@@ -1,0 +1,24 @@
+settings:
+  legacy:
+    force: false
+    interval: 0s
+schema:
+- name: api
+  path: .
+  commands:
+    build:
+      status: true
+      dir: ./
+    run:
+      status: true
+      dir: ./
+  watcher:
+    paths:
+    - /
+    extensions:
+    - go
+    ignored_paths:
+    - .git
+    - .realize
+    - vendor
+
