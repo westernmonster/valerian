@@ -29,6 +29,7 @@
 
 * 追求效率，不使用 ORM，采用 sqlx 和 sqalx 处理数据库访问
 > github.com/jmoiron/sqlx
+>
 > github.com/heetch/sqalx
 
 * 采用 jennifer 作为代码生成器，数据访问层可以统一通过代码生成器生成。
