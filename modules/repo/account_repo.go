@@ -10,6 +10,7 @@ import (
 	tracerr "github.com/ztrue/tracerr"
 )
 
+// Account 账户
 type Account struct {
 	ID           int64   `db:"id" json:"id,string"`                        // ID ID
 	Mobile       string  `db:"mobile" json:"mobile"`                       // Mobile 手机
@@ -28,8 +29,10 @@ type Account struct {
 	UpdatedAt    int64   `db:"updated_at" json:"updated_at"`               // UpdatedAt 更新时间
 }
 
+// AccountRepository 账户数据访问层
 type AccountRepository struct{}
 
+// QueryListPaged get paged records by condition
 func (p *AccountRepository) QueryListPaged(node sqalx.Node, page int, pageSize int, cond map[string]string) (total int, items []*Account, err error) {
 	offset := (page - 1) * pageSize
 	condition := make(map[string]interface{})
@@ -68,6 +71,7 @@ func (p *AccountRepository) QueryListPaged(node sqalx.Node, page int, pageSize i
 	return
 }
 
+// GetAll get all records
 func (p *AccountRepository) GetAll(node sqalx.Node) (items []*Account, err error) {
 	items = make([]*Account, 0)
 	sqlSelect := packr.NewBox("./sql/account").String("GET_ALL.sql")
@@ -85,6 +89,7 @@ func (p *AccountRepository) GetAll(node sqalx.Node) (items []*Account, err error
 	return
 }
 
+// GetAllByCondition get records by condition
 func (p *AccountRepository) GetAllByCondition(node sqalx.Node, cond map[string]string) (items []*Account, err error) {
 	items = make([]*Account, 0)
 	condition := make(map[string]interface{})
@@ -155,6 +160,7 @@ func (p *AccountRepository) GetAllByCondition(node sqalx.Node, cond map[string]s
 	return
 }
 
+// GetByID get record by ID
 func (p *AccountRepository) GetByID(node sqalx.Node, id int64) (item *Account, exist bool, err error) {
 	item = new(Account)
 	sqlSelect := packr.NewBox("./sql/account").String("GET_BY_ID.sql")
@@ -178,6 +184,7 @@ func (p *AccountRepository) GetByID(node sqalx.Node, id int64) (item *Account, e
 	return
 }
 
+// GetByCondition get record by condition
 func (p *AccountRepository) GetByCondition(node sqalx.Node, cond map[string]string) (item *Account, exist bool, err error) {
 	item = new(Account)
 	condition := make(map[string]interface{})
@@ -254,6 +261,7 @@ func (p *AccountRepository) GetByCondition(node sqalx.Node, cond map[string]stri
 	return
 }
 
+// Insert insert a new record
 func (p *AccountRepository) Insert(node sqalx.Node, item *Account) (err error) {
 	sqlInsert := packr.NewBox("./sql/account").String("INSERT.sql")
 
@@ -269,6 +277,7 @@ func (p *AccountRepository) Insert(node sqalx.Node, item *Account) (err error) {
 	return
 }
 
+// Update update a exist record
 func (p *AccountRepository) Update(node sqalx.Node, item *Account) (err error) {
 	sqlUpdate := packr.NewBox("./sql/account").String("UPDATE.sql")
 
@@ -283,6 +292,7 @@ func (p *AccountRepository) Update(node sqalx.Node, item *Account) (err error) {
 	return
 }
 
+// Delete logic delete a exist record
 func (p *AccountRepository) Delete(node sqalx.Node, id int64) (err error) {
 	sqlDelete := packr.NewBox("./sql/account").String("DELETE.sql")
 
@@ -295,6 +305,7 @@ func (p *AccountRepository) Delete(node sqalx.Node, id int64) (err error) {
 	return
 }
 
+// BatchDelete logic batch delete records
 func (p *AccountRepository) BatchDelete(node sqalx.Node, ids []int64) (err error) {
 	tx, err := node.Beginx()
 	if err != nil {

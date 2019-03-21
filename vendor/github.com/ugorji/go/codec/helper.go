@@ -139,18 +139,18 @@ const (
 	// so structFieldInfo fits into 8 bytes
 	maxLevelsEmbedding = 14
 
-	// finalizers are used? to Close Encoder/Decoder when they are GC'ed
-	// so that their pooled resources are returned.
+	// useFinalizers=true configures finalizers to release pool'ed resources
+	// acquired by Encoder/Decoder during their GC.
 	//
 	// Note that calling SetFinalizer is always expensive,
 	// as code must be run on the systemstack even for SetFinalizer(t, nil).
 	//
-	// We document that folks SHOULD call Close() when done, or they can
+	// We document that folks SHOULD call Release() when done, or they can
 	// explicitly call SetFinalizer themselves e.g.
-	//    runtime.SetFinalizer(e, (*Encoder).Close)
-	//    runtime.SetFinalizer(d, (*Decoder).Close)
-	useFinalizers          = false
-	removeFinalizerOnClose = false
+	//    runtime.SetFinalizer(e, (*Encoder).Release)
+	//    runtime.SetFinalizer(d, (*Decoder).Release)
+	useFinalizers            = false
+	removeFinalizerOnRelease = false
 )
 
 var oneByteArr [1]byte
@@ -542,22 +542,23 @@ type BasicHandle struct {
 	// (for Cbor and Msgpack), where time.Time was not a builtin supported type.
 	TimeNotBuiltin bool
 
-	// DoNotClose configures whether Close() is implicitly called after an encode or
+	// ExplicitRelease configures whether Release() is implicitly called after an encode or
 	// decode call.
 	//
 	// If you will hold onto an Encoder or Decoder for re-use, by calling Reset(...)
-	// on it, then you do not want it to be implicitly closed after each Encode/Decode call.
+	// on it or calling (Must)Encode repeatedly into a given []byte or io.Writer,
+	// then you do not want it to be implicitly closed after each Encode/Decode call.
 	// Doing so will unnecessarily return resources to the shared pool, only for you to
 	// grab them right after again to do another Encode/Decode call.
 	//
-	// Instead, you configure DoNotClose=true, and you explicitly call Close() when
+	// Instead, you configure ExplicitRelease=true, and you explicitly call Release() when
 	// you are truly done.
 	//
 	// As an alternative, you can explicitly set a finalizer - so its resources
 	// are returned to the shared pool before it is garbage-collected. Do it as below:
-	//    runtime.SetFinalizer(e, (*Encoder).Close)
-	//    runtime.SetFinalizer(d, (*Decoder).Close)
-	DoNotClose bool
+	//    runtime.SetFinalizer(e, (*Encoder).Release)
+	//    runtime.SetFinalizer(d, (*Decoder).Release)
+	ExplicitRelease bool
 
 	be bool   // is handle a binary encoding?
 	js bool   // is handle javascript handler?
@@ -624,15 +625,16 @@ LOOP:
 	return
 }
 
-func (c *BasicHandle) fn(rt reflect.Type, checkFastpath, checkCodecSelfer bool) (fn *codecFn) {
+func (x *BasicHandle) fn(rt reflect.Type, checkFastpath, checkCodecSelfer bool) (fn *codecFn) {
 	rtid := rt2id(rt)
-	sp := c.rtidFns.load()
+	sp := x.rtidFns.load()
 	if sp != nil {
 		if _, fn = findFn(sp, rtid); fn != nil {
 			// xdebugf("<<<< %c: found fn for %v in rtidfns of size: %v", c.n, rt, len(sp))
 			return
 		}
 	}
+	c := x
 	// xdebugf("#### for %c: load fn for %v in rtidfns of size: %v", c.n, rt, len(sp))
 	fn = new(codecFn)
 	fi := &(fn.i)
@@ -2373,12 +2375,11 @@ type pooler struct {
 	strRv8, strRv16, strRv32, strRv64, strRv128 sync.Pool // for stringRV
 
 	// lifetime-scoped pooled resources
-	dn                                 sync.Pool // for decNaked
+	// dn                                 sync.Pool // for decNaked
 	buf1k, buf2k, buf4k, buf8k, buf16k sync.Pool // for [N]byte
 }
 
 func (p *pooler) init() {
-	// function-scoped pooled resources
 	p.tiload.New = func() interface{} { return new(typeInfoLoadArray) }
 
 	p.strRv8.New = func() interface{} { return new([8]sfiRv) }
@@ -2387,14 +2388,14 @@ func (p *pooler) init() {
 	p.strRv64.New = func() interface{} { return new([64]sfiRv) }
 	p.strRv128.New = func() interface{} { return new([128]sfiRv) }
 
-	// lifetime-scoped pooled resources
+	// p.dn.New = func() interface{} { x := new(decNaked); x.init(); return x }
+
 	p.buf1k.New = func() interface{} { return new([1 * 1024]byte) }
 	p.buf2k.New = func() interface{} { return new([2 * 1024]byte) }
 	p.buf4k.New = func() interface{} { return new([4 * 1024]byte) }
 	p.buf8k.New = func() interface{} { return new([8 * 1024]byte) }
 	p.buf16k.New = func() interface{} { return new([16 * 1024]byte) }
 
-	p.dn.New = func() interface{} { x := new(decNaked); x.init(); return x }
 }
 
 func (p *pooler) sfiRv8() (sp *sync.Pool, v interface{}) {
@@ -2428,13 +2429,13 @@ func (p *pooler) bytes8k() (sp *sync.Pool, v interface{}) {
 func (p *pooler) bytes16k() (sp *sync.Pool, v interface{}) {
 	return &p.buf16k, p.buf16k.Get()
 }
-
-func (p *pooler) decNaked() (sp *sync.Pool, v interface{}) {
-	return &p.dn, p.dn.Get()
-}
 func (p *pooler) tiLoad() (sp *sync.Pool, v interface{}) {
 	return &p.tiload, p.tiload.Get()
 }
+
+// func (p *pooler) decNaked() (sp *sync.Pool, v interface{}) {
+// 	return &p.dn, p.dn.Get()
+// }
 
 // func (p *pooler) decNaked() (v *decNaked, f func(*decNaked) ) {
 // 	sp := &(p.dn)

@@ -66,7 +66,7 @@ func ConstructDBConnStr(config map[string]string) (connStr string, err error) {
 
 func InitDatabase() (db *sqlx.DB, node sqalx.Node, err error) {
 	mode := viper.Get("MODE")
-	dbConfig := viper.GetStringMapString(fmt.Sprintf("%s.db.enauka", mode))
+	dbConfig := viper.GetStringMapString(fmt.Sprintf("%s.db.flywiki", mode))
 
 	connStr, err := ConstructDBConnStr(dbConfig)
 	if err != nil {

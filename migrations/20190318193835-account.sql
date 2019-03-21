@@ -20,5 +20,7 @@ CREATE TABLE `accounts`  (
   KEY `idx_mobile` (`mobile`) COMMENT 'mobile',
   KEY `idx_email` (`email`) COMMENT 'email'
 ) COMMENT '账户';
+
+
 -- +migrate Down
 DROP TABLE accounts;

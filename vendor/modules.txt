@@ -1,5 +1,19 @@
+# github.com/PuerkitoBio/purell v1.1.0
+github.com/PuerkitoBio/purell
+# github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578
+github.com/PuerkitoBio/urlesc
+# github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc
+github.com/alecthomas/template
+github.com/alecthomas/template/parse
 # github.com/bwmarrin/snowflake v0.0.0-20180412010544-68117e6bbede
 github.com/bwmarrin/snowflake
+# github.com/denverdino/aliyungo v0.0.0-20190308225517-f1fa5f5452ee
+github.com/denverdino/aliyungo/dm
+github.com/denverdino/aliyungo/sms
+github.com/denverdino/aliyungo/common
+github.com/denverdino/aliyungo/util
+# github.com/dgrijalva/jwt-go v3.2.0+incompatible
+github.com/dgrijalva/jwt-go
 # github.com/fsnotify/fsnotify v1.4.7
 github.com/fsnotify/fsnotify
 # github.com/gin-contrib/sse v0.0.0-20190301062529-5545eab6dad3
@@ -9,6 +23,18 @@ github.com/gin-gonic/gin
 github.com/gin-gonic/gin/binding
 github.com/gin-gonic/gin/json
 github.com/gin-gonic/gin/render
+# github.com/go-openapi/jsonpointer v0.17.0
+github.com/go-openapi/jsonpointer
+# github.com/go-openapi/jsonreference v0.18.0
+github.com/go-openapi/jsonreference
+# github.com/go-openapi/spec v0.18.0
+github.com/go-openapi/spec
+# github.com/go-openapi/swag v0.17.0
+github.com/go-openapi/swag
+# github.com/go-ozzo/ozzo-validation v3.5.0+incompatible
+github.com/go-ozzo/ozzo-validation
+# github.com/go-sql-driver/mysql v1.4.0
+github.com/go-sql-driver/mysql
 # github.com/gobuffalo/envy v1.6.15
 github.com/gobuffalo/envy
 # github.com/gobuffalo/packd v0.0.0-20190315122247-83d601d65093
@@ -41,10 +67,16 @@ github.com/jmoiron/sqlx/reflectx
 github.com/joho/godotenv
 # github.com/json-iterator/go v1.1.6
 github.com/json-iterator/go
+# github.com/konsorten/go-windows-terminal-sequences v1.0.1
+github.com/konsorten/go-windows-terminal-sequences
 # github.com/logrusorgru/aurora v0.0.0-20181002194514-a7b3b318ed4e
 github.com/logrusorgru/aurora
 # github.com/magiconair/properties v1.8.0
 github.com/magiconair/properties
+# github.com/mailru/easyjson v0.0.0-20180823135443-60711f1a8329
+github.com/mailru/easyjson/jlexer
+github.com/mailru/easyjson/jwriter
+github.com/mailru/easyjson/buffer
 # github.com/mattn/go-isatty v0.0.7
 github.com/mattn/go-isatty
 # github.com/mitchellh/mapstructure v1.1.2
@@ -63,6 +95,8 @@ github.com/rogpeppe/go-internal/module
 github.com/rogpeppe/go-internal/semver
 # github.com/satori/go.uuid v1.2.0
 github.com/satori/go.uuid
+# github.com/sirupsen/logrus v1.4.0
+github.com/sirupsen/logrus
 # github.com/spf13/afero v1.1.2
 github.com/spf13/afero
 github.com/spf13/afero/mem
@@ -74,17 +108,40 @@ github.com/spf13/jwalterweatherman
 github.com/spf13/pflag
 # github.com/spf13/viper v1.3.2
 github.com/spf13/viper
-# github.com/ugorji/go/codec v0.0.0-20181204163529-d75b2dcb6bc8
+# github.com/swaggo/gin-swagger v1.1.0
+github.com/swaggo/gin-swagger
+github.com/swaggo/gin-swagger/swaggerFiles
+# github.com/swaggo/swag v1.4.1
+github.com/swaggo/swag
+# github.com/ugorji/go/codec v0.0.0-20181209151446-772ced7fd4c2
 github.com/ugorji/go/codec
 # github.com/westernmonster/sqalx v0.3.0
 github.com/westernmonster/sqalx
 # github.com/ztrue/tracerr v0.3.0
 github.com/ztrue/tracerr
+# golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2
+golang.org/x/crypto/ssh/terminal
+# golang.org/x/net v0.0.0-20190311183353-d8887717615a
+golang.org/x/net/webdav
+golang.org/x/net/context
+golang.org/x/net/webdav/internal/xml
+golang.org/x/net/idna
 # golang.org/x/sys v0.0.0-20190222072716-a9d3bda3a223
 golang.org/x/sys/unix
+golang.org/x/sys/windows
 # golang.org/x/text v0.3.0
 golang.org/x/text/transform
 golang.org/x/text/unicode/norm
+golang.org/x/text/width
+golang.org/x/text/secure/bidirule
+golang.org/x/text/unicode/bidi
+# golang.org/x/tools v0.0.0-20190315044204-8b67d361bba2
+golang.org/x/tools/go/loader
+golang.org/x/tools/go/ast/astutil
+golang.org/x/tools/go/buildutil
+golang.org/x/tools/go/internal/cgo
+# google.golang.org/appengine v1.5.0
+google.golang.org/appengine/cloudsql
 # gopkg.in/go-playground/validator.v8 v8.18.2
 gopkg.in/go-playground/validator.v8
 # gopkg.in/yaml.v2 v2.2.2
