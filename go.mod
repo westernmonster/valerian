@@ -4,6 +4,7 @@ go 1.12
 
 require (
 	github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc
+	github.com/asaskevich/govalidator v0.0.0-20180720115003-f9ffefc3facf
 	github.com/bwmarrin/snowflake v0.0.0-20180412010544-68117e6bbede
 	github.com/denverdino/aliyungo v0.0.0-20190308225517-f1fa5f5452ee
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible

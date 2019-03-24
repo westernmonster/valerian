@@ -23,7 +23,7 @@ type Account struct {
 	Introduction *string `db:"introduction" json:"introduction,omitempty"` // Introduction 自我介绍
 	Avatar       string  `db:"avatar" json:"avatar"`                       // Avatar 头像
 	Source       int     `db:"source" json:"source"`                       // Source 注册来源
-	IP           int     `db:"ip" json:"ip"`                               // IP 注册IP
+	IP           int64   `db:"ip" json:"ip"`                               // IP 注册IP
 	Deleted      int     `db:"deleted" json:"deleted"`                     // Deleted 是否删除
 	CreatedAt    int64   `db:"created_at" json:"created_at"`               // CreatedAt 创建时间
 	UpdatedAt    int64   `db:"updated_at" json:"updated_at"`               // UpdatedAt 更新时间

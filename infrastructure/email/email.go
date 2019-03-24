@@ -7,15 +7,15 @@ import (
 const ()
 
 type EmailClient struct {
-	dm.Client
+	*dm.Client
 }
 
-func (p *EmailClient) SendActiveEmail(email string, valcode string) (err error) {
+func (p *EmailClient) SendRegisterEmail(email string, valcode string) (err error) {
 	args := &dm.SendSingleMailArgs{
 		ReplyToAddress: false,
 		ToAddress:      email,
 		FromAlias:      "飞行百科",
-		Subject:        "飞行百科激活邮件",
+		Subject:        "飞行百科注册验证码",
 	}
 
 	err = p.Client.SendSingleMail(args)

@@ -12,7 +12,7 @@ CREATE TABLE `accounts`  (
   `introduction` varchar(500) NULL COMMENT '自我介绍',
   `avatar` varchar(200) NOT NULL COMMENT '头像',
   `source` int(11) NOT NULL COMMENT '注册来源',
-  `ip` int(11) NOT NULL COMMENT '注册IP',
+  `ip` bigint(20) NOT NULL COMMENT '注册IP',
   `deleted` int(11) NOT NULL COMMENT '是否删除',
   `created_at` bigint(20) NOT NULL COMMENT '创建时间',
   `updated_at` bigint(20) NOT NULL COMMENT '更新时间',

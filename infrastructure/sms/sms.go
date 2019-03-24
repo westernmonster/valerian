@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/denverdino/aliyungo/sms"
+	"github.com/ztrue/tracerr"
 )
 
 const (
@@ -13,29 +14,46 @@ const (
 )
 
 type SMSClient struct {
-	sms.Client
+	Client *sms.DYSmsClient
 }
 
 func (p *SMSClient) SendRegisterValcode(mobile string, valcode string) (err error) {
-	args := &sms.SingleSendSmsArgs{
-		SignName:     SignName,
-		TemplateCode: RegisterTemplateCode,
-		RecNum:       mobile,
-		ParamString:  fmt.Sprintf(`{"code":"%s"}`, valcode),
+	args := &sms.SendSmsArgs{
+		SignName:      SignName,
+		TemplateCode:  RegisterTemplateCode,
+		PhoneNumbers:  mobile,
+		TemplateParam: fmt.Sprintf(`{"code":"%s"}`, valcode),
 	}
 
-	err = p.Client.SingleSendSms(args)
+	resp, err := p.Client.SendSms(args)
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+
+	if resp.Code != "OK" {
+		err = tracerr.Errorf("下发短信失败")
+		return
+	}
 	return
 }
 
 func (p *SMSClient) SendResetPasswordValcode(mobile string, valcode string) (err error) {
-	args := &sms.SingleSendSmsArgs{
-		SignName:     SignName,
-		TemplateCode: ResetPasswordTemplateCode,
-		RecNum:       mobile,
-		ParamString:  fmt.Sprintf(`{"code":"%s"}`, valcode),
+	args := &sms.SendSmsArgs{
+		SignName:      SignName,
+		TemplateCode:  ResetPasswordTemplateCode,
+		PhoneNumbers:  mobile,
+		TemplateParam: fmt.Sprintf(`{"code":"%s"}`, valcode),
 	}
 
-	err = p.Client.SingleSendSms(args)
+	resp, err := p.Client.SendSms(args)
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+	if resp.Code != "OK" {
+		err = tracerr.Errorf("下发短信失败")
+		return
+	}
 	return
 }

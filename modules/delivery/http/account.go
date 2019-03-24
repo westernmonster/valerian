@@ -3,6 +3,7 @@ package http
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -12,6 +13,8 @@ import (
 	"github.com/ztrue/tracerr"
 
 	"git.flywk.com/flywiki/api/infrastructure"
+	"git.flywk.com/flywiki/api/infrastructure/berr"
+	"git.flywk.com/flywiki/api/infrastructure/helper"
 	"git.flywk.com/flywiki/api/models"
 	"git.flywk.com/flywiki/api/modules/repo"
 )
@@ -21,7 +24,10 @@ type AccountCtrl struct {
 
 	AccountUsecase interface {
 		GetByID(userID int64) (item *repo.Account, err error)
-		DoLogin(req *models.LoginReq, ip string) (item *repo.Account, err error)
+		Login(req *models.LoginReq, ip string) (item *repo.Account, err error)
+		Register(req *models.RegisterReq, ip string) (err error)
+		ForgetPassword(req *models.ForgetPasswordReq) (sessionID int64, err error)
+		ResetPassword(req *models.ResetPasswordReq) (err error)
 	}
 }
 
@@ -130,7 +136,7 @@ func (p *AccountCtrl) Login(ctx *gin.Context) {
 	}
 
 	ip := ctx.ClientIP()
-	user, err := p.AccountUsecase.DoLogin(req, ip)
+	user, err := p.AccountUsecase.Login(req, ip)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return
@@ -146,6 +152,141 @@ func (p *AccountCtrl) Login(ctx *gin.Context) {
 		Token: cookie.Value,
 		Role:  "user",
 	})
+
+	return
+}
+
+// Register 用户注册
+// @Summary 用户注册
+// @Description 用户注册
+// @Tags account
+// @Accept json
+// @Produce json
+// @Param req body models.RegisterReq true "注册请求"
+// @Success 200 "成功"
+// @Failure 400 "验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /accounts [post]
+func (p *AccountCtrl) Register(ctx *gin.Context) {
+	req := new(models.RegisterReq)
+
+	if e := ctx.Bind(req); e != nil {
+		p.HandleError(ctx, e)
+		return
+	}
+
+	if e := req.Validate(); e != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, infrastructure.RespCommon{
+			Success: false,
+			Code:    http.StatusBadRequest,
+			Message: "验证失败，请检查您的输入",
+		})
+
+		return
+	}
+
+	ip := ctx.ClientIP()
+	err := p.AccountUsecase.Register(req, ip)
+	if err != nil {
+		p.HandleError(ctx, err)
+		return
+	}
+
+	p.SuccessResp(ctx, nil)
+
+	return
+}
+
+// ForgetPassword 忘记密码
+// @Summary 忘记密码
+// @Description 忘记密码，此为重设密码第一步，提交用户标识（手机号、邮箱），和用户输入的验证码进行验证，并返回一个 Session ID
+// @Tags account
+// @Accept json
+// @Produce json
+// @Param req body models.ForgetPasswordReq true "请求"
+// @Success 200 "SessionID"
+// @Failure 400 "验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /accounts/attributes/forget_password [put]
+func (p *AccountCtrl) ForgetPassword(ctx *gin.Context) {
+	req := new(models.ForgetPasswordReq)
+
+	if e := ctx.Bind(req); e != nil {
+		p.HandleError(ctx, e)
+		return
+	}
+
+	if e := req.Validate(); e != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, infrastructure.RespCommon{
+			Success: false,
+			Code:    http.StatusBadRequest,
+			Message: "验证失败，请检查您的输入",
+		})
+
+		return
+	}
+
+	sessionID, err := p.AccountUsecase.ForgetPassword(req)
+	if err != nil {
+		p.HandleError(ctx, err)
+		return
+	}
+
+	strID := strconv.FormatInt(sessionID, 10)
+	b64Str := helper.Base64Encode(strID)
+
+	p.SuccessResp(ctx, b64Str)
+
+	return
+}
+
+// ResetPassword 重设密码
+// @Summary 重设密码
+// @Description  重设密码第二步，传入新密码和Session ID，如果返回的Code值为307，则表示Session已经失效，前端可以根据这个值做对应的处理
+// @Tags account
+// @Accept json
+// @Produce json
+// @Param req body models.ForgetPasswordReq true "请求"
+// @Success 200 "成功，如果返回的Code值为307，则表示Session已经失效，前端可以根据这个值做对应的处理"
+// @Failure 400 "验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /accounts/attributes/reset_password [put]
+func (p *AccountCtrl) ResetPassword(ctx *gin.Context) {
+	req := new(models.ResetPasswordReq)
+
+	if e := ctx.Bind(req); e != nil {
+		p.HandleError(ctx, e)
+		return
+	}
+
+	if e := req.Validate(); e != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, infrastructure.RespCommon{
+			Success: false,
+			Code:    http.StatusBadRequest,
+			Message: "验证失败，请检查您的输入",
+		})
+
+		return
+	}
+
+	err := p.AccountUsecase.ResetPassword(req)
+	if err != nil {
+		switch err.(type) {
+		case *berr.BizError:
+			ctx.AbortWithStatusJSON(http.StatusOK, infrastructure.RespCommon{
+				Success: false,
+				Code:    http.StatusTemporaryRedirect,
+				Message: "Session 错误或失效",
+			})
+			return
+		default:
+			p.HandleError(ctx, err)
+			return
+
+		}
+	}
+
+	p.SuccessResp(ctx, nil)
 
 	return
 }

@@ -5,6 +5,8 @@ github.com/PuerkitoBio/urlesc
 # github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc
 github.com/alecthomas/template
 github.com/alecthomas/template/parse
+# github.com/asaskevich/govalidator v0.0.0-20180720115003-f9ffefc3facf
+github.com/asaskevich/govalidator
 # github.com/bwmarrin/snowflake v0.0.0-20180412010544-68117e6bbede
 github.com/bwmarrin/snowflake
 # github.com/denverdino/aliyungo v0.0.0-20190308225517-f1fa5f5452ee
@@ -33,6 +35,7 @@ github.com/go-openapi/spec
 github.com/go-openapi/swag
 # github.com/go-ozzo/ozzo-validation v3.5.0+incompatible
 github.com/go-ozzo/ozzo-validation
+github.com/go-ozzo/ozzo-validation/is
 # github.com/go-sql-driver/mysql v1.4.0
 github.com/go-sql-driver/mysql
 # github.com/gobuffalo/envy v1.6.15

@@ -9,6 +9,10 @@
         "port": 3306,
         "dialect": "mysql"
       }
+    },
+    "aliyun": {
+      "access_key_id": "LTAISxGg2eaIluVV",
+      "access_key_secret": "zcODCoe2bGJmNEEGXbwyiaIYQUQWbJ"
     }
   },
   "test": {
@@ -21,6 +25,10 @@
         "port": 3306,
         "dialect": "mysql"
       }
+    },
+    "aliyun": {
+      "access_key_id": "LTAISxGg2eaIluVV",
+      "access_key_secret": "zcODCoe2bGJmNEEGXbwyiaIYQUQWbJ"
     }
   },
   "production": {
@@ -33,8 +41,10 @@
         "port": 3306,
         "dialect": "mysql"
       }
+    },
+    "aliyun": {
+      "access_key_id": "LTAISxGg2eaIluVV",
+      "access_key_secret": "zcODCoe2bGJmNEEGXbwyiaIYQUQWbJ"
     }
   }
 }
-
-
