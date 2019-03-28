@@ -28,6 +28,7 @@ type AccountCtrl struct {
 		Register(req *models.RegisterReq, ip string) (err error)
 		ForgetPassword(req *models.ForgetPasswordReq) (sessionID int64, err error)
 		ResetPassword(req *models.ResetPasswordReq) (err error)
+		ChangePassword(accountID int64, req *models.ChangePasswordReq) (err error)
 	}
 }
 
@@ -316,4 +317,51 @@ func (p *AccountCtrl) createCookie(user *repo.Account) (cookie *http.Cookie, err
 
 	return
 
+}
+
+// ChangePassword 更改密码
+// @Summary 更改密码
+// @Description  更改密码，API会验证登录 （JWT Token 或 Cookie）
+// @Tags account
+// @Accept json
+// @Produce json
+// @Param req body models.ChangePasswordReq true "请求"
+// @Success 200 "成功"
+// @Failure 400 "验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /accounts/attributes/reset_password [put]
+func (p *AccountCtrl) ChangePassword(ctx *gin.Context) {
+
+	accountID, err := p.GetAccountID(ctx)
+	if err != nil {
+		p.HandleError(ctx, err)
+		return
+	}
+
+	req := new(models.ChangePasswordReq)
+
+	if e := ctx.Bind(req); e != nil {
+		p.HandleError(ctx, e)
+		return
+	}
+
+	if e := req.Validate(); e != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, infrastructure.RespCommon{
+			Success: false,
+			Code:    http.StatusBadRequest,
+			Message: "验证失败，请检查您的输入",
+		})
+
+		return
+	}
+
+	err = p.AccountUsecase.ChangePassword(accountID, req)
+	if err != nil {
+		p.HandleError(ctx, err)
+		return
+	}
+
+	p.SuccessResp(ctx, nil)
+
+	return
 }

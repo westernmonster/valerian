@@ -390,3 +390,73 @@ func (p *AccountUsecase) ResetPassword(req *models.ResetPasswordReq) (err error)
 	return
 
 }
+
+func (p *AccountUsecase) ChangePassword(accountID int64, req *models.ChangePasswordReq) (err error) {
+	tx, err := p.Node.Beginx()
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+	defer tx.Rollback()
+
+	account, exist, err := p.AccountRepository.GetByID(tx, accountID)
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+	if !exist {
+		err = berr.Errorf("未找到当前用户")
+		return
+	}
+
+	account.Password = req.Password
+
+	err = p.AccountRepository.Update(tx, account)
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+	return
+
+}
+
+func (p *AccountUsecase) UpdateProfile(accountID int64, req *models.ChangePasswordReq) (err error) {
+	tx, err := p.Node.Beginx()
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+	defer tx.Rollback()
+
+	account, exist, err := p.AccountRepository.GetByID(tx, accountID)
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+	if !exist {
+		err = berr.Errorf("未找到当前用户")
+		return
+	}
+
+	account.Password = req.Password
+
+	err = p.AccountRepository.Update(tx, account)
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+	return
+
+}

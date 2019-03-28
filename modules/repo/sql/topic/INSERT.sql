@@ -1,0 +1,33 @@
+INSERT INTO topics(
+    id,
+    name,
+    description,
+    is_private,
+    allow_discuss,
+    edit_permission,
+    view_permission,
+    join_permission,
+    important,
+    mute_notification,
+    category_view_type,
+    created_by,
+    deleted,
+    created_at,
+    updated_at
+) VALUES (
+    :id,
+    :name,
+    :description,
+    :is_private,
+    :allow_discuss,
+    :edit_permission,
+    :view_permission,
+    :join_permission,
+    :important,
+    :mute_notification,
+    :category_view_type,
+    :created_by,
+    :deleted,
+    :created_at,
+    :updated_at
+)

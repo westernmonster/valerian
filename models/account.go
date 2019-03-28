@@ -146,3 +146,30 @@ func (p *RequestValcodeReq) Validate() error {
 			validation.In(ValcodeRegister, ValcodeForgetPassword).Error("验证码类型不在允许范围内")),
 	)
 }
+
+type ChangePasswordReq struct {
+	Password string `json:"password"`
+}
+
+func (p *ChangePasswordReq) Validate() error {
+	return validation.ValidateStruct(
+		p,
+		validation.Field(&p.Password,
+			validation.Required.Error(`请输入密码`),
+			validation.RuneLength(32, 32).Error(`密码格式不正确`)),
+	)
+}
+
+type UpdateProfileReq struct {
+	// 用户头像
+	Avatar *string `json:"avatar,omitempty"`
+
+	// 用户性别， 1 为男，2 为女
+	Gener *int `json:"gener,omitempty"`
+
+	// 地区
+	Area *int64 `json:"area,string,omitempty"`
+
+	// 个性签名
+	Introduction *int `json:"introduction,omitempty"`
+}
