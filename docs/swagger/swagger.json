@@ -47,6 +47,82 @@
                 }
             }
         },
+        "/accounts/attributes": {
+            "put": {
+                "description": "更改用户资料，需要登录验证 （JWT Token 或 Cookie）",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "account"
+                ],
+                "summary": "更改用户资料",
+                "parameters": [
+                    {
+                        "description": "请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/models.UpdateProfileReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功"
+                    },
+                    "400": {
+                        "description": "验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/accounts/attributes/change_password": {
+            "put": {
+                "description": "更改密码，API会验证登录 （JWT Token 或 Cookie）",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "account"
+                ],
+                "summary": "更改密码",
+                "parameters": [
+                    {
+                        "description": "请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/models.ChangePasswordReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功"
+                    },
+                    "400": {
+                        "description": "验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
         "/accounts/attributes/forget_password": {
             "put": {
                 "description": "忘记密码，此为重设密码第一步，提交用户标识（手机号、邮箱），和用户输入的验证码进行验证，并返回一个 Session ID",
@@ -87,7 +163,7 @@
         },
         "/accounts/attributes/reset_password": {
             "put": {
-                "description": "更改密码，API会验证登录 （JWT Token 或 Cookie）",
+                "description": "重设密码第二步，传入新密码和Session ID，如果返回的Code值为307，则表示Session已经失效，前端可以根据这个值做对应的处理",
                 "consumes": [
                     "application/json"
                 ],
@@ -97,7 +173,7 @@
                 "tags": [
                     "account"
                 ],
-                "summary": "更改密码",
+                "summary": "重设密码",
                 "parameters": [
                     {
                         "description": "请求",
@@ -106,13 +182,13 @@
                         "required": true,
                         "schema": {
                             "type": "object",
-                            "$ref": "#/definitions/models.ChangePasswordReq"
+                            "$ref": "#/definitions/models.ForgetPasswordReq"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "成功"
+                        "description": "成功，如果返回的Code值为307，则表示Session已经失效，前端可以根据这个值做对应的处理"
                     },
                     "400": {
                         "description": "验证失败"
@@ -155,6 +231,44 @@
                             "type": "object",
                             "$ref": "#/definitions/models.LoginResult"
                         }
+                    },
+                    "400": {
+                        "description": "验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/valcodes": {
+            "post": {
+                "description": "请求验证码",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "common"
+                ],
+                "summary": "请求验证码",
+                "parameters": [
+                    {
+                        "description": "请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/models.RequestValcodeReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功"
                     },
                     "400": {
                         "description": "验证失败"
@@ -233,6 +347,56 @@
                 },
                 "valcode": {
                     "description": "验证码 6位数字",
+                    "type": "string"
+                }
+            }
+        },
+        "models.RequestValcodeReq": {
+            "type": "object",
+            "properties": {
+                "code_type": {
+                    "description": "验证码类型, 1为注册验证码, 2为重置密码验证码",
+                    "type": "integer"
+                },
+                "identity": {
+                    "description": "用户标识, 可以为邮件或手机号码",
+                    "type": "string"
+                }
+            }
+        },
+        "models.UpdateProfileReq": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "description": "用户头像\n如果无需更改该字段，在提交JSON请求中请不要包含该字段",
+                    "type": "string"
+                },
+                "birth_day": {
+                    "description": "出生日",
+                    "type": "integer"
+                },
+                "birth_month": {
+                    "description": "出生月",
+                    "type": "integer"
+                },
+                "birth_year": {
+                    "description": "出生年\n如果无需更改该字段，在提交JSON请求中请不要包含该字段",
+                    "type": "integer"
+                },
+                "gener": {
+                    "description": "用户性别， 1 为男，2 为女\n如果无需更改该字段，在提交JSON请求中请不要包含该字段",
+                    "type": "integer"
+                },
+                "introduction": {
+                    "description": "个性签名\n如果无需更改该字段，在提交JSON请求中请不要包含该字段",
+                    "type": "string"
+                },
+                "location": {
+                    "description": "地区\n如果无需更改该字段，在提交JSON请求中请不要包含该字段",
+                    "type": "integer"
+                },
+                "password": {
+                    "description": "密码\n如果无需更改该字段，在提交JSON请求中请不要包含该字段",
                     "type": "string"
                 }
             }

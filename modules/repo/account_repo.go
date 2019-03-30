@@ -20,6 +20,7 @@ type Account struct {
 	BirthYear    *int    `db:"birth_year" json:"birth_year,omitempty"`     // BirthYear 出生年
 	BirthMonth   *int    `db:"birth_month" json:"birth_month,omitempty"`   // BirthMonth 出生月
 	BirthDay     *int    `db:"birth_day" json:"birth_day,omitempty"`       // BirthDay 出生日
+	Location     *int64  `db:"location" json:"location,string,omitempty"`  // 地区 ID
 	Introduction *string `db:"introduction" json:"introduction,omitempty"` // Introduction 自我介绍
 	Avatar       string  `db:"avatar" json:"avatar"`                       // Avatar 头像
 	Source       int     `db:"source" json:"source"`                       // Source 注册来源

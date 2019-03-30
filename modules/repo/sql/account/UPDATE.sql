@@ -7,6 +7,7 @@ SET
     birth_year=:birth_year,
     birth_month=:birth_month,
     birth_day=:birth_day,
+    location=:location,
     introduction=:introduction,
     avatar=:avatar,
     source=:source,

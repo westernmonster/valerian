@@ -79,6 +79,15 @@ type AccountUsecase struct {
 		// BatchDelete logic batch delete records
 		BatchDelete(node sqalx.Node, ids []int64) (err error)
 	}
+
+	AreaRepository interface {
+		// GetAllByCondition get records by condition
+		GetAllByCondition(node sqalx.Node, cond map[string]string) (items []*repo.Area, err error)
+		// GetByID get a record by ID
+		GetByID(node sqalx.Node, id int64) (item *repo.Area, exist bool, err error)
+		// GetByCondition get a record by condition
+		GetByCondition(node sqalx.Node, cond map[string]string) (item *repo.Area, exist bool, err error)
+	}
 }
 
 func (p *AccountUsecase) GetByID(userID int64) (item *repo.Account, err error) {
@@ -426,7 +435,7 @@ func (p *AccountUsecase) ChangePassword(accountID int64, req *models.ChangePassw
 
 }
 
-func (p *AccountUsecase) UpdateProfile(accountID int64, req *models.ChangePasswordReq) (err error) {
+func (p *AccountUsecase) UpdateProfile(accountID int64, req *models.UpdateProfileReq) (err error) {
 	tx, err := p.Node.Beginx()
 	if err != nil {
 		err = tracerr.Wrap(err)
@@ -444,7 +453,62 @@ func (p *AccountUsecase) UpdateProfile(accountID int64, req *models.ChangePasswo
 		return
 	}
 
-	account.Password = req.Password
+	if req.Gender != nil {
+		if *req.Gender != models.GenderMale && *req.Gender != models.GenderFemale {
+			err = berr.Errorf("性别数据错误")
+			return
+		}
+		account.Gender = req.Gender
+	}
+
+	if req.Avatar != nil {
+		if !govalidator.IsURL(*req.Avatar) {
+			err = berr.Errorf("头像格式不正确")
+			return
+		}
+		account.Avatar = *req.Avatar
+	}
+
+	if req.Introduction != nil {
+		account.Introduction = req.Introduction
+	}
+
+	if req.BirthYear != nil {
+		account.BirthYear = req.BirthYear
+	}
+
+	if req.BirthMonth != nil {
+		account.BirthMonth = req.BirthMonth
+	}
+
+	if req.BirthDay != nil {
+		account.BirthDay = req.BirthDay
+	}
+
+	// TODO: Validate BirthDay
+
+	if req.Password != nil {
+		if len(*req.Password) != 32 {
+			err = berr.Errorf("密码格式不正确")
+			return
+		}
+		account.Password = *req.Password
+	}
+
+	if req.Location != nil {
+		_, exist, errGet := p.AreaRepository.GetByID(tx, *req.Location)
+		if errGet != nil {
+			err = tracerr.Wrap(err)
+			return
+		}
+
+		if !exist {
+			err = berr.Errorf("地址信息错误")
+			return
+		}
+
+		account.Location = req.Location
+	}
 
 	err = p.AccountRepository.Update(tx, account)
 	if err != nil {

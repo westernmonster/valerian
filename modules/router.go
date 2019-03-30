@@ -25,10 +25,12 @@ func Configure(p *bootstrap.Bootstrapper) {
 	api := p.Group("/api/v1")
 
 	api.POST("/session", AccountCtrl.Login)
-
 	api.POST("/accounts", AccountCtrl.Register)
+
 	api.PUT("/accounts/attributes/forget_password", AccountCtrl.ForgetPassword)
 	api.PUT("/accounts/attributes/reset_password", AccountCtrl.ResetPassword)
+	api.PUT("/accounts/attributes/change_password", AccountCtrl.Auth, AccountCtrl.ResetPassword)
+	api.PUT("/accounts/attributes", AccountCtrl.Auth, AccountCtrl.UpdateProfile)
 
 	db, node, err := db.InitDatabase()
 	if err != nil {
@@ -76,6 +78,8 @@ func InitAccountCtrl() (err error) {
 			DB:                db,
 			AccountRepository: &repo.AccountRepository{},
 			ValcodeRepository: &repo.ValcodeRepository{},
+			SessionRepository: &repo.SessionRepository{},
+			AreaRepository:    &repo.AreaRepository{},
 		},
 	}
 

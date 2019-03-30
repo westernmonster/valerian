@@ -1,0 +1,4 @@
+SELECT
+a.*
+FROM areas a
+WHERE a.deleted=0 %s

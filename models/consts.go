@@ -29,3 +29,8 @@ const (
 const (
 	SessionTypeResetPassword = 1
 )
+
+const (
+	GenderMale   = 1
+	GenderFemale = 2
+)

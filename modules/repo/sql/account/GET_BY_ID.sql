@@ -8,6 +8,7 @@ SELECT
     a.birth_month,
     a.birth_day,
     a.introduction,
+    a.location,
     a.avatar,
     a.source,
     a.ip,

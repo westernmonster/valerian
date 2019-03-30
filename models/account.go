@@ -18,6 +18,7 @@ type Account struct {
 	BirthYear    *int    `db:"birth_year" json:"birth_year,omitempty"`     // BirthYear 出生年
 	BirthMonth   *int    `db:"birth_month" json:"birth_month,omitempty"`   // BirthMonth 出生月
 	BirthDay     *int    `db:"birth_day" json:"birth_day,omitempty"`       // BirthDay 出生日
+	Location     *int64  `db:"location" json:"location,string,omitempty"`  // Location 地区
 	Introduction *string `db:"introduction" json:"introduction,omitempty"` // Introduction 自我介绍
 	Avatar       string  `db:"avatar" json:"avatar"`                       // Avatar 头像
 	Source       int     `db:"source" json:"source"`                       // Source 注册来源
@@ -162,14 +163,41 @@ func (p *ChangePasswordReq) Validate() error {
 
 type UpdateProfileReq struct {
 	// 用户头像
+	// 如果无需更改该字段，在提交JSON请求中请不要包含该字段
 	Avatar *string `json:"avatar,omitempty"`
 
 	// 用户性别， 1 为男，2 为女
-	Gener *int `json:"gener,omitempty"`
+	// 如果无需更改该字段，在提交JSON请求中请不要包含该字段
+	Gender *int `json:"gener,omitempty"`
 
 	// 地区
-	Area *int64 `json:"area,string,omitempty"`
+	// 如果无需更改该字段，在提交JSON请求中请不要包含该字段
+	Location *int64 `json:"location,string,omitempty"`
+
+	// 出生年
+	// 如果无需更改该字段，在提交JSON请求中请不要包含该字段
+	BirthYear *int `db:"birth_year" json:"birth_year,omitempty"`
+
+	// 出生月
+	BirthMonth *int `db:"birth_month" json:"birth_month,omitempty"`
+
+	// 出生日
+	BirthDay *int `db:"birth_day" json:"birth_day,omitempty"`
 
 	// 个性签名
-	Introduction *int `json:"introduction,omitempty"`
+	// 如果无需更改该字段，在提交JSON请求中请不要包含该字段
+	Introduction *string `json:"introduction,omitempty"`
+
+	// 密码
+	// 如果无需更改该字段，在提交JSON请求中请不要包含该字段
+	Password *string `json:"password,omitempty"`
+}
+
+type IdentityAuthReq struct {
+	CertType   int
+	CertNumber string
+	RealName   string
+	Company    string
+	Department string
+	Position   string
 }

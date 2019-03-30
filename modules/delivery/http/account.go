@@ -29,6 +29,7 @@ type AccountCtrl struct {
 		ForgetPassword(req *models.ForgetPasswordReq) (sessionID int64, err error)
 		ResetPassword(req *models.ResetPasswordReq) (err error)
 		ChangePassword(accountID int64, req *models.ChangePasswordReq) (err error)
+		UpdateProfile(accountID int64, req *models.UpdateProfileReq) (err error)
 	}
 }
 
@@ -329,7 +330,7 @@ func (p *AccountCtrl) createCookie(user *repo.Account) (cookie *http.Cookie, err
 // @Success 200 "成功"
 // @Failure 400 "验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /accounts/attributes/reset_password [put]
+// @Router /accounts/attributes/change_password [put]
 func (p *AccountCtrl) ChangePassword(ctx *gin.Context) {
 
 	accountID, err := p.GetAccountID(ctx)
@@ -356,6 +357,43 @@ func (p *AccountCtrl) ChangePassword(ctx *gin.Context) {
 	}
 
 	err = p.AccountUsecase.ChangePassword(accountID, req)
+	if err != nil {
+		p.HandleError(ctx, err)
+		return
+	}
+
+	p.SuccessResp(ctx, nil)
+
+	return
+}
+
+// UpdateProfile 更改用户资料
+// @Summary 更改用户资料
+// @Description 更改用户资料，需要登录验证 （JWT Token 或 Cookie）
+// @Tags account
+// @Accept json
+// @Produce json
+// @Param req body models.UpdateProfileReq true "请求"
+// @Success 200 "成功"
+// @Failure 400 "验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /accounts/attributes [put]
+func (p *AccountCtrl) UpdateProfile(ctx *gin.Context) {
+
+	accountID, err := p.GetAccountID(ctx)
+	if err != nil {
+		p.HandleError(ctx, err)
+		return
+	}
+
+	req := new(models.UpdateProfileReq)
+
+	if e := ctx.Bind(req); e != nil {
+		p.HandleError(ctx, e)
+		return
+	}
+
+	err = p.AccountUsecase.UpdateProfile(accountID, req)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return
