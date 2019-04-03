@@ -16,6 +16,7 @@ require (
 	github.com/golang/protobuf v1.3.1 // indirect
 	github.com/hashicorp/go-multierror v1.0.0
 	github.com/heetch/sqalx v0.3.0 // indirect
+	github.com/jinzhu/copier v0.0.0-20180308034124-7e38e58719c3
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/json-iterator/go v1.1.6 // indirect
 	github.com/mattn/go-isatty v0.0.7 // indirect
@@ -25,6 +26,7 @@ require (
 	github.com/spf13/viper v1.3.2
 	github.com/swaggo/gin-swagger v1.1.0
 	github.com/swaggo/swag v1.4.1
+	github.com/valyala/quicktemplate v1.0.2
 	github.com/westernmonster/sqalx v0.3.0
 	github.com/ztrue/tracerr v0.3.0
 	google.golang.org/appengine v1.5.0 // indirect

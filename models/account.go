@@ -27,13 +27,61 @@ type Account struct {
 	UpdatedAt    int64   `db:"updated_at" json:"updated_at"`               // UpdatedAt 更新时间
 }
 
-type LoginReq struct {
+type EmailLoginReq struct {
 	// Source 来源，1:Web, 2:iOS; 3:Android
 	Source int `json:"source"`
-	// Identity 登录标识，可以传入邮件或手机号，请在提交前进行验证
-	Identity string `json:"identity"`
+	// Email 邮件地址
+	Email string `json:"identity"`
 	// Password 密码，服务端不保存密码的明文值，请在提交前进行 MD5 哈希
 	Password string `json:"password"`
+}
+
+func (p *EmailLoginReq) Validate() error {
+	return validation.ValidateStruct(
+		p,
+		validation.Field(&p.Email,
+			validation.Required.Error(`请输入邮件地址`),
+			is.Email.Error("邮件地址格式不正确"),
+		),
+		validation.Field(&p.Password,
+			validation.Required.Error(`"password" is required`),
+			validation.RuneLength(32, 32).Error(`the length of "password" is incorrect`)),
+		validation.Field(&p.Source,
+			validation.Required.Error(`请输入手机号或邮件地址`),
+			validation.In(SourceAndroid, SourceiOS, SourceWeb).Error("来源不在允许范围内")),
+	)
+}
+
+type MobileLoginReq struct {
+	// Source 来源，1:Web, 2:iOS; 3:Android
+	Source int `json:"source"`
+	// Mobile 手机号码
+	Mobile string `json:"identity"`
+	// Prefix 电话号码前缀，例如86
+	Prefix string `json:"identity"`
+	// Password 密码，服务端不保存密码的明文值，请在提交前进行 MD5 哈希
+	Password string `json:"password"`
+	// 标识类型, 1手机, 2邮件
+	IdentityType int `json:"identity_type"`
+}
+
+func (p *MobileLoginReq) Validate() error {
+	return validation.ValidateStruct(
+		p,
+		validation.Field(&p.Mobile,
+			validation.Required.Error(`请输入手机号码`),
+			ValidateMobile(p.Prefix),
+		),
+		validation.Field(&p.Prefix,
+			validation.Required.Error(`请选择国家区号`),
+		),
+		validation.Field(&p.Password,
+			validation.Required.Error(`"password" is required`),
+			validation.RuneLength(32, 32).Error(`the length of "password" is incorrect`)),
+		validation.Field(&p.Source,
+			validation.Required.Error(`请输入手机号或邮件地址`),
+			validation.In(SourceAndroid, SourceiOS, SourceWeb).Error("来源不在允许范围内")),
+	)
 }
 
 type LoginResult struct {
@@ -44,34 +92,94 @@ type LoginResult struct {
 	Token string `json:"token"`
 }
 
-func (p *LoginReq) Validate() error {
-	return validation.ValidateStruct(
-		p,
-		validation.Field(&p.Identity,
-			validation.Required.Error(`请输入手机号或邮件地址`),
-			validation.By(ValidateIdentity)),
-		validation.Field(&p.Password,
-			validation.Required.Error(`"password" is required`),
-			validation.RuneLength(32, 32).Error(`the length of "password" is incorrect`)),
-		validation.Field(&p.Source,
-			validation.Required.Error(`请输入手机号或邮件地址`),
-			validation.In(SourceAndroid, SourceiOS, SourceWeb).Error("来源不在允许范围内")),
-	)
+func ValidateMobile(prefix string) *ValidateIdentityRule {
+	return &ValidateIdentityRule{
+		Prefix: prefix,
+	}
+}
+
+type ValidateMobileRule struct {
+	IdentityType int
+	Prefix       string
+}
+
+func (p *ValidateMobileRule) Validate(v interface{}) error {
+	mobile := v.(string)
+
+	chinaRegex := regexp.MustCompile(ChinaMobileRegex)
+	otherRegex := regexp.MustCompile(OtherMobileRegex)
+
+	if p.Prefix == "86" {
+		if !chinaRegex.MatchString(mobile) {
+			return berr.Errorf("手机号码不正确")
+		}
+	} else { // China
+		if !otherRegex.MatchString(mobile) {
+			return berr.Errorf("手机号码不正确")
+		}
+	} // Other Country
+
+	return nil
+}
+
+func ValidateIdentity(identityType int, prefix string) *ValidateIdentityRule {
+	return &ValidateIdentityRule{
+		IdentityType: identityType,
+		Prefix:       prefix,
+	}
+}
+
+type ValidateIdentityRule struct {
+	IdentityType int
+	Prefix       string
+}
+
+func (p *ValidateIdentityRule) Validate(v interface{}) error {
+	identity := v.(string)
+
+	if p.IdentityType == IdentityEmail {
+		if !govalidator.IsEmail(identity) {
+			return berr.Errorf("邮件地址不正确")
+		}
+	} else {
+		chinaRegex := regexp.MustCompile(ChinaMobileRegex)
+		otherRegex := regexp.MustCompile(OtherMobileRegex)
+
+		if p.Prefix == "86" {
+			if !chinaRegex.MatchString(identity) {
+				return berr.Errorf("手机号码不正确")
+			}
+		} else { // China
+			if !otherRegex.MatchString(identity) {
+				return berr.Errorf("手机号码不正确")
+			}
+		} // Other Country
+	}
+
+	return nil
 }
 
 type ForgetPasswordReq struct {
 	Identity string `json:"identity"`
 	Valcode  string `json:"valcode"`
+	Prefix   string `json:"prefix"`
+	// 标识类型, 1手机, 2邮件
+	IdentityType int `json:"identity_type"`
 }
 
 func (p *ForgetPasswordReq) Validate() error {
 	return validation.ValidateStruct(
 		p,
-		validation.Field(&p.Identity, validation.Required.Error(`请输入手机号或邮件地址`), validation.By(ValidateIdentity)),
+		validation.Field(&p.Identity,
+			validation.Required.Error(`请输入手机号或邮件地址`),
+			ValidateIdentity(p.IdentityType, p.Prefix)),
 		validation.Field(&p.Valcode,
 			validation.Required.Error(`请输入验证码`),
 			validation.RuneLength(6, 6).Error(`验证码必须为6位数字`),
 			is.Digit.Error("验证码必须为6位数字")),
+		validation.Field(&p.IdentityType,
+			validation.Required.Error(`请输入类型`),
+			validation.In(IdentityEmail, IdentityMobile).Error("登录标识类型不正确")),
 	)
 }
 
@@ -91,21 +199,25 @@ func (p *ResetPasswordReq) Validate() error {
 	)
 }
 
-type RegisterReq struct {
-	// 用户标识， 可以为邮件或手机号码
-	Identity string `json:"identity"`
+type EmailRegisterReq struct {
+	// 邮件地址
+	Email string `json:"identity"`
 	// 验证码 6位数字
 	Valcode string `json:"valcode"`
 	// 密码 后端不保存明文密码，请于前端求得当前密码MD5哈希值后发送给后端
 	Password string `json:"password"`
 	// Source 来源，1:Web, 2:iOS; 3:Android
 	Source int `json:"source"`
+	// 标识类型, 1手机, 2邮件
+	IdentityType int `json:"identity_type"`
 }
 
-func (p *RegisterReq) Validate() error {
+func (p *EmailRegisterReq) Validate() error {
 	return validation.ValidateStruct(
 		p,
-		validation.Field(&p.Identity, validation.Required.Error(`请输入手机号或邮件地址`), validation.By(ValidateIdentity)),
+		validation.Field(&p.Email, validation.Required.Error(`请输入手机号或邮件地址`),
+			is.Email.Error("邮件格式不正确"),
+		),
 		validation.Field(&p.Password,
 			validation.Required.Error(`请输入密码`),
 			validation.RuneLength(32, 32).Error(`密码格式不正确`)),
@@ -119,29 +231,77 @@ func (p *RegisterReq) Validate() error {
 	)
 }
 
-func ValidateIdentity(obj interface{}) error {
-	identity := obj.(string)
-
-	regex := regexp.MustCompile(MobileRegex)
-
-	if !govalidator.IsEmail(identity) && !regex.MatchString(identity) {
-		return berr.Errorf("手机号或者邮件地址不正确")
-	}
-
-	return nil
+type MobileRegisterReq struct {
+	// 手机号码
+	Mobile string `json:"identity"`
+	// Prefix 电话号码前缀，例如86
+	Prefix string `json:"prefix"`
+	// 验证码 6位数字
+	Valcode string `json:"valcode"`
+	// 密码 后端不保存明文密码，请于前端求得当前密码MD5哈希值后发送给后端
+	Password string `json:"password"`
+	// Source 来源，1:Web, 2:iOS; 3:Android
+	Source int `json:"source"`
 }
 
-type RequestValcodeReq struct {
-	// 用户标识, 可以为邮件或手机号码
-	Identity string `json:"identity"`
+func (p *MobileRegisterReq) Validate() error {
+	return validation.ValidateStruct(
+		p,
+		validation.Field(&p.Mobile,
+			validation.Required.Error(`请输入手机号码`),
+			ValidateMobile(p.Prefix),
+		),
+		validation.Field(&p.Password,
+			validation.Required.Error(`请输入密码`),
+			validation.RuneLength(32, 32).Error(`密码格式不正确`)),
+		validation.Field(&p.Valcode,
+			validation.Required.Error(`请输入验证码`),
+			validation.RuneLength(6, 6).Error(`验证码必须为6位数字`),
+			is.Digit.Error("验证码必须为6位数字")),
+		validation.Field(&p.Source,
+			validation.Required.Error(`请输入手机号或邮件地址`),
+			validation.In(SourceAndroid, SourceiOS, SourceWeb).Error("来源不在允许范围内")),
+	)
+}
+
+type RequestEmailValcodeReq struct {
+	// 邮件地址
+	Email string `json:"email"`
+
 	// 验证码类型, 1为注册验证码, 2为重置密码验证码
 	CodeType int `json:"code_type"`
 }
 
-func (p *RequestValcodeReq) Validate() error {
+func (p *RequestEmailValcodeReq) Validate() error {
 	return validation.ValidateStruct(
 		p,
-		validation.Field(&p.Identity, validation.Required.Error(`请输入手机号或邮件地址`), validation.By(ValidateIdentity)),
+		validation.Field(&p.Email, validation.Required.Error(`请输入手机号或邮件地址`), is.Email.Error("邮件地址格式不正确")),
+		validation.Field(&p.CodeType,
+			validation.Required.Error(`请输入验证码类型`),
+			validation.In(ValcodeRegister, ValcodeForgetPassword).Error("验证码类型不在允许范围内")),
+	)
+}
+
+type RequestMobileValcodeReq struct {
+	// 手机号码
+	Mobile string `json:"mobile"`
+
+	// Prefix 电话号码前缀，例如86
+	Prefix string `json:"prefix"`
+
+	// 验证码类型, 1为注册验证码, 2为重置密码验证码
+	CodeType int `json:"code_type"`
+
+	// 验证码类型, 1手机, 2邮件
+	IdentityType int `json:"identity_type"`
+}
+
+func (p *RequestMobileValcodeReq) Validate() error {
+	return validation.ValidateStruct(
+		p,
+		validation.Field(&p.Mobile, validation.Required.Error(`请输入手机号或邮件地址`),
+			ValidateMobile(p.Prefix),
+		),
 		validation.Field(&p.CodeType,
 			validation.Required.Error(`请输入验证码类型`),
 			validation.In(ValcodeRegister, ValcodeForgetPassword).Error("验证码类型不在允许范围内")),

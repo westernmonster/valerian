@@ -24,8 +24,10 @@ type AccountCtrl struct {
 
 	AccountUsecase interface {
 		GetByID(userID int64) (item *repo.Account, err error)
-		Login(req *models.LoginReq, ip string) (item *repo.Account, err error)
-		Register(req *models.RegisterReq, ip string) (err error)
+		EmailLogin(req *models.EmailLoginReq, ip string) (item *repo.Account, err error)
+		MobileLogin(req *models.MobileLoginReq, ip string) (item *repo.Account, err error)
+		EmailRegister(req *models.EmailRegisterReq, ip string) (err error)
+		MobileRegister(req *models.MobileRegisterReq, ip string) (err error)
 		ForgetPassword(req *models.ForgetPasswordReq) (sessionID int64, err error)
 		ResetPassword(req *models.ResetPasswordReq) (err error)
 		ChangePassword(accountID int64, req *models.ChangePasswordReq) (err error)
@@ -107,19 +109,19 @@ func (p *AccountCtrl) Auth(ctx *gin.Context) {
 	}
 }
 
-// Login 用户登录
-// @Summary 用户登录
-// @Description 用户登录
+// EmailLogin 用户邮件登录
+// @Summary 用户邮件登录
+// @Description 用户邮件登录
 // @Tags session
 // @Accept json
 // @Produce json
-// @Param req body models.LoginReq true "用户登录"
+// @Param req body models.EmailLoginReq true "用户登录"
 // @Success 200 {object} models.LoginResult "成功"
 // @Failure 400 "验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /session [post]
-func (p *AccountCtrl) Login(ctx *gin.Context) {
-	req := new(models.LoginReq)
+// @Router /session/email [post]
+func (p *AccountCtrl) EmailLogin(ctx *gin.Context) {
+	req := new(models.EmailLoginReq)
 
 	if e := ctx.Bind(req); e != nil {
 		p.HandleError(ctx, e)
@@ -138,7 +140,7 @@ func (p *AccountCtrl) Login(ctx *gin.Context) {
 	}
 
 	ip := ctx.ClientIP()
-	user, err := p.AccountUsecase.Login(req, ip)
+	user, err := p.AccountUsecase.EmailLogin(req, ip)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return
@@ -158,19 +160,19 @@ func (p *AccountCtrl) Login(ctx *gin.Context) {
 	return
 }
 
-// Register 用户注册
-// @Summary 用户注册
-// @Description 用户注册
-// @Tags account
+// MobileLogin 用户手机登录
+// @Summary 用户手机登录
+// @Description 用户手机登录
+// @Tags session
 // @Accept json
 // @Produce json
-// @Param req body models.RegisterReq true "注册请求"
-// @Success 200 "成功"
+// @Param req body models.MobileLoginReq true "用户登录"
+// @Success 200 {object} models.LoginResult "成功"
 // @Failure 400 "验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /accounts [post]
-func (p *AccountCtrl) Register(ctx *gin.Context) {
-	req := new(models.RegisterReq)
+// @Router /session/mobile [post]
+func (p *AccountCtrl) MobileLogin(ctx *gin.Context) {
+	req := new(models.MobileLoginReq)
 
 	if e := ctx.Bind(req); e != nil {
 		p.HandleError(ctx, e)
@@ -188,7 +190,98 @@ func (p *AccountCtrl) Register(ctx *gin.Context) {
 	}
 
 	ip := ctx.ClientIP()
-	err := p.AccountUsecase.Register(req, ip)
+	user, err := p.AccountUsecase.MobileLogin(req, ip)
+	if err != nil {
+		p.HandleError(ctx, err)
+		return
+	}
+
+	cookie, err := p.createCookie(user)
+	if err != nil {
+		p.HandleError(ctx, err)
+		return
+	}
+	http.SetCookie(ctx.Writer, cookie)
+	p.SuccessResp(ctx, models.LoginResult{
+		Token: cookie.Value,
+		Role:  "user",
+	})
+
+	return
+}
+
+// EmailRegister 用户邮件注册
+// @Summary 用户邮件注册
+// @Description 用户邮件注册
+// @Tags account
+// @Accept json
+// @Produce json
+// @Param req body models.EmailRegisterReq true "注册请求"
+// @Success 200 "成功"
+// @Failure 400 "验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /accounts/email [post]
+func (p *AccountCtrl) EmailRegister(ctx *gin.Context) {
+	req := new(models.EmailRegisterReq)
+
+	if e := ctx.Bind(req); e != nil {
+		p.HandleError(ctx, e)
+		return
+	}
+
+	if e := req.Validate(); e != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, infrastructure.RespCommon{
+			Success: false,
+			Code:    http.StatusBadRequest,
+			Message: "验证失败，请检查您的输入",
+		})
+
+		return
+	}
+
+	ip := ctx.ClientIP()
+	err := p.AccountUsecase.EmailRegister(req, ip)
+	if err != nil {
+		p.HandleError(ctx, err)
+		return
+	}
+
+	p.SuccessResp(ctx, nil)
+
+	return
+}
+
+// MobileRegister 用户手机注册
+// @Summary 用户手机注册
+// @Description 用户手机注册
+// @Tags account
+// @Accept json
+// @Produce json
+// @Param req body models.MobileRegisterReq true "注册请求"
+// @Success 200 "成功"
+// @Failure 400 "验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /accounts/mobile [post]
+func (p *AccountCtrl) MobileRegister(ctx *gin.Context) {
+	req := new(models.MobileRegisterReq)
+
+	if e := ctx.Bind(req); e != nil {
+		p.HandleError(ctx, e)
+		return
+	}
+
+	if e := req.Validate(); e != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, infrastructure.RespCommon{
+			Success: false,
+			Code:    http.StatusBadRequest,
+			Message: "验证失败，请检查您的输入",
+		})
+
+		return
+	}
+
+	ip := ctx.ClientIP()
+	err := p.AccountUsecase.MobileRegister(req, ip)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return

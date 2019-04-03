@@ -24,8 +24,10 @@ var (
 func Configure(p *bootstrap.Bootstrapper) {
 	api := p.Group("/api/v1")
 
-	api.POST("/session", AccountCtrl.Login)
-	api.POST("/accounts", AccountCtrl.Register)
+	api.POST("/session/email", AccountCtrl.EmailLogin)
+	api.POST("/session/mobile", AccountCtrl.MobileLogin)
+	api.POST("/accounts/email", AccountCtrl.EmailRegister)
+	api.POST("/accounts/mobile", AccountCtrl.MobileRegister)
 
 	api.PUT("/accounts/attributes/forget_password", AccountCtrl.ForgetPassword)
 	api.PUT("/accounts/attributes/reset_password", AccountCtrl.ResetPassword)
@@ -62,7 +64,18 @@ func Configure(p *bootstrap.Bootstrapper) {
 		},
 	}
 
-	api.POST("/valcodes", valcodeCtrl.Request)
+	api.POST("/valcodes/email", valcodeCtrl.RequestEmailValcode)
+	api.POST("/valcodes/mobile", valcodeCtrl.RequestMobileValcode)
+
+	countryCodeCtrl := &http.CountryCodeCtrl{
+		CountryCodeUsecase: &usecase.CountryCodeUsecase{
+			Node:                  node,
+			DB:                    db,
+			CountryCodeRepository: &repo.CountryCodeRepository{},
+		},
+	}
+
+	api.GET("/country_codes", countryCodeCtrl.GetAll)
 }
 
 func InitAccountCtrl() (err error) {

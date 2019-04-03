@@ -9,44 +9,6 @@
     "host": "www.flywk.com",
     "basePath": "/api/v1",
     "paths": {
-        "/accounts": {
-            "post": {
-                "description": "用户注册",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "account"
-                ],
-                "summary": "用户注册",
-                "parameters": [
-                    {
-                        "description": "注册请求",
-                        "name": "req",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "object",
-                            "$ref": "#/definitions/models.RegisterReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功"
-                    },
-                    "400": {
-                        "description": "验证失败"
-                    },
-                    "500": {
-                        "description": "服务器端错误"
-                    }
-                }
-            }
-        },
         "/accounts/attributes": {
             "put": {
                 "description": "更改用户资料，需要登录验证 （JWT Token 或 Cookie）",
@@ -199,9 +161,108 @@
                 }
             }
         },
-        "/session": {
+        "/accounts/email": {
             "post": {
-                "description": "用户登录",
+                "description": "用户邮件注册",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "account"
+                ],
+                "summary": "用户邮件注册",
+                "parameters": [
+                    {
+                        "description": "注册请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/models.EmailRegisterReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功"
+                    },
+                    "400": {
+                        "description": "验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/accounts/mobile": {
+            "post": {
+                "description": "用户手机注册",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "account"
+                ],
+                "summary": "用户手机注册",
+                "parameters": [
+                    {
+                        "description": "注册请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/models.MobileRegisterReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功"
+                    },
+                    "400": {
+                        "description": "验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/country_codes": {
+            "get": {
+                "description": "获取电话国家代码",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "common"
+                ],
+                "summary": "获取电话国家代码",
+                "responses": {
+                    "200": {
+                        "description": "成功"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/session/email": {
+            "post": {
+                "description": "用户邮件登录",
                 "consumes": [
                     "application/json"
                 ],
@@ -211,7 +272,7 @@
                 "tags": [
                     "session"
                 ],
-                "summary": "用户登录",
+                "summary": "用户邮件登录",
                 "parameters": [
                     {
                         "description": "用户登录",
@@ -220,7 +281,7 @@
                         "required": true,
                         "schema": {
                             "type": "object",
-                            "$ref": "#/definitions/models.LoginReq"
+                            "$ref": "#/definitions/models.EmailLoginReq"
                         }
                     }
                 ],
@@ -241,9 +302,51 @@
                 }
             }
         },
-        "/valcodes": {
+        "/session/mobile": {
             "post": {
-                "description": "请求验证码",
+                "description": "用户手机登录",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "session"
+                ],
+                "summary": "用户手机登录",
+                "parameters": [
+                    {
+                        "description": "用户登录",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/models.MobileLoginReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/models.LoginResult"
+                        }
+                    },
+                    "400": {
+                        "description": "验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/valcodes/email": {
+            "post": {
+                "description": "请求邮件验证码",
                 "consumes": [
                     "application/json"
                 ],
@@ -253,7 +356,7 @@
                 "tags": [
                     "common"
                 ],
-                "summary": "请求验证码",
+                "summary": "请求邮件验证码",
                 "parameters": [
                     {
                         "description": "请求",
@@ -262,7 +365,45 @@
                         "required": true,
                         "schema": {
                             "type": "object",
-                            "$ref": "#/definitions/models.RequestValcodeReq"
+                            "$ref": "#/definitions/models.RequestEmailValcodeReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功"
+                    },
+                    "400": {
+                        "description": "验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/valcodes/mobile": {
+            "post": {
+                "description": "请求手机验证码",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "common"
+                ],
+                "summary": "请求手机验证码",
+                "parameters": [
+                    {
+                        "description": "请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/models.RequestMobileValcodeReq"
                         }
                     }
                 ],
@@ -289,22 +430,11 @@
                 }
             }
         },
-        "models.ForgetPasswordReq": {
+        "models.EmailLoginReq": {
             "type": "object",
             "properties": {
                 "identity": {
-                    "type": "string"
-                },
-                "valcode": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.LoginReq": {
-            "type": "object",
-            "properties": {
-                "identity": {
-                    "description": "Identity 登录标识，可以传入邮件或手机号，请在提交前进行验证",
+                    "description": "Email 邮件地址",
                     "type": "string"
                 },
                 "password": {
@@ -314,6 +444,49 @@
                 "source": {
                     "description": "Source 来源，1:Web, 2:iOS; 3:Android",
                     "type": "integer"
+                }
+            }
+        },
+        "models.EmailRegisterReq": {
+            "type": "object",
+            "properties": {
+                "identity": {
+                    "description": "邮件地址",
+                    "type": "string"
+                },
+                "identity_type": {
+                    "description": "标识类型, 1手机, 2邮件",
+                    "type": "integer"
+                },
+                "password": {
+                    "description": "密码 后端不保存明文密码，请于前端求得当前密码MD5哈希值后发送给后端",
+                    "type": "string"
+                },
+                "source": {
+                    "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                    "type": "integer"
+                },
+                "valcode": {
+                    "description": "验证码 6位数字",
+                    "type": "string"
+                }
+            }
+        },
+        "models.ForgetPasswordReq": {
+            "type": "object",
+            "properties": {
+                "identity": {
+                    "type": "string"
+                },
+                "identity_type": {
+                    "description": "标识类型, 1手机, 2邮件",
+                    "type": "integer"
+                },
+                "prefix": {
+                    "type": "string"
+                },
+                "valcode": {
+                    "type": "string"
                 }
             }
         },
@@ -330,15 +503,40 @@
                 }
             }
         },
-        "models.RegisterReq": {
+        "models.MobileLoginReq": {
             "type": "object",
             "properties": {
                 "identity": {
-                    "description": "用户标识， 可以为邮件或手机号码",
+                    "description": "Prefix 电话号码前缀，例如86",
+                    "type": "string"
+                },
+                "identity_type": {
+                    "description": "标识类型, 1手机, 2邮件",
+                    "type": "integer"
+                },
+                "password": {
+                    "description": "Password 密码，服务端不保存密码的明文值，请在提交前进行 MD5 哈希",
+                    "type": "string"
+                },
+                "source": {
+                    "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                    "type": "integer"
+                }
+            }
+        },
+        "models.MobileRegisterReq": {
+            "type": "object",
+            "properties": {
+                "identity": {
+                    "description": "手机号码",
                     "type": "string"
                 },
                 "password": {
                     "description": "密码 后端不保存明文密码，请于前端求得当前密码MD5哈希值后发送给后端",
+                    "type": "string"
+                },
+                "prefix": {
+                    "description": "Prefix 电话号码前缀，例如86",
                     "type": "string"
                 },
                 "source": {
@@ -351,15 +549,36 @@
                 }
             }
         },
-        "models.RequestValcodeReq": {
+        "models.RequestEmailValcodeReq": {
             "type": "object",
             "properties": {
                 "code_type": {
                     "description": "验证码类型, 1为注册验证码, 2为重置密码验证码",
                     "type": "integer"
                 },
-                "identity": {
-                    "description": "用户标识, 可以为邮件或手机号码",
+                "email": {
+                    "description": "邮件地址",
+                    "type": "string"
+                }
+            }
+        },
+        "models.RequestMobileValcodeReq": {
+            "type": "object",
+            "properties": {
+                "code_type": {
+                    "description": "验证码类型, 1为注册验证码, 2为重置密码验证码",
+                    "type": "integer"
+                },
+                "identity_type": {
+                    "description": "验证码类型, 1手机, 2邮件",
+                    "type": "integer"
+                },
+                "mobile": {
+                    "description": "手机号码",
+                    "type": "string"
+                },
+                "prefix": {
+                    "description": "Prefix 电话号码前缀，例如86",
                     "type": "string"
                 }
             }

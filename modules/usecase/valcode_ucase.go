@@ -3,7 +3,6 @@ package usecase
 import (
 	"time"
 
-	"github.com/asaskevich/govalidator"
 	"github.com/jmoiron/sqlx"
 	"github.com/westernmonster/sqalx"
 	"github.com/ztrue/tracerr"
@@ -50,7 +49,7 @@ type ValcodeUsecase struct {
 	}
 }
 
-func (p *ValcodeUsecase) Request(req *models.RequestValcodeReq) (createdTime int64, err error) {
+func (p *ValcodeUsecase) RequestEmailValcode(req *models.RequestEmailValcodeReq) (createdTime int64, err error) {
 	tx, err := p.Node.Beginx()
 	if err != nil {
 		err = tracerr.Wrap(err)
@@ -58,7 +57,7 @@ func (p *ValcodeUsecase) Request(req *models.RequestValcodeReq) (createdTime int
 	}
 	defer tx.Rollback()
 
-	has, err := p.ValcodeRepository.HasSentRecordsInDuration(tx, req.Identity, req.CodeType, models.ValcodeSpan)
+	has, err := p.ValcodeRepository.HasSentRecordsInDuration(tx, req.Email, req.CodeType, models.ValcodeSpan)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -70,43 +69,22 @@ func (p *ValcodeUsecase) Request(req *models.RequestValcodeReq) (createdTime int
 
 	valcode := helper.GenerateValcode(6)
 
-	if govalidator.IsEmail(req.Identity) {
-		switch req.CodeType {
-		case models.ValcodeRegister:
-			if e := p.EmailClient.SendRegisterEmail(req.Identity, valcode); e != nil {
-				err = tracerr.Wrap(e)
-				return
-			}
-			break
-		case models.ValcodeForgetPassword:
-			if e := p.EmailClient.SendResetPasswordValcode(req.Identity, valcode); e != nil {
-				err = tracerr.Wrap(e)
-				return
-			}
-			break
-		default:
-			err = berr.Errorf("未知的验证码类型")
+	switch req.CodeType {
+	case models.ValcodeRegister:
+		if e := p.EmailClient.SendRegisterEmail(req.Email, valcode); e != nil {
+			err = tracerr.Wrap(e)
 			return
 		}
-	} else {
-
-		switch req.CodeType {
-		case models.ValcodeRegister:
-			if e := p.SMSClient.SendRegisterValcode(req.Identity, valcode); e != nil {
-				err = tracerr.Wrap(e)
-				return
-			}
-			break
-		case models.ValcodeForgetPassword:
-			if e := p.SMSClient.SendResetPasswordValcode(req.Identity, valcode); e != nil {
-				err = tracerr.Wrap(e)
-				return
-			}
-			break
-		default:
-			err = berr.Errorf("未知的验证码类型")
+		break
+	case models.ValcodeForgetPassword:
+		if e := p.EmailClient.SendResetPasswordValcode(req.Email, valcode); e != nil {
+			err = tracerr.Wrap(e)
 			return
 		}
+		break
+	default:
+		err = berr.Errorf("未知的验证码类型")
+		return
 	}
 
 	id, err := gid.NextID()
@@ -120,7 +98,74 @@ func (p *ValcodeUsecase) Request(req *models.RequestValcodeReq) (createdTime int
 		CodeType: req.CodeType,
 		Used:     0,
 		Code:     valcode,
-		Identity: req.Identity,
+		Identity: req.Email,
+	}
+
+	err = p.ValcodeRepository.Insert(tx, item)
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+	return
+}
+
+func (p *ValcodeUsecase) RequestMobileValcode(req *models.RequestMobileValcodeReq) (createdTime int64, err error) {
+	tx, err := p.Node.Beginx()
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+	defer tx.Rollback()
+
+	mobile := req.Prefix + req.Mobile
+	has, err := p.ValcodeRepository.HasSentRecordsInDuration(tx, mobile, req.CodeType, models.ValcodeSpan)
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+	if has {
+		err = berr.Errorf("60秒下发一次验证码，请不要重复请求")
+		return
+	}
+
+	valcode := helper.GenerateValcode(6)
+
+	switch req.CodeType {
+	case models.ValcodeRegister:
+		if e := p.SMSClient.SendRegisterValcode(mobile, valcode); e != nil {
+			err = tracerr.Wrap(e)
+			return
+		}
+		break
+	case models.ValcodeForgetPassword:
+		if e := p.SMSClient.SendResetPasswordValcode(mobile, valcode); e != nil {
+			err = tracerr.Wrap(e)
+			return
+		}
+		break
+	default:
+		err = berr.Errorf("未知的验证码类型")
+		return
+	}
+
+	id, err := gid.NextID()
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+
+	item := &repo.Valcode{
+		ID:       id,
+		CodeType: req.CodeType,
+		Used:     0,
+		Code:     valcode,
+		Identity: mobile,
 	}
 
 	err = p.ValcodeRepository.Insert(tx, item)

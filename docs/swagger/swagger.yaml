@@ -5,17 +5,10 @@ definitions:
       password:
         type: string
     type: object
-  models.ForgetPasswordReq:
+  models.EmailLoginReq:
     properties:
       identity:
-        type: string
-      valcode:
-        type: string
-    type: object
-  models.LoginReq:
-    properties:
-      identity:
-        description: Identity 登录标识，可以传入邮件或手机号，请在提交前进行验证
+        description: Email 邮件地址
         type: string
       password:
         description: Password 密码，服务端不保存密码的明文值，请在提交前进行 MD5 哈希
@@ -23,6 +16,36 @@ definitions:
       source:
         description: Source 来源，1:Web, 2:iOS; 3:Android
         type: integer
+    type: object
+  models.EmailRegisterReq:
+    properties:
+      identity:
+        description: 邮件地址
+        type: string
+      identity_type:
+        description: 标识类型, 1手机, 2邮件
+        type: integer
+      password:
+        description: 密码 后端不保存明文密码，请于前端求得当前密码MD5哈希值后发送给后端
+        type: string
+      source:
+        description: Source 来源，1:Web, 2:iOS; 3:Android
+        type: integer
+      valcode:
+        description: 验证码 6位数字
+        type: string
+    type: object
+  models.ForgetPasswordReq:
+    properties:
+      identity:
+        type: string
+      identity_type:
+        description: 标识类型, 1手机, 2邮件
+        type: integer
+      prefix:
+        type: string
+      valcode:
+        type: string
     type: object
   models.LoginResult:
     properties:
@@ -35,13 +58,31 @@ definitions:
           例子： Authorization: Bearer  TJVA95OrM7E20RMHrHDcEfxjoYZgeFONFh7HgQ
         type: string
     type: object
-  models.RegisterReq:
+  models.MobileLoginReq:
     properties:
       identity:
-        description: 用户标识， 可以为邮件或手机号码
+        description: Prefix 电话号码前缀，例如86
+        type: string
+      identity_type:
+        description: 标识类型, 1手机, 2邮件
+        type: integer
+      password:
+        description: Password 密码，服务端不保存密码的明文值，请在提交前进行 MD5 哈希
+        type: string
+      source:
+        description: Source 来源，1:Web, 2:iOS; 3:Android
+        type: integer
+    type: object
+  models.MobileRegisterReq:
+    properties:
+      identity:
+        description: 手机号码
         type: string
       password:
         description: 密码 后端不保存明文密码，请于前端求得当前密码MD5哈希值后发送给后端
+        type: string
+      prefix:
+        description: Prefix 电话号码前缀，例如86
         type: string
       source:
         description: Source 来源，1:Web, 2:iOS; 3:Android
@@ -50,13 +91,28 @@ definitions:
         description: 验证码 6位数字
         type: string
     type: object
-  models.RequestValcodeReq:
+  models.RequestEmailValcodeReq:
     properties:
       code_type:
         description: 验证码类型, 1为注册验证码, 2为重置密码验证码
         type: integer
-      identity:
-        description: 用户标识, 可以为邮件或手机号码
+      email:
+        description: 邮件地址
+        type: string
+    type: object
+  models.RequestMobileValcodeReq:
+    properties:
+      code_type:
+        description: 验证码类型, 1为注册验证码, 2为重置密码验证码
+        type: integer
+      identity_type:
+        description: 验证码类型, 1手机, 2邮件
+        type: integer
+      mobile:
+        description: 手机号码
+        type: string
+      prefix:
+        description: Prefix 电话号码前缀，例如86
         type: string
     type: object
   models.UpdateProfileReq:
@@ -105,31 +161,6 @@ info:
   license: {}
   version: "1.0"
 paths:
-  /accounts:
-    post:
-      consumes:
-      - application/json
-      description: 用户注册
-      parameters:
-      - description: 注册请求
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/models.RegisterReq'
-          type: object
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-        "400":
-          description: 验证失败
-        "500":
-          description: 服务器端错误
-      summary: 用户注册
-      tags:
-      - account
   /accounts/attributes:
     put:
       consumes:
@@ -230,18 +261,83 @@ paths:
       summary: 重设密码
       tags:
       - account
-  /session:
+  /accounts/email:
     post:
       consumes:
       - application/json
-      description: 用户登录
+      description: 用户邮件注册
+      parameters:
+      - description: 注册请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/models.EmailRegisterReq'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+        "400":
+          description: 验证失败
+        "500":
+          description: 服务器端错误
+      summary: 用户邮件注册
+      tags:
+      - account
+  /accounts/mobile:
+    post:
+      consumes:
+      - application/json
+      description: 用户手机注册
+      parameters:
+      - description: 注册请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/models.MobileRegisterReq'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+        "400":
+          description: 验证失败
+        "500":
+          description: 服务器端错误
+      summary: 用户手机注册
+      tags:
+      - account
+  /country_codes:
+    get:
+      consumes:
+      - application/json
+      description: 获取电话国家代码
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+        "500":
+          description: 服务器端错误
+      summary: 获取电话国家代码
+      tags:
+      - common
+  /session/email:
+    post:
+      consumes:
+      - application/json
+      description: 用户邮件登录
       parameters:
       - description: 用户登录
         in: body
         name: req
         required: true
         schema:
-          $ref: '#/definitions/models.LoginReq'
+          $ref: '#/definitions/models.EmailLoginReq'
           type: object
       produces:
       - application/json
@@ -255,21 +351,49 @@ paths:
           description: 验证失败
         "500":
           description: 服务器端错误
-      summary: 用户登录
+      summary: 用户邮件登录
       tags:
       - session
-  /valcodes:
+  /session/mobile:
     post:
       consumes:
       - application/json
-      description: 请求验证码
+      description: 用户手机登录
+      parameters:
+      - description: 用户登录
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/models.MobileLoginReq'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/models.LoginResult'
+            type: object
+        "400":
+          description: 验证失败
+        "500":
+          description: 服务器端错误
+      summary: 用户手机登录
+      tags:
+      - session
+  /valcodes/email:
+    post:
+      consumes:
+      - application/json
+      description: 请求邮件验证码
       parameters:
       - description: 请求
         in: body
         name: req
         required: true
         schema:
-          $ref: '#/definitions/models.RequestValcodeReq'
+          $ref: '#/definitions/models.RequestEmailValcodeReq'
           type: object
       produces:
       - application/json
@@ -280,7 +404,32 @@ paths:
           description: 验证失败
         "500":
           description: 服务器端错误
-      summary: 请求验证码
+      summary: 请求邮件验证码
+      tags:
+      - common
+  /valcodes/mobile:
+    post:
+      consumes:
+      - application/json
+      description: 请求手机验证码
+      parameters:
+      - description: 请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/models.RequestMobileValcodeReq'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+        "400":
+          description: 验证失败
+        "500":
+          description: 服务器端错误
+      summary: 请求手机验证码
       tags:
       - common
 swagger: "2.0"
