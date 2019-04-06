@@ -24,15 +24,15 @@ var (
 func Configure(p *bootstrap.Bootstrapper) {
 	api := p.Group("/api/v1")
 
-	api.POST("/session/email", AccountCtrl.EmailLogin)
-	api.POST("/session/mobile", AccountCtrl.MobileLogin)
-	api.POST("/accounts/email", AccountCtrl.EmailRegister)
-	api.POST("/accounts/mobile", AccountCtrl.MobileRegister)
+	api.POST("/auth/login/email", AccountCtrl.EmailLogin)
+	api.POST("/auth/login/mobile", AccountCtrl.MobileLogin)
+	api.POST("/auth/registration/email", AccountCtrl.EmailRegister)
+	api.POST("/auth/registration/mobile", AccountCtrl.MobileRegister)
 
-	api.PUT("/accounts/attributes/forget_password", AccountCtrl.ForgetPassword)
-	api.PUT("/accounts/attributes/reset_password", AccountCtrl.ResetPassword)
-	api.PUT("/accounts/attributes/change_password", AccountCtrl.Auth, AccountCtrl.ResetPassword)
-	api.PUT("/accounts/attributes", AccountCtrl.Auth, AccountCtrl.UpdateProfile)
+	api.PUT("/auth/password/reset", AccountCtrl.ForgetPassword)
+	api.PUT("/auth/password/reset/confirm", AccountCtrl.ResetPassword)
+	api.PUT("/me/password", AccountCtrl.Auth, AccountCtrl.ChangePassword)
+	api.PUT("/me", AccountCtrl.Auth, AccountCtrl.UpdateProfile)
 
 	db, node, err := db.InitDatabase()
 	if err != nil {

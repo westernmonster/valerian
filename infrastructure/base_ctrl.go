@@ -4,12 +4,14 @@ import (
 	b64 "encoding/base64"
 	"net/http"
 
+	"git.flywk.com/flywiki/api/infrastructure/berr"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/ztrue/tracerr"
 )
 
+// swagger:model
 type RespCommon struct {
 	// Code 状态码
 	Code int `json:"code"`
@@ -37,6 +39,7 @@ type PaginationResult struct {
 	Pagination Pagination `json:"pagination"`
 }
 
+// swagger:model
 type RespPagination struct {
 	// Code 状态码
 	Code int `json:"code"`
@@ -89,6 +92,13 @@ func (p *BaseCtrl) HandleError(ctx *gin.Context, err error) {
 		}
 		log.Error(tracerr.Sprint(v))
 		break
+	case *berr.BizError:
+		ctx.AbortWithStatusJSON(http.StatusOK, RespCommon{
+			Success: false,
+			Code:    http.StatusTemporaryRedirect,
+			Message: err.Error(),
+		})
+		return
 	default:
 		message = err.Error()
 		log.Error(v)

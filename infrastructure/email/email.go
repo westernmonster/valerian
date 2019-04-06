@@ -14,6 +14,10 @@ type EmailClient struct {
 
 func (p *EmailClient) SendRegisterEmail(email string, valcode string) (err error) {
 	args := &dm.SendSingleMailArgs{
+		SendEmailArgs: dm.SendEmailArgs{
+			AccountName: "noreply@flywki.com",
+			AddressType: "1",
+		},
 		ReplyToAddress: false,
 		ToAddress:      email,
 		FromAlias:      "飞行百科",
@@ -36,6 +40,10 @@ func (p *EmailClient) SendRegisterEmail(email string, valcode string) (err error
 
 func (p *EmailClient) SendResetPasswordValcode(email string, valcode string) (err error) {
 	args := &dm.SendSingleMailArgs{
+		SendEmailArgs: dm.SendEmailArgs{
+			AccountName: "noreply@flywki.com",
+			AddressType: "1",
+		},
 		ReplyToAddress: false,
 		ToAddress:      email,
 		FromAlias:      "飞行百科",

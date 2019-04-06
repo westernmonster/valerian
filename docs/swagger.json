@@ -1,0 +1,341 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "https"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "title": "FLYWIKI API.",
+    "version": "0.0.1"
+  },
+  "host": "dev.flywiki.com",
+  "basePath": "/api/v1",
+  "paths": {
+    "/auth/login/email": {
+      "post": {
+        "description": "用户邮件登录",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "auth"
+        ],
+        "operationId": "EmailLogin",
+        "parameters": [
+          {
+            "name": "req",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/EmailLoginReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "schema": {
+              "type": "object",
+              "items": {
+                "$ref": "#/definitions/LoginResult"
+              }
+            }
+          },
+          "400": {
+            "description": "验证失败",
+            "schema": {
+              "$ref": "#/definitions/RespCommon"
+            }
+          },
+          "500": {
+            "description": "服务器出错",
+            "schema": {
+              "$ref": "#/definitions/RespCommon"
+            }
+          }
+        }
+      }
+    },
+    "/auth/login/mobile": {
+      "post": {
+        "description": "用户手机登录",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "auth"
+        ],
+        "operationId": "MobileLogin",
+        "parameters": [
+          {
+            "name": "req",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/MobileLoginReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "schema": {
+              "type": "object",
+              "items": {
+                "$ref": "#/definitions/LoginResult"
+              }
+            }
+          },
+          "400": {
+            "description": "验证失败",
+            "schema": {
+              "$ref": "#/definitions/RespCommon"
+            }
+          },
+          "500": {
+            "description": "服务器出错",
+            "schema": {
+              "$ref": "#/definitions/RespCommon"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "BaseCtrl": {
+      "type": "object",
+      "x-go-package": "git.flywk.com/flywiki/api/infrastructure"
+    },
+    "CountryCode": {
+      "description": "CountryCode 国际电话区号",
+      "type": "object",
+      "properties": {
+        "cn_name": {
+          "description": "国家中文名",
+          "type": "string",
+          "x-go-name": "CnName"
+        },
+        "code": {
+          "description": "编码",
+          "type": "string",
+          "x-go-name": "Code"
+        },
+        "en_name": {
+          "description": "国家英文名",
+          "type": "string",
+          "x-go-name": "EnName"
+        },
+        "id": {
+          "description": "ID",
+          "type": "string",
+          "format": "int64",
+          "x-go-name": "ID"
+        },
+        "prefix": {
+          "description": "前缀/电话区号",
+          "type": "string",
+          "x-go-name": "Prefix",
+          "example": "86"
+        }
+      },
+      "x-go-package": "git.flywk.com/flywiki/api/models"
+    },
+    "EmailLoginReq": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "description": "Email 邮件地址",
+          "type": "string",
+          "x-go-name": "Email"
+        },
+        "password": {
+          "description": "Password 密码，服务端不保存密码的明文值，请在提交前进行 MD5 哈希",
+          "type": "string",
+          "x-go-name": "Password"
+        },
+        "source": {
+          "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Source"
+        }
+      },
+      "x-go-package": "git.flywk.com/flywiki/api/models"
+    },
+    "LoginResult": {
+      "type": "object",
+      "properties": {
+        "role": {
+          "description": "用户角色，用于客户端权限管理",
+          "type": "string",
+          "x-go-name": "Role"
+        },
+        "token": {
+          "description": "Token JWT Token， 请在 HTTP 请求头中添加\n例子： Authorization: Bearer  TJVA95OrM7E20RMHrHDcEfxjoYZgeFONFh7HgQ",
+          "type": "string",
+          "x-go-name": "Token"
+        }
+      },
+      "x-go-package": "git.flywk.com/flywiki/api/models"
+    },
+    "MobileLoginReq": {
+      "type": "object",
+      "properties": {
+        "mobile": {
+          "description": "Mobile 手机号码",
+          "type": "string",
+          "x-go-name": "Mobile"
+        },
+        "password": {
+          "description": "Password 密码，服务端不保存密码的明文值，请在提交前进行 MD5 哈希",
+          "type": "string",
+          "x-go-name": "Password"
+        },
+        "prefix": {
+          "description": "Prefix 电话号码前缀，例如86",
+          "type": "string",
+          "x-go-name": "Prefix"
+        },
+        "source": {
+          "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Source"
+        }
+      },
+      "x-go-package": "git.flywk.com/flywiki/api/models"
+    },
+    "Pagination": {
+      "type": "object",
+      "properties": {
+        "current": {
+          "description": "当前页数",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Current"
+        },
+        "pageSize": {
+          "description": "每页数量",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "PageSize"
+        },
+        "total": {
+          "description": "总计数量",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Total"
+        }
+      },
+      "x-go-package": "git.flywk.com/flywiki/api/infrastructure"
+    },
+    "PaginationResult": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "description": "数据列表",
+          "type": "object",
+          "x-go-name": "List"
+        },
+        "pagination": {
+          "$ref": "#/definitions/Pagination"
+        }
+      },
+      "x-go-package": "git.flywk.com/flywiki/api/infrastructure"
+    },
+    "RespCommon": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Code 状态码",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Code"
+        },
+        "message": {
+          "description": "返回消息",
+          "type": "string",
+          "x-go-name": "Message"
+        },
+        "result": {
+          "description": "返回内容",
+          "type": "object",
+          "x-go-name": "Result"
+        },
+        "success": {
+          "description": "是否成功",
+          "type": "boolean",
+          "x-go-name": "Success"
+        }
+      },
+      "x-go-package": "git.flywk.com/flywiki/api/infrastructure"
+    },
+    "RespPagination": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Code 状态码",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Code"
+        },
+        "message": {
+          "description": "返回消息",
+          "type": "string",
+          "x-go-name": "Message"
+        },
+        "result": {
+          "$ref": "#/definitions/PaginationResult"
+        },
+        "success": {
+          "description": "是否成功",
+          "type": "boolean",
+          "x-go-name": "Success"
+        }
+      },
+      "x-go-package": "git.flywk.com/flywiki/api/infrastructure"
+    },
+    "ValidateMobileRule": {
+      "type": "object",
+      "properties": {
+        "IdentityType": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "Prefix": {
+          "type": "string"
+        }
+      },
+      "x-go-package": "git.flywk.com/flywiki/api/models"
+    }
+  },
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "security": [
+    {
+      "api_key": []
+    }
+  ],
+  "x-meta-array": [
+    "value1",
+    "value2"
+  ],
+  "x-meta-array-obj": [
+    {
+      "name": "obj",
+      "value": "field"
+    }
+  ],
+  "x-meta-value": "value"
+}

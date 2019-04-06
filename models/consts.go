@@ -5,6 +5,10 @@ import (
 )
 
 const (
+	DefaultAvatarUrl = "https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png"
+)
+
+const (
 	ValcodeSpan = time.Minute
 )
 

@@ -1,9 +1,17 @@
 package models
 
+// CountryCode 国际电话区号
+// swagger:model
 type CountryCode struct {
-	ID     int64  `json:"id,string"` // ID ID
-	EnName string `json:"en_name"`   // EnName 国家英文名
-	CnName string `json:"cn_name"`   // CnName 国家中文名
-	Code   string `json:"code"`      // Code 编码
-	Prefix string `json:"prefix"`    // Prefix 前缀
+	// ID
+	ID int64 `json:"id,string"`
+	//  国家英文名
+	EnName string `json:"en_name"`
+	// 国家中文名
+	CnName string `json:"cn_name"`
+	// 编码
+	Code string `json:"code"`
+	// 前缀/电话区号
+	// example: 86
+	Prefix string `json:"prefix"`
 }

@@ -18,6 +18,7 @@ type SMSClient struct {
 }
 
 func (p *SMSClient) SendRegisterValcode(mobile string, valcode string) (err error) {
+	fmt.Println(mobile)
 	args := &sms.SendSmsArgs{
 		SignName:      SignName,
 		TemplateCode:  RegisterTemplateCode,

@@ -169,7 +169,7 @@ func sprint(err error, nums []int, colorized bool) string {
 	if withSource {
 		rows = append(rows, "")
 	}
-	for _, frame := range frames {
+	for i, frame := range frames {
 		message := frame.String()
 		if colorized {
 			message = aurora.Bold(message).String()
@@ -177,6 +177,10 @@ func sprint(err error, nums []int, colorized bool) string {
 		rows = append(rows, message)
 		if withSource {
 			rows = sourceRows(rows, frame, before, after, colorized)
+		}
+
+		if i > 3 {
+			break
 		}
 	}
 	return strings.Join(rows, "\n")

@@ -32,6 +32,7 @@ type AccountCtrl struct {
 		ResetPassword(req *models.ResetPasswordReq) (err error)
 		ChangePassword(accountID int64, req *models.ChangePasswordReq) (err error)
 		UpdateProfile(accountID int64, req *models.UpdateProfileReq) (err error)
+		GetProfile(accountID int64) (profile *models.ProfileResp, err error)
 	}
 }
 
@@ -110,16 +111,34 @@ func (p *AccountCtrl) Auth(ctx *gin.Context) {
 }
 
 // EmailLogin 用户邮件登录
-// @Summary 用户邮件登录
-// @Description 用户邮件登录
-// @Tags session
-// @Accept json
-// @Produce json
-// @Param req body models.EmailLoginReq true "用户登录"
-// @Success 200 {object} models.LoginResult "成功"
-// @Failure 400 "验证失败"
-// @Failure 500 "服务器端错误"
-// @Router /session/email [post]
+// swagger:operation POST /auth/login/email auth EmailLogin
+//
+//  用户邮件登录
+//
+// ---
+// produces:
+// - application/json
+// parameters:
+// - name: req
+//   in: body
+//   schema:
+//     "$ref": "#/definitions/EmailLoginReq"
+//   required: true
+// responses:
+//   '200':
+//     description: 成功
+//     schema:
+//       type: object
+//       items:
+//         "$ref": "#/definitions/LoginResult"
+//   '400':
+//     description: 验证失败
+//     schema:
+//       "$ref": "#/definitions/RespCommon"
+//   '500':
+//     description: 服务器出错
+//     schema:
+//       "$ref": "#/definitions/RespCommon"
 func (p *AccountCtrl) EmailLogin(ctx *gin.Context) {
 	req := new(models.EmailLoginReq)
 
@@ -129,11 +148,10 @@ func (p *AccountCtrl) EmailLogin(ctx *gin.Context) {
 	}
 
 	if e := req.Validate(); e != nil {
-
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, infrastructure.RespCommon{
 			Success: false,
 			Code:    http.StatusBadRequest,
-			Message: "验证失败，请检查您的输入",
+			Message: e.Error(),
 		})
 
 		return
@@ -161,16 +179,34 @@ func (p *AccountCtrl) EmailLogin(ctx *gin.Context) {
 }
 
 // MobileLogin 用户手机登录
-// @Summary 用户手机登录
-// @Description 用户手机登录
-// @Tags session
-// @Accept json
-// @Produce json
-// @Param req body models.MobileLoginReq true "用户登录"
-// @Success 200 {object} models.LoginResult "成功"
-// @Failure 400 "验证失败"
-// @Failure 500 "服务器端错误"
-// @Router /session/mobile [post]
+// swagger:operation POST /auth/login/mobile auth MobileLogin
+//
+//  用户手机登录
+//
+// ---
+// produces:
+// - application/json
+// parameters:
+// - name: req
+//   in: body
+//   schema:
+//     "$ref": "#/definitions/MobileLoginReq"
+//   required: true
+// responses:
+//   '200':
+//     description: 成功
+//     schema:
+//       type: object
+//       items:
+//         "$ref": "#/definitions/LoginResult"
+//   '400':
+//     description: 验证失败
+//     schema:
+//       "$ref": "#/definitions/RespCommon"
+//   '500':
+//     description: 服务器出错
+//     schema:
+//       "$ref": "#/definitions/RespCommon"
 func (p *AccountCtrl) MobileLogin(ctx *gin.Context) {
 	req := new(models.MobileLoginReq)
 
@@ -183,7 +219,7 @@ func (p *AccountCtrl) MobileLogin(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, infrastructure.RespCommon{
 			Success: false,
 			Code:    http.StatusBadRequest,
-			Message: "验证失败，请检查您的输入",
+			Message: e.Error(),
 		})
 
 		return
@@ -213,14 +249,14 @@ func (p *AccountCtrl) MobileLogin(ctx *gin.Context) {
 // EmailRegister 用户邮件注册
 // @Summary 用户邮件注册
 // @Description 用户邮件注册
-// @Tags account
+// @Tags auth
 // @Accept json
 // @Produce json
 // @Param req body models.EmailRegisterReq true "注册请求"
 // @Success 200 "成功"
 // @Failure 400 "验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /accounts/email [post]
+// @Router /auth/registration/email [post]
 func (p *AccountCtrl) EmailRegister(ctx *gin.Context) {
 	req := new(models.EmailRegisterReq)
 
@@ -230,10 +266,11 @@ func (p *AccountCtrl) EmailRegister(ctx *gin.Context) {
 	}
 
 	if e := req.Validate(); e != nil {
+		fmt.Println(e)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, infrastructure.RespCommon{
 			Success: false,
 			Code:    http.StatusBadRequest,
-			Message: "验证失败，请检查您的输入",
+			Message: e.Error(),
 		})
 
 		return
@@ -254,14 +291,14 @@ func (p *AccountCtrl) EmailRegister(ctx *gin.Context) {
 // MobileRegister 用户手机注册
 // @Summary 用户手机注册
 // @Description 用户手机注册
-// @Tags account
+// @Tags auth
 // @Accept json
 // @Produce json
 // @Param req body models.MobileRegisterReq true "注册请求"
 // @Success 200 "成功"
 // @Failure 400 "验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /accounts/mobile [post]
+// @Router /auth/registration/mobile [post]
 func (p *AccountCtrl) MobileRegister(ctx *gin.Context) {
 	req := new(models.MobileRegisterReq)
 
@@ -274,7 +311,7 @@ func (p *AccountCtrl) MobileRegister(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, infrastructure.RespCommon{
 			Success: false,
 			Code:    http.StatusBadRequest,
-			Message: "验证失败，请检查您的输入",
+			Message: e.Error(),
 		})
 
 		return
@@ -295,14 +332,14 @@ func (p *AccountCtrl) MobileRegister(ctx *gin.Context) {
 // ForgetPassword 忘记密码
 // @Summary 忘记密码
 // @Description 忘记密码，此为重设密码第一步，提交用户标识（手机号、邮箱），和用户输入的验证码进行验证，并返回一个 Session ID
-// @Tags account
+// @Tags auth
 // @Accept json
 // @Produce json
 // @Param req body models.ForgetPasswordReq true "请求"
 // @Success 200 "SessionID"
 // @Failure 400 "验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /accounts/attributes/forget_password [put]
+// @Router /auth/password/reset [put]
 func (p *AccountCtrl) ForgetPassword(ctx *gin.Context) {
 	req := new(models.ForgetPasswordReq)
 
@@ -315,7 +352,7 @@ func (p *AccountCtrl) ForgetPassword(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, infrastructure.RespCommon{
 			Success: false,
 			Code:    http.StatusBadRequest,
-			Message: "验证失败，请检查您的输入",
+			Message: e.Error(),
 		})
 
 		return
@@ -338,14 +375,14 @@ func (p *AccountCtrl) ForgetPassword(ctx *gin.Context) {
 // ResetPassword 重设密码
 // @Summary 重设密码
 // @Description  重设密码第二步，传入新密码和Session ID，如果返回的Code值为307，则表示Session已经失效，前端可以根据这个值做对应的处理
-// @Tags account
+// @Tags auth
 // @Accept json
 // @Produce json
 // @Param req body models.ForgetPasswordReq true "请求"
 // @Success 200 "成功，如果返回的Code值为307，则表示Session已经失效，前端可以根据这个值做对应的处理"
 // @Failure 400 "验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /accounts/attributes/reset_password [put]
+// @Router /auth/password/reset/confirm [put]
 func (p *AccountCtrl) ResetPassword(ctx *gin.Context) {
 	req := new(models.ResetPasswordReq)
 
@@ -358,7 +395,7 @@ func (p *AccountCtrl) ResetPassword(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, infrastructure.RespCommon{
 			Success: false,
 			Code:    http.StatusBadRequest,
-			Message: "验证失败，请检查您的输入",
+			Message: e.Error(),
 		})
 
 		return
@@ -423,7 +460,7 @@ func (p *AccountCtrl) createCookie(user *repo.Account) (cookie *http.Cookie, err
 // @Success 200 "成功"
 // @Failure 400 "验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /accounts/attributes/change_password [put]
+// @Router /me/password [put]
 func (p *AccountCtrl) ChangePassword(ctx *gin.Context) {
 
 	accountID, err := p.GetAccountID(ctx)
@@ -443,7 +480,7 @@ func (p *AccountCtrl) ChangePassword(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, infrastructure.RespCommon{
 			Success: false,
 			Code:    http.StatusBadRequest,
-			Message: "验证失败，请检查您的输入",
+			Message: e.Error(),
 		})
 
 		return
@@ -470,7 +507,7 @@ func (p *AccountCtrl) ChangePassword(ctx *gin.Context) {
 // @Success 200 "成功"
 // @Failure 400 "验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /accounts/attributes [put]
+// @Router /me [put]
 func (p *AccountCtrl) UpdateProfile(ctx *gin.Context) {
 
 	accountID, err := p.GetAccountID(ctx)
@@ -493,6 +530,34 @@ func (p *AccountCtrl) UpdateProfile(ctx *gin.Context) {
 	}
 
 	p.SuccessResp(ctx, nil)
+
+	return
+}
+
+// GetProfile 获取当前用户资料
+// @Summary 获取当前用户资料
+// @Description 获取当前用户资料，需要登录验证 （JWT Token 或 Cookie）
+// @Tags account
+// @Accept json
+// @Produce json
+// @Success 200 {object} models.ProfileResp "用户资料"
+// @Failure 500 "服务器端错误"
+// @Router /me [get]
+func (p *AccountCtrl) GetProfile(ctx *gin.Context) {
+
+	accountID, err := p.GetAccountID(ctx)
+	if err != nil {
+		p.HandleError(ctx, err)
+		return
+	}
+
+	item, err := p.AccountUsecase.GetProfile(accountID)
+	if err != nil {
+		p.HandleError(ctx, err)
+		return
+	}
+
+	p.SuccessResp(ctx, item)
 
 	return
 }

@@ -136,15 +136,20 @@ func (p *ValcodeUsecase) RequestMobileValcode(req *models.RequestMobileValcodeRe
 
 	valcode := helper.GenerateValcode(6)
 
+	phone := mobile
+	if req.Prefix == "86" { // if is china's number, use it without prefix
+		phone = req.Mobile
+	}
+
 	switch req.CodeType {
 	case models.ValcodeRegister:
-		if e := p.SMSClient.SendRegisterValcode(mobile, valcode); e != nil {
+		if e := p.SMSClient.SendRegisterValcode(phone, valcode); e != nil {
 			err = tracerr.Wrap(e)
 			return
 		}
 		break
 	case models.ValcodeForgetPassword:
-		if e := p.SMSClient.SendResetPasswordValcode(mobile, valcode); e != nil {
+		if e := p.SMSClient.SendResetPasswordValcode(phone, valcode); e != nil {
 			err = tracerr.Wrap(e)
 			return
 		}

@@ -505,6 +505,83 @@ func (p *AccountUsecase) ChangePassword(accountID int64, req *models.ChangePassw
 
 }
 
+func (p *AccountUsecase) GetLocationString(nodeID int64) (locationString string, err error) {
+	arr := []string{}
+
+	id := nodeID
+	for {
+		item, exist, errInner := p.AreaRepository.GetByID(p.Node, id)
+		if errInner != nil {
+			err = tracerr.Wrap(errInner)
+			return
+		}
+		if !exist {
+			err = berr.Errorf("未找到该地址")
+			return
+		}
+
+		arr = append(arr, item.Name)
+
+		if item.Parent == 0 {
+			break
+		}
+
+		id = item.Parent
+	}
+
+	locationString = ""
+
+	for i := len(arr) - 1; i >= 0; i-- {
+		locationString += arr[i] + " "
+	}
+
+	return
+}
+
+func (p *AccountUsecase) GetProfile(accountID int64) (profile *models.ProfileResp, err error) {
+	item, exist, err := p.AccountRepository.GetByID(p.Node, accountID)
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+
+	if !exist {
+		err = berr.Errorf("未找到当前用户")
+		return
+	}
+
+	profile = &models.ProfileResp{
+		ID:           item.ID,
+		Mobile:       item.Mobile,
+		Email:        item.Email,
+		Gender:       item.Gender,
+		BirthYear:    item.BirthYear,
+		BirthMonth:   item.BirthMonth,
+		BirthDay:     item.BirthDay,
+		Location:     item.Location,
+		Introduction: item.Introduction,
+		Avatar:       item.Avatar,
+		Source:       item.Source,
+		CreatedAt:    item.CreatedAt,
+		UpdatedAt:    item.UpdatedAt,
+	}
+
+	ipStr := helper.InetNtoA(item.IP)
+	profile.IP = &ipStr
+
+	if item.Location != nil {
+		locationString, errInner := p.GetLocationString(*item.Location)
+		if errInner != nil {
+			err = tracerr.Wrap(errInner)
+			return
+		}
+
+		profile.LocationString = &locationString
+	}
+
+	return
+}
+
 func (p *AccountUsecase) UpdateProfile(accountID int64, req *models.UpdateProfileReq) (err error) {
 	tx, err := p.Node.Beginx()
 	if err != nil {

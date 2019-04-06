@@ -20,7 +20,7 @@ type CountryCodeCtrl struct {
 // @Tags common
 // @Accept json
 // @Produce json
-// @Success 200 "成功"
+// @Success 200 {object} models.CountryCode "用户资料"
 // @Failure 500 "服务器端错误"
 // @Router /country_codes [get]
 func (p *CountryCodeCtrl) GetAll(ctx *gin.Context) {

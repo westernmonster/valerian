@@ -11,8 +11,8 @@
       }
     },
     "aliyun": {
-      "access_key_id": "LTAISxGg2eaIluVV",
-      "access_key_secret": "zcODCoe2bGJmNEEGXbwyiaIYQUQWbJ"
+      "access_key_id": "LTAILu9eAnhmQIVi",
+      "access_key_secret": "hUNGWl0FciuSxFM9KonCz9Gzt7gjeE"
     }
   },
   "test": {
@@ -27,8 +27,8 @@
       }
     },
     "aliyun": {
-      "access_key_id": "LTAISxGg2eaIluVV",
-      "access_key_secret": "zcODCoe2bGJmNEEGXbwyiaIYQUQWbJ"
+      "access_key_id": "LTAILu9eAnhmQIVi",
+      "access_key_secret": "hUNGWl0FciuSxFM9KonCz9Gzt7gjeE"
     }
   },
   "production": {
@@ -43,8 +43,8 @@
       }
     },
     "aliyun": {
-      "access_key_id": "LTAISxGg2eaIluVV",
-      "access_key_secret": "zcODCoe2bGJmNEEGXbwyiaIYQUQWbJ"
+      "access_key_id": "LTAILu9eAnhmQIVi",
+      "access_key_secret": "hUNGWl0FciuSxFM9KonCz9Gzt7gjeE"
     }
   }
 }

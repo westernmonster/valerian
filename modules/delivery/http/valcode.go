@@ -40,7 +40,7 @@ func (p *ValcodeCtrl) RequestEmailValcode(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, infrastructure.RespCommon{
 			Success: false,
 			Code:    http.StatusBadRequest,
-			Message: "验证失败，请检查您的输入",
+			Message: e.Error(),
 		})
 
 		return
@@ -80,7 +80,7 @@ func (p *ValcodeCtrl) RequestMobileValcode(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, infrastructure.RespCommon{
 			Success: false,
 			Code:    http.StatusBadRequest,
-			Message: "验证失败，请检查您的输入",
+			Message: e.Error(),
 		})
 
 		return

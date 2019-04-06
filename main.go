@@ -1,3 +1,36 @@
+// Package classification FLYWIKI API.
+//
+//
+//     Schemes: https
+//     Host: dev.flywiki.com
+//     BasePath: /api/v1
+//     Version: 0.0.1
+//
+//     Consumes:
+//     - application/json
+//
+//     Produces:
+//     - application/json
+//
+//     Security:
+//     - api_key:
+//
+//     SecurityDefinitions:
+//     api_key:
+//          type: apiKey
+//          name: Authorization
+//          in: header
+//
+//     Extensions:
+//     x-meta-value: value
+//     x-meta-array:
+//       - value1
+//       - value2
+//     x-meta-array-obj:
+//       - name: obj
+//         value: field
+//
+// swagger:meta
 package main
 
 import (
@@ -5,13 +38,9 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/spf13/viper"
-	ginSwagger "github.com/swaggo/gin-swagger"   // gin-swagger middleware
-	"github.com/swaggo/gin-swagger/swaggerFiles" // swagger embed files
 
 	"git.flywk.com/flywiki/api/infrastructure/bootstrap"
 	"git.flywk.com/flywiki/api/modules"
-
-	_ "git.flywk.com/flywiki/api/docs"
 )
 
 func newApp() *bootstrap.Bootstrapper {
@@ -26,16 +55,11 @@ func newApp() *bootstrap.Bootstrapper {
 	app.Configure(
 		modules.Configure,
 	)
-	app.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	app.StaticFile("/swagger", "./docs/swagger.json")
 	return app
 }
 
-// @title
-// @version 1.0
-// @description 飞行百科 API
-//
-// @host www.flywk.com
-// @BasePath /api/v1
 func main() {
 	setupConfig()
 
