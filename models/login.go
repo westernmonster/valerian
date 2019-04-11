@@ -8,6 +8,7 @@ import (
 	"github.com/go-ozzo/ozzo-validation/is"
 )
 
+// 邮件登录请求
 // swagger:model
 type EmailLoginReq struct {
 	// Source 来源，1:Web, 2:iOS; 3:Android
@@ -34,6 +35,7 @@ func (p *EmailLoginReq) Validate() error {
 	)
 }
 
+// 手机登录请求
 // swagger:model
 type MobileLoginReq struct {
 	// Source 来源，1:Web, 2:iOS; 3:Android
@@ -65,6 +67,7 @@ func (p *MobileLoginReq) Validate() error {
 	)
 }
 
+// 登录返回结果
 // swagger:model
 type LoginResult struct {
 	// 用户角色，用于客户端权限管理

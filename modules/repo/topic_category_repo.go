@@ -15,6 +15,7 @@ type TopicCategory struct {
 	Name      string `db:"name" json:"name"`                    // Name 分类名
 	ParentID  int64  `db:"parent_id" json:"parent_id,string"`   // ParentID 父级ID, 一级分类的父ID为 0
 	CreatedBy int64  `db:"created_by" json:"created_by,string"` // CreatedBy 创建人n
+	Seq       int    `db:"seq" json:"seq"`                      // Seq 顺序
 	Deleted   int    `db:"deleted" json:"deleted"`              // Deleted 是否删除
 	CreatedAt int64  `db:"created_at" json:"created_at"`        // CreatedAt 创建时间
 	UpdatedAt int64  `db:"updated_at" json:"updated_at"`        // UpdatedAt 更新时间
@@ -105,6 +106,10 @@ func (p *TopicCategoryRepository) GetAllByCondition(node sqalx.Node, cond map[st
 		clause += " AND a.created_by =:created_by"
 		condition["created_by"] = val
 	}
+	if val, ok := cond["seq"]; ok {
+		clause += " AND a.seq =:seq"
+		condition["seq"] = val
+	}
 
 	box := packr.NewBox("./sql/topic_category")
 	sqlSelect := fmt.Sprintf(box.String("GET_ALL_BY_CONDITION.sql"), clause)
@@ -171,6 +176,10 @@ func (p *TopicCategoryRepository) GetByCondition(node sqalx.Node, cond map[strin
 	if val, ok := cond["created_by"]; ok {
 		clause += " AND a.created_by =:created_by"
 		condition["created_by"] = val
+	}
+	if val, ok := cond["seq"]; ok {
+		clause += " AND a.seq =:seq"
+		condition["seq"] = val
 	}
 
 	box := packr.NewBox("./sql/topic_category")

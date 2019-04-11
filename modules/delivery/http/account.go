@@ -14,6 +14,7 @@ import (
 
 	"git.flywk.com/flywiki/api/infrastructure"
 	"git.flywk.com/flywiki/api/infrastructure/berr"
+	"git.flywk.com/flywiki/api/infrastructure/biz"
 	"git.flywk.com/flywiki/api/infrastructure/helper"
 	"git.flywk.com/flywiki/api/models"
 	"git.flywk.com/flywiki/api/modules/repo"
@@ -23,16 +24,16 @@ type AccountCtrl struct {
 	infrastructure.BaseCtrl
 
 	AccountUsecase interface {
-		GetByID(userID int64) (item *repo.Account, err error)
-		EmailLogin(req *models.EmailLoginReq, ip string) (item *repo.Account, err error)
-		MobileLogin(req *models.MobileLoginReq, ip string) (item *repo.Account, err error)
-		EmailRegister(req *models.EmailRegisterReq, ip string) (err error)
-		MobileRegister(req *models.MobileRegisterReq, ip string) (err error)
-		ForgetPassword(req *models.ForgetPasswordReq) (sessionID int64, err error)
-		ResetPassword(req *models.ResetPasswordReq) (err error)
-		ChangePassword(accountID int64, req *models.ChangePasswordReq) (err error)
-		UpdateProfile(accountID int64, req *models.UpdateProfileReq) (err error)
-		GetProfile(accountID int64) (profile *models.ProfileResp, err error)
+		GetByID(bizCtx *biz.BizContext, userID int64) (item *repo.Account, err error)
+		EmailLogin(bizCtx *biz.BizContext, req *models.EmailLoginReq, ip string) (item *repo.Account, err error)
+		MobileLogin(bizCtx *biz.BizContext, req *models.MobileLoginReq, ip string) (item *repo.Account, err error)
+		EmailRegister(bizCtx *biz.BizContext, req *models.EmailRegisterReq, ip string) (err error)
+		MobileRegister(bizCtx *biz.BizContext, req *models.MobileRegisterReq, ip string) (err error)
+		ForgetPassword(bizCtx *biz.BizContext, req *models.ForgetPasswordReq) (sessionID int64, err error)
+		ResetPassword(bizCtx *biz.BizContext, req *models.ResetPasswordReq) (err error)
+		ChangePassword(bizCtx *biz.BizContext, req *models.ChangePasswordReq) (err error)
+		UpdateProfile(bizCtx *biz.BizContext, req *models.UpdateProfileReq) (err error)
+		GetProfile(bizCtx *biz.BizContext) (profile *models.ProfileResp, err error)
 	}
 }
 
@@ -85,7 +86,7 @@ func (p *AccountCtrl) Auth(ctx *gin.Context) {
 	}
 
 	if claims, ok := token.Claims.(*infrastructure.TokenClaims); ok && token.Valid {
-		account, err := p.AccountUsecase.GetByID(claims.AccountID)
+		account, err := p.AccountUsecase.GetByID(nil, claims.AccountID)
 		if err != nil {
 			logrus.Error(fmt.Sprintf("Error on fetch user info: %v", err))
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, map[string]interface{}{
@@ -111,34 +112,18 @@ func (p *AccountCtrl) Auth(ctx *gin.Context) {
 }
 
 // EmailLogin 用户邮件登录
-// swagger:operation POST /auth/login/email auth EmailLogin
-//
-//  用户邮件登录
-//
-// ---
-// produces:
-// - application/json
-// parameters:
-// - name: req
-//   in: body
-//   schema:
-//     "$ref": "#/definitions/EmailLoginReq"
-//   required: true
-// responses:
-//   '200':
-//     description: 成功
-//     schema:
-//       type: object
-//       items:
-//         "$ref": "#/definitions/LoginResult"
-//   '400':
-//     description: 验证失败
-//     schema:
-//       "$ref": "#/definitions/RespCommon"
-//   '500':
-//     description: 服务器出错
-//     schema:
-//       "$ref": "#/definitions/RespCommon"
+// @Summary 用户邮件登录
+// @Description 用户邮件登录
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param Source header int true "来源" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param req body models.EmailLoginReq true "用户登录"
+// @Success 200 {object} models.LoginResult "成功"
+// @Failure 400 "验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /auth/login/email [post]
 func (p *AccountCtrl) EmailLogin(ctx *gin.Context) {
 	req := new(models.EmailLoginReq)
 
@@ -158,7 +143,7 @@ func (p *AccountCtrl) EmailLogin(ctx *gin.Context) {
 	}
 
 	ip := ctx.ClientIP()
-	user, err := p.AccountUsecase.EmailLogin(req, ip)
+	user, err := p.AccountUsecase.EmailLogin(p.GetBizContext(ctx), req, ip)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return
@@ -178,35 +163,19 @@ func (p *AccountCtrl) EmailLogin(ctx *gin.Context) {
 	return
 }
 
-// MobileLogin 用户手机登录
-// swagger:operation POST /auth/login/mobile auth MobileLogin
-//
-//  用户手机登录
-//
-// ---
-// produces:
-// - application/json
-// parameters:
-// - name: req
-//   in: body
-//   schema:
-//     "$ref": "#/definitions/MobileLoginReq"
-//   required: true
-// responses:
-//   '200':
-//     description: 成功
-//     schema:
-//       type: object
-//       items:
-//         "$ref": "#/definitions/LoginResult"
-//   '400':
-//     description: 验证失败
-//     schema:
-//       "$ref": "#/definitions/RespCommon"
-//   '500':
-//     description: 服务器出错
-//     schema:
-//       "$ref": "#/definitions/RespCommon"
+// EmailLogin 用户手机登录
+// @Summary 用户手机登录
+// @Description 用户手机登录
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param req body models.MobileLoginReq true "手机登录"
+// @Success 200 {object} models.LoginResult "成功"
+// @Failure 400 "验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /auth/login/mobile [post]
 func (p *AccountCtrl) MobileLogin(ctx *gin.Context) {
 	req := new(models.MobileLoginReq)
 
@@ -226,7 +195,8 @@ func (p *AccountCtrl) MobileLogin(ctx *gin.Context) {
 	}
 
 	ip := ctx.ClientIP()
-	user, err := p.AccountUsecase.MobileLogin(req, ip)
+	bizCtx := p.GetBizContext(ctx)
+	user, err := p.AccountUsecase.MobileLogin(bizCtx, req, ip)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return
@@ -246,13 +216,14 @@ func (p *AccountCtrl) MobileLogin(ctx *gin.Context) {
 	return
 }
 
-// EmailRegister 用户邮件注册
 // @Summary 用户邮件注册
-// @Description 用户邮件注册
+// @Description  用户邮件注册
 // @Tags auth
 // @Accept json
 // @Produce json
-// @Param req body models.EmailRegisterReq true "注册请求"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param req body models.EmailRegisterReq true "请求"
 // @Success 200 "成功"
 // @Failure 400 "验证失败"
 // @Failure 500 "服务器端错误"
@@ -277,7 +248,7 @@ func (p *AccountCtrl) EmailRegister(ctx *gin.Context) {
 	}
 
 	ip := ctx.ClientIP()
-	err := p.AccountUsecase.EmailRegister(req, ip)
+	err := p.AccountUsecase.EmailRegister(p.GetBizContext(ctx), req, ip)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return
@@ -288,13 +259,14 @@ func (p *AccountCtrl) EmailRegister(ctx *gin.Context) {
 	return
 }
 
-// MobileRegister 用户手机注册
 // @Summary 用户手机注册
-// @Description 用户手机注册
+// @Description  用户手机注册
 // @Tags auth
 // @Accept json
 // @Produce json
-// @Param req body models.MobileRegisterReq true "注册请求"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param req body models.MobileRegisterReq true "请求"
 // @Success 200 "成功"
 // @Failure 400 "验证失败"
 // @Failure 500 "服务器端错误"
@@ -318,7 +290,7 @@ func (p *AccountCtrl) MobileRegister(ctx *gin.Context) {
 	}
 
 	ip := ctx.ClientIP()
-	err := p.AccountUsecase.MobileRegister(req, ip)
+	err := p.AccountUsecase.MobileRegister(p.GetBizContext(ctx), req, ip)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return
@@ -329,16 +301,17 @@ func (p *AccountCtrl) MobileRegister(ctx *gin.Context) {
 	return
 }
 
-// ForgetPassword 忘记密码
 // @Summary 忘记密码
-// @Description 忘记密码，此为重设密码第一步，提交用户标识（手机号、邮箱），和用户输入的验证码进行验证，并返回一个 Session ID
+// @Description  忘记密码，此为重设密码第一步，提交用户标识（手机号、邮箱），和用户输入的验证码进行验证，并返回一个 Session ID
 // @Tags auth
 // @Accept json
 // @Produce json
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param req body models.ForgetPasswordReq true "请求"
-// @Success 200 "SessionID"
-// @Failure 400 "验证失败"
-// @Failure 500 "服务器端错误"
+// @Success 200 {object} infrastructure.RespCommon "成功"
+// @Failure 400 {object} infrastructure.RespCommon "验证失败"
+// @Failure 500 {object} infrastructure.RespCommon "服务器端错误"
 // @Router /auth/password/reset [put]
 func (p *AccountCtrl) ForgetPassword(ctx *gin.Context) {
 	req := new(models.ForgetPasswordReq)
@@ -358,7 +331,7 @@ func (p *AccountCtrl) ForgetPassword(ctx *gin.Context) {
 		return
 	}
 
-	sessionID, err := p.AccountUsecase.ForgetPassword(req)
+	sessionID, err := p.AccountUsecase.ForgetPassword(p.GetBizContext(ctx), req)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return
@@ -372,16 +345,17 @@ func (p *AccountCtrl) ForgetPassword(ctx *gin.Context) {
 	return
 }
 
-// ResetPassword 重设密码
 // @Summary 重设密码
-// @Description  重设密码第二步，传入新密码和Session ID，如果返回的Code值为307，则表示Session已经失效，前端可以根据这个值做对应的处理
+// @Description 重设密码第二步，传入新密码和Session ID，如果返回的Code值为307，则表示Session已经失效，前端可以根据这个值做对应的处理
 // @Tags auth
 // @Accept json
 // @Produce json
-// @Param req body models.ForgetPasswordReq true "请求"
-// @Success 200 "成功，如果返回的Code值为307，则表示Session已经失效，前端可以根据这个值做对应的处理"
-// @Failure 400 "验证失败"
-// @Failure 500 "服务器端错误"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param req body models.ResetPasswordReq true "请求"
+// @Success 200 {object} infrastructure.RespCommon "成功"
+// @Failure 400 {object} infrastructure.RespCommon "验证失败"
+// @Failure 500 {object} infrastructure.RespCommon "服务器端错误"
 // @Router /auth/password/reset/confirm [put]
 func (p *AccountCtrl) ResetPassword(ctx *gin.Context) {
 	req := new(models.ResetPasswordReq)
@@ -401,7 +375,7 @@ func (p *AccountCtrl) ResetPassword(ctx *gin.Context) {
 		return
 	}
 
-	err := p.AccountUsecase.ResetPassword(req)
+	err := p.AccountUsecase.ResetPassword(p.GetBizContext(ctx), req)
 	if err != nil {
 		switch err.(type) {
 		case *berr.BizError:
@@ -450,24 +424,21 @@ func (p *AccountCtrl) createCookie(user *repo.Account) (cookie *http.Cookie, err
 
 }
 
-// ChangePassword 更改密码
 // @Summary 更改密码
-// @Description  更改密码，API会验证登录 （JWT Token 或 Cookie）
+// @Description 更改密码，需要登录验证 （JWT Token 或 Cookie）
 // @Tags account
 // @Accept json
 // @Produce json
-// @Param req body models.ChangePasswordReq true "请求"
+// @Param Authorization header string true "Bearer"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param req body models.UpdateProfileReq true "请求"
 // @Success 200 "成功"
 // @Failure 400 "验证失败"
+// @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /me/password [put]
 func (p *AccountCtrl) ChangePassword(ctx *gin.Context) {
-
-	accountID, err := p.GetAccountID(ctx)
-	if err != nil {
-		p.HandleError(ctx, err)
-		return
-	}
 
 	req := new(models.ChangePasswordReq)
 
@@ -486,7 +457,7 @@ func (p *AccountCtrl) ChangePassword(ctx *gin.Context) {
 		return
 	}
 
-	err = p.AccountUsecase.ChangePassword(accountID, req)
+	err := p.AccountUsecase.ChangePassword(p.GetBizContext(ctx), req)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return
@@ -503,18 +474,16 @@ func (p *AccountCtrl) ChangePassword(ctx *gin.Context) {
 // @Tags account
 // @Accept json
 // @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param req body models.UpdateProfileReq true "请求"
 // @Success 200 "成功"
 // @Failure 400 "验证失败"
+// @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /me [put]
 func (p *AccountCtrl) UpdateProfile(ctx *gin.Context) {
-
-	accountID, err := p.GetAccountID(ctx)
-	if err != nil {
-		p.HandleError(ctx, err)
-		return
-	}
 
 	req := new(models.UpdateProfileReq)
 
@@ -523,7 +492,7 @@ func (p *AccountCtrl) UpdateProfile(ctx *gin.Context) {
 		return
 	}
 
-	err = p.AccountUsecase.UpdateProfile(accountID, req)
+	err := p.AccountUsecase.UpdateProfile(p.GetBizContext(ctx), req)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return
@@ -540,18 +509,16 @@ func (p *AccountCtrl) UpdateProfile(ctx *gin.Context) {
 // @Tags account
 // @Accept json
 // @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Success 200 {object} models.ProfileResp "用户资料"
+// @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /me [get]
 func (p *AccountCtrl) GetProfile(ctx *gin.Context) {
 
-	accountID, err := p.GetAccountID(ctx)
-	if err != nil {
-		p.HandleError(ctx, err)
-		return
-	}
-
-	item, err := p.AccountUsecase.GetProfile(accountID)
+	item, err := p.AccountUsecase.GetProfile(p.GetBizContext(ctx))
 	if err != nil {
 		p.HandleError(ctx, err)
 		return

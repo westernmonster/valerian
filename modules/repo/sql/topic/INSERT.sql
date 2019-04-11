@@ -1,7 +1,8 @@
 INSERT INTO topics(
     id,
     name,
-    description,
+    cover,
+    introduction,
     is_private,
     allow_discuss,
     edit_permission,
@@ -17,7 +18,8 @@ INSERT INTO topics(
 ) VALUES (
     :id,
     :name,
-    :description,
+    :cover,
+    :introduction,
     :is_private,
     :allow_discuss,
     :edit_permission,

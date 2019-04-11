@@ -1,7 +1,8 @@
 UPDATE topics
 SET
     name=:name,
-    description=:description,
+    cover=:cover,
+    introduction=:introduction,
     is_private=:is_private,
     allow_discuss=:allow_discuss,
     edit_permission=:edit_permission,

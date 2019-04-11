@@ -4,6 +4,7 @@ SELECT
     a.name,
     a.parent_id,
     a.created_by,
+    a.seq,
     a.deleted,
     a.created_at,
     a.updated_at

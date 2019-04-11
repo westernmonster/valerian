@@ -5,6 +5,8 @@ import (
 	"github.com/go-ozzo/ozzo-validation/is"
 )
 
+// 邮件注册请求
+// swagger:model
 type EmailRegisterReq struct {
 	// 邮件地址
 	Email string `json:"email"`
@@ -35,6 +37,8 @@ func (p *EmailRegisterReq) Validate() error {
 	)
 }
 
+// 手机注册请求
+// swagger:model
 type MobileRegisterReq struct {
 	// 手机号码
 	Mobile string `json:"mobile"`

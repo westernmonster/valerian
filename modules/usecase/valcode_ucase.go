@@ -8,6 +8,7 @@ import (
 	"github.com/ztrue/tracerr"
 
 	"git.flywk.com/flywiki/api/infrastructure/berr"
+	"git.flywk.com/flywiki/api/infrastructure/biz"
 	"git.flywk.com/flywiki/api/infrastructure/gid"
 	"git.flywk.com/flywiki/api/infrastructure/helper"
 	"git.flywk.com/flywiki/api/models"
@@ -49,7 +50,7 @@ type ValcodeUsecase struct {
 	}
 }
 
-func (p *ValcodeUsecase) RequestEmailValcode(req *models.RequestEmailValcodeReq) (createdTime int64, err error) {
+func (p *ValcodeUsecase) RequestEmailValcode(ctx *biz.BizContext, req *models.RequestEmailValcodeReq) (createdTime int64, err error) {
 	tx, err := p.Node.Beginx()
 	if err != nil {
 		err = tracerr.Wrap(err)
@@ -115,7 +116,7 @@ func (p *ValcodeUsecase) RequestEmailValcode(req *models.RequestEmailValcodeReq)
 	return
 }
 
-func (p *ValcodeUsecase) RequestMobileValcode(req *models.RequestMobileValcodeReq) (createdTime int64, err error) {
+func (p *ValcodeUsecase) RequestMobileValcode(ctx *biz.BizContext, req *models.RequestMobileValcodeReq) (createdTime int64, err error) {
 	tx, err := p.Node.Beginx()
 	if err != nil {
 		err = tracerr.Wrap(err)

@@ -5,13 +5,14 @@ import (
 	"net/http"
 
 	"git.flywk.com/flywiki/api/infrastructure/berr"
+	"git.flywk.com/flywiki/api/infrastructure/biz"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/ztrue/tracerr"
 )
 
-// swagger:model
+// 通用返回结果
 type RespCommon struct {
 	// Code 状态码
 	Code int `json:"code"`
@@ -19,7 +20,7 @@ type RespCommon struct {
 	Success bool `json:"success"`
 	// 返回消息
 	Message string `json:"message"`
-	// 返回内容
+	// 返回内容，这里是一个接口字段，具体需要查看执行结果
 	Result interface{} `json:"result,omitempty"`
 }
 
@@ -40,6 +41,7 @@ type PaginationResult struct {
 }
 
 // swagger:model
+// 分页返回结果
 type RespPagination struct {
 	// Code 状态码
 	Code int `json:"code"`
@@ -125,5 +127,28 @@ func (p *BaseCtrl) GetAccountID(ctx *gin.Context) (accountID int64, err error) {
 		err = tracerr.New("获取当前用户信息失败")
 		return
 	}
+	return
+}
+
+// GetBizContext 获取Biz上下文
+func (p *BaseCtrl) GetBizContext(ctx *gin.Context) (bizContext *biz.BizContext) {
+	bizContext = &biz.BizContext{
+		Locale: "zh-CN",
+	}
+
+	accountID := ctx.GetInt64("AccountID")
+	if accountID != 0 {
+		bizContext.AccountID = &accountID
+	}
+
+	locale := ctx.GetHeader("Locale")
+
+	for _, v := range []string{"zh-CN", "en-US"} {
+		if locale == v {
+			bizContext.Locale = v
+			break
+		}
+	}
+
 	return
 }

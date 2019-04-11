@@ -4,6 +4,7 @@ INSERT INTO topic_categories(
     name,
     parent_id,
     created_by,
+    seq,
     deleted,
     created_at,
     updated_at
@@ -13,6 +14,7 @@ INSERT INTO topic_categories(
     :name,
     :parent_id,
     :created_by,
+    :seq,
     :deleted,
     :created_at,
     :updated_at

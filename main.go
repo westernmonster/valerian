@@ -1,36 +1,3 @@
-// Package classification FLYWIKI API.
-//
-//
-//     Schemes: https
-//     Host: dev.flywiki.com
-//     BasePath: /api/v1
-//     Version: 0.0.1
-//
-//     Consumes:
-//     - application/json
-//
-//     Produces:
-//     - application/json
-//
-//     Security:
-//     - api_key:
-//
-//     SecurityDefinitions:
-//     api_key:
-//          type: apiKey
-//          name: Authorization
-//          in: header
-//
-//     Extensions:
-//     x-meta-value: value
-//     x-meta-array:
-//       - value1
-//       - value2
-//     x-meta-array-obj:
-//       - name: obj
-//         value: field
-//
-// swagger:meta
 package main
 
 import (
@@ -38,7 +5,10 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/spf13/viper"
+	ginSwagger "github.com/swaggo/gin-swagger" // gin-swagger middleware
+	"github.com/swaggo/gin-swagger/swaggerFiles"
 
+	_ "git.flywk.com/flywiki/api/docs"
 	"git.flywk.com/flywiki/api/infrastructure/bootstrap"
 	"git.flywk.com/flywiki/api/modules"
 )
@@ -56,10 +26,31 @@ func newApp() *bootstrap.Bootstrapper {
 		modules.Configure,
 	)
 
-	app.StaticFile("/swagger", "./docs/swagger.json")
+	app.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	return app
 }
 
+// @title
+// @version 1.0
+// @description 飞行百科 API
+// @description 所有返回结果以如下JSON对象返回
+// @description <pre>
+// @description {
+// @description    "code": 0,           // 如果没有另行约定，一般为200
+// @description    "message": "string", // 一般用户发生错误或者验证失败时候返回的消息
+// @description    "result": {},        // 返回结果，所有文档所示的返回结果处于这个字段
+// @description    "success": true      // 用于判断是否执行成功
+// @description }
+// @description </pre>
+// @description
+// @description
+//
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
+//
+// @host dev.flywk.com
+// @BasePath /api/v1
 func main() {
 	setupConfig()
 

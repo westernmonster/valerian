@@ -1,7 +1,8 @@
 SELECT
     a.id,
     a.name,
-    a.description,
+    a.cover,
+    a.introduction,
     a.is_private,
     a.allow_discuss,
     a.edit_permission,

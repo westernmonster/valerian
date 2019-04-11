@@ -18,6 +18,7 @@ type Account struct {
 	UpdatedAt    int64   `db:"updated_at" json:"updated_at"`               // UpdatedAt 更新时间
 }
 
+// swagger:model
 type IdentityAuthReq struct {
 	CertType   int
 	CertNumber string

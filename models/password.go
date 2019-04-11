@@ -46,6 +46,8 @@ func (p *ValidateIdentityRule) Validate(v interface{}) error {
 	return nil
 }
 
+// 忘记密码请求
+// swagger:model
 type ForgetPasswordReq struct {
 	Identity string `json:"identity"`
 	Valcode  string `json:"valcode"`
@@ -70,6 +72,8 @@ func (p *ForgetPasswordReq) Validate() error {
 	)
 }
 
+// 重设密码请求
+// swagger:model
 type ResetPasswordReq struct {
 	Password  string `json:"password"`
 	SessionID string `json:"session_id"`
@@ -86,6 +90,8 @@ func (p *ResetPasswordReq) Validate() error {
 	)
 }
 
+// 更改密码请求
+// swagger:model
 type ChangePasswordReq struct {
 	Password string `json:"password"`
 }

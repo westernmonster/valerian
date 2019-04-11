@@ -4,7 +4,7 @@ package models
 // swagger:model
 type CountryCode struct {
 	// ID
-	ID int64 `json:"id,string"`
+	ID int64 `json:"id,string" swaggertype:"string"`
 	//  国家英文名
 	EnName string `json:"en_name"`
 	// 国家中文名

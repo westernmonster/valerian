@@ -11,6 +11,7 @@ import (
 	"github.com/ztrue/tracerr"
 
 	"git.flywk.com/flywiki/api/infrastructure/berr"
+	"git.flywk.com/flywiki/api/infrastructure/biz"
 	"git.flywk.com/flywiki/api/infrastructure/gid"
 	"git.flywk.com/flywiki/api/infrastructure/helper"
 	"git.flywk.com/flywiki/api/models"
@@ -90,7 +91,7 @@ type AccountUsecase struct {
 	}
 }
 
-func (p *AccountUsecase) GetByID(userID int64) (item *repo.Account, err error) {
+func (p *AccountUsecase) GetByID(ctx *biz.BizContext, userID int64) (item *repo.Account, err error) {
 	item, exist, err := p.AccountRepository.GetByID(p.Node, userID)
 
 	if !exist {
@@ -102,7 +103,7 @@ func (p *AccountUsecase) GetByID(userID int64) (item *repo.Account, err error) {
 }
 
 // EmailLogin 登录
-func (p *AccountUsecase) EmailLogin(req *models.EmailLoginReq, ip string) (item *repo.Account, err error) {
+func (p *AccountUsecase) EmailLogin(ctx *biz.BizContext, req *models.EmailLoginReq, ip string) (item *repo.Account, err error) {
 	tx, err := p.Node.Beginx()
 	if err != nil {
 		err = tracerr.Wrap(err)
@@ -140,7 +141,7 @@ func (p *AccountUsecase) EmailLogin(req *models.EmailLoginReq, ip string) (item 
 }
 
 // MobileLogin 登录
-func (p *AccountUsecase) MobileLogin(req *models.MobileLoginReq, ip string) (item *repo.Account, err error) {
+func (p *AccountUsecase) MobileLogin(ctx *biz.BizContext, req *models.MobileLoginReq, ip string) (item *repo.Account, err error) {
 	tx, err := p.Node.Beginx()
 	if err != nil {
 		err = tracerr.Wrap(err)
@@ -177,7 +178,7 @@ func (p *AccountUsecase) MobileLogin(req *models.MobileLoginReq, ip string) (ite
 
 }
 
-func (p *AccountUsecase) EmailRegister(req *models.EmailRegisterReq, ip string) (err error) {
+func (p *AccountUsecase) EmailRegister(ctx *biz.BizContext, req *models.EmailRegisterReq, ip string) (err error) {
 	tx, err := p.Node.Beginx()
 	if err != nil {
 		err = tracerr.Wrap(err)
@@ -245,7 +246,7 @@ func (p *AccountUsecase) EmailRegister(req *models.EmailRegisterReq, ip string) 
 
 }
 
-func (p *AccountUsecase) MobileRegister(req *models.MobileRegisterReq, ip string) (err error) {
+func (p *AccountUsecase) MobileRegister(ctx *biz.BizContext, req *models.MobileRegisterReq, ip string) (err error) {
 	tx, err := p.Node.Beginx()
 	if err != nil {
 		err = tracerr.Wrap(err)
@@ -315,7 +316,7 @@ func (p *AccountUsecase) MobileRegister(req *models.MobileRegisterReq, ip string
 
 }
 
-func (p *AccountUsecase) ForgetPassword(req *models.ForgetPasswordReq) (sessionID int64, err error) {
+func (p *AccountUsecase) ForgetPassword(ctx *biz.BizContext, req *models.ForgetPasswordReq) (sessionID int64, err error) {
 	tx, err := p.Node.Beginx()
 	if err != nil {
 		err = tracerr.Wrap(err)
@@ -402,7 +403,7 @@ func (p *AccountUsecase) ForgetPassword(req *models.ForgetPasswordReq) (sessionI
 
 }
 
-func (p *AccountUsecase) ResetPassword(req *models.ResetPasswordReq) (err error) {
+func (p *AccountUsecase) ResetPassword(ctx *biz.BizContext, req *models.ResetPasswordReq) (err error) {
 	tx, err := p.Node.Beginx()
 	if err != nil {
 		err = tracerr.Wrap(err)
@@ -470,7 +471,7 @@ func (p *AccountUsecase) ResetPassword(req *models.ResetPasswordReq) (err error)
 
 }
 
-func (p *AccountUsecase) ChangePassword(accountID int64, req *models.ChangePasswordReq) (err error) {
+func (p *AccountUsecase) ChangePassword(ctx *biz.BizContext, req *models.ChangePasswordReq) (err error) {
 	tx, err := p.Node.Beginx()
 	if err != nil {
 		err = tracerr.Wrap(err)
@@ -478,7 +479,7 @@ func (p *AccountUsecase) ChangePassword(accountID int64, req *models.ChangePassw
 	}
 	defer tx.Rollback()
 
-	account, exist, err := p.AccountRepository.GetByID(tx, accountID)
+	account, exist, err := p.AccountRepository.GetByID(tx, *ctx.AccountID)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -538,8 +539,8 @@ func (p *AccountUsecase) GetLocationString(nodeID int64) (locationString string,
 	return
 }
 
-func (p *AccountUsecase) GetProfile(accountID int64) (profile *models.ProfileResp, err error) {
-	item, exist, err := p.AccountRepository.GetByID(p.Node, accountID)
+func (p *AccountUsecase) GetProfile(ctx *biz.BizContext) (profile *models.ProfileResp, err error) {
+	item, exist, err := p.AccountRepository.GetByID(p.Node, *ctx.AccountID)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -582,7 +583,7 @@ func (p *AccountUsecase) GetProfile(accountID int64) (profile *models.ProfileRes
 	return
 }
 
-func (p *AccountUsecase) UpdateProfile(accountID int64, req *models.UpdateProfileReq) (err error) {
+func (p *AccountUsecase) UpdateProfile(ctx *biz.BizContext, req *models.UpdateProfileReq) (err error) {
 	tx, err := p.Node.Beginx()
 	if err != nil {
 		err = tracerr.Wrap(err)
@@ -590,7 +591,7 @@ func (p *AccountUsecase) UpdateProfile(accountID int64, req *models.UpdateProfil
 	}
 	defer tx.Rollback()
 
-	account, exist, err := p.AccountRepository.GetByID(tx, accountID)
+	account, exist, err := p.AccountRepository.GetByID(tx, *ctx.AccountID)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return

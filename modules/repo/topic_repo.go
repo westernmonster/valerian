@@ -12,7 +12,8 @@ import (
 type Topic struct {
 	ID               int64  `db:"id" json:"id,string"`                          // ID ID
 	Name             string `db:"name" json:"name"`                             // Name 话题名
-	Description      string `db:"description" json:"description"`               // Description 描述
+	Cover            string `db:"cover" json:"cover"`                           // Cover 话题封面
+	Introduction     string `db:"introduction" json:"introduction"`             // Introduction 话题简介
 	IsPrivate        int    `db:"is_private" json:"is_private"`                 // IsPrivate 是否私密
 	AllowDiscuss     int    `db:"allow_discuss" json:"allow_discuss"`           // AllowDiscuss 允许讨论
 	EditPermission   int    `db:"edit_permission" json:"edit_permission"`       // EditPermission 编辑权限
@@ -100,9 +101,13 @@ func (p *TopicRepository) GetAllByCondition(node sqalx.Node, cond map[string]str
 		clause += " AND a.name =:name"
 		condition["name"] = val
 	}
-	if val, ok := cond["description"]; ok {
-		clause += " AND a.description =:description"
-		condition["description"] = val
+	if val, ok := cond["cover"]; ok {
+		clause += " AND a.cover =:cover"
+		condition["cover"] = val
+	}
+	if val, ok := cond["introduction"]; ok {
+		clause += " AND a.introduction =:introduction"
+		condition["introduction"] = val
 	}
 	if val, ok := cond["is_private"]; ok {
 		clause += " AND a.is_private =:is_private"
@@ -195,9 +200,13 @@ func (p *TopicRepository) GetByCondition(node sqalx.Node, cond map[string]string
 		clause += " AND a.name =:name"
 		condition["name"] = val
 	}
-	if val, ok := cond["description"]; ok {
-		clause += " AND a.description =:description"
-		condition["description"] = val
+	if val, ok := cond["cover"]; ok {
+		clause += " AND a.cover =:cover"
+		condition["cover"] = val
+	}
+	if val, ok := cond["introduction"]; ok {
+		clause += " AND a.introduction =:introduction"
+		condition["introduction"] = val
 	}
 	if val, ok := cond["is_private"]; ok {
 		clause += " AND a.is_private =:is_private"

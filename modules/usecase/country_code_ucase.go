@@ -6,6 +6,7 @@ import (
 	"github.com/westernmonster/sqalx"
 	"github.com/ztrue/tracerr"
 
+	"git.flywk.com/flywiki/api/infrastructure/biz"
 	"git.flywk.com/flywiki/api/models"
 	"git.flywk.com/flywiki/api/modules/repo"
 )
@@ -19,7 +20,7 @@ type CountryCodeUsecase struct {
 	}
 }
 
-func (p *CountryCodeUsecase) GetAll() (items []*models.CountryCode, err error) {
+func (p *CountryCodeUsecase) GetAll(ctx *biz.BizContext) (items []*models.CountryCode, err error) {
 	items = make([]*models.CountryCode, 0)
 
 	data, err := p.CountryCodeRepository.GetAll(p.Node)

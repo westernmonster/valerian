@@ -32,6 +32,7 @@ func Configure(p *bootstrap.Bootstrapper) {
 	api.PUT("/auth/password/reset", AccountCtrl.ForgetPassword)
 	api.PUT("/auth/password/reset/confirm", AccountCtrl.ResetPassword)
 	api.PUT("/me/password", AccountCtrl.Auth, AccountCtrl.ChangePassword)
+	api.GET("/me", AccountCtrl.Auth, AccountCtrl.GetProfile)
 	api.PUT("/me", AccountCtrl.Auth, AccountCtrl.UpdateProfile)
 
 	db, node, err := db.InitDatabase()
@@ -76,6 +77,20 @@ func Configure(p *bootstrap.Bootstrapper) {
 	}
 
 	api.GET("/country_codes", countryCodeCtrl.GetAll)
+
+	topicCategoryCtrl := &http.TopicCategoryCtrl{
+		TopicCategoryUsecase: &usecase.TopicCategoryUsecase{
+			Node:                    node,
+			DB:                      db,
+			TopicCategoryRepository: &repo.TopicCategoryRepository{},
+		},
+	}
+	api.GET("/topic_categories", topicCategoryCtrl.GetAll)
+	api.GET("/topic_categories/hierarchy", topicCategoryCtrl.GetHierarchyOfAll)
+	api.PUT("/topic_categories/:id", topicCategoryCtrl.Update)
+	api.POST("/topic_categories", topicCategoryCtrl.Create)
+	api.DELETE("/topic_categories/:id", topicCategoryCtrl.Delete)
+	api.PATCH("/topic_categories", topicCategoryCtrl.BulkSave)
 }
 
 func InitAccountCtrl() (err error) {

@@ -1,0 +1,2045 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "飞行百科 API\n所有返回结果以如下JSON对象返回\n\u003cpre\u003e\n{\n\"code\": 0,           // 如果没有另行约定，一般为200\n\"message\": \"string\", // 一般用户发生错误或者验证失败时候返回的消息\n\"result\": {},        // 返回结果，所有文档所示的返回结果处于这个字段\n\"success\": true      // 用于判断是否执行成功\n}\n\u003c/pre\u003e\n\n",
+        "contact": {},
+        "license": {},
+        "version": "1.0"
+    },
+    "host": "dev.flywk.com",
+    "basePath": "/api/v1",
+    "paths": {
+        "/auth/login/email": {
+            "post": {
+                "description": "用户邮件登录",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "用户邮件登录",
+                "parameters": [
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "来源",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "用户登录",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/models.EmailLoginReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/models.LoginResult"
+                        }
+                    },
+                    "400": {
+                        "description": "验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/auth/login/mobile": {
+            "post": {
+                "description": "用户手机登录",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "用户手机登录",
+                "parameters": [
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "手机登录",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/models.MobileLoginReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/models.LoginResult"
+                        }
+                    },
+                    "400": {
+                        "description": "验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/auth/password/reset": {
+            "put": {
+                "description": "忘记密码，此为重设密码第一步，提交用户标识（手机号、邮箱），和用户输入的验证码进行验证，并返回一个 Session ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "忘记密码",
+                "parameters": [
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/models.ForgetPasswordReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/infrastructure.RespCommon"
+                        }
+                    },
+                    "400": {
+                        "description": "验证失败",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/infrastructure.RespCommon"
+                        }
+                    },
+                    "500": {
+                        "description": "服务器端错误",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/infrastructure.RespCommon"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/password/reset/confirm": {
+            "put": {
+                "description": "重设密码第二步，传入新密码和Session ID，如果返回的Code值为307，则表示Session已经失效，前端可以根据这个值做对应的处理",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "重设密码",
+                "parameters": [
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/models.ResetPasswordReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/infrastructure.RespCommon"
+                        }
+                    },
+                    "400": {
+                        "description": "验证失败",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/infrastructure.RespCommon"
+                        }
+                    },
+                    "500": {
+                        "description": "服务器端错误",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/infrastructure.RespCommon"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/registration/email": {
+            "post": {
+                "description": "用户邮件注册",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "用户邮件注册",
+                "parameters": [
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/models.EmailRegisterReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功"
+                    },
+                    "400": {
+                        "description": "验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/auth/registration/mobile": {
+            "post": {
+                "description": "用户手机注册",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "用户手机注册",
+                "parameters": [
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/models.MobileRegisterReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功"
+                    },
+                    "400": {
+                        "description": "验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/country_codes": {
+            "get": {
+                "description": "获取电话国家区号",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "common"
+                ],
+                "summary": "获取电话国家区号",
+                "parameters": [
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "用户资料",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.CountryCode"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/me": {
+            "get": {
+                "description": "获取当前用户资料，需要登录验证 （JWT Token 或 Cookie）",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "account"
+                ],
+                "summary": "获取当前用户资料",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "用户资料",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/models.ProfileResp"
+                        }
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            },
+            "put": {
+                "description": "更改用户资料，需要登录验证 （JWT Token 或 Cookie）",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "account"
+                ],
+                "summary": "更改用户资料",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/models.UpdateProfileReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功"
+                    },
+                    "400": {
+                        "description": "验证失败"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/me/password": {
+            "put": {
+                "description": "更改密码，需要登录验证 （JWT Token 或 Cookie）",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "account"
+                ],
+                "summary": "更改密码",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/models.UpdateProfileReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功"
+                    },
+                    "400": {
+                        "description": "验证失败"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/topic_categories": {
+            "get": {
+                "description": "获取分类列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "topic"
+                ],
+                "summary": "获取分类列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "话题ID",
+                        "name": "topic_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "分类",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.TopicCategory"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            },
+            "post": {
+                "description": "新增话题分类",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "topic"
+                ],
+                "summary": "新增话题分类",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/models.CreateTopicCategoryReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功"
+                    },
+                    "400": {
+                        "description": "验证请求失败"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            },
+            "patch": {
+                "description": "批量新增/更改话题分类",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "topic"
+                ],
+                "summary": "批量新增/更改话题分类",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/models.SaveTopicCategoriesReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功"
+                    },
+                    "400": {
+                        "description": "验证请求失败"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/topic_categories/hierarchy": {
+            "get": {
+                "description": "按层级结构获取分类",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "topic"
+                ],
+                "summary": "按层级结构获取分类",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "话题ID",
+                        "name": "topic_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "层级分类",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/models.TopicCategoriesResp"
+                        }
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/topic_categories/{id}": {
+            "put": {
+                "description": "更新话题分类",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "topic"
+                ],
+                "summary": "更新话题分类",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/models.UpdateTopicCategoryReq"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功"
+                    },
+                    "400": {
+                        "description": "验证请求失败"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            },
+            "delete": {
+                "description": "删除话题分类",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "topic"
+                ],
+                "summary": "删除话题分类",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功"
+                    },
+                    "400": {
+                        "description": "验证请求失败"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/topics": {
+            "post": {
+                "description": "新增话题",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "topic"
+                ],
+                "summary": "新增话题",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/models.CreateTopicReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功"
+                    },
+                    "400": {
+                        "description": "验证请求失败"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/topics/{id}": {
+            "put": {
+                "description": "更新话题",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "topic"
+                ],
+                "summary": "更新话题",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/models.UpdateTopicReq"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功"
+                    },
+                    "400": {
+                        "description": "验证请求失败"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            },
+            "delete": {
+                "description": "删除话题",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "topic"
+                ],
+                "summary": "删除话题",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功"
+                    },
+                    "400": {
+                        "description": "验证请求失败"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/valcodes/email": {
+            "post": {
+                "description": "请求邮件验证码",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "common"
+                ],
+                "summary": "请求邮件验证码",
+                "parameters": [
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/models.RequestEmailValcodeReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功"
+                    },
+                    "400": {
+                        "description": "验证请求失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/valcodes/mobile": {
+            "post": {
+                "description": "请求短信验证码",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "common"
+                ],
+                "summary": "请求短信验证码",
+                "parameters": [
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/models.RequestMobileValcodeReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功"
+                    },
+                    "400": {
+                        "description": "验证请求失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "infrastructure.RespCommon": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "Code 状态码",
+                    "type": "integer"
+                },
+                "message": {
+                    "description": "返回消息",
+                    "type": "string"
+                },
+                "result": {
+                    "description": "返回内容，这里是一个接口字段，具体需要查看执行结果",
+                    "type": "object"
+                },
+                "success": {
+                    "description": "是否成功",
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.CountryCode": {
+            "type": "object",
+            "properties": {
+                "cn_name": {
+                    "description": "国家中文名",
+                    "type": "string"
+                },
+                "code": {
+                    "description": "编码",
+                    "type": "string"
+                },
+                "en_name": {
+                    "description": "国家英文名",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID",
+                    "type": "string"
+                },
+                "prefix": {
+                    "description": "前缀/电话区号\nexample: 86",
+                    "type": "string"
+                }
+            }
+        },
+        "models.CreateTopicCategoryReq": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "description": "分类名\nrequired: true",
+                    "type": "string"
+                },
+                "parent_id": {
+                    "description": "ParentID 父级ID, 一级分类的父ID为 0\nrequired: true",
+                    "type": "string"
+                },
+                "seq": {
+                    "description": "顺序\nrequired: true",
+                    "type": "integer"
+                },
+                "topic_id": {
+                    "description": "话题ID\nrequired: true",
+                    "type": "string"
+                }
+            }
+        },
+        "models.CreateTopicReq": {
+            "type": "object",
+            "properties": {
+                "allow_discuss": {
+                    "description": "允许讨论",
+                    "type": "boolean"
+                },
+                "categories": {
+                    "description": "话题分类",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.TopicCategoryParentItem"
+                    }
+                },
+                "category_view_type": {
+                    "description": "分类视图",
+                    "type": "integer"
+                },
+                "cover": {
+                    "description": "封面图",
+                    "type": "string"
+                },
+                "edit_permission": {
+                    "description": "编辑权限",
+                    "type": "integer"
+                },
+                "important": {
+                    "description": "重要标记",
+                    "type": "boolean"
+                },
+                "introduction": {
+                    "description": "简介",
+                    "type": "string"
+                },
+                "is_private": {
+                    "description": "是否私密",
+                    "type": "boolean"
+                },
+                "join_permission": {
+                    "description": "加入权限",
+                    "type": "integer"
+                },
+                "members": {
+                    "description": "成员",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.TopicMember"
+                    }
+                },
+                "mute_notification": {
+                    "description": "消息免打扰",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "名称",
+                    "type": "string"
+                },
+                "related_topics": {
+                    "description": "关联话题",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.RelatedTopic"
+                    }
+                },
+                "view_permission": {
+                    "description": "查看权限",
+                    "type": "integer"
+                }
+            }
+        },
+        "models.EmailLoginReq": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "description": "Email 邮件地址",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "Password 密码，服务端不保存密码的明文值，请在提交前进行 MD5 哈希",
+                    "type": "string"
+                },
+                "source": {
+                    "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                    "type": "integer"
+                }
+            }
+        },
+        "models.EmailRegisterReq": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "description": "邮件地址",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "密码 后端不保存明文密码，请于前端求得当前密码MD5哈希值后发送给后端",
+                    "type": "string"
+                },
+                "source": {
+                    "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                    "type": "integer"
+                },
+                "valcode": {
+                    "description": "验证码 6位数字",
+                    "type": "string"
+                }
+            }
+        },
+        "models.ForgetPasswordReq": {
+            "type": "object",
+            "properties": {
+                "identity": {
+                    "type": "string"
+                },
+                "identity_type": {
+                    "description": "标识类型, 1手机, 2邮件",
+                    "type": "integer"
+                },
+                "prefix": {
+                    "type": "string"
+                },
+                "valcode": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.LoginResult": {
+            "type": "object",
+            "properties": {
+                "role": {
+                    "description": "用户角色，用于客户端权限管理",
+                    "type": "string"
+                },
+                "token": {
+                    "description": "Token JWT Token， 请在 HTTP 请求头中添加\n例子： Authorization: Bearer  TJVA95OrM7E20RMHrHDcEfxjoYZgeFONFh7HgQ",
+                    "type": "string"
+                }
+            }
+        },
+        "models.MobileLoginReq": {
+            "type": "object",
+            "properties": {
+                "mobile": {
+                    "description": "Mobile 手机号码",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "Password 密码，服务端不保存密码的明文值，请在提交前进行 MD5 哈希",
+                    "type": "string"
+                },
+                "prefix": {
+                    "description": "Prefix 电话号码前缀，例如86",
+                    "type": "string"
+                },
+                "source": {
+                    "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                    "type": "integer"
+                }
+            }
+        },
+        "models.MobileRegisterReq": {
+            "type": "object",
+            "properties": {
+                "mobile": {
+                    "description": "手机号码",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "密码 后端不保存明文密码，请于前端求得当前密码MD5哈希值后发送给后端",
+                    "type": "string"
+                },
+                "prefix": {
+                    "description": "Prefix 电话号码前缀，例如86",
+                    "type": "string"
+                },
+                "source": {
+                    "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                    "type": "integer"
+                },
+                "valcode": {
+                    "description": "验证码 6位数字",
+                    "type": "string"
+                }
+            }
+        },
+        "models.ProfileResp": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "description": "头像",
+                    "type": "string"
+                },
+                "birth_day": {
+                    "description": "出生日",
+                    "type": "integer"
+                },
+                "birth_month": {
+                    "description": "出生月",
+                    "type": "integer"
+                },
+                "birth_year": {
+                    "description": "出生年",
+                    "type": "integer"
+                },
+                "created_at": {
+                    "description": "注册时间",
+                    "type": "integer"
+                },
+                "email": {
+                    "description": "邮件地址",
+                    "type": "string",
+                    "format": "email"
+                },
+                "gender": {
+                    "description": "性别 1为男， 2为女",
+                    "type": "integer"
+                },
+                "id": {
+                    "description": "ID",
+                    "type": "string",
+                    "format": "int64"
+                },
+                "introduction": {
+                    "description": "自我介绍",
+                    "type": "string"
+                },
+                "ip": {
+                    "description": "IP 注册IP",
+                    "type": "string"
+                },
+                "location": {
+                    "description": "所在地区值",
+                    "type": "integer"
+                },
+                "location_string": {
+                    "description": "所在地区名，地区是层级结构，这里将国家、州/省、市、区全部获取出来",
+                    "type": "string"
+                },
+                "mobile": {
+                    "description": "手机",
+                    "type": "string",
+                    "format": "mobile"
+                },
+                "source": {
+                    "description": "来源，1:Web, 2:iOS; 3:Android",
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "description": "更新时间",
+                    "type": "integer"
+                }
+            }
+        },
+        "models.RelatedTopic": {
+            "type": "object",
+            "properties": {
+                "topic_id": {
+                    "description": "关联话题ID",
+                    "type": "integer"
+                },
+                "type": {
+                    "description": "类型：1:强关系 2:弱关系",
+                    "type": "integer"
+                }
+            }
+        },
+        "models.RequestEmailValcodeReq": {
+            "type": "object",
+            "properties": {
+                "code_type": {
+                    "description": "验证码类型, 1为注册验证码, 2为重置密码验证码",
+                    "type": "integer"
+                },
+                "email": {
+                    "description": "邮件地址",
+                    "type": "string"
+                }
+            }
+        },
+        "models.RequestMobileValcodeReq": {
+            "type": "object",
+            "properties": {
+                "code_type": {
+                    "description": "验证码类型, 1为注册验证码, 2为重置密码验证码",
+                    "type": "integer"
+                },
+                "mobile": {
+                    "description": "手机号码",
+                    "type": "string"
+                },
+                "prefix": {
+                    "description": "Prefix 电话号码前缀，例如86",
+                    "type": "string"
+                }
+            }
+        },
+        "models.ResetPasswordReq": {
+            "type": "object",
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "session_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.SaveTopicCategoriesReq": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "description": "话题分类\nrequired: true",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.TopicCategoryParentItem"
+                    }
+                },
+                "topic_id": {
+                    "description": "话题ID\nrequired: true",
+                    "type": "string"
+                }
+            }
+        },
+        "models.TopicCategoriesResp": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "description": "话题分类",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.TopicCategoryParentItem"
+                    }
+                },
+                "topic_id": {
+                    "description": "话题ID",
+                    "type": "string"
+                }
+            }
+        },
+        "models.TopicCategory": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "integer"
+                },
+                "created_by": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "parent_id": {
+                    "type": "integer"
+                },
+                "seq": {
+                    "type": "integer"
+                },
+                "topic_id": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.TopicCategoryChildItem": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "description": "分类名\nrequired: true",
+                    "type": "string"
+                },
+                "seq": {
+                    "description": "顺序\nrequired: true",
+                    "type": "integer"
+                }
+            }
+        },
+        "models.TopicCategoryParentItem": {
+            "type": "object",
+            "properties": {
+                "children": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.TopicCategoryChildItem"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "description": "分类名\nrequired: true",
+                    "type": "string"
+                },
+                "seq": {
+                    "description": "顺序\nrequired: true",
+                    "type": "integer"
+                }
+            }
+        },
+        "models.TopicMember": {
+            "type": "object",
+            "properties": {
+                "account_id": {
+                    "description": "成员ID",
+                    "type": "integer"
+                },
+                "role": {
+                    "description": "角色",
+                    "type": "integer"
+                }
+            }
+        },
+        "models.UpdateProfileReq": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "description": "用户头像\n如果无需更改该字段，在提交JSON请求中请不要包含该字段",
+                    "type": "string"
+                },
+                "birth_day": {
+                    "description": "出生日",
+                    "type": "integer"
+                },
+                "birth_month": {
+                    "description": "出生月",
+                    "type": "integer"
+                },
+                "birth_year": {
+                    "description": "出生年\n如果无需更改该字段，在提交JSON请求中请不要包含该字段",
+                    "type": "integer"
+                },
+                "gener": {
+                    "description": "用户性别， 1 为男，2 为女\n如果无需更改该字段，在提交JSON请求中请不要包含该字段",
+                    "type": "integer"
+                },
+                "introduction": {
+                    "description": "个性签名\n如果无需更改该字段，在提交JSON请求中请不要包含该字段",
+                    "type": "string"
+                },
+                "location": {
+                    "description": "地区\n如果无需更改该字段，在提交JSON请求中请不要包含该字段",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "密码\n如果无需更改该字段，在提交JSON请求中请不要包含该字段",
+                    "type": "string"
+                }
+            }
+        },
+        "models.UpdateTopicCategoryReq": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "description": "分类名\nrequired: true",
+                    "type": "string"
+                },
+                "parent_id": {
+                    "description": "ParentID 父级ID, 一级分类的父ID为 0\nrequired: true",
+                    "type": "string"
+                },
+                "seq": {
+                    "description": "顺序\nrequired: true",
+                    "type": "integer"
+                }
+            }
+        },
+        "models.UpdateTopicReq": {
+            "type": "object",
+            "properties": {
+                "allow_discuss": {
+                    "description": "允许讨论",
+                    "type": "boolean"
+                },
+                "categories": {
+                    "description": "话题分类",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.TopicCategoryParentItem"
+                    }
+                },
+                "category_view_type": {
+                    "description": "分类视图",
+                    "type": "integer"
+                },
+                "cover": {
+                    "description": "封面图",
+                    "type": "string"
+                },
+                "edit_permission": {
+                    "description": "编辑权限",
+                    "type": "integer"
+                },
+                "important": {
+                    "description": "重要标记",
+                    "type": "boolean"
+                },
+                "introduction": {
+                    "description": "简介",
+                    "type": "string"
+                },
+                "is_private": {
+                    "description": "是否私密",
+                    "type": "boolean"
+                },
+                "join_permission": {
+                    "description": "加入权限",
+                    "type": "integer"
+                },
+                "members": {
+                    "description": "成员",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.TopicMember"
+                    }
+                },
+                "mute_notification": {
+                    "description": "消息免打扰",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "名称",
+                    "type": "string"
+                },
+                "related_topics": {
+                    "description": "关联话题",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.RelatedTopic"
+                    }
+                },
+                "view_permission": {
+                    "description": "查看权限",
+                    "type": "integer"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}

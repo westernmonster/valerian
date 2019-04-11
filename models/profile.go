@@ -1,5 +1,6 @@
 package models
 
+// 更新用户资料请求
 type UpdateProfileReq struct {
 	// 用户头像
 	// 如果无需更改该字段，在提交JSON请求中请不要包含该字段
@@ -11,7 +12,7 @@ type UpdateProfileReq struct {
 
 	// 地区
 	// 如果无需更改该字段，在提交JSON请求中请不要包含该字段
-	Location *int64 `json:"location,string,omitempty"`
+	Location *int64 `json:"location,string,omitempty" swaggertype:"string"`
 
 	// 出生年
 	// 如果无需更改该字段，在提交JSON请求中请不要包含该字段
@@ -32,13 +33,14 @@ type UpdateProfileReq struct {
 	Password *string `json:"password,omitempty"`
 }
 
+// 用户资料
 type ProfileResp struct {
 	// ID
-	ID int64 `json:"id,string"`
+	ID int64 `json:"id,string" swaggertype:"string" format:"int64"`
 	// 手机
-	Mobile string `json:"mobile"`
+	Mobile string `json:"mobile" format:"mobile"`
 	// 邮件地址
-	Email string `json:"email"`
+	Email string `json:"email" format:"email"`
 	// 性别 1为男， 2为女
 	Gender *int `json:"gender,omitempty"`
 	// 出生年

@@ -5,6 +5,8 @@ import (
 	"github.com/go-ozzo/ozzo-validation/is"
 )
 
+// 邮件验证码请求
+// swagger:model
 type RequestEmailValcodeReq struct {
 	// 邮件地址
 	Email string `json:"email"`
@@ -23,6 +25,8 @@ func (p *RequestEmailValcodeReq) Validate() error {
 	)
 }
 
+// 短信验证码请求
+// swagger:model
 type RequestMobileValcodeReq struct {
 	// 手机号码
 	Mobile string `json:"mobile"`

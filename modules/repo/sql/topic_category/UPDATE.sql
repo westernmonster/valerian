@@ -4,5 +4,6 @@ SET
     name=:name,
     parent_id=:parent_id,
     created_by=:created_by,
+    seq=:seq,
     updated_at=:updated_at
 WHERE id=:id
