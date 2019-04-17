@@ -10,6 +10,7 @@ import (
 
 	_ "git.flywk.com/flywiki/api/docs"
 	"git.flywk.com/flywiki/api/infrastructure/bootstrap"
+	"git.flywk.com/flywiki/api/infrastructure/locale"
 	"git.flywk.com/flywiki/api/modules"
 )
 
@@ -17,7 +18,9 @@ func newApp() *bootstrap.Bootstrapper {
 	app := bootstrap.New("flywk.com", "admin@flywk.com")
 	app.Bootstrap()
 
-	err := modules.InitAccountCtrl()
+	locale.LoadTranslateFile()
+
+	err := modules.InitAuthCtrl()
 	if err != nil {
 		panic(err)
 	}
@@ -30,7 +33,7 @@ func newApp() *bootstrap.Bootstrapper {
 	return app
 }
 
-// @title
+// @title 飞行百科 API
 // @version 1.0
 // @description 飞行百科 API
 // @description 所有返回结果以如下JSON对象返回

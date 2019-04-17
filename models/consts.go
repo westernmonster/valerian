@@ -13,6 +13,27 @@ const (
 )
 
 const (
+	JWTKey = "flywk$*^hn"
+
+	OAUTH2MobileClientID     = "532c28d5412dd75bf975fb951c740a30"
+	OAUTH2MobileClientSecret = "16ed0e1ab220aebf9362045ccad0664f"
+	OAUTH2MobileClientDomain = "https://api.flywk.com"
+
+	OAUTH2WebClientID     = "2567a5ec9705eb7ac2c984033e06189d"
+	OAUTH2WebClientSecret = "8b17d5515cdc1939d83abe5c00d673ad"
+	OAUTH2WebClientDomain = "https://www.flywk.com"
+
+	GrantTypePassword     = "password"
+	GrantTypeDigits       = "digits"
+	GrantTypeRefreshToken = "refresh_token"
+	GrantTypeSina         = "sina"
+	GrantTypeQQConn       = "qqconn"
+	GrantTypeWeChat       = "wechat"
+	GrantTypeCTCC         = "ctcc"
+	GrantTypeCMCC         = "cmcc"
+)
+
+const (
 	IdentityMobile = 1
 	IdentityEmail  = 2
 )
@@ -44,4 +65,11 @@ const (
 const (
 	GenderMale   = 1
 	GenderFemale = 2
+)
+
+const (
+	IDCertificationUncommitted = -1
+	IDCertificationInProgress  = 0
+	IDCertificationSuccess     = 1
+	IDCertificationFailed      = 2
 )

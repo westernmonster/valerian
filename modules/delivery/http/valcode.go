@@ -3,10 +3,17 @@ package http
 import (
 	"net/http"
 
+	"github.com/gin-gonic/gin"
+	"github.com/jmoiron/sqlx"
+	"github.com/westernmonster/sqalx"
+
 	"git.flywk.com/flywiki/api/infrastructure"
 	"git.flywk.com/flywiki/api/infrastructure/biz"
+	"git.flywk.com/flywiki/api/infrastructure/email"
+	"git.flywk.com/flywiki/api/infrastructure/sms"
 	"git.flywk.com/flywiki/api/models"
-	"github.com/gin-gonic/gin"
+	"git.flywk.com/flywiki/api/modules/repo"
+	"git.flywk.com/flywiki/api/modules/usecase"
 )
 
 type ValcodeCtrl struct {
@@ -15,6 +22,18 @@ type ValcodeCtrl struct {
 	ValcodeUsecase interface {
 		RequestEmailValcode(bizCtx *biz.BizContext, req *models.RequestEmailValcodeReq) (createdTime int64, err error)
 		RequestMobileValcode(bizCtx *biz.BizContext, req *models.RequestMobileValcodeReq) (createdTime int64, err error)
+	}
+}
+
+func NewValcodeCtrl(smsClient *sms.SMSClient, emailClient *email.EmailClient, db *sqlx.DB, node sqalx.Node) *ValcodeCtrl {
+	return &ValcodeCtrl{
+		ValcodeUsecase: &usecase.ValcodeUsecase{
+			Node:              node,
+			DB:                db,
+			SMSClient:         smsClient,
+			EmailClient:       emailClient,
+			ValcodeRepository: &repo.ValcodeRepository{},
+		},
 	}
 }
 

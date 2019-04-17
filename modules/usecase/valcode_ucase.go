@@ -113,6 +113,8 @@ func (p *ValcodeUsecase) RequestEmailValcode(ctx *biz.BizContext, req *models.Re
 		err = tracerr.Wrap(err)
 		return
 	}
+
+	createdTime = time.Now().Unix()
 	return
 }
 
@@ -185,5 +187,7 @@ func (p *ValcodeUsecase) RequestMobileValcode(ctx *biz.BizContext, req *models.R
 		err = tracerr.Wrap(err)
 		return
 	}
+
+	createdTime = time.Now().Unix()
 	return
 }

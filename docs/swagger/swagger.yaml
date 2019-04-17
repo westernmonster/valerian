@@ -1,5 +1,56 @@
 basePath: /api/v1
 definitions:
+  cloudauth.STSToken:
+    properties:
+      AccessKeyId:
+        description: |-
+          OSS AccessKey ID。
+          required: true
+        type: string
+      AccessKeySecret:
+        description: OSS AccessKey密钥
+        type: string
+      BucketName:
+        description: OSS bucket，认证服务指定的文件上传 Bucket。
+        type: string
+      EndPoint:
+        description: OSS endpoint
+        type: string
+      Expiration:
+        description: STS token过期时间。
+        type: string
+      Path:
+        description: 一个认证请求生成的用来上传的目录，业务方需要将文件上传到这个目录。
+        type: string
+      Token:
+        description: STS 访问Token。
+        type: string
+    type: object
+  cloudauth.VerifyToken:
+    properties:
+      DurationSeconds:
+        description: 认证会话超时时间，单位为秒。一般为1,800s。
+        type: integer
+      Token:
+        description: 一次认证会话的标识。
+        type: string
+    type: object
+  cloudauth.VerifyTokenData:
+    properties:
+      CloudauthPageUrl:
+        description: 认证流程页面入口URL。
+        type: string
+      STSToken:
+        $ref: '#/definitions/cloudauth.STSToken'
+        description: |-
+          如果业务方有额外的文件需要一并提交认证服务，可以使用STSToken将其上传到认证服务指定的地方。
+          操作方法参考使用STSToken 上传文件示例。STSToken的具体结构描述见STSToken。
+        type: object
+      VerifyToken:
+        $ref: '#/definitions/cloudauth.VerifyToken'
+        description: 认证流程页面入口URL。
+        type: object
+    type: object
   infrastructure.RespCommon:
     properties:
       code:
@@ -148,6 +199,18 @@ definitions:
       valcode:
         type: string
     type: object
+  models.Locale:
+    properties:
+      id:
+        description: ID ID
+        type: integer
+      locale:
+        description: Locale 语言编码
+        type: string
+      name:
+        description: Name 语言名称
+        type: string
+    type: object
   models.LoginResult:
     properties:
       role:
@@ -190,6 +253,23 @@ definitions:
         type: integer
       valcode:
         description: 验证码 6位数字
+        type: string
+    type: object
+  models.PolicyToken:
+    properties:
+      accessid:
+        type: string
+      callback:
+        type: string
+      dir:
+        type: string
+      expire:
+        type: string
+      host:
+        type: string
+      policy:
+        type: string
+      signature:
         type: string
     type: object
   models.ProfileResp:
@@ -492,6 +572,7 @@ info:
     </pre>
 
   license: {}
+  title: 飞行百科 API
   version: "1.0"
 paths:
   /auth/login/email:
@@ -797,7 +878,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: 用户资料
+          description: 国家区号
           schema:
             items:
               $ref: '#/definitions/models.CountryCode'
@@ -805,6 +886,95 @@ paths:
         "500":
           description: 服务器端错误
       summary: 获取电话国家区号
+      tags:
+      - common
+  /files/oss_token:
+    get:
+      consumes:
+      - application/json
+      description: |-
+        获取阿里云OSS上传TOKEN
+        阿里云文档：https://help.aliyun.com/document_detail/31926.html
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 请求
+        in: query
+        name: file_type
+        required: true
+        type: models.RequestOSSTokenReq
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Token
+          schema:
+            $ref: '#/definitions/models.PolicyToken'
+            type: object
+        "400":
+          description: 验证失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 获取阿里云OSS上传TOKEN
+      tags:
+      - common
+  /locales:
+    get:
+      consumes:
+      - application/json
+      description: 语言编码
+      parameters:
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 语言编码
+          schema:
+            items:
+              $ref: '#/definitions/models.Locale'
+            type: array
+        "500":
+          description: 服务器端错误
+      summary: 语言编码
       tags:
       - common
   /me:
@@ -896,6 +1066,89 @@ paths:
         "500":
           description: 服务器端错误
       summary: 更改用户资料
+      tags:
+      - account
+  /me/certification/idcard:
+    post:
+      consumes:
+      - application/json
+      description: 获取实名认证Token
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Token
+          schema:
+            $ref: '#/definitions/cloudauth.VerifyTokenData'
+            type: object
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 获取实名认证Token
+      tags:
+      - account
+  /me/certification/idcard/status:
+    get:
+      consumes:
+      - application/json
+      description: 获取实名认证状态
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回实名认证状态
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 获取实名认证状态
       tags:
       - account
   /me/password:

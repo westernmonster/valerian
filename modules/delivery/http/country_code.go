@@ -4,7 +4,11 @@ import (
 	"git.flywk.com/flywiki/api/infrastructure"
 	"git.flywk.com/flywiki/api/infrastructure/biz"
 	"git.flywk.com/flywiki/api/models"
+	"git.flywk.com/flywiki/api/modules/repo"
+	"git.flywk.com/flywiki/api/modules/usecase"
 	"github.com/gin-gonic/gin"
+	"github.com/jmoiron/sqlx"
+	"github.com/westernmonster/sqalx"
 )
 
 type CountryCodeCtrl struct {
@@ -15,6 +19,16 @@ type CountryCodeCtrl struct {
 	}
 }
 
+func NewCountryCodeCtrl(db *sqlx.DB, node sqalx.Node) *CountryCodeCtrl {
+	return &CountryCodeCtrl{
+		CountryCodeUsecase: &usecase.CountryCodeUsecase{
+			Node:                  node,
+			DB:                    db,
+			CountryCodeRepository: &repo.CountryCodeRepository{},
+		},
+	}
+}
+
 // @Summary 获取电话国家区号
 // @Description 获取电话国家区号
 // @Tags common
@@ -22,7 +36,7 @@ type CountryCodeCtrl struct {
 // @Produce json
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Success 200 {array} models.CountryCode "用户资料"
+// @Success 200 {array} models.CountryCode "国家区号"
 // @Failure 500 "服务器端错误"
 // @Router /country_codes [get]
 func (p *CountryCodeCtrl) GetAll(ctx *gin.Context) {

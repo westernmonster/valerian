@@ -66,3 +66,19 @@ type ProfileResp struct {
 	// 更新时间
 	UpdatedAt int64 `json:"updated_at"`
 }
+
+type AccountSetting struct {
+	Locale string `json:"locale"`
+}
+
+type AccountCertification struct {
+}
+
+type AccountProfile struct {
+	// 关注用户数
+	Followed int `json:"followed"`
+	// 收藏数
+	Collection int `json:"collection"`
+	// 文章数
+	Articles int `json:"articles"`
+}

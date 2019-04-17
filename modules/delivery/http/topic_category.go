@@ -3,10 +3,15 @@ package http
 import (
 	"net/http"
 
+	"github.com/gin-gonic/gin"
+	"github.com/jmoiron/sqlx"
+	"github.com/westernmonster/sqalx"
+
 	"git.flywk.com/flywiki/api/infrastructure"
 	"git.flywk.com/flywiki/api/infrastructure/biz"
 	"git.flywk.com/flywiki/api/models"
-	"github.com/gin-gonic/gin"
+	"git.flywk.com/flywiki/api/modules/repo"
+	"git.flywk.com/flywiki/api/modules/usecase"
 )
 
 type TopicCategoryCtrl struct {
@@ -19,6 +24,16 @@ type TopicCategoryCtrl struct {
 		BulkSave(ctx *biz.BizContext, req *models.SaveTopicCategoriesReq) (err error)
 		GetAll(ctx *biz.BizContext, topicID int64) (items []*models.TopicCategory, err error)
 		GetHierarchyOfAll(ctx *biz.BizContext, topicID int64) (resp *models.TopicCategoriesResp, err error)
+	}
+}
+
+func NewTopicCategoryCtrl(db *sqlx.DB, node sqalx.Node) *TopicCategoryCtrl {
+	return &TopicCategoryCtrl{
+		TopicCategoryUsecase: &usecase.TopicCategoryUsecase{
+			Node:                    node,
+			DB:                      db,
+			TopicCategoryRepository: &repo.TopicCategoryRepository{},
+		},
 	}
 }
 
