@@ -6,12 +6,11 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
-
-	"gopkg.in/oauth2.v3"
-	"gopkg.in/oauth2.v3/generates"
-	"gopkg.in/oauth2.v3/models"
-
 	. "github.com/smartystreets/goconvey/convey"
+
+	"git.flywk.com/flywiki/api/infrastructure/oauth2"
+	"git.flywk.com/flywiki/api/infrastructure/oauth2/generates"
+	"git.flywk.com/flywiki/api/infrastructure/oauth2/models"
 )
 
 func TestJWTAccess(t *testing.T) {
@@ -45,7 +44,7 @@ func TestJWTAccess(t *testing.T) {
 		claims, ok := token.Claims.(*generates.JWTAccessClaims)
 		So(ok, ShouldBeTrue)
 		So(token.Valid, ShouldBeTrue)
-		So(claims.ClientID, ShouldEqual, "123456")
-		So(claims.UserID, ShouldEqual, "000000")
+		So(claims.Audience, ShouldEqual, "123456")
+		So(claims.Subject, ShouldEqual, "000000")
 	})
 }

@@ -4,11 +4,11 @@ import (
 	"testing"
 	"time"
 
-	"git.flywk.com/flywiki/api/infrastructure/oauth2"
 	. "github.com/smartystreets/goconvey/convey"
 
-	"gopkg.in/oauth2.v3/generates"
-	"gopkg.in/oauth2.v3/models"
+	"git.flywk.com/flywiki/api/infrastructure/oauth2"
+	"git.flywk.com/flywiki/api/infrastructure/oauth2/generates"
+	"git.flywk.com/flywiki/api/infrastructure/oauth2/models"
 )
 
 func TestAccess(t *testing.T) {

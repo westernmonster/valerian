@@ -103,3 +103,4 @@ func NewMD5(space UUID, data []byte) UUID {
 func NewSHA1(space UUID, data []byte) UUID {
 	return NewHash(sha1.New(), space, data, 5)
 
+}

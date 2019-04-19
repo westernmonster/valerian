@@ -2,15 +2,15 @@ package generates
 
 import (
 	"encoding/base64"
+	errs "errors"
 	"strings"
 	"time"
 
-	errs "errors"
-
 	"github.com/dgrijalva/jwt-go"
-	"gopkg.in/oauth2.v3"
-	"gopkg.in/oauth2.v3/errors"
-	"gopkg.in/oauth2.v3/utils/uuid"
+
+	"git.flywk.com/flywiki/api/infrastructure/oauth2"
+	"git.flywk.com/flywiki/api/infrastructure/oauth2/errors"
+	"git.flywk.com/flywiki/api/infrastructure/oauth2/utils/uuid"
 )
 
 // JWTAccessClaims jwt claims

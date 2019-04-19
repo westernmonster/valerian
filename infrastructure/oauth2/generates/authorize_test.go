@@ -4,11 +4,11 @@ import (
 	"testing"
 	"time"
 
-	"gopkg.in/oauth2.v3"
-	"gopkg.in/oauth2.v3/generates"
-	"gopkg.in/oauth2.v3/models"
-
 	. "github.com/smartystreets/goconvey/convey"
+
+	"git.flywk.com/flywiki/api/infrastructure/oauth2"
+	"git.flywk.com/flywiki/api/infrastructure/oauth2/generates"
+	"git.flywk.com/flywiki/api/infrastructure/oauth2/models"
 )
 
 func TestAuthorize(t *testing.T) {

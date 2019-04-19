@@ -3,12 +3,12 @@ package manage_test
 import (
 	"testing"
 
-	"gopkg.in/oauth2.v3"
-	"gopkg.in/oauth2.v3/manage"
-	"gopkg.in/oauth2.v3/models"
-	"gopkg.in/oauth2.v3/store"
-
 	. "github.com/smartystreets/goconvey/convey"
+
+	"git.flywk.com/flywiki/api/infrastructure/oauth2"
+	"git.flywk.com/flywiki/api/infrastructure/oauth2/manage"
+	"git.flywk.com/flywiki/api/infrastructure/oauth2/models"
+	"git.flywk.com/flywiki/api/infrastructure/oauth2/store"
 )
 
 func TestManager(t *testing.T) {

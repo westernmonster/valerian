@@ -4,21 +4,13 @@ import (
 	"fmt"
 
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk"
-	"github.com/dgrijalva/jwt-go"
-	ginserver "github.com/go-oauth2/gin-server"
 	"github.com/spf13/viper"
 	"github.com/ztrue/tracerr"
-	"gopkg.in/oauth2.v3/generates"
-	"gopkg.in/oauth2.v3/manage"
-	oauth_models "gopkg.in/oauth2.v3/models"
-	"gopkg.in/oauth2.v3/server"
-	"gopkg.in/oauth2.v3/store"
 
 	"git.flywk.com/flywiki/api/infrastructure/bootstrap"
 	"git.flywk.com/flywiki/api/infrastructure/db"
 	"git.flywk.com/flywiki/api/infrastructure/email"
 	"git.flywk.com/flywiki/api/infrastructure/sms"
-	"git.flywk.com/flywiki/api/models"
 	"git.flywk.com/flywiki/api/modules/delivery/http"
 	"git.flywk.com/flywiki/api/modules/repo"
 	"git.flywk.com/flywiki/api/modules/usecase"
@@ -29,33 +21,6 @@ var (
 )
 
 func Configure(p *bootstrap.Bootstrapper) {
-	// OAUTH 2
-	manager := manage.NewDefaultManager()
-	manager.SetAuthorizeCodeTokenCfg(manage.DefaultAuthorizeCodeTokenCfg)
-
-	// Generate jwt access token
-	manager.MapAccessGenerate(generates.NewJWTAccessGenerate([]byte(models.JWTKey), jwt.SigningMethodHS512))
-
-	// Client: 目前 OAuth2 只开放给自有服务，所以使用 password grant, client 也写死
-	clientStore := store.NewClientStore()
-	clientStore.Set(models.OAUTH2MobileClientID, &oauth_models.Client{
-		ID:     models.OAUTH2MobileClientID,
-		Secret: models.OAUTH2MobileClientSecret,
-		Domain: models.OAUTH2MobileClientDomain,
-	})
-	clientStore.Set(models.OAUTH2WebClientID, &oauth_models.Client{
-		ID:     models.OAUTH2WebClientID,
-		Secret: models.OAUTH2WebClientSecret,
-		Domain: models.OAUTH2WebClientDomain,
-	})
-
-	manager.MapClientStorage(clientStore)
-
-	// Initialize the gin oauth2 service
-	ginserver.InitServer(manager)
-	ginserver.SetAllowGetAccessRequest(true)
-	ginserver.SetClientInfoHandler(server.ClientFormHandler)
-	ginserver.SetPasswordAuthorizationHandler(server.PasswordAuthorizationHandler)
 
 	api := p.Group("/api/v1")
 
