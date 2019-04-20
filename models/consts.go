@@ -13,7 +13,8 @@ const (
 )
 
 const (
-	JWTKey = "flywk$*^hn"
+	JWTKey   = "flywk$*^hn"
+	TokenKey = "flywiki_token"
 
 	OAUTH2MobileClientID     = "532c28d5412dd75bf975fb951c740a30"
 	OAUTH2MobileClientSecret = "16ed0e1ab220aebf9362045ccad0664f"

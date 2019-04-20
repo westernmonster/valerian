@@ -575,282 +575,6 @@ info:
   title: 飞行百科 API
   version: "1.0"
 paths:
-  /auth/login/email:
-    post:
-      consumes:
-      - application/json
-      description: 用户邮件登录
-      parameters:
-      - description: 来源
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 用户登录
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/models.EmailLoginReq'
-          type: object
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            $ref: '#/definitions/models.LoginResult'
-            type: object
-        "400":
-          description: 验证失败
-        "500":
-          description: 服务器端错误
-      summary: 用户邮件登录
-      tags:
-      - auth
-  /auth/login/mobile:
-    post:
-      consumes:
-      - application/json
-      description: 用户手机登录
-      parameters:
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 手机登录
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/models.MobileLoginReq'
-          type: object
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            $ref: '#/definitions/models.LoginResult'
-            type: object
-        "400":
-          description: 验证失败
-        "500":
-          description: 服务器端错误
-      summary: 用户手机登录
-      tags:
-      - auth
-  /auth/password/reset:
-    put:
-      consumes:
-      - application/json
-      description: 忘记密码，此为重设密码第一步，提交用户标识（手机号、邮箱），和用户输入的验证码进行验证，并返回一个 Session ID
-      parameters:
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 请求
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/models.ForgetPasswordReq'
-          type: object
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            $ref: '#/definitions/infrastructure.RespCommon'
-            type: object
-        "400":
-          description: 验证失败
-          schema:
-            $ref: '#/definitions/infrastructure.RespCommon'
-            type: object
-        "500":
-          description: 服务器端错误
-          schema:
-            $ref: '#/definitions/infrastructure.RespCommon'
-            type: object
-      summary: 忘记密码
-      tags:
-      - auth
-  /auth/password/reset/confirm:
-    put:
-      consumes:
-      - application/json
-      description: 重设密码第二步，传入新密码和Session ID，如果返回的Code值为307，则表示Session已经失效，前端可以根据这个值做对应的处理
-      parameters:
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 请求
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/models.ResetPasswordReq'
-          type: object
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            $ref: '#/definitions/infrastructure.RespCommon'
-            type: object
-        "400":
-          description: 验证失败
-          schema:
-            $ref: '#/definitions/infrastructure.RespCommon'
-            type: object
-        "500":
-          description: 服务器端错误
-          schema:
-            $ref: '#/definitions/infrastructure.RespCommon'
-            type: object
-      summary: 重设密码
-      tags:
-      - auth
-  /auth/registration/email:
-    post:
-      consumes:
-      - application/json
-      description: 用户邮件注册
-      parameters:
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 请求
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/models.EmailRegisterReq'
-          type: object
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-        "400":
-          description: 验证失败
-        "500":
-          description: 服务器端错误
-      summary: 用户邮件注册
-      tags:
-      - auth
-  /auth/registration/mobile:
-    post:
-      consumes:
-      - application/json
-      description: 用户手机注册
-      parameters:
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 请求
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/models.MobileRegisterReq'
-          type: object
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-        "400":
-          description: 验证失败
-        "500":
-          description: 服务器端错误
-      summary: 用户手机注册
-      tags:
-      - auth
   /country_codes:
     get:
       consumes:
@@ -1200,6 +924,282 @@ paths:
       summary: 更改密码
       tags:
       - account
+  /oauth/login/email:
+    post:
+      consumes:
+      - application/json
+      description: 用户邮件登录
+      parameters:
+      - description: 来源
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 用户登录
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/models.EmailLoginReq'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/models.LoginResult'
+            type: object
+        "400":
+          description: 验证失败
+        "500":
+          description: 服务器端错误
+      summary: 用户邮件登录
+      tags:
+      - auth
+  /oauth/login/mobile:
+    post:
+      consumes:
+      - application/json
+      description: 用户手机登录
+      parameters:
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 手机登录
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/models.MobileLoginReq'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/models.LoginResult'
+            type: object
+        "400":
+          description: 验证失败
+        "500":
+          description: 服务器端错误
+      summary: 用户手机登录
+      tags:
+      - auth
+  /oauth/password/reset:
+    put:
+      consumes:
+      - application/json
+      description: 忘记密码，此为重设密码第一步，提交用户标识（手机号、邮箱），和用户输入的验证码进行验证，并返回一个 Session ID
+      parameters:
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/models.ForgetPasswordReq'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/infrastructure.RespCommon'
+            type: object
+        "400":
+          description: 验证失败
+          schema:
+            $ref: '#/definitions/infrastructure.RespCommon'
+            type: object
+        "500":
+          description: 服务器端错误
+          schema:
+            $ref: '#/definitions/infrastructure.RespCommon'
+            type: object
+      summary: 忘记密码
+      tags:
+      - auth
+  /oauth/password/reset/confirm:
+    put:
+      consumes:
+      - application/json
+      description: 重设密码第二步，传入新密码和Session ID，如果返回的Code值为307，则表示Session已经失效，前端可以根据这个值做对应的处理
+      parameters:
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/models.ResetPasswordReq'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/infrastructure.RespCommon'
+            type: object
+        "400":
+          description: 验证失败
+          schema:
+            $ref: '#/definitions/infrastructure.RespCommon'
+            type: object
+        "500":
+          description: 服务器端错误
+          schema:
+            $ref: '#/definitions/infrastructure.RespCommon'
+            type: object
+      summary: 重设密码
+      tags:
+      - auth
+  /oauth/registration/email:
+    post:
+      consumes:
+      - application/json
+      description: 用户邮件注册
+      parameters:
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/models.EmailRegisterReq'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+        "400":
+          description: 验证失败
+        "500":
+          description: 服务器端错误
+      summary: 用户邮件注册
+      tags:
+      - auth
+  /oauth/registration/mobile:
+    post:
+      consumes:
+      - application/json
+      description: 用户手机注册
+      parameters:
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/models.MobileRegisterReq'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+        "400":
+          description: 验证失败
+        "500":
+          description: 服务器端错误
+      summary: 用户手机注册
+      tags:
+      - auth
   /topic_categories:
     get:
       consumes:

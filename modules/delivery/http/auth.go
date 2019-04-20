@@ -120,7 +120,7 @@ func (p *AuthCtrl) Auth(ctx *gin.Context) {
 // @Success 200 {object} models.LoginResult "成功"
 // @Failure 400 "验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /auth/login/email [post]
+// @Router /oauth/login/email [post]
 func (p *AuthCtrl) EmailLogin(ctx *gin.Context) {
 	req := new(models.EmailLoginReq)
 
@@ -172,7 +172,7 @@ func (p *AuthCtrl) EmailLogin(ctx *gin.Context) {
 // @Success 200 {object} models.LoginResult "成功"
 // @Failure 400 "验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /auth/login/mobile [post]
+// @Router /oauth/login/mobile [post]
 func (p *AuthCtrl) MobileLogin(ctx *gin.Context) {
 	req := new(models.MobileLoginReq)
 
@@ -224,7 +224,7 @@ func (p *AuthCtrl) MobileLogin(ctx *gin.Context) {
 // @Success 200 "成功"
 // @Failure 400 "验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /auth/registration/email [post]
+// @Router /oauth/registration/email [post]
 func (p *AuthCtrl) EmailRegister(ctx *gin.Context) {
 	req := new(models.EmailRegisterReq)
 
@@ -267,7 +267,7 @@ func (p *AuthCtrl) EmailRegister(ctx *gin.Context) {
 // @Success 200 "成功"
 // @Failure 400 "验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /auth/registration/mobile [post]
+// @Router /oauth/registration/mobile [post]
 func (p *AuthCtrl) MobileRegister(ctx *gin.Context) {
 	req := new(models.MobileRegisterReq)
 
@@ -309,7 +309,7 @@ func (p *AuthCtrl) MobileRegister(ctx *gin.Context) {
 // @Success 200 {object} infrastructure.RespCommon "成功"
 // @Failure 400 {object} infrastructure.RespCommon "验证失败"
 // @Failure 500 {object} infrastructure.RespCommon "服务器端错误"
-// @Router /auth/password/reset [put]
+// @Router /oauth/password/reset [put]
 func (p *AuthCtrl) ForgetPassword(ctx *gin.Context) {
 	req := new(models.ForgetPasswordReq)
 
@@ -353,7 +353,7 @@ func (p *AuthCtrl) ForgetPassword(ctx *gin.Context) {
 // @Success 200 {object} infrastructure.RespCommon "成功"
 // @Failure 400 {object} infrastructure.RespCommon "验证失败"
 // @Failure 500 {object} infrastructure.RespCommon "服务器端错误"
-// @Router /auth/password/reset/confirm [put]
+// @Router /oauth/password/reset/confirm [put]
 func (p *AuthCtrl) ResetPassword(ctx *gin.Context) {
 	req := new(models.ResetPasswordReq)
 

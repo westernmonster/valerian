@@ -20,11 +20,6 @@ func newApp() *bootstrap.Bootstrapper {
 
 	locale.LoadTranslateFile()
 
-	err := modules.InitAuthCtrl()
-	if err != nil {
-		panic(err)
-	}
-
 	app.Configure(
 		modules.Configure,
 	)

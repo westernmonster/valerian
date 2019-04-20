@@ -1,0 +1,29 @@
+INSERT INTO auth_access(
+    id,
+    client_id,
+    authorize,
+    previous,
+    access_token,
+    refresh_token,
+    expired_in,
+    scope,
+    redirect_uri,
+    extra,
+    deleted,
+    created_at,
+    updated_at
+) VALUES (
+    :id,
+    :client_id,
+    :authorize,
+    :previous,
+    :access_token,
+    :refresh_token,
+    :expired_in,
+    :scope,
+    :redirect_uri,
+    :extra,
+    :deleted,
+    :created_at,
+    :updated_at
+)
