@@ -16,17 +16,17 @@ import (
 )
 
 func Configure(p *bootstrap.Bootstrapper) {
+	db, node, err := db.InitDatabase()
+	if err != nil {
+		panic(err)
+		return
+	}
 
 	api := p.Group("/api/v1")
 	{
-		// api.GET("/oauth/token", authserver.HandleTokenRequest)
-		// api.GET("/oauth/authorize", authserver.HandleAuthorizeRequest)
 
-		db, node, err := db.InitDatabase()
-		if err != nil {
-			panic(err)
-			return
-		}
+		api.GET("/oauth/token", HandleTokenRequest)
+		api.GET("/oauth/authorize", HandleAuthorizeRequest)
 
 		authCtrl := &http.AuthCtrl{
 			AuthUsecase: &usecase.AuthUsecase{

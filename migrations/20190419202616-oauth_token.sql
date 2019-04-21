@@ -67,6 +67,12 @@ CREATE TABLE `auth_expires`  (
 ) COMMENT 'OAUTH2 Expires';
 
 
+INSERT INTO auth_clients(id, client_id, client_secret, extra, redirect_uri, deleted, created_at, updated_at)
+VALUES(1, '532c28d5412dd75bf975fb951c740a30', '16ed0e1ab220aebf9362045ccad0664f', '','https://api.flywk.com', 0, 1555177901,1555177901);
+
+INSERT INTO auth_clients(id, client_id, client_secret, extra, redirect_uri, deleted, created_at, updated_at)
+VALUES(2, '2567a5ec9705eb7ac2c984033e06189d', '8b17d5515cdc1939d83abe5c00d673ad', '','https://www.flywk.com', 0, 1555177901,1555177901);
+
 
 -- +migrate Down
 DROP TABLE auth_clients;

@@ -19,7 +19,7 @@ func newApp() *bootstrap.Bootstrapper {
 	app.Bootstrap()
 
 	locale.LoadTranslateFile()
-
+	modules.StartOAUTHServer()
 	app.Configure(
 		modules.Configure,
 	)

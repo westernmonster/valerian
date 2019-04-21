@@ -6,7 +6,7 @@ import (
 
 const TokenSigningKey = "flywk$*^hn"
 
-type TokenClaims struct {
+type CustomUserData struct {
 	AccountID int64  `json:"account_id,string"`
 	Role      string `json:"role"`
 	jwt.StandardClaims

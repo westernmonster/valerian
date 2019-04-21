@@ -123,6 +123,14 @@ type OAuthStorage struct {
 	}
 }
 
+func (p *OAuthStorage) Clone() osin.Storage {
+	return p
+}
+
+func (p *OAuthStorage) Close() {
+	return
+}
+
 // GetClient loads the client by id
 func (p *OAuthStorage) GetClient(id string) (client osin.Client, err error) {
 	item, exist, err := p.AuthClientRepository.GetByCondition(p.Node, map[string]string{"client_id": id})

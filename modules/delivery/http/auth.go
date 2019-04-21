@@ -4,13 +4,8 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	"strings"
-	"time"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
-	"github.com/ztrue/tracerr"
 
 	"git.flywk.com/flywiki/api/infrastructure"
 	"git.flywk.com/flywiki/api/infrastructure/berr"
@@ -35,77 +30,78 @@ type AuthCtrl struct {
 }
 
 func GetBearer(auth []string) (jwt string, ok bool) {
-	for _, v := range auth {
-		ret := strings.Split(v, " ")
-		if len(ret) == 2 && ret[0] == "Bearer" {
-			return ret[1], true
-		}
-	}
-	return "", false
-}
+	// for _, v := range auth {
+	// 	ret := strings.Split(v, " ")
+	// 	if len(ret) == 2 && ret[0] == "Bearer" {
+	// 		return ret[1], true
+	// 	}
+	// }
+	// return "", false
+	// }
 
-// Auth godoc
-func (p *AuthCtrl) Auth(ctx *gin.Context) {
-	tokenStr := ""
+	// // Auth godoc
+	// func (p *AuthCtrl) Auth(ctx *gin.Context) {
+	// tokenStr := ""
 
-	if v, ok := GetBearer(ctx.Request.Header["Authorization"]); ok {
-		tokenStr = v
-	} else {
-		cookieValue, err := ctx.Cookie("token")
-		if err == nil {
-			tokenStr = cookieValue
-		}
-	}
+	// if v, ok := GetBearer(ctx.Request.Header["Authorization"]); ok {
+	// 	tokenStr = v
+	// } else {
+	// 	cookieValue, err := ctx.Cookie("token")
+	// 	if err == nil {
+	// 		tokenStr = cookieValue
+	// 	}
+	// }
 
-	if tokenStr == "" {
-		ctx.AbortWithStatusJSON(http.StatusUnauthorized, map[string]interface{}{
-			"code":    http.StatusUnauthorized,
-			"success": false,
-			"message": "jwt token is not set",
-		})
-		return
-	}
+	// if tokenStr == "" {
+	// 	ctx.AbortWithStatusJSON(http.StatusUnauthorized, map[string]interface{}{
+	// 		"code":    http.StatusUnauthorized,
+	// 		"success": false,
+	// 		"message": "jwt token is not set",
+	// 	})
+	// 	return
+	// }
 
-	claims := new(infrastructure.TokenClaims)
+	// claims := new(infrastructure.TokenClaims)
 
-	token, err := jwt.ParseWithClaims(tokenStr, claims, func(*jwt.Token) (interface{}, error) {
-		return []byte(infrastructure.TokenSigningKey), nil
-	})
+	// token, err := jwt.ParseWithClaims(tokenStr, claims, func(*jwt.Token) (interface{}, error) {
+	// 	return []byte(infrastructure.TokenSigningKey), nil
+	// })
 
-	if err != nil {
-		logrus.Error(fmt.Sprintf("Error parsing token: %v", err))
-		ctx.AbortWithStatusJSON(http.StatusUnauthorized, map[string]interface{}{
-			"code":    http.StatusUnauthorized,
-			"success": false,
-			"message": "服务器端发生错误",
-		})
-		return
-	}
+	// if err != nil {
+	// 	logrus.Error(fmt.Sprintf("Error parsing token: %v", err))
+	// 	ctx.AbortWithStatusJSON(http.StatusUnauthorized, map[string]interface{}{
+	// 		"code":    http.StatusUnauthorized,
+	// 		"success": false,
+	// 		"message": "服务器端发生错误",
+	// 	})
+	// 	return
+	// }
 
-	if claims, ok := token.Claims.(*infrastructure.TokenClaims); ok && token.Valid {
-		account, err := p.AuthUsecase.GetByID(nil, claims.AccountID)
-		if err != nil {
-			logrus.Error(fmt.Sprintf("Error on fetch user info: %v", err))
-			ctx.AbortWithStatusJSON(http.StatusUnauthorized, map[string]interface{}{
-				"code":    http.StatusUnauthorized,
-				"success": false,
-				"message": "服务器端发生错误",
-			})
-			return
-		}
+	// if claims, ok := token.Claims.(*infrastructure.TokenClaims); ok && token.Valid {
+	// 	account, err := p.AuthUsecase.GetByID(nil, claims.AccountID)
+	// 	if err != nil {
+	// 		logrus.Error(fmt.Sprintf("Error on fetch user info: %v", err))
+	// 		ctx.AbortWithStatusJSON(http.StatusUnauthorized, map[string]interface{}{
+	// 			"code":    http.StatusUnauthorized,
+	// 			"success": false,
+	// 			"message": "服务器端发生错误",
+	// 		})
+	// 		return
+	// 	}
 
-		ctx.Set("AccountID", account.ID)
-		ctx.Set("Role", claims.Role)
-		ctx.Next()
-	} else {
-		logrus.Error(fmt.Sprintf("Error parsing token: %v", err))
-		ctx.AbortWithStatusJSON(http.StatusUnauthorized, map[string]interface{}{
-			"code":    http.StatusUnauthorized,
-			"success": false,
-			"message": "服务器端发生错误",
-		})
-		return
-	}
+	// 	ctx.Set("AccountID", account.ID)
+	// 	ctx.Set("Role", claims.Role)
+	// 	ctx.Next()
+	// } else {
+	// 	logrus.Error(fmt.Sprintf("Error parsing token: %v", err))
+	// 	ctx.AbortWithStatusJSON(http.StatusUnauthorized, map[string]interface{}{
+	// 		"code":    http.StatusUnauthorized,
+	// 		"success": false,
+	// 		"message": "服务器端发生错误",
+	// 	})
+	// 	return
+	// }
+	return
 }
 
 // EmailLogin 用户邮件登录
@@ -395,28 +391,29 @@ func (p *AuthCtrl) ResetPassword(ctx *gin.Context) {
 }
 
 func (p *AuthCtrl) createCookie(user *repo.Account) (cookie *http.Cookie, err error) {
-	age := 90 * 24 * 60 * 60 // 90 days, present by second
-	cookie = new(http.Cookie)
-	cookie.Name = "token"
-	cookie.MaxAge = age
-	cookie.HttpOnly = true
+	// age := 90 * 24 * 60 * 60 // 90 days, present by second
+	// cookie = new(http.Cookie)
+	// cookie.Name = "token"
+	// cookie.MaxAge = age
+	// cookie.HttpOnly = true
 
-	claims := infrastructure.TokenClaims{
-		user.ID,
-		"role",
-		jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Hour * 24 * 90).Unix(),
-			Issuer:    "web",
-		},
-	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString([]byte(infrastructure.TokenSigningKey))
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-	cookie.Value = tokenString
+	// claims := infrastructure.TokenClaims{
+	// 	user.ID,
+	// 	"role",
+	// 	jwt.StandardClaims{
+	// 		ExpiresAt: time.Now().Add(time.Hour * 24 * 90).Unix(),
+	// 		Issuer:    "web",
+	// 	},
+	// }
+	// token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	// tokenString, err := token.SignedString([]byte(infrastructure.TokenSigningKey))
+	// if err != nil {
+	// 	err = tracerr.Wrap(err)
+	// 	return
+	// }
+	// cookie.Value = tokenString
+
+	// return
 
 	return
-
 }

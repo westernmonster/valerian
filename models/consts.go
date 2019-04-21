@@ -74,3 +74,10 @@ const (
 	IDCertificationSuccess     = 1
 	IDCertificationFailed      = 2
 )
+
+// x-app-version App 版本号  3.22
+// x-app-versioncode App 版本号 1024
+// x-app-build release/debug
+// x-app-za OS=iOS&Release=12.2&Model=iPhone7,2&VersionName=4.39.0&VersionCode=1280&Width=750&Height=1334&DeviceType=Phone&Brand=Apple&OperatorType=46011
+// x-network-type 4G/3G etc
+// x-udid 设备唯一标识符
