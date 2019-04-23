@@ -3,6 +3,8 @@ SET
     mobile=:mobile,
     email=:email,
     password=:password,
+    role=:role,
+    salt=:salt,
     gender=:gender,
     birth_year=:birth_year,
     birth_month=:birth_month,

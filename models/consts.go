@@ -27,11 +27,22 @@ const (
 	GrantTypePassword     = "password"
 	GrantTypeDigits       = "digits"
 	GrantTypeRefreshToken = "refresh_token"
-	GrantTypeSina         = "sina"
-	GrantTypeQQConn       = "qqconn"
+	GrantTypeGoogle       = "google"
 	GrantTypeWeChat       = "wechat"
-	GrantTypeCTCC         = "ctcc"
-	GrantTypeCMCC         = "cmcc"
+
+	ResponseTypeToken = "token"
+	ResponseTypeCode  = "code"
+
+	Issuer = "https://flywk.com"
+
+	PasswordPepper = "8PrhfDL7Qr/G6%RbaiQouFfQ"
+
+	ExpiresIn = 60 * 60 * 72
+
+	// GrantTypeSina         = "sina"
+	// GrantTypeQQConn       = "qqconn"
+	// GrantTypeCTCC         = "ctcc"
+	// GrantTypeCMCC         = "cmcc"
 )
 
 const (

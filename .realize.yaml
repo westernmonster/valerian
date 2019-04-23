@@ -21,9 +21,3 @@ schema:
     - .git
     - .realize
     - vendor
-    scripts:
-    - type: before
-      command: swag init
-      global: false
-      output: true
-

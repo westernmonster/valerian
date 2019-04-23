@@ -25,16 +25,18 @@ func Configure(p *bootstrap.Bootstrapper) {
 	api := p.Group("/api/v1")
 	{
 
-		api.GET("/oauth/token", HandleTokenRequest)
-		api.GET("/oauth/authorize", HandleAuthorizeRequest)
+		// api.GET("/oauth/token", HandleTokenRequest)
+		// api.GET("/oauth/authorize", HandleAuthorizeRequest)
 
 		authCtrl := &http.AuthCtrl{
-			AuthUsecase: &usecase.AuthUsecase{
-				Node:              node,
-				DB:                db,
-				AccountRepository: &repo.AccountRepository{},
-				ValcodeRepository: &repo.ValcodeRepository{},
-				SessionRepository: &repo.SessionRepository{},
+			OauthUsecase: &usecase.OauthUsecase{
+				Node:                       node,
+				DB:                         db,
+				AccountRepository:          &repo.AccountRepository{},
+				ValcodeRepository:          &repo.ValcodeRepository{},
+				SessionRepository:          &repo.SessionRepository{},
+				OauthClientRepository:      &repo.OauthClientRepository{},
+				OauthAccessTokenRepository: &repo.OauthAccessTokenRepository{},
 			},
 		}
 

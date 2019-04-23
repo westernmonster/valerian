@@ -12,7 +12,7 @@ type EmailRegisterReq struct {
 	Email string `json:"email"`
 	// 验证码 6位数字
 	Valcode string `json:"valcode"`
-	// 密码 后端不保存明文密码，请于前端求得当前密码MD5哈希值后发送给后端
+	// 密码
 	Password string `json:"password"`
 	// Source 来源，1:Web, 2:iOS; 3:Android
 	Source int `json:"source"`
@@ -25,8 +25,8 @@ func (p *EmailRegisterReq) Validate() error {
 			is.Email.Error("邮件格式不正确"),
 		),
 		validation.Field(&p.Password,
-			validation.Required.Error(`请输入密码`),
-			validation.RuneLength(32, 32).Error(`密码格式不正确`)),
+			validation.Required.Error(`"password" is required`),
+			validation.RuneLength(6, 50).Error(`"password" length must in 6-50 characters`)),
 		validation.Field(&p.Valcode,
 			validation.Required.Error(`请输入验证码`),
 			validation.RuneLength(6, 6).Error(`验证码必须为6位数字`),
@@ -46,7 +46,7 @@ type MobileRegisterReq struct {
 	Prefix string `json:"prefix"`
 	// 验证码 6位数字
 	Valcode string `json:"valcode"`
-	// 密码 后端不保存明文密码，请于前端求得当前密码MD5哈希值后发送给后端
+	// 密码
 	Password string `json:"password"`
 	// Source 来源，1:Web, 2:iOS; 3:Android
 	Source int `json:"source"`
@@ -60,8 +60,8 @@ func (p *MobileRegisterReq) Validate() error {
 			ValidateMobile(p.Prefix),
 		),
 		validation.Field(&p.Password,
-			validation.Required.Error(`请输入密码`),
-			validation.RuneLength(32, 32).Error(`密码格式不正确`)),
+			validation.Required.Error(`"password" is required`),
+			validation.RuneLength(6, 50).Error(`"password" length must in 6-50 characters`)),
 		validation.Field(&p.Valcode,
 			validation.Required.Error(`请输入验证码`),
 			validation.RuneLength(6, 6).Error(`验证码必须为6位数字`),

@@ -95,7 +95,6 @@ func (p *AccountCtrl) ChangePassword(ctx *gin.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /me [put]
 func (p *AccountCtrl) UpdateProfile(ctx *gin.Context) {
-
 	req := new(models.UpdateProfileReq)
 
 	if e := ctx.Bind(req); e != nil {
@@ -110,7 +109,6 @@ func (p *AccountCtrl) UpdateProfile(ctx *gin.Context) {
 	}
 
 	p.SuccessResp(ctx, nil)
-
 	return
 }
 
@@ -128,7 +126,6 @@ func (p *AccountCtrl) UpdateProfile(ctx *gin.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /me [get]
 func (p *AccountCtrl) GetProfile(ctx *gin.Context) {
-
 	item, err := p.AccountUsecase.GetProfile(p.GetBizContext(ctx))
 	if err != nil {
 		p.HandleError(ctx, err)

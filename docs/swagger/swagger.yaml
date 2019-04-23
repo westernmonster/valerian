@@ -162,11 +162,14 @@ definitions:
     type: object
   models.EmailLoginReq:
     properties:
+      client_id:
+        description: ClientID OAUTH2 Client ID
+        type: string
       email:
         description: Email 邮件地址
         type: string
       password:
-        description: Password 密码，服务端不保存密码的明文值，请在提交前进行 MD5 哈希
+        description: Password 密码，长度至少为6位
         type: string
       source:
         description: Source 来源，1:Web, 2:iOS; 3:Android
@@ -178,7 +181,7 @@ definitions:
         description: 邮件地址
         type: string
       password:
-        description: 密码 后端不保存明文密码，请于前端求得当前密码MD5哈希值后发送给后端
+        description: 密码
         type: string
       source:
         description: Source 来源，1:Web, 2:iOS; 3:Android
@@ -213,22 +216,37 @@ definitions:
     type: object
   models.LoginResult:
     properties:
+      access_token:
+        description: |-
+          Access Token， 请在 HTTP 请求头中添加
+          例子： Authorization: Bearer  TJVA95OrM7E20RMHrHDcEfxjoYZgeFONFh7HgQ
+        type: string
+      account_id:
+        description: 用户ID
+        type: string
+      expires_in:
+        description: 有效期 秒为单位
+        type: integer
+      refresh_token:
+        type: string
       role:
         description: 用户角色，用于客户端权限管理
         type: string
-      token:
-        description: |-
-          Token JWT Token， 请在 HTTP 请求头中添加
-          例子： Authorization: Bearer  TJVA95OrM7E20RMHrHDcEfxjoYZgeFONFh7HgQ
+      scope:
+        type: string
+      token_type:
         type: string
     type: object
   models.MobileLoginReq:
     properties:
+      client_id:
+        description: ClientID
+        type: string
       mobile:
         description: Mobile 手机号码
         type: string
       password:
-        description: Password 密码，服务端不保存密码的明文值，请在提交前进行 MD5 哈希
+        description: Password 密码
         type: string
       prefix:
         description: Prefix 电话号码前缀，例如86
@@ -243,7 +261,7 @@ definitions:
         description: 手机号码
         type: string
       password:
-        description: 密码 后端不保存明文密码，请于前端求得当前密码MD5哈希值后发送给后端
+        description: 密码
         type: string
       prefix:
         description: Prefix 电话号码前缀，例如86
