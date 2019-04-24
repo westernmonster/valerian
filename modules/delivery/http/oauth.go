@@ -22,6 +22,7 @@ type AuthCtrl struct {
 		GetByID(bizCtx *biz.BizContext, userID int64) (item *repo.Account, err error)
 		EmailLogin(ctx *biz.BizContext, req *models.EmailLoginReq, ip string) (loginResult *models.LoginResult, err error)
 		MobileLogin(ctx *biz.BizContext, req *models.MobileLoginReq, ip string) (loginResult *models.LoginResult, err error)
+		DigitLogin(ctx *biz.BizContext, req *models.DigitLoginReq, ip string) (loginResult *models.LoginResult, err error)
 		EmailRegister(bizCtx *biz.BizContext, req *models.EmailRegisterReq, ip string) (err error)
 		MobileRegister(bizCtx *biz.BizContext, req *models.MobileRegisterReq, ip string) (err error)
 		ForgetPassword(bizCtx *biz.BizContext, req *models.ForgetPasswordReq) (sessionID int64, err error)
@@ -187,6 +188,56 @@ func (p *AuthCtrl) MobileLogin(ctx *gin.Context) {
 	ip := ctx.ClientIP()
 	bizCtx := p.GetBizContext(ctx)
 	result, err := p.OauthUsecase.MobileLogin(bizCtx, req, ip)
+	if err != nil {
+		p.HandleError(ctx, err)
+		return
+	}
+
+	cookie, err := p.createCookie(result.AccessToken)
+	if err != nil {
+		p.HandleError(ctx, err)
+		return
+	}
+	http.SetCookie(ctx.Writer, cookie)
+	p.SuccessResp(ctx, result)
+
+	return
+}
+
+// DigitLogin 验证码登录
+// @Summary 验证码登录
+// @Description 验证码登录
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param req body models.DigitLoginReq true "手机登录"
+// @Success 200 {object} models.LoginResult "成功"
+// @Failure 400 "验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /oauth/login/digit [post]
+func (p *AuthCtrl) DigitLogin(ctx *gin.Context) {
+	req := new(models.DigitLoginReq)
+
+	if e := ctx.Bind(req); e != nil {
+		p.HandleError(ctx, e)
+		return
+	}
+
+	if e := req.Validate(); e != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, infrastructure.RespCommon{
+			Success: false,
+			Code:    http.StatusBadRequest,
+			Message: e.Error(),
+		})
+
+		return
+	}
+
+	ip := ctx.ClientIP()
+	bizCtx := p.GetBizContext(ctx)
+	result, err := p.OauthUsecase.DigitLogin(bizCtx, req, ip)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return

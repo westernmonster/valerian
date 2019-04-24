@@ -53,6 +53,7 @@ const (
 const (
 	ValcodeRegister       = 1
 	ValcodeForgetPassword = 2
+	ValcodeLogin          = 3
 )
 
 const (

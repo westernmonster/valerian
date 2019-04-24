@@ -160,6 +160,24 @@ definitions:
         description: 查看权限
         type: integer
     type: object
+  models.DigitLoginReq:
+    properties:
+      client_id:
+        description: ClientID
+        type: string
+      mobile:
+        description: 手机号码
+        type: string
+      prefix:
+        description: Prefix 国际区号，例如86
+        type: string
+      source:
+        description: Source 来源，1:Web, 2:iOS; 3:Android
+        type: integer
+      valcode:
+        description: 验证码 6位数字
+        type: string
+    type: object
   models.EmailLoginReq:
     properties:
       client_id:
@@ -228,13 +246,16 @@ definitions:
         description: 有效期 秒为单位
         type: integer
       refresh_token:
+        description: Refresh Token 暂不使用
         type: string
       role:
         description: 用户角色，用于客户端权限管理
         type: string
       scope:
+        description: Scope 暂不使用
         type: string
       token_type:
+        description: Token 类型，默认为 Bearer
         type: string
     type: object
   models.MobileLoginReq:
@@ -249,7 +270,7 @@ definitions:
         description: Password 密码
         type: string
       prefix:
-        description: Prefix 电话号码前缀，例如86
+        description: Prefix 国际区号，例如86
         type: string
       source:
         description: Source 来源，1:Web, 2:iOS; 3:Android
@@ -362,7 +383,7 @@ definitions:
   models.RequestMobileValcodeReq:
     properties:
       code_type:
-        description: 验证码类型, 1为注册验证码, 2为重置密码验证码
+        description: 验证码类型, 1为注册验证码, 2为重置密码验证码, 3为登录验证码
         type: integer
       mobile:
         description: 手机号码
@@ -942,6 +963,51 @@ paths:
       summary: 更改密码
       tags:
       - account
+  /oauth/login/digit:
+    post:
+      consumes:
+      - application/json
+      description: 验证码登录
+      parameters:
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 手机登录
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/models.DigitLoginReq'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/models.LoginResult'
+            type: object
+        "400":
+          description: 验证失败
+        "500":
+          description: 服务器端错误
+      summary: 验证码登录
+      tags:
+      - auth
   /oauth/login/email:
     post:
       consumes:

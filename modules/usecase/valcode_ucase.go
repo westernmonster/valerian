@@ -157,6 +157,12 @@ func (p *ValcodeUsecase) RequestMobileValcode(ctx *biz.BizContext, req *models.R
 			return
 		}
 		break
+	case models.ValcodeLogin:
+		if e := p.SMSClient.SendResetPasswordValcode(phone, valcode); e != nil {
+			err = tracerr.Wrap(e)
+			return
+		}
+		break
 	default:
 		err = berr.Errorf("未知的验证码类型")
 		return

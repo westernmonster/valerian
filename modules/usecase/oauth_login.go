@@ -165,6 +165,91 @@ func (p *OauthUsecase) MobileLogin(ctx *biz.BizContext, req *models.MobileLoginR
 	return
 }
 
+// DigitLogin 验证码登录
+func (p *OauthUsecase) DigitLogin(ctx *biz.BizContext, req *models.DigitLoginReq, ip string) (loginResult *models.LoginResult, err error) {
+	tx, err := p.Node.Beginx()
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+	defer tx.Rollback()
+
+	client, exist, err := p.OauthClientRepository.GetByCondition(tx, map[string]string{
+		"client_id": req.ClientID,
+	})
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+
+	if !exist {
+		err = berr.Errorf("未找到该client")
+		return
+	}
+
+	user, exist, errGet := p.AccountRepository.GetByCondition(tx, map[string]string{
+		"mobile": req.Prefix + req.Mobile,
+	})
+	if errGet != nil {
+		err = tracerr.Wrap(errGet)
+		return
+	}
+
+	if !exist {
+		err = berr.Errorf("为找到该手机号")
+		return
+	}
+
+	// Valcode
+	mobile := req.Prefix + req.Mobile
+	correct, valcodeItem, errValcode := p.ValcodeRepository.IsCodeCorrect(tx, mobile, models.ValcodeLogin, req.Valcode)
+	if errValcode != nil {
+		err = tracerr.Wrap(errValcode)
+		return
+	}
+	if !correct {
+		err = berr.Errorf("验证码不正确或已经使用")
+		return
+	}
+	valcodeItem.Used = 1
+
+	err = p.ValcodeRepository.Update(tx, valcodeItem)
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+
+	token, err := p.grantAccessToken(tx, client, user, models.ExpiresIn, "")
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+
+	loginResult = &models.LoginResult{
+		AccountID:    user.ID,
+		Role:         user.Role,
+		AccessToken:  token.Token,
+		ExpiresIn:    models.ExpiresIn,
+		TokenType:    "Bearer",
+		Scope:        "",
+		RefreshToken: "",
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+	return
+
+	err = tx.Commit()
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+	return
+}
+
 func (p *OauthUsecase) grantAccessToken(node sqalx.Node, client *repo.OauthClient, user *repo.Account, expiresIn int, scope string) (token *repo.OauthAccessToken, err error) {
 	tx, err := node.Beginx()
 	if err != nil {

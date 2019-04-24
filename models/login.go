@@ -39,6 +39,42 @@ func (p *EmailLoginReq) Validate() error {
 	)
 }
 
+// 验证码登录
+type DigitLoginReq struct {
+	// 手机号码
+	Mobile string `json:"mobile"`
+	// Prefix 国际区号，例如86
+	Prefix string `json:"prefix"`
+	// 验证码 6位数字
+	Valcode string `json:"valcode"`
+	// Source 来源，1:Web, 2:iOS; 3:Android
+	Source int `json:"source"`
+
+	// ClientID
+	ClientID string `json:"client_id"`
+}
+
+func (p *DigitLoginReq) Validate() error {
+	return validation.ValidateStruct(
+		p,
+		validation.Field(&p.Mobile,
+			validation.Required.Error(`请输入手机号码`),
+			ValidateMobile(p.Prefix),
+		),
+		validation.Field(&p.Prefix,
+			validation.Required.Error(`请输入国际区号`),
+		),
+		validation.Field(&p.Valcode,
+			validation.Required.Error(`请输入验证码`),
+			validation.RuneLength(6, 6).Error(`验证码必须为6位数字`),
+			is.Digit.Error("验证码必须为6位数字")),
+		validation.Field(&p.Source,
+			validation.Required.Error(`请输入来源`),
+			validation.In(SourceAndroid, SourceiOS, SourceWeb).Error("来源不在允许范围内")),
+		validation.Field(&p.ClientID, validation.Required.Error(`"client_id" is required`)),
+	)
+}
+
 // 手机登录请求
 // swagger:model
 type MobileLoginReq struct {
@@ -46,7 +82,7 @@ type MobileLoginReq struct {
 	Source int `json:"source"`
 	// Mobile 手机号码
 	Mobile string `json:"mobile"`
-	// Prefix 电话号码前缀，例如86
+	// Prefix 国际区号，例如86
 	Prefix string `json:"prefix"`
 	// Password 密码
 	Password string `json:"password"`
