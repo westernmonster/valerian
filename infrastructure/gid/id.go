@@ -13,7 +13,6 @@ var WorkerID = int64(1)
 var generator *snowflake.Node
 
 func NextID() (ts int64, err error) {
-
 	if generator == nil {
 		if iw, err := snowflake.NewNode(WorkerID); err != nil {
 			return 0, err

@@ -87,6 +87,10 @@ const (
 	IDCertificationFailed      = 2
 )
 
+const (
+	HeaderStatusCode = "flywiki-status-code"
+)
+
 // x-app-version App 版本号  3.22
 // x-app-versioncode App 版本号 1024
 // x-app-build release/debug
