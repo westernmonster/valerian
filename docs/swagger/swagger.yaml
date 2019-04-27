@@ -245,6 +245,9 @@ definitions:
       expires_in:
         description: 有效期 秒为单位
         type: integer
+      profile:
+        $ref: '#/definitions/models.ProfileResp'
+        type: object
       refresh_token:
         description: Refresh Token 暂不使用
         type: string

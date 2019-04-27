@@ -60,7 +60,7 @@ type ProfileResp struct {
 	// 来源，1:Web, 2:iOS; 3:Android
 	Source int `json:"source"`
 	// IP 注册IP
-	IP *string `json:"ip, omitempty"`
+	IP *string `json:"ip,omitempty"`
 	// 注册时间
 	CreatedAt int64 `json:"created_at"`
 	// 更新时间

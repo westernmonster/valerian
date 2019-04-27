@@ -11,6 +11,7 @@ import (
 	"git.flywk.com/flywiki/api/infrastructure/email"
 	"git.flywk.com/flywiki/api/infrastructure/sms"
 	"git.flywk.com/flywiki/api/modules/delivery/http"
+	"git.flywk.com/flywiki/api/modules/middleware"
 	"git.flywk.com/flywiki/api/modules/repo"
 	"git.flywk.com/flywiki/api/modules/usecase"
 )
@@ -21,6 +22,8 @@ func Configure(p *bootstrap.Bootstrapper) {
 		panic(err)
 		return
 	}
+
+	auth := middleware.New()
 
 	api := p.Group("/api/v1")
 	{
@@ -68,10 +71,10 @@ func Configure(p *bootstrap.Bootstrapper) {
 		api.POST("/valcodes/mobile", valcodeCtrl.RequestMobileValcode)
 
 		// 账户
-		// accountCtrl := http.NewAccountCtrl(db, node)
-		// api.PUT("/me/password", authserver.HandleTokenVerify(), accountCtrl.ChangePassword)
-		// api.GET("/me", authserver.HandleTokenVerify(), accountCtrl.GetProfile)
-		// api.PUT("/me", authserver.HandleTokenVerify(), accountCtrl.UpdateProfile)
+		accountCtrl := http.NewAccountCtrl(db, node)
+		api.PUT("/me/password", auth.User, accountCtrl.ChangePassword)
+		api.GET("/me", auth.User, accountCtrl.GetProfile)
+		api.PUT("/me", auth.User, accountCtrl.UpdateProfile)
 
 		// 电话区域码
 		countryCodeCtrl := http.NewCountryCodeCtrl(db, node)
@@ -83,14 +86,14 @@ func Configure(p *bootstrap.Bootstrapper) {
 
 		// 话题分类
 		topicCategoryCtrl := http.NewTopicCategoryCtrl(db, node)
-		api.GET("/topic_categories", topicCategoryCtrl.GetAll)
-		api.GET("/topic_categories/hierarchy", topicCategoryCtrl.GetHierarchyOfAll)
-		api.PUT("/topic_categories/:id", topicCategoryCtrl.Update)
-		api.POST("/topic_categories", topicCategoryCtrl.Create)
-		api.DELETE("/topic_categories/:id", topicCategoryCtrl.Delete)
-		api.PATCH("/topic_categories", topicCategoryCtrl.BulkSave)
+		api.GET("/topic_categories", auth.User, topicCategoryCtrl.GetAll)
+		api.GET("/topic_categories/hierarchy", auth.User, topicCategoryCtrl.GetHierarchyOfAll)
+		api.PUT("/topic_categories/:id", auth.User, topicCategoryCtrl.Update)
+		api.POST("/topic_categories", auth.User, topicCategoryCtrl.Create)
+		api.DELETE("/topic_categories/:id", auth.User, topicCategoryCtrl.Delete)
+		api.PATCH("/topic_categories", auth.User, topicCategoryCtrl.BulkSave)
 
 		fileCtrl := &http.FileCtrl{}
-		api.POST("/files/oss_token", fileCtrl.GetOSSToken)
+		api.POST("/files/oss_token", auth.User, fileCtrl.GetOSSToken)
 	}
 }

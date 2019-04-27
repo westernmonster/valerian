@@ -128,6 +128,8 @@ type LoginResult struct {
 	Scope string `json:"scope"`
 	// Refresh Token 暂不使用
 	RefreshToken string `json:"refresh_token,omitempty"`
+
+	Profile *ProfileResp `json:"profile"`
 }
 
 func ValidateMobile(prefix string) *ValidateIdentityRule {

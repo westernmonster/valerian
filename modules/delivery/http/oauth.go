@@ -30,81 +30,6 @@ type AuthCtrl struct {
 	}
 }
 
-func GetBearer(auth []string) (jwt string, ok bool) {
-	// for _, v := range auth {
-	// 	ret := strings.Split(v, " ")
-	// 	if len(ret) == 2 && ret[0] == "Bearer" {
-	// 		return ret[1], true
-	// 	}
-	// }
-	// return "", false
-	// }
-
-	// // Auth godoc
-	// func (p *AuthCtrl) Auth(ctx *gin.Context) {
-	// tokenStr := ""
-
-	// if v, ok := GetBearer(ctx.Request.Header["Authorization"]); ok {
-	// 	tokenStr = v
-	// } else {
-	// 	cookieValue, err := ctx.Cookie("token")
-	// 	if err == nil {
-	// 		tokenStr = cookieValue
-	// 	}
-	// }
-
-	// if tokenStr == "" {
-	// 	ctx.AbortWithStatusJSON(http.StatusUnauthorized, map[string]interface{}{
-	// 		"code":    http.StatusUnauthorized,
-	// 		"success": false,
-	// 		"message": "jwt token is not set",
-	// 	})
-	// 	return
-	// }
-
-	// claims := new(infrastructure.TokenClaims)
-
-	// token, err := jwt.ParseWithClaims(tokenStr, claims, func(*jwt.Token) (interface{}, error) {
-	// 	return []byte(infrastructure.TokenSigningKey), nil
-	// })
-
-	// if err != nil {
-	// 	logrus.Error(fmt.Sprintf("Error parsing token: %v", err))
-	// 	ctx.AbortWithStatusJSON(http.StatusUnauthorized, map[string]interface{}{
-	// 		"code":    http.StatusUnauthorized,
-	// 		"success": false,
-	// 		"message": "服务器端发生错误",
-	// 	})
-	// 	return
-	// }
-
-	// if claims, ok := token.Claims.(*infrastructure.TokenClaims); ok && token.Valid {
-	// 	account, err := p.OauthUsecase.GetByID(nil, claims.AccountID)
-	// 	if err != nil {
-	// 		logrus.Error(fmt.Sprintf("Error on fetch user info: %v", err))
-	// 		ctx.AbortWithStatusJSON(http.StatusUnauthorized, map[string]interface{}{
-	// 			"code":    http.StatusUnauthorized,
-	// 			"success": false,
-	// 			"message": "服务器端发生错误",
-	// 		})
-	// 		return
-	// 	}
-
-	// 	ctx.Set("AccountID", account.ID)
-	// 	ctx.Set("Role", claims.Role)
-	// 	ctx.Next()
-	// } else {
-	// 	logrus.Error(fmt.Sprintf("Error parsing token: %v", err))
-	// 	ctx.AbortWithStatusJSON(http.StatusUnauthorized, map[string]interface{}{
-	// 		"code":    http.StatusUnauthorized,
-	// 		"success": false,
-	// 		"message": "服务器端发生错误",
-	// 	})
-	// 	return
-	// }
-	return
-}
-
 // EmailLogin 用户邮件登录
 // @Summary 用户邮件登录
 // @Description 用户邮件登录
@@ -441,6 +366,7 @@ func (p *AuthCtrl) createCookie(token string) (cookie *http.Cookie, err error) {
 	cookie.Name = "token"
 	cookie.MaxAge = age
 	cookie.HttpOnly = true
+	cookie.Path = "/"
 	cookie.Value = token
 	return
 }

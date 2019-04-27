@@ -95,6 +95,7 @@ func (p *AccountCtrl) ChangePassword(ctx *gin.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /me [put]
 func (p *AccountCtrl) UpdateProfile(ctx *gin.Context) {
+
 	req := new(models.UpdateProfileReq)
 
 	if e := ctx.Bind(req); e != nil {
