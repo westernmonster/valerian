@@ -1,6 +1,7 @@
 SELECT
     a.id,
-    a.en_name,
+    a.name,
+    a.emoji,
     a.cn_name,
     a.code,
     a.prefix,

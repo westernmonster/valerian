@@ -903,7 +903,11 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "成功"
+                        "description": "成功",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/models.LoginResult"
+                        }
                     },
                     "400": {
                         "description": "验证失败"
@@ -964,7 +968,11 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "成功"
+                        "description": "成功",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/models.LoginResult"
+                        }
                     },
                     "400": {
                         "description": "验证失败"
@@ -1833,12 +1841,16 @@
                     "description": "编码",
                     "type": "string"
                 },
-                "en_name": {
-                    "description": "国家英文名",
+                "emoji": {
+                    "description": "国旗",
                     "type": "string"
                 },
                 "id": {
                     "description": "ID",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "国家名",
                     "type": "string"
                 },
                 "prefix": {

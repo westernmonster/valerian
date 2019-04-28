@@ -1,17 +1,19 @@
 INSERT INTO country_codes(
     id,
-    en_name,
+    name,
     cn_name,
     code,
+    emoji,
     prefix,
     deleted,
     created_at,
     updated_at
 ) VALUES (
     :id,
-    :en_name,
+    :name,
     :cn_name,
     :code,
+    :emoji,
     :prefix,
     :deleted,
     :created_at,

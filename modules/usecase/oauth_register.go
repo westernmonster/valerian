@@ -22,7 +22,7 @@ func (p *OauthUsecase) GetByID(ctx *biz.BizContext, userID int64) (item *repo.Ac
 	return
 }
 
-func (p *OauthUsecase) EmailRegister(ctx *biz.BizContext, req *models.EmailRegisterReq, ip string) (err error) {
+func (p *OauthUsecase) EmailRegister(ctx *biz.BizContext, req *models.EmailRegisterReq, ip string) (accountID int64, err error) {
 	tx, err := p.Node.Beginx()
 	if err != nil {
 		err = tracerr.Wrap(err)
@@ -99,11 +99,13 @@ func (p *OauthUsecase) EmailRegister(ctx *biz.BizContext, req *models.EmailRegis
 		err = tracerr.Wrap(err)
 		return
 	}
+
+	accountID = id
 	return
 
 }
 
-func (p *OauthUsecase) MobileRegister(ctx *biz.BizContext, req *models.MobileRegisterReq, ip string) (err error) {
+func (p *OauthUsecase) MobileRegister(ctx *biz.BizContext, req *models.MobileRegisterReq, ip string) (accountID int64, err error) {
 	tx, err := p.Node.Beginx()
 	if err != nil {
 		err = tracerr.Wrap(err)
@@ -182,5 +184,7 @@ func (p *OauthUsecase) MobileRegister(ctx *biz.BizContext, req *models.MobileReg
 		err = tracerr.Wrap(err)
 		return
 	}
+
+	accountID = id
 	return
 }

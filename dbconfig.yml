@@ -1,12 +1,12 @@
 development:
     dialect: mysql
-    datasource: flywk:flywk@/flywk_dev?parseTime=true
+    datasource: flywk:flywk@/flywk_dev?parseTime=true&charset=utf8mb4
     dir: migrations
     table: migrations
 
 production:
     dialect: mysql
-    datasource: flywk:flywk@/flywk_prod?parseTime=true
+    datasource: flywk:flywk@/flywk_prod?parseTime=true&charset=utf8mb4
     dir: migrations
     table: migrations
 

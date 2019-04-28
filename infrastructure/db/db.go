@@ -40,7 +40,7 @@ func ConstructDBConnStr(config map[string]string) (connStr string, err error) {
 	}
 
 	if config["dialect"] == "mysql" {
-		connStr = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true",
+		connStr = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true&charset=utf8mb4",
 			config["username"],
 			config["password"],
 			config["host"],

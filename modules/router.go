@@ -41,8 +41,15 @@ func Configure(p *bootstrap.Bootstrapper) {
 				OauthClientRepository:      &repo.OauthClientRepository{},
 				OauthAccessTokenRepository: &repo.OauthAccessTokenRepository{},
 			},
+			AccountUsecase: &usecase.AccountUsecase{
+				Node:              node,
+				DB:                db,
+				AccountRepository: &repo.AccountRepository{},
+				AreaRepository:    &repo.AreaRepository{},
+			},
 		}
 
+		api.POST("/oauth/logout", authCtrl.Logout)
 		api.POST("/oauth/login/email", authCtrl.EmailLogin)
 		api.POST("/oauth/login/mobile", authCtrl.MobileLogin)
 		api.POST("/oauth/registration/email", authCtrl.EmailRegister)

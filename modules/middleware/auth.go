@@ -80,7 +80,6 @@ func (p *Auth) AuthToken(ctx *gin.Context) (accountID int64, err error) {
 	}
 
 	token, err := p.OauthUsecase.GetTokenInfo(tokenStr)
-	fmt.Println(token)
 	if err != nil {
 		return 0, ecode.NoLogin
 	}
@@ -90,7 +89,6 @@ func (p *Auth) AuthToken(ctx *gin.Context) (accountID int64, err error) {
 
 // AuthCookie is used to authorize request by cookie
 func (p *Auth) AuthCookie(ctx *gin.Context) (int64, error) {
-
 	tokenStr := ""
 	cookieValue, err := ctx.Cookie("token")
 	if err == nil {
@@ -98,8 +96,6 @@ func (p *Auth) AuthCookie(ctx *gin.Context) (int64, error) {
 	} else {
 		return 0, ecode.NoLogin
 	}
-
-	fmt.Println(tokenStr)
 
 	token, err := p.OauthUsecase.GetTokenInfo(tokenStr)
 	if err != nil {

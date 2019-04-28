@@ -3,15 +3,17 @@ package repo
 import (
 	"database/sql"
 	"fmt"
+	"time"
+
 	packr "github.com/gobuffalo/packr"
 	sqalx "github.com/westernmonster/sqalx"
 	tracerr "github.com/ztrue/tracerr"
-	"time"
 )
 
 type CountryCode struct {
 	ID        int64  `db:"id" json:"id,string"`          // ID ID
-	EnName    string `db:"en_name" json:"en_name"`       // EnName 国家英文名
+	Name      string `db:"name" json:"name"`             // Name 国家名
+	Emoji     string `db:"emoji" json:"emoji"`           // Emoji 国旗
 	CnName    string `db:"cn_name" json:"cn_name"`       // CnName 国家中文名
 	Code      string `db:"code" json:"code"`             // Code 编码
 	Prefix    string `db:"prefix" json:"prefix"`         // Prefix 前缀
@@ -89,9 +91,9 @@ func (p *CountryCodeRepository) GetAllByCondition(node sqalx.Node, cond map[stri
 		clause += " AND a.id =:id"
 		condition["id"] = val
 	}
-	if val, ok := cond["en_name"]; ok {
-		clause += " AND a.en_name =:en_name"
-		condition["en_name"] = val
+	if val, ok := cond["name"]; ok {
+		clause += " AND a.name =:name"
+		condition["name"] = val
 	}
 	if val, ok := cond["cn_name"]; ok {
 		clause += " AND a.cn_name =:cn_name"
@@ -156,9 +158,9 @@ func (p *CountryCodeRepository) GetByCondition(node sqalx.Node, cond map[string]
 		clause += " AND a.id =:id"
 		condition["id"] = val
 	}
-	if val, ok := cond["en_name"]; ok {
-		clause += " AND a.en_name =:en_name"
-		condition["en_name"] = val
+	if val, ok := cond["name"]; ok {
+		clause += " AND a.name =:name"
+		condition["name"] = val
 	}
 	if val, ok := cond["cn_name"]; ok {
 		clause += " AND a.cn_name =:cn_name"

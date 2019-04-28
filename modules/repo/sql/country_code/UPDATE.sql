@@ -1,8 +1,9 @@
 UPDATE country_codes
 SET
-    en_name=:en_name,
+    name=:name,
     cn_name=:cn_name,
     code=:code,
+    emoji=:emoji,
     prefix=:prefix,
     updated_at=:updated_at
 WHERE id=:id

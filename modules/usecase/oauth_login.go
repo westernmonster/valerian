@@ -4,6 +4,7 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -356,6 +357,9 @@ func (p *OauthUsecase) GetTokenInfo(tokenStr string) (claims *infrastructure.Tok
 		}
 		return []byte(models.JWTSignKey), nil
 	})
+
+	fmt.Println(1)
+	fmt.Println(err)
 	if err != nil {
 		return
 	}
