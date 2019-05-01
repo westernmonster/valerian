@@ -27,10 +27,8 @@ type RequestOSSTokenReq struct {
 	// 文件类型
 	// file: 文章附件
 	// image: 图片
-	// certificatin: 工作证件照片
+	// certification: 工作证件照片
 	// other: 其他
-	//
-	// required: true
 	FileType string `json:"file_type"`
 }
 

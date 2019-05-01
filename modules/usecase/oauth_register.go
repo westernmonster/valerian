@@ -1,14 +1,16 @@
 package usecase
 
 import (
+	"fmt"
+
 	"github.com/ztrue/tracerr"
 
-	"git.flywk.com/flywiki/api/infrastructure/berr"
-	"git.flywk.com/flywiki/api/infrastructure/biz"
-	"git.flywk.com/flywiki/api/infrastructure/gid"
-	"git.flywk.com/flywiki/api/infrastructure/helper"
-	"git.flywk.com/flywiki/api/models"
-	"git.flywk.com/flywiki/api/modules/repo"
+	"valerian/infrastructure/berr"
+	"valerian/infrastructure/biz"
+	"valerian/infrastructure/gid"
+	"valerian/infrastructure/helper"
+	"valerian/models"
+	"valerian/modules/repo"
 )
 
 func (p *OauthUsecase) GetByID(ctx *biz.BizContext, userID int64) (item *repo.Account, err error) {
@@ -66,6 +68,7 @@ func (p *OauthUsecase) EmailRegister(ctx *biz.BizContext, req *models.EmailRegis
 		err = tracerr.Wrap(err)
 		return
 	}
+
 	item.Password = passwordHash
 	item.Salt = salt
 	item.Role = "user"
@@ -146,11 +149,15 @@ func (p *OauthUsecase) MobileRegister(ctx *biz.BizContext, req *models.MobileReg
 		err = tracerr.Wrap(err)
 		return
 	}
+
+	fmt.Printf("salt: %s\n", salt)
 	passwordHash, err := hashPassword(req.Password, salt)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
 	}
+
+	fmt.Printf("hash: %s\n", passwordHash)
 	item.Password = passwordHash
 	item.Salt = salt
 	item.Role = "user"

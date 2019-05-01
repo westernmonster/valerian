@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"git.flywk.com/flywiki/api/infrastructure/email/tmpl"
-	"git.flywk.com/flywiki/api/infrastructure/email/tmpl/layouts"
+	"valerian/infrastructure/email/tmpl"
+	"valerian/infrastructure/email/tmpl/layouts"
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk"
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk/requests"
 	"github.com/sirupsen/logrus"

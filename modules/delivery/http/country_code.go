@@ -1,11 +1,11 @@
 package http
 
 import (
-	"git.flywk.com/flywiki/api/infrastructure"
-	"git.flywk.com/flywiki/api/infrastructure/biz"
-	"git.flywk.com/flywiki/api/models"
-	"git.flywk.com/flywiki/api/modules/repo"
-	"git.flywk.com/flywiki/api/modules/usecase"
+	"valerian/infrastructure"
+	"valerian/infrastructure/biz"
+	"valerian/models"
+	"valerian/modules/repo"
+	"valerian/modules/usecase"
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
 	"github.com/westernmonster/sqalx"

@@ -6,7 +6,7 @@ package tmpl
 
 //line infrastructure/email/tmpl/reset_valcode.qtpl:1
 import (
-	"git.flywk.com/flywiki/api/infrastructure/email/tmpl/layouts"
+	"valerian/infrastructure/email/tmpl/layouts"
 )
 
 //line infrastructure/email/tmpl/reset_valcode.qtpl:6

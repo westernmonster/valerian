@@ -6,14 +6,14 @@ import (
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk"
 	"github.com/spf13/viper"
 
-	"git.flywk.com/flywiki/api/infrastructure/bootstrap"
-	"git.flywk.com/flywiki/api/infrastructure/db"
-	"git.flywk.com/flywiki/api/infrastructure/email"
-	"git.flywk.com/flywiki/api/infrastructure/sms"
-	"git.flywk.com/flywiki/api/modules/delivery/http"
-	"git.flywk.com/flywiki/api/modules/middleware"
-	"git.flywk.com/flywiki/api/modules/repo"
-	"git.flywk.com/flywiki/api/modules/usecase"
+	"valerian/infrastructure/bootstrap"
+	"valerian/infrastructure/db"
+	"valerian/infrastructure/email"
+	"valerian/infrastructure/sms"
+	"valerian/modules/delivery/http"
+	"valerian/modules/middleware"
+	"valerian/modules/repo"
+	"valerian/modules/usecase"
 )
 
 func Configure(p *bootstrap.Bootstrapper) {

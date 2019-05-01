@@ -15,8 +15,8 @@ import (
 	"github.com/spf13/viper"
 	"github.com/ztrue/tracerr"
 
-	"git.flywk.com/flywiki/api/infrastructure"
-	"git.flywk.com/flywiki/api/models"
+	"valerian/infrastructure"
+	"valerian/models"
 )
 
 const (
@@ -133,7 +133,7 @@ type FileCtrl struct {
 // @Failure 400 "验证失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /files/oss_token [get]
+// @Router /files/oss_token [post]
 func (p *FileCtrl) GetOSSToken(ctx *gin.Context) {
 	req := new(models.RequestOSSTokenReq)
 

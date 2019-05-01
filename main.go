@@ -8,10 +8,10 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger" // gin-swagger middleware
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 
-	_ "git.flywk.com/flywiki/api/docs"
-	"git.flywk.com/flywiki/api/infrastructure/bootstrap"
-	"git.flywk.com/flywiki/api/infrastructure/locale"
-	"git.flywk.com/flywiki/api/modules"
+	_ "valerian/docs"
+	"valerian/infrastructure/bootstrap"
+	"valerian/infrastructure/locale"
+	"valerian/modules"
 )
 
 func newApp() *bootstrap.Bootstrapper {

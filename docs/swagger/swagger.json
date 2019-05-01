@@ -65,7 +65,7 @@
             }
         },
         "/files/oss_token": {
-            "get": {
+            "post": {
                 "description": "获取阿里云OSS上传TOKEN\n阿里云文档：https://help.aliyun.com/document_detail/31926.html",
                 "consumes": [
                     "application/json"
@@ -697,6 +697,57 @@
                             "type": "object",
                             "$ref": "#/definitions/models.LoginResult"
                         }
+                    },
+                    "400": {
+                        "description": "验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/oauth/logout": {
+            "post": {
+                "description": "退出登录",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "退出登录",
+                "parameters": [
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "来源",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功"
                     },
                     "400": {
                         "description": "验证失败"

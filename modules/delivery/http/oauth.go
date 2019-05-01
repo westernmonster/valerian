@@ -7,12 +7,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"git.flywk.com/flywiki/api/infrastructure"
-	"git.flywk.com/flywiki/api/infrastructure/berr"
-	"git.flywk.com/flywiki/api/infrastructure/biz"
-	"git.flywk.com/flywiki/api/infrastructure/helper"
-	"git.flywk.com/flywiki/api/models"
-	"git.flywk.com/flywiki/api/modules/repo"
+	"valerian/infrastructure"
+	"valerian/infrastructure/berr"
+	"valerian/infrastructure/biz"
+	"valerian/infrastructure/helper"
+	"valerian/models"
+	"valerian/modules/repo"
 )
 
 type AuthCtrl struct {
@@ -264,6 +264,13 @@ func (p *AuthCtrl) EmailRegister(ctx *gin.Context) {
 
 	result.Profile = profile
 
+	cookie, err := p.createCookie(result.AccessToken)
+	if err != nil {
+		p.HandleError(ctx, err)
+		return
+	}
+	http.SetCookie(ctx.Writer, cookie)
+
 	p.SuccessResp(ctx, result)
 
 	return
@@ -310,6 +317,7 @@ func (p *AuthCtrl) MobileRegister(ctx *gin.Context) {
 		Source:   req.Source,
 		Mobile:   req.Mobile,
 		Password: req.Password,
+		Prefix:   req.Prefix,
 		ClientID: "532c28d5412dd75bf975fb951c740a30",
 	}, ip)
 	if err != nil {
@@ -324,6 +332,13 @@ func (p *AuthCtrl) MobileRegister(ctx *gin.Context) {
 	}
 
 	result.Profile = profile
+
+	cookie, err := p.createCookie(result.AccessToken)
+	if err != nil {
+		p.HandleError(ctx, err)
+		return
+	}
+	http.SetCookie(ctx.Writer, cookie)
 
 	p.SuccessResp(ctx, result)
 

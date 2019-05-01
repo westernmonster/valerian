@@ -4,8 +4,8 @@ import (
 	b64 "encoding/base64"
 	"net/http"
 
-	"git.flywk.com/flywiki/api/infrastructure/berr"
-	"git.flywk.com/flywiki/api/infrastructure/biz"
+	"valerian/infrastructure/berr"
+	"valerian/infrastructure/biz"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"

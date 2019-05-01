@@ -4,9 +4,9 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/westernmonster/sqalx"
 
-	"git.flywk.com/flywiki/api/infrastructure/biz"
-	"git.flywk.com/flywiki/api/models"
-	"git.flywk.com/flywiki/api/modules/repo"
+	"valerian/infrastructure/biz"
+	"valerian/models"
+	"valerian/modules/repo"
 )
 
 type TopicUsecase struct {

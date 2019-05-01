@@ -3,9 +3,9 @@ package http
 import (
 	"net/http"
 
-	"git.flywk.com/flywiki/api/infrastructure"
-	"git.flywk.com/flywiki/api/infrastructure/biz"
-	"git.flywk.com/flywiki/api/models"
+	"valerian/infrastructure"
+	"valerian/infrastructure/biz"
+	"valerian/models"
 	"github.com/gin-gonic/gin"
 )
 

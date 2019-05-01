@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	xtime "git.flywk.com/flywiki/api/infrastructure/time"
+	xtime "valerian/infrastructure/time"
 )
 
 type cfg1 struct {

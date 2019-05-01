@@ -13,13 +13,13 @@ import (
 	"github.com/westernmonster/sqalx"
 	"github.com/ztrue/tracerr"
 
-	"git.flywk.com/flywiki/api/infrastructure"
-	"git.flywk.com/flywiki/api/infrastructure/berr"
-	"git.flywk.com/flywiki/api/infrastructure/biz"
-	"git.flywk.com/flywiki/api/infrastructure/ecode"
-	"git.flywk.com/flywiki/api/infrastructure/gid"
-	"git.flywk.com/flywiki/api/models"
-	"git.flywk.com/flywiki/api/modules/repo"
+	"valerian/infrastructure"
+	"valerian/infrastructure/berr"
+	"valerian/infrastructure/biz"
+	"valerian/infrastructure/ecode"
+	"valerian/infrastructure/gid"
+	"valerian/models"
+	"valerian/modules/repo"
 )
 
 // EmailLogin 登录
@@ -122,7 +122,6 @@ func (p *OauthUsecase) MobileLogin(ctx *biz.BizContext, req *models.MobileLoginR
 		err = tracerr.Wrap(errGet)
 		return
 	}
-
 	if !exist {
 		err = berr.Errorf("未找到该手机号")
 		return

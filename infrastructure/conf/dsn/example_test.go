@@ -3,8 +3,8 @@ package dsn_test
 import (
 	"log"
 
-	"git.flywk.com/flywiki/api/infrastructure/conf/dsn"
-	xtime "git.flywk.com/flywiki/api/infrastructure/time"
+	"valerian/infrastructure/conf/dsn"
+	xtime "valerian/infrastructure/time"
 )
 
 // Config struct

@@ -6,9 +6,9 @@ import (
 	"github.com/westernmonster/sqalx"
 	"github.com/ztrue/tracerr"
 
-	"git.flywk.com/flywiki/api/infrastructure/biz"
-	"git.flywk.com/flywiki/api/models"
-	"git.flywk.com/flywiki/api/modules/repo"
+	"valerian/infrastructure/biz"
+	"valerian/models"
+	"valerian/modules/repo"
 )
 
 type LocaleUsecase struct {

@@ -7,12 +7,12 @@ import (
 	"github.com/westernmonster/sqalx"
 	"github.com/ztrue/tracerr"
 
-	"git.flywk.com/flywiki/api/infrastructure/berr"
-	"git.flywk.com/flywiki/api/infrastructure/biz"
-	"git.flywk.com/flywiki/api/infrastructure/gid"
-	"git.flywk.com/flywiki/api/infrastructure/helper"
-	"git.flywk.com/flywiki/api/models"
-	"git.flywk.com/flywiki/api/modules/repo"
+	"valerian/infrastructure/berr"
+	"valerian/infrastructure/biz"
+	"valerian/infrastructure/gid"
+	"valerian/infrastructure/helper"
+	"valerian/models"
+	"valerian/modules/repo"
 )
 
 type ValcodeUsecase struct {

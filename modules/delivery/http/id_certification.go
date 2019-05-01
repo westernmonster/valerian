@@ -3,9 +3,9 @@ package http
 import (
 	"github.com/gin-gonic/gin"
 
-	"git.flywk.com/flywiki/api/infrastructure"
-	"git.flywk.com/flywiki/api/infrastructure/biz"
-	"git.flywk.com/flywiki/api/infrastructure/cloudauth"
+	"valerian/infrastructure"
+	"valerian/infrastructure/biz"
+	"valerian/infrastructure/cloudauth"
 )
 
 type IDCertificationCtrl struct {

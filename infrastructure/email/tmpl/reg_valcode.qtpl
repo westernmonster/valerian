@@ -1,5 +1,5 @@
 {% import (
-    "git.flywk.com/flywiki/api/infrastructure/email/tmpl/layouts"
+    "valerian/infrastructure/email/tmpl/layouts"
 )
 %}
 

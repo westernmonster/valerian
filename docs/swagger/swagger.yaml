@@ -658,7 +658,7 @@ paths:
       tags:
       - common
   /files/oss_token:
-    get:
+    post:
       consumes:
       - application/json
       description: |-
@@ -1102,6 +1102,41 @@ paths:
         "500":
           description: 服务器端错误
       summary: 用户手机登录
+      tags:
+      - auth
+  /oauth/logout:
+    post:
+      consumes:
+      - application/json
+      description: 退出登录
+      parameters:
+      - description: 来源
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+        "400":
+          description: 验证失败
+        "500":
+          description: 服务器端错误
+      summary: 退出登录
       tags:
       - auth
   /oauth/password/reset:

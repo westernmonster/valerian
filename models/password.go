@@ -3,7 +3,7 @@ package models
 import (
 	"regexp"
 
-	"git.flywk.com/flywiki/api/infrastructure/berr"
+	"valerian/infrastructure/berr"
 	"github.com/asaskevich/govalidator"
 	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/go-ozzo/ozzo-validation/is"
@@ -83,8 +83,7 @@ func (p *ResetPasswordReq) Validate() error {
 	return validation.ValidateStruct(
 		p,
 		validation.Field(&p.Password,
-			validation.Required.Error(`请输入密码`),
-			validation.RuneLength(32, 32).Error(`密码格式不正确`)),
+			validation.Required.Error(`请输入密码`)),
 		validation.Field(&p.SessionID,
 			validation.Required.Error(`请输入 Session ID`)),
 	)
@@ -100,7 +99,6 @@ func (p *ChangePasswordReq) Validate() error {
 	return validation.ValidateStruct(
 		p,
 		validation.Field(&p.Password,
-			validation.Required.Error(`请输入密码`),
-			validation.RuneLength(32, 32).Error(`密码格式不正确`)),
+			validation.Required.Error(`请输入密码`)),
 	)
 }

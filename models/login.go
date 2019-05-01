@@ -3,7 +3,7 @@ package models
 import (
 	"regexp"
 
-	"git.flywk.com/flywiki/api/infrastructure/berr"
+	"valerian/infrastructure/berr"
 	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/go-ozzo/ozzo-validation/is"
 )

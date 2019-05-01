@@ -5,13 +5,13 @@ import (
 	"net/http"
 	"strings"
 
-	"git.flywk.com/flywiki/api/infrastructure"
-	"git.flywk.com/flywiki/api/infrastructure/biz"
-	"git.flywk.com/flywiki/api/infrastructure/db"
-	"git.flywk.com/flywiki/api/infrastructure/ecode"
-	"git.flywk.com/flywiki/api/models"
-	"git.flywk.com/flywiki/api/modules/repo"
-	"git.flywk.com/flywiki/api/modules/usecase"
+	"valerian/infrastructure"
+	"valerian/infrastructure/biz"
+	"valerian/infrastructure/db"
+	"valerian/infrastructure/ecode"
+	"valerian/models"
+	"valerian/modules/repo"
+	"valerian/modules/usecase"
 	"github.com/gin-gonic/gin"
 )
 

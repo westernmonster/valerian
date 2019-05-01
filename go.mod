@@ -1,4 +1,4 @@
-module git.flywk.com/flywiki/api
+module valerian
 
 go 1.12
 
