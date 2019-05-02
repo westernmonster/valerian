@@ -15,6 +15,7 @@ type PolicyToken struct {
 	Policy      string `json:"policy"`
 	Directory   string `json:"dir"`
 	Callback    string `json:"callback"`
+	Key         string `json:"key"`
 }
 
 type CallbackParam struct {
@@ -30,6 +31,9 @@ type RequestOSSTokenReq struct {
 	// certification: 工作证件照片
 	// other: 其他
 	FileType string `json:"file_type"`
+
+	// 文件名
+	FileName string `json:"file_name"`
 }
 
 func (p *RequestOSSTokenReq) Validate() error {
@@ -39,5 +43,7 @@ func (p *RequestOSSTokenReq) Validate() error {
 			validation.Required.Error(`请输入文件类型`),
 			validation.In("file", "image", "other", "certificatin").Error("文件类型不在允许范围内"),
 		),
+		validation.Field(&p.FileName,
+			validation.Required.Error(`请输入文件名`)),
 	)
 }

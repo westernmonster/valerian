@@ -18,6 +18,8 @@ github.com/aliyun/alibaba-cloud-sdk-go/sdk/utils
 github.com/aliyun/alibaba-cloud-sdk-go/sdk/auth/signers
 # github.com/asaskevich/govalidator v0.0.0-20180720115003-f9ffefc3facf
 github.com/asaskevich/govalidator
+# github.com/bitly/go-simplejson v0.5.0
+github.com/bitly/go-simplejson
 # github.com/bwmarrin/snowflake v0.3.0
 github.com/bwmarrin/snowflake
 # github.com/davecgh/go-spew v1.1.1

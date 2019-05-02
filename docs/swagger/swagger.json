@@ -2208,6 +2208,9 @@
                 "host": {
                     "type": "string"
                 },
+                "key": {
+                    "type": "string"
+                },
                 "policy": {
                     "type": "string"
                 },

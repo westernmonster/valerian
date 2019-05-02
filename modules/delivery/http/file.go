@@ -9,6 +9,8 @@ import (
 	"hash"
 	"io"
 	"net/http"
+	"path/filepath"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -16,11 +18,12 @@ import (
 	"github.com/ztrue/tracerr"
 
 	"valerian/infrastructure"
+	"valerian/infrastructure/gid"
 	"valerian/models"
 )
 
 const (
-	Host             = "flywiki.oss-cn-hangzhou.aliyuncs.com"
+	Host             = "https://flywiki.oss-cn-hangzhou.aliyuncs.com"
 	CallbackURL      = "https://dev.flywk.com/api/v1/files/callback"
 	ImageDir         = "images/"
 	FileDir          = "files/"
@@ -42,7 +45,7 @@ func get_gmt_iso8601(expire_end int64) string {
 	return tokenExpire
 }
 
-func GetPolicyToken(fileType string) (token models.PolicyToken, err error) {
+func GetPolicyToken(fileType, fileName string) (token models.PolicyToken, err error) {
 	dir := OtherDir
 	switch fileType {
 	case "image":
@@ -56,6 +59,19 @@ func GetPolicyToken(fileType string) (token models.PolicyToken, err error) {
 		break
 	}
 
+	id, err := gid.NextID()
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+
+	ext := filepath.Ext(fileName)
+	name := strconv.FormatInt(id, 10)
+
+	if ext != "" {
+		name = name + ext
+	}
+
 	mode := viper.Get("MODE")
 	accessKeyID := viper.GetString(fmt.Sprintf("%s.aliyun.access_key_id", mode))
 	accessKeySecret := viper.GetString(fmt.Sprintf("%s.aliyun.access_key_secret", mode))
@@ -67,11 +83,22 @@ func GetPolicyToken(fileType string) (token models.PolicyToken, err error) {
 	//create post policy json
 	var config models.ConfigStruct
 	config.Expiration = tokenExpire
-	var condition []string
-	condition = append(condition, "starts-with")
-	condition = append(condition, "$key")
-	condition = append(condition, dir)
-	config.Conditions = append(config.Conditions, condition)
+	config.Conditions = append(config.Conditions, []string{
+		"content-length-range",
+		"0",
+		strconv.FormatInt(1024*1024*5, 10),
+	})
+
+	config.Conditions = append(config.Conditions, []string{
+		"bucket",
+		"flywiki",
+	})
+
+	config.Conditions = append(config.Conditions, []string{
+		"eq",
+		"$key",
+		dir + name,
+	})
 
 	//calucate signature
 	result, err := json.Marshal(config)
@@ -104,12 +131,7 @@ func GetPolicyToken(fileType string) (token models.PolicyToken, err error) {
 	policyToken.Directory = dir
 	policyToken.Policy = string(debyte)
 	policyToken.Callback = string(callbackBase64)
-
-	// response, err := json.Marshal(policyToken)
-	// if err != nil {
-	// 	err = tracerr.Wrap(err)
-	// 	return
-	// }
+	policyToken.Key = dir + name
 
 	token = policyToken
 	return
@@ -152,7 +174,7 @@ func (p *FileCtrl) GetOSSToken(ctx *gin.Context) {
 		return
 	}
 
-	token, err := GetPolicyToken(req.FileType)
+	token, err := GetPolicyToken(req.FileType, req.FileName)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return
