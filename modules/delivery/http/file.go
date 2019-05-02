@@ -83,18 +83,13 @@ func GetPolicyToken(fileType, fileName string) (token models.PolicyToken, err er
 	//create post policy json
 	var config models.ConfigStruct
 	config.Expiration = tokenExpire
-	config.Conditions = append(config.Conditions, []string{
+	config.Conditions = append(config.Conditions, []interface{}{
 		"content-length-range",
-		"0",
-		strconv.FormatInt(1024*1024*5, 10),
+		0,
+		1024 * 1024 * 5,
 	})
 
-	config.Conditions = append(config.Conditions, []string{
-		"bucket",
-		"flywiki",
-	})
-
-	config.Conditions = append(config.Conditions, []string{
+	config.Conditions = append(config.Conditions, []interface{}{
 		"eq",
 		"$key",
 		dir + name,

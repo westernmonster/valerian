@@ -3,8 +3,8 @@ package models
 import validation "github.com/go-ozzo/ozzo-validation"
 
 type ConfigStruct struct {
-	Expiration string     `json:"expiration"`
-	Conditions [][]string `json:"conditions"`
+	Expiration string          `json:"expiration"`
+	Conditions [][]interface{} `json:"conditions"`
 }
 
 type PolicyToken struct {
