@@ -400,6 +400,20 @@ definitions:
         description: Prefix 电话号码前缀，例如86
         type: string
     type: object
+  models.RequestOSSTokenReq:
+    properties:
+      file_name:
+        description: 文件名
+        type: string
+      file_type:
+        description: |-
+          文件类型
+          file: 文章附件
+          image: 图片
+          certification: 工作证件照片
+          other: 其他
+        type: string
+    type: object
   models.ResetPasswordReq:
     properties:
       password:
@@ -690,10 +704,12 @@ paths:
         required: true
         type: string
       - description: 请求
-        in: query
-        name: file_type
+        in: body
+        name: req
         required: true
-        type: models.RequestOSSTokenReq
+        schema:
+          $ref: '#/definitions/models.RequestOSSTokenReq'
+          type: object
       produces:
       - application/json
       responses:

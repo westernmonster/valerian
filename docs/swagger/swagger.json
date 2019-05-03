@@ -109,11 +109,14 @@
                         "required": true
                     },
                     {
-                        "type": "models.RequestOSSTokenReq",
                         "description": "请求",
-                        "name": "file_type",
-                        "in": "query",
-                        "required": true
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/models.RequestOSSTokenReq"
+                        }
                     }
                 ],
                 "responses": {
@@ -2326,6 +2329,19 @@
                 },
                 "prefix": {
                     "description": "Prefix 电话号码前缀，例如86",
+                    "type": "string"
+                }
+            }
+        },
+        "models.RequestOSSTokenReq": {
+            "type": "object",
+            "properties": {
+                "file_name": {
+                    "description": "文件名",
+                    "type": "string"
+                },
+                "file_type": {
+                    "description": "文件类型\nfile: 文章附件\nimage: 图片\ncertification: 工作证件照片\nother: 其他",
                     "type": "string"
                 }
             }
