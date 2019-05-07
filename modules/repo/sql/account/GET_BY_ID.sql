@@ -3,6 +3,7 @@ SELECT
     a.mobile,
     a.email,
     a.password,
+    a.user_name,
     a.role,
     a.salt,
     a.gender,

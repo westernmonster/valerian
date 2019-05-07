@@ -221,3 +221,4 @@ ALTER TABLE country_codes MODIFY COLUMN emoji varchar(10) NOT NULL AFTER code;
 ALTER TABLE country_codes CHANGE COLUMN `en_name` `name` varchar(50) NOT NULL;
 -- +migrate Down
 ALTER TABLE country_codes DROP COLUMN emoji;
+ALTER TABLE country_codes CHANGE COLUMN `name` `en_name` varchar(50) NOT NULL;

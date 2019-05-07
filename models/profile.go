@@ -41,6 +41,9 @@ type ProfileResp struct {
 	Mobile string `json:"mobile" format:"mobile"`
 	// 邮件地址
 	Email string `json:"email" format:"email"`
+
+	// 用户名
+	UserName string `json:"user_name" format:"user_name"`
 	// 性别 1为男， 2为女
 	Gender *int `json:"gender,omitempty"`
 	// 出生年

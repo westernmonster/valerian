@@ -4,7 +4,6 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
-	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -160,13 +159,6 @@ func (p *OauthUsecase) MobileLogin(ctx *biz.BizContext, req *models.MobileLoginR
 		return
 	}
 	return
-
-	err = tx.Commit()
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-	return
 }
 
 // DigitLogin 验证码登录
@@ -246,12 +238,6 @@ func (p *OauthUsecase) DigitLogin(ctx *biz.BizContext, req *models.DigitLoginReq
 	}
 	return
 
-	err = tx.Commit()
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-	return
 }
 
 func (p *OauthUsecase) grantAccessToken(node sqalx.Node, client *repo.OauthClient, user *repo.Account, expiresIn int, scope string) (token *repo.OauthAccessToken, err error) {
@@ -357,8 +343,6 @@ func (p *OauthUsecase) GetTokenInfo(tokenStr string) (claims *infrastructure.Tok
 		return []byte(models.JWTSignKey), nil
 	})
 
-	fmt.Println(1)
-	fmt.Println(err)
 	if err != nil {
 		return
 	}

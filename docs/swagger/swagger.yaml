@@ -89,33 +89,10 @@ definitions:
           example: 86
         type: string
     type: object
-  models.CreateTopicCategoryReq:
-    properties:
-      name:
-        description: |-
-          分类名
-          required: true
-        type: string
-      parent_id:
-        description: |-
-          ParentID 父级ID, 一级分类的父ID为 0
-          required: true
-        type: string
-      seq:
-        description: |-
-          顺序
-          required: true
-        type: integer
-      topic_id:
-        description: |-
-          话题ID
-          required: true
-        type: string
-    type: object
   models.CreateTopicReq:
     properties:
-      allow_discuss:
-        description: 允许讨论
+      allow_chat:
+        description: 开启群聊
         type: boolean
       categories:
         description: 话题分类
@@ -123,14 +100,24 @@ definitions:
           $ref: '#/definitions/models.TopicCategoryParentItem'
         type: array
       category_view_type:
-        description: 分类视图
-        type: integer
+        description: |-
+          分类视图
+          section 章节
+          column 栏目
+        type: string
       cover:
-        description: 封面图
+        description: |-
+          封面图
+          必须为URL
         type: string
       edit_permission:
-        description: 编辑权限
-        type: integer
+        description: |-
+          编辑权限
+          auth 认证用户
+          auth_join 认证且加入
+          auth_join_audit 认证且加入，需审核
+          admin 仅管理员
+        type: string
       important:
         description: 重要标记
         type: boolean
@@ -141,12 +128,19 @@ definitions:
         description: 是否私密
         type: boolean
       join_permission:
-        description: 加入权限
-        type: integer
+        description: |-
+          加入权限
+          free  自由加入
+          auth_free 认证用户自由加入
+          approve 经批准
+          auth_approve 认证用户经批准
+          admin 仅管理员添加
+          purchase 购买
+        type: string
       members:
         description: 成员
         items:
-          $ref: '#/definitions/models.TopicMember'
+          $ref: '#/definitions/models.TopicMemberReq'
         type: array
       mute_notification:
         description: 消息免打扰
@@ -157,11 +151,39 @@ definitions:
       related_topics:
         description: 关联话题
         items:
-          $ref: '#/definitions/models.RelatedTopic'
+          $ref: '#/definitions/models.RelatedTopicReq'
         type: array
-      view_permission:
-        description: 查看权限
+      topic_home:
+        description: |-
+          话题首页
+          introduction 简介
+          feed 动态
+          catalog 目录
+          discussion 讨论
+          chat 群聊
+        type: string
+      topic_set_id:
+        description: |-
+          集合ID
+          如果是一个全新的创建，无需传入这个字段
+          在当前话题版本上创建新的版本时候，需要将这个ID传入进来，
+          后台方可在内部将不同版本归属于一个集合
         type: integer
+      topic_type:
+        description: 话题类型
+        type: integer
+      version_lang:
+        description: 版本语言
+        type: string
+      version_name:
+        description: 版本名
+        type: string
+      view_permission:
+        description: |-
+          查看权限
+          public 公开
+          join 加入
+        type: string
     type: object
   models.DigitLoginReq:
     properties:
@@ -369,15 +391,43 @@ definitions:
       updated_at:
         description: 更新时间
         type: integer
+      user_name:
+        description: 用户名
+        format: user_name
+        type: string
     type: object
   models.RelatedTopic:
+    properties:
+      name:
+        description: 话题名
+        type: string
+      topic_id:
+        description: 话题ID
+        type: string
+      type:
+        description: |-
+          关联类型
+          normal 普通关联
+          strong 强关联
+        type: string
+      version_lang:
+        description: 版本语言
+        type: string
+      version_name:
+        description: 版本名称
+        type: string
+    type: object
+  models.RelatedTopicReq:
     properties:
       topic_id:
         description: 关联话题ID
         type: integer
       type:
-        description: 类型：1:强关系 2:弱关系
-        type: integer
+        description: |-
+          类型
+          normal
+          strong
+        type: string
     type: object
   models.RequestEmailValcodeReq:
     properties:
@@ -434,6 +484,104 @@ definitions:
         description: |-
           话题ID
           required: true
+        type: string
+    type: object
+  models.Topic:
+    properties:
+      allow_chat:
+        description: 开启群聊
+        type: boolean
+      categories:
+        description: 话题分类
+        items:
+          $ref: '#/definitions/models.TopicCategoryParentItem'
+        type: array
+      category_view_type:
+        description: |-
+          分类视图
+          section 章节
+          column 栏目
+        type: string
+      cover:
+        description: |-
+          封面图
+          必须为URL
+        type: string
+      created_at:
+        type: integer
+      edit_permission:
+        description: |-
+          编辑权限
+          auth 认证用户
+          auth_join 认证且加入
+          auth_join_audit 认证且加入，需审核
+          admin 仅管理员
+        type: string
+      id:
+        type: string
+      important:
+        description: 重要标记
+        type: boolean
+      introduction:
+        description: 简介
+        type: string
+      is_private:
+        description: 是否私密
+        type: boolean
+      join_permission:
+        description: |-
+          加入权限
+          free  自由加入
+          auth_free 认证用户自由加入
+          approve 经批准
+          auth_approve 认证用户经批准
+          admin 仅管理员添加
+          purchase 购买
+        type: string
+      members:
+        description: 成员
+        items:
+          $ref: '#/definitions/models.TopicMember'
+        type: array
+      mute_notification:
+        description: 消息免打扰
+        type: boolean
+      name:
+        description: 名称
+        type: string
+      related_topics:
+        description: 关联话题
+        items:
+          $ref: '#/definitions/models.RelatedTopic'
+        type: array
+      topic_home:
+        description: |-
+          话题首页
+          introduction 简介
+          feed 动态
+          catalog 目录
+          discussion 讨论
+          chat 群聊
+        type: string
+      topic_set_id:
+        description: 集合ID
+        type: string
+      topic_type:
+        description: 话题类型
+        type: integer
+      topic_type_name:
+        type: string
+      version_lang:
+        description: 版本语言
+        type: string
+      version_name:
+        description: 版本名
+        type: string
+      view_permission:
+        description: |-
+          查看权限
+          public 公开
+          join 加入
         type: string
     type: object
   models.TopicCategoriesResp:
@@ -503,11 +651,32 @@ definitions:
   models.TopicMember:
     properties:
       account_id:
+        description: 账户ID
+        type: string
+      avatar:
+        description: 头像
+        type: string
+      role:
+        description: |-
+          成员角色
+          user 普通用户
+          admin 管理员
+        type: string
+      user_name:
+        description: 用户名
+        type: string
+    type: object
+  models.TopicMemberReq:
+    properties:
+      account_id:
         description: 成员ID
         type: integer
       role:
-        description: 角色
-        type: integer
+        description: |-
+          角色
+          user 普通用户
+          admin 管理员
+        type: string
     type: object
   models.UpdateProfileReq:
     properties:
@@ -548,28 +717,10 @@ definitions:
           如果无需更改该字段，在提交JSON请求中请不要包含该字段
         type: string
     type: object
-  models.UpdateTopicCategoryReq:
-    properties:
-      name:
-        description: |-
-          分类名
-          required: true
-        type: string
-      parent_id:
-        description: |-
-          ParentID 父级ID, 一级分类的父ID为 0
-          required: true
-        type: string
-      seq:
-        description: |-
-          顺序
-          required: true
-        type: integer
-    type: object
   models.UpdateTopicReq:
     properties:
-      allow_discuss:
-        description: 允许讨论
+      allow_chat:
+        description: 开启群聊
         type: boolean
       categories:
         description: 话题分类
@@ -577,14 +728,24 @@ definitions:
           $ref: '#/definitions/models.TopicCategoryParentItem'
         type: array
       category_view_type:
-        description: 分类视图
-        type: integer
+        description: |-
+          分类视图
+          section 章节
+          column 栏目
+        type: string
       cover:
-        description: 封面图
+        description: |-
+          封面图
+          必须为URL
         type: string
       edit_permission:
-        description: 编辑权限
-        type: integer
+        description: |-
+          编辑权限
+          auth 认证用户
+          auth_join 认证且加入
+          auth_join_audit 认证且加入，需审核
+          admin 仅管理员
+        type: string
       important:
         description: 重要标记
         type: boolean
@@ -595,12 +756,19 @@ definitions:
         description: 是否私密
         type: boolean
       join_permission:
-        description: 加入权限
-        type: integer
+        description: |-
+          加入权限
+          free  自由加入
+          auth_free 认证用户自由加入
+          approve 经批准
+          auth_approve 认证用户经批准
+          admin 仅管理员添加
+          purchase 购买
+        type: string
       members:
         description: 成员
         items:
-          $ref: '#/definitions/models.TopicMember'
+          $ref: '#/definitions/models.TopicMemberReq'
         type: array
       mute_notification:
         description: 消息免打扰
@@ -611,11 +779,32 @@ definitions:
       related_topics:
         description: 关联话题
         items:
-          $ref: '#/definitions/models.RelatedTopic'
+          $ref: '#/definitions/models.RelatedTopicReq'
         type: array
-      view_permission:
-        description: 查看权限
+      topic_home:
+        description: |-
+          话题首页
+          introduction 简介
+          feed 动态
+          catalog 目录
+          discussion 讨论
+          chat 群聊
+        type: string
+      topic_type:
+        description: 话题类型
         type: integer
+      version_lang:
+        description: 版本语言
+        type: string
+      version_name:
+        description: 版本名
+        type: string
+      view_permission:
+        description: |-
+          查看权限
+          public 公开
+          join 加入
+        type: string
     type: object
 host: dev.flywk.com
 info:
@@ -1349,7 +1538,155 @@ paths:
       summary: 用户手机注册
       tags:
       - auth
-  /topic_categories:
+  /topic_categories/hierarchy:
+    get:
+      consumes:
+      - application/json
+      description: 按层级结构获取分类
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 话题ID
+        in: query
+        name: topic_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 层级分类
+          schema:
+            $ref: '#/definitions/models.TopicCategoriesResp'
+            type: object
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 按层级结构获取分类
+      tags:
+      - topic
+  /topics:
+    get:
+      consumes:
+      - application/json
+      description: 搜索话题
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 查询条件
+        in: query
+        name: q
+        required: true
+        type: string
+      - description: 排除的话题ID
+        in: query
+        name: from_topic_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功,返回topic_id
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 搜索话题
+      tags:
+      - topic
+    post:
+      consumes:
+      - application/json
+      description: 新增话题
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateTopicReq'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功,返回topic_id
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 新增话题
+      tags:
+      - topic
+  /topics/:
     get:
       consumes:
       - application/json
@@ -1446,251 +1783,6 @@ paths:
       summary: 批量新增/更改话题分类
       tags:
       - topic
-    post:
-      consumes:
-      - application/json
-      description: 新增话题分类
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 请求
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/models.CreateTopicCategoryReq'
-          type: object
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-        "400":
-          description: 验证请求失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 新增话题分类
-      tags:
-      - topic
-  /topic_categories/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: 删除话题分类
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-        "400":
-          description: 验证请求失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 删除话题分类
-      tags:
-      - topic
-    put:
-      consumes:
-      - application/json
-      description: 更新话题分类
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 请求
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/models.UpdateTopicCategoryReq'
-          type: object
-      - description: ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-        "400":
-          description: 验证请求失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 更新话题分类
-      tags:
-      - topic
-  /topic_categories/hierarchy:
-    get:
-      consumes:
-      - application/json
-      description: 按层级结构获取分类
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 话题ID
-        in: query
-        name: topic_id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 层级分类
-          schema:
-            $ref: '#/definitions/models.TopicCategoriesResp'
-            type: object
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 按层级结构获取分类
-      tags:
-      - topic
-  /topics:
-    post:
-      consumes:
-      - application/json
-      description: 新增话题
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 请求
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/models.CreateTopicReq'
-          type: object
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-        "400":
-          description: 验证请求失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 新增话题
-      tags:
-      - topic
   /topics/{id}:
     delete:
       consumes:
@@ -1736,6 +1828,55 @@ paths:
         "500":
           description: 服务器端错误
       summary: 删除话题
+      tags:
+      - topic
+    get:
+      consumes:
+      - application/json
+      description: 获取话题
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 话题
+          schema:
+            $ref: '#/definitions/models.Topic'
+            type: object
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 获取话题
       tags:
       - topic
     put:

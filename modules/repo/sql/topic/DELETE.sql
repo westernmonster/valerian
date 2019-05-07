@@ -1,3 +1,1 @@
-UPDATE topics
-SET deleted=1
-WHERE id=:id
+UPDATE topics SET deleted=1 WHERE id=:id

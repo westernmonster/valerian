@@ -1,3 +1,16 @@
 user_not_exist: 用户不存在
 user_not_found: 未找到该用户
+join_permission_free: 自由加入
+join_permission_auth_free: 认证用户自由加入
+join_permission_approve: 经批准
+join_permission_auth_approve: 认证用户经批准
+join_permission_admin: 仅管理员添加
+join_permission_purchase: 购买
+view_permission_public: 公开
+view_permission_join: 加入
+edit_permission_auth: 认证用户
+edit_permission_auth_join: 认证且加入
+edit_permission_auth_join_audit: 认证且加入，需审核
+edit_permission_admin: 仅管理员
+
 

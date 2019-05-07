@@ -80,8 +80,8 @@ func (p *TopicCategoryUsecase) GetAll(ctx *biz.BizContext, topicID int64) (items
 func (p *TopicCategoryUsecase) GetHierarchyOfAll(ctx *biz.BizContext, topicID int64) (resp *models.TopicCategoriesResp, err error) {
 	resp = new(models.TopicCategoriesResp)
 	parents, err := p.TopicCategoryRepository.GetAllByCondition(p.Node, map[string]string{
-		"topic_id": strconv.FormatInt(topicID, 10),
-		"parent":   "0",
+		"topic_id":  strconv.FormatInt(topicID, 10),
+		"parent_id": "0",
 	})
 	if err != nil {
 		err = tracerr.Wrap(err)
@@ -101,8 +101,8 @@ func (p *TopicCategoryUsecase) GetHierarchyOfAll(ctx *biz.BizContext, topicID in
 		}
 
 		children, errInner := p.TopicCategoryRepository.GetAllByCondition(p.Node, map[string]string{
-			"topic_id": strconv.FormatInt(topicID, 10),
-			"parent":   strconv.FormatInt(v.ID, 10),
+			"topic_id":  strconv.FormatInt(topicID, 10),
+			"parent_id": strconv.FormatInt(v.ID, 10),
 		})
 		if errInner != nil {
 			err = tracerr.Wrap(errInner)
@@ -268,7 +268,7 @@ func (p *TopicCategoryUsecase) Delete(ctx *biz.BizContext, id int64) (err error)
 	}
 
 	children, err := p.TopicCategoryRepository.GetAllByCondition(tx, map[string]string{
-		"parent": strconv.FormatInt(item.ID, 10),
+		"parent_id": strconv.FormatInt(item.ID, 10),
 	})
 
 	for _, v := range children {

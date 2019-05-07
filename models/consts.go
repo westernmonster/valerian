@@ -91,6 +91,50 @@ const (
 	HeaderStatusCode = "flywiki-status-code"
 )
 
+const (
+	JoinPermissionFree        = "free"
+	JoinPermissionAuthFree    = "auth_free"
+	JoinPermissionApprove     = "approve"
+	JoinPermissionAuthApprove = "auth_approve"
+	JoinPermissionAdmin       = "admin"
+	JoinPermissionPurchase    = "purchase"
+)
+
+const (
+	ViewPermissionPublic = "public"
+	ViewPermissionJoin   = "join"
+)
+
+const (
+	EditPermissionAuth          = "auth"
+	EditPermissionAuthJoin      = "auth_join"
+	EditPermissionAuthJoinAudit = "auth_join_audit"
+	EditPermissionAdmin         = "admin"
+)
+
+const (
+	CategoryViewTypeiSection = "section"
+	CategoryViewTypeiColumn  = "column"
+)
+
+const (
+	TopicHomeIntroduction = "introduction"
+	TopicHomeFeed         = "feed"
+	TopicHomeCataglog     = "catalog"
+	TopicHomeDiscussion   = "discussion"
+	TopicHomeChat         = "chat"
+)
+
+const (
+	MemberRoleAdmin = "admin"
+	MemberRoleUser  = "user"
+)
+
+const (
+	TopicRelationStrong = "strong"
+	TopicRelationNormal = "normal"
+)
+
 // x-app-version App 版本号  3.22
 // x-app-versioncode App 版本号 1024
 // x-app-build release/debug

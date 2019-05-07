@@ -91,14 +91,20 @@ func Configure(p *bootstrap.Bootstrapper) {
 		localeCtrl := http.NewLocaleCtrl(db, node)
 		api.GET("/locales", localeCtrl.GetAll)
 
+		// 话题
+		topicCtrl := http.NewTopicCtrl(db, node)
+		api.POST("/topics", auth.User, topicCtrl.Create)
+		api.PUT("/topics/:id", auth.User, topicCtrl.Update)
+		api.GET("/topics/:id", auth.User, topicCtrl.Get)
+		api.GET("/topics", auth.User, topicCtrl.Search)
+
 		// 话题分类
 		topicCategoryCtrl := http.NewTopicCategoryCtrl(db, node)
-		api.GET("/topic_categories", auth.User, topicCategoryCtrl.GetAll)
-		api.GET("/topic_categories/hierarchy", auth.User, topicCategoryCtrl.GetHierarchyOfAll)
-		api.PUT("/topic_categories/:id", auth.User, topicCategoryCtrl.Update)
-		api.POST("/topic_categories", auth.User, topicCategoryCtrl.Create)
-		api.DELETE("/topic_categories/:id", auth.User, topicCategoryCtrl.Delete)
-		api.PATCH("/topic_categories", auth.User, topicCategoryCtrl.BulkSave)
+		api.GET("/topics/:id/categories", auth.User, topicCategoryCtrl.GetAll)
+		api.GET("/topics/:id/categories/hierarchy", auth.User, topicCategoryCtrl.GetHierarchyOfAll)
+		// api.POST("/topics/:id/categories", auth.User, topicCategoryCtrl.Create)
+		// api.DELETE("/topic_categories/:id", auth.User, topicCategoryCtrl.Delete)
+		api.PATCH("/topics/:id/categories", auth.User, topicCategoryCtrl.BulkSave)
 
 		fileCtrl := &http.FileCtrl{}
 		api.POST("/files/oss_token", auth.User, fileCtrl.GetOSSToken)

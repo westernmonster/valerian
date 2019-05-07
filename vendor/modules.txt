@@ -90,6 +90,7 @@ github.com/jinzhu/copier
 github.com/jmespath/go-jmespath
 # github.com/jmoiron/sqlx v1.2.0
 github.com/jmoiron/sqlx
+github.com/jmoiron/sqlx/types
 github.com/jmoiron/sqlx/reflectx
 # github.com/joho/godotenv v1.3.0
 github.com/joho/godotenv

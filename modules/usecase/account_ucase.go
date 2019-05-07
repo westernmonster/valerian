@@ -196,6 +196,7 @@ func (p *AccountUsecase) GetProfileByID(accountID int64) (profile *models.Profil
 		Introduction: item.Introduction,
 		Avatar:       item.Avatar,
 		Source:       item.Source,
+		UserName:     item.UserName,
 		CreatedAt:    item.CreatedAt,
 		UpdatedAt:    item.UpdatedAt,
 	}

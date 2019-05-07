@@ -3,10 +3,12 @@ package repo
 import (
 	"database/sql"
 	"fmt"
+	"time"
+	"valerian/models"
+
 	packr "github.com/gobuffalo/packr"
 	sqalx "github.com/westernmonster/sqalx"
 	tracerr "github.com/ztrue/tracerr"
-	"time"
 )
 
 type TopicMember struct {
@@ -78,6 +80,19 @@ func (p *TopicMemberRepository) GetAll(node sqalx.Node) (items []*TopicMember, e
 	return
 }
 
+// GetAllTopicMembers
+func (p *TopicMemberRepository) GetAllTopicMembers(node sqalx.Node, topicID int64) (items []*models.TopicMember, err error) {
+	items = make([]*models.TopicMember, 0)
+	sqlSelect := "SELECT a.account_id, a.role, b.user_name, b.avatar FROM topic_members a LEFT JOIN accounts b ON a.account_id = b.id WHERE a.topic_id=? ORDER BY a.id DESC"
+
+	err = node.Select(&items, sqlSelect, topicID)
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+	return
+}
+
 // GetAllByCondition get records by condition
 func (p *TopicMemberRepository) GetAllByCondition(node sqalx.Node, cond map[string]string) (items []*TopicMember, err error) {
 	items = make([]*TopicMember, 0)
@@ -117,7 +132,7 @@ func (p *TopicMemberRepository) GetAllByCondition(node sqalx.Node, cond map[stri
 	return
 }
 
-// GetByID get record by ID
+// GetByID get a record by ID
 func (p *TopicMemberRepository) GetByID(node sqalx.Node, id int64) (item *TopicMember, exist bool, err error) {
 	item = new(TopicMember)
 	sqlSelect := packr.NewBox("./sql/topic_member").String("GET_BY_ID.sql")
@@ -141,7 +156,7 @@ func (p *TopicMemberRepository) GetByID(node sqalx.Node, id int64) (item *TopicM
 	return
 }
 
-// GetByCondition get record by condition
+// GetByCondition get a record by condition
 func (p *TopicMemberRepository) GetByCondition(node sqalx.Node, cond map[string]string) (item *TopicMember, exist bool, err error) {
 	item = new(TopicMember)
 	condition := make(map[string]interface{})

@@ -2,6 +2,7 @@ package http
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
@@ -49,9 +50,18 @@ func NewTopicCategoryCtrl(db *sqlx.DB, node sqalx.Node) *TopicCategoryCtrl {
 // @Success 200 {array} models.TopicCategory "分类"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /topic_categories [get]
+// @Router /topics/:id/categories [get]
 func (p *TopicCategoryCtrl) GetAll(ctx *gin.Context) {
-	topicID := ctx.GetInt64("topic_id")
+	id, exist := ctx.Params.Get("id")
+	if !exist {
+		p.SuccessResp(ctx, nil)
+	}
+
+	topicID, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		p.HandleError(ctx, err)
+		return
+	}
 	if topicID == 0 {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, infrastructure.RespCommon{
 			Success: false,
@@ -89,7 +99,16 @@ func (p *TopicCategoryCtrl) GetAll(ctx *gin.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /topic_categories/hierarchy [get]
 func (p *TopicCategoryCtrl) GetHierarchyOfAll(ctx *gin.Context) {
-	topicID := ctx.GetInt64("topic_id")
+	id, exist := ctx.Params.Get("id")
+	if !exist {
+		p.SuccessResp(ctx, nil)
+	}
+
+	topicID, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		p.HandleError(ctx, err)
+		return
+	}
 	if topicID == 0 {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, infrastructure.RespCommon{
 			Success: false,
@@ -113,129 +132,6 @@ func (p *TopicCategoryCtrl) GetHierarchyOfAll(ctx *gin.Context) {
 
 }
 
-// @Summary 新增话题分类
-// @Description 新增话题分类
-// @Tags topic
-// @Accept json
-// @Produce json
-// @Param Authorization header string true "Bearer"
-// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
-// @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body models.CreateTopicCategoryReq true "请求"
-// @Success 200 "成功"
-// @Failure 400 "验证请求失败"
-// @Failure 401 "登录验证失败"
-// @Failure 500 "服务器端错误"
-// @Router /topic_categories [post]
-func (p *TopicCategoryCtrl) Create(ctx *gin.Context) {
-	req := new(models.CreateTopicCategoryReq)
-
-	if e := ctx.Bind(req); e != nil {
-		p.HandleError(ctx, e)
-		return
-	}
-
-	if e := req.Validate(); e != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, infrastructure.RespCommon{
-			Success: false,
-			Code:    http.StatusBadRequest,
-			Message: e.Error(),
-		})
-
-		return
-	}
-
-	bizCtx := p.GetBizContext(ctx)
-	err := p.TopicCategoryUsecase.Create(bizCtx, req)
-	if err != nil {
-		p.HandleError(ctx, err)
-		return
-	}
-
-	p.SuccessResp(ctx, nil)
-
-	return
-
-}
-
-// @Summary 更新话题分类
-// @Description 更新话题分类
-// @Tags topic
-// @Accept json
-// @Produce json
-// @Param Authorization header string true "Bearer"
-// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
-// @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body models.UpdateTopicCategoryReq true "请求"
-// @Param id path string true "ID"
-// @Success 200 "成功"
-// @Failure 400 "验证请求失败"
-// @Failure 401 "登录验证失败"
-// @Failure 500 "服务器端错误"
-// @Router /topic_categories/{id} [put]
-func (p *TopicCategoryCtrl) Update(ctx *gin.Context) {
-	req := new(models.UpdateTopicCategoryReq)
-
-	if e := ctx.Bind(req); e != nil {
-		p.HandleError(ctx, e)
-		return
-	}
-
-	id := ctx.GetInt64("id")
-
-	if e := req.Validate(); e != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, infrastructure.RespCommon{
-			Success: false,
-			Code:    http.StatusBadRequest,
-			Message: e.Error(),
-		})
-
-		return
-	}
-
-	bizCtx := p.GetBizContext(ctx)
-	err := p.TopicCategoryUsecase.Update(bizCtx, id, req)
-	if err != nil {
-		p.HandleError(ctx, err)
-		return
-	}
-
-	p.SuccessResp(ctx, nil)
-
-	return
-
-}
-
-// @Summary 删除话题分类
-// @Description 删除话题分类
-// @Tags topic
-// @Accept json
-// @Produce json
-// @Param Authorization header string true "Bearer"
-// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
-// @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param id path string true "ID"
-// @Success 200 "成功"
-// @Failure 400 "验证请求失败"
-// @Failure 401 "登录验证失败"
-// @Failure 500 "服务器端错误"
-// @Router /topic_categories/{id} [delete]
-func (p *TopicCategoryCtrl) Delete(ctx *gin.Context) {
-	id := ctx.GetInt64("id")
-
-	bizCtx := p.GetBizContext(ctx)
-	err := p.TopicCategoryUsecase.Delete(bizCtx, id)
-	if err != nil {
-		p.HandleError(ctx, err)
-		return
-	}
-
-	p.SuccessResp(ctx, nil)
-
-	return
-
-}
-
 // @Summary 批量新增/更改话题分类
 // @Description 批量新增/更改话题分类
 // @Tags topic
@@ -249,7 +145,7 @@ func (p *TopicCategoryCtrl) Delete(ctx *gin.Context) {
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /topic_categories [patch]
+// @Router /topics/:id/categories [patch]
 func (p *TopicCategoryCtrl) BulkSave(ctx *gin.Context) {
 	req := new(models.SaveTopicCategoriesReq)
 

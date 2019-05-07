@@ -1,2 +1,16 @@
 user_not_exist: user not exist
 user_not_found: user not found
+join_permission_free: Free join
+join_permission_auth_free: Authenticated user free join
+join_permission_approve: By approval
+join_permission_auth_approve: Authenticated user by approval
+join_permission_admin: Administrator add
+join_permission_purchase: Purchase
+view_permission_public: Public
+view_permission_join: Join
+edit_permission_auth: Authenticated user
+edit_permission_auth_join: Joined authenticated user
+edit_permission_auth_join_audit: Joined authenticated user, need audit
+edit_permission_admin: Administrator
+
+

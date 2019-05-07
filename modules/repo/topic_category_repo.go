@@ -127,7 +127,7 @@ func (p *TopicCategoryRepository) GetAllByCondition(node sqalx.Node, cond map[st
 	return
 }
 
-// GetByID get record by ID
+// GetByID get a record by ID
 func (p *TopicCategoryRepository) GetByID(node sqalx.Node, id int64) (item *TopicCategory, exist bool, err error) {
 	item = new(TopicCategory)
 	sqlSelect := packr.NewBox("./sql/topic_category").String("GET_BY_ID.sql")
@@ -151,7 +151,7 @@ func (p *TopicCategoryRepository) GetByID(node sqalx.Node, id int64) (item *Topi
 	return
 }
 
-// GetByCondition get record by condition
+// GetByCondition get a record by condition
 func (p *TopicCategoryRepository) GetByCondition(node sqalx.Node, cond map[string]string) (item *TopicCategory, exist bool, err error) {
 	item = new(TopicCategory)
 	condition := make(map[string]interface{})
