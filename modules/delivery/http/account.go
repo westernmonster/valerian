@@ -3,9 +3,10 @@ package http
 import (
 	"net/http"
 
+	"valerian/library/database/sqalx"
+	"valerian/library/database/sqlx"
+
 	"github.com/gin-gonic/gin"
-	"github.com/jmoiron/sqlx"
-	"github.com/westernmonster/sqalx"
 
 	"valerian/infrastructure"
 	"valerian/infrastructure/biz"

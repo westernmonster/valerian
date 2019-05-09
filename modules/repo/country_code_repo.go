@@ -1,12 +1,14 @@
 package repo
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"time"
 
+	"valerian/library/database/sqalx"
+
 	packr "github.com/gobuffalo/packr"
-	sqalx "github.com/westernmonster/sqalx"
 	tracerr "github.com/ztrue/tracerr"
 )
 
@@ -64,16 +66,16 @@ func (p *CountryCodeRepository) QueryListPaged(node sqalx.Node, page int, pageSi
 }
 
 // GetAll get all records
-func (p *CountryCodeRepository) GetAll(node sqalx.Node) (items []*CountryCode, err error) {
+func (p *CountryCodeRepository) GetAll(ctx context.Context, node sqalx.Node) (items []*CountryCode, err error) {
 	items = make([]*CountryCode, 0)
 	sqlSelect := packr.NewBox("./sql/country_code").String("GET_ALL.sql")
 
-	stmtSelect, err := node.PrepareNamed(sqlSelect)
+	stmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
 	}
-	err = stmtSelect.Select(&items, map[string]interface{}{})
+	err = stmtSelect.SelectContext(ctx, &items, map[string]interface{}{})
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return

@@ -1037,75 +1037,6 @@
                 }
             }
         },
-        "/topic_categories/hierarchy": {
-            "get": {
-                "description": "按层级结构获取分类",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "topic"
-                ],
-                "summary": "按层级结构获取分类",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Bearer",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "enum": [
-                            1,
-                            2,
-                            3
-                        ],
-                        "type": "integer",
-                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
-                        "name": "Source",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "enum": [
-                            "zh-CN",
-                            "en-US"
-                        ],
-                        "type": "string",
-                        "description": "语言",
-                        "name": "Locale",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "话题ID",
-                        "name": "topic_id",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "层级分类",
-                        "schema": {
-                            "type": "object",
-                            "$ref": "#/definitions/models.TopicCategoriesResp"
-                        }
-                    },
-                    "401": {
-                        "description": "登录验证失败"
-                    },
-                    "500": {
-                        "description": "服务器端错误"
-                    }
-                }
-            }
-        },
         "/topics": {
             "get": {
                 "description": "搜索话题",
@@ -1252,7 +1183,7 @@
         },
         "/topics/": {
             "get": {
-                "description": "获取分类列表",
+                "description": "按层级结构获取分类",
                 "consumes": [
                     "application/json"
                 ],
@@ -1262,7 +1193,7 @@
                 "tags": [
                     "topic"
                 ],
-                "summary": "获取分类列表",
+                "summary": "按层级结构获取分类",
                 "parameters": [
                     {
                         "type": "string",
@@ -1304,12 +1235,10 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "分类",
+                        "description": "层级分类",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.TopicCategory"
-                            }
+                            "type": "object",
+                            "$ref": "#/definitions/models.TopicCategoriesResp"
                         }
                     },
                     "401": {

@@ -8,6 +8,7 @@ require (
 	github.com/aliyun/alibaba-cloud-sdk-go v0.0.0-20190418113227-25233c783f4e
 	github.com/asaskevich/govalidator v0.0.0-20180720115003-f9ffefc3facf
 	github.com/bitly/go-simplejson v0.5.0 // indirect
+	github.com/bouk/monkey v1.0.1
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/fatih/structs v1.1.0 // indirect
@@ -20,6 +21,7 @@ require (
 	github.com/go-playground/universal-translator v0.16.0 // indirect
 	github.com/go-sql-driver/mysql v1.4.1
 	github.com/gobuffalo/packr v1.25.0
+	github.com/gogo/protobuf v1.2.1
 	github.com/golang/protobuf v1.3.1
 	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/hashicorp/go-multierror v1.0.0
@@ -29,13 +31,18 @@ require (
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/json-iterator/go v1.1.6
 	github.com/leodido/go-urn v1.1.0 // indirect
+	github.com/lib/pq v1.0.0
 	github.com/mattn/go-isatty v0.0.7
+	github.com/mattn/go-sqlite3 v1.9.0
 	github.com/moul/http2curl v1.0.0 // indirect
 	github.com/nicksnyder/go-i18n/v2 v2.0.0-beta.6
+	github.com/opentracing-contrib/go-gin v0.0.0-20190301172248-2e18f8b9c7d4
+	github.com/opentracing-contrib/go-stdlib v0.0.0-20190324214902-3020fec0e66b
 	github.com/opentracing/opentracing-go v1.1.0
 	github.com/pborman/uuid v1.2.0 // indirect
 	github.com/pkg/errors v0.8.1
 	github.com/prometheus/client_golang v0.9.2
+	github.com/satori/go.uuid v1.2.0
 	github.com/sergi/go-diff v1.0.0 // indirect
 	github.com/sirupsen/logrus v1.4.1
 	github.com/smartystreets/goconvey v0.0.0-20190330032615-68dc04aab96a
@@ -51,9 +58,11 @@ require (
 	github.com/tidwall/pretty v0.0.0-20190325153808-1166b9ac2b65 // indirect
 	github.com/tidwall/rtree v0.0.0-20180113144539-6cd427091e0e // indirect
 	github.com/tidwall/tinyqueue v0.0.0-20180302190814-1e39f5511563 // indirect
+	github.com/uber/jaeger-client-go v2.16.0+incompatible
+	github.com/uber/jaeger-lib v2.0.0+incompatible
 	github.com/ugorji/go/codec v0.0.0-20190320090025-2dc34c0b8780
 	github.com/valyala/quicktemplate v1.0.2
-	github.com/westernmonster/sqalx v0.3.0
+	github.com/westernmonster/sqalx v0.3.0 // indirect
 	github.com/xeipuuv/gojsonpointer v0.0.0-20180127040702-4e3ac2762d5f // indirect
 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
 	github.com/xeipuuv/gojsonschema v1.1.0 // indirect

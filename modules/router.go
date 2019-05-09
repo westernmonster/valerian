@@ -4,24 +4,45 @@ import (
 	"fmt"
 
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk"
+	"github.com/opentracing-contrib/go-gin/ginhttp"
 	"github.com/spf13/viper"
+	"github.com/uber/jaeger-lib/metrics"
+	jprom "github.com/uber/jaeger-lib/metrics/prometheus"
+	"go.uber.org/zap"
 
 	"valerian/infrastructure/bootstrap"
 	"valerian/infrastructure/db"
 	"valerian/infrastructure/email"
 	"valerian/infrastructure/sms"
+	"valerian/library/log"
+	"valerian/library/tracing"
 	"valerian/modules/delivery/http"
 	"valerian/modules/middleware"
 	"valerian/modules/repo"
 	"valerian/modules/usecase"
 )
 
+var (
+	logger *zap.Logger
+)
+
 func Configure(p *bootstrap.Bootstrapper) {
-	db, node, err := db.InitDatabase()
+
+	logger, _ = zap.NewProduction()
+	vlogger := log.NewFactory(logger.With(zap.String("service", "frontend")))
+	vlogger.Bg().Info("Starting", zap.String("address", "http://localhost:7001"))
+
+	var metricsFactory metrics.Factory
+	metricsFactory = jprom.New()
+	tracer := tracing.Init("frontend", metricsFactory.Namespace(metrics.NSOptions{Name: "frontend"}), vlogger, "localhost:6831")
+
+	db, node, err := db.InitDatabase(tracer)
 	if err != nil {
 		panic(err)
 		return
 	}
+
+	p.Use(ginhttp.Middleware(tracer))
 
 	auth := middleware.New()
 
@@ -84,7 +105,7 @@ func Configure(p *bootstrap.Bootstrapper) {
 		api.PUT("/me", auth.User, accountCtrl.UpdateProfile)
 
 		// 电话区域码
-		countryCodeCtrl := http.NewCountryCodeCtrl(db, node)
+		countryCodeCtrl := http.NewCountryCodeCtrl(db, node, vlogger)
 		api.GET("/country_codes", countryCodeCtrl.GetAll)
 
 		// 语言

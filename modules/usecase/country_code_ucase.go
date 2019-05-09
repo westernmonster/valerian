@@ -1,14 +1,15 @@
 package usecase
 
 import (
+	"context"
+	"valerian/library/database/sqalx"
+	"valerian/library/database/sqlx"
+	"valerian/modules/repo"
+
 	"github.com/jinzhu/copier"
-	"github.com/jmoiron/sqlx"
-	"github.com/westernmonster/sqalx"
 	"github.com/ztrue/tracerr"
 
-	"valerian/infrastructure/biz"
 	"valerian/models"
-	"valerian/modules/repo"
 )
 
 type CountryCodeUsecase struct {
@@ -16,14 +17,14 @@ type CountryCodeUsecase struct {
 	*sqlx.DB
 	CountryCodeRepository interface {
 		// GetAll get all records
-		GetAll(node sqalx.Node) (items []*repo.CountryCode, err error)
+		GetAll(ctx context.Context, node sqalx.Node) (items []*repo.CountryCode, err error)
 	}
 }
 
-func (p *CountryCodeUsecase) GetAll(ctx *biz.BizContext) (items []*models.CountryCode, err error) {
+func (p *CountryCodeUsecase) GetAll(ctx context.Context) (items []*models.CountryCode, err error) {
 	items = make([]*models.CountryCode, 0)
 
-	data, err := p.CountryCodeRepository.GetAll(p.Node)
+	data, err := p.CountryCodeRepository.GetAll(ctx, p.Node)
 	if err != nil {
 		err = tracerr.Wrap(err)
 	}

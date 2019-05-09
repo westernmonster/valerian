@@ -7,11 +7,16 @@ import (
 	"github.com/spf13/viper"
 	ginSwagger "github.com/swaggo/gin-swagger" // gin-swagger middleware
 	"github.com/swaggo/gin-swagger/swaggerFiles"
+	"go.uber.org/zap"
 
 	_ "valerian/docs"
 	"valerian/infrastructure/bootstrap"
 	"valerian/infrastructure/locale"
 	"valerian/modules"
+)
+
+var (
+	logger *zap.Logger
 )
 
 func newApp() *bootstrap.Bootstrapper {

@@ -10,9 +10,10 @@ import (
 	"valerian/modules/repo"
 	"valerian/modules/usecase"
 
+	"valerian/library/database/sqalx"
+	"valerian/library/database/sqlx"
+
 	"github.com/gin-gonic/gin"
-	"github.com/jmoiron/sqlx"
-	"github.com/westernmonster/sqalx"
 )
 
 type TopicCtrl struct {

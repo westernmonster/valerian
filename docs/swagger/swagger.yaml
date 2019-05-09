@@ -1538,54 +1538,6 @@ paths:
       summary: 用户手机注册
       tags:
       - auth
-  /topic_categories/hierarchy:
-    get:
-      consumes:
-      - application/json
-      description: 按层级结构获取分类
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 话题ID
-        in: query
-        name: topic_id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 层级分类
-          schema:
-            $ref: '#/definitions/models.TopicCategoriesResp'
-            type: object
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 按层级结构获取分类
-      tags:
-      - topic
   /topics:
     get:
       consumes:
@@ -1690,7 +1642,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: 获取分类列表
+      description: 按层级结构获取分类
       parameters:
       - description: Bearer
         in: header
@@ -1723,16 +1675,15 @@ paths:
       - application/json
       responses:
         "200":
-          description: 分类
+          description: 层级分类
           schema:
-            items:
-              $ref: '#/definitions/models.TopicCategory'
-            type: array
+            $ref: '#/definitions/models.TopicCategoriesResp'
+            type: object
         "401":
           description: 登录验证失败
         "500":
           description: 服务器端错误
-      summary: 获取分类列表
+      summary: 按层级结构获取分类
       tags:
       - topic
     patch:

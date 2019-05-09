@@ -1,9 +1,10 @@
 package usecase
 
 import (
+	"valerian/library/database/sqalx"
+	"valerian/library/database/sqlx"
+
 	"github.com/jinzhu/copier"
-	"github.com/jmoiron/sqlx"
-	"github.com/westernmonster/sqalx"
 	"github.com/ztrue/tracerr"
 
 	"valerian/infrastructure/biz"

@@ -4,10 +4,12 @@ import (
 	"fmt"
 	"strings"
 
+	"valerian/library/database/sqalx"
+	"valerian/library/database/sqlx"
+
 	"github.com/hashicorp/go-multierror"
-	"github.com/jmoiron/sqlx"
+	"github.com/opentracing/opentracing-go"
 	"github.com/spf13/viper"
-	"github.com/westernmonster/sqalx"
 	"github.com/ztrue/tracerr"
 )
 
@@ -64,7 +66,7 @@ func ConstructDBConnStr(config map[string]string) (connStr string, err error) {
 	return
 }
 
-func InitDatabase() (db *sqlx.DB, node sqalx.Node, err error) {
+func InitDatabase(tracer opentracing.Tracer) (db *sqlx.DB, node sqalx.Node, err error) {
 	mode := viper.Get("MODE")
 	dbConfig := viper.GetStringMapString(fmt.Sprintf("%s.db.flywiki", mode))
 
@@ -74,7 +76,7 @@ func InitDatabase() (db *sqlx.DB, node sqalx.Node, err error) {
 		return
 	}
 
-	db, err = sqlx.Open(dbConfig["dialect"], connStr)
+	db, err = sqlx.Open(dbConfig["dialect"], connStr, tracer)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return

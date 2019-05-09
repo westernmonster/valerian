@@ -3,9 +3,10 @@ package usecase
 import (
 	"strconv"
 
-	"github.com/jmoiron/sqlx"
-	"github.com/jmoiron/sqlx/types"
-	"github.com/westernmonster/sqalx"
+	"valerian/library/database/sqalx"
+	"valerian/library/database/sqlx"
+	"valerian/library/database/sqlx/types"
+
 	"github.com/ztrue/tracerr"
 
 	"valerian/infrastructure/berr"

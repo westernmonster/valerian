@@ -8,8 +8,9 @@ import (
 	"strings"
 	"time"
 
+	"valerian/library/database/sqalx"
+
 	"github.com/dgrijalva/jwt-go"
-	"github.com/westernmonster/sqalx"
 	"github.com/ztrue/tracerr"
 
 	"valerian/infrastructure"

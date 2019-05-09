@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"time"
 
+	"valerian/library/database/sqalx"
+
 	packr "github.com/gobuffalo/packr"
 	types "github.com/jmoiron/sqlx/types"
-	sqalx "github.com/westernmonster/sqalx"
 	tracerr "github.com/ztrue/tracerr"
 )
 

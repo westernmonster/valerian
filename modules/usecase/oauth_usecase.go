@@ -7,10 +7,10 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 
-	"github.com/jmoiron/sqlx"
-	"github.com/westernmonster/sqalx"
 	"github.com/ztrue/tracerr"
 
+	"valerian/library/database/sqalx"
+	"valerian/library/database/sqlx"
 	"valerian/models"
 	"valerian/modules/repo"
 )

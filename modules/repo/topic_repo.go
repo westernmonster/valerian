@@ -7,9 +7,10 @@ import (
 	"time"
 	"valerian/models"
 
+	"valerian/library/database/sqalx"
+	"valerian/library/database/sqlx/types"
+
 	packr "github.com/gobuffalo/packr"
-	"github.com/jmoiron/sqlx/types"
-	sqalx "github.com/westernmonster/sqalx"
 	tracerr "github.com/ztrue/tracerr"
 )
 

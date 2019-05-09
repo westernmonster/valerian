@@ -20,6 +20,8 @@ github.com/aliyun/alibaba-cloud-sdk-go/sdk/auth/signers
 github.com/asaskevich/govalidator
 # github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973
 github.com/beorn7/perks/quantile
+# github.com/bouk/monkey v1.0.1
+github.com/bouk/monkey
 # github.com/bwmarrin/snowflake v0.3.0
 github.com/bwmarrin/snowflake
 # github.com/davecgh/go-spew v1.1.1
@@ -61,6 +63,8 @@ github.com/gobuffalo/packd
 github.com/gobuffalo/packr
 # github.com/gobuffalo/syncx v0.0.0-20190224160051-33c29581e754
 github.com/gobuffalo/syncx
+# github.com/gogo/protobuf v1.2.1
+github.com/gogo/protobuf/proto
 # github.com/golang/protobuf v1.3.1
 github.com/golang/protobuf/proto
 github.com/golang/protobuf/ptypes
@@ -89,9 +93,8 @@ github.com/jinzhu/copier
 # github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af
 github.com/jmespath/go-jmespath
 # github.com/jmoiron/sqlx v1.2.0
-github.com/jmoiron/sqlx
-github.com/jmoiron/sqlx/types
 github.com/jmoiron/sqlx/reflectx
+github.com/jmoiron/sqlx/types
 # github.com/joho/godotenv v1.3.0
 github.com/joho/godotenv
 # github.com/json-iterator/go v1.1.6
@@ -102,6 +105,9 @@ github.com/jtolds/gls
 github.com/konsorten/go-windows-terminal-sequences
 # github.com/leodido/go-urn v1.1.0
 github.com/leodido/go-urn
+# github.com/lib/pq v1.0.0
+github.com/lib/pq
+github.com/lib/pq/oid
 # github.com/logrusorgru/aurora v0.0.0-20181002194514-a7b3b318ed4e
 github.com/logrusorgru/aurora
 # github.com/magiconair/properties v1.8.0
@@ -112,6 +118,8 @@ github.com/mailru/easyjson/jwriter
 github.com/mailru/easyjson/buffer
 # github.com/mattn/go-isatty v0.0.7
 github.com/mattn/go-isatty
+# github.com/mattn/go-sqlite3 v1.9.0
+github.com/mattn/go-sqlite3
 # github.com/matttproud/golang_protobuf_extensions v1.0.1
 github.com/matttproud/golang_protobuf_extensions/pbutil
 # github.com/mitchellh/mapstructure v1.1.2
@@ -124,6 +132,10 @@ github.com/modern-go/reflect2
 github.com/nicksnyder/go-i18n/v2/i18n
 github.com/nicksnyder/go-i18n/v2/internal
 github.com/nicksnyder/go-i18n/v2/internal/plural
+# github.com/opentracing-contrib/go-gin v0.0.0-20190301172248-2e18f8b9c7d4
+github.com/opentracing-contrib/go-gin/ginhttp
+# github.com/opentracing-contrib/go-stdlib v0.0.0-20190324214902-3020fec0e66b
+github.com/opentracing-contrib/go-stdlib/nethttp
 # github.com/opentracing/opentracing-go v1.1.0
 github.com/opentracing/opentracing-go
 github.com/opentracing/opentracing-go/ext
@@ -182,14 +194,33 @@ github.com/swaggo/gin-swagger
 github.com/swaggo/gin-swagger/swaggerFiles
 # github.com/swaggo/swag v1.5.0
 github.com/swaggo/swag
+# github.com/uber/jaeger-client-go v2.16.0+incompatible
+github.com/uber/jaeger-client-go/config
+github.com/uber/jaeger-client-go/rpcmetrics
+github.com/uber/jaeger-client-go
+github.com/uber/jaeger-client-go/internal/baggage/remote
+github.com/uber/jaeger-client-go/internal/throttler/remote
+github.com/uber/jaeger-client-go/transport
+github.com/uber/jaeger-client-go/internal/baggage
+github.com/uber/jaeger-client-go/internal/spanlog
+github.com/uber/jaeger-client-go/internal/throttler
+github.com/uber/jaeger-client-go/log
+github.com/uber/jaeger-client-go/thrift
+github.com/uber/jaeger-client-go/thrift-gen/jaeger
+github.com/uber/jaeger-client-go/thrift-gen/sampling
+github.com/uber/jaeger-client-go/thrift-gen/zipkincore
+github.com/uber/jaeger-client-go/utils
+github.com/uber/jaeger-client-go/thrift-gen/baggage
+github.com/uber/jaeger-client-go/thrift-gen/agent
+# github.com/uber/jaeger-lib v2.0.0+incompatible
+github.com/uber/jaeger-lib/metrics
+github.com/uber/jaeger-lib/metrics/prometheus
 # github.com/ugorji/go/codec v0.0.0-20190320090025-2dc34c0b8780
 github.com/ugorji/go/codec
 # github.com/valyala/bytebufferpool v1.0.0
 github.com/valyala/bytebufferpool
 # github.com/valyala/quicktemplate v1.0.2
 github.com/valyala/quicktemplate
-# github.com/westernmonster/sqalx v0.3.0
-github.com/westernmonster/sqalx
 # github.com/ztrue/tracerr v0.3.0
 github.com/ztrue/tracerr
 # go.uber.org/atomic v1.4.0

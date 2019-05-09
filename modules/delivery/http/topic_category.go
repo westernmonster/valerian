@@ -4,9 +4,10 @@ import (
 	"net/http"
 	"strconv"
 
+	"valerian/library/database/sqalx"
+	"valerian/library/database/sqlx"
+
 	"github.com/gin-gonic/gin"
-	"github.com/jmoiron/sqlx"
-	"github.com/westernmonster/sqalx"
 
 	"valerian/infrastructure"
 	"valerian/infrastructure/biz"
@@ -97,7 +98,7 @@ func (p *TopicCategoryCtrl) GetAll(ctx *gin.Context) {
 // @Success 200 {object} models.TopicCategoriesResp "层级分类"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /topic_categories/hierarchy [get]
+// @Router /topics/:id/categories/hierarchy [get]
 func (p *TopicCategoryCtrl) GetHierarchyOfAll(ctx *gin.Context) {
 	id, exist := ctx.Params.Get("id")
 	if !exist {
