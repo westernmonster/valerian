@@ -47,11 +47,11 @@ func NewTopicCategoryCtrl(db *sqlx.DB, node sqalx.Node) *TopicCategoryCtrl {
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param topic_id query string true "话题ID"
+// @Param id path string true "话题ID"
 // @Success 200 {array} models.TopicCategory "分类"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /topics/:id/categories [get]
+// @Router /topics/{id}/categories [get]
 func (p *TopicCategoryCtrl) GetAll(ctx *gin.Context) {
 	id, exist := ctx.Params.Get("id")
 	if !exist {
@@ -94,11 +94,11 @@ func (p *TopicCategoryCtrl) GetAll(ctx *gin.Context) {
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param topic_id query string true "话题ID"
+// @Param id path string true "话题ID"
 // @Success 200 {object} models.TopicCategoriesResp "层级分类"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /topics/:id/categories/hierarchy [get]
+// @Router /topics/{id}/categories/hierarchy [get]
 func (p *TopicCategoryCtrl) GetHierarchyOfAll(ctx *gin.Context) {
 	id, exist := ctx.Params.Get("id")
 	if !exist {
@@ -142,11 +142,12 @@ func (p *TopicCategoryCtrl) GetHierarchyOfAll(ctx *gin.Context) {
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param req body models.SaveTopicCategoriesReq true "请求"
+// @Param id path string true "话题ID"
 // @Success 200 "成功"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /topics/:id/categories [patch]
+// @Router /topics/{id}/categories [patch]
 func (p *TopicCategoryCtrl) BulkSave(ctx *gin.Context) {
 	req := new(models.SaveTopicCategoriesReq)
 

@@ -118,6 +118,12 @@ func Configure(p *bootstrap.Bootstrapper) {
 		api.PUT("/topics/:id", auth.User, topicCtrl.Update)
 		api.GET("/topics/:id", auth.User, topicCtrl.Get)
 		api.GET("/topics", auth.User, topicCtrl.Search)
+		api.GET("/topics/:id/members", auth.User, topicCtrl.GetTopicMembersPaged)
+		api.PATCH("/topics/:id/members", auth.User, topicCtrl.BatchSavedTopicMember)
+		api.GET("/topic_sets/:id/versions", auth.User, topicCtrl.GetTopicVersions)
+		api.GET("/topics/:id/related", auth.User, topicCtrl.GetAllRelatedTopics)
+
+		api.POST("/me/followed/topics", auth.User, topicCtrl.FollowTopic)
 
 		// 话题分类
 		topicCategoryCtrl := http.NewTopicCategoryCtrl(db, node)

@@ -82,11 +82,44 @@ func (p *TopicMemberRepository) GetAll(node sqalx.Node) (items []*TopicMember, e
 }
 
 // GetAllTopicMembers
-func (p *TopicMemberRepository) GetAllTopicMembers(node sqalx.Node, topicID int64) (items []*models.TopicMember, err error) {
+func (p *TopicMemberRepository) GetTopicMembers(node sqalx.Node, topicID int64, limit int) (items []*models.TopicMember, err error) {
 	items = make([]*models.TopicMember, 0)
-	sqlSelect := "SELECT a.account_id, a.role, b.user_name, b.avatar FROM topic_members a LEFT JOIN accounts b ON a.account_id = b.id WHERE a.topic_id=? ORDER BY a.id DESC"
+	sqlSelect := "SELECT a.account_id, a.role, b.user_name, b.avatar FROM topic_members a LEFT JOIN accounts b ON a.account_id = b.id WHERE a.topic_id=? ORDER BY a.id DESC limit ?"
 
-	err = node.Select(&items, sqlSelect, topicID)
+	err = node.Select(&items, sqlSelect, topicID, limit)
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+	return
+}
+
+// GetTopicMembersCount
+func (p *TopicMemberRepository) GetTopicMembersCount(node sqalx.Node, topicID int64) (count int, err error) {
+	sqlCount := "SELECT COUNT(1) as count FROM topic_members a LEFT JOIN accounts b ON a.account_id = b.id WHERE a.topic_id=?"
+	err = node.Get(&count, sqlCount, topicID)
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+	return
+}
+
+// GetTopicMembersPaged
+func (p *TopicMemberRepository) GetTopicMembersPaged(node sqalx.Node, topicID int64, page, pageSize int) (count int, items []*models.TopicMember, err error) {
+	items = make([]*models.TopicMember, 0)
+	offset := (page - 1) * pageSize
+
+	sqlCount := "SELECT COUNT(1) as count FROM topic_members a LEFT JOIN accounts b ON a.account_id = b.id WHERE a.topic_id=?"
+	err = node.Get(&count, sqlCount, topicID)
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+
+	sqlSelect := "SELECT a.account_id, a.role, b.user_name, b.avatar FROM topic_members a LEFT JOIN accounts b ON a.account_id = b.id WHERE a.topic_id=? ORDER BY a.id DESC limit ?,?"
+
+	err = node.Select(&items, sqlSelect, topicID, offset, pageSize)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return

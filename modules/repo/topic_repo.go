@@ -390,3 +390,15 @@ func (p *TopicRepository) BatchDelete(node sqalx.Node, ids []int64) (err error) 
 
 	return
 }
+
+func (p *TopicRepository) GetTopicVersions(node sqalx.Node, topicSetID int64) (items []*models.TopicVersion, err error) {
+	items = make([]*models.TopicVersion, 0)
+	sqlSelect := "SELECT a.id AS topic_set_id,b.id AS topic_id,b.version_name,b.version_lang FROM topic_sets a LEFT JOIN topics b ON a.id=b.topic_set_id WHERE a.id=?"
+
+	err = node.Select(&items, sqlSelect, topicSetID)
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+	return
+}

@@ -23,6 +23,35 @@ type RelatedTopic struct {
 	TopicID int64 `db:"topic_id" json:"topic_id,string" swaggertype:"string"`
 	// 话题名
 	Name string `db:"name" json:"name"`
+	// 封面图
+	// 必须为URL
+	Cover string `db:"cover" json:"cover"`
+	// 版本名称
+	VersionName string `db:"version_name" json:"version_name"`
+	// 版本语言
+	VersionLanguage string `db:"version_lang" json:"version_lang"`
+	// 关联类型
+	// normal 普通关联
+	// strong 强关联
+	Type string `db:"type" json:"type"`
+	// 简介
+	Introduction string `db:"introduction" json:"introduction"`
+
+	// 成员数
+	MembersCount int `json:"members_count"`
+
+	// 资源数量
+	ResourcesCount int `json:"resources_count"`
+
+	// 是否关注
+	IsFollowed bool `json:"is_followed"`
+}
+
+type RelatedTopicShort struct {
+	// 话题ID
+	TopicID int64 `db:"topic_id" json:"topic_id,string" swaggertype:"string"`
+	// 话题名
+	Name string `db:"name" json:"name"`
 	// 版本名称
 	VersionName string `db:"version_name" json:"version_name"`
 	// 版本语言
@@ -64,7 +93,7 @@ type Topic struct {
 	Introduction string `json:"introduction"`
 
 	// 关联话题
-	RelatedTopics []*RelatedTopic `json:"related_topics"`
+	RelatedTopics []*RelatedTopicShort `json:"related_topics"`
 
 	// 话题分类
 	Categories []*TopicCategoryParentItem `json:"categories"`
@@ -127,6 +156,9 @@ type Topic struct {
 	MuteNotification bool `db:"mute_notification" json:"mute_notification"`
 
 	CreatedAt int64 `json:"created_at" swaggertype:"integer"`
+
+	// 是否关注
+	IsFollowed bool `json:"is_followed"`
 }
 
 type CreateTopicReq struct {
@@ -138,7 +170,14 @@ type CreateTopicReq struct {
 	TopicSetID *int64 `json:"topic_set_id,string,omitempty"`
 
 	// 成员
-	Members []*TopicMemberReq `json:"members"`
+	Members []*struct {
+		// 成员ID
+		AccountID int64 `json:"account_id,string"`
+		// 角色
+		// user 普通用户
+		// admin 管理员
+		Role string `json:"role"`
+	} `json:"members,omitempty"`
 
 	// 封面图
 	// 必须为URL
@@ -288,6 +327,10 @@ type TopicMemberReq struct {
 	// user 普通用户
 	// admin 管理员
 	Role string `json:"role"`
+
+	// 操作
+	// C U D
+	Opt string `json:"opt"`
 }
 
 func (p *TopicMemberReq) Validate() error {
@@ -296,6 +339,8 @@ func (p *TopicMemberReq) Validate() error {
 		validation.Field(&p.AccountID, validation.Required.Error(`请传入成员ID`)),
 		validation.Field(&p.Role, validation.Required.Error(`请传入成员角色`),
 			validation.In(MemberRoleUser, MemberRoleAdmin).Error("角色值不正确")),
+		validation.Field(&p.Opt, validation.Required.Error(`请传入操作`),
+			validation.In("C", "U", "D").Error("操作值不正确")),
 	)
 }
 
@@ -306,7 +351,14 @@ type BulkSaveTopicMembersReq struct {
 
 type UpdateTopicReq struct {
 	// 成员
-	Members []*TopicMemberReq `json:"members,omitempty"`
+	Members []*struct {
+		// 成员ID
+		AccountID int64 `json:"account_id,string"`
+		// 角色
+		// user 普通用户
+		// admin 管理员
+		Role string `json:"role"`
+	} `json:"members,omitempty"`
 
 	// 封面图
 	// 必须为URL
@@ -415,4 +467,47 @@ func (p *UpdateTopicReq) Validate() error {
 			validation.RuneLength(0, 50).Error(`版本语言最大长度为50个字符`),
 		),
 	)
+}
+
+type TopicMembersPagedResp struct {
+	Count    int            `json:"count"`
+	PageSize int            `json:"page_size"`
+	Data     []*TopicMember `json:"data"`
+}
+
+type BatchSavedTopicMemberReq struct {
+	// 成员列表
+	Members []*TopicMemberReq `json:"members"`
+}
+
+func (p *BatchSavedTopicMemberReq) Validate() error {
+	return validation.ValidateStruct(
+		p,
+		validation.Field(&p.Members, validation.Required.Error(`请传入成员`)),
+	)
+}
+
+type TopicFollower struct {
+	// 是否关注
+	IsFollowed bool `json:"is_followed"`
+	// 话题ID
+	TopicID int64 `db:"topic_id" json:"topic_id,string" swaggertype:"string"`
+}
+
+func (p *TopicFollower) Validate() error {
+	return validation.ValidateStruct(
+		p,
+		validation.Field(&p.TopicID, validation.Required.Error(`请传入话题ID`)),
+	)
+}
+
+type TopicVersion struct {
+	// 集合ID
+	TopicSetID int64 `db:"topic_set_id" json:"topic_set_id,string"  swaggertype:"string"`
+	// 话题ID
+	TopicID int64 `db:"topic_id" json:"topic_id,string" swaggertype:"string"`
+	// 版本名称
+	VersionName string `db:"version_name" json:"version_name"`
+	// 版本语言
+	VersionLanguage string `db:"version_lang" json:"version_lang"`
 }
