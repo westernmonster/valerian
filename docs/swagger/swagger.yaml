@@ -148,7 +148,7 @@ definitions:
       members:
         description: 成员
         items:
-          type: '&{%!s(token.Pos=4215) %!s(*ast.StructType=&{4216 0xc000b1f200 false})}'
+          type: '&{%!s(token.Pos=4215) %!s(*ast.StructType=&{4216 0xc000aff560 false})}'
         type: array
       mute_notification:
         description: 消息免打扰
@@ -842,7 +842,7 @@ definitions:
       members:
         description: 成员
         items:
-          type: '&{%!s(token.Pos=9532) %!s(*ast.StructType=&{9533 0xc000b1ff80 false})}'
+          type: '&{%!s(token.Pos=9532) %!s(*ast.StructType=&{9533 0xc000b14390 false})}'
         type: array
       mute_notification:
         description: 消息免打扰

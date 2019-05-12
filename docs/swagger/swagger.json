@@ -2270,7 +2270,7 @@
                     "description": "成员",
                     "type": "array",
                     "items": {
-                        "type": "\u0026{%!s(token.Pos=4215) %!s(*ast.StructType=\u0026{4216 0xc000b1f200 false})}"
+                        "type": "\u0026{%!s(token.Pos=4215) %!s(*ast.StructType=\u0026{4216 0xc000aff560 false})}"
                     }
                 },
                 "mute_notification": {
@@ -3095,7 +3095,7 @@
                     "description": "成员",
                     "type": "array",
                     "items": {
-                        "type": "\u0026{%!s(token.Pos=9532) %!s(*ast.StructType=\u0026{9533 0xc000b1ff80 false})}"
+                        "type": "\u0026{%!s(token.Pos=9532) %!s(*ast.StructType=\u0026{9533 0xc000b14390 false})}"
                     }
                 },
                 "mute_notification": {
