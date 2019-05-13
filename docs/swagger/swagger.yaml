@@ -97,11 +97,31 @@ definitions:
           example: 86
         type: string
     type: object
+  models.CreateTopicMemberArg:
+    properties:
+      account_id:
+        description: 成员ID
+        type: integer
+      role:
+        description: |-
+          角色
+          user 普通用户
+          admin 管理员
+        type: string
+    type: object
   models.CreateTopicReq:
     properties:
       allow_chat:
         description: 开启群聊
         type: boolean
+      allow_discuss:
+        description: 允许讨论
+        type: boolean
+      bg:
+        description: |-
+          背景图
+          必须为URL
+        type: string
       categories:
         description: 话题分类
         items:
@@ -138,17 +158,21 @@ definitions:
       join_permission:
         description: |-
           加入权限
-          free  自由加入
-          auth_free 认证用户自由加入
-          approve 经批准
-          auth_approve 认证用户经批准
-          admin 仅管理员添加
-          purchase 购买
+          默认为 member
+          member 注册用户
+          id_cert 身份认证自由关注
+          work_cert 业内认证自由关注
+          member_approve 注册用户，需审批
+          id_cert_approve 身份认证自由关注，需审批
+          work_cert_approve 业内认证自由关注，需审批
+          admin_add 仅管理员手工添加
+          purchase 付费购买
+          vip Pro 用户自由关注
         type: string
       members:
         description: 成员
         items:
-          type: '&{%!s(token.Pos=4215) %!s(*ast.StructType=&{4216 0xc000ba95f0 false})}'
+          $ref: '#/definitions/models.CreateTopicMemberArg'
         type: array
       mute_notification:
         description: 消息免打扰
@@ -180,9 +204,6 @@ definitions:
       topic_type:
         description: 话题类型
         type: integer
-      version_lang:
-        description: 版本语言
-        type: string
       version_name:
         description: 版本名
         type: string
@@ -377,12 +398,21 @@ definitions:
         description: ID
         format: int64
         type: string
+      id_cert:
+        description: 是否身份认证
+        type: boolean
       introduction:
         description: 自我介绍
         type: string
       ip:
         description: IP 注册IP
         type: string
+      is_org:
+        description: 是否机构用户
+        type: boolean
+      is_vip:
+        description: 是否VIP
+        type: boolean
       location:
         description: 所在地区值
         type: integer
@@ -403,9 +433,17 @@ definitions:
         description: 用户名
         format: user_name
         type: string
+      work_cert:
+        description: 是否工作认证
+        type: boolean
     type: object
   models.RelatedTopic:
     properties:
+      can_follow:
+        description: |-
+          能否关注
+          根据当前用户匹配权限返回
+        type: boolean
       cover:
         description: |-
           封面图
@@ -434,9 +472,6 @@ definitions:
           关联类型
           normal 普通关联
           strong 强关联
-        type: string
-      version_lang:
-        description: 版本语言
         type: string
       version_name:
         description: 版本名称
@@ -467,9 +502,6 @@ definitions:
           关联类型
           normal 普通关联
           strong 强关联
-        type: string
-      version_lang:
-        description: 版本语言
         type: string
       version_name:
         description: 版本名称
@@ -537,6 +569,19 @@ definitions:
       allow_chat:
         description: 开启群聊
         type: boolean
+      allow_discuss:
+        description: 允许讨论
+        type: boolean
+      bg:
+        description: |-
+          背景图
+          必须为URL
+        type: string
+      can_follow:
+        description: |-
+          能否关注
+          根据当前用户匹配权限返回
+        type: boolean
       categories:
         description: 话题分类
         items:
@@ -580,12 +625,16 @@ definitions:
       join_permission:
         description: |-
           加入权限
-          free  自由加入
-          auth_free 认证用户自由加入
-          approve 经批准
-          auth_approve 认证用户经批准
-          admin 仅管理员添加
-          purchase 购买
+          默认为 member
+          member 注册用户
+          id_cert 身份认证自由关注
+          work_cert 业内认证自由关注
+          member_approve 注册用户，需审批
+          id_cert_approve 身份认证自由关注，需审批
+          work_cert_approve 业内认证自由关注，需审批
+          admin_add 仅管理员手工添加
+          purchase 付费购买
+          vip Pro 用户自由关注
         type: string
       members:
         description: 成员
@@ -619,9 +668,6 @@ definitions:
         description: 话题类型
         type: integer
       topic_type_name:
-        type: string
-      version_lang:
-        description: 版本语言
         type: string
       version_name:
         description: 版本名
@@ -717,6 +763,7 @@ definitions:
       role:
         description: |-
           成员角色
+          owner 所有者
           user 普通用户
           admin 管理员
         type: string
@@ -759,9 +806,6 @@ definitions:
         type: string
       topic_set_id:
         description: 集合ID
-        type: string
-      version_lang:
-        description: 版本语言
         type: string
       version_name:
         description: 版本名称
@@ -811,6 +855,11 @@ definitions:
       allow_chat:
         description: 开启群聊
         type: boolean
+      bg:
+        description: |-
+          背景图
+          必须为URL
+        type: string
       categories:
         description: 话题分类
         items:
@@ -857,7 +906,7 @@ definitions:
       members:
         description: 成员
         items:
-          type: '&{%!s(token.Pos=9532) %!s(*ast.StructType=&{9533 0xc000bc6900 false})}'
+          $ref: '#/definitions/models.CreateTopicMemberArg'
         type: array
       mute_notification:
         description: 消息免打扰
@@ -882,9 +931,6 @@ definitions:
       topic_type:
         description: 话题类型
         type: integer
-      version_lang:
-        description: 版本语言
-        type: string
       version_name:
         description: 版本名
         type: string

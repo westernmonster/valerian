@@ -172,6 +172,15 @@ type Topic struct {
 	CanFollow bool `json:"can_follow"`
 }
 
+type CreateTopicMemberArg struct {
+	// 成员ID
+	AccountID int64 `json:"account_id,string"`
+	// 角色
+	// user 普通用户
+	// admin 管理员
+	Role string `json:"role"`
+}
+
 type CreateTopicReq struct {
 
 	// 集合ID
@@ -181,14 +190,7 @@ type CreateTopicReq struct {
 	TopicSetID *int64 `json:"topic_set_id,string,omitempty"`
 
 	// 成员
-	Members []*struct {
-		// 成员ID
-		AccountID int64 `json:"account_id,string"`
-		// 角色
-		// user 普通用户
-		// admin 管理员
-		Role string `json:"role"`
-	} `json:"members,omitempty"`
+	Members []*CreateTopicMemberArg `json:"members,omitempty"`
 
 	// 封面图
 	// 必须为URL
@@ -343,6 +345,7 @@ type TopicMemberReq struct {
 	// 角色
 	// user 普通用户
 	// admin 管理员
+	// owner 主理人
 	Role string `json:"role"`
 
 	// 操作
@@ -368,14 +371,7 @@ type BulkSaveTopicMembersReq struct {
 
 type UpdateTopicReq struct {
 	// 成员
-	Members []*struct {
-		// 成员ID
-		AccountID int64 `json:"account_id,string"`
-		// 角色
-		// user 普通用户
-		// admin 管理员
-		Role string `json:"role"`
-	} `json:"members,omitempty"`
+	Members []*CreateTopicMemberArg `json:"members,omitempty"`
 
 	// 封面图
 	// 必须为URL

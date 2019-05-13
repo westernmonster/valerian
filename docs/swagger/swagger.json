@@ -2230,12 +2230,33 @@
                 }
             }
         },
+        "models.CreateTopicMemberArg": {
+            "type": "object",
+            "properties": {
+                "account_id": {
+                    "description": "成员ID",
+                    "type": "integer"
+                },
+                "role": {
+                    "description": "角色\nuser 普通用户\nadmin 管理员",
+                    "type": "string"
+                }
+            }
+        },
         "models.CreateTopicReq": {
             "type": "object",
             "properties": {
                 "allow_chat": {
                     "description": "开启群聊",
                     "type": "boolean"
+                },
+                "allow_discuss": {
+                    "description": "允许讨论",
+                    "type": "boolean"
+                },
+                "bg": {
+                    "description": "背景图\n必须为URL",
+                    "type": "string"
                 },
                 "categories": {
                     "description": "话题分类",
@@ -2269,14 +2290,14 @@
                     "type": "boolean"
                 },
                 "join_permission": {
-                    "description": "加入权限\nfree  自由加入\nauth_free 认证用户自由加入\napprove 经批准\nauth_approve 认证用户经批准\nadmin 仅管理员添加\npurchase 购买",
+                    "description": "加入权限\n默认为 member\nmember 注册用户\nid_cert 身份认证自由关注\nwork_cert 业内认证自由关注\nmember_approve 注册用户，需审批\nid_cert_approve 身份认证自由关注，需审批\nwork_cert_approve 业内认证自由关注，需审批\nadmin_add 仅管理员手工添加\npurchase 付费购买\nvip Pro 用户自由关注",
                     "type": "string"
                 },
                 "members": {
                     "description": "成员",
                     "type": "array",
                     "items": {
-                        "type": "\u0026{%!s(token.Pos=4215) %!s(*ast.StructType=\u0026{4216 0xc000ba95f0 false})}"
+                        "$ref": "#/definitions/models.CreateTopicMemberArg"
                     }
                 },
                 "mute_notification": {
@@ -2305,10 +2326,6 @@
                 "topic_type": {
                     "description": "话题类型",
                     "type": "integer"
-                },
-                "version_lang": {
-                    "description": "版本语言",
-                    "type": "string"
                 },
                 "version_name": {
                     "description": "版本名",
@@ -2575,6 +2592,10 @@
                     "type": "string",
                     "format": "int64"
                 },
+                "id_cert": {
+                    "description": "是否身份认证",
+                    "type": "boolean"
+                },
                 "introduction": {
                     "description": "自我介绍",
                     "type": "string"
@@ -2582,6 +2603,14 @@
                 "ip": {
                     "description": "IP 注册IP",
                     "type": "string"
+                },
+                "is_org": {
+                    "description": "是否机构用户",
+                    "type": "boolean"
+                },
+                "is_vip": {
+                    "description": "是否VIP",
+                    "type": "boolean"
                 },
                 "location": {
                     "description": "所在地区值",
@@ -2608,12 +2637,20 @@
                     "description": "用户名",
                     "type": "string",
                     "format": "user_name"
+                },
+                "work_cert": {
+                    "description": "是否工作认证",
+                    "type": "boolean"
                 }
             }
         },
         "models.RelatedTopic": {
             "type": "object",
             "properties": {
+                "can_follow": {
+                    "description": "能否关注\n根据当前用户匹配权限返回",
+                    "type": "boolean"
+                },
                 "cover": {
                     "description": "封面图\n必须为URL",
                     "type": "string"
@@ -2644,10 +2681,6 @@
                 },
                 "type": {
                     "description": "关联类型\nnormal 普通关联\nstrong 强关联",
-                    "type": "string"
-                },
-                "version_lang": {
-                    "description": "版本语言",
                     "type": "string"
                 },
                 "version_name": {
@@ -2682,10 +2715,6 @@
                 },
                 "type": {
                     "description": "关联类型\nnormal 普通关联\nstrong 强关联",
-                    "type": "string"
-                },
-                "version_lang": {
-                    "description": "版本语言",
                     "type": "string"
                 },
                 "version_name": {
@@ -2771,6 +2800,18 @@
                     "description": "开启群聊",
                     "type": "boolean"
                 },
+                "allow_discuss": {
+                    "description": "允许讨论",
+                    "type": "boolean"
+                },
+                "bg": {
+                    "description": "背景图\n必须为URL",
+                    "type": "string"
+                },
+                "can_follow": {
+                    "description": "能否关注\n根据当前用户匹配权限返回",
+                    "type": "boolean"
+                },
                 "categories": {
                     "description": "话题分类",
                     "type": "array",
@@ -2813,7 +2854,7 @@
                     "type": "boolean"
                 },
                 "join_permission": {
-                    "description": "加入权限\nfree  自由加入\nauth_free 认证用户自由加入\napprove 经批准\nauth_approve 认证用户经批准\nadmin 仅管理员添加\npurchase 购买",
+                    "description": "加入权限\n默认为 member\nmember 注册用户\nid_cert 身份认证自由关注\nwork_cert 业内认证自由关注\nmember_approve 注册用户，需审批\nid_cert_approve 身份认证自由关注，需审批\nwork_cert_approve 业内认证自由关注，需审批\nadmin_add 仅管理员手工添加\npurchase 付费购买\nvip Pro 用户自由关注",
                     "type": "string"
                 },
                 "members": {
@@ -2851,10 +2892,6 @@
                     "type": "integer"
                 },
                 "topic_type_name": {
-                    "type": "string"
-                },
-                "version_lang": {
-                    "description": "版本语言",
                     "type": "string"
                 },
                 "version_name": {
@@ -2975,7 +3012,7 @@
                     "type": "string"
                 },
                 "role": {
-                    "description": "成员角色\nuser 普通用户\nadmin 管理员",
+                    "description": "成员角色\nowner 所有者\nuser 普通用户\nadmin 管理员",
                     "type": "string"
                 },
                 "user_name": {
@@ -3029,10 +3066,6 @@
                     "description": "集合ID",
                     "type": "string"
                 },
-                "version_lang": {
-                    "description": "版本语言",
-                    "type": "string"
-                },
                 "version_name": {
                     "description": "版本名称",
                     "type": "string"
@@ -3083,6 +3116,10 @@
                     "description": "开启群聊",
                     "type": "boolean"
                 },
+                "bg": {
+                    "description": "背景图\n必须为URL",
+                    "type": "string"
+                },
                 "categories": {
                     "description": "话题分类",
                     "type": "array",
@@ -3122,7 +3159,7 @@
                     "description": "成员",
                     "type": "array",
                     "items": {
-                        "type": "\u0026{%!s(token.Pos=9532) %!s(*ast.StructType=\u0026{9533 0xc000bc6900 false})}"
+                        "$ref": "#/definitions/models.CreateTopicMemberArg"
                     }
                 },
                 "mute_notification": {
@@ -3147,10 +3184,6 @@
                 "topic_type": {
                     "description": "话题类型",
                     "type": "integer"
-                },
-                "version_lang": {
-                    "description": "版本语言",
-                    "type": "string"
                 },
                 "version_name": {
                     "description": "版本名",
