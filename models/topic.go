@@ -527,3 +527,14 @@ type TopicVersion struct {
 	// 版本名称
 	VersionName string `db:"version_name" json:"version_name"`
 }
+
+type ChangeOwnerArg struct {
+	NewOwnerID int64 `json:"new_owner_id,string"  swaggertype:"string"`
+}
+
+func (p *ChangeOwnerArg) Validate() error {
+	return validation.ValidateStruct(
+		p,
+		validation.Field(&p.NewOwnerID, validation.Required.Error(`请传入新主理人ID`)),
+	)
+}
