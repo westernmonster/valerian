@@ -9,6 +9,7 @@ type TopicMember struct {
 	// 账户ID
 	AccountID int64 `db:"account_id" json:"account_id,string" swaggertype:"string"`
 	// 成员角色
+	// owner 所有者
 	// user 普通用户
 	// admin 管理员
 	Role string `db:"role" json:"role"`
@@ -28,8 +29,6 @@ type RelatedTopic struct {
 	Cover string `db:"cover" json:"cover"`
 	// 版本名称
 	VersionName string `db:"version_name" json:"version_name"`
-	// 版本语言
-	VersionLanguage string `db:"version_lang" json:"version_lang"`
 	// 关联类型
 	// normal 普通关联
 	// strong 强关联
@@ -45,6 +44,10 @@ type RelatedTopic struct {
 
 	// 是否关注
 	IsFollowed bool `json:"is_followed"`
+
+	// 能否关注
+	// 根据当前用户匹配权限返回
+	CanFollow bool `json:"can_follow"`
 }
 
 type RelatedTopicShort struct {
@@ -54,8 +57,6 @@ type RelatedTopicShort struct {
 	Name string `db:"name" json:"name"`
 	// 版本名称
 	VersionName string `db:"version_name" json:"version_name"`
-	// 版本语言
-	VersionLanguage string `db:"version_lang" json:"version_lang"`
 	// 关联类型
 	// normal 普通关联
 	// strong 强关联
@@ -69,8 +70,6 @@ type TopicSearchResult struct {
 	Name string `db:"name" json:"name"`
 	// 版本名称
 	VersionName string `db:"version_name" json:"version_name"`
-	// 版本语言
-	VersionLanguage string `db:"version_lang" json:"version_lang"`
 }
 
 type Topic struct {
@@ -84,7 +83,11 @@ type Topic struct {
 
 	// 封面图
 	// 必须为URL
-	Cover string `json:"cover"`
+	Cover *string `json:"cover"`
+
+	// 背景图
+	// 必须为URL
+	Bg *string `json:"bg"`
 
 	// 名称
 	Name string `json:"name"`
@@ -119,14 +122,14 @@ type Topic struct {
 	// 版本名
 	VersionName string `json:"version_name"`
 
-	// 版本语言
-	VersionLanguage string `json:"version_lang"`
-
 	// 是否私密
 	IsPrivate bool `json:"is_private"`
 
 	// 开启群聊
 	AllowChat bool `json:"allow_chat"`
+
+	// 允许讨论
+	AllowDiscuss bool `json:"allow_discuss"`
 
 	// 编辑权限
 	// auth 认证用户
@@ -141,12 +144,16 @@ type Topic struct {
 	ViewPermission string `json:"view_permission"`
 
 	// 加入权限
-	// free  自由加入
-	// auth_free 认证用户自由加入
-	// approve 经批准
-	// auth_approve 认证用户经批准
-	// admin 仅管理员添加
-	// purchase 购买
+	// 默认为 member
+	// member 注册用户
+	// id_cert 身份认证自由关注
+	// work_cert 业内认证自由关注
+	// member_approve 注册用户，需审批
+	// id_cert_approve 身份认证自由关注，需审批
+	// work_cert_approve 业内认证自由关注，需审批
+	// admin_add 仅管理员手工添加
+	// purchase 付费购买
+	// vip Pro 用户自由关注
 	JoinPermission string `json:"join_permission"`
 
 	// 重要标记
@@ -159,6 +166,10 @@ type Topic struct {
 
 	// 是否关注
 	IsFollowed bool `json:"is_followed"`
+
+	// 能否关注
+	// 根据当前用户匹配权限返回
+	CanFollow bool `json:"can_follow"`
 }
 
 type CreateTopicReq struct {
@@ -181,7 +192,11 @@ type CreateTopicReq struct {
 
 	// 封面图
 	// 必须为URL
-	Cover string `json:"cover"`
+	Cover *string `json:"cover,omitempty"`
+
+	// 背景图
+	// 必须为URL
+	Bg *string `json:"bg,omitempty"`
 
 	// 名称
 	Name string `json:"name"`
@@ -214,14 +229,14 @@ type CreateTopicReq struct {
 	// 版本名
 	VersionName string `json:"version_name"`
 
-	// 版本语言
-	VersionLanguage string `json:"version_lang"`
-
 	// 是否私密
 	IsPrivate bool `json:"is_private"`
 
 	// 开启群聊
 	AllowChat bool `json:"allow_chat"`
+
+	// 允许讨论
+	AllowDiscuss bool `json:"allow_discuss"`
 
 	// 编辑权限
 	// auth 认证用户
@@ -236,12 +251,16 @@ type CreateTopicReq struct {
 	ViewPermission string `json:"view_permission"`
 
 	// 加入权限
-	// free  自由加入
-	// auth_free 认证用户自由加入
-	// approve 经批准
-	// auth_approve 认证用户经批准
-	// admin 仅管理员添加
-	// purchase 购买
+	// 默认为 member
+	// member 注册用户
+	// id_cert 身份认证自由关注
+	// work_cert 业内认证自由关注
+	// member_approve 注册用户，需审批
+	// id_cert_approve 身份认证自由关注，需审批
+	// work_cert_approve 业内认证自由关注，需审批
+	// admin_add 仅管理员手工添加
+	// purchase 付费购买
+	// vip Pro 用户自由关注
 	JoinPermission string `json:"join_permission"`
 
 	// 重要标记
@@ -257,8 +276,10 @@ func (p *CreateTopicReq) Validate() error {
 		validation.Field(&p.Members, validation.Required.Error(`请选择成员`)),
 		validation.Field(&p.TopicType, validation.Required.Error(`请选择话题类型`)),
 		validation.Field(&p.Cover,
-			validation.Required.Error(`请选择封面图`),
 			is.URL.Error("封面图格式不正确"),
+		),
+		validation.Field(&p.Bg,
+			is.URL.Error("背景图格式不正确"),
 		),
 		validation.Field(&p.Name,
 			validation.Required.Error(`请输入话题名`),
@@ -279,7 +300,7 @@ func (p *CreateTopicReq) Validate() error {
 		),
 		validation.Field(&p.EditPermission,
 			validation.Required.Error(`请输入编辑权限`),
-			validation.In(EditPermissionAuth, EditPermissionAdmin, EditPermissionAuthJoin, EditPermissionAuthJoinAudit).Error("编辑权限不正确"),
+			validation.In(EditPermissionIDCert, EditPermissionWorkCert, EditPermissionIDCertJoined, EditPermissionWorkCertJoined, EditPermissionApprovedIDCertJoined, EditPermissionApprovedWorkCertJoined, EditPermissionAdmin).Error("编辑权限不正确"),
 		),
 		validation.Field(&p.ViewPermission,
 			validation.Required.Error(`请输入查看权限`),
@@ -287,15 +308,11 @@ func (p *CreateTopicReq) Validate() error {
 		),
 		validation.Field(&p.JoinPermission,
 			validation.Required.Error(`请输入加入权限`),
-			validation.In(JoinPermissionFree, JoinPermissionAdmin, JoinPermissionApprove, JoinPermissionAuthFree, JoinPermissionPurchase, JoinPermissionAuthApprove).Error("加入权限不正确"),
+			validation.In(JoinPermissionMember, JoinPermissionIDCert, JoinPermissionWorkCert, JoinPermissionMemberApprove, JoinPermissionIDCertApprove, JoinPermissionWorkCertApprove, JoinPermissionAdminAdd, JoinPermissionPurchase, JoinPermissionVIP).Error("加入权限不正确"),
 		),
 		validation.Field(&p.VersionName,
 			validation.Required.Error(`请输入版本名`),
 			validation.RuneLength(0, 250).Error(`版本名最大长度为250个字符`),
-		),
-		validation.Field(&p.VersionLanguage,
-			validation.Required.Error(`请输入版本语言`),
-			validation.RuneLength(0, 50).Error(`版本语言最大长度为50个字符`),
 		),
 	)
 }
@@ -364,6 +381,10 @@ type UpdateTopicReq struct {
 	// 必须为URL
 	Cover *string `json:"cover,omitempty"`
 
+	// 背景图
+	// 必须为URL
+	Bg *string `json:"bg,omitempty"`
+
 	// 名称
 	Name *string `json:"name,omitempty"`
 
@@ -394,9 +415,6 @@ type UpdateTopicReq struct {
 
 	// 版本名
 	VersionName *string `json:"version_name,omitempty"`
-
-	// 版本语言
-	VersionLanguage *string `json:"version_lang,omitempty"`
 
 	// 是否私密
 	IsPrivate *bool `json:"is_private,omitempty"`
@@ -438,6 +456,9 @@ func (p *UpdateTopicReq) Validate() error {
 		validation.Field(&p.Cover,
 			is.URL.Error("封面图格式不正确"),
 		),
+		validation.Field(&p.Bg,
+			is.URL.Error("背景图格式不正确"),
+		),
 		validation.Field(&p.Name,
 			validation.RuneLength(0, 250).Error(`话题名最大长度为250个字符`),
 		),
@@ -452,19 +473,16 @@ func (p *UpdateTopicReq) Validate() error {
 			validation.In(TopicHomeIntroduction, TopicHomeFeed, TopicHomeCataglog, TopicHomeDiscussion, TopicHomeChat).Error("话题首页不正确"),
 		),
 		validation.Field(&p.EditPermission,
-			validation.In(EditPermissionAuth, EditPermissionAdmin, EditPermissionAuthJoin, EditPermissionAuthJoinAudit).Error("编辑权限不正确"),
+			validation.In(EditPermissionIDCert, EditPermissionWorkCert, EditPermissionIDCertJoined, EditPermissionWorkCertJoined, EditPermissionApprovedIDCertJoined, EditPermissionApprovedWorkCertJoined, EditPermissionAdmin).Error("编辑权限不正确"),
 		),
 		validation.Field(&p.ViewPermission,
 			validation.In(ViewPermissionJoin, ViewPermissionPublic).Error("查看权限不正确"),
 		),
 		validation.Field(&p.JoinPermission,
-			validation.In(JoinPermissionFree, JoinPermissionAdmin, JoinPermissionApprove, JoinPermissionAuthFree, JoinPermissionPurchase, JoinPermissionAuthApprove).Error("加入权限不正确"),
+			validation.In(JoinPermissionMember, JoinPermissionIDCert, JoinPermissionWorkCert, JoinPermissionMemberApprove, JoinPermissionIDCertApprove, JoinPermissionWorkCertApprove, JoinPermissionAdminAdd, JoinPermissionPurchase, JoinPermissionVIP).Error("加入权限不正确"),
 		),
 		validation.Field(&p.VersionName,
 			validation.RuneLength(0, 250).Error(`版本名最大长度为250个字符`),
-		),
-		validation.Field(&p.VersionLanguage,
-			validation.RuneLength(0, 50).Error(`版本语言最大长度为50个字符`),
 		),
 	)
 }
@@ -508,6 +526,4 @@ type TopicVersion struct {
 	TopicID int64 `db:"topic_id" json:"topic_id,string" swaggertype:"string"`
 	// 版本名称
 	VersionName string `db:"version_name" json:"version_name"`
-	// 版本语言
-	VersionLanguage string `db:"version_lang" json:"version_lang"`
 }

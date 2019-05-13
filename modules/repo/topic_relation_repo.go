@@ -84,7 +84,7 @@ func (p *TopicRelationRepository) GetAll(node sqalx.Node) (items []*TopicRelatio
 
 func (p *TopicRelationRepository) GetAllRelatedTopics(node sqalx.Node, topicID int64) (items []*models.RelatedTopicShort, err error) {
 	items = make([]*models.RelatedTopicShort, 0)
-	sqlSelect := "SELECT a.to_topic_id AS topic_id,b.name,b.version_name,b.version_lang,a.relation AS type FROM topic_relations a LEFT JOIN topics b ON a.to_topic_id=b.id WHERE a.from_topic_id=?"
+	sqlSelect := "SELECT a.to_topic_id AS topic_id,b.name,b.version_name,a.relation AS type FROM topic_relations a LEFT JOIN topics b ON a.to_topic_id=b.id WHERE a.from_topic_id=?"
 
 	err = node.Select(&items, sqlSelect, topicID)
 	if err != nil {
@@ -96,7 +96,7 @@ func (p *TopicRelationRepository) GetAllRelatedTopics(node sqalx.Node, topicID i
 
 func (p *TopicRelationRepository) GetAllRelatedTopicsDetail(node sqalx.Node, topicID int64) (items []*models.RelatedTopic, err error) {
 	items = make([]*models.RelatedTopic, 0)
-	sqlSelect := "SELECT a.to_topic_id AS topic_id,b.name,b.version_name,b.version_lang,a.relation AS type,b.cover, b.introduction FROM topic_relations a LEFT JOIN topics b ON a.to_topic_id=b.id WHERE a.from_topic_id=?"
+	sqlSelect := "SELECT a.to_topic_id AS topic_id,b.name,b.version_name,a.relation AS type,b.cover, b.introduction FROM topic_relations a LEFT JOIN topics b ON a.to_topic_id=b.id WHERE a.from_topic_id=?"
 
 	err = node.Select(&items, sqlSelect, topicID)
 	if err != nil {

@@ -18,10 +18,12 @@ type Topic struct {
 	ID               int64         `db:"id" json:"id,string"`                          // ID ID
 	TopicSetID       int64         `db:"topic_set_id" json:"topic_set_id,string"`      // TopicSetID 话题集合ID
 	Name             string        `db:"name" json:"name"`                             // Name 话题名
-	Cover            string        `db:"cover" json:"cover"`                           // Cover 话题封面
+	Cover            *string       `db:"cover" json:"cover"`                           // Cover 话题封面
+	Bg               *string       `db:"bg" json:"bg"`                                 // Bg 背景图
 	Introduction     string        `db:"introduction" json:"introduction"`             // Introduction 话题简介
 	IsPrivate        types.BitBool `db:"is_private" json:"is_private"`                 // IsPrivate 是否私密
 	AllowChat        types.BitBool `db:"allow_chat" json:"allow_chat"`                 // AllowChat 开启聊天
+	AllowDiscuss     types.BitBool `db:"allow_discuss" json:"allow_discuss"`           // AllowChat 开启聊天
 	EditPermission   string        `db:"edit_permission" json:"edit_permission"`       // EditPermission 编辑权限
 	ViewPermission   string        `db:"view_permission" json:"view_permission"`       // ViewPermission 查看权限
 	JoinPermission   string        `db:"join_permission" json:"join_permission"`       // JoinPermission 加入权限
@@ -31,7 +33,6 @@ type Topic struct {
 	TopicHome        string        `db:"topic_home" json:"topic_home"`                 // TopicHome 话题首页
 	TopicType        int           `db:"topic_type" json:"topic_type"`                 // TopicType 话题类型
 	VersionName      string        `db:"version_name" json:"version_name"`             // VersionName 版本名称
-	VersionLanguage  string        `db:"version_lang" json:"version_lang"`             // VersionLanguage 版本语言
 	CreatedBy        int64         `db:"created_by" json:"created_by,string"`          // CreatedBy 创建人
 	Deleted          types.BitBool `db:"deleted" json:"deleted"`                       // Deleted 是否删除
 	CreatedAt        int64         `db:"created_at" json:"created_at"`                 // CreatedAt 创建时间
@@ -106,8 +107,7 @@ func (p *TopicRepository) SearchTopics(node sqalx.Node, cond map[string]string) 
 	if val, ok := cond["query"]; ok {
 		if strings.TrimSpace(val) != "" {
 			clause += ` AND (a.name LIKE :query
-		OR a.version_name LIKE :query
-		OR a.version_lang LIKE :query)`
+		OR a.version_name LIKE :query)`
 			condition["query"] = "%" + val + "%"
 		}
 	}
@@ -393,7 +393,7 @@ func (p *TopicRepository) BatchDelete(node sqalx.Node, ids []int64) (err error) 
 
 func (p *TopicRepository) GetTopicVersions(node sqalx.Node, topicSetID int64) (items []*models.TopicVersion, err error) {
 	items = make([]*models.TopicVersion, 0)
-	sqlSelect := "SELECT a.id AS topic_set_id,b.id AS topic_id,b.version_name,b.version_lang FROM topic_sets a LEFT JOIN topics b ON a.id=b.topic_set_id WHERE a.id=?"
+	sqlSelect := "SELECT a.id AS topic_set_id,b.id AS topic_id,b.version_name FROM topic_sets a LEFT JOIN topics b ON a.id=b.topic_set_id WHERE a.id=?"
 
 	err = node.Select(&items, sqlSelect, topicSetID)
 	if err != nil {

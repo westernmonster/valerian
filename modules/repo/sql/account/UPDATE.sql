@@ -14,5 +14,9 @@ SET
     avatar=:avatar,
     source=:source,
     ip=:ip,
+    id_cert=:id_cert,
+    work_cert=:work_cert,
+    is_org=:is_org,
+    is_vip=:is_vip,
     updated_at=:updated_at
 WHERE id=:id

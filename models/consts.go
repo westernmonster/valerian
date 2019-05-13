@@ -92,12 +92,15 @@ const (
 )
 
 const (
-	JoinPermissionFree        = "free"
-	JoinPermissionAuthFree    = "auth_free"
-	JoinPermissionApprove     = "approve"
-	JoinPermissionAuthApprove = "auth_approve"
-	JoinPermissionAdmin       = "admin"
-	JoinPermissionPurchase    = "purchase"
+	JoinPermissionMember          = "member"
+	JoinPermissionIDCert          = "id_cert"
+	JoinPermissionWorkCert        = "work_cert"
+	JoinPermissionMemberApprove   = "member_approve"
+	JoinPermissionIDCertApprove   = "id_cert_approve"
+	JoinPermissionWorkCertApprove = "work_cert_approve"
+	JoinPermissionAdminAdd        = "admin_add"
+	JoinPermissionPurchase        = "purchase"
+	JoinPermissionVIP             = "vip"
 )
 
 const (
@@ -106,10 +109,13 @@ const (
 )
 
 const (
-	EditPermissionAuth          = "auth"
-	EditPermissionAuthJoin      = "auth_join"
-	EditPermissionAuthJoinAudit = "auth_join_audit"
-	EditPermissionAdmin         = "admin"
+	EditPermissionIDCert                 = "id_cert"
+	EditPermissionWorkCert               = "work_cert"
+	EditPermissionIDCertJoined           = "id_cert_joined"
+	EditPermissionWorkCertJoined         = "work_cert_joined"
+	EditPermissionApprovedIDCertJoined   = "approved_id_cert_joined"
+	EditPermissionApprovedWorkCertJoined = "approved_work_cert_joined"
+	EditPermissionAdmin                  = "only_admin"
 )
 
 const (
@@ -126,6 +132,14 @@ const (
 )
 
 const (
+	AccountRoleAdmin = "admin"
+	AccountRoleUser  = "user"
+	AccountRoleOrg   = "org"
+	AccountRoleGuest = "guest"
+)
+
+const (
+	MemberRoleOwner = "owner"
 	MemberRoleAdmin = "admin"
 	MemberRoleUser  = "user"
 )

@@ -29,6 +29,10 @@ type Account struct {
 	Avatar       string        `db:"avatar" json:"avatar"`                       // Avatar 头像
 	Source       int           `db:"source" json:"source"`                       // Source 注册来源
 	IP           int64         `db:"ip" json:"ip,string"`                        // IP 注册IP
+	IDCert       types.BitBool `db:"id_cert" json:"id_cert"`                     // IDCert 是否身份认证
+	WorkCert     types.BitBool `db:"work_cert" json:"work_cert"`                 // WorkCert 是否工作认证
+	IsOrg        types.BitBool `db:"is_org" json:"is_org"`                       // IsOrg 是否机构用户
+	IsVIP        types.BitBool `db:"is_vip" json:"is_vip"`                       // IsVIP 是否VIP用户
 	Deleted      types.BitBool `db:"deleted" json:"deleted"`                     // Deleted 是否删除
 	CreatedAt    int64         `db:"created_at" json:"created_at"`               // CreatedAt 创建时间
 	UpdatedAt    int64         `db:"updated_at" json:"updated_at"`               // UpdatedAt 更新时间

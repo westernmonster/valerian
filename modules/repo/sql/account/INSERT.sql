@@ -14,6 +14,10 @@ INSERT INTO accounts(
     avatar,
     source,
     ip,
+    id_cert,
+    work_cert,
+    is_org,
+    is_vip,
     deleted,
     created_at,
     updated_at
@@ -33,6 +37,10 @@ INSERT INTO accounts(
     :avatar,
     :source,
     :ip,
+    :id_cert,
+    :work_cert,
+    :is_org,
+    :is_vip,
     :deleted,
     :created_at,
     :updated_at

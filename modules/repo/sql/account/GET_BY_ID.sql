@@ -15,6 +15,10 @@ SELECT
     a.avatar,
     a.source,
     a.ip,
+    a.id_cert,
+    a.work_cert,
+    a.is_org,
+    a.is_vip,
     a.deleted,
     a.created_at,
     a.updated_at

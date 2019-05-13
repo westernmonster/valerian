@@ -64,6 +64,18 @@ type ProfileResp struct {
 	Source int `json:"source"`
 	// IP 注册IP
 	IP *string `json:"ip,omitempty"`
+
+	// 是否身份认证
+	IDCert bool `json:"id_cert"`
+
+	// 是否工作认证
+	WorkCert bool `json:"work_cert"`
+
+	// 是否机构用户
+	IsOrg bool `json:"is_org"`
+
+	// 是否VIP
+	IsVIP bool `json:"is_vip"`
 	// 注册时间
 	CreatedAt int64 `json:"created_at"`
 	// 更新时间

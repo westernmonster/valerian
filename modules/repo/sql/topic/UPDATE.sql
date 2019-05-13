@@ -5,6 +5,7 @@ SET
     introduction=:introduction,
     is_private=:is_private,
     allow_chat=:allow_chat,
+    allow_discuss=:allow_discuss,
     edit_permission=:edit_permission,
     view_permission=:view_permission,
     join_permission=:join_permission,
@@ -14,7 +15,6 @@ SET
     topic_home=:topic_home,
     topic_type=:topic_type,
     version_name=:version_name,
-    version_lang=:version_lang,
     created_by=:created_by,
     updated_at=:updated_at
 WHERE id=:id

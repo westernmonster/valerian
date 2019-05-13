@@ -1162,7 +1162,13 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "成功,返回topic_id"
+                        "description": "话题成员",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.TopicVersion"
+                            }
+                        }
                     },
                     "400": {
                         "description": "验证请求失败"
@@ -2270,7 +2276,7 @@
                     "description": "成员",
                     "type": "array",
                     "items": {
-                        "type": "\u0026{%!s(token.Pos=4215) %!s(*ast.StructType=\u0026{4216 0xc000aff560 false})}"
+                        "type": "\u0026{%!s(token.Pos=4215) %!s(*ast.StructType=\u0026{4216 0xc000ba95f0 false})}"
                     }
                 },
                 "mute_notification": {
@@ -3012,6 +3018,27 @@
                 }
             }
         },
+        "models.TopicVersion": {
+            "type": "object",
+            "properties": {
+                "topic_id": {
+                    "description": "话题ID",
+                    "type": "string"
+                },
+                "topic_set_id": {
+                    "description": "集合ID",
+                    "type": "string"
+                },
+                "version_lang": {
+                    "description": "版本语言",
+                    "type": "string"
+                },
+                "version_name": {
+                    "description": "版本名称",
+                    "type": "string"
+                }
+            }
+        },
         "models.UpdateProfileReq": {
             "type": "object",
             "properties": {
@@ -3095,7 +3122,7 @@
                     "description": "成员",
                     "type": "array",
                     "items": {
-                        "type": "\u0026{%!s(token.Pos=9532) %!s(*ast.StructType=\u0026{9533 0xc000b14390 false})}"
+                        "type": "\u0026{%!s(token.Pos=9532) %!s(*ast.StructType=\u0026{9533 0xc000bc6900 false})}"
                     }
                 },
                 "mute_notification": {

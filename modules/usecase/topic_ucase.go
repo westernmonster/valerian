@@ -254,15 +254,16 @@ func (p *TopicUsecase) Get(ctx *biz.BizContext, topicID int64) (item *models.Top
 		ID:               t.ID,
 		TopicSetID:       t.TopicSetID,
 		Cover:            t.Cover,
+		Bg:               t.Bg,
 		Name:             t.Name,
 		Introduction:     t.Introduction,
 		CategoryViewType: t.CategoryViewType,
 		TopicType:        t.TopicType,
 		TopicHome:        t.TopicHome,
 		VersionName:      t.VersionName,
-		VersionLanguage:  t.VersionLanguage,
 		IsPrivate:        bool(t.IsPrivate),
 		AllowChat:        bool(t.AllowChat),
+		AllowDiscuss:     bool(t.AllowDiscuss),
 		EditPermission:   t.EditPermission,
 		ViewPermission:   t.ViewPermission,
 		JoinPermission:   t.JoinPermission,
@@ -329,9 +330,11 @@ func (p *TopicUsecase) Create(ctx *biz.BizContext, req *models.CreateTopicReq) (
 		ID:               id,
 		Name:             req.Name,
 		Cover:            req.Cover,
+		Bg:               req.Bg,
 		Introduction:     req.Introduction,
 		IsPrivate:        types.BitBool(req.IsPrivate),
 		AllowChat:        types.BitBool(req.AllowChat),
+		AllowDiscuss:     types.BitBool(req.AllowDiscuss),
 		EditPermission:   req.EditPermission,
 		ViewPermission:   req.ViewPermission,
 		JoinPermission:   req.JoinPermission,
@@ -340,7 +343,6 @@ func (p *TopicUsecase) Create(ctx *biz.BizContext, req *models.CreateTopicReq) (
 		CategoryViewType: req.CategoryViewType,
 		TopicHome:        req.TopicHome,
 		VersionName:      req.VersionName,
-		VersionLanguage:  req.VersionLanguage,
 		CreatedBy:        *ctx.AccountID,
 	}
 
@@ -459,7 +461,11 @@ func (p *TopicUsecase) Update(ctx *biz.BizContext, topicID int64, req *models.Up
 	}
 
 	if req.Cover != nil && *req.Cover != "" {
-		item.Cover = *req.Cover
+		item.Cover = req.Cover
+	}
+
+	if req.Bg != nil && *req.Bg != "" {
+		item.Bg = req.Bg
 	}
 
 	if req.Name != nil && *req.Name != "" {
@@ -486,10 +492,6 @@ func (p *TopicUsecase) Update(ctx *biz.BizContext, topicID int64, req *models.Up
 			err = berr.Errorf("话题版本已经存在")
 			return
 		}
-	}
-
-	if req.VersionLanguage != nil && *req.VersionLanguage != "" {
-		item.VersionLanguage = *req.VersionLanguage
 	}
 
 	if req.JoinPermission != nil && *req.JoinPermission != "" {
@@ -615,7 +617,23 @@ func (p *TopicUsecase) bulkCreateMembers(node sqalx.Node, accountID, topicID int
 	}
 	defer tx.Rollback()
 
+	ownerCount := 0
+
 	for _, v := range req.Members {
+		if v.Role == models.MemberRoleOwner {
+			ownerCount = ownerCount + 1
+
+			if v.AccountID != accountID {
+				err = berr.Errorf("主理人需为创建用户")
+				return
+			}
+		}
+
+		if ownerCount > 1 {
+			err = berr.Errorf("主理人只能有一个")
+			return
+		}
+
 		member, exist, errInner := p.TopicMemberRepository.GetByCondition(tx, map[string]string{
 			"topic_id":   strconv.FormatInt(topicID, 10),
 			"account_id": strconv.FormatInt(v.AccountID, 10),
@@ -649,6 +667,39 @@ func (p *TopicUsecase) bulkCreateMembers(node sqalx.Node, accountID, topicID int
 				err = tracerr.Wrap(errInner)
 				return
 			}
+
+			errInner = p.followTopic(tx, topicID, v.AccountID)
+			if errInner != nil {
+				err = tracerr.Wrap(errInner)
+				return
+			}
+
+			break
+		}
+	}
+
+	if ownerCount == 0 {
+		id, errInner := gid.NextID()
+		if errInner != nil {
+			err = tracerr.Wrap(errInner)
+			return
+		}
+		item := &repo.TopicMember{
+			ID:        id,
+			AccountID: accountID,
+			Role:      models.MemberRoleOwner,
+			TopicID:   topicID,
+		}
+		errInner = p.TopicMemberRepository.Insert(tx, item)
+		if errInner != nil {
+			err = tracerr.Wrap(errInner)
+			return
+		}
+
+		errInner = p.followTopic(tx, topicID, accountID)
+		if errInner != nil {
+			err = tracerr.Wrap(errInner)
+			return
 		}
 	}
 
@@ -657,6 +708,27 @@ func (p *TopicUsecase) bulkCreateMembers(node sqalx.Node, accountID, topicID int
 		err = tracerr.Wrap(err)
 		return
 	}
+	return
+}
+
+func (p *TopicUsecase) followTopic(node sqalx.Node, topicID, accountID int64) (err error) {
+	id, err := gid.NextID()
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+	follower := &repo.TopicFollower{
+		ID:          id,
+		TopicID:     topicID,
+		FollowersID: accountID,
+	}
+
+	err = p.TopicFollowerRepository.Insert(node, follower)
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+
 	return
 }
 
@@ -846,8 +918,20 @@ func (p *TopicUsecase) BulkSaveMembers(ctx *biz.BizContext, topicID int64, req *
 	}
 	defer tx.Rollback()
 
-	for _, v := range req.Members {
+	_, exist, err := p.TopicRepository.GetByID(p.Node, topicID)
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+	if !exist {
+		err = berr.Errorf("话题不存在")
+		return
+	}
 
+	for _, v := range req.Members {
+		if v.Role == models.MemberRoleOwner {
+			continue
+		}
 		member, exist, errInner := p.TopicMemberRepository.GetByCondition(tx, map[string]string{
 			"topic_id":   strconv.FormatInt(topicID, 10),
 			"account_id": strconv.FormatInt(v.AccountID, 10),
@@ -875,6 +959,12 @@ func (p *TopicUsecase) BulkSaveMembers(ctx *biz.BizContext, topicID int64, req *
 				TopicID:   topicID,
 			}
 			errInner = p.TopicMemberRepository.Insert(tx, item)
+			if errInner != nil {
+				err = tracerr.Wrap(errInner)
+				return
+			}
+
+			errInner = p.followTopic(tx, topicID, v.AccountID)
 			if errInner != nil {
 				err = tracerr.Wrap(errInner)
 				return
