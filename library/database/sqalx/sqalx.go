@@ -7,7 +7,6 @@ import (
 	"strings"
 	"valerian/library/database/sqlx"
 
-	"github.com/opentracing/opentracing-go"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -99,8 +98,8 @@ func NewFromTransaction(tx *sqlx.Tx, options ...Option) (Node, error) {
 }
 
 // Connect to a database.
-func Connect(driverName, dataSourceName string, span opentracing.Span, options ...Option) (Node, error) {
-	db, err := sqlx.Connect(driverName, dataSourceName, span)
+func Connect(driverName, dataSourceName string, options ...Option) (Node, error) {
+	db, err := sqlx.Connect(driverName, dataSourceName)
 	if err != nil {
 		return nil, err
 	}

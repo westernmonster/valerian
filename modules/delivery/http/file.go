@@ -18,7 +18,7 @@ import (
 	"github.com/ztrue/tracerr"
 
 	"valerian/infrastructure"
-	"valerian/infrastructure/gid"
+	"valerian/library/gid"
 	"valerian/models"
 )
 

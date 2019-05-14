@@ -11,8 +11,6 @@ import (
 	"reflect"
 	"time"
 	"valerian/library/stat"
-
-	"github.com/opentracing/opentracing-go"
 )
 
 var stats = stat.DB
@@ -32,8 +30,8 @@ type Config struct {
 }
 
 // ConnectContext to a database and verify with a ping.
-func ConnectContext(ctx context.Context, driverName, dataSourceName string, span opentracing.Span) (*DB, error) {
-	db, err := Open(driverName, dataSourceName, span)
+func ConnectContext(ctx context.Context, driverName, dataSourceName string) (*DB, error) {
+	db, err := Open(driverName, dataSourceName)
 	if err != nil {
 		return db, err
 	}
@@ -139,9 +137,6 @@ func MustExecContext(ctx context.Context, e ExecerContext, query string, args ..
 
 // PrepareNamedContext returns an sqlx.NamedStmt
 func (db *DB) PrepareNamedContext(ctx context.Context, query string) (*NamedStmt, error) {
-	if db.span != nil {
-		db.span.SetTag("sql.prepare", query)
-	}
 
 	return prepareNamedContext(ctx, db, query)
 }
@@ -269,6 +264,9 @@ func (tx *Tx) PreparexContext(ctx context.Context, query string) (*Stmt, error) 
 
 // PrepareNamedContext returns an sqlx.NamedStmt
 func (tx *Tx) PrepareNamedContext(ctx context.Context, query string) (*NamedStmt, error) {
+	// if tx.span != nil {
+	// 	tx.span.SetTag("sql.prepare", query)
+	// }
 	return prepareNamedContext(ctx, tx, query)
 }
 

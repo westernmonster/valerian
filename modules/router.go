@@ -12,9 +12,9 @@ import (
 
 	"valerian/infrastructure/bootstrap"
 	"valerian/infrastructure/db"
-	"valerian/infrastructure/email"
-	"valerian/infrastructure/sms"
+	"valerian/library/email"
 	"valerian/library/log"
+	"valerian/library/sms"
 	"valerian/library/tracing"
 	"valerian/modules/delivery/http"
 	"valerian/modules/middleware"
@@ -36,7 +36,7 @@ func Configure(p *bootstrap.Bootstrapper) {
 	metricsFactory = jprom.New()
 	tracer := tracing.Init("frontend", metricsFactory.Namespace(metrics.NSOptions{Name: "frontend"}), vlogger, "localhost:6831")
 
-	db, node, err := db.InitDatabase(tracer)
+	db, node, err := db.InitDatabase()
 	if err != nil {
 		panic(err)
 		return

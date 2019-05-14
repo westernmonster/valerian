@@ -9,8 +9,8 @@ import (
 
 	"valerian/infrastructure/berr"
 	"valerian/infrastructure/biz"
-	"valerian/infrastructure/gid"
 	"valerian/infrastructure/helper"
+	"valerian/library/gid"
 	"valerian/models"
 	"valerian/modules/repo"
 )

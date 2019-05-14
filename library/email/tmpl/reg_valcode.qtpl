@@ -1,5 +1,5 @@
 {% import (
-    "valerian/infrastructure/email/tmpl/layouts"
+    "valerian/library/email/tmpl/layouts"
 )
 %}
 

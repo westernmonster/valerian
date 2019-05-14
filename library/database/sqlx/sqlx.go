@@ -254,8 +254,8 @@ type DB struct {
 
 // NewDb returns a new sqlx DB wrapper for a pre-existing *sql.DB.  The
 // driverName of the original database is required for named query support.
-func NewDb(db *sql.DB, driverName string, span opentracing.Span) *DB {
-	return &DB{DB: db, driverName: driverName, Mapper: mapper(), span: span}
+func NewDb(db *sql.DB, driverName string) *DB {
+	return &DB{DB: db, driverName: driverName, Mapper: mapper()}
 }
 
 // DriverName returns the driverName passed to the Open function for this DB.
@@ -264,17 +264,17 @@ func (db *DB) DriverName() string {
 }
 
 // Open is the same as sql.Open, but returns an *sqlx.DB instead.
-func Open(driverName, dataSourceName string, span opentracing.Span) (*DB, error) {
+func Open(driverName, dataSourceName string) (*DB, error) {
 	db, err := sql.Open(driverName, dataSourceName)
 	if err != nil {
 		return nil, err
 	}
-	return &DB{DB: db, driverName: driverName, Mapper: mapper(), span: span}, err
+	return &DB{DB: db, driverName: driverName, Mapper: mapper()}, err
 }
 
 // MustOpen is the same as sql.Open, but returns an *sqlx.DB instead and panics on error.
-func MustOpen(driverName, dataSourceName string, span opentracing.Span) *DB {
-	db, err := Open(driverName, dataSourceName, span)
+func MustOpen(driverName, dataSourceName string) *DB {
+	db, err := Open(driverName, dataSourceName)
 	if err != nil {
 		panic(err)
 	}
@@ -632,8 +632,8 @@ func (r *Rows) StructScan(dest interface{}) error {
 }
 
 // Connect to a database and verify with a ping.
-func Connect(driverName, dataSourceName string, span opentracing.Span) (*DB, error) {
-	db, err := Open(driverName, dataSourceName, span)
+func Connect(driverName, dataSourceName string) (*DB, error) {
+	db, err := Open(driverName, dataSourceName)
 	if err != nil {
 		return nil, err
 	}
@@ -646,8 +646,8 @@ func Connect(driverName, dataSourceName string, span opentracing.Span) (*DB, err
 }
 
 // MustConnect connects to a database and panics on error.
-func MustConnect(driverName, dataSourceName string, span opentracing.Span) *DB {
-	db, err := Connect(driverName, dataSourceName, span)
+func MustConnect(driverName, dataSourceName string) *DB {
+	db, err := Connect(driverName, dataSourceName)
 	if err != nil {
 		panic(err)
 	}

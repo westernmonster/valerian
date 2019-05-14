@@ -5,7 +5,7 @@ import (
 
 	"valerian/infrastructure"
 	"valerian/infrastructure/biz"
-	"valerian/infrastructure/cloudauth"
+	"valerian/library/cloudauth"
 )
 
 type IDCertificationCtrl struct {

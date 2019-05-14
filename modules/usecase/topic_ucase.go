@@ -6,12 +6,12 @@ import (
 	"valerian/library/database/sqalx"
 	"valerian/library/database/sqlx"
 	"valerian/library/database/sqlx/types"
+	"valerian/library/gid"
 
 	"github.com/ztrue/tracerr"
 
 	"valerian/infrastructure/berr"
 	"valerian/infrastructure/biz"
-	"valerian/infrastructure/gid"
 	"valerian/models"
 	"valerian/modules/repo"
 )

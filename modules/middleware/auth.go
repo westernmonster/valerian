@@ -8,17 +8,12 @@ import (
 	"valerian/infrastructure"
 	"valerian/infrastructure/biz"
 	"valerian/infrastructure/db"
-	"valerian/infrastructure/ecode"
-	"valerian/library/log"
-	"valerian/library/tracing"
+	"valerian/library/ecode"
 	"valerian/models"
 	"valerian/modules/repo"
 	"valerian/modules/usecase"
 
 	"github.com/gin-gonic/gin"
-	"github.com/uber/jaeger-lib/metrics"
-	jprom "github.com/uber/jaeger-lib/metrics/prometheus"
-	"go.uber.org/zap"
 )
 
 type authFunc func(*gin.Context) (int64, error)
@@ -31,16 +26,7 @@ type Auth struct {
 }
 
 func New() *Auth {
-
-	logger, _ := zap.NewProduction()
-	vlogger := log.NewFactory(logger.With(zap.String("service", "frontend")))
-	vlogger.Bg().Info("Starting", zap.String("address", "http://localhost:7001"))
-
-	var metricsFactory metrics.Factory
-	metricsFactory = jprom.New()
-	tracer := tracing.Init("frontend", metricsFactory.Namespace(metrics.NSOptions{Name: "frontend"}), vlogger, "localhost:6831")
-
-	db, node, err := db.InitDatabase(tracer)
+	db, node, err := db.InitDatabase()
 	if err != nil {
 		panic(err)
 	}

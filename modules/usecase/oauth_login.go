@@ -9,6 +9,8 @@ import (
 	"time"
 
 	"valerian/library/database/sqalx"
+	"valerian/library/ecode"
+	"valerian/library/gid"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/ztrue/tracerr"
@@ -16,8 +18,6 @@ import (
 	"valerian/infrastructure"
 	"valerian/infrastructure/berr"
 	"valerian/infrastructure/biz"
-	"valerian/infrastructure/ecode"
-	"valerian/infrastructure/gid"
 	"valerian/models"
 	"valerian/modules/repo"
 )
