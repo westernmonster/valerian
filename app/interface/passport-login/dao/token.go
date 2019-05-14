@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"valerian/app/interface/passport/model"
+	"valerian/app/interface/passport-login/model"
 )
 
 const (

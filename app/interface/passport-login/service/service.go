@@ -2,9 +2,9 @@ package service
 
 import (
 	"context"
-	"valerian/app/interface/passport/conf"
-	"valerian/app/interface/passport/dao"
-	"valerian/app/interface/passport/model"
+	"valerian/app/interface/passport-login/conf"
+	"valerian/app/interface/passport-login/dao"
+	"valerian/app/interface/passport-login/model"
 )
 
 var (
