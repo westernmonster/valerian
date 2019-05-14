@@ -99,8 +99,8 @@ func NewFromTransaction(tx *sqlx.Tx, options ...Option) (Node, error) {
 }
 
 // Connect to a database.
-func Connect(driverName, dataSourceName string, tracer opentracing.Tracer, options ...Option) (Node, error) {
-	db, err := sqlx.Connect(driverName, dataSourceName, tracer)
+func Connect(driverName, dataSourceName string, span opentracing.Span, options ...Option) (Node, error) {
+	db, err := sqlx.Connect(driverName, dataSourceName, span)
 	if err != nil {
 		return nil, err
 	}

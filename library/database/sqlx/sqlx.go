@@ -249,13 +249,13 @@ type DB struct {
 	driverName string
 	unsafe     bool
 	Mapper     *reflectx.Mapper
-	tracer     opentracing.Tracer
+	span       opentracing.Span
 }
 
 // NewDb returns a new sqlx DB wrapper for a pre-existing *sql.DB.  The
 // driverName of the original database is required for named query support.
-func NewDb(db *sql.DB, driverName string, tracer opentracing.Tracer) *DB {
-	return &DB{DB: db, driverName: driverName, Mapper: mapper(), tracer: tracer}
+func NewDb(db *sql.DB, driverName string, span opentracing.Span) *DB {
+	return &DB{DB: db, driverName: driverName, Mapper: mapper(), span: span}
 }
 
 // DriverName returns the driverName passed to the Open function for this DB.
@@ -264,17 +264,17 @@ func (db *DB) DriverName() string {
 }
 
 // Open is the same as sql.Open, but returns an *sqlx.DB instead.
-func Open(driverName, dataSourceName string, tracer opentracing.Tracer) (*DB, error) {
+func Open(driverName, dataSourceName string, span opentracing.Span) (*DB, error) {
 	db, err := sql.Open(driverName, dataSourceName)
 	if err != nil {
 		return nil, err
 	}
-	return &DB{DB: db, driverName: driverName, Mapper: mapper(), tracer: tracer}, err
+	return &DB{DB: db, driverName: driverName, Mapper: mapper(), span: span}, err
 }
 
 // MustOpen is the same as sql.Open, but returns an *sqlx.DB instead and panics on error.
-func MustOpen(driverName, dataSourceName string, tracer opentracing.Tracer) *DB {
-	db, err := Open(driverName, dataSourceName, tracer)
+func MustOpen(driverName, dataSourceName string, span opentracing.Span) *DB {
+	db, err := Open(driverName, dataSourceName, span)
 	if err != nil {
 		panic(err)
 	}
@@ -632,8 +632,8 @@ func (r *Rows) StructScan(dest interface{}) error {
 }
 
 // Connect to a database and verify with a ping.
-func Connect(driverName, dataSourceName string, tracer opentracing.Tracer) (*DB, error) {
-	db, err := Open(driverName, dataSourceName, tracer)
+func Connect(driverName, dataSourceName string, span opentracing.Span) (*DB, error) {
+	db, err := Open(driverName, dataSourceName, span)
 	if err != nil {
 		return nil, err
 	}
@@ -646,8 +646,8 @@ func Connect(driverName, dataSourceName string, tracer opentracing.Tracer) (*DB,
 }
 
 // MustConnect connects to a database and panics on error.
-func MustConnect(driverName, dataSourceName string, tracer opentracing.Tracer) *DB {
-	db, err := Connect(driverName, dataSourceName, tracer)
+func MustConnect(driverName, dataSourceName string, span opentracing.Span) *DB {
+	db, err := Connect(driverName, dataSourceName, span)
 	if err != nil {
 		panic(err)
 	}

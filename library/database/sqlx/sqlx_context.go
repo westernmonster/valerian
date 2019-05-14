@@ -9,14 +9,31 @@ import (
 	"io/ioutil"
 	"path/filepath"
 	"reflect"
+	"time"
+	"valerian/library/stat"
 
 	"github.com/opentracing/opentracing-go"
-	"github.com/opentracing/opentracing-go/ext"
 )
 
+var stats = stat.DB
+
+// Config mysql config.
+type Config struct {
+	Addr         string        // for trace
+	DSN          string        // write data source name.
+	ReadDSN      []string      // read data source name.
+	Active       int           // pool
+	Idle         int           // pool
+	IdleTimeout  time.Duration // connect max life time.
+	QueryTimeout time.Duration // query sql timeout
+	ExecTimeout  time.Duration // execute sql timeout
+	TranTimeout  time.Duration // transaction sql timeout
+	// Breaker      *breaker.Config // breaker
+}
+
 // ConnectContext to a database and verify with a ping.
-func ConnectContext(ctx context.Context, driverName, dataSourceName string, tracer opentracing.Tracer) (*DB, error) {
-	db, err := Open(driverName, dataSourceName, tracer)
+func ConnectContext(ctx context.Context, driverName, dataSourceName string, span opentracing.Span) (*DB, error) {
+	db, err := Open(driverName, dataSourceName, span)
 	if err != nil {
 		return db, err
 	}
@@ -55,19 +72,6 @@ type ExtContext interface {
 // StructScan is used. The *sql.Rows are closed automatically.
 // Any placeholder parameters are replaced with supplied args.
 func SelectContext(ctx context.Context, q QueryerContext, dest interface{}, query string, args ...interface{}) error {
-	fmt.Println(11111)
-	if parentSpan := opentracing.SpanFromContext(ctx); parentSpan != nil {
-		parentCtx := parentSpan.Context()
-		span := opentracing.StartSpan("select", opentracing.ChildOf(parentCtx))
-		ext.SpanKindRPCClient.Set(span)
-		ext.PeerService.Set(span, "mysql")
-		span.SetTag("sql.query", query)
-		span.SetTag("sql.param", args)
-
-		defer span.Finish()
-		ctx = opentracing.ContextWithSpan(ctx, span)
-	}
-
 	rows, err := q.QueryxContext(ctx, query, args...)
 	if err != nil {
 		return err
@@ -135,15 +139,8 @@ func MustExecContext(ctx context.Context, e ExecerContext, query string, args ..
 
 // PrepareNamedContext returns an sqlx.NamedStmt
 func (db *DB) PrepareNamedContext(ctx context.Context, query string) (*NamedStmt, error) {
-	if parentSpan := opentracing.SpanFromContext(ctx); parentSpan != nil {
-		parentCtx := parentSpan.Context()
-		span := db.tracer.StartSpan("prepare named:", opentracing.ChildOf(parentCtx))
-		ext.SpanKindRPCClient.Set(span)
-		ext.PeerService.Set(span, "mysql")
-		span.SetTag("sql.query", query)
-
-		defer span.Finish()
-		ctx = opentracing.ContextWithSpan(ctx, span)
+	if db.span != nil {
+		db.span.SetTag("sql.prepare", query)
 	}
 
 	return prepareNamedContext(ctx, db, query)

@@ -6,13 +6,15 @@ import (
 
 	"valerian/library/cache/memcache"
 	"valerian/library/database/sqalx"
+	"valerian/library/log"
 )
 
 // Dao dao struct
 type Dao struct {
-	node     *sqalx.Node
+	node     sqalx.Node
 	mc       *memcache.Pool
 	mcExpire int32
+	logger   log.Factory
 	c        *conf.Config
 }
 
