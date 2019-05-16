@@ -19,6 +19,7 @@ import (
 	"time"
 
 	"valerian/library/log"
+	xtime "valerian/library/time"
 
 	"github.com/opentracing/opentracing-go"
 	"github.com/uber/jaeger-client-go/config"
@@ -26,6 +27,12 @@ import (
 	"github.com/uber/jaeger-lib/metrics"
 	"go.uber.org/zap"
 )
+
+type Config struct {
+	Addr    string "dsn:address"
+	Family  string
+	Timeout xtime.Duration `dsn:"query.timeout,200ms"`
+}
 
 // Init creates a new instance of Jaeger tracer.
 func Init(serviceName string, metricsFactory metrics.Factory, logger log.Factory, hostPort string) opentracing.Tracer {

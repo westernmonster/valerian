@@ -9,6 +9,7 @@ var (
 // SetGlobalTracer SetGlobalTracer
 func SetGlobalTracer(tracer opentracing.Tracer) {
 	_tracer = tracer
+
 }
 
 func StartSpan(operationName string, opts ...opentracing.StartSpanOption) opentracing.Span {

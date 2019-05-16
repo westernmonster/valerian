@@ -122,6 +122,7 @@ func Configure(p *bootstrap.Bootstrapper) {
 		api.PATCH("/topics/:id/members", auth.User, topicCtrl.BatchSavedTopicMember)
 		api.GET("/topic_sets/:id/versions", auth.User, topicCtrl.GetTopicVersions)
 		api.GET("/topics/:id/related", auth.User, topicCtrl.GetAllRelatedTopics)
+		api.GET("/topic_types", auth.User, topicCtrl.GetAllTopicTypes)
 
 		api.POST("/me/followed/topics", auth.User, topicCtrl.FollowTopic)
 

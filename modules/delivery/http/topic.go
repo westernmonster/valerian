@@ -30,6 +30,7 @@ type TopicCtrl struct {
 		GetTopicVersions(ctx *biz.BizContext, topicSetID int64) (items []*models.TopicVersion, err error)
 		FollowTopic(ctx *biz.BizContext, topicID int64, isFollowed bool) (err error)
 		GetAllRelatedTopics(ctx *biz.BizContext, topicID int64) (items []*models.RelatedTopic, err error)
+		GetAllTopicTypes(ctx *biz.BizContext) (items []*models.TopicType, err error)
 	}
 }
 
@@ -510,6 +511,33 @@ func (p *TopicCtrl) GetTopicVersions(ctx *gin.Context) {
 
 	bizCtx := p.GetBizContext(ctx)
 	items, err := p.TopicUsecase.GetTopicVersions(bizCtx, topicSetID)
+	if err != nil {
+		p.HandleError(ctx, err)
+		return
+	}
+
+	p.SuccessResp(ctx, items)
+
+	return
+
+}
+
+// @Summary 获取话题类型
+// @Description 获取话题类型
+// @Tags topic
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Success 200 {array} models.TopicType "话题类型"
+// @Failure 401 "登录验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /topic_types [get]
+func (p *TopicCtrl) GetAllTopicTypes(ctx *gin.Context) {
+
+	bizCtx := p.GetBizContext(ctx)
+	items, err := p.TopicUsecase.GetAllTopicTypes(bizCtx)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return

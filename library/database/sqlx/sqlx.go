@@ -1,19 +1,24 @@
 package sqlx
 
 import (
+	"context"
 	"database/sql"
 	"database/sql/driver"
-	"errors"
 	"fmt"
-
 	"io/ioutil"
 	"path/filepath"
 	"reflect"
 	"strings"
 	"sync"
+	"time"
 
-	"github.com/jmoiron/sqlx/reflectx"
+	"valerian/library/database/sqlx/reflectx"
+	"valerian/library/net/netutil/breaker"
+	xtime "valerian/library/time"
+	"valerian/library/tracing"
+
 	"github.com/opentracing/opentracing-go"
+	"github.com/pkg/errors"
 )
 
 // Although the NameMapper is convenient, in practice it should not
@@ -246,16 +251,14 @@ func (r *Row) Err() error {
 // used mostly to automatically bind named queries using the right bindvars.
 type DB struct {
 	*sql.DB
-	driverName string
-	unsafe     bool
-	Mapper     *reflectx.Mapper
-	span       opentracing.Span
-}
-
-// NewDb returns a new sqlx DB wrapper for a pre-existing *sql.DB.  The
-// driverName of the original database is required for named query support.
-func NewDb(db *sql.DB, driverName string) *DB {
-	return &DB{DB: db, driverName: driverName, Mapper: mapper()}
+	driverName   string
+	Addr         string
+	unsafe       bool
+	Mapper       *reflectx.Mapper
+	breaker      breaker.Breaker
+	ExecTimeout  xtime.Duration
+	QueryTimeout xtime.Duration // query sql timeout
+	TranTimeout  xtime.Duration // transaction sql timeout
 }
 
 // DriverName returns the driverName passed to the Open function for this DB.
@@ -264,21 +267,21 @@ func (db *DB) DriverName() string {
 }
 
 // Open is the same as sql.Open, but returns an *sqlx.DB instead.
-func Open(driverName, dataSourceName string) (*DB, error) {
+func Open(driverName, dataSourceName string, breaker breaker.Breaker, addr string, execTimeout xtime.Duration, queryTimeout xtime.Duration, tranTimeout xtime.Duration) (*DB, error) {
 	db, err := sql.Open(driverName, dataSourceName)
 	if err != nil {
 		return nil, err
 	}
-	return &DB{DB: db, driverName: driverName, Mapper: mapper()}, err
-}
-
-// MustOpen is the same as sql.Open, but returns an *sqlx.DB instead and panics on error.
-func MustOpen(driverName, dataSourceName string) *DB {
-	db, err := Open(driverName, dataSourceName)
-	if err != nil {
-		panic(err)
-	}
-	return db
+	return &DB{
+		DB:           db,
+		driverName:   driverName,
+		Mapper:       mapper(),
+		Addr:         addr,
+		breaker:      breaker,
+		ExecTimeout:  execTimeout,
+		QueryTimeout: queryTimeout,
+		TranTimeout:  tranTimeout,
+	}, err
 }
 
 // MapperFunc sets a new mapper for this db using the default sqlx struct tag
@@ -332,13 +335,6 @@ func (db *DB) Get(dest interface{}, query string, args ...interface{}) error {
 
 // MustBegin starts a transaction, and panics on error.  Returns an *sqlx.Tx instead
 // of an *sql.Tx.
-func (db *DB) MustBegin() *Tx {
-	tx, err := db.Beginx()
-	if err != nil {
-		panic(err)
-	}
-	return tx
-}
 
 // Beginx begins a transaction and returns an *sqlx.Tx instead of an *sql.Tx.
 func (db *DB) Beginx() (*Tx, error) {
@@ -366,12 +362,6 @@ func (db *DB) QueryRowx(query string, args ...interface{}) *Row {
 	return &Row{rows: rows, err: err, unsafe: db.unsafe, Mapper: db.Mapper}
 }
 
-// MustExec (panic) runs MustExec using this database.
-// Any placeholder parameters are replaced with supplied args.
-func (db *DB) MustExec(query string, args ...interface{}) sql.Result {
-	return MustExec(db, query, args...)
-}
-
 // Preparex returns an sqlx.Stmt instead of a sql.Stmt
 func (db *DB) Preparex(query string) (*Stmt, error) {
 	return Preparex(db, query)
@@ -380,6 +370,42 @@ func (db *DB) Preparex(query string) (*Stmt, error) {
 // PrepareNamed returns an sqlx.NamedStmt
 func (db *DB) PrepareNamed(query string) (*NamedStmt, error) {
 	return prepareNamed(db, query)
+}
+
+func (db *DB) onBreaker(err *error) {
+	if err != nil && *err != nil && *err != sql.ErrNoRows && *err != sql.ErrTxDone {
+		db.breaker.MarkFailed()
+	} else {
+		db.breaker.MarkSuccess()
+	}
+}
+
+func (db *DB) DBPing(ctx context.Context) (err error) {
+	now := time.Now()
+	if parent := opentracing.SpanFromContext(ctx); parent != nil {
+		parentCtx := parent.Context()
+		span := tracing.StartSpan("ping", opentracing.ChildOf(parentCtx))
+		span.SetTag("address", db.Addr)
+		defer span.Finish()
+	}
+
+	if err = db.breaker.Allow(); err != nil {
+		stats.Incr("mysql:ping", "breaker")
+		return
+	}
+
+	_, c, cancel := db.ExecTimeout.Shrink(ctx)
+	err = db.PingContext(c)
+	cancel()
+
+	db.onBreaker(&err)
+
+	stats.Timing("mysql:ping", int64(time.Since(now)/time.Millisecond))
+
+	if err != nil {
+		err = errors.WithStack(err)
+	}
+	return
 }
 
 // Tx is an sqlx wrapper around sql.Tx with extra functionality
@@ -453,12 +479,6 @@ func (tx *Tx) Get(dest interface{}, query string, args ...interface{}) error {
 	return Get(tx, dest, query, args...)
 }
 
-// MustExec runs MustExec within a transaction.
-// Any placeholder parameters are replaced with supplied args.
-func (tx *Tx) MustExec(query string, args ...interface{}) sql.Result {
-	return MustExec(tx, query, args...)
-}
-
 // Preparex  a statement within a transaction.
 func (tx *Tx) Preparex(query string) (*Stmt, error) {
 	return Preparex(tx, query)
@@ -519,13 +539,6 @@ func (s *Stmt) Select(dest interface{}, args ...interface{}) error {
 // An error is returned if the result set is empty.
 func (s *Stmt) Get(dest interface{}, args ...interface{}) error {
 	return Get(&qStmt{s}, dest, "", args...)
-}
-
-// MustExec (panic) using this statement.  Note that the query portion of the error
-// output will be blank, as Stmt does not expose its query.
-// Any placeholder parameters are replaced with supplied args.
-func (s *Stmt) MustExec(args ...interface{}) sql.Result {
-	return MustExec(&qStmt{s}, "", args...)
 }
 
 // QueryRowx using this statement.
@@ -631,28 +644,19 @@ func (r *Rows) StructScan(dest interface{}) error {
 	return r.Err()
 }
 
-// Connect to a database and verify with a ping.
-func Connect(driverName, dataSourceName string) (*DB, error) {
-	db, err := Open(driverName, dataSourceName)
-	if err != nil {
-		return nil, err
-	}
-	err = db.Ping()
-	if err != nil {
-		db.Close()
-		return nil, err
-	}
-	return db, nil
-}
-
-// MustConnect connects to a database and panics on error.
-func MustConnect(driverName, dataSourceName string) *DB {
-	db, err := Connect(driverName, dataSourceName)
-	if err != nil {
-		panic(err)
-	}
-	return db
-}
+// // Connect to a database and verify with a ping.
+// func Connect(driverName, dataSourceName string) (*DB, error) {
+// 	db, err := Open(driverName, dataSourceName)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	err = db.Ping()
+// 	if err != nil {
+// 		db.Close()
+// 		return nil, err
+// 	}
+// 	return db, nil
+// }
 
 // Preparex prepares a statement.
 func Preparex(p Preparer, query string) (*Stmt, error) {

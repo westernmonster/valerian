@@ -1182,6 +1182,70 @@
                 }
             }
         },
+        "/topic_types": {
+            "get": {
+                "description": "获取话题类型",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "topic"
+                ],
+                "summary": "获取话题类型",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "话题类型",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.TopicType"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
         "/topics": {
             "get": {
                 "description": "搜索话题",
@@ -3033,7 +3097,7 @@
                     "type": "string"
                 },
                 "role": {
-                    "description": "角色\nuser 普通用户\nadmin 管理员",
+                    "description": "角色\nuser 普通用户\nadmin 管理员\nowner 主理人",
                     "type": "string"
                 }
             }
@@ -3052,6 +3116,17 @@
                 },
                 "page_size": {
                     "type": "integer"
+                }
+            }
+        },
+        "models.TopicType": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
                 }
             }
         },

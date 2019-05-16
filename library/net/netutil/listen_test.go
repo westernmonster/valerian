@@ -1,3 +1,5 @@
+package netutil
+
 import "testing"
 
 func TestListen(t *testing.T) {
@@ -12,4 +14,3 @@ func TestListen(t *testing.T) {
 		t.Errorf("LimitListener: expceted cur=0 but got %d", l.cur)
 	}
 }
-

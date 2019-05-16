@@ -1,6 +1,7 @@
 package repo
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"time"
@@ -24,7 +25,7 @@ type Area struct {
 type AreaRepository struct{}
 
 // QueryListPaged get paged records by condition
-func (p *AreaRepository) QueryListPaged(node sqalx.Node, page int, pageSize int, cond map[string]string) (total int, items []*Area, err error) {
+func (p *AreaRepository) QueryListPaged(ctx context.Context, node sqalx.Node, page int, pageSize int, cond map[string]string) (total int, items []*Area, err error) {
 	offset := (page - 1) * pageSize
 	condition := make(map[string]interface{})
 	clause := ""
@@ -35,7 +36,7 @@ func (p *AreaRepository) QueryListPaged(node sqalx.Node, page int, pageSize int,
 	sqlCount := fmt.Sprintf(box.String("QUERY_LIST_PAGED_COUNT.sql"), clause)
 	sqlSelect := fmt.Sprintf(box.String("QUERY_LIST_PAGED_DATA.sql"), clause)
 
-	stmtCount, err := node.PrepareNamed(sqlCount)
+	stmtCount, err := node.PrepareNamedContext(ctx, sqlCount)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -63,7 +64,7 @@ func (p *AreaRepository) QueryListPaged(node sqalx.Node, page int, pageSize int,
 }
 
 // GetAll get all records
-func (p *AreaRepository) GetAll(node sqalx.Node) (items []*Area, err error) {
+func (p *AreaRepository) GetAll(ctx context.Context, node sqalx.Node) (items []*Area, err error) {
 	items = make([]*Area, 0)
 	sqlSelect := packr.NewBox("./sql/area").String("GET_ALL.sql")
 
@@ -81,7 +82,7 @@ func (p *AreaRepository) GetAll(node sqalx.Node) (items []*Area, err error) {
 }
 
 // GetAllByCondition get records by condition
-func (p *AreaRepository) GetAllByCondition(node sqalx.Node, cond map[string]string) (items []*Area, err error) {
+func (p *AreaRepository) GetAllByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (items []*Area, err error) {
 	items = make([]*Area, 0)
 	condition := make(map[string]interface{})
 	clause := ""
@@ -124,7 +125,7 @@ func (p *AreaRepository) GetAllByCondition(node sqalx.Node, cond map[string]stri
 }
 
 // GetByID get record by ID
-func (p *AreaRepository) GetByID(node sqalx.Node, id int64) (item *Area, exist bool, err error) {
+func (p *AreaRepository) GetByID(ctx context.Context, node sqalx.Node, id int64) (item *Area, exist bool, err error) {
 	item = new(Area)
 	sqlSelect := packr.NewBox("./sql/area").String("GET_BY_ID.sql")
 
@@ -148,7 +149,7 @@ func (p *AreaRepository) GetByID(node sqalx.Node, id int64) (item *Area, exist b
 }
 
 // GetByCondition get record by condition
-func (p *AreaRepository) GetByCondition(node sqalx.Node, cond map[string]string) (item *Area, exist bool, err error) {
+func (p *AreaRepository) GetByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (item *Area, exist bool, err error) {
 	item = new(Area)
 	condition := make(map[string]interface{})
 	clause := ""
@@ -197,7 +198,7 @@ func (p *AreaRepository) GetByCondition(node sqalx.Node, cond map[string]string)
 }
 
 // Insert insert a new record
-func (p *AreaRepository) Insert(node sqalx.Node, item *Area) (err error) {
+func (p *AreaRepository) Insert(ctx context.Context, node sqalx.Node, item *Area) (err error) {
 	sqlInsert := packr.NewBox("./sql/area").String("INSERT.sql")
 
 	item.CreatedAt = time.Now().Unix()
@@ -213,7 +214,7 @@ func (p *AreaRepository) Insert(node sqalx.Node, item *Area) (err error) {
 }
 
 // Update update a exist record
-func (p *AreaRepository) Update(node sqalx.Node, item *Area) (err error) {
+func (p *AreaRepository) Update(ctx context.Context, node sqalx.Node, item *Area) (err error) {
 	sqlUpdate := packr.NewBox("./sql/area").String("UPDATE.sql")
 
 	item.UpdatedAt = time.Now().Unix()
@@ -228,7 +229,7 @@ func (p *AreaRepository) Update(node sqalx.Node, item *Area) (err error) {
 }
 
 // Delete logic delete a exist record
-func (p *AreaRepository) Delete(node sqalx.Node, id int64) (err error) {
+func (p *AreaRepository) Delete(ctx context.Context, node sqalx.Node, id int64) (err error) {
 	sqlDelete := packr.NewBox("./sql/area").String("DELETE.sql")
 
 	_, err = node.NamedExec(sqlDelete, map[string]interface{}{"id": id})
@@ -241,7 +242,7 @@ func (p *AreaRepository) Delete(node sqalx.Node, id int64) (err error) {
 }
 
 // BatchDelete logic batch delete records
-func (p *AreaRepository) BatchDelete(node sqalx.Node, ids []int64) (err error) {
+func (p *AreaRepository) BatchDelete(ctx context.Context, node sqalx.Node, ids []int64) (err error) {
 	tx, err := node.Beginx()
 	if err != nil {
 		err = tracerr.Wrap(err)

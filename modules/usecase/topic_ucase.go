@@ -8,6 +8,7 @@ import (
 	"valerian/library/database/sqlx/types"
 	"valerian/library/gid"
 
+	"github.com/jinzhu/copier"
 	"github.com/ztrue/tracerr"
 
 	"valerian/infrastructure/berr"
@@ -96,6 +97,8 @@ type TopicUsecase struct {
 	TopicTypeRepository interface {
 		// GetByID get a record by ID
 		GetByID(node sqalx.Node, id int) (item *repo.TopicType, exist bool, err error)
+
+		GetAll(node sqalx.Node) (items []*repo.TopicType, err error)
 	}
 
 	TopicRelationRepository interface {
@@ -1000,5 +1003,19 @@ func (p *TopicUsecase) BulkSaveMembers(ctx *biz.BizContext, topicID int64, req *
 		err = tracerr.Wrap(err)
 		return
 	}
+	return
+}
+
+func (p *TopicUsecase) GetAllTopicTypes(ctx *biz.BizContext) (items []*models.TopicType, err error) {
+	data, err := p.TopicTypeRepository.GetAll(p.Node)
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+
+	items = make([]*models.TopicType, 0)
+
+	copier.Copy(&items, &data)
+
 	return
 }

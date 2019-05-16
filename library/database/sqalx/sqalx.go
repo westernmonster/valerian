@@ -3,12 +3,31 @@ package sqalx
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"strings"
-	"valerian/library/database/sqlx"
+	"sync/atomic"
+	"time"
 
-	uuid "github.com/satori/go.uuid"
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/pkg/errors"
+
+	"valerian/library/database/sqlx"
+	"valerian/library/ecode"
+	"valerian/library/net/netutil/breaker"
+	xtime "valerian/library/time"
 )
+
+type Config struct {
+	Addr         string          // for trace
+	DSN          string          // write data source name.
+	ReadDSN      []string        // read data source name.
+	Active       int             // pool
+	Idle         int             // pool
+	IdleTimeout  xtime.Duration  // connect max life time.
+	QueryTimeout xtime.Duration  // query sql timeout
+	ExecTimeout  xtime.Duration  // execute sql timeout
+	TranTimeout  xtime.Duration  // transaction sql timeout
+	Breaker      *breaker.Config // breaker
+}
 
 var (
 	// ErrNotInTransaction is returned when using Commit
@@ -20,9 +39,54 @@ var (
 	ErrIncompatibleOption = errors.New("incompatible option")
 )
 
+func NewMySQL(c *Config) (Node, error) {
+	if c.QueryTimeout == 0 || c.ExecTimeout == 0 || c.TranTimeout == 0 {
+		panic("mysql must be set query/execute/transction timeout")
+	}
+
+	brkGroup := breaker.NewGroup(c.Breaker)
+	brk := brkGroup.Get(c.Addr)
+
+	w, err := connect(c, c.DSN, brk)
+	if err != nil {
+		return nil, err
+	}
+
+	rs := make([]*sqlx.DB, 0, len(c.ReadDSN))
+	for _, rd := range c.ReadDSN {
+		brk := brkGroup.Get(parseDSNAddr(rd))
+		d, err := connect(c, rd, brk)
+		if err != nil {
+			return nil, err
+		}
+		rs = append(rs, d)
+	}
+
+	n := node{
+		write:  w,
+		read:   rs,
+		master: w,
+		Driver: w,
+	}
+
+	return &n, nil
+}
+
+func connect(c *Config, dataSourceName string, breaker breaker.Breaker) (db *sqlx.DB, err error) {
+	db, err = sqlx.Open("mysql", c.DSN, breaker, c.Addr, c.QueryTimeout, c.ExecTimeout, c.TranTimeout)
+	if err != nil {
+		err = errors.WithStack(err)
+		return nil, err
+	}
+
+	db.DB.SetMaxIdleConns(c.Active)
+	db.DB.SetMaxIdleConns(c.Idle)
+	db.DB.SetConnMaxLifetime(time.Duration(c.IdleTimeout))
+	return db, nil
+}
+
 // A Node is a database driver that can manage nested transactions.
 type Node interface {
-	Driver
 
 	// Close the underlying sqlx connection.
 	Close() error
@@ -34,98 +98,53 @@ type Node interface {
 	Commit() error
 	// Tx returns the underlying transaction.
 	Tx() *sqlx.Tx
+
+	SelectContext(ctx context.Context, dest interface{}, query string, args ...interface{}) (err error)
+
+	ExecContext(ctx context.Context, query string, args ...interface{}) (result sql.Result, err error)
+
+	GetContext(ctx context.Context, dest interface{}, query string, args ...interface{}) (err error)
+
+	PrepareNamedContext(ctx context.Context, query string) (stmt *sqlx.NamedStmt, err error)
+
+	NamedExecContext(ctx context.Context, query string, arg interface{}) (sql.Result, error)
 }
 
 // A Driver can query the database. It can either be a *sqlx.DB or a *sqlx.Tx
 // and therefore is limited to the methods they have in common.
 type Driver interface {
-	sqlx.Execer
 	sqlx.ExecerContext
-	sqlx.Queryer
 	sqlx.QueryerContext
-	sqlx.Preparer
 	sqlx.PreparerContext
-	BindNamed(query string, arg interface{}) (string, []interface{}, error)
-	DriverName() string
-	Get(dest interface{}, query string, args ...interface{}) error
+	// BindNamed(query string, arg interface{}) (string, []interface{}, error)
+	// DriverName() string
 	GetContext(ctx context.Context, dest interface{}, query string, args ...interface{}) error
-	MustExec(query string, args ...interface{}) sql.Result
-	MustExecContext(ctx context.Context, query string, args ...interface{}) sql.Result
-	NamedExec(query string, arg interface{}) (sql.Result, error)
 	NamedExecContext(ctx context.Context, query string, arg interface{}) (sql.Result, error)
-	NamedQuery(query string, arg interface{}) (*sqlx.Rows, error)
-	PrepareNamed(query string) (*sqlx.NamedStmt, error)
 	PrepareNamedContext(ctx context.Context, query string) (*sqlx.NamedStmt, error)
-	Preparex(query string) (*sqlx.Stmt, error)
 	PreparexContext(ctx context.Context, query string) (*sqlx.Stmt, error)
-	Rebind(query string) string
-	Select(dest interface{}, query string, args ...interface{}) error
 	SelectContext(ctx context.Context, dest interface{}, query string, args ...interface{}) error
 }
 
-// New creates a new Node with the given DB.
-func New(db *sqlx.DB, options ...Option) (Node, error) {
-	n := node{
-		db:     db,
-		Driver: db,
-	}
-
-	for _, opt := range options {
-		err := opt(&n)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	return &n, nil
-}
-
-// NewFromTransaction creates a new Node from the given transaction.
-func NewFromTransaction(tx *sqlx.Tx, options ...Option) (Node, error) {
-	n := node{
-		tx:     tx,
-		Driver: tx,
-	}
-
-	for _, opt := range options {
-		err := opt(&n)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	return &n, nil
-}
-
-// Connect to a database.
-func Connect(driverName, dataSourceName string, options ...Option) (Node, error) {
-	db, err := sqlx.Connect(driverName, dataSourceName)
-	if err != nil {
-		return nil, err
-	}
-
-	node, err := New(db, options...)
-	if err != nil {
-		// the connection has been opened within this function, we must close it
-		// on error.
-		db.Close()
-		return nil, err
-	}
-
-	return node, nil
-}
-
 type node struct {
-	Driver
-	db               *sqlx.DB
-	tx               *sqlx.Tx
-	savePointID      string
-	savePointEnabled bool
-	nested           bool
+	Driver Driver
+	write  *sqlx.DB
+	read   []*sqlx.DB
+	idx    int64
+	master *sqlx.DB
+	tx     *sqlx.Tx
+	nested bool
 }
 
-func (n *node) Close() error {
-	return n.db.Close()
+func (n *node) Close() (err error) {
+	if e := n.write.Close(); e != nil {
+		err = errors.WithStack(e)
+	}
+	for _, rd := range n.read {
+		if e := rd.Close(); e != nil {
+			err = errors.WithStack(e)
+		}
+	}
+	return
 }
 
 func (n node) Beginx() (Node, error) {
@@ -134,14 +153,8 @@ func (n node) Beginx() (Node, error) {
 	switch {
 	case n.tx == nil:
 		// new actual transaction
-		n.tx, err = n.db.Beginx()
+		n.tx, err = n.write.Beginx()
 		n.Driver = n.tx
-	case n.savePointEnabled:
-		// already in a transaction: using savepoints
-		n.nested = true
-		// savepoints name must start with a char and cannot contain dashes (-)
-		n.savePointID = "sp_" + strings.Replace(uuid.NewV1().String(), "-", "_", -1)
-		_, err = n.tx.Exec("SAVEPOINT " + n.savePointID)
 	default:
 		// already in a transaction: reusing current transaction
 		n.nested = true
@@ -161,9 +174,7 @@ func (n *node) Rollback() error {
 
 	var err error
 
-	if n.savePointEnabled && n.savePointID != "" {
-		_, err = n.tx.Exec("ROLLBACK TO SAVEPOINT " + n.savePointID)
-	} else if !n.nested {
+	if !n.nested {
 		err = n.tx.Rollback()
 	}
 
@@ -184,9 +195,7 @@ func (n *node) Commit() error {
 
 	var err error
 
-	if n.savePointID != "" {
-		_, err = n.tx.Exec("RELEASE SAVEPOINT " + n.savePointID)
-	} else if !n.nested {
+	if !n.nested {
 		err = n.tx.Commit()
 	}
 
@@ -205,16 +214,82 @@ func (n *node) Tx() *sqlx.Tx {
 	return n.tx
 }
 
-// Option to configure sqalx
-type Option func(*node) error
-
-// SavePoint option enables PostgreSQL Savepoints for nested transactions.
-func SavePoint(enabled bool) Option {
-	return func(n *node) error {
-		if enabled && n.Driver.DriverName() != "postgres" {
-			return ErrIncompatibleOption
-		}
-		n.savePointEnabled = enabled
-		return nil
+// Ping verifies a connection to the database is still alive, establishing a
+// connection if necessary.
+func (n *node) Ping(c context.Context) (err error) {
+	if err = n.write.DBPing(c); err != nil {
+		return
 	}
+	for _, rd := range n.read {
+		if err = rd.DBPing(c); err != nil {
+			return
+		}
+	}
+	return
+}
+
+func (n *node) SelectContext(ctx context.Context, dest interface{}, query string, args ...interface{}) (err error) {
+	// 事务默认write库执行，如果没有事务，则从随机从只读库中读取
+	if n.tx == nil {
+		idx := n.readIndex()
+		for i := range n.read {
+			if err = n.read[(idx+i)%len(n.read)].SelectContext(ctx, dest, query, args...); !ecode.ServiceUnavailable.Equal(err) {
+				return
+			}
+		}
+	}
+	return n.Driver.SelectContext(ctx, dest, query, args...)
+}
+
+func (n *node) ExecContext(ctx context.Context, query string, args ...interface{}) (result sql.Result, err error) {
+	// 默认write库执行，如果有事务则Driver为 write 库
+	if n.tx != nil {
+		return n.Driver.ExecContext(ctx, query, args...)
+	}
+
+	return n.write.ExecContext(ctx, query, args...)
+}
+
+func (n *node) GetContext(ctx context.Context, dest interface{}, query string, args ...interface{}) (err error) {
+	// 事务默认write库执行，如果没有事务，则从随机从只读库中读取
+	if n.tx == nil {
+		idx := n.readIndex()
+		for i := range n.read {
+			if err = n.read[(idx+i)%len(n.read)].GetContext(ctx, dest, query, args...); !ecode.ServiceUnavailable.Equal(err) {
+				return
+			}
+		}
+	}
+	return n.Driver.GetContext(ctx, dest, query, args...)
+}
+
+func (n *node) PrepareNamedContext(ctx context.Context, query string) (stmt *sqlx.NamedStmt, err error) {
+	return
+}
+
+func (n *node) NamedExecContext(ctx context.Context, query string, arg interface{}) (result sql.Result, err error) {
+	return
+}
+
+func (n *node) readIndex() int {
+	if len(n.read) == 0 {
+		return 0
+	}
+	v := atomic.AddInt64(&n.idx, 1)
+	return int(v) % len(n.read)
+}
+
+// parseDSNAddr parse dsn name and return addr.
+func parseDSNAddr(dsn string) (addr string) {
+	if dsn == "" {
+		return
+	}
+	part0 := strings.Split(dsn, "@")
+	if len(part0) > 1 {
+		part1 := strings.Split(part0[1], "?")
+		if len(part1) > 0 {
+			addr = part1[0]
+		}
+	}
+	return
 }

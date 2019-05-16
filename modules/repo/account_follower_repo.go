@@ -1,6 +1,7 @@
 package repo
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"time"
@@ -22,7 +23,7 @@ type AccountFollower struct {
 type AccountFollowerRepository struct{}
 
 // QueryListPaged get paged records by condition
-func (p *AccountFollowerRepository) QueryListPaged(node sqalx.Node, page int, pageSize int, cond map[string]string) (total int, items []*AccountFollower, err error) {
+func (p *AccountFollowerRepository) QueryListPaged(ctx context.Context, node sqalx.Node, page int, pageSize int, cond map[string]string) (total int, items []*AccountFollower, err error) {
 	offset := (page - 1) * pageSize
 	condition := make(map[string]interface{})
 	clause := ""
@@ -33,7 +34,7 @@ func (p *AccountFollowerRepository) QueryListPaged(node sqalx.Node, page int, pa
 	sqlCount := fmt.Sprintf(box.String("QUERY_LIST_PAGED_COUNT.sql"), clause)
 	sqlSelect := fmt.Sprintf(box.String("QUERY_LIST_PAGED_DATA.sql"), clause)
 
-	stmtCount, err := node.PrepareNamed(sqlCount)
+	stmtCount, err := node.PrepareNamedContext(ctx, sqlCount)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -47,7 +48,7 @@ func (p *AccountFollowerRepository) QueryListPaged(node sqalx.Node, page int, pa
 	condition["limit"] = pageSize
 	condition["offset"] = offset
 
-	stmtSelect, err := node.PrepareNamed(sqlSelect)
+	stmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -61,11 +62,11 @@ func (p *AccountFollowerRepository) QueryListPaged(node sqalx.Node, page int, pa
 }
 
 // GetAll get all records
-func (p *AccountFollowerRepository) GetAll(node sqalx.Node) (items []*AccountFollower, err error) {
+func (p *AccountFollowerRepository) GetAll(ctx context.Context, node sqalx.Node) (items []*AccountFollower, err error) {
 	items = make([]*AccountFollower, 0)
 	sqlSelect := packr.NewBox("./sql/account_follower").String("GET_ALL.sql")
 
-	stmtSelect, err := node.PrepareNamed(sqlSelect)
+	stmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -79,7 +80,7 @@ func (p *AccountFollowerRepository) GetAll(node sqalx.Node) (items []*AccountFol
 }
 
 // GetAllByCondition get records by condition
-func (p *AccountFollowerRepository) GetAllByCondition(node sqalx.Node, cond map[string]string) (items []*AccountFollower, err error) {
+func (p *AccountFollowerRepository) GetAllByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (items []*AccountFollower, err error) {
 	items = make([]*AccountFollower, 0)
 	condition := make(map[string]interface{})
 	clause := ""
@@ -100,7 +101,7 @@ func (p *AccountFollowerRepository) GetAllByCondition(node sqalx.Node, cond map[
 	box := packr.NewBox("./sql/account_follower")
 	sqlSelect := fmt.Sprintf(box.String("GET_ALL_BY_CONDITION.sql"), clause)
 
-	stmtSelect, err := node.PrepareNamed(sqlSelect)
+	stmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -114,11 +115,11 @@ func (p *AccountFollowerRepository) GetAllByCondition(node sqalx.Node, cond map[
 }
 
 // GetByID get record by ID
-func (p *AccountFollowerRepository) GetByID(node sqalx.Node, id int64) (item *AccountFollower, exist bool, err error) {
+func (p *AccountFollowerRepository) GetByID(ctx context.Context, node sqalx.Node, id int64) (item *AccountFollower, exist bool, err error) {
 	item = new(AccountFollower)
 	sqlSelect := packr.NewBox("./sql/account_follower").String("GET_BY_ID.sql")
 
-	tmtSelect, err := node.PrepareNamed(sqlSelect)
+	tmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -138,7 +139,7 @@ func (p *AccountFollowerRepository) GetByID(node sqalx.Node, id int64) (item *Ac
 }
 
 // GetByCondition get record by condition
-func (p *AccountFollowerRepository) GetByCondition(node sqalx.Node, cond map[string]string) (item *AccountFollower, exist bool, err error) {
+func (p *AccountFollowerRepository) GetByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (item *AccountFollower, exist bool, err error) {
 	item = new(AccountFollower)
 	condition := make(map[string]interface{})
 	clause := ""
@@ -159,7 +160,7 @@ func (p *AccountFollowerRepository) GetByCondition(node sqalx.Node, cond map[str
 	box := packr.NewBox("./sql/account_follower")
 	sqlSelect := fmt.Sprintf(box.String("GET_BY_CONDITION.sql"), clause)
 
-	tmtSelect, err := node.PrepareNamed(sqlSelect)
+	tmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -179,13 +180,13 @@ func (p *AccountFollowerRepository) GetByCondition(node sqalx.Node, cond map[str
 }
 
 // Insert insert a new record
-func (p *AccountFollowerRepository) Insert(node sqalx.Node, item *AccountFollower) (err error) {
+func (p *AccountFollowerRepository) Insert(ctx context.Context, node sqalx.Node, item *AccountFollower) (err error) {
 	sqlInsert := packr.NewBox("./sql/account_follower").String("INSERT.sql")
 
 	item.CreatedAt = time.Now().Unix()
 	item.UpdatedAt = time.Now().Unix()
 
-	_, err = node.NamedExec(sqlInsert, item)
+	_, err = node.NamedExecContext(ctx, sqlInsert, item)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -195,12 +196,12 @@ func (p *AccountFollowerRepository) Insert(node sqalx.Node, item *AccountFollowe
 }
 
 // Update update a exist record
-func (p *AccountFollowerRepository) Update(node sqalx.Node, item *AccountFollower) (err error) {
+func (p *AccountFollowerRepository) Update(ctx context.Context, node sqalx.Node, item *AccountFollower) (err error) {
 	sqlUpdate := packr.NewBox("./sql/account_follower").String("UPDATE.sql")
 
 	item.UpdatedAt = time.Now().Unix()
 
-	_, err = node.NamedExec(sqlUpdate, item)
+	_, err = node.NamedExecContext(ctx, sqlUpdate, item)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -210,10 +211,10 @@ func (p *AccountFollowerRepository) Update(node sqalx.Node, item *AccountFollowe
 }
 
 // Delete logic delete a exist record
-func (p *AccountFollowerRepository) Delete(node sqalx.Node, id int64) (err error) {
+func (p *AccountFollowerRepository) Delete(ctx context.Context, node sqalx.Node, id int64) (err error) {
 	sqlDelete := packr.NewBox("./sql/account_follower").String("DELETE.sql")
 
-	_, err = node.NamedExec(sqlDelete, map[string]interface{}{"id": id})
+	_, err = node.NamedExecContext(ctx, sqlDelete, map[string]interface{}{"id": id})
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -223,7 +224,7 @@ func (p *AccountFollowerRepository) Delete(node sqalx.Node, id int64) (err error
 }
 
 // BatchDelete logic batch delete records
-func (p *AccountFollowerRepository) BatchDelete(node sqalx.Node, ids []int64) (err error) {
+func (p *AccountFollowerRepository) BatchDelete(ctx context.Context, node sqalx.Node, ids []int64) (err error) {
 	tx, err := node.Beginx()
 	if err != nil {
 		err = tracerr.Wrap(err)
@@ -232,7 +233,7 @@ func (p *AccountFollowerRepository) BatchDelete(node sqalx.Node, ids []int64) (e
 
 	defer tx.Rollback()
 	for _, id := range ids {
-		errDelete := p.Delete(tx, id)
+		errDelete := p.Delete(ctx, tx, id)
 		if errDelete != nil {
 			err = tracerr.Wrap(err)
 			return

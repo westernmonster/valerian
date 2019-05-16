@@ -534,3 +534,8 @@ func (p *ChangeOwnerArg) Validate() error {
 		validation.Field(&p.NewOwnerID, validation.Required.Error(`请传入新主理人ID`)),
 	)
 }
+
+type TopicType struct {
+	ID   int    `db:"id" json:"id"`     // ID ID
+	Name string `db:"name" json:"name"` // Name 话题类型
+}

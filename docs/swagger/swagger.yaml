@@ -786,6 +786,7 @@ definitions:
           角色
           user 普通用户
           admin 管理员
+          owner 主理人
         type: string
     type: object
   models.TopicMembersPagedResp:
@@ -798,6 +799,13 @@ definitions:
         type: array
       page_size:
         type: integer
+    type: object
+  models.TopicType:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
     type: object
   models.TopicVersion:
     properties:
@@ -1771,6 +1779,50 @@ paths:
         "500":
           description: 服务器端错误
       summary: 获取话题版本
+      tags:
+      - topic
+  /topic_types:
+    get:
+      consumes:
+      - application/json
+      description: 获取话题类型
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 话题类型
+          schema:
+            items:
+              $ref: '#/definitions/models.TopicType'
+            type: array
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 获取话题类型
       tags:
       - topic
   /topics:
