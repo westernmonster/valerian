@@ -30,25 +30,12 @@ type ValcodeUsecase struct {
 		SendResetPasswordValcode(email string, valcode string) (err error)
 	}
 	ValcodeRepository interface {
-		// GetAllByCondition get records by condition
-		GetAllByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (items []*repo.Valcode, err error)
-		// GetByID get record by ID
-		GetByID(ctx context.Context, node sqalx.Node, id int64) (item *repo.Valcode, exist bool, err error)
-
-		// GetByCondition get record by condition
-		GetByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (item *repo.Valcode, exist bool, err error)
-
 		// HasSentRecordsInDuration determine current identity has sent records in specified duration
 		HasSentRecordsInDuration(ctx context.Context, node sqalx.Node, identity string, codeType int, duration time.Duration) (has bool, err error)
-
 		// Insert insert a new record
 		Insert(ctx context.Context, node sqalx.Node, item *repo.Valcode) (err error)
 		// Update update a exist record
 		Update(ctx context.Context, node sqalx.Node, item *repo.Valcode) (err error)
-		// Delete logic delete a exist record
-		Delete(ctx context.Context, node sqalx.Node, id int64) (err error)
-		// BatchDelete logic batch delete records
-		BatchDelete(ctx context.Context, node sqalx.Node, ids []int64) (err error)
 	}
 }
 

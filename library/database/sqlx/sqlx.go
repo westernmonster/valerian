@@ -127,10 +127,6 @@ func isUnsafe(i interface{}) bool {
 		return v.unsafe
 	case *Rows:
 		return v.unsafe
-	case NamedStmt:
-		return v.Stmt.unsafe
-	case *NamedStmt:
-		return v.Stmt.unsafe
 	case Stmt:
 		return v.unsafe
 	case *Stmt:
@@ -303,23 +299,6 @@ func (db *DB) Unsafe() *DB {
 	return &DB{DB: db.DB, driverName: db.driverName, unsafe: true, Mapper: db.Mapper}
 }
 
-// BindNamed binds a query using the DB driver's bindvar type.
-func (db *DB) BindNamed(query string, arg interface{}) (string, []interface{}, error) {
-	return bindNamedMapper(BindType(db.driverName), query, arg, db.Mapper)
-}
-
-// NamedQuery using this DB.
-// Any named placeholder parameters are replaced with fields from arg.
-func (db *DB) NamedQuery(query string, arg interface{}) (*Rows, error) {
-	return NamedQuery(db, query, arg)
-}
-
-// NamedExec using this DB.
-// Any named placeholder parameters are replaced with fields from arg.
-func (db *DB) NamedExec(query string, arg interface{}) (sql.Result, error) {
-	return NamedExec(db, query, arg)
-}
-
 // Select using this DB.
 // Any placeholder parameters are replaced with supplied args.
 func (db *DB) Select(dest interface{}, query string, args ...interface{}) error {
@@ -384,11 +363,6 @@ func (db *DB) QueryRowx(query string, args ...interface{}) *Row {
 // Preparex returns an sqlx.Stmt instead of a sql.Stmt
 func (db *DB) Preparex(query string) (*Stmt, error) {
 	return Preparex(db, query)
-}
-
-// PrepareNamed returns an sqlx.NamedStmt
-func (db *DB) PrepareNamed(query string) (*NamedStmt, error) {
-	return prepareNamed(db, query)
 }
 
 func (db *DB) onBreaker(err *error) {
@@ -482,23 +456,6 @@ func (tx *Tx) Unsafe() *Tx {
 	return &Tx{Tx: tx.Tx, driverName: tx.driverName, unsafe: true, Mapper: tx.Mapper}
 }
 
-// BindNamed binds a query within a transaction's bindvar type.
-func (tx *Tx) BindNamed(query string, arg interface{}) (string, []interface{}, error) {
-	return bindNamedMapper(BindType(tx.driverName), query, arg, tx.Mapper)
-}
-
-// NamedQuery within a transaction.
-// Any named placeholder parameters are replaced with fields from arg.
-func (tx *Tx) NamedQuery(query string, arg interface{}) (*Rows, error) {
-	return NamedQuery(tx, query, arg)
-}
-
-// NamedExec a named query within a transaction.
-// Any named placeholder parameters are replaced with fields from arg.
-func (tx *Tx) NamedExec(query string, arg interface{}) (sql.Result, error) {
-	return NamedExec(tx, query, arg)
-}
-
 // Select within a transaction.
 // Any placeholder parameters are replaced with supplied args.
 func (tx *Tx) Select(dest interface{}, query string, args ...interface{}) error {
@@ -549,20 +506,6 @@ func (tx *Tx) Stmtx(stmt interface{}) *Stmt {
 		panic(fmt.Sprintf("non-statement type %v passed to Stmtx", reflect.ValueOf(stmt).Type()))
 	}
 	return &Stmt{Stmt: tx.Stmt(s), Mapper: tx.Mapper}
-}
-
-// NamedStmt returns a version of the prepared statement which runs within a transaction.
-func (tx *Tx) NamedStmt(stmt *NamedStmt) *NamedStmt {
-	return &NamedStmt{
-		QueryString: stmt.QueryString,
-		Params:      stmt.Params,
-		Stmt:        tx.Stmtx(stmt.Stmt),
-	}
-}
-
-// PrepareNamed returns an sqlx.NamedStmt
-func (tx *Tx) PrepareNamed(query string) (*NamedStmt, error) {
-	return prepareNamed(tx, query)
 }
 
 // Stmt is an sqlx wrapper around sql.Stmt with extra functionality

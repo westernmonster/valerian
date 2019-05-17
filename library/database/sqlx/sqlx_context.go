@@ -129,34 +129,6 @@ func LoadFileContext(ctx context.Context, e ExecerContext, path string) (*sql.Re
 	return &res, err
 }
 
-// MustExecContext execs the query using e and panics if there was an error.
-// Any placeholder parameters are replaced with supplied args.
-func MustExecContext(ctx context.Context, e ExecerContext, query string, args ...interface{}) sql.Result {
-	res, err := e.ExecContext(ctx, query, args...)
-	if err != nil {
-		panic(err)
-	}
-	return res
-}
-
-// PrepareNamedContext returns an sqlx.NamedStmt
-func (db *DB) PrepareNamedContext(ctx context.Context, query string) (*NamedStmt, error) {
-
-	return prepareNamedContext(ctx, db, query)
-}
-
-// NamedQueryContext using this DB.
-// Any named placeholder parameters are replaced with fields from arg.
-func (db *DB) NamedQueryContext(ctx context.Context, query string, arg interface{}) (*Rows, error) {
-	return NamedQueryContext(ctx, db, query, arg)
-}
-
-// NamedExecContext using this DB.
-// Any named placeholder parameters are replaced with fields from arg.
-func (db *DB) NamedExecContext(ctx context.Context, query string, arg interface{}) (sql.Result, error) {
-	return NamedExecContext(ctx, db, query, arg)
-}
-
 // SelectContext using this DB.
 // Any placeholder parameters are replaced with supplied args.
 func (db *DB) SelectContext(ctx context.Context, dest interface{}, query string, args ...interface{}) (err error) {
@@ -219,27 +191,6 @@ func (db *DB) QueryRowxContext(ctx context.Context, query string, args ...interf
 	return &Row{rows: rows, err: err, unsafe: db.unsafe, Mapper: db.Mapper}
 }
 
-// MustBeginTx starts a transaction, and panics on error.  Returns an *sqlx.Tx instead
-// of an *sql.Tx.
-//
-// The provided context is used until the transaction is committed or rolled
-// back. If the context is canceled, the sql package will roll back the
-// transaction. Tx.Commit will return an error if the context provided to
-// MustBeginContext is canceled.
-func (db *DB) MustBeginTx(ctx context.Context, opts *sql.TxOptions) *Tx {
-	tx, err := db.BeginTxx(ctx, opts)
-	if err != nil {
-		panic(err)
-	}
-	return tx
-}
-
-// MustExecContext (panic) runs MustExec using this database.
-// Any placeholder parameters are replaced with supplied args.
-func (db *DB) MustExecContext(ctx context.Context, query string, args ...interface{}) sql.Result {
-	return MustExecContext(ctx, db, query, args...)
-}
-
 // BeginTxx begins a transaction and returns an *sqlx.Tx instead of an
 // *sql.Tx.
 //
@@ -272,36 +223,12 @@ func (tx *Tx) StmtxContext(ctx context.Context, stmt interface{}) *Stmt {
 	return &Stmt{Stmt: tx.StmtContext(ctx, s), Mapper: tx.Mapper}
 }
 
-// NamedStmtContext returns a version of the prepared statement which runs
-// within a transaction.
-func (tx *Tx) NamedStmtContext(ctx context.Context, stmt *NamedStmt) *NamedStmt {
-	return &NamedStmt{
-		QueryString: stmt.QueryString,
-		Params:      stmt.Params,
-		Stmt:        tx.StmtxContext(ctx, stmt.Stmt),
-	}
-}
-
 // PreparexContext returns an sqlx.Stmt instead of a sql.Stmt.
 //
 // The provided context is used for the preparation of the statement, not for
 // the execution of the statement.
 func (tx *Tx) PreparexContext(ctx context.Context, query string) (*Stmt, error) {
 	return PreparexContext(ctx, tx, query)
-}
-
-// PrepareNamedContext returns an sqlx.NamedStmt
-func (tx *Tx) PrepareNamedContext(ctx context.Context, query string) (*NamedStmt, error) {
-	// if tx.span != nil {
-	// 	tx.span.SetTag("sql.prepare", query)
-	// }
-	return prepareNamedContext(ctx, tx, query)
-}
-
-// MustExecContext runs MustExecContext within a transaction.
-// Any placeholder parameters are replaced with supplied args.
-func (tx *Tx) MustExecContext(ctx context.Context, query string, args ...interface{}) sql.Result {
-	return MustExecContext(ctx, tx, query, args...)
 }
 
 // QueryxContext within a transaction and context.
@@ -334,12 +261,6 @@ func (tx *Tx) QueryRowxContext(ctx context.Context, query string, args ...interf
 	return &Row{rows: rows, err: err, unsafe: tx.unsafe, Mapper: tx.Mapper}
 }
 
-// NamedExecContext using this Tx.
-// Any named placeholder parameters are replaced with fields from arg.
-func (tx *Tx) NamedExecContext(ctx context.Context, query string, arg interface{}) (sql.Result, error) {
-	return NamedExecContext(ctx, tx, query, arg)
-}
-
 // SelectContext using the prepared statement.
 // Any placeholder parameters are replaced with supplied args.
 func (s *Stmt) SelectContext(ctx context.Context, dest interface{}, args ...interface{}) error {
@@ -351,13 +272,6 @@ func (s *Stmt) SelectContext(ctx context.Context, dest interface{}, args ...inte
 // An error is returned if the result set is empty.
 func (s *Stmt) GetContext(ctx context.Context, dest interface{}, args ...interface{}) error {
 	return GetContext(ctx, &qStmt{s}, dest, "", args...)
-}
-
-// MustExecContext (panic) using this statement.  Note that the query portion of
-// the error output will be blank, as Stmt does not expose its query.
-// Any placeholder parameters are replaced with supplied args.
-func (s *Stmt) MustExecContext(ctx context.Context, args ...interface{}) sql.Result {
-	return MustExecContext(ctx, &qStmt{s}, "", args...)
 }
 
 // QueryRowxContext using this statement.

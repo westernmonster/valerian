@@ -108,10 +108,6 @@ type Node interface {
 	ExecContext(ctx context.Context, query string, args ...interface{}) (result sql.Result, err error)
 
 	GetContext(ctx context.Context, dest interface{}, query string, args ...interface{}) (err error)
-
-	PrepareNamedContext(ctx context.Context, query string) (stmt *sqlx.NamedStmt, err error)
-
-	NamedExecContext(ctx context.Context, query string, arg interface{}) (sql.Result, error)
 }
 
 // A Driver can query the database. It can either be a *sqlx.DB or a *sqlx.Tx
@@ -123,8 +119,6 @@ type Driver interface {
 	// BindNamed(query string, arg interface{}) (string, []interface{}, error)
 	// DriverName() string
 	GetContext(ctx context.Context, dest interface{}, query string, args ...interface{}) error
-	NamedExecContext(ctx context.Context, query string, arg interface{}) (sql.Result, error)
-	PrepareNamedContext(ctx context.Context, query string) (*sqlx.NamedStmt, error)
 	PreparexContext(ctx context.Context, query string) (*sqlx.Stmt, error)
 	SelectContext(ctx context.Context, dest interface{}, query string, args ...interface{}) error
 }
@@ -268,23 +262,6 @@ func (n *node) GetContext(ctx context.Context, dest interface{}, query string, a
 		}
 	}
 	return n.Driver.GetContext(ctx, dest, query, args...)
-}
-
-func (n *node) PrepareNamedContext(ctx context.Context, query string) (stmt *sqlx.NamedStmt, err error) {
-	if n.tx != nil {
-		return n.Driver.PrepareNamedContext(ctx, query)
-	}
-
-	return n.write.PrepareNamedContext(ctx, query)
-}
-
-func (n *node) NamedExecContext(ctx context.Context, query string, arg interface{}) (result sql.Result, err error) {
-	if n.tx != nil {
-		return n.Driver.NamedExecContext(ctx, query, arg)
-	}
-
-	return n.write.NamedExecContext(ctx, query, arg)
-
 }
 
 func (n *node) readIndex() int {

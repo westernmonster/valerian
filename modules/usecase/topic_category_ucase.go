@@ -26,24 +26,16 @@ type TopicCategoryUsecase struct {
 	}
 
 	TopicCategoryRepository interface {
-		// QueryListPaged get paged records by condition
-		QueryListPaged(ctx context.Context, node sqalx.Node, page int, pageSize int, cond map[string]string) (total int, items []*repo.TopicCategory, err error)
-		// GetAll get all records
-		GetAll(ctx context.Context, node sqalx.Node) (items []*repo.TopicCategory, err error)
 		// GetAllByCondition get records by condition
 		GetAllByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (items []*repo.TopicCategory, err error)
 		// GetByID get a record by ID
 		GetByID(ctx context.Context, node sqalx.Node, id int64) (item *repo.TopicCategory, exist bool, err error)
-		// GetByCondition get a record by condition
-		GetByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (item *repo.TopicCategory, exist bool, err error)
 		// Insert insert a new record
 		Insert(ctx context.Context, node sqalx.Node, item *repo.TopicCategory) (err error)
 		// Update update a exist record
 		Update(ctx context.Context, node sqalx.Node, item *repo.TopicCategory) (err error)
 		// Delete logic delete a exist record
 		Delete(ctx context.Context, node sqalx.Node, id int64) (err error)
-		// BatchDelete logic batch delete records
-		BatchDelete(ctx context.Context, node sqalx.Node, ids []int64) (err error)
 	}
 }
 

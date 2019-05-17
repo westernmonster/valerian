@@ -31,10 +31,6 @@ type TopicUsecase struct {
 		Insert(ctx context.Context, node sqalx.Node, item *repo.Topic) (err error)
 		// Update update a exist record
 		Update(ctx context.Context, node sqalx.Node, item *repo.Topic) (err error)
-		// Delete logic delete a exist record
-		Delete(ctx context.Context, node sqalx.Node, id int64) (err error)
-		// BatchDelete logic batch delete records
-		BatchDelete(ctx context.Context, node sqalx.Node, ids []int64) (err error)
 
 		SearchTopics(ctx context.Context, node sqalx.Node, cond map[string]string) (items []*models.TopicSearchResult, err error)
 
@@ -46,21 +42,15 @@ type TopicUsecase struct {
 		GetAllByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (items []*repo.TopicCategory, err error)
 		// GetByID get a record by ID
 		GetByID(ctx context.Context, node sqalx.Node, id int64) (item *repo.TopicCategory, exist bool, err error)
-		// GetByCondition get a record by condition
-		GetByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (item *repo.TopicCategory, exist bool, err error)
 		// Insert insert a new record
 		Insert(ctx context.Context, node sqalx.Node, item *repo.TopicCategory) (err error)
 		// Update update a exist record
 		Update(ctx context.Context, node sqalx.Node, item *repo.TopicCategory) (err error)
 		// Delete logic delete a exist record
 		Delete(ctx context.Context, node sqalx.Node, id int64) (err error)
-		// BatchDelete logic batch delete records
-		BatchDelete(ctx context.Context, node sqalx.Node, ids []int64) (err error)
 	}
 
 	TopicMemberRepository interface {
-		// GetByID get a record by ID
-		GetByID(ctx context.Context, node sqalx.Node, id int64) (item *repo.TopicMember, exist bool, err error)
 		// GetByCondition get a record by condition
 		GetByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (item *repo.TopicMember, exist bool, err error)
 		// Insert insert a new record
@@ -69,8 +59,6 @@ type TopicUsecase struct {
 		Update(ctx context.Context, node sqalx.Node, item *repo.TopicMember) (err error)
 		// Delete logic delete a exist record
 		Delete(ctx context.Context, node sqalx.Node, id int64) (err error)
-		// BatchDelete logic batch delete records
-		BatchDelete(ctx context.Context, node sqalx.Node, ids []int64) (err error)
 
 		GetTopicMembers(ctx context.Context, node sqalx.Node, topicID int64, limit int) (items []*models.TopicMember, err error)
 
@@ -89,8 +77,6 @@ type TopicUsecase struct {
 		GetByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (item *repo.TopicFollower, exist bool, err error)
 		// Insert insert a new record
 		Insert(ctx context.Context, node sqalx.Node, item *repo.TopicFollower) (err error)
-		// Update update a exist record
-		Update(ctx context.Context, node sqalx.Node, item *repo.TopicFollower) (err error)
 		// Delete logic delete a exist record
 		Delete(ctx context.Context, node sqalx.Node, id int64) (err error)
 	}
@@ -103,18 +89,12 @@ type TopicUsecase struct {
 	}
 
 	TopicRelationRepository interface {
-		// GetByID get a record by ID
-		GetByID(ctx context.Context, node sqalx.Node, id int64) (item *repo.TopicRelation, exist bool, err error)
 		// GetByCondition get a record by condition
 		GetByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (item *repo.TopicRelation, exist bool, err error)
 		// Insert insert a new record
 		Insert(ctx context.Context, node sqalx.Node, item *repo.TopicRelation) (err error)
 		// Update update a exist record
 		Update(ctx context.Context, node sqalx.Node, item *repo.TopicRelation) (err error)
-		// Delete logic delete a exist record
-		Delete(ctx context.Context, node sqalx.Node, id int64) (err error)
-		// BatchDelete logic batch delete records
-		BatchDelete(ctx context.Context, node sqalx.Node, ids []int64) (err error)
 
 		GetAllRelatedTopics(ctx context.Context, node sqalx.Node, topicID int64) (items []*models.RelatedTopicShort, err error)
 

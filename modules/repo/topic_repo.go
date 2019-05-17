@@ -11,7 +11,6 @@ import (
 	"valerian/library/database/sqalx"
 	"valerian/library/database/sqlx/types"
 
-	packr "github.com/gobuffalo/packr"
 	tracerr "github.com/ztrue/tracerr"
 )
 
@@ -42,56 +41,12 @@ type Topic struct {
 
 type TopicRepository struct{}
 
-// QueryListPaged get paged records by condition
-func (p *TopicRepository) QueryListPaged(ctx context.Context, node sqalx.Node, page int, pageSize int, cond map[string]string) (total int, items []*Topic, err error) {
-	offset := (page - 1) * pageSize
-	condition := make(map[string]interface{})
-	clause := ""
-
-	items = make([]*Topic, 0)
-
-	box := packr.NewBox("./sql/topic")
-	sqlCount := fmt.Sprintf(box.String("QUERY_LIST_PAGED_COUNT.sql"), clause)
-	sqlSelect := fmt.Sprintf(box.String("QUERY_LIST_PAGED_DATA.sql"), clause)
-
-	stmtCount, err := node.PrepareNamedContext(ctx, sqlCount)
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-	err = stmtCount.Get(&total, condition)
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-
-	condition["limit"] = pageSize
-	condition["offset"] = offset
-
-	stmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-	err = stmtSelect.Select(&items, condition)
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-	return
-}
-
 // GetAll get all records
 func (p *TopicRepository) GetAll(ctx context.Context, node sqalx.Node) (items []*Topic, err error) {
 	items = make([]*Topic, 0)
-	sqlSelect := packr.NewBox("./sql/topic").String("GET_ALL.sql")
+	sqlSelect := "SELECT a.* FROM topics a WHERE a.deleted=0 ORDER BY a.id DESC "
 
-	stmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-	err = stmtSelect.Select(&items, map[string]interface{}{})
+	err = node.SelectContext(ctx, &items, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -102,109 +57,26 @@ func (p *TopicRepository) GetAll(ctx context.Context, node sqalx.Node) (items []
 // SearchTopics
 func (p *TopicRepository) SearchTopics(ctx context.Context, node sqalx.Node, cond map[string]string) (items []*models.TopicSearchResult, err error) {
 	items = make([]*models.TopicSearchResult, 0)
-	condition := make(map[string]interface{})
+	condition := make([]interface{}, 0)
 	clause := ""
 
 	if val, ok := cond["query"]; ok {
 		if strings.TrimSpace(val) != "" {
-			clause += ` AND (a.name LIKE :query
-		OR a.version_name LIKE :query)`
-			condition["query"] = "%" + val + "%"
+			clause += ` AND (a.name LIKE ?
+		OR a.version_name LIKE ?)`
+			condition = append(condition, val)
+			condition = append(condition, val)
 		}
 	}
 
 	if val, ok := cond["id"]; ok {
-		clause += " AND a.id !=:id"
-		condition["id"] = val
+		clause += " AND a.id !=?"
+		condition = append(condition, val)
 	}
 
-	box := packr.NewBox("./sql/topic")
-	sqlSelect := fmt.Sprintf(box.String("SEARCH_TOPICS.sql"), clause)
+	sqlSelect := fmt.Sprintf("SELECT a.id as topic_id, a.name, a.version_name FROM topics a WHERE a.deleted=0 %s ", clause)
 
-	fmt.Println(sqlSelect)
-
-	stmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-	err = stmtSelect.Select(&items, condition)
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-	return
-}
-
-// GetAllByCondition get records by condition
-func (p *TopicRepository) GetAllByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (items []*Topic, err error) {
-	items = make([]*Topic, 0)
-	condition := make(map[string]interface{})
-	clause := ""
-
-	if val, ok := cond["id"]; ok {
-		clause += " AND a.id =:id"
-		condition["id"] = val
-	}
-	if val, ok := cond["name"]; ok {
-		clause += " AND a.name =:name"
-		condition["name"] = val
-	}
-	if val, ok := cond["cover"]; ok {
-		clause += " AND a.cover =:cover"
-		condition["cover"] = val
-	}
-	if val, ok := cond["introduction"]; ok {
-		clause += " AND a.introduction =:introduction"
-		condition["introduction"] = val
-	}
-	if val, ok := cond["is_private"]; ok {
-		clause += " AND a.is_private =:is_private"
-		condition["is_private"] = val
-	}
-	if val, ok := cond["allow_chat"]; ok {
-		clause += " AND a.allow_chat =:allow_chat"
-		condition["allow_chat"] = val
-	}
-	if val, ok := cond["edit_permission"]; ok {
-		clause += " AND a.edit_permission =:edit_permission"
-		condition["edit_permission"] = val
-	}
-	if val, ok := cond["view_permission"]; ok {
-		clause += " AND a.view_permission =:view_permission"
-		condition["view_permission"] = val
-	}
-	if val, ok := cond["join_permission"]; ok {
-		clause += " AND a.join_permission =:join_permission"
-		condition["join_permission"] = val
-	}
-	if val, ok := cond["important"]; ok {
-		clause += " AND a.important =:important"
-		condition["important"] = val
-	}
-	if val, ok := cond["mute_notification"]; ok {
-		clause += " AND a.mute_notification =:mute_notification"
-		condition["mute_notification"] = val
-	}
-	if val, ok := cond["category_view_type"]; ok {
-		clause += " AND a.category_view_type =:category_view_type"
-		condition["category_view_type"] = val
-	}
-
-	if val, ok := cond["created_by"]; ok {
-		clause += " AND a.created_by =:created_by"
-		condition["created_by"] = val
-	}
-
-	box := packr.NewBox("./sql/topic")
-	sqlSelect := fmt.Sprintf(box.String("GET_ALL_BY_CONDITION.sql"), clause)
-
-	stmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-	err = stmtSelect.Select(&items, condition)
+	err = node.SelectContext(ctx, &items, sqlSelect, condition...)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -215,15 +87,9 @@ func (p *TopicRepository) GetAllByCondition(ctx context.Context, node sqalx.Node
 // GetByID get record by ID
 func (p *TopicRepository) GetByID(ctx context.Context, node sqalx.Node, id int64) (item *Topic, exist bool, err error) {
 	item = new(Topic)
-	sqlSelect := packr.NewBox("./sql/topic").String("GET_BY_ID.sql")
+	sqlSelect := "SELECT a.* FROM topics a WHERE a.id=? AND a.deleted=0"
 
-	tmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-
-	if e := tmtSelect.Get(item, map[string]interface{}{"id": id}); e != nil {
+	if e := node.GetContext(ctx, item, sqlSelect, id); e != nil {
 		if e == sql.ErrNoRows {
 			item = nil
 			return
@@ -234,83 +100,95 @@ func (p *TopicRepository) GetByID(ctx context.Context, node sqalx.Node, id int64
 
 	exist = true
 	return
+
 }
 
 // GetByCondition get record by condition
 func (p *TopicRepository) GetByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (item *Topic, exist bool, err error) {
 	item = new(Topic)
-	condition := make(map[string]interface{})
+	condition := make([]interface{}, 0)
 	clause := ""
 
 	if val, ok := cond["id"]; ok {
-		clause += " AND a.id =:id"
-		condition["id"] = val
+		clause += " AND a.id =?"
+		condition = append(condition, val)
 	}
-
 	if val, ok := cond["topic_set_id"]; ok {
-		clause += " AND a.topic_set_id =:topic_set_id"
-		condition["topic_set_id"] = val
+		clause += " AND a.topic_set_id =?"
+		condition = append(condition, val)
 	}
-
 	if val, ok := cond["name"]; ok {
-		clause += " AND a.name =:name"
-		condition["name"] = val
+		clause += " AND a.name =?"
+		condition = append(condition, val)
 	}
 	if val, ok := cond["cover"]; ok {
-		clause += " AND a.cover =:cover"
-		condition["cover"] = val
+		clause += " AND a.cover =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["bg"]; ok {
+		clause += " AND a.bg =?"
+		condition = append(condition, val)
 	}
 	if val, ok := cond["introduction"]; ok {
-		clause += " AND a.introduction =:introduction"
-		condition["introduction"] = val
+		clause += " AND a.introduction =?"
+		condition = append(condition, val)
 	}
 	if val, ok := cond["is_private"]; ok {
-		clause += " AND a.is_private =:is_private"
-		condition["is_private"] = val
+		clause += " AND a.is_private =?"
+		condition = append(condition, val)
 	}
 	if val, ok := cond["allow_chat"]; ok {
-		clause += " AND a.allow_chat =:allow_chat"
-		condition["allow_chat"] = val
+		clause += " AND a.allow_chat =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["allow_discuss"]; ok {
+		clause += " AND a.allow_discuss =?"
+		condition = append(condition, val)
 	}
 	if val, ok := cond["edit_permission"]; ok {
-		clause += " AND a.edit_permission =:edit_permission"
-		condition["edit_permission"] = val
+		clause += " AND a.edit_permission =?"
+		condition = append(condition, val)
 	}
 	if val, ok := cond["view_permission"]; ok {
-		clause += " AND a.view_permission =:view_permission"
-		condition["view_permission"] = val
+		clause += " AND a.view_permission =?"
+		condition = append(condition, val)
 	}
 	if val, ok := cond["join_permission"]; ok {
-		clause += " AND a.join_permission =:join_permission"
-		condition["join_permission"] = val
+		clause += " AND a.join_permission =?"
+		condition = append(condition, val)
 	}
 	if val, ok := cond["important"]; ok {
-		clause += " AND a.important =:important"
-		condition["important"] = val
+		clause += " AND a.important =?"
+		condition = append(condition, val)
 	}
 	if val, ok := cond["mute_notification"]; ok {
-		clause += " AND a.mute_notification =:mute_notification"
-		condition["mute_notification"] = val
+		clause += " AND a.mute_notification =?"
+		condition = append(condition, val)
 	}
 	if val, ok := cond["category_view_type"]; ok {
-		clause += " AND a.category_view_type =:category_view_type"
-		condition["category_view_type"] = val
+		clause += " AND a.category_view_type =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["topic_type"]; ok {
+		clause += " AND a.topic_type =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["topic_home"]; ok {
+		clause += " AND a.topic_home =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["version_name"]; ok {
+		clause += " AND a.version_name =?"
+		condition = append(condition, val)
 	}
 	if val, ok := cond["created_by"]; ok {
-		clause += " AND a.created_by =:created_by"
-		condition["created_by"] = val
+		clause += " AND a.created_by =?"
+		condition = append(condition, val)
 	}
 
-	box := packr.NewBox("./sql/topic")
-	sqlSelect := fmt.Sprintf(box.String("GET_BY_CONDITION.sql"), clause)
+	sqlSelect := fmt.Sprintf("SELECT a.* FROM topics a WHERE a.deleted=0 %s", clause)
 
-	tmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-
-	if e := tmtSelect.Get(item, condition); e != nil {
+	if e := node.GetContext(ctx, item, sqlSelect, condition...); e != nil {
 		if e == sql.ErrNoRows {
 			item = nil
 			return
@@ -325,12 +203,12 @@ func (p *TopicRepository) GetByCondition(ctx context.Context, node sqalx.Node, c
 
 // Insert insert a new record
 func (p *TopicRepository) Insert(ctx context.Context, node sqalx.Node, item *Topic) (err error) {
-	sqlInsert := packr.NewBox("./sql/topic").String("INSERT.sql")
+	sqlInsert := "INSERT INTO topics( id,topic_set_id,name,cover,bg,introduction,is_private,allow_chat,allow_discuss,edit_permission,view_permission,join_permission,important,mute_notification,category_view_type,topic_type,topic_home,version_name,created_by,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
 
 	item.CreatedAt = time.Now().Unix()
 	item.UpdatedAt = time.Now().Unix()
 
-	_, err = node.NamedExecContext(ctx, sqlInsert, item)
+	_, err = node.ExecContext(ctx, sqlInsert, item.ID, item.TopicSetID, item.Name, item.Cover, item.Bg, item.Introduction, item.IsPrivate, item.AllowChat, item.AllowDiscuss, item.EditPermission, item.ViewPermission, item.JoinPermission, item.Important, item.MuteNotification, item.CategoryViewType, item.TopicType, item.TopicHome, item.VersionName, item.CreatedBy, item.Deleted, item.CreatedAt, item.UpdatedAt)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -341,49 +219,11 @@ func (p *TopicRepository) Insert(ctx context.Context, node sqalx.Node, item *Top
 
 // Update update a exist record
 func (p *TopicRepository) Update(ctx context.Context, node sqalx.Node, item *Topic) (err error) {
-	sqlUpdate := packr.NewBox("./sql/topic").String("UPDATE.sql")
+	sqlUpdate := "UPDATE topics SET topic_set_id=?,name=?,cover=?,bg=?,introduction=?,is_private=?,allow_chat=?,allow_discuss=?,edit_permission=?,view_permission=?,join_permission=?,important=?,mute_notification=?,category_view_type=?,topic_type=?,topic_home=?,version_name=?,created_by=?,updated_at=? WHERE id=?"
 
 	item.UpdatedAt = time.Now().Unix()
 
-	_, err = node.NamedExecContext(ctx, sqlUpdate, item)
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-
-	return
-}
-
-// Delete logic delete a exist record
-func (p *TopicRepository) Delete(ctx context.Context, node sqalx.Node, id int64) (err error) {
-	sqlDelete := packr.NewBox("./sql/topic").String("DELETE.sql")
-
-	_, err = node.NamedExecContext(ctx, sqlDelete, map[string]interface{}{"id": id})
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-
-	return
-}
-
-// BatchDelete logic batch delete records
-func (p *TopicRepository) BatchDelete(ctx context.Context, node sqalx.Node, ids []int64) (err error) {
-	tx, err := node.Beginx(ctx)
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-
-	defer tx.Rollback()
-	for _, id := range ids {
-		errDelete := p.Delete(ctx, tx, id)
-		if errDelete != nil {
-			err = tracerr.Wrap(err)
-			return
-		}
-	}
-	err = tx.Commit()
+	_, err = node.ExecContext(ctx, sqlUpdate, item.TopicSetID, item.Name, item.Cover, item.Bg, item.Introduction, item.IsPrivate, item.AllowChat, item.AllowDiscuss, item.EditPermission, item.ViewPermission, item.JoinPermission, item.Important, item.MuteNotification, item.CategoryViewType, item.TopicType, item.TopicHome, item.VersionName, item.CreatedBy, item.UpdatedAt, item.ID)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return

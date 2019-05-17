@@ -3,11 +3,8 @@ package repo
 import (
 	"context"
 	"database/sql"
-	"fmt"
-	"time"
 	"valerian/library/database/sqalx"
 
-	packr "github.com/gobuffalo/packr"
 	tracerr "github.com/ztrue/tracerr"
 )
 
@@ -24,118 +21,11 @@ type Area struct {
 
 type AreaRepository struct{}
 
-// QueryListPaged get paged records by condition
-func (p *AreaRepository) QueryListPaged(ctx context.Context, node sqalx.Node, page int, pageSize int, cond map[string]string) (total int, items []*Area, err error) {
-	offset := (page - 1) * pageSize
-	condition := make(map[string]interface{})
-	clause := ""
-
-	items = make([]*Area, 0)
-
-	box := packr.NewBox("./sql/area")
-	sqlCount := fmt.Sprintf(box.String("QUERY_LIST_PAGED_COUNT.sql"), clause)
-	sqlSelect := fmt.Sprintf(box.String("QUERY_LIST_PAGED_DATA.sql"), clause)
-
-	stmtCount, err := node.PrepareNamedContext(ctx, sqlCount)
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-	err = stmtCount.Get(&total, condition)
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-
-	condition["limit"] = pageSize
-	condition["offset"] = offset
-
-	stmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-	err = stmtSelect.Select(&items, condition)
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-	return
-}
-
-// GetAll get all records
-func (p *AreaRepository) GetAll(ctx context.Context, node sqalx.Node) (items []*Area, err error) {
-	items = make([]*Area, 0)
-	sqlSelect := packr.NewBox("./sql/area").String("GET_ALL.sql")
-
-	stmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-	err = stmtSelect.Select(&items, map[string]interface{}{})
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-	return
-}
-
-// GetAllByCondition get records by condition
-func (p *AreaRepository) GetAllByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (items []*Area, err error) {
-	items = make([]*Area, 0)
-	condition := make(map[string]interface{})
-	clause := ""
-
-	if val, ok := cond["id"]; ok {
-		clause += " AND a.id =:id"
-		condition["id"] = val
-	}
-	if val, ok := cond["name"]; ok {
-		clause += " AND a.name =:name"
-		condition["name"] = val
-	}
-	if val, ok := cond["code"]; ok {
-		clause += " AND a.code =:code"
-		condition["code"] = val
-	}
-	if val, ok := cond["type"]; ok {
-		clause += " AND a.type =:type"
-		condition["type"] = val
-	}
-	if val, ok := cond["parent"]; ok {
-		clause += " AND a.parent =:parent"
-		condition["parent"] = val
-	}
-
-	box := packr.NewBox("./sql/area")
-	sqlSelect := fmt.Sprintf(box.String("GET_ALL_BY_CONDITION.sql"), clause)
-
-	stmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-	err = stmtSelect.Select(&items, condition)
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-	return
-}
-
 // GetByID get record by ID
 func (p *AreaRepository) GetByID(ctx context.Context, node sqalx.Node, id int64) (item *Area, exist bool, err error) {
 	item = new(Area)
-	sqlSelect := packr.NewBox("./sql/area").String("GET_BY_ID.sql")
-
-	tmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-
-	if e := tmtSelect.Get(item, map[string]interface{}{"id": id}); e != nil {
+	sqlSelect := `SELECT a.id, a.name, a.code, a.type, a.parent, a.deleted, a.created_at, a.updated_at FROM areas a WHERE a.id=? AND a.deleted=0 `
+	if e := node.GetContext(ctx, item, sqlSelect, id); e != nil {
 		if e == sql.ErrNoRows {
 			item = nil
 			return
@@ -145,123 +35,5 @@ func (p *AreaRepository) GetByID(ctx context.Context, node sqalx.Node, id int64)
 	}
 
 	exist = true
-	return
-}
-
-// GetByCondition get record by condition
-func (p *AreaRepository) GetByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (item *Area, exist bool, err error) {
-	item = new(Area)
-	condition := make(map[string]interface{})
-	clause := ""
-
-	if val, ok := cond["id"]; ok {
-		clause += " AND a.id =:id"
-		condition["id"] = val
-	}
-	if val, ok := cond["name"]; ok {
-		clause += " AND a.name =:name"
-		condition["name"] = val
-	}
-	if val, ok := cond["code"]; ok {
-		clause += " AND a.code =:code"
-		condition["code"] = val
-	}
-	if val, ok := cond["type"]; ok {
-		clause += " AND a.type =:type"
-		condition["type"] = val
-	}
-	if val, ok := cond["parent"]; ok {
-		clause += " AND a.parent =:parent"
-		condition["parent"] = val
-	}
-
-	box := packr.NewBox("./sql/area")
-	sqlSelect := fmt.Sprintf(box.String("GET_BY_CONDITION.sql"), clause)
-
-	tmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-
-	if e := tmtSelect.Get(item, condition); e != nil {
-		if e == sql.ErrNoRows {
-			item = nil
-			return
-		}
-		err = tracerr.Wrap(e)
-		return
-	}
-
-	exist = true
-	return
-}
-
-// Insert insert a new record
-func (p *AreaRepository) Insert(ctx context.Context, node sqalx.Node, item *Area) (err error) {
-	sqlInsert := packr.NewBox("./sql/area").String("INSERT.sql")
-
-	item.CreatedAt = time.Now().Unix()
-	item.UpdatedAt = time.Now().Unix()
-
-	_, err = node.NamedExecContext(ctx, sqlInsert, item)
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-
-	return
-}
-
-// Update update a exist record
-func (p *AreaRepository) Update(ctx context.Context, node sqalx.Node, item *Area) (err error) {
-	sqlUpdate := packr.NewBox("./sql/area").String("UPDATE.sql")
-
-	item.UpdatedAt = time.Now().Unix()
-
-	_, err = node.NamedExecContext(ctx, sqlUpdate, item)
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-
-	return
-}
-
-// Delete logic delete a exist record
-func (p *AreaRepository) Delete(ctx context.Context, node sqalx.Node, id int64) (err error) {
-	sqlDelete := packr.NewBox("./sql/area").String("DELETE.sql")
-
-	_, err = node.NamedExecContext(ctx, sqlDelete, map[string]interface{}{"id": id})
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-
-	return
-}
-
-// BatchDelete logic batch delete records
-func (p *AreaRepository) BatchDelete(ctx context.Context, node sqalx.Node, ids []int64) (err error) {
-	tx, err := node.Beginx(ctx)
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-
-	defer tx.Rollback()
-	for _, id := range ids {
-		errDelete := p.Delete(ctx, tx, id)
-		if errDelete != nil {
-			err = tracerr.Wrap(err)
-			return
-		}
-	}
-	err = tx.Commit()
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-
 	return
 }

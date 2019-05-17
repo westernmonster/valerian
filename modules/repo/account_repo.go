@@ -41,158 +41,11 @@ type Account struct {
 
 type AccountRepository struct{}
 
-// QueryListPaged get paged records by condition
-func (p *AccountRepository) QueryListPaged(ctx context.Context, node sqalx.Node, page int, pageSize int, cond map[string]string) (total int, items []*Account, err error) {
-	offset := (page - 1) * pageSize
-	condition := make(map[string]interface{})
-	clause := ""
-
-	items = make([]*Account, 0)
-
-	box := packr.NewBox("./sql/account")
-	sqlCount := fmt.Sprintf(box.String("QUERY_LIST_PAGED_COUNT.sql"), clause)
-	sqlSelect := fmt.Sprintf(box.String("QUERY_LIST_PAGED_DATA.sql"), clause)
-
-	stmtCount, err := node.PrepareNamedContext(ctx, sqlCount)
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-	err = stmtCount.Get(&total, condition)
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-
-	condition["limit"] = pageSize
-	condition["offset"] = offset
-
-	stmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-	err = stmtSelect.Select(&items, condition)
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-	return
-}
-
-// GetAll get all records
-func (p *AccountRepository) GetAll(ctx context.Context, node sqalx.Node) (items []*Account, err error) {
-	items = make([]*Account, 0)
-	sqlSelect := packr.NewBox("./sql/account").String("GET_ALL.sql")
-
-	stmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-	err = stmtSelect.Select(&items, map[string]interface{}{})
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-	return
-}
-
-// GetAllByCondition get records by condition
-func (p *AccountRepository) GetAllByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (items []*Account, err error) {
-	items = make([]*Account, 0)
-	condition := make(map[string]interface{})
-	clause := ""
-
-	if val, ok := cond["id"]; ok {
-		clause += " AND a.id =:id"
-		condition["id"] = val
-	}
-	if val, ok := cond["mobile"]; ok {
-		clause += " AND a.mobile =:mobile"
-		condition["mobile"] = val
-	}
-	if val, ok := cond["email"]; ok {
-		clause += " AND a.email =:email"
-		condition["email"] = val
-	}
-	if val, ok := cond["password"]; ok {
-		clause += " AND a.password =:password"
-		condition["password"] = val
-	}
-	if val, ok := cond["role"]; ok {
-		clause += " AND a.role =:role"
-		condition["role"] = val
-	}
-	if val, ok := cond["salt"]; ok {
-		clause += " AND a.salt =:salt"
-		condition["salt"] = val
-	}
-	if val, ok := cond["gender"]; ok {
-		clause += " AND a.gender =:gender"
-		condition["gender"] = val
-	}
-	if val, ok := cond["birth_year"]; ok {
-		clause += " AND a.birth_year =:birth_year"
-		condition["birth_year"] = val
-	}
-	if val, ok := cond["birth_month"]; ok {
-		clause += " AND a.birth_month =:birth_month"
-		condition["birth_month"] = val
-	}
-	if val, ok := cond["birth_day"]; ok {
-		clause += " AND a.birth_day =:birth_day"
-		condition["birth_day"] = val
-	}
-	if val, ok := cond["location"]; ok {
-		clause += " AND a.location =:location"
-		condition["location"] = val
-	}
-	if val, ok := cond["introduction"]; ok {
-		clause += " AND a.introduction =:introduction"
-		condition["introduction"] = val
-	}
-	if val, ok := cond["avatar"]; ok {
-		clause += " AND a.avatar =:avatar"
-		condition["avatar"] = val
-	}
-	if val, ok := cond["source"]; ok {
-		clause += " AND a.source =:source"
-		condition["source"] = val
-	}
-	if val, ok := cond["ip"]; ok {
-		clause += " AND a.ip =:ip"
-		condition["ip"] = val
-	}
-
-	box := packr.NewBox("./sql/account")
-	sqlSelect := fmt.Sprintf(box.String("GET_ALL_BY_CONDITION.sql"), clause)
-
-	stmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-	err = stmtSelect.Select(&items, condition)
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-	return
-}
-
 // GetByID get record by ID
 func (p *AccountRepository) GetByID(ctx context.Context, node sqalx.Node, id int64) (item *Account, exist bool, err error) {
 	item = new(Account)
-	sqlSelect := packr.NewBox("./sql/account").String("GET_BY_ID.sql")
-
-	tmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-
-	if e := tmtSelect.Get(item, map[string]interface{}{"id": id}); e != nil {
+	sqlSelect := ` SELECT a.* FROM accounts a WHERE a.id=? AND a.deleted=0 `
+	if e := node.GetContext(ctx, item, sqlSelect, map[string]interface{}{"id": id}); e != nil {
 		if e == sql.ErrNoRows {
 			item = nil
 			return
@@ -208,80 +61,74 @@ func (p *AccountRepository) GetByID(ctx context.Context, node sqalx.Node, id int
 // GetByCondition get record by condition
 func (p *AccountRepository) GetByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (item *Account, exist bool, err error) {
 	item = new(Account)
-	condition := make(map[string]interface{})
+	condition := make([]interface{}, 0)
 	clause := ""
 
 	if val, ok := cond["id"]; ok {
-		clause += " AND a.id =:id"
-		condition["id"] = val
+		clause += " AND a.id =?"
+		condition = append(condition, val)
 	}
 	if val, ok := cond["mobile"]; ok {
-		clause += " AND a.mobile =:mobile"
-		condition["mobile"] = val
+		clause += " AND a.mobile =?"
+		condition = append(condition, val)
 	}
 	if val, ok := cond["email"]; ok {
-		clause += " AND a.email =:email"
-		condition["email"] = val
+		clause += " AND a.email =?"
+		condition = append(condition, val)
 	}
 	if val, ok := cond["password"]; ok {
-		clause += " AND a.password =:password"
-		condition["password"] = val
+		clause += " AND a.password =?"
+		condition = append(condition, val)
 	}
 	if val, ok := cond["role"]; ok {
-		clause += " AND a.role =:role"
-		condition["role"] = val
+		clause += " AND a.role =?"
+		condition = append(condition, val)
 	}
 	if val, ok := cond["salt"]; ok {
-		clause += " AND a.salt =:salt"
-		condition["salt"] = val
+		clause += " AND a.salt =?"
+		condition = append(condition, val)
 	}
 	if val, ok := cond["gender"]; ok {
-		clause += " AND a.gender =:gender"
-		condition["gender"] = val
+		clause += " AND a.gender =?"
+		condition = append(condition, val)
 	}
 	if val, ok := cond["birth_year"]; ok {
-		clause += " AND a.birth_year =:birth_year"
-		condition["birth_year"] = val
+		clause += " AND a.birth_year =?"
+		condition = append(condition, val)
 	}
 	if val, ok := cond["birth_month"]; ok {
-		clause += " AND a.birth_month =:birth_month"
-		condition["birth_month"] = val
+		clause += " AND a.birth_month =?"
+		condition = append(condition, val)
 	}
 	if val, ok := cond["birth_day"]; ok {
-		clause += " AND a.birth_day =:birth_day"
-		condition["birth_day"] = val
+		clause += " AND a.birth_day =?"
+		condition = append(condition, val)
 	}
 	if val, ok := cond["location"]; ok {
-		clause += " AND a.location =:location"
-		condition["location"] = val
+		clause += " AND a.location =?"
+		condition = append(condition, val)
 	}
 	if val, ok := cond["introduction"]; ok {
-		clause += " AND a.introduction =:introduction"
-		condition["introduction"] = val
+		clause += " AND a.introduction =?"
+		condition = append(condition, val)
 	}
 	if val, ok := cond["avatar"]; ok {
-		clause += " AND a.avatar =:avatar"
-		condition["avatar"] = val
+		clause += " AND a.avatar =?"
+		condition = append(condition, val)
 	}
 	if val, ok := cond["source"]; ok {
-		clause += " AND a.source =:source"
-		condition["source"] = val
+		clause += " AND a.source ="
+		condition = append(condition, val)
 	}
 	if val, ok := cond["ip"]; ok {
-		clause += " AND a.ip =:ip"
-		condition["ip"] = val
+		clause += " AND a.ip =?"
+		condition = append(condition, val)
 	}
 
 	box := packr.NewBox("./sql/account")
 	sqlSelect := fmt.Sprintf(box.String("GET_BY_CONDITION.sql"), clause)
 
-	tmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-
-	if e := tmtSelect.Get(item, condition); e != nil {
+	if e := node.GetContext(ctx, item, sqlSelect, condition...); e != nil {
 		if e == sql.ErrNoRows {
 			item = nil
 			return
@@ -296,12 +143,38 @@ func (p *AccountRepository) GetByCondition(ctx context.Context, node sqalx.Node,
 
 // Insert insert a new record
 func (p *AccountRepository) Insert(ctx context.Context, node sqalx.Node, item *Account) (err error) {
-	sqlInsert := packr.NewBox("./sql/account").String("INSERT.sql")
+	sqlInsert := `
+INSERT INTO accounts( id, mobile, email, user_name, password, role, salt, gender, birth_year, birth_month, birth_day, location, introduction, avatar, source, ip, id_cert, work_cert, is_org, is_vip, deleted, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) `
+	packr.NewBox("./sql/account").String("INSERT.sql")
 
 	item.CreatedAt = time.Now().Unix()
 	item.UpdatedAt = time.Now().Unix()
 
-	_, err = node.NamedExecContext(ctx, sqlInsert, item)
+	_, err = node.ExecContext(ctx, sqlInsert,
+		item.ID,
+		item.Mobile,
+		item.Email,
+		item.UserName,
+		item.Password,
+		item.Role,
+		item.Salt,
+		item.Gender,
+		item.BirthYear,
+		item.BirthMonth,
+		item.BirthDay,
+		item.Location,
+		item.Introduction,
+		item.Avatar,
+		item.Source,
+		item.IP,
+		item.IDCert,
+		item.WorkCert,
+		item.IsOrg,
+		item.IsVIP,
+		item.Deleted,
+		item.CreatedAt,
+		item.UpdatedAt,
+	)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -312,49 +185,11 @@ func (p *AccountRepository) Insert(ctx context.Context, node sqalx.Node, item *A
 
 // Update update a exist record
 func (p *AccountRepository) Update(ctx context.Context, node sqalx.Node, item *Account) (err error) {
-	sqlUpdate := packr.NewBox("./sql/account").String("UPDATE.sql")
+	sqlUpdate := ` UPDATE accounts SET mobile=?, email=?, password=?, role=?, salt=?, gender=?, birth_year=?, birth_month=?, birth_day=?, location=?, introduction=?, avatar=?, source=?, ip=?, id_cert=?, work_cert=?, is_org=?, is_vip=?, updated_at=? WHERE id=? `
 
 	item.UpdatedAt = time.Now().Unix()
 
-	_, err = node.NamedExecContext(ctx, sqlUpdate, item)
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-
-	return
-}
-
-// Delete logic delete a exist record
-func (p *AccountRepository) Delete(ctx context.Context, node sqalx.Node, id int64) (err error) {
-	sqlDelete := packr.NewBox("./sql/account").String("DELETE.sql")
-
-	_, err = node.NamedExecContext(ctx, sqlDelete, map[string]interface{}{"id": id})
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-
-	return
-}
-
-// BatchDelete logic batch delete records
-func (p *AccountRepository) BatchDelete(ctx context.Context, node sqalx.Node, ids []int64) (err error) {
-	tx, err := node.Beginx(ctx)
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-
-	defer tx.Rollback()
-	for _, id := range ids {
-		errDelete := p.Delete(ctx, tx, id)
-		if errDelete != nil {
-			err = tracerr.Wrap(err)
-			return
-		}
-	}
-	err = tx.Commit()
+	_, err = node.ExecContext(ctx, sqlUpdate, item.Mobile, item.Email, item.Password, item.Role, item.Salt, item.Gender, item.BirthYear, item.BirthMonth, item.BirthDay, item.Location, item.Introduction, item.Avatar, item.Source, item.IP, item.IDCert, item.WorkCert, item.IsOrg, item.IsVIP, item.UpdatedAt, item.ID)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return

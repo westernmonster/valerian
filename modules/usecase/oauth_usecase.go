@@ -29,12 +29,6 @@ type OauthUsecase struct {
 		SendResetPasswordValcode(email string, valcode string) (err error)
 	}
 	AccountRepository interface {
-		// QueryListPaged get paged records by condition
-		QueryListPaged(ctx context.Context, node sqalx.Node, page int, pageSize int, cond map[string]string) (total int, items []*repo.Account, err error)
-		// GetAll get all records
-		GetAll(ctx context.Context, node sqalx.Node) (items []*repo.Account, err error)
-		// GetAllByCondition get records by condition
-		GetAllByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (items []*repo.Account, err error)
 		// GetByID get a record by ID
 		GetByID(ctx context.Context, node sqalx.Node, id int64) (item *repo.Account, exist bool, err error)
 		// GetByCondition get a record by condition
@@ -43,10 +37,6 @@ type OauthUsecase struct {
 		Insert(ctx context.Context, node sqalx.Node, item *repo.Account) (err error)
 		// Update update a exist record
 		Update(ctx context.Context, node sqalx.Node, item *repo.Account) (err error)
-		// Delete logic delete a exist record
-		Delete(ctx context.Context, node sqalx.Node, id int64) (err error)
-		// BatchDelete logic batch delete records
-		BatchDelete(ctx context.Context, node sqalx.Node, ids []int64) (err error)
 	}
 
 	ValcodeRepository interface {
@@ -61,65 +51,25 @@ type OauthUsecase struct {
 	}
 
 	SessionRepository interface {
-		// GetAll get all records
-		GetAll(ctx context.Context, node sqalx.Node) (items []*repo.Session, err error)
-		// GetAllByCondition get records by condition
-		GetAllByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (items []*repo.Session, err error)
 		// GetByID get a record by ID
 		GetByID(ctx context.Context, node sqalx.Node, id int64) (item *repo.Session, exist bool, err error)
-		// GetByCondition get a record by condition
-		GetByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (item *repo.Session, exist bool, err error)
 		// Insert insert a new record
 		Insert(ctx context.Context, node sqalx.Node, item *repo.Session) (err error)
-		// Update update a exist record
-		Update(ctx context.Context, node sqalx.Node, item *repo.Session) (err error)
-		// Delete logic delete a exist record
-		Delete(ctx context.Context, node sqalx.Node, id int64) (err error)
-		// BatchDelete logic batch delete records
-		BatchDelete(ctx context.Context, node sqalx.Node, ids []int64) (err error)
 	}
 
 	OauthAccessTokenRepository interface {
-		// GetAll get all records
-		GetAll(ctx context.Context, node sqalx.Node) (items []*repo.OauthAccessToken, err error)
-		// GetAllByCondition get records by condition
-		GetAllByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (items []*repo.OauthAccessToken, err error)
-		// GetByID get a record by ID
-		GetByID(ctx context.Context, node sqalx.Node, id int64) (item *repo.OauthAccessToken, exist bool, err error)
 		// GetByCondition get a record by condition
 		GetByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (item *repo.OauthAccessToken, exist bool, err error)
 		// Insert insert a new record
 		Insert(ctx context.Context, node sqalx.Node, item *repo.OauthAccessToken) (err error)
-		// Update update a exist record
-		Update(ctx context.Context, node sqalx.Node, item *repo.OauthAccessToken) (err error)
-		// Delete logic delete a exist record
-		Delete(ctx context.Context, node sqalx.Node, id int64) (err error)
 
 		// Delete logic delete a exist record
 		DeleteByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (err error)
-
-		// BatchDelete logic batch delete records
-		BatchDelete(ctx context.Context, node sqalx.Node, ids []int64) (err error)
 	}
 
 	OauthClientRepository interface {
-		// GetAll get all records
-		GetAll(ctx context.Context, node sqalx.Node) (items []*repo.OauthClient, err error)
-		// GetAllByCondition get records by condition
-		GetAllByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (items []*repo.OauthClient, err error)
-		// GetByID get a record by ID
-		GetByID(ctx context.Context, node sqalx.Node, id int64) (item *repo.OauthClient, exist bool, err error)
 		// GetByCondition get a record by condition
 		GetByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (item *repo.OauthClient, exist bool, err error)
-		// Insert insert a new record
-		Insert(ctx context.Context, node sqalx.Node, item *repo.OauthClient) (err error)
-		// Update update a exist record
-		Update(ctx context.Context, node sqalx.Node, item *repo.OauthClient) (err error)
-		// Delete logic delete a exist record
-		Delete(ctx context.Context, node sqalx.Node, id int64) (err error)
-
-		// BatchDelete logic batch delete records
-		BatchDelete(ctx context.Context, node sqalx.Node, ids []int64) (err error)
 	}
 }
 

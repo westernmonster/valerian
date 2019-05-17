@@ -28,12 +28,6 @@ type AccountUsecase struct {
 		SendResetPasswordValcode(email string, valcode string) (err error)
 	}
 	AccountRepository interface {
-		// QueryListPaged get paged records by condition
-		QueryListPaged(ctx context.Context, node sqalx.Node, page int, pageSize int, cond map[string]string) (total int, items []*repo.Account, err error)
-		// GetAll get all records
-		GetAll(ctx context.Context, node sqalx.Node) (items []*repo.Account, err error)
-		// GetAllByCondition get records by condition
-		GetAllByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (items []*repo.Account, err error)
 		// GetByID get a record by ID
 		GetByID(ctx context.Context, node sqalx.Node, id int64) (item *repo.Account, exist bool, err error)
 		// GetByCondition get a record by condition
@@ -42,19 +36,11 @@ type AccountUsecase struct {
 		Insert(ctx context.Context, node sqalx.Node, item *repo.Account) (err error)
 		// Update update a exist record
 		Update(ctx context.Context, node sqalx.Node, item *repo.Account) (err error)
-		// Delete logic delete a exist record
-		Delete(ctx context.Context, node sqalx.Node, id int64) (err error)
-		// BatchDelete logic batch delete records
-		BatchDelete(ctx context.Context, node sqalx.Node, ids []int64) (err error)
 	}
 
 	AreaRepository interface {
-		// GetAllByCondition get records by condition
-		GetAllByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (items []*repo.Area, err error)
 		// GetByID get a record by ID
 		GetByID(ctx context.Context, node sqalx.Node, id int64) (item *repo.Area, exist bool, err error)
-		// GetByCondition get a record by condition
-		GetByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (item *repo.Area, exist bool, err error)
 	}
 }
 
