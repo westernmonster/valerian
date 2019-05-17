@@ -1,10 +1,10 @@
 package http
 
 import (
+	"context"
 	"net/http"
 
 	"valerian/library/database/sqalx"
-	"valerian/library/database/sqlx"
 	"valerian/library/email"
 	"valerian/library/sms"
 
@@ -21,16 +21,15 @@ type ValcodeCtrl struct {
 	infrastructure.BaseCtrl
 
 	ValcodeUsecase interface {
-		RequestEmailValcode(bizCtx *biz.BizContext, req *models.RequestEmailValcodeReq) (createdTime int64, err error)
-		RequestMobileValcode(bizCtx *biz.BizContext, req *models.RequestMobileValcodeReq) (createdTime int64, err error)
+		RequestEmailValcode(c context.Context, ctx *biz.BizContext, req *models.RequestEmailValcodeReq) (createdTime int64, err error)
+		RequestMobileValcode(c context.Context, ctx *biz.BizContext, req *models.RequestMobileValcodeReq) (createdTime int64, err error)
 	}
 }
 
-func NewValcodeCtrl(smsClient *sms.SMSClient, emailClient *email.EmailClient, db *sqlx.DB, node sqalx.Node) *ValcodeCtrl {
+func NewValcodeCtrl(smsClient *sms.SMSClient, emailClient *email.EmailClient, node sqalx.Node) *ValcodeCtrl {
 	return &ValcodeCtrl{
 		ValcodeUsecase: &usecase.ValcodeUsecase{
 			Node:              node,
-			DB:                db,
 			SMSClient:         smsClient,
 			EmailClient:       emailClient,
 			ValcodeRepository: &repo.ValcodeRepository{},
@@ -68,7 +67,7 @@ func (p *ValcodeCtrl) RequestEmailValcode(ctx *gin.Context) {
 		return
 	}
 
-	createdTime, err := p.ValcodeUsecase.RequestEmailValcode(p.GetBizContext(ctx), req)
+	createdTime, err := p.ValcodeUsecase.RequestEmailValcode(ctx.Request.Context(), p.GetBizContext(ctx), req)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return
@@ -109,7 +108,7 @@ func (p *ValcodeCtrl) RequestMobileValcode(ctx *gin.Context) {
 		return
 	}
 
-	createdTime, err := p.ValcodeUsecase.RequestMobileValcode(p.GetBizContext(ctx), req)
+	createdTime, err := p.ValcodeUsecase.RequestMobileValcode(ctx.Request.Context(), p.GetBizContext(ctx), req)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return

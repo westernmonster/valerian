@@ -29,14 +29,14 @@ var (
 func Configure(p *bootstrap.Bootstrapper) {
 
 	logger, _ = zap.NewProduction()
-	vlogger := log.NewFactory(logger.With(zap.String("service", "frontend")))
+	vlogger := log.NewFactory(logger.With(zap.String("service", "valerian")))
 	vlogger.Bg().Info("Starting", zap.String("address", "http://localhost:7001"))
 
 	var metricsFactory metrics.Factory
 	metricsFactory = jprom.New()
-	tracer := tracing.Init("frontend", metricsFactory.Namespace(metrics.NSOptions{Name: "frontend"}), vlogger, "localhost:6831")
+	tracer := tracing.Init("valerian", metricsFactory.Namespace(metrics.NSOptions{Name: "valerian"}), vlogger, "localhost:6831")
 
-	db, node, err := db.InitDatabase()
+	node, err := db.InitDatabase()
 	if err != nil {
 		panic(err)
 		return
@@ -55,7 +55,6 @@ func Configure(p *bootstrap.Bootstrapper) {
 		authCtrl := &http.AuthCtrl{
 			OauthUsecase: &usecase.OauthUsecase{
 				Node:                       node,
-				DB:                         db,
 				AccountRepository:          &repo.AccountRepository{},
 				ValcodeRepository:          &repo.ValcodeRepository{},
 				SessionRepository:          &repo.SessionRepository{},
@@ -64,7 +63,6 @@ func Configure(p *bootstrap.Bootstrapper) {
 			},
 			AccountUsecase: &usecase.AccountUsecase{
 				Node:              node,
-				DB:                db,
 				AccountRepository: &repo.AccountRepository{},
 				AreaRepository:    &repo.AreaRepository{},
 			},
@@ -94,26 +92,26 @@ func Configure(p *bootstrap.Bootstrapper) {
 		emailClient := &email.EmailClient{Client: aliClient}
 
 		// 验证码
-		valcodeCtrl := http.NewValcodeCtrl(smsClient, emailClient, db, node)
+		valcodeCtrl := http.NewValcodeCtrl(smsClient, emailClient, node)
 		api.POST("/valcodes/email", valcodeCtrl.RequestEmailValcode)
 		api.POST("/valcodes/mobile", valcodeCtrl.RequestMobileValcode)
 
 		// 账户
-		accountCtrl := http.NewAccountCtrl(db, node)
+		accountCtrl := http.NewAccountCtrl(node)
 		api.PUT("/me/password", auth.User, accountCtrl.ChangePassword)
 		api.GET("/me", auth.User, accountCtrl.GetProfile)
 		api.PUT("/me", auth.User, accountCtrl.UpdateProfile)
 
 		// 电话区域码
-		countryCodeCtrl := http.NewCountryCodeCtrl(db, node, vlogger)
+		countryCodeCtrl := http.NewCountryCodeCtrl(node, vlogger)
 		api.GET("/country_codes", countryCodeCtrl.GetAll)
 
 		// 语言
-		localeCtrl := http.NewLocaleCtrl(db, node)
+		localeCtrl := http.NewLocaleCtrl(node)
 		api.GET("/locales", localeCtrl.GetAll)
 
 		// 话题
-		topicCtrl := http.NewTopicCtrl(db, node)
+		topicCtrl := http.NewTopicCtrl(node)
 		api.POST("/topics", auth.User, topicCtrl.Create)
 		api.PUT("/topics/:id", auth.User, topicCtrl.Update)
 		api.GET("/topics/:id", auth.User, topicCtrl.Get)
@@ -127,7 +125,7 @@ func Configure(p *bootstrap.Bootstrapper) {
 		api.POST("/me/followed/topics", auth.User, topicCtrl.FollowTopic)
 
 		// 话题分类
-		topicCategoryCtrl := http.NewTopicCategoryCtrl(db, node)
+		topicCategoryCtrl := http.NewTopicCategoryCtrl(node)
 		api.GET("/topics/:id/categories", auth.User, topicCategoryCtrl.GetAll)
 		api.GET("/topics/:id/categories/hierarchy", auth.User, topicCategoryCtrl.GetHierarchyOfAll)
 		// api.POST("/topics/:id/categories", auth.User, topicCategoryCtrl.Create)

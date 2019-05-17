@@ -1,6 +1,7 @@
 package repo
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"time"
@@ -25,7 +26,7 @@ type Article struct {
 type ArticleRepository struct{}
 
 // QueryListPaged get paged records by condition
-func (p *ArticleRepository) QueryListPaged(node sqalx.Node, page int, pageSize int, cond map[string]string) (total int, items []*Article, err error) {
+func (p *ArticleRepository) QueryListPaged(ctx context.Context, node sqalx.Node, page int, pageSize int, cond map[string]string) (total int, items []*Article, err error) {
 	offset := (page - 1) * pageSize
 	condition := make(map[string]interface{})
 	clause := ""
@@ -36,7 +37,7 @@ func (p *ArticleRepository) QueryListPaged(node sqalx.Node, page int, pageSize i
 	sqlCount := fmt.Sprintf(box.String("QUERY_LIST_PAGED_COUNT.sql"), clause)
 	sqlSelect := fmt.Sprintf(box.String("QUERY_LIST_PAGED_DATA.sql"), clause)
 
-	stmtCount, err := node.PrepareNamed(sqlCount)
+	stmtCount, err := node.PrepareNamedContext(ctx, sqlCount)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -50,7 +51,7 @@ func (p *ArticleRepository) QueryListPaged(node sqalx.Node, page int, pageSize i
 	condition["limit"] = pageSize
 	condition["offset"] = offset
 
-	stmtSelect, err := node.PrepareNamed(sqlSelect)
+	stmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -64,11 +65,11 @@ func (p *ArticleRepository) QueryListPaged(node sqalx.Node, page int, pageSize i
 }
 
 // GetAll get all records
-func (p *ArticleRepository) GetAll(node sqalx.Node) (items []*Article, err error) {
+func (p *ArticleRepository) GetAll(ctx context.Context, node sqalx.Node) (items []*Article, err error) {
 	items = make([]*Article, 0)
 	sqlSelect := packr.NewBox("./sql/article").String("GET_ALL.sql")
 
-	stmtSelect, err := node.PrepareNamed(sqlSelect)
+	stmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -82,7 +83,7 @@ func (p *ArticleRepository) GetAll(node sqalx.Node) (items []*Article, err error
 }
 
 // GetAllByCondition get records by condition
-func (p *ArticleRepository) GetAllByCondition(node sqalx.Node, cond map[string]string) (items []*Article, err error) {
+func (p *ArticleRepository) GetAllByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (items []*Article, err error) {
 	items = make([]*Article, 0)
 	condition := make(map[string]interface{})
 	clause := ""
@@ -115,7 +116,7 @@ func (p *ArticleRepository) GetAllByCondition(node sqalx.Node, cond map[string]s
 	box := packr.NewBox("./sql/article")
 	sqlSelect := fmt.Sprintf(box.String("GET_ALL_BY_CONDITION.sql"), clause)
 
-	stmtSelect, err := node.PrepareNamed(sqlSelect)
+	stmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -129,11 +130,11 @@ func (p *ArticleRepository) GetAllByCondition(node sqalx.Node, cond map[string]s
 }
 
 // GetByID get record by ID
-func (p *ArticleRepository) GetByID(node sqalx.Node, id int64) (item *Article, exist bool, err error) {
+func (p *ArticleRepository) GetByID(ctx context.Context, node sqalx.Node, id int64) (item *Article, exist bool, err error) {
 	item = new(Article)
 	sqlSelect := packr.NewBox("./sql/article").String("GET_BY_ID.sql")
 
-	tmtSelect, err := node.PrepareNamed(sqlSelect)
+	tmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -153,7 +154,7 @@ func (p *ArticleRepository) GetByID(node sqalx.Node, id int64) (item *Article, e
 }
 
 // GetByCondition get record by condition
-func (p *ArticleRepository) GetByCondition(node sqalx.Node, cond map[string]string) (item *Article, exist bool, err error) {
+func (p *ArticleRepository) GetByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (item *Article, exist bool, err error) {
 	item = new(Article)
 	condition := make(map[string]interface{})
 	clause := ""
@@ -186,7 +187,7 @@ func (p *ArticleRepository) GetByCondition(node sqalx.Node, cond map[string]stri
 	box := packr.NewBox("./sql/article")
 	sqlSelect := fmt.Sprintf(box.String("GET_BY_CONDITION.sql"), clause)
 
-	tmtSelect, err := node.PrepareNamed(sqlSelect)
+	tmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -206,13 +207,13 @@ func (p *ArticleRepository) GetByCondition(node sqalx.Node, cond map[string]stri
 }
 
 // Insert insert a new record
-func (p *ArticleRepository) Insert(node sqalx.Node, item *Article) (err error) {
+func (p *ArticleRepository) Insert(ctx context.Context, node sqalx.Node, item *Article) (err error) {
 	sqlInsert := packr.NewBox("./sql/article").String("INSERT.sql")
 
 	item.CreatedAt = time.Now().Unix()
 	item.UpdatedAt = time.Now().Unix()
 
-	_, err = node.NamedExec(sqlInsert, item)
+	_, err = node.NamedExecContext(ctx, sqlInsert, item)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -222,12 +223,12 @@ func (p *ArticleRepository) Insert(node sqalx.Node, item *Article) (err error) {
 }
 
 // Update update a exist record
-func (p *ArticleRepository) Update(node sqalx.Node, item *Article) (err error) {
+func (p *ArticleRepository) Update(ctx context.Context, node sqalx.Node, item *Article) (err error) {
 	sqlUpdate := packr.NewBox("./sql/article").String("UPDATE.sql")
 
 	item.UpdatedAt = time.Now().Unix()
 
-	_, err = node.NamedExec(sqlUpdate, item)
+	_, err = node.NamedExecContext(ctx, sqlUpdate, item)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -237,10 +238,10 @@ func (p *ArticleRepository) Update(node sqalx.Node, item *Article) (err error) {
 }
 
 // Delete logic delete a exist record
-func (p *ArticleRepository) Delete(node sqalx.Node, id int64) (err error) {
+func (p *ArticleRepository) Delete(ctx context.Context, node sqalx.Node, id int64) (err error) {
 	sqlDelete := packr.NewBox("./sql/article").String("DELETE.sql")
 
-	_, err = node.NamedExec(sqlDelete, map[string]interface{}{"id": id})
+	_, err = node.NamedExecContext(ctx, sqlDelete, map[string]interface{}{"id": id})
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -250,8 +251,8 @@ func (p *ArticleRepository) Delete(node sqalx.Node, id int64) (err error) {
 }
 
 // BatchDelete logic batch delete records
-func (p *ArticleRepository) BatchDelete(node sqalx.Node, ids []int64) (err error) {
-	tx, err := node.Beginx()
+func (p *ArticleRepository) BatchDelete(ctx context.Context, node sqalx.Node, ids []int64) (err error) {
+	tx, err := node.Beginx(ctx)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -259,7 +260,7 @@ func (p *ArticleRepository) BatchDelete(node sqalx.Node, ids []int64) (err error
 
 	defer tx.Rollback()
 	for _, id := range ids {
-		errDelete := p.Delete(tx, id)
+		errDelete := p.Delete(ctx, tx, id)
 		if errDelete != nil {
 			err = tracerr.Wrap(err)
 			return

@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"valerian/library/database/sqalx"
-	"valerian/library/database/sqlx"
+	"valerian/library/net/netutil/breaker"
 
 	"github.com/hashicorp/go-multierror"
 	"github.com/spf13/viper"
@@ -65,7 +65,7 @@ func ConstructDBConnStr(config map[string]string) (connStr string, err error) {
 	return
 }
 
-func InitDatabase() (db *sqlx.DB, node sqalx.Node, err error) {
+func InitDatabase() (node sqalx.Node, err error) {
 	mode := viper.Get("MODE")
 	dbConfig := viper.GetStringMapString(fmt.Sprintf("%s.db.flywiki", mode))
 
@@ -75,17 +75,28 @@ func InitDatabase() (db *sqlx.DB, node sqalx.Node, err error) {
 		return
 	}
 
-	db, err = sqlx.Open(dbConfig["dialect"], connStr)
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
+	c := &sqalx.Config{
+		Addr:    viper.GetString(fmt.Sprintf("%s.db.flywiki.host", mode)),
+		DSN:     connStr,
+		ReadDSN: []string{connStr},
+		Active:  20,
+		Idle:    10,
+		Breaker: &breaker.Config{
+			SwitchOff: false,
+			Ratio:     0.1,
+			Bucket:    10,
+			Request:   100,
+		},
 	}
 
-	node, err = sqalx.New(db)
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
+	c.IdleTimeout.UnmarshalText([]byte("4h"))
+	c.QueryTimeout.UnmarshalText([]byte("100ms"))
+	c.ExecTimeout.UnmarshalText([]byte("100ms"))
+	c.TranTimeout.UnmarshalText([]byte("200ms"))
 
+	c.Breaker.Window.UnmarshalText([]byte("1s"))
+	c.Breaker.Sleep.UnmarshalText([]byte("100ms"))
+
+	node = sqalx.NewMySQL(c)
 	return
 }

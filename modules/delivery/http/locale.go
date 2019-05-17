@@ -1,8 +1,8 @@
 package http
 
 import (
+	"context"
 	"valerian/library/database/sqalx"
-	"valerian/library/database/sqlx"
 
 	"github.com/gin-gonic/gin"
 
@@ -17,15 +17,14 @@ type LocaleCtrl struct {
 	infrastructure.BaseCtrl
 
 	LocaleUsecase interface {
-		GetAll(bizCtx *biz.BizContext) (items []*models.Locale, err error)
+		GetAll(c context.Context, ctx *biz.BizContext) (items []*models.Locale, err error)
 	}
 }
 
-func NewLocaleCtrl(db *sqlx.DB, node sqalx.Node) *LocaleCtrl {
+func NewLocaleCtrl(node sqalx.Node) *LocaleCtrl {
 	return &LocaleCtrl{
 		LocaleUsecase: &usecase.LocaleUsecase{
 			Node:             node,
-			DB:               db,
 			LocaleRepository: &repo.LocaleRepository{},
 		},
 	}
@@ -44,7 +43,7 @@ func NewLocaleCtrl(db *sqlx.DB, node sqalx.Node) *LocaleCtrl {
 // @Router /locales [get]
 func (p *LocaleCtrl) GetAll(ctx *gin.Context) {
 
-	items, err := p.LocaleUsecase.GetAll(p.GetBizContext(ctx))
+	items, err := p.LocaleUsecase.GetAll(ctx.Request.Context(), p.GetBizContext(ctx))
 	if err != nil {
 		p.HandleError(ctx, err)
 		return

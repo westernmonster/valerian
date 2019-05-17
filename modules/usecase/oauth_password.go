@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"context"
 	"strconv"
 	"time"
 
@@ -15,8 +16,8 @@ import (
 	"valerian/modules/repo"
 )
 
-func (p *OauthUsecase) ForgetPassword(ctx *biz.BizContext, req *models.ForgetPasswordReq) (sessionID int64, err error) {
-	tx, err := p.Node.Beginx()
+func (p *OauthUsecase) ForgetPassword(c context.Context, ctx *biz.BizContext, req *models.ForgetPasswordReq) (sessionID int64, err error) {
+	tx, err := p.Node.Beginx(c)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -26,7 +27,7 @@ func (p *OauthUsecase) ForgetPassword(ctx *biz.BizContext, req *models.ForgetPas
 	var accountID int64
 
 	if govalidator.IsEmail(req.Identity) {
-		item, exist, errGet := p.AccountRepository.GetByCondition(tx, map[string]string{
+		item, exist, errGet := p.AccountRepository.GetByCondition(c, tx, map[string]string{
 			"email": req.Identity,
 		})
 		if errGet != nil {
@@ -41,7 +42,7 @@ func (p *OauthUsecase) ForgetPassword(ctx *biz.BizContext, req *models.ForgetPas
 		accountID = item.ID
 
 	} else {
-		item, exist, errGet := p.AccountRepository.GetByCondition(tx, map[string]string{
+		item, exist, errGet := p.AccountRepository.GetByCondition(c, tx, map[string]string{
 			"mobile": req.Identity,
 		})
 		if errGet != nil {
@@ -56,7 +57,7 @@ func (p *OauthUsecase) ForgetPassword(ctx *biz.BizContext, req *models.ForgetPas
 	}
 
 	// Valcode
-	correct, valcodeItem, errValcode := p.ValcodeRepository.IsCodeCorrect(tx, req.Identity, models.ValcodeForgetPassword, req.Valcode)
+	correct, valcodeItem, errValcode := p.ValcodeRepository.IsCodeCorrect(c, tx, req.Identity, models.ValcodeForgetPassword, req.Valcode)
 	if errValcode != nil {
 		err = tracerr.Wrap(errValcode)
 		return
@@ -67,7 +68,7 @@ func (p *OauthUsecase) ForgetPassword(ctx *biz.BizContext, req *models.ForgetPas
 	}
 	valcodeItem.Used = 1
 
-	err = p.ValcodeRepository.Update(tx, valcodeItem)
+	err = p.ValcodeRepository.Update(c, tx, valcodeItem)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -85,7 +86,7 @@ func (p *OauthUsecase) ForgetPassword(ctx *biz.BizContext, req *models.ForgetPas
 		AccountID:   accountID,
 	}
 
-	err = p.SessionRepository.Insert(tx, session)
+	err = p.SessionRepository.Insert(c, tx, session)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -102,8 +103,8 @@ func (p *OauthUsecase) ForgetPassword(ctx *biz.BizContext, req *models.ForgetPas
 
 }
 
-func (p *OauthUsecase) ResetPassword(ctx *biz.BizContext, req *models.ResetPasswordReq) (err error) {
-	tx, err := p.Node.Beginx()
+func (p *OauthUsecase) ResetPassword(c context.Context, ctx *biz.BizContext, req *models.ResetPasswordReq) (err error) {
+	tx, err := p.Node.Beginx(c)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -122,7 +123,7 @@ func (p *OauthUsecase) ResetPassword(ctx *biz.BizContext, req *models.ResetPassw
 		return
 	}
 
-	session, exist, err := p.SessionRepository.GetByID(tx, id)
+	session, exist, err := p.SessionRepository.GetByID(c, tx, id)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -143,7 +144,7 @@ func (p *OauthUsecase) ResetPassword(ctx *biz.BizContext, req *models.ResetPassw
 		return
 	}
 
-	account, exist, err := p.AccountRepository.GetByID(tx, session.AccountID)
+	account, exist, err := p.AccountRepository.GetByID(c, tx, session.AccountID)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -155,7 +156,7 @@ func (p *OauthUsecase) ResetPassword(ctx *biz.BizContext, req *models.ResetPassw
 
 	account.Password = req.Password
 
-	err = p.AccountRepository.Update(tx, account)
+	err = p.AccountRepository.Update(c, tx, account)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return

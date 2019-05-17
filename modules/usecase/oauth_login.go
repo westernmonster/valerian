@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"context"
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
@@ -23,15 +24,15 @@ import (
 )
 
 // EmailLogin 登录
-func (p *OauthUsecase) EmailLogin(ctx *biz.BizContext, req *models.EmailLoginReq, ip string) (loginResult *models.LoginResult, err error) {
-	tx, err := p.Node.Beginx()
+func (p *OauthUsecase) EmailLogin(c context.Context, ctx *biz.BizContext, req *models.EmailLoginReq, ip string) (loginResult *models.LoginResult, err error) {
+	tx, err := p.Node.Beginx(c)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
 	}
 	defer tx.Rollback()
 
-	client, exist, err := p.OauthClientRepository.GetByCondition(tx, map[string]string{
+	client, exist, err := p.OauthClientRepository.GetByCondition(c, tx, map[string]string{
 		"client_id": req.ClientID,
 	})
 	if err != nil {
@@ -44,7 +45,7 @@ func (p *OauthUsecase) EmailLogin(ctx *biz.BizContext, req *models.EmailLoginReq
 		return
 	}
 
-	user, exist, errGet := p.AccountRepository.GetByCondition(tx, map[string]string{
+	user, exist, errGet := p.AccountRepository.GetByCondition(c, tx, map[string]string{
 		"email": req.Email,
 	})
 	if errGet != nil {
@@ -68,7 +69,7 @@ func (p *OauthUsecase) EmailLogin(ctx *biz.BizContext, req *models.EmailLoginReq
 		return
 	}
 
-	token, err := p.grantAccessToken(tx, client, user, models.ExpiresIn, "")
+	token, err := p.grantAccessToken(c, tx, client, user, models.ExpiresIn, "")
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -94,15 +95,15 @@ func (p *OauthUsecase) EmailLogin(ctx *biz.BizContext, req *models.EmailLoginReq
 }
 
 // MobileLogin 登录
-func (p *OauthUsecase) MobileLogin(ctx *biz.BizContext, req *models.MobileLoginReq, ip string) (loginResult *models.LoginResult, err error) {
-	tx, err := p.Node.Beginx()
+func (p *OauthUsecase) MobileLogin(c context.Context, ctx *biz.BizContext, req *models.MobileLoginReq, ip string) (loginResult *models.LoginResult, err error) {
+	tx, err := p.Node.Beginx(c)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
 	}
 	defer tx.Rollback()
 
-	client, exist, err := p.OauthClientRepository.GetByCondition(tx, map[string]string{
+	client, exist, err := p.OauthClientRepository.GetByCondition(c, tx, map[string]string{
 		"client_id": req.ClientID,
 	})
 	if err != nil {
@@ -115,7 +116,7 @@ func (p *OauthUsecase) MobileLogin(ctx *biz.BizContext, req *models.MobileLoginR
 		return
 	}
 
-	user, exist, errGet := p.AccountRepository.GetByCondition(tx, map[string]string{
+	user, exist, errGet := p.AccountRepository.GetByCondition(c, tx, map[string]string{
 		"mobile": req.Prefix + req.Mobile,
 	})
 	if errGet != nil {
@@ -138,7 +139,7 @@ func (p *OauthUsecase) MobileLogin(ctx *biz.BizContext, req *models.MobileLoginR
 		return
 	}
 
-	token, err := p.grantAccessToken(tx, client, user, models.ExpiresIn, "")
+	token, err := p.grantAccessToken(c, tx, client, user, models.ExpiresIn, "")
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -163,15 +164,15 @@ func (p *OauthUsecase) MobileLogin(ctx *biz.BizContext, req *models.MobileLoginR
 }
 
 // DigitLogin 验证码登录
-func (p *OauthUsecase) DigitLogin(ctx *biz.BizContext, req *models.DigitLoginReq, ip string) (loginResult *models.LoginResult, err error) {
-	tx, err := p.Node.Beginx()
+func (p *OauthUsecase) DigitLogin(c context.Context, ctx *biz.BizContext, req *models.DigitLoginReq, ip string) (loginResult *models.LoginResult, err error) {
+	tx, err := p.Node.Beginx(c)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
 	}
 	defer tx.Rollback()
 
-	client, exist, err := p.OauthClientRepository.GetByCondition(tx, map[string]string{
+	client, exist, err := p.OauthClientRepository.GetByCondition(c, tx, map[string]string{
 		"client_id": req.ClientID,
 	})
 	if err != nil {
@@ -184,7 +185,7 @@ func (p *OauthUsecase) DigitLogin(ctx *biz.BizContext, req *models.DigitLoginReq
 		return
 	}
 
-	user, exist, errGet := p.AccountRepository.GetByCondition(tx, map[string]string{
+	user, exist, errGet := p.AccountRepository.GetByCondition(c, tx, map[string]string{
 		"mobile": req.Prefix + req.Mobile,
 	})
 	if errGet != nil {
@@ -199,7 +200,7 @@ func (p *OauthUsecase) DigitLogin(ctx *biz.BizContext, req *models.DigitLoginReq
 
 	// Valcode
 	mobile := req.Prefix + req.Mobile
-	correct, valcodeItem, errValcode := p.ValcodeRepository.IsCodeCorrect(tx, mobile, models.ValcodeLogin, req.Valcode)
+	correct, valcodeItem, errValcode := p.ValcodeRepository.IsCodeCorrect(c, tx, mobile, models.ValcodeLogin, req.Valcode)
 	if errValcode != nil {
 		err = tracerr.Wrap(errValcode)
 		return
@@ -210,13 +211,13 @@ func (p *OauthUsecase) DigitLogin(ctx *biz.BizContext, req *models.DigitLoginReq
 	}
 	valcodeItem.Used = 1
 
-	err = p.ValcodeRepository.Update(tx, valcodeItem)
+	err = p.ValcodeRepository.Update(c, tx, valcodeItem)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
 	}
 
-	token, err := p.grantAccessToken(tx, client, user, models.ExpiresIn, "")
+	token, err := p.grantAccessToken(c, tx, client, user, models.ExpiresIn, "")
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -241,8 +242,8 @@ func (p *OauthUsecase) DigitLogin(ctx *biz.BizContext, req *models.DigitLoginReq
 
 }
 
-func (p *OauthUsecase) grantAccessToken(node sqalx.Node, client *repo.OauthClient, user *repo.Account, expiresIn int, scope string) (token *repo.OauthAccessToken, err error) {
-	tx, err := node.Beginx()
+func (p *OauthUsecase) grantAccessToken(c context.Context, node sqalx.Node, client *repo.OauthClient, user *repo.Account, expiresIn int, scope string) (token *repo.OauthAccessToken, err error) {
+	tx, err := node.Beginx(c)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -256,7 +257,7 @@ func (p *OauthUsecase) grantAccessToken(node sqalx.Node, client *repo.OauthClien
 		"user_id":    strconv.FormatInt(user.ID, 10),
 	}
 
-	err = p.OauthAccessTokenRepository.DeleteByCondition(tx, cond)
+	err = p.OauthAccessTokenRepository.DeleteByCondition(c, tx, cond)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -285,7 +286,7 @@ func (p *OauthUsecase) grantAccessToken(node sqalx.Node, client *repo.OauthClien
 
 	token.Token = jwtToken
 
-	err = p.OauthAccessTokenRepository.Insert(tx, token)
+	err = p.OauthAccessTokenRepository.Insert(c, tx, token)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return

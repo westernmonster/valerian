@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"context"
 	"valerian/library/database/sqalx"
 	"valerian/library/database/sqlx"
 
@@ -28,44 +29,44 @@ type AccountUsecase struct {
 	}
 	AccountRepository interface {
 		// QueryListPaged get paged records by condition
-		QueryListPaged(node sqalx.Node, page int, pageSize int, cond map[string]string) (total int, items []*repo.Account, err error)
+		QueryListPaged(ctx context.Context, node sqalx.Node, page int, pageSize int, cond map[string]string) (total int, items []*repo.Account, err error)
 		// GetAll get all records
-		GetAll(node sqalx.Node) (items []*repo.Account, err error)
+		GetAll(ctx context.Context, node sqalx.Node) (items []*repo.Account, err error)
 		// GetAllByCondition get records by condition
-		GetAllByCondition(node sqalx.Node, cond map[string]string) (items []*repo.Account, err error)
+		GetAllByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (items []*repo.Account, err error)
 		// GetByID get a record by ID
-		GetByID(node sqalx.Node, id int64) (item *repo.Account, exist bool, err error)
+		GetByID(ctx context.Context, node sqalx.Node, id int64) (item *repo.Account, exist bool, err error)
 		// GetByCondition get a record by condition
-		GetByCondition(node sqalx.Node, cond map[string]string) (item *repo.Account, exist bool, err error)
+		GetByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (item *repo.Account, exist bool, err error)
 		// Insert insert a new record
-		Insert(node sqalx.Node, item *repo.Account) (err error)
+		Insert(ctx context.Context, node sqalx.Node, item *repo.Account) (err error)
 		// Update update a exist record
-		Update(node sqalx.Node, item *repo.Account) (err error)
+		Update(ctx context.Context, node sqalx.Node, item *repo.Account) (err error)
 		// Delete logic delete a exist record
-		Delete(node sqalx.Node, id int64) (err error)
+		Delete(ctx context.Context, node sqalx.Node, id int64) (err error)
 		// BatchDelete logic batch delete records
-		BatchDelete(node sqalx.Node, ids []int64) (err error)
+		BatchDelete(ctx context.Context, node sqalx.Node, ids []int64) (err error)
 	}
 
 	AreaRepository interface {
 		// GetAllByCondition get records by condition
-		GetAllByCondition(node sqalx.Node, cond map[string]string) (items []*repo.Area, err error)
+		GetAllByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (items []*repo.Area, err error)
 		// GetByID get a record by ID
-		GetByID(node sqalx.Node, id int64) (item *repo.Area, exist bool, err error)
+		GetByID(ctx context.Context, node sqalx.Node, id int64) (item *repo.Area, exist bool, err error)
 		// GetByCondition get a record by condition
-		GetByCondition(node sqalx.Node, cond map[string]string) (item *repo.Area, exist bool, err error)
+		GetByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (item *repo.Area, exist bool, err error)
 	}
 }
 
-func (p *AccountUsecase) ChangePassword(ctx *biz.BizContext, req *models.ChangePasswordReq) (err error) {
-	tx, err := p.Node.Beginx()
+func (p *AccountUsecase) ChangePassword(c context.Context, ctx *biz.BizContext, req *models.ChangePasswordReq) (err error) {
+	tx, err := p.Node.Beginx(c)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
 	}
 	defer tx.Rollback()
 
-	account, exist, err := p.AccountRepository.GetByID(tx, *ctx.AccountID)
+	account, exist, err := p.AccountRepository.GetByID(c, tx, *ctx.AccountID)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -77,7 +78,7 @@ func (p *AccountUsecase) ChangePassword(ctx *biz.BizContext, req *models.ChangeP
 
 	account.Password = req.Password
 
-	err = p.AccountRepository.Update(tx, account)
+	err = p.AccountRepository.Update(c, tx, account)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -92,12 +93,12 @@ func (p *AccountUsecase) ChangePassword(ctx *biz.BizContext, req *models.ChangeP
 
 }
 
-func (p *AccountUsecase) GetLocationString(nodeID int64) (locationString string, err error) {
+func (p *AccountUsecase) GetLocationString(c context.Context, nodeID int64) (locationString string, err error) {
 	arr := []string{}
 
 	id := nodeID
 	for {
-		item, exist, errInner := p.AreaRepository.GetByID(p.Node, id)
+		item, exist, errInner := p.AreaRepository.GetByID(c, p.Node, id)
 		if errInner != nil {
 			err = tracerr.Wrap(errInner)
 			return
@@ -125,8 +126,8 @@ func (p *AccountUsecase) GetLocationString(nodeID int64) (locationString string,
 	return
 }
 
-func (p *AccountUsecase) GetProfile(ctx *biz.BizContext) (profile *models.ProfileResp, err error) {
-	item, exist, err := p.AccountRepository.GetByID(p.Node, *ctx.AccountID)
+func (p *AccountUsecase) GetProfile(c context.Context, ctx *biz.BizContext) (profile *models.ProfileResp, err error) {
+	item, exist, err := p.AccountRepository.GetByID(c, p.Node, *ctx.AccountID)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -165,7 +166,7 @@ func (p *AccountUsecase) GetProfile(ctx *biz.BizContext) (profile *models.Profil
 	profile.IP = &ipStr
 
 	if item.Location != nil {
-		locationString, errInner := p.GetLocationString(*item.Location)
+		locationString, errInner := p.GetLocationString(c, *item.Location)
 		if errInner != nil {
 			err = tracerr.Wrap(errInner)
 			return
@@ -177,8 +178,8 @@ func (p *AccountUsecase) GetProfile(ctx *biz.BizContext) (profile *models.Profil
 	return
 }
 
-func (p *AccountUsecase) GetProfileByID(accountID int64) (profile *models.ProfileResp, err error) {
-	item, exist, err := p.AccountRepository.GetByID(p.Node, accountID)
+func (p *AccountUsecase) GetProfileByID(c context.Context, accountID int64) (profile *models.ProfileResp, err error) {
+	item, exist, err := p.AccountRepository.GetByID(c, p.Node, accountID)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -218,7 +219,7 @@ func (p *AccountUsecase) GetProfileByID(accountID int64) (profile *models.Profil
 	profile.IP = &ipStr
 
 	if item.Location != nil {
-		locationString, errInner := p.GetLocationString(*item.Location)
+		locationString, errInner := p.GetLocationString(c, *item.Location)
 		if errInner != nil {
 			err = tracerr.Wrap(errInner)
 			return
@@ -230,15 +231,15 @@ func (p *AccountUsecase) GetProfileByID(accountID int64) (profile *models.Profil
 	return
 }
 
-func (p *AccountUsecase) UpdateProfile(ctx *biz.BizContext, req *models.UpdateProfileReq) (err error) {
-	tx, err := p.Node.Beginx()
+func (p *AccountUsecase) UpdateProfile(c context.Context, ctx *biz.BizContext, req *models.UpdateProfileReq) (err error) {
+	tx, err := p.Node.Beginx(c)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
 	}
 	defer tx.Rollback()
 
-	account, exist, err := p.AccountRepository.GetByID(tx, *ctx.AccountID)
+	account, exist, err := p.AccountRepository.GetByID(c, tx, *ctx.AccountID)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -291,7 +292,7 @@ func (p *AccountUsecase) UpdateProfile(ctx *biz.BizContext, req *models.UpdatePr
 	}
 
 	if req.Location != nil {
-		_, exist, errGet := p.AreaRepository.GetByID(tx, *req.Location)
+		_, exist, errGet := p.AreaRepository.GetByID(c, tx, *req.Location)
 		if errGet != nil {
 			err = tracerr.Wrap(err)
 			return
@@ -305,7 +306,7 @@ func (p *AccountUsecase) UpdateProfile(ctx *biz.BizContext, req *models.UpdatePr
 		account.Location = req.Location
 	}
 
-	err = p.AccountRepository.Update(tx, account)
+	err = p.AccountRepository.Update(c, tx, account)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return

@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/ztrue/tracerr"
@@ -13,8 +14,8 @@ import (
 	"valerian/modules/repo"
 )
 
-func (p *OauthUsecase) GetByID(ctx *biz.BizContext, userID int64) (item *repo.Account, err error) {
-	item, exist, err := p.AccountRepository.GetByID(p.Node, userID)
+func (p *OauthUsecase) GetByID(c context.Context, ctx *biz.BizContext, userID int64) (item *repo.Account, err error) {
+	item, exist, err := p.AccountRepository.GetByID(c, p.Node, userID)
 
 	if !exist {
 		err = tracerr.Errorf("获取用户信息失败")
@@ -24,8 +25,8 @@ func (p *OauthUsecase) GetByID(ctx *biz.BizContext, userID int64) (item *repo.Ac
 	return
 }
 
-func (p *OauthUsecase) EmailRegister(ctx *biz.BizContext, req *models.EmailRegisterReq, ip string) (accountID int64, err error) {
-	tx, err := p.Node.Beginx()
+func (p *OauthUsecase) EmailRegister(c context.Context, ctx *biz.BizContext, req *models.EmailRegisterReq, ip string) (accountID int64, err error) {
+	tx, err := p.Node.Beginx(c)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -45,7 +46,7 @@ func (p *OauthUsecase) EmailRegister(ctx *biz.BizContext, req *models.EmailRegis
 		IP:     ipAddr,
 	}
 
-	_, exist, errGet := p.AccountRepository.GetByCondition(tx, map[string]string{
+	_, exist, errGet := p.AccountRepository.GetByCondition(c, tx, map[string]string{
 		"email": req.Email,
 	})
 	if errGet != nil {
@@ -74,7 +75,7 @@ func (p *OauthUsecase) EmailRegister(ctx *biz.BizContext, req *models.EmailRegis
 	item.Role = "user"
 
 	// Valcode
-	correct, valcodeItem, errValcode := p.ValcodeRepository.IsCodeCorrect(tx, req.Email, models.ValcodeRegister, req.Valcode)
+	correct, valcodeItem, errValcode := p.ValcodeRepository.IsCodeCorrect(c, tx, req.Email, models.ValcodeRegister, req.Valcode)
 	if errValcode != nil {
 		err = tracerr.Wrap(errValcode)
 		return
@@ -85,13 +86,13 @@ func (p *OauthUsecase) EmailRegister(ctx *biz.BizContext, req *models.EmailRegis
 	}
 	valcodeItem.Used = 1
 
-	err = p.ValcodeRepository.Update(tx, valcodeItem)
+	err = p.ValcodeRepository.Update(c, tx, valcodeItem)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
 	}
 
-	err = p.AccountRepository.Insert(tx, item)
+	err = p.AccountRepository.Insert(c, tx, item)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -108,8 +109,8 @@ func (p *OauthUsecase) EmailRegister(ctx *biz.BizContext, req *models.EmailRegis
 
 }
 
-func (p *OauthUsecase) MobileRegister(ctx *biz.BizContext, req *models.MobileRegisterReq, ip string) (accountID int64, err error) {
-	tx, err := p.Node.Beginx()
+func (p *OauthUsecase) MobileRegister(c context.Context, ctx *biz.BizContext, req *models.MobileRegisterReq, ip string) (accountID int64, err error) {
+	tx, err := p.Node.Beginx(c)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -131,7 +132,7 @@ func (p *OauthUsecase) MobileRegister(ctx *biz.BizContext, req *models.MobileReg
 
 	mobile := req.Prefix + req.Mobile
 
-	_, exist, errGet := p.AccountRepository.GetByCondition(tx, map[string]string{
+	_, exist, errGet := p.AccountRepository.GetByCondition(c, tx, map[string]string{
 		"mobile": mobile,
 	})
 	if errGet != nil {
@@ -163,7 +164,7 @@ func (p *OauthUsecase) MobileRegister(ctx *biz.BizContext, req *models.MobileReg
 	item.Role = "user"
 
 	// Valcode
-	correct, valcodeItem, errValcode := p.ValcodeRepository.IsCodeCorrect(tx, mobile, models.ValcodeRegister, req.Valcode)
+	correct, valcodeItem, errValcode := p.ValcodeRepository.IsCodeCorrect(c, tx, mobile, models.ValcodeRegister, req.Valcode)
 	if errValcode != nil {
 		err = tracerr.Wrap(errValcode)
 		return
@@ -174,13 +175,13 @@ func (p *OauthUsecase) MobileRegister(ctx *biz.BizContext, req *models.MobileReg
 	}
 	valcodeItem.Used = 1
 
-	err = p.ValcodeRepository.Update(tx, valcodeItem)
+	err = p.ValcodeRepository.Update(c, tx, valcodeItem)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
 	}
 
-	err = p.AccountRepository.Insert(tx, item)
+	err = p.AccountRepository.Insert(c, tx, item)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return

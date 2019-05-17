@@ -93,6 +93,7 @@ func (n *NamedStmt) QueryRowxContext(ctx context.Context, arg interface{}) *Row 
 // SelectContext using this NamedStmt
 // Any named placeholder parameters are replaced with fields from arg.
 func (n *NamedStmt) SelectContext(ctx context.Context, dest interface{}, arg interface{}) error {
+
 	rows, err := n.QueryxContext(ctx, arg)
 	if err != nil {
 		return err

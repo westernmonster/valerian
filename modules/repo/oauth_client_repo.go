@@ -1,6 +1,7 @@
 package repo
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"time"
@@ -24,7 +25,7 @@ type OauthClient struct {
 type OauthClientRepository struct{}
 
 // QueryListPaged get paged records by condition
-func (p *OauthClientRepository) QueryListPaged(node sqalx.Node, page int, pageSize int, cond map[string]string) (total int, items []*OauthClient, err error) {
+func (p *OauthClientRepository) QueryListPaged(ctx context.Context, node sqalx.Node, page int, pageSize int, cond map[string]string) (total int, items []*OauthClient, err error) {
 	offset := (page - 1) * pageSize
 	condition := make(map[string]interface{})
 	clause := ""
@@ -35,7 +36,7 @@ func (p *OauthClientRepository) QueryListPaged(node sqalx.Node, page int, pageSi
 	sqlCount := fmt.Sprintf(box.String("QUERY_LIST_PAGED_COUNT.sql"), clause)
 	sqlSelect := fmt.Sprintf(box.String("QUERY_LIST_PAGED_DATA.sql"), clause)
 
-	stmtCount, err := node.PrepareNamed(sqlCount)
+	stmtCount, err := node.PrepareNamedContext(ctx, sqlCount)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -49,7 +50,7 @@ func (p *OauthClientRepository) QueryListPaged(node sqalx.Node, page int, pageSi
 	condition["limit"] = pageSize
 	condition["offset"] = offset
 
-	stmtSelect, err := node.PrepareNamed(sqlSelect)
+	stmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -63,11 +64,11 @@ func (p *OauthClientRepository) QueryListPaged(node sqalx.Node, page int, pageSi
 }
 
 // GetAll get all records
-func (p *OauthClientRepository) GetAll(node sqalx.Node) (items []*OauthClient, err error) {
+func (p *OauthClientRepository) GetAll(ctx context.Context, node sqalx.Node) (items []*OauthClient, err error) {
 	items = make([]*OauthClient, 0)
 	sqlSelect := packr.NewBox("./sql/oauth_client").String("GET_ALL.sql")
 
-	stmtSelect, err := node.PrepareNamed(sqlSelect)
+	stmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -81,7 +82,7 @@ func (p *OauthClientRepository) GetAll(node sqalx.Node) (items []*OauthClient, e
 }
 
 // GetAllByCondition get records by condition
-func (p *OauthClientRepository) GetAllByCondition(node sqalx.Node, cond map[string]string) (items []*OauthClient, err error) {
+func (p *OauthClientRepository) GetAllByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (items []*OauthClient, err error) {
 	items = make([]*OauthClient, 0)
 	condition := make(map[string]interface{})
 	clause := ""
@@ -110,7 +111,7 @@ func (p *OauthClientRepository) GetAllByCondition(node sqalx.Node, cond map[stri
 	box := packr.NewBox("./sql/oauth_client")
 	sqlSelect := fmt.Sprintf(box.String("GET_ALL_BY_CONDITION.sql"), clause)
 
-	stmtSelect, err := node.PrepareNamed(sqlSelect)
+	stmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -124,11 +125,11 @@ func (p *OauthClientRepository) GetAllByCondition(node sqalx.Node, cond map[stri
 }
 
 // GetByID get record by ID
-func (p *OauthClientRepository) GetByID(node sqalx.Node, id int64) (item *OauthClient, exist bool, err error) {
+func (p *OauthClientRepository) GetByID(ctx context.Context, node sqalx.Node, id int64) (item *OauthClient, exist bool, err error) {
 	item = new(OauthClient)
 	sqlSelect := packr.NewBox("./sql/oauth_client").String("GET_BY_ID.sql")
 
-	tmtSelect, err := node.PrepareNamed(sqlSelect)
+	tmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -148,7 +149,7 @@ func (p *OauthClientRepository) GetByID(node sqalx.Node, id int64) (item *OauthC
 }
 
 // GetByCondition get record by condition
-func (p *OauthClientRepository) GetByCondition(node sqalx.Node, cond map[string]string) (item *OauthClient, exist bool, err error) {
+func (p *OauthClientRepository) GetByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (item *OauthClient, exist bool, err error) {
 	item = new(OauthClient)
 	condition := make(map[string]interface{})
 	clause := ""
@@ -177,7 +178,7 @@ func (p *OauthClientRepository) GetByCondition(node sqalx.Node, cond map[string]
 	box := packr.NewBox("./sql/oauth_client")
 	sqlSelect := fmt.Sprintf(box.String("GET_BY_CONDITION.sql"), clause)
 
-	tmtSelect, err := node.PrepareNamed(sqlSelect)
+	tmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -197,13 +198,13 @@ func (p *OauthClientRepository) GetByCondition(node sqalx.Node, cond map[string]
 }
 
 // Insert insert a new record
-func (p *OauthClientRepository) Insert(node sqalx.Node, item *OauthClient) (err error) {
+func (p *OauthClientRepository) Insert(ctx context.Context, node sqalx.Node, item *OauthClient) (err error) {
 	sqlInsert := packr.NewBox("./sql/oauth_client").String("INSERT.sql")
 
 	item.CreatedAt = time.Now().Unix()
 	item.UpdatedAt = time.Now().Unix()
 
-	_, err = node.NamedExec(sqlInsert, item)
+	_, err = node.NamedExecContext(ctx, sqlInsert, item)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -213,12 +214,12 @@ func (p *OauthClientRepository) Insert(node sqalx.Node, item *OauthClient) (err 
 }
 
 // Update update a exist record
-func (p *OauthClientRepository) Update(node sqalx.Node, item *OauthClient) (err error) {
+func (p *OauthClientRepository) Update(ctx context.Context, node sqalx.Node, item *OauthClient) (err error) {
 	sqlUpdate := packr.NewBox("./sql/oauth_client").String("UPDATE.sql")
 
 	item.UpdatedAt = time.Now().Unix()
 
-	_, err = node.NamedExec(sqlUpdate, item)
+	_, err = node.NamedExecContext(ctx, sqlUpdate, item)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -228,10 +229,10 @@ func (p *OauthClientRepository) Update(node sqalx.Node, item *OauthClient) (err 
 }
 
 // Delete logic delete a exist record
-func (p *OauthClientRepository) Delete(node sqalx.Node, id int64) (err error) {
+func (p *OauthClientRepository) Delete(ctx context.Context, node sqalx.Node, id int64) (err error) {
 	sqlDelete := packr.NewBox("./sql/oauth_client").String("DELETE.sql")
 
-	_, err = node.NamedExec(sqlDelete, map[string]interface{}{"id": id})
+	_, err = node.NamedExecContext(ctx, sqlDelete, map[string]interface{}{"id": id})
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -241,8 +242,8 @@ func (p *OauthClientRepository) Delete(node sqalx.Node, id int64) (err error) {
 }
 
 // BatchDelete logic batch delete records
-func (p *OauthClientRepository) BatchDelete(node sqalx.Node, ids []int64) (err error) {
-	tx, err := node.Beginx()
+func (p *OauthClientRepository) BatchDelete(ctx context.Context, node sqalx.Node, ids []int64) (err error) {
+	tx, err := node.Beginx(ctx)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -250,7 +251,7 @@ func (p *OauthClientRepository) BatchDelete(node sqalx.Node, ids []int64) (err e
 
 	defer tx.Rollback()
 	for _, id := range ids {
-		errDelete := p.Delete(tx, id)
+		errDelete := p.Delete(ctx, tx, id)
 		if errDelete != nil {
 			err = tracerr.Wrap(err)
 			return

@@ -1,6 +1,7 @@
 package http
 
 import (
+	"context"
 	"net/http"
 	"strconv"
 
@@ -11,7 +12,6 @@ import (
 	"valerian/modules/usecase"
 
 	"valerian/library/database/sqalx"
-	"valerian/library/database/sqlx"
 
 	"github.com/gin-gonic/gin"
 )
@@ -20,25 +20,24 @@ type TopicCtrl struct {
 	infrastructure.BaseCtrl
 
 	TopicUsecase interface {
-		Create(ctx *biz.BizContext, req *models.CreateTopicReq) (id int64, err error)
-		Update(ctx *biz.BizContext, id int64, req *models.UpdateTopicReq) (err error)
-		Delete(ctx *biz.BizContext, id int64) (err error)
-		Get(ctx *biz.BizContext, topicID int64) (item *models.Topic, err error)
-		SeachTopics(ctx *biz.BizContext, topicID int64, query string) (items []*models.TopicSearchResult, err error)
-		GetTopicMembersPaged(ctx *biz.BizContext, topicID int64, page, pageSize int) (resp *models.TopicMembersPagedResp, err error)
-		BulkSaveMembers(ctx *biz.BizContext, topicID int64, req *models.BatchSavedTopicMemberReq) (err error)
-		GetTopicVersions(ctx *biz.BizContext, topicSetID int64) (items []*models.TopicVersion, err error)
-		FollowTopic(ctx *biz.BizContext, topicID int64, isFollowed bool) (err error)
-		GetAllRelatedTopics(ctx *biz.BizContext, topicID int64) (items []*models.RelatedTopic, err error)
-		GetAllTopicTypes(ctx *biz.BizContext) (items []*models.TopicType, err error)
+		Create(c context.Context, ctx *biz.BizContext, req *models.CreateTopicReq) (id int64, err error)
+		Update(c context.Context, ctx *biz.BizContext, id int64, req *models.UpdateTopicReq) (err error)
+		Delete(c context.Context, ctx *biz.BizContext, id int64) (err error)
+		Get(c context.Context, ctx *biz.BizContext, topicID int64) (item *models.Topic, err error)
+		SeachTopics(c context.Context, ctx *biz.BizContext, topicID int64, query string) (items []*models.TopicSearchResult, err error)
+		GetTopicMembersPaged(c context.Context, ctx *biz.BizContext, topicID int64, page, pageSize int) (resp *models.TopicMembersPagedResp, err error)
+		BulkSaveMembers(c context.Context, ctx *biz.BizContext, topicID int64, req *models.BatchSavedTopicMemberReq) (err error)
+		GetTopicVersions(c context.Context, ctx *biz.BizContext, topicSetID int64) (items []*models.TopicVersion, err error)
+		FollowTopic(c context.Context, ctx *biz.BizContext, topicID int64, isFollowed bool) (err error)
+		GetAllRelatedTopics(c context.Context, ctx *biz.BizContext, topicID int64) (items []*models.RelatedTopic, err error)
+		GetAllTopicTypes(c context.Context, ctx *biz.BizContext) (items []*models.TopicType, err error)
 	}
 }
 
-func NewTopicCtrl(db *sqlx.DB, node sqalx.Node) *TopicCtrl {
+func NewTopicCtrl(node sqalx.Node) *TopicCtrl {
 	return &TopicCtrl{
 		TopicUsecase: &usecase.TopicUsecase{
 			Node:                    node,
-			DB:                      db,
 			TopicRepository:         &repo.TopicRepository{},
 			TopicMemberRepository:   &repo.TopicMemberRepository{},
 			TopicCategoryRepository: &repo.TopicCategoryRepository{},
@@ -86,7 +85,7 @@ func (p *TopicCtrl) GetAllRelatedTopics(ctx *gin.Context) {
 	}
 
 	bizCtx := p.GetBizContext(ctx)
-	items, err := p.TopicUsecase.GetAllRelatedTopics(bizCtx, topicID)
+	items, err := p.TopicUsecase.GetAllRelatedTopics(ctx.Request.Context(), bizCtx, topicID)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return
@@ -162,7 +161,7 @@ func (p *TopicCtrl) GetTopicMembersPaged(ctx *gin.Context) {
 	}
 
 	bizCtx := p.GetBizContext(ctx)
-	items, err := p.TopicUsecase.GetTopicMembersPaged(bizCtx, topicID, page, pageSize)
+	items, err := p.TopicUsecase.GetTopicMembersPaged(ctx.Request.Context(), bizCtx, topicID, page, pageSize)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return
@@ -200,7 +199,7 @@ func (p *TopicCtrl) Search(ctx *gin.Context) {
 	}
 
 	bizCtx := p.GetBizContext(ctx)
-	items, err := p.TopicUsecase.SeachTopics(bizCtx, topicID, query)
+	items, err := p.TopicUsecase.SeachTopics(ctx.Request.Context(), bizCtx, topicID, query)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return
@@ -245,7 +244,7 @@ func (p *TopicCtrl) FollowTopic(ctx *gin.Context) {
 	}
 
 	bizCtx := p.GetBizContext(ctx)
-	err := p.TopicUsecase.FollowTopic(bizCtx, req.TopicID, req.IsFollowed)
+	err := p.TopicUsecase.FollowTopic(ctx.Request.Context(), bizCtx, req.TopicID, req.IsFollowed)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return
@@ -301,7 +300,7 @@ func (p *TopicCtrl) BatchSavedTopicMember(ctx *gin.Context) {
 	}
 
 	bizCtx := p.GetBizContext(ctx)
-	err = p.TopicUsecase.BulkSaveMembers(bizCtx, topicID, req)
+	err = p.TopicUsecase.BulkSaveMembers(ctx.Request.Context(), bizCtx, topicID, req)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return
@@ -346,7 +345,7 @@ func (p *TopicCtrl) Create(ctx *gin.Context) {
 	}
 
 	bizCtx := p.GetBizContext(ctx)
-	id, err := p.TopicUsecase.Create(bizCtx, req)
+	id, err := p.TopicUsecase.Create(ctx.Request.Context(), bizCtx, req)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return
@@ -403,7 +402,7 @@ func (p *TopicCtrl) Update(ctx *gin.Context) {
 	}
 
 	bizCtx := p.GetBizContext(ctx)
-	err = p.TopicUsecase.Update(bizCtx, topicID, req)
+	err = p.TopicUsecase.Update(ctx.Request.Context(), bizCtx, topicID, req)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return
@@ -442,7 +441,7 @@ func (p *TopicCtrl) Get(ctx *gin.Context) {
 	}
 
 	bizCtx := p.GetBizContext(ctx)
-	item, err := p.TopicUsecase.Get(bizCtx, topicID)
+	item, err := p.TopicUsecase.Get(ctx.Request.Context(), bizCtx, topicID)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return
@@ -471,7 +470,7 @@ func (p *TopicCtrl) Delete(ctx *gin.Context) {
 	id := ctx.GetInt64("id")
 
 	bizCtx := p.GetBizContext(ctx)
-	err := p.TopicUsecase.Delete(bizCtx, id)
+	err := p.TopicUsecase.Delete(ctx.Request.Context(), bizCtx, id)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return
@@ -510,7 +509,7 @@ func (p *TopicCtrl) GetTopicVersions(ctx *gin.Context) {
 	}
 
 	bizCtx := p.GetBizContext(ctx)
-	items, err := p.TopicUsecase.GetTopicVersions(bizCtx, topicSetID)
+	items, err := p.TopicUsecase.GetTopicVersions(ctx.Request.Context(), bizCtx, topicSetID)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return
@@ -537,7 +536,7 @@ func (p *TopicCtrl) GetTopicVersions(ctx *gin.Context) {
 func (p *TopicCtrl) GetAllTopicTypes(ctx *gin.Context) {
 
 	bizCtx := p.GetBizContext(ctx)
-	items, err := p.TopicUsecase.GetAllTopicTypes(bizCtx)
+	items, err := p.TopicUsecase.GetAllTopicTypes(ctx.Request.Context(), bizCtx)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return

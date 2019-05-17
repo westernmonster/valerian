@@ -1,6 +1,7 @@
 package repo
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"time"
@@ -25,7 +26,7 @@ type Valcode struct {
 type ValcodeRepository struct{}
 
 // QueryListPaged get paged records by condition
-func (p *ValcodeRepository) QueryListPaged(node sqalx.Node, page int, pageSize int, cond map[string]string) (total int, items []*Valcode, err error) {
+func (p *ValcodeRepository) QueryListPaged(ctx context.Context, node sqalx.Node, page int, pageSize int, cond map[string]string) (total int, items []*Valcode, err error) {
 	offset := (page - 1) * pageSize
 	condition := make(map[string]interface{})
 	clause := ""
@@ -36,7 +37,7 @@ func (p *ValcodeRepository) QueryListPaged(node sqalx.Node, page int, pageSize i
 	sqlCount := fmt.Sprintf(box.String("QUERY_LIST_PAGED_COUNT.sql"), clause)
 	sqlSelect := fmt.Sprintf(box.String("QUERY_LIST_PAGED_DATA.sql"), clause)
 
-	stmtCount, err := node.PrepareNamed(sqlCount)
+	stmtCount, err := node.PrepareNamedContext(ctx, sqlCount)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -50,7 +51,7 @@ func (p *ValcodeRepository) QueryListPaged(node sqalx.Node, page int, pageSize i
 	condition["limit"] = pageSize
 	condition["offset"] = offset
 
-	stmtSelect, err := node.PrepareNamed(sqlSelect)
+	stmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -64,11 +65,11 @@ func (p *ValcodeRepository) QueryListPaged(node sqalx.Node, page int, pageSize i
 }
 
 // GetAll get all records
-func (p *ValcodeRepository) GetAll(node sqalx.Node) (items []*Valcode, err error) {
+func (p *ValcodeRepository) GetAll(ctx context.Context, node sqalx.Node) (items []*Valcode, err error) {
 	items = make([]*Valcode, 0)
 	sqlSelect := packr.NewBox("./sql/valcode").String("GET_ALL.sql")
 
-	stmtSelect, err := node.PrepareNamed(sqlSelect)
+	stmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -82,7 +83,7 @@ func (p *ValcodeRepository) GetAll(node sqalx.Node) (items []*Valcode, err error
 }
 
 // GetAllByCondition get records by condition
-func (p *ValcodeRepository) GetAllByCondition(node sqalx.Node, cond map[string]string) (items []*Valcode, err error) {
+func (p *ValcodeRepository) GetAllByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (items []*Valcode, err error) {
 	items = make([]*Valcode, 0)
 	condition := make(map[string]interface{})
 	clause := ""
@@ -111,7 +112,7 @@ func (p *ValcodeRepository) GetAllByCondition(node sqalx.Node, cond map[string]s
 	box := packr.NewBox("./sql/valcode")
 	sqlSelect := fmt.Sprintf(box.String("GET_ALL_BY_CONDITION.sql"), clause)
 
-	stmtSelect, err := node.PrepareNamed(sqlSelect)
+	stmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -125,11 +126,11 @@ func (p *ValcodeRepository) GetAllByCondition(node sqalx.Node, cond map[string]s
 }
 
 // GetByID get record by ID
-func (p *ValcodeRepository) GetByID(node sqalx.Node, id int64) (item *Valcode, exist bool, err error) {
+func (p *ValcodeRepository) GetByID(ctx context.Context, node sqalx.Node, id int64) (item *Valcode, exist bool, err error) {
 	item = new(Valcode)
 	sqlSelect := packr.NewBox("./sql/valcode").String("GET_BY_ID.sql")
 
-	tmtSelect, err := node.PrepareNamed(sqlSelect)
+	tmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -149,7 +150,7 @@ func (p *ValcodeRepository) GetByID(node sqalx.Node, id int64) (item *Valcode, e
 }
 
 // GetByCondition get record by condition
-func (p *ValcodeRepository) GetByCondition(node sqalx.Node, cond map[string]string) (item *Valcode, exist bool, err error) {
+func (p *ValcodeRepository) GetByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (item *Valcode, exist bool, err error) {
 	item = new(Valcode)
 	condition := make(map[string]interface{})
 	clause := ""
@@ -178,7 +179,7 @@ func (p *ValcodeRepository) GetByCondition(node sqalx.Node, cond map[string]stri
 	box := packr.NewBox("./sql/valcode")
 	sqlSelect := fmt.Sprintf(box.String("GET_BY_CONDITION.sql"), clause)
 
-	tmtSelect, err := node.PrepareNamed(sqlSelect)
+	tmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -198,13 +199,13 @@ func (p *ValcodeRepository) GetByCondition(node sqalx.Node, cond map[string]stri
 }
 
 // Insert insert a new record
-func (p *ValcodeRepository) Insert(node sqalx.Node, item *Valcode) (err error) {
+func (p *ValcodeRepository) Insert(ctx context.Context, node sqalx.Node, item *Valcode) (err error) {
 	sqlInsert := packr.NewBox("./sql/valcode").String("INSERT.sql")
 
 	item.CreatedAt = time.Now().Unix()
 	item.UpdatedAt = time.Now().Unix()
 
-	_, err = node.NamedExec(sqlInsert, item)
+	_, err = node.NamedExecContext(ctx, sqlInsert, item)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -214,12 +215,12 @@ func (p *ValcodeRepository) Insert(node sqalx.Node, item *Valcode) (err error) {
 }
 
 // Update update a exist record
-func (p *ValcodeRepository) Update(node sqalx.Node, item *Valcode) (err error) {
+func (p *ValcodeRepository) Update(ctx context.Context, node sqalx.Node, item *Valcode) (err error) {
 	sqlUpdate := packr.NewBox("./sql/valcode").String("UPDATE.sql")
 
 	item.UpdatedAt = time.Now().Unix()
 
-	_, err = node.NamedExec(sqlUpdate, item)
+	_, err = node.NamedExecContext(ctx, sqlUpdate, item)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -229,10 +230,10 @@ func (p *ValcodeRepository) Update(node sqalx.Node, item *Valcode) (err error) {
 }
 
 // Delete logic delete a exist record
-func (p *ValcodeRepository) Delete(node sqalx.Node, id int64) (err error) {
+func (p *ValcodeRepository) Delete(ctx context.Context, node sqalx.Node, id int64) (err error) {
 	sqlDelete := packr.NewBox("./sql/valcode").String("DELETE.sql")
 
-	_, err = node.NamedExec(sqlDelete, map[string]interface{}{"id": id})
+	_, err = node.NamedExecContext(ctx, sqlDelete, map[string]interface{}{"id": id})
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -242,8 +243,8 @@ func (p *ValcodeRepository) Delete(node sqalx.Node, id int64) (err error) {
 }
 
 // BatchDelete logic batch delete records
-func (p *ValcodeRepository) BatchDelete(node sqalx.Node, ids []int64) (err error) {
-	tx, err := node.Beginx()
+func (p *ValcodeRepository) BatchDelete(ctx context.Context, node sqalx.Node, ids []int64) (err error) {
+	tx, err := node.Beginx(ctx)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -251,7 +252,7 @@ func (p *ValcodeRepository) BatchDelete(node sqalx.Node, ids []int64) (err error
 
 	defer tx.Rollback()
 	for _, id := range ids {
-		errDelete := p.Delete(tx, id)
+		errDelete := p.Delete(ctx, tx, id)
 		if errDelete != nil {
 			err = tracerr.Wrap(err)
 			return
@@ -267,7 +268,7 @@ func (p *ValcodeRepository) BatchDelete(node sqalx.Node, ids []int64) (err error
 }
 
 // HasSentRecordsInDuration determine current identity has sent records in specified duration
-func (p *ValcodeRepository) HasSentRecordsInDuration(node sqalx.Node, identity string, codeType int, duration time.Duration) (has bool, err error) {
+func (p *ValcodeRepository) HasSentRecordsInDuration(ctx context.Context, node sqalx.Node, identity string, codeType int, duration time.Duration) (has bool, err error) {
 	items := make([]*Valcode, 0)
 	condition := make(map[string]interface{})
 	clause := ""
@@ -287,7 +288,7 @@ func (p *ValcodeRepository) HasSentRecordsInDuration(node sqalx.Node, identity s
 	box := packr.NewBox("./sql/valcode")
 	sqlSelect := fmt.Sprintf(box.String("GET_ALL_BY_CONDITION.sql"), clause)
 
-	stmtSelect, err := node.PrepareNamed(sqlSelect)
+	stmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -308,7 +309,7 @@ func (p *ValcodeRepository) HasSentRecordsInDuration(node sqalx.Node, identity s
 // if used return false
 // if could not found in database, return false
 // if found in database and isn't used, return ture
-func (p *ValcodeRepository) IsCodeCorrect(node sqalx.Node, identity string, codeType int, code string) (correct bool, item *Valcode, err error) {
+func (p *ValcodeRepository) IsCodeCorrect(ctx context.Context, node sqalx.Node, identity string, codeType int, code string) (correct bool, item *Valcode, err error) {
 	items := make([]*Valcode, 0)
 	condition := make(map[string]interface{})
 	clause := ""
@@ -325,7 +326,7 @@ func (p *ValcodeRepository) IsCodeCorrect(node sqalx.Node, identity string, code
 	box := packr.NewBox("./sql/valcode")
 	sqlSelect := fmt.Sprintf(box.String("GET_ALL_BY_CONDITION.sql"), clause)
 
-	stmtSelect, err := node.PrepareNamed(sqlSelect)
+	stmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return

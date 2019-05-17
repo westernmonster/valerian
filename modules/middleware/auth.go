@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strings"
@@ -20,20 +21,19 @@ type authFunc func(*gin.Context) (int64, error)
 
 type Auth struct {
 	OauthUsecase interface {
-		GetByID(bizCtx *biz.BizContext, userID int64) (item *repo.Account, err error)
+		GetByID(c context.Context, bizCtx *biz.BizContext, userID int64) (item *repo.Account, err error)
 		GetTokenInfo(tokenStr string) (claims *infrastructure.TokenClaims, err error)
 	}
 }
 
 func New() *Auth {
-	db, node, err := db.InitDatabase()
+	node, err := db.InitDatabase()
 	if err != nil {
 		panic(err)
 	}
 	auth := &Auth{
 		OauthUsecase: &usecase.OauthUsecase{
 			Node:                       node,
-			DB:                         db,
 			AccountRepository:          &repo.AccountRepository{},
 			ValcodeRepository:          &repo.ValcodeRepository{},
 			SessionRepository:          &repo.SessionRepository{},

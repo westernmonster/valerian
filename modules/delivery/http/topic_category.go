@@ -1,11 +1,11 @@
 package http
 
 import (
+	"context"
 	"net/http"
 	"strconv"
 
 	"valerian/library/database/sqalx"
-	"valerian/library/database/sqlx"
 
 	"github.com/gin-gonic/gin"
 
@@ -20,20 +20,19 @@ type TopicCategoryCtrl struct {
 	infrastructure.BaseCtrl
 
 	TopicCategoryUsecase interface {
-		Create(ctx *biz.BizContext, req *models.CreateTopicCategoryReq) (err error)
-		Update(ctx *biz.BizContext, id int64, req *models.UpdateTopicCategoryReq) (err error)
-		Delete(ctx *biz.BizContext, id int64) (err error)
-		BulkSave(ctx *biz.BizContext, req *models.SaveTopicCategoriesReq) (err error)
-		GetAll(ctx *biz.BizContext, topicID int64) (items []*models.TopicCategory, err error)
-		GetHierarchyOfAll(ctx *biz.BizContext, topicID int64) (resp *models.TopicCategoriesResp, err error)
+		Create(c context.Context, ctx *biz.BizContext, req *models.CreateTopicCategoryReq) (err error)
+		Update(c context.Context, ctx *biz.BizContext, id int64, req *models.UpdateTopicCategoryReq) (err error)
+		Delete(c context.Context, ctx *biz.BizContext, id int64) (err error)
+		BulkSave(c context.Context, ctx *biz.BizContext, req *models.SaveTopicCategoriesReq) (err error)
+		GetAll(c context.Context, ctx *biz.BizContext, topicID int64) (items []*models.TopicCategory, err error)
+		GetHierarchyOfAll(c context.Context, ctx *biz.BizContext, topicID int64) (resp *models.TopicCategoriesResp, err error)
 	}
 }
 
-func NewTopicCategoryCtrl(db *sqlx.DB, node sqalx.Node) *TopicCategoryCtrl {
+func NewTopicCategoryCtrl(node sqalx.Node) *TopicCategoryCtrl {
 	return &TopicCategoryCtrl{
 		TopicCategoryUsecase: &usecase.TopicCategoryUsecase{
 			Node:                    node,
-			DB:                      db,
 			TopicCategoryRepository: &repo.TopicCategoryRepository{},
 		},
 	}
@@ -74,7 +73,7 @@ func (p *TopicCategoryCtrl) GetAll(ctx *gin.Context) {
 	}
 
 	bizCtx := p.GetBizContext(ctx)
-	items, err := p.TopicCategoryUsecase.GetAll(bizCtx, topicID)
+	items, err := p.TopicCategoryUsecase.GetAll(ctx.Request.Context(), bizCtx, topicID)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return
@@ -121,7 +120,7 @@ func (p *TopicCategoryCtrl) GetHierarchyOfAll(ctx *gin.Context) {
 	}
 
 	bizCtx := p.GetBizContext(ctx)
-	resp, err := p.TopicCategoryUsecase.GetHierarchyOfAll(bizCtx, topicID)
+	resp, err := p.TopicCategoryUsecase.GetHierarchyOfAll(ctx.Request.Context(), bizCtx, topicID)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return
@@ -167,7 +166,7 @@ func (p *TopicCategoryCtrl) BulkSave(ctx *gin.Context) {
 	}
 
 	bizCtx := p.GetBizContext(ctx)
-	err := p.TopicCategoryUsecase.BulkSave(bizCtx, req)
+	err := p.TopicCategoryUsecase.BulkSave(ctx.Request.Context(), bizCtx, req)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return

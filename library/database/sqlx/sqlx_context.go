@@ -11,6 +11,10 @@ import (
 	"reflect"
 	"time"
 	"valerian/library/stat"
+	"valerian/library/tracing"
+
+	"github.com/opentracing/opentracing-go"
+	"github.com/pkg/errors"
 )
 
 var stats = stat.DB
@@ -155,8 +159,32 @@ func (db *DB) NamedExecContext(ctx context.Context, query string, arg interface{
 
 // SelectContext using this DB.
 // Any placeholder parameters are replaced with supplied args.
-func (db *DB) SelectContext(ctx context.Context, dest interface{}, query string, args ...interface{}) error {
-	return SelectContext(ctx, db, dest, query, args...)
+func (db *DB) SelectContext(ctx context.Context, dest interface{}, query string, args ...interface{}) (err error) {
+	now := time.Now()
+	span := opentracing.SpanFromContext(ctx)
+	if span != nil {
+		parentCtx := span.Context()
+		span = tracing.StartSpan("select", opentracing.ChildOf(parentCtx))
+		span.SetTag("address", db.Addr)
+		span.SetTag("sql", query)
+		defer span.Finish()
+	}
+
+	if err = db.breaker.Allow(); err != nil {
+		stats.Incr("mysql:select", "breaker")
+		return
+	}
+
+	_, c, cancel := db.QueryTimeout.Shrink(ctx)
+	err = SelectContext(c, db, dest, query, args...)
+	db.onBreaker(&err)
+	stats.Timing("mysql:query", int64(time.Since(now)/time.Millisecond))
+	if err != nil {
+		err = errors.Wrapf(err, "query:%s, args:%+v", query, args)
+		cancel()
+		return
+	}
+	return
 }
 
 // GetContext using this DB.

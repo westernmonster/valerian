@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"context"
 	"strconv"
 
 	"valerian/library/database/sqalx"
@@ -23,106 +24,106 @@ type TopicUsecase struct {
 
 	TopicRepository interface {
 		// GetByID get a record by ID
-		GetByID(node sqalx.Node, id int64) (item *repo.Topic, exist bool, err error)
+		GetByID(ctx context.Context, node sqalx.Node, id int64) (item *repo.Topic, exist bool, err error)
 		// GetByCondition get a record by condition
-		GetByCondition(node sqalx.Node, cond map[string]string) (item *repo.Topic, exist bool, err error)
+		GetByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (item *repo.Topic, exist bool, err error)
 		// Insert insert a new record
-		Insert(node sqalx.Node, item *repo.Topic) (err error)
+		Insert(ctx context.Context, node sqalx.Node, item *repo.Topic) (err error)
 		// Update update a exist record
-		Update(node sqalx.Node, item *repo.Topic) (err error)
+		Update(ctx context.Context, node sqalx.Node, item *repo.Topic) (err error)
 		// Delete logic delete a exist record
-		Delete(node sqalx.Node, id int64) (err error)
+		Delete(ctx context.Context, node sqalx.Node, id int64) (err error)
 		// BatchDelete logic batch delete records
-		BatchDelete(node sqalx.Node, ids []int64) (err error)
+		BatchDelete(ctx context.Context, node sqalx.Node, ids []int64) (err error)
 
-		SearchTopics(node sqalx.Node, cond map[string]string) (items []*models.TopicSearchResult, err error)
+		SearchTopics(ctx context.Context, node sqalx.Node, cond map[string]string) (items []*models.TopicSearchResult, err error)
 
-		GetTopicVersions(node sqalx.Node, topicSetID int64) (items []*models.TopicVersion, err error)
+		GetTopicVersions(ctx context.Context, node sqalx.Node, topicSetID int64) (items []*models.TopicVersion, err error)
 	}
 
 	TopicCategoryRepository interface {
 		// GetAllByCondition get records by condition
-		GetAllByCondition(node sqalx.Node, cond map[string]string) (items []*repo.TopicCategory, err error)
+		GetAllByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (items []*repo.TopicCategory, err error)
 		// GetByID get a record by ID
-		GetByID(node sqalx.Node, id int64) (item *repo.TopicCategory, exist bool, err error)
+		GetByID(ctx context.Context, node sqalx.Node, id int64) (item *repo.TopicCategory, exist bool, err error)
 		// GetByCondition get a record by condition
-		GetByCondition(node sqalx.Node, cond map[string]string) (item *repo.TopicCategory, exist bool, err error)
+		GetByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (item *repo.TopicCategory, exist bool, err error)
 		// Insert insert a new record
-		Insert(node sqalx.Node, item *repo.TopicCategory) (err error)
+		Insert(ctx context.Context, node sqalx.Node, item *repo.TopicCategory) (err error)
 		// Update update a exist record
-		Update(node sqalx.Node, item *repo.TopicCategory) (err error)
+		Update(ctx context.Context, node sqalx.Node, item *repo.TopicCategory) (err error)
 		// Delete logic delete a exist record
-		Delete(node sqalx.Node, id int64) (err error)
+		Delete(ctx context.Context, node sqalx.Node, id int64) (err error)
 		// BatchDelete logic batch delete records
-		BatchDelete(node sqalx.Node, ids []int64) (err error)
+		BatchDelete(ctx context.Context, node sqalx.Node, ids []int64) (err error)
 	}
 
 	TopicMemberRepository interface {
 		// GetByID get a record by ID
-		GetByID(node sqalx.Node, id int64) (item *repo.TopicMember, exist bool, err error)
+		GetByID(ctx context.Context, node sqalx.Node, id int64) (item *repo.TopicMember, exist bool, err error)
 		// GetByCondition get a record by condition
-		GetByCondition(node sqalx.Node, cond map[string]string) (item *repo.TopicMember, exist bool, err error)
+		GetByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (item *repo.TopicMember, exist bool, err error)
 		// Insert insert a new record
-		Insert(node sqalx.Node, item *repo.TopicMember) (err error)
+		Insert(ctx context.Context, node sqalx.Node, item *repo.TopicMember) (err error)
 		// Update update a exist record
-		Update(node sqalx.Node, item *repo.TopicMember) (err error)
+		Update(ctx context.Context, node sqalx.Node, item *repo.TopicMember) (err error)
 		// Delete logic delete a exist record
-		Delete(node sqalx.Node, id int64) (err error)
+		Delete(ctx context.Context, node sqalx.Node, id int64) (err error)
 		// BatchDelete logic batch delete records
-		BatchDelete(node sqalx.Node, ids []int64) (err error)
+		BatchDelete(ctx context.Context, node sqalx.Node, ids []int64) (err error)
 
-		GetTopicMembers(node sqalx.Node, topicID int64, limit int) (items []*models.TopicMember, err error)
+		GetTopicMembers(ctx context.Context, node sqalx.Node, topicID int64, limit int) (items []*models.TopicMember, err error)
 
-		GetTopicMembersPaged(node sqalx.Node, topicID int64, page, pageSize int) (count int, items []*models.TopicMember, err error)
+		GetTopicMembersPaged(ctx context.Context, node sqalx.Node, topicID int64, page, pageSize int) (count int, items []*models.TopicMember, err error)
 
-		GetTopicMembersCount(node sqalx.Node, topicID int64) (count int, err error)
+		GetTopicMembersCount(ctx context.Context, node sqalx.Node, topicID int64) (count int, err error)
 	}
 
 	TopicSetRepository interface {
 		// Insert insert a new record
-		Insert(node sqalx.Node, item *repo.TopicSet) (err error)
+		Insert(ctx context.Context, node sqalx.Node, item *repo.TopicSet) (err error)
 	}
 
 	TopicFollowerRepository interface {
 		// GetByCondition get a record by condition
-		GetByCondition(node sqalx.Node, cond map[string]string) (item *repo.TopicFollower, exist bool, err error)
+		GetByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (item *repo.TopicFollower, exist bool, err error)
 		// Insert insert a new record
-		Insert(node sqalx.Node, item *repo.TopicFollower) (err error)
+		Insert(ctx context.Context, node sqalx.Node, item *repo.TopicFollower) (err error)
 		// Update update a exist record
-		Update(node sqalx.Node, item *repo.TopicFollower) (err error)
+		Update(ctx context.Context, node sqalx.Node, item *repo.TopicFollower) (err error)
 		// Delete logic delete a exist record
-		Delete(node sqalx.Node, id int64) (err error)
+		Delete(ctx context.Context, node sqalx.Node, id int64) (err error)
 	}
 
 	TopicTypeRepository interface {
 		// GetByID get a record by ID
-		GetByID(node sqalx.Node, id int) (item *repo.TopicType, exist bool, err error)
+		GetByID(ctx context.Context, node sqalx.Node, id int) (item *repo.TopicType, exist bool, err error)
 
-		GetAll(node sqalx.Node) (items []*repo.TopicType, err error)
+		GetAll(ctx context.Context, node sqalx.Node) (items []*repo.TopicType, err error)
 	}
 
 	TopicRelationRepository interface {
 		// GetByID get a record by ID
-		GetByID(node sqalx.Node, id int64) (item *repo.TopicRelation, exist bool, err error)
+		GetByID(ctx context.Context, node sqalx.Node, id int64) (item *repo.TopicRelation, exist bool, err error)
 		// GetByCondition get a record by condition
-		GetByCondition(node sqalx.Node, cond map[string]string) (item *repo.TopicRelation, exist bool, err error)
+		GetByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (item *repo.TopicRelation, exist bool, err error)
 		// Insert insert a new record
-		Insert(node sqalx.Node, item *repo.TopicRelation) (err error)
+		Insert(ctx context.Context, node sqalx.Node, item *repo.TopicRelation) (err error)
 		// Update update a exist record
-		Update(node sqalx.Node, item *repo.TopicRelation) (err error)
+		Update(ctx context.Context, node sqalx.Node, item *repo.TopicRelation) (err error)
 		// Delete logic delete a exist record
-		Delete(node sqalx.Node, id int64) (err error)
+		Delete(ctx context.Context, node sqalx.Node, id int64) (err error)
 		// BatchDelete logic batch delete records
-		BatchDelete(node sqalx.Node, ids []int64) (err error)
+		BatchDelete(ctx context.Context, node sqalx.Node, ids []int64) (err error)
 
-		GetAllRelatedTopics(node sqalx.Node, topicID int64) (items []*models.RelatedTopicShort, err error)
+		GetAllRelatedTopics(ctx context.Context, node sqalx.Node, topicID int64) (items []*models.RelatedTopicShort, err error)
 
-		GetAllRelatedTopicsDetail(node sqalx.Node, topicID int64) (items []*models.RelatedTopic, err error)
+		GetAllRelatedTopicsDetail(ctx context.Context, node sqalx.Node, topicID int64) (items []*models.RelatedTopic, err error)
 	}
 }
 
-func (p *TopicUsecase) GetTopicMembersPaged(ctx *biz.BizContext, topicID int64, page, pageSize int) (resp *models.TopicMembersPagedResp, err error) {
-	count, data, err := p.TopicMemberRepository.GetTopicMembersPaged(p.Node, topicID, page, pageSize)
+func (p *TopicUsecase) GetTopicMembersPaged(c context.Context, ctx *biz.BizContext, topicID int64, page, pageSize int) (resp *models.TopicMembersPagedResp, err error) {
+	count, data, err := p.TopicMemberRepository.GetTopicMembersPaged(c, p.Node, topicID, page, pageSize)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -137,15 +138,15 @@ func (p *TopicUsecase) GetTopicMembersPaged(ctx *biz.BizContext, topicID int64, 
 	return
 }
 
-func (p *TopicUsecase) FollowTopic(ctx *biz.BizContext, topicID int64, isFollowed bool) (err error) {
-	tx, err := p.Node.Beginx()
+func (p *TopicUsecase) FollowTopic(c context.Context, ctx *biz.BizContext, topicID int64, isFollowed bool) (err error) {
+	tx, err := p.Node.Beginx(c)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
 	}
 	defer tx.Rollback()
 
-	item, exist, err := p.TopicFollowerRepository.GetByCondition(tx, map[string]string{
+	item, exist, err := p.TopicFollowerRepository.GetByCondition(c, tx, map[string]string{
 		"topic_id":     strconv.FormatInt(topicID, 10),
 		"followers_id": strconv.FormatInt(*ctx.AccountID, 10),
 	})
@@ -170,7 +171,7 @@ func (p *TopicUsecase) FollowTopic(ctx *biz.BizContext, topicID int64, isFollowe
 			FollowersID: *ctx.AccountID,
 		}
 
-		errInner = p.TopicFollowerRepository.Insert(tx, follower)
+		errInner = p.TopicFollowerRepository.Insert(c, tx, follower)
 		if errInner != nil {
 			err = tracerr.Wrap(errInner)
 			return
@@ -181,7 +182,7 @@ func (p *TopicUsecase) FollowTopic(ctx *biz.BizContext, topicID int64, isFollowe
 			return
 		}
 
-		errInner := p.TopicFollowerRepository.Delete(tx, item.ID)
+		errInner := p.TopicFollowerRepository.Delete(c, tx, item.ID)
 		if errInner != nil {
 			err = tracerr.Wrap(errInner)
 			return
@@ -197,8 +198,8 @@ func (p *TopicUsecase) FollowTopic(ctx *biz.BizContext, topicID int64, isFollowe
 	return
 }
 
-func (p *TopicUsecase) SeachTopics(ctx *biz.BizContext, topicID int64, query string) (items []*models.TopicSearchResult, err error) {
-	items, err = p.TopicRepository.SearchTopics(p.Node, map[string]string{
+func (p *TopicUsecase) SeachTopics(c context.Context, ctx *biz.BizContext, topicID int64, query string) (items []*models.TopicSearchResult, err error) {
+	items, err = p.TopicRepository.SearchTopics(c, p.Node, map[string]string{
 		"id":    strconv.FormatInt(topicID, 10),
 		"query": query,
 	})
@@ -209,15 +210,15 @@ func (p *TopicUsecase) SeachTopics(ctx *biz.BizContext, topicID int64, query str
 	return
 }
 
-func (p *TopicUsecase) GetAllRelatedTopics(ctx *biz.BizContext, topicID int64) (items []*models.RelatedTopic, err error) {
-	items, err = p.TopicRelationRepository.GetAllRelatedTopicsDetail(p.Node, topicID)
+func (p *TopicUsecase) GetAllRelatedTopics(c context.Context, ctx *biz.BizContext, topicID int64) (items []*models.RelatedTopic, err error) {
+	items, err = p.TopicRelationRepository.GetAllRelatedTopicsDetail(c, p.Node, topicID)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
 	}
 
 	for _, v := range items {
-		_, exist, errInner := p.TopicFollowerRepository.GetByCondition(p.Node, map[string]string{
+		_, exist, errInner := p.TopicFollowerRepository.GetByCondition(c, p.Node, map[string]string{
 			"topic_id":     strconv.FormatInt(v.TopicID, 10),
 			"followers_id": strconv.FormatInt(*ctx.AccountID, 10),
 		})
@@ -230,7 +231,7 @@ func (p *TopicUsecase) GetAllRelatedTopics(ctx *biz.BizContext, topicID int64) (
 			v.IsFollowed = true
 		}
 
-		count, errInner := p.TopicMemberRepository.GetTopicMembersCount(p.Node, v.TopicID)
+		count, errInner := p.TopicMemberRepository.GetTopicMembersCount(c, p.Node, v.TopicID)
 		if errInner != nil {
 			err = tracerr.Wrap(errInner)
 			return
@@ -242,8 +243,8 @@ func (p *TopicUsecase) GetAllRelatedTopics(ctx *biz.BizContext, topicID int64) (
 	return
 }
 
-func (p *TopicUsecase) Get(ctx *biz.BizContext, topicID int64) (item *models.Topic, err error) {
-	t, exist, err := p.TopicRepository.GetByID(p.Node, topicID)
+func (p *TopicUsecase) Get(c context.Context, ctx *biz.BizContext, topicID int64) (item *models.Topic, err error) {
+	t, exist, err := p.TopicRepository.GetByID(c, p.Node, topicID)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -279,28 +280,28 @@ func (p *TopicUsecase) Get(ctx *biz.BizContext, topicID int64) (item *models.Top
 	item.RelatedTopics = make([]*models.RelatedTopicShort, 0)
 	item.Categories = make([]*models.TopicCategoryParentItem, 0)
 
-	members, err := p.TopicMemberRepository.GetTopicMembers(p.Node, topicID, 10)
+	members, err := p.TopicMemberRepository.GetTopicMembers(c, p.Node, topicID, 10)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
 	}
 	item.Members = members
 
-	relatedTopics, err := p.TopicRelationRepository.GetAllRelatedTopics(p.Node, topicID)
+	relatedTopics, err := p.TopicRelationRepository.GetAllRelatedTopics(c, p.Node, topicID)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
 	}
 	item.RelatedTopics = relatedTopics
 
-	categories, err := p.getCategoriesHierarchyOfAll(p.Node, topicID)
+	categories, err := p.getCategoriesHierarchyOfAll(c, p.Node, topicID)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
 	}
 	item.Categories = categories
 
-	_, exist, err = p.TopicFollowerRepository.GetByCondition(p.Node, map[string]string{
+	_, exist, err = p.TopicFollowerRepository.GetByCondition(c, p.Node, map[string]string{
 		"topic_id":     strconv.FormatInt(topicID, 10),
 		"followers_id": strconv.FormatInt(*ctx.AccountID, 10),
 	})
@@ -315,8 +316,8 @@ func (p *TopicUsecase) Get(ctx *biz.BizContext, topicID int64) (item *models.Top
 	return
 }
 
-func (p *TopicUsecase) Create(ctx *biz.BizContext, req *models.CreateTopicReq) (id int64, err error) {
-	tx, err := p.Node.Beginx()
+func (p *TopicUsecase) Create(c context.Context, ctx *biz.BizContext, req *models.CreateTopicReq) (id int64, err error) {
+	tx, err := p.Node.Beginx(c)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -349,7 +350,7 @@ func (p *TopicUsecase) Create(ctx *biz.BizContext, req *models.CreateTopicReq) (
 		CreatedBy:        *ctx.AccountID,
 	}
 
-	_, exist, err := p.TopicTypeRepository.GetByID(tx, req.TopicType)
+	_, exist, err := p.TopicTypeRepository.GetByID(c, tx, req.TopicType)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -362,7 +363,7 @@ func (p *TopicUsecase) Create(ctx *biz.BizContext, req *models.CreateTopicReq) (
 	item.TopicType = req.TopicType
 
 	if req.TopicSetID != nil {
-		_, exist, errInner := p.TopicRepository.GetByCondition(tx, map[string]string{
+		_, exist, errInner := p.TopicRepository.GetByCondition(c, tx, map[string]string{
 			"topic_set_id": strconv.FormatInt(*req.TopicSetID, 10),
 			"version_name": req.VersionName,
 		})
@@ -388,32 +389,32 @@ func (p *TopicUsecase) Create(ctx *biz.BizContext, req *models.CreateTopicReq) (
 		}
 		item.TopicSetID = sid
 
-		errInner = p.TopicSetRepository.Insert(tx, set)
+		errInner = p.TopicSetRepository.Insert(c, tx, set)
 		if errInner != nil {
 			err = tracerr.Wrap(errInner)
 			return
 		}
 	}
 
-	err = p.TopicRepository.Insert(tx, item)
+	err = p.TopicRepository.Insert(c, tx, item)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
 	}
 
-	err = p.bulkSaveCategories(tx, *ctx.AccountID, id, req.Categories)
+	err = p.bulkSaveCategories(c, tx, *ctx.AccountID, id, req.Categories)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
 	}
 
-	err = p.bulkCreateMembers(tx, *ctx.AccountID, id, req)
+	err = p.bulkCreateMembers(c, tx, *ctx.AccountID, id, req)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
 	}
 
-	err = p.bulkSaveRelations(tx, *ctx.AccountID, id, req.RelatedTopics)
+	err = p.bulkSaveRelations(c, tx, *ctx.AccountID, id, req.RelatedTopics)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -427,19 +428,19 @@ func (p *TopicUsecase) Create(ctx *biz.BizContext, req *models.CreateTopicReq) (
 	return
 }
 
-func (p *TopicUsecase) Delete(ctx *biz.BizContext, topicID int64) (err error) {
+func (p *TopicUsecase) Delete(c context.Context, ctx *biz.BizContext, topicID int64) (err error) {
 	return
 }
 
-func (p *TopicUsecase) Update(ctx *biz.BizContext, topicID int64, req *models.UpdateTopicReq) (err error) {
-	tx, err := p.Node.Beginx()
+func (p *TopicUsecase) Update(c context.Context, ctx *biz.BizContext, topicID int64, req *models.UpdateTopicReq) (err error) {
+	tx, err := p.Node.Beginx(c)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
 	}
 	defer tx.Rollback()
 
-	item, exist, err := p.TopicRepository.GetByID(tx, topicID)
+	item, exist, err := p.TopicRepository.GetByID(c, tx, topicID)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -450,7 +451,7 @@ func (p *TopicUsecase) Update(ctx *biz.BizContext, topicID int64, req *models.Up
 	}
 
 	if req.TopicType != nil {
-		_, exist, errInner := p.TopicTypeRepository.GetByID(tx, *req.TopicType)
+		_, exist, errInner := p.TopicTypeRepository.GetByID(c, tx, *req.TopicType)
 		if errInner != nil {
 			err = tracerr.Wrap(errInner)
 			return
@@ -482,7 +483,7 @@ func (p *TopicUsecase) Update(ctx *biz.BizContext, topicID int64, req *models.Up
 	if req.VersionName != nil && *req.VersionName != "" {
 		item.VersionName = *req.VersionName
 
-		dbItem, exist, errInner := p.TopicRepository.GetByCondition(tx, map[string]string{
+		dbItem, exist, errInner := p.TopicRepository.GetByCondition(c, tx, map[string]string{
 			"topic_set_id": strconv.FormatInt(item.TopicSetID, 10),
 			"version_name": *req.VersionName,
 		})
@@ -533,19 +534,19 @@ func (p *TopicUsecase) Update(ctx *biz.BizContext, topicID int64, req *models.Up
 		item.MuteNotification = types.BitBool(*req.MuteNotification)
 	}
 
-	err = p.TopicRepository.Update(tx, item)
+	err = p.TopicRepository.Update(c, tx, item)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
 	}
 
-	err = p.bulkSaveCategories(tx, *ctx.AccountID, item.ID, req.Categories)
+	err = p.bulkSaveCategories(c, tx, *ctx.AccountID, item.ID, req.Categories)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
 	}
 
-	err = p.bulkSaveRelations(tx, *ctx.AccountID, item.ID, req.RelatedTopics)
+	err = p.bulkSaveRelations(c, tx, *ctx.AccountID, item.ID, req.RelatedTopics)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -559,8 +560,8 @@ func (p *TopicUsecase) Update(ctx *biz.BizContext, topicID int64, req *models.Up
 	return
 }
 
-func (p *TopicUsecase) bulkSaveRelations(node sqalx.Node, accountID, topicID int64, relations []*models.RelatedTopicReq) (err error) {
-	tx, err := p.Node.Beginx()
+func (p *TopicUsecase) bulkSaveRelations(c context.Context, node sqalx.Node, accountID, topicID int64, relations []*models.RelatedTopicReq) (err error) {
+	tx, err := p.Node.Beginx(c)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -568,7 +569,7 @@ func (p *TopicUsecase) bulkSaveRelations(node sqalx.Node, accountID, topicID int
 	defer tx.Rollback()
 
 	for _, v := range relations {
-		relation, exist, errInner := p.TopicRelationRepository.GetByCondition(tx, map[string]string{
+		relation, exist, errInner := p.TopicRelationRepository.GetByCondition(c, tx, map[string]string{
 			"from_topic_id": strconv.FormatInt(topicID, 10),
 			"top_topic_id":  strconv.FormatInt(v.TopicID, 10),
 		})
@@ -579,7 +580,7 @@ func (p *TopicUsecase) bulkSaveRelations(node sqalx.Node, accountID, topicID int
 
 		if exist {
 			relation.Relation = v.Type
-			errInner = p.TopicRelationRepository.Update(tx, relation)
+			errInner = p.TopicRelationRepository.Update(c, tx, relation)
 			if errInner != nil {
 				err = tracerr.Wrap(errInner)
 				return
@@ -596,7 +597,7 @@ func (p *TopicUsecase) bulkSaveRelations(node sqalx.Node, accountID, topicID int
 				ToTopicID:   v.TopicID,
 				Relation:    v.Type,
 			}
-			errInner = p.TopicRelationRepository.Insert(tx, item)
+			errInner = p.TopicRelationRepository.Insert(c, tx, item)
 			if errInner != nil {
 				err = tracerr.Wrap(errInner)
 				return
@@ -612,8 +613,8 @@ func (p *TopicUsecase) bulkSaveRelations(node sqalx.Node, accountID, topicID int
 	return
 }
 
-func (p *TopicUsecase) bulkCreateMembers(node sqalx.Node, accountID, topicID int64, req *models.CreateTopicReq) (err error) {
-	tx, err := p.Node.Beginx()
+func (p *TopicUsecase) bulkCreateMembers(c context.Context, node sqalx.Node, accountID, topicID int64, req *models.CreateTopicReq) (err error) {
+	tx, err := p.Node.Beginx(c)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -637,7 +638,7 @@ func (p *TopicUsecase) bulkCreateMembers(node sqalx.Node, accountID, topicID int
 			return
 		}
 
-		member, exist, errInner := p.TopicMemberRepository.GetByCondition(tx, map[string]string{
+		member, exist, errInner := p.TopicMemberRepository.GetByCondition(c, tx, map[string]string{
 			"topic_id":   strconv.FormatInt(topicID, 10),
 			"account_id": strconv.FormatInt(v.AccountID, 10),
 		})
@@ -648,7 +649,7 @@ func (p *TopicUsecase) bulkCreateMembers(node sqalx.Node, accountID, topicID int
 
 		if exist {
 			member.Role = v.Role
-			errInner = p.TopicMemberRepository.Update(tx, member)
+			errInner = p.TopicMemberRepository.Update(c, tx, member)
 			if errInner != nil {
 				err = tracerr.Wrap(errInner)
 				return
@@ -665,13 +666,13 @@ func (p *TopicUsecase) bulkCreateMembers(node sqalx.Node, accountID, topicID int
 				Role:      v.Role,
 				TopicID:   topicID,
 			}
-			errInner = p.TopicMemberRepository.Insert(tx, item)
+			errInner = p.TopicMemberRepository.Insert(c, tx, item)
 			if errInner != nil {
 				err = tracerr.Wrap(errInner)
 				return
 			}
 
-			errInner = p.followTopic(tx, topicID, v.AccountID)
+			errInner = p.followTopic(c, tx, topicID, v.AccountID)
 			if errInner != nil {
 				err = tracerr.Wrap(errInner)
 				return
@@ -693,13 +694,13 @@ func (p *TopicUsecase) bulkCreateMembers(node sqalx.Node, accountID, topicID int
 			Role:      models.MemberRoleOwner,
 			TopicID:   topicID,
 		}
-		errInner = p.TopicMemberRepository.Insert(tx, item)
+		errInner = p.TopicMemberRepository.Insert(c, tx, item)
 		if errInner != nil {
 			err = tracerr.Wrap(errInner)
 			return
 		}
 
-		errInner = p.followTopic(tx, topicID, accountID)
+		errInner = p.followTopic(c, tx, topicID, accountID)
 		if errInner != nil {
 			err = tracerr.Wrap(errInner)
 			return
@@ -714,7 +715,7 @@ func (p *TopicUsecase) bulkCreateMembers(node sqalx.Node, accountID, topicID int
 	return
 }
 
-func (p *TopicUsecase) followTopic(node sqalx.Node, topicID, accountID int64) (err error) {
+func (p *TopicUsecase) followTopic(c context.Context, node sqalx.Node, topicID, accountID int64) (err error) {
 	id, err := gid.NextID()
 	if err != nil {
 		err = tracerr.Wrap(err)
@@ -726,7 +727,7 @@ func (p *TopicUsecase) followTopic(node sqalx.Node, topicID, accountID int64) (e
 		FollowersID: accountID,
 	}
 
-	err = p.TopicFollowerRepository.Insert(node, follower)
+	err = p.TopicFollowerRepository.Insert(c, node, follower)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -735,8 +736,8 @@ func (p *TopicUsecase) followTopic(node sqalx.Node, topicID, accountID int64) (e
 	return
 }
 
-func (p *TopicUsecase) bulkSaveCategories(node sqalx.Node, accountID int64, topicID int64, categories []*models.TopicCategoryParentItem) (err error) {
-	tx, err := p.Node.Beginx()
+func (p *TopicUsecase) bulkSaveCategories(c context.Context, node sqalx.Node, accountID int64, topicID int64, categories []*models.TopicCategoryParentItem) (err error) {
+	tx, err := p.Node.Beginx(c)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -744,7 +745,7 @@ func (p *TopicUsecase) bulkSaveCategories(node sqalx.Node, accountID int64, topi
 	defer tx.Rollback()
 
 	dicMap := make(map[int64]bool)
-	items, err := p.TopicCategoryRepository.GetAllByCondition(tx, map[string]string{
+	items, err := p.TopicCategoryRepository.GetAllByCondition(c, tx, map[string]string{
 		"topic_id": strconv.FormatInt(topicID, 10),
 	})
 	for _, v := range items {
@@ -759,7 +760,7 @@ func (p *TopicUsecase) bulkSaveCategories(node sqalx.Node, accountID int64, topi
 			// exist in db
 			if _, ok := dicMap[*parent.ID]; ok {
 				// update record
-				item, _, errInner := p.TopicCategoryRepository.GetByID(tx, *parent.ID)
+				item, _, errInner := p.TopicCategoryRepository.GetByID(c, tx, *parent.ID)
 				if errInner != nil {
 					err = tracerr.Wrap(errInner)
 					return
@@ -768,7 +769,7 @@ func (p *TopicUsecase) bulkSaveCategories(node sqalx.Node, accountID int64, topi
 				item.Name = parent.Name
 				item.Seq = parent.Seq
 
-				errInner = p.TopicCategoryRepository.Update(tx, item)
+				errInner = p.TopicCategoryRepository.Update(c, tx, item)
 				if errInner != nil {
 					err = tracerr.Wrap(errInner)
 					return
@@ -796,7 +797,7 @@ func (p *TopicUsecase) bulkSaveCategories(node sqalx.Node, accountID int64, topi
 				CreatedBy: accountID,
 			}
 
-			errInner = p.TopicCategoryRepository.Insert(tx, item)
+			errInner = p.TopicCategoryRepository.Insert(c, tx, item)
 			if errInner != nil {
 				err = tracerr.Wrap(errInner)
 				return
@@ -809,7 +810,7 @@ func (p *TopicUsecase) bulkSaveCategories(node sqalx.Node, accountID int64, topi
 				// exist in db
 				if _, ok := dicMap[*child.ID]; ok {
 					// update record
-					item, _, errInner := p.TopicCategoryRepository.GetByID(tx, *child.ID)
+					item, _, errInner := p.TopicCategoryRepository.GetByID(c, tx, *child.ID)
 					if errInner != nil {
 						err = tracerr.Wrap(errInner)
 						return
@@ -819,7 +820,7 @@ func (p *TopicUsecase) bulkSaveCategories(node sqalx.Node, accountID int64, topi
 					item.Seq = child.Seq
 					item.ParentID = parentID
 
-					errInner = p.TopicCategoryRepository.Update(tx, item)
+					errInner = p.TopicCategoryRepository.Update(c, tx, item)
 					if errInner != nil {
 						err = tracerr.Wrap(errInner)
 						return
@@ -845,7 +846,7 @@ func (p *TopicUsecase) bulkSaveCategories(node sqalx.Node, accountID int64, topi
 					CreatedBy: accountID,
 				}
 
-				errInner = p.TopicCategoryRepository.Insert(tx, item)
+				errInner = p.TopicCategoryRepository.Insert(c, tx, item)
 				if errInner != nil {
 					err = tracerr.Wrap(errInner)
 					return
@@ -862,8 +863,8 @@ func (p *TopicUsecase) bulkSaveCategories(node sqalx.Node, accountID int64, topi
 	return
 }
 
-func (p *TopicUsecase) getCategoriesHierarchyOfAll(node sqalx.Node, topicID int64) (items []*models.TopicCategoryParentItem, err error) {
-	parents, err := p.TopicCategoryRepository.GetAllByCondition(node, map[string]string{
+func (p *TopicUsecase) getCategoriesHierarchyOfAll(c context.Context, node sqalx.Node, topicID int64) (items []*models.TopicCategoryParentItem, err error) {
+	parents, err := p.TopicCategoryRepository.GetAllByCondition(c, node, map[string]string{
 		"topic_id":  strconv.FormatInt(topicID, 10),
 		"parent_id": "0",
 	})
@@ -883,7 +884,7 @@ func (p *TopicUsecase) getCategoriesHierarchyOfAll(node sqalx.Node, topicID int6
 			Children: make([]*models.TopicCategoryChildItem, 0),
 		}
 
-		children, errInner := p.TopicCategoryRepository.GetAllByCondition(node, map[string]string{
+		children, errInner := p.TopicCategoryRepository.GetAllByCondition(c, node, map[string]string{
 			"topic_id":  strconv.FormatInt(topicID, 10),
 			"parent_id": strconv.FormatInt(v.ID, 10),
 		})
@@ -909,19 +910,19 @@ func (p *TopicUsecase) getCategoriesHierarchyOfAll(node sqalx.Node, topicID int6
 
 }
 
-func (p *TopicUsecase) GetTopicVersions(ctx *biz.BizContext, topicSetID int64) (items []*models.TopicVersion, err error) {
-	return p.TopicRepository.GetTopicVersions(p.Node, topicSetID)
+func (p *TopicUsecase) GetTopicVersions(c context.Context, ctx *biz.BizContext, topicSetID int64) (items []*models.TopicVersion, err error) {
+	return p.TopicRepository.GetTopicVersions(c, p.Node, topicSetID)
 }
 
-func (p *TopicUsecase) BulkSaveMembers(ctx *biz.BizContext, topicID int64, req *models.BatchSavedTopicMemberReq) (err error) {
-	tx, err := p.Node.Beginx()
+func (p *TopicUsecase) BulkSaveMembers(c context.Context, ctx *biz.BizContext, topicID int64, req *models.BatchSavedTopicMemberReq) (err error) {
+	tx, err := p.Node.Beginx(c)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
 	}
 	defer tx.Rollback()
 
-	_, exist, err := p.TopicRepository.GetByID(p.Node, topicID)
+	_, exist, err := p.TopicRepository.GetByID(c, p.Node, topicID)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -935,7 +936,7 @@ func (p *TopicUsecase) BulkSaveMembers(ctx *biz.BizContext, topicID int64, req *
 		if v.Role == models.MemberRoleOwner {
 			continue
 		}
-		member, exist, errInner := p.TopicMemberRepository.GetByCondition(tx, map[string]string{
+		member, exist, errInner := p.TopicMemberRepository.GetByCondition(c, tx, map[string]string{
 			"topic_id":   strconv.FormatInt(topicID, 10),
 			"account_id": strconv.FormatInt(v.AccountID, 10),
 		})
@@ -961,13 +962,13 @@ func (p *TopicUsecase) BulkSaveMembers(ctx *biz.BizContext, topicID int64, req *
 				Role:      v.Role,
 				TopicID:   topicID,
 			}
-			errInner = p.TopicMemberRepository.Insert(tx, item)
+			errInner = p.TopicMemberRepository.Insert(c, tx, item)
 			if errInner != nil {
 				err = tracerr.Wrap(errInner)
 				return
 			}
 
-			errInner = p.followTopic(tx, topicID, v.AccountID)
+			errInner = p.followTopic(c, tx, topicID, v.AccountID)
 			if errInner != nil {
 				err = tracerr.Wrap(errInner)
 				return
@@ -979,7 +980,7 @@ func (p *TopicUsecase) BulkSaveMembers(ctx *biz.BizContext, topicID int64, req *
 				continue
 			}
 			member.Role = v.Role
-			errInner = p.TopicMemberRepository.Update(tx, member)
+			errInner = p.TopicMemberRepository.Update(c, tx, member)
 			if errInner != nil {
 				err = tracerr.Wrap(errInner)
 				return
@@ -989,7 +990,7 @@ func (p *TopicUsecase) BulkSaveMembers(ctx *biz.BizContext, topicID int64, req *
 			if !exist {
 				continue
 			}
-			errInner = p.TopicMemberRepository.Delete(tx, member.ID)
+			errInner = p.TopicMemberRepository.Delete(c, tx, member.ID)
 			if errInner != nil {
 				err = tracerr.Wrap(errInner)
 				return
@@ -1006,8 +1007,8 @@ func (p *TopicUsecase) BulkSaveMembers(ctx *biz.BizContext, topicID int64, req *
 	return
 }
 
-func (p *TopicUsecase) GetAllTopicTypes(ctx *biz.BizContext) (items []*models.TopicType, err error) {
-	data, err := p.TopicTypeRepository.GetAll(p.Node)
+func (p *TopicUsecase) GetAllTopicTypes(c context.Context, ctx *biz.BizContext) (items []*models.TopicType, err error) {
+	data, err := p.TopicTypeRepository.GetAll(c, p.Node)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return

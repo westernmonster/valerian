@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"context"
 	"time"
 
 	"valerian/library/database/sqalx"
@@ -30,36 +31,36 @@ type ValcodeUsecase struct {
 	}
 	ValcodeRepository interface {
 		// GetAllByCondition get records by condition
-		GetAllByCondition(node sqalx.Node, cond map[string]string) (items []*repo.Valcode, err error)
+		GetAllByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (items []*repo.Valcode, err error)
 		// GetByID get record by ID
-		GetByID(node sqalx.Node, id int64) (item *repo.Valcode, exist bool, err error)
+		GetByID(ctx context.Context, node sqalx.Node, id int64) (item *repo.Valcode, exist bool, err error)
 
 		// GetByCondition get record by condition
-		GetByCondition(node sqalx.Node, cond map[string]string) (item *repo.Valcode, exist bool, err error)
+		GetByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (item *repo.Valcode, exist bool, err error)
 
 		// HasSentRecordsInDuration determine current identity has sent records in specified duration
-		HasSentRecordsInDuration(node sqalx.Node, identity string, codeType int, duration time.Duration) (has bool, err error)
+		HasSentRecordsInDuration(ctx context.Context, node sqalx.Node, identity string, codeType int, duration time.Duration) (has bool, err error)
 
 		// Insert insert a new record
-		Insert(node sqalx.Node, item *repo.Valcode) (err error)
+		Insert(ctx context.Context, node sqalx.Node, item *repo.Valcode) (err error)
 		// Update update a exist record
-		Update(node sqalx.Node, item *repo.Valcode) (err error)
+		Update(ctx context.Context, node sqalx.Node, item *repo.Valcode) (err error)
 		// Delete logic delete a exist record
-		Delete(node sqalx.Node, id int64) (err error)
+		Delete(ctx context.Context, node sqalx.Node, id int64) (err error)
 		// BatchDelete logic batch delete records
-		BatchDelete(node sqalx.Node, ids []int64) (err error)
+		BatchDelete(ctx context.Context, node sqalx.Node, ids []int64) (err error)
 	}
 }
 
-func (p *ValcodeUsecase) RequestEmailValcode(ctx *biz.BizContext, req *models.RequestEmailValcodeReq) (createdTime int64, err error) {
-	tx, err := p.Node.Beginx()
+func (p *ValcodeUsecase) RequestEmailValcode(c context.Context, ctx *biz.BizContext, req *models.RequestEmailValcodeReq) (createdTime int64, err error) {
+	tx, err := p.Node.Beginx(c)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
 	}
 	defer tx.Rollback()
 
-	has, err := p.ValcodeRepository.HasSentRecordsInDuration(tx, req.Email, req.CodeType, models.ValcodeSpan)
+	has, err := p.ValcodeRepository.HasSentRecordsInDuration(c, tx, req.Email, req.CodeType, models.ValcodeSpan)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -103,7 +104,7 @@ func (p *ValcodeUsecase) RequestEmailValcode(ctx *biz.BizContext, req *models.Re
 		Identity: req.Email,
 	}
 
-	err = p.ValcodeRepository.Insert(tx, item)
+	err = p.ValcodeRepository.Insert(c, tx, item)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -119,8 +120,8 @@ func (p *ValcodeUsecase) RequestEmailValcode(ctx *biz.BizContext, req *models.Re
 	return
 }
 
-func (p *ValcodeUsecase) RequestMobileValcode(ctx *biz.BizContext, req *models.RequestMobileValcodeReq) (createdTime int64, err error) {
-	tx, err := p.Node.Beginx()
+func (p *ValcodeUsecase) RequestMobileValcode(c context.Context, ctx *biz.BizContext, req *models.RequestMobileValcodeReq) (createdTime int64, err error) {
+	tx, err := p.Node.Beginx(c)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -128,7 +129,7 @@ func (p *ValcodeUsecase) RequestMobileValcode(ctx *biz.BizContext, req *models.R
 	defer tx.Rollback()
 
 	mobile := req.Prefix + req.Mobile
-	has, err := p.ValcodeRepository.HasSentRecordsInDuration(tx, mobile, req.CodeType, models.ValcodeSpan)
+	has, err := p.ValcodeRepository.HasSentRecordsInDuration(c, tx, mobile, req.CodeType, models.ValcodeSpan)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -183,7 +184,7 @@ func (p *ValcodeUsecase) RequestMobileValcode(ctx *biz.BizContext, req *models.R
 		Identity: mobile,
 	}
 
-	err = p.ValcodeRepository.Insert(tx, item)
+	err = p.ValcodeRepository.Insert(c, tx, item)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return

@@ -1,10 +1,10 @@
 package http
 
 import (
+	"context"
 	"net/http"
 
 	"valerian/library/database/sqalx"
-	"valerian/library/database/sqlx"
 
 	"github.com/gin-gonic/gin"
 
@@ -19,17 +19,16 @@ type AccountCtrl struct {
 	infrastructure.BaseCtrl
 
 	AccountUsecase interface {
-		ChangePassword(bizCtx *biz.BizContext, req *models.ChangePasswordReq) (err error)
-		UpdateProfile(bizCtx *biz.BizContext, req *models.UpdateProfileReq) (err error)
-		GetProfile(bizCtx *biz.BizContext) (profile *models.ProfileResp, err error)
+		ChangePassword(c context.Context, ctx *biz.BizContext, req *models.ChangePasswordReq) (err error)
+		UpdateProfile(c context.Context, ctx *biz.BizContext, req *models.UpdateProfileReq) (err error)
+		GetProfile(c context.Context, ctx *biz.BizContext) (profile *models.ProfileResp, err error)
 	}
 }
 
-func NewAccountCtrl(db *sqlx.DB, node sqalx.Node) *AccountCtrl {
+func NewAccountCtrl(node sqalx.Node) *AccountCtrl {
 	return &AccountCtrl{
 		AccountUsecase: &usecase.AccountUsecase{
 			Node:              node,
-			DB:                db,
 			AccountRepository: &repo.AccountRepository{},
 			AreaRepository:    &repo.AreaRepository{},
 		},
@@ -69,7 +68,7 @@ func (p *AccountCtrl) ChangePassword(ctx *gin.Context) {
 		return
 	}
 
-	err := p.AccountUsecase.ChangePassword(p.GetBizContext(ctx), req)
+	err := p.AccountUsecase.ChangePassword(ctx.Request.Context(), p.GetBizContext(ctx), req)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return
@@ -104,7 +103,7 @@ func (p *AccountCtrl) UpdateProfile(ctx *gin.Context) {
 		return
 	}
 
-	err := p.AccountUsecase.UpdateProfile(p.GetBizContext(ctx), req)
+	err := p.AccountUsecase.UpdateProfile(ctx.Request.Context(), p.GetBizContext(ctx), req)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return
@@ -128,7 +127,7 @@ func (p *AccountCtrl) UpdateProfile(ctx *gin.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /me [get]
 func (p *AccountCtrl) GetProfile(ctx *gin.Context) {
-	item, err := p.AccountUsecase.GetProfile(p.GetBizContext(ctx))
+	item, err := p.AccountUsecase.GetProfile(ctx.Request.Context(), p.GetBizContext(ctx))
 	if err != nil {
 		p.HandleError(ctx, err)
 		return

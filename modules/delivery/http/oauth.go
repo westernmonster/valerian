@@ -1,6 +1,7 @@
 package http
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -19,18 +20,18 @@ type AuthCtrl struct {
 	infrastructure.BaseCtrl
 
 	OauthUsecase interface {
-		GetByID(bizCtx *biz.BizContext, userID int64) (item *repo.Account, err error)
-		EmailLogin(ctx *biz.BizContext, req *models.EmailLoginReq, ip string) (loginResult *models.LoginResult, err error)
-		MobileLogin(ctx *biz.BizContext, req *models.MobileLoginReq, ip string) (loginResult *models.LoginResult, err error)
-		DigitLogin(ctx *biz.BizContext, req *models.DigitLoginReq, ip string) (loginResult *models.LoginResult, err error)
-		EmailRegister(bizCtx *biz.BizContext, req *models.EmailRegisterReq, ip string) (accountID int64, err error)
-		MobileRegister(bizCtx *biz.BizContext, req *models.MobileRegisterReq, ip string) (accountID int64, err error)
-		ForgetPassword(bizCtx *biz.BizContext, req *models.ForgetPasswordReq) (sessionID int64, err error)
-		ResetPassword(bizCtx *biz.BizContext, req *models.ResetPasswordReq) (err error)
+		GetByID(c context.Context, ctx *biz.BizContext, userID int64) (item *repo.Account, err error)
+		EmailLogin(c context.Context, ctx *biz.BizContext, req *models.EmailLoginReq, ip string) (loginResult *models.LoginResult, err error)
+		MobileLogin(c context.Context, ctx *biz.BizContext, req *models.MobileLoginReq, ip string) (loginResult *models.LoginResult, err error)
+		DigitLogin(c context.Context, ctx *biz.BizContext, req *models.DigitLoginReq, ip string) (loginResult *models.LoginResult, err error)
+		EmailRegister(c context.Context, ctx *biz.BizContext, req *models.EmailRegisterReq, ip string) (accountID int64, err error)
+		MobileRegister(c context.Context, ctx *biz.BizContext, req *models.MobileRegisterReq, ip string) (accountID int64, err error)
+		ForgetPassword(c context.Context, ctx *biz.BizContext, req *models.ForgetPasswordReq) (sessionID int64, err error)
+		ResetPassword(c context.Context, ctx *biz.BizContext, req *models.ResetPasswordReq) (err error)
 	}
 
 	AccountUsecase interface {
-		GetProfileByID(accountID int64) (profile *models.ProfileResp, err error)
+		GetProfileByID(c context.Context, accountID int64) (profile *models.ProfileResp, err error)
 	}
 }
 
@@ -66,13 +67,13 @@ func (p *AuthCtrl) EmailLogin(ctx *gin.Context) {
 	}
 
 	ip := ctx.ClientIP()
-	result, err := p.OauthUsecase.EmailLogin(p.GetBizContext(ctx), req, ip)
+	result, err := p.OauthUsecase.EmailLogin(ctx.Request.Context(), p.GetBizContext(ctx), req, ip)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return
 	}
 
-	profile, err := p.AccountUsecase.GetProfileByID(result.AccountID)
+	profile, err := p.AccountUsecase.GetProfileByID(ctx.Request.Context(), result.AccountID)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return
@@ -124,13 +125,13 @@ func (p *AuthCtrl) MobileLogin(ctx *gin.Context) {
 
 	ip := ctx.ClientIP()
 	bizCtx := p.GetBizContext(ctx)
-	result, err := p.OauthUsecase.MobileLogin(bizCtx, req, ip)
+	result, err := p.OauthUsecase.MobileLogin(ctx.Request.Context(), bizCtx, req, ip)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return
 	}
 
-	profile, err := p.AccountUsecase.GetProfileByID(result.AccountID)
+	profile, err := p.AccountUsecase.GetProfileByID(ctx.Request.Context(), result.AccountID)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return
@@ -182,13 +183,13 @@ func (p *AuthCtrl) DigitLogin(ctx *gin.Context) {
 
 	ip := ctx.ClientIP()
 	bizCtx := p.GetBizContext(ctx)
-	result, err := p.OauthUsecase.DigitLogin(bizCtx, req, ip)
+	result, err := p.OauthUsecase.DigitLogin(ctx.Request.Context(), bizCtx, req, ip)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return
 	}
 
-	profile, err := p.AccountUsecase.GetProfileByID(result.AccountID)
+	profile, err := p.AccountUsecase.GetProfileByID(ctx.Request.Context(), result.AccountID)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return
@@ -239,13 +240,13 @@ func (p *AuthCtrl) EmailRegister(ctx *gin.Context) {
 	}
 
 	ip := ctx.ClientIP()
-	_, err := p.OauthUsecase.EmailRegister(p.GetBizContext(ctx), req, ip)
+	_, err := p.OauthUsecase.EmailRegister(ctx.Request.Context(), p.GetBizContext(ctx), req, ip)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return
 	}
 
-	result, err := p.OauthUsecase.EmailLogin(p.GetBizContext(ctx), &models.EmailLoginReq{
+	result, err := p.OauthUsecase.EmailLogin(ctx.Request.Context(), p.GetBizContext(ctx), &models.EmailLoginReq{
 		Source:   req.Source,
 		Email:    req.Email,
 		Password: req.Password,
@@ -256,7 +257,7 @@ func (p *AuthCtrl) EmailRegister(ctx *gin.Context) {
 		return
 	}
 
-	profile, err := p.AccountUsecase.GetProfileByID(result.AccountID)
+	profile, err := p.AccountUsecase.GetProfileByID(ctx.Request.Context(), result.AccountID)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return
@@ -307,13 +308,13 @@ func (p *AuthCtrl) MobileRegister(ctx *gin.Context) {
 	}
 
 	ip := ctx.ClientIP()
-	_, err := p.OauthUsecase.MobileRegister(p.GetBizContext(ctx), req, ip)
+	_, err := p.OauthUsecase.MobileRegister(ctx.Request.Context(), p.GetBizContext(ctx), req, ip)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return
 	}
 
-	result, err := p.OauthUsecase.MobileLogin(p.GetBizContext(ctx), &models.MobileLoginReq{
+	result, err := p.OauthUsecase.MobileLogin(ctx.Request.Context(), p.GetBizContext(ctx), &models.MobileLoginReq{
 		Source:   req.Source,
 		Mobile:   req.Mobile,
 		Password: req.Password,
@@ -325,7 +326,7 @@ func (p *AuthCtrl) MobileRegister(ctx *gin.Context) {
 		return
 	}
 
-	profile, err := p.AccountUsecase.GetProfileByID(result.AccountID)
+	profile, err := p.AccountUsecase.GetProfileByID(ctx.Request.Context(), result.AccountID)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return
@@ -375,7 +376,7 @@ func (p *AuthCtrl) ForgetPassword(ctx *gin.Context) {
 		return
 	}
 
-	sessionID, err := p.OauthUsecase.ForgetPassword(p.GetBizContext(ctx), req)
+	sessionID, err := p.OauthUsecase.ForgetPassword(ctx.Request.Context(), p.GetBizContext(ctx), req)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return
@@ -419,7 +420,7 @@ func (p *AuthCtrl) ResetPassword(ctx *gin.Context) {
 		return
 	}
 
-	err := p.OauthUsecase.ResetPassword(p.GetBizContext(ctx), req)
+	err := p.OauthUsecase.ResetPassword(ctx.Request.Context(), p.GetBizContext(ctx), req)
 	if err != nil {
 		switch err.(type) {
 		case *berr.BizError:

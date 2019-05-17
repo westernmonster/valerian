@@ -3,6 +3,7 @@ package sqalx
 import (
 	"context"
 	"database/sql"
+	"go-common/library/log"
 	"strings"
 	"sync/atomic"
 	"time"
@@ -39,7 +40,7 @@ var (
 	ErrIncompatibleOption = errors.New("incompatible option")
 )
 
-func NewMySQL(c *Config) (Node, error) {
+func NewMySQL(c *Config) Node {
 	if c.QueryTimeout == 0 || c.ExecTimeout == 0 || c.TranTimeout == 0 {
 		panic("mysql must be set query/execute/transction timeout")
 	}
@@ -49,7 +50,8 @@ func NewMySQL(c *Config) (Node, error) {
 
 	w, err := connect(c, c.DSN, brk)
 	if err != nil {
-		return nil, err
+		log.Error("open mysql error(%v)", err)
+		panic(err)
 	}
 
 	rs := make([]*sqlx.DB, 0, len(c.ReadDSN))
@@ -57,7 +59,8 @@ func NewMySQL(c *Config) (Node, error) {
 		brk := brkGroup.Get(parseDSNAddr(rd))
 		d, err := connect(c, rd, brk)
 		if err != nil {
-			return nil, err
+			log.Error("open mysql error(%v)", err)
+			panic(err)
 		}
 		rs = append(rs, d)
 	}
@@ -67,9 +70,10 @@ func NewMySQL(c *Config) (Node, error) {
 		read:   rs,
 		master: w,
 		Driver: w,
+		Config: c,
 	}
 
-	return &n, nil
+	return &n
 }
 
 func connect(c *Config, dataSourceName string, breaker breaker.Breaker) (db *sqlx.DB, err error) {
@@ -91,7 +95,7 @@ type Node interface {
 	// Close the underlying sqlx connection.
 	Close() error
 	// Begin a new transaction.
-	Beginx() (Node, error)
+	Beginx(c context.Context) (Node, error)
 	// Rollback the associated transaction.
 	Rollback() error
 	// Commit the assiociated transaction.
@@ -127,6 +131,7 @@ type Driver interface {
 
 type node struct {
 	Driver Driver
+	Config *Config
 	write  *sqlx.DB
 	read   []*sqlx.DB
 	idx    int64
@@ -135,25 +140,13 @@ type node struct {
 	nested bool
 }
 
-func (n *node) Close() (err error) {
-	if e := n.write.Close(); e != nil {
-		err = errors.WithStack(e)
-	}
-	for _, rd := range n.read {
-		if e := rd.Close(); e != nil {
-			err = errors.WithStack(e)
-		}
-	}
-	return
-}
-
-func (n node) Beginx() (Node, error) {
+func (n node) Beginx(c context.Context) (Node, error) {
 	var err error
 
 	switch {
 	case n.tx == nil:
 		// new actual transaction
-		n.tx, err = n.write.Beginx()
+		n.tx, err = n.write.Beginx(c)
 		n.Driver = n.tx
 	default:
 		// already in a transaction: reusing current transaction
@@ -228,6 +221,20 @@ func (n *node) Ping(c context.Context) (err error) {
 	return
 }
 
+func (n *node) Close() (err error) {
+	if err = n.write.Close(); err != nil {
+		err = errors.WithStack(err)
+		return
+	}
+	for _, rd := range n.read {
+		if e := rd.Close(); e != nil {
+			err = errors.WithStack(e)
+			return
+		}
+	}
+	return
+}
+
 func (n *node) SelectContext(ctx context.Context, dest interface{}, query string, args ...interface{}) (err error) {
 	// 事务默认write库执行，如果没有事务，则从随机从只读库中读取
 	if n.tx == nil {
@@ -264,11 +271,20 @@ func (n *node) GetContext(ctx context.Context, dest interface{}, query string, a
 }
 
 func (n *node) PrepareNamedContext(ctx context.Context, query string) (stmt *sqlx.NamedStmt, err error) {
-	return
+	if n.tx != nil {
+		return n.Driver.PrepareNamedContext(ctx, query)
+	}
+
+	return n.write.PrepareNamedContext(ctx, query)
 }
 
 func (n *node) NamedExecContext(ctx context.Context, query string, arg interface{}) (result sql.Result, err error) {
-	return
+	if n.tx != nil {
+		return n.Driver.NamedExecContext(ctx, query, arg)
+	}
+
+	return n.write.NamedExecContext(ctx, query, arg)
+
 }
 
 func (n *node) readIndex() int {

@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"context"
 	"strconv"
 
 	"valerian/library/cloudauth"
@@ -22,36 +23,36 @@ type IDCertificationUsecase struct {
 	CloudAuthClient           *cloudauth.CloudAuthClient
 	IDCertificationRepository interface {
 		// QueryListPaged get paged records by condition
-		QueryListPaged(node sqalx.Node, page int, pageSize int, cond map[string]string) (total int, items []*repo.IDCertification, err error)
+		QueryListPaged(ctx context.Context, node sqalx.Node, page int, pageSize int, cond map[string]string) (total int, items []*repo.IDCertification, err error)
 		// GetAll get all records
-		GetAll(node sqalx.Node) (items []*repo.IDCertification, err error)
+		GetAll(ctx context.Context, node sqalx.Node) (items []*repo.IDCertification, err error)
 		// GetAllByCondition get records by condition
-		GetAllByCondition(node sqalx.Node, cond map[string]string) (items []*repo.IDCertification, err error)
+		GetAllByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (items []*repo.IDCertification, err error)
 		// GetByID get a record by ID
-		GetByID(node sqalx.Node, id int64) (item *repo.IDCertification, exist bool, err error)
+		GetByID(ctx context.Context, node sqalx.Node, id int64) (item *repo.IDCertification, exist bool, err error)
 		// GetByCondition get a record by condition
-		GetByCondition(node sqalx.Node, cond map[string]string) (item *repo.IDCertification, exist bool, err error)
+		GetByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (item *repo.IDCertification, exist bool, err error)
 		// Insert insert a new record
-		Insert(node sqalx.Node, item *repo.IDCertification) (err error)
+		Insert(ctx context.Context, node sqalx.Node, item *repo.IDCertification) (err error)
 		// Update update a exist record
-		Update(node sqalx.Node, item *repo.IDCertification) (err error)
+		Update(ctx context.Context, node sqalx.Node, item *repo.IDCertification) (err error)
 		// Delete logic delete a exist record
-		Delete(node sqalx.Node, id int64) (err error)
+		Delete(ctx context.Context, node sqalx.Node, id int64) (err error)
 		// BatchDelete logic batch delete records
-		BatchDelete(node sqalx.Node, ids []int64) (err error)
+		BatchDelete(ctx context.Context, node sqalx.Node, ids []int64) (err error)
 	}
 }
 
 // Request 发起认证请求，获取 Token
-func (p *IDCertificationUsecase) Request(ctx *biz.BizContext) (token cloudauth.VerifyTokenData, err error) {
-	tx, err := p.Node.Beginx()
+func (p *IDCertificationUsecase) Request(c context.Context, ctx *biz.BizContext) (token cloudauth.VerifyTokenData, err error) {
+	tx, err := p.Node.Beginx(c)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
 	}
 	defer tx.Rollback()
 
-	item, exist, err := p.IDCertificationRepository.GetByCondition(tx, map[string]string{
+	item, exist, err := p.IDCertificationRepository.GetByCondition(c, tx, map[string]string{
 		"account_id": strconv.FormatInt(*ctx.AccountID, 10),
 	})
 	if err != nil {
@@ -71,7 +72,7 @@ func (p *IDCertificationUsecase) Request(ctx *biz.BizContext) (token cloudauth.V
 			Status:    models.IDCertificationUncommitted,
 		}
 
-		errInner = p.IDCertificationRepository.Insert(tx, item)
+		errInner = p.IDCertificationRepository.Insert(c, tx, item)
 		if errInner != nil {
 			err = tracerr.Wrap(errInner)
 			return
@@ -97,15 +98,15 @@ func (p *IDCertificationUsecase) Request(ctx *biz.BizContext) (token cloudauth.V
 }
 
 // 查询认证状态
-func (p *IDCertificationUsecase) GetStatus(ctx *biz.BizContext) (status int, err error) {
-	tx, err := p.Node.Beginx()
+func (p *IDCertificationUsecase) GetStatus(c context.Context, ctx *biz.BizContext) (status int, err error) {
+	tx, err := p.Node.Beginx(c)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
 	}
 	defer tx.Rollback()
 
-	item, exist, err := p.IDCertificationRepository.GetByCondition(tx, map[string]string{
+	item, exist, err := p.IDCertificationRepository.GetByCondition(c, tx, map[string]string{
 		"account_id": strconv.FormatInt(*ctx.AccountID, 10),
 	})
 	if err != nil {
@@ -129,7 +130,7 @@ func (p *IDCertificationUsecase) GetStatus(ctx *biz.BizContext) (status int, err
 	item.Status = resp.Data.StatusCode
 	item.AuditConclusions = &resp.Data.AuditConclusions
 
-	err = p.IDCertificationRepository.Update(tx, item)
+	err = p.IDCertificationRepository.Update(c, tx, item)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -155,7 +156,7 @@ func (p *IDCertificationUsecase) GetStatus(ctx *biz.BizContext) (status int, err
 		item.FacePic = &material.Data.FacePic
 		item.EthnicGroup = &material.Data.EthnicGroup
 
-		errInner = p.IDCertificationRepository.Update(tx, item)
+		errInner = p.IDCertificationRepository.Update(c, tx, item)
 		if errInner != nil {
 			err = tracerr.Wrap(errInner)
 			return

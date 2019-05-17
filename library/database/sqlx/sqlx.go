@@ -337,12 +337,31 @@ func (db *DB) Get(dest interface{}, query string, args ...interface{}) error {
 // of an *sql.Tx.
 
 // Beginx begins a transaction and returns an *sqlx.Tx instead of an *sql.Tx.
-func (db *DB) Beginx() (*Tx, error) {
-	tx, err := db.DB.Begin()
-	if err != nil {
-		return nil, err
+func (db *DB) Beginx(c context.Context) (t *Tx, err error) {
+	now := time.Now()
+	span := opentracing.SpanFromContext(c)
+	if span != nil {
+		parentCtx := span.Context()
+		span = tracing.StartSpan("begin", opentracing.ChildOf(parentCtx))
+		span.SetTag("address", db.Addr)
+		defer span.Finish()
 	}
-	return &Tx{Tx: tx, driverName: db.driverName, unsafe: db.unsafe, Mapper: db.Mapper}, err
+
+	if err = db.breaker.Allow(); err != nil {
+		stats.Incr("mysql:begin", "breaker")
+		return
+	}
+
+	_, c, cancel := db.TranTimeout.Shrink(c)
+	tx, err := db.DB.BeginTx(c, nil)
+	stats.Timing("mysql:begin", int64(time.Since(now)/time.Millisecond))
+	if err != nil {
+		err = errors.WithStack(err)
+		cancel()
+		return
+	}
+
+	return &Tx{Tx: tx, span: span, driverName: db.driverName, db: db, unsafe: db.unsafe, Mapper: db.Mapper, c: c, cancel: cancel}, err
 }
 
 // Queryx queries the database and returns an *sqlx.Rows.
@@ -412,8 +431,39 @@ func (db *DB) DBPing(ctx context.Context) (err error) {
 type Tx struct {
 	*sql.Tx
 	driverName string
+	db         *DB
 	unsafe     bool
 	Mapper     *reflectx.Mapper
+	span       opentracing.Span
+	c          context.Context
+	cancel     func()
+}
+
+// Commit commits the transaction.
+func (tx *Tx) Commit() (err error) {
+	err = tx.Tx.Commit()
+	tx.cancel()
+	tx.db.onBreaker(&err)
+	if tx.span != nil {
+		tx.span.Finish()
+	}
+	if err != nil {
+		err = errors.WithStack(err)
+	}
+	return
+}
+
+func (tx *Tx) Rollback() (err error) {
+	err = tx.Tx.Commit()
+	tx.cancel()
+	tx.db.onBreaker(&err)
+	if tx.span != nil {
+		tx.span.Finish()
+	}
+	if err != nil {
+		err = errors.WithStack(err)
+	}
+	return
 }
 
 // DriverName returns the driverName used by the DB which began this transaction.

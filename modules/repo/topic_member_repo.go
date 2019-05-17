@@ -1,6 +1,7 @@
 package repo
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"time"
@@ -25,7 +26,7 @@ type TopicMember struct {
 type TopicMemberRepository struct{}
 
 // QueryListPaged get paged records by condition
-func (p *TopicMemberRepository) QueryListPaged(node sqalx.Node, page int, pageSize int, cond map[string]string) (total int, items []*TopicMember, err error) {
+func (p *TopicMemberRepository) QueryListPaged(ctx context.Context, node sqalx.Node, page int, pageSize int, cond map[string]string) (total int, items []*TopicMember, err error) {
 	offset := (page - 1) * pageSize
 	condition := make(map[string]interface{})
 	clause := ""
@@ -36,7 +37,7 @@ func (p *TopicMemberRepository) QueryListPaged(node sqalx.Node, page int, pageSi
 	sqlCount := fmt.Sprintf(box.String("QUERY_LIST_PAGED_COUNT.sql"), clause)
 	sqlSelect := fmt.Sprintf(box.String("QUERY_LIST_PAGED_DATA.sql"), clause)
 
-	stmtCount, err := node.PrepareNamed(sqlCount)
+	stmtCount, err := node.PrepareNamedContext(ctx, sqlCount)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -50,7 +51,7 @@ func (p *TopicMemberRepository) QueryListPaged(node sqalx.Node, page int, pageSi
 	condition["limit"] = pageSize
 	condition["offset"] = offset
 
-	stmtSelect, err := node.PrepareNamed(sqlSelect)
+	stmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -64,11 +65,11 @@ func (p *TopicMemberRepository) QueryListPaged(node sqalx.Node, page int, pageSi
 }
 
 // GetAll get all records
-func (p *TopicMemberRepository) GetAll(node sqalx.Node) (items []*TopicMember, err error) {
+func (p *TopicMemberRepository) GetAll(ctx context.Context, node sqalx.Node) (items []*TopicMember, err error) {
 	items = make([]*TopicMember, 0)
 	sqlSelect := packr.NewBox("./sql/topic_member").String("GET_ALL.sql")
 
-	stmtSelect, err := node.PrepareNamed(sqlSelect)
+	stmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -82,11 +83,11 @@ func (p *TopicMemberRepository) GetAll(node sqalx.Node) (items []*TopicMember, e
 }
 
 // GetAllTopicMembers
-func (p *TopicMemberRepository) GetTopicMembers(node sqalx.Node, topicID int64, limit int) (items []*models.TopicMember, err error) {
+func (p *TopicMemberRepository) GetTopicMembers(ctx context.Context, node sqalx.Node, topicID int64, limit int) (items []*models.TopicMember, err error) {
 	items = make([]*models.TopicMember, 0)
 	sqlSelect := "SELECT a.account_id, a.role, b.user_name, b.avatar FROM topic_members a LEFT JOIN accounts b ON a.account_id = b.id WHERE a.topic_id=? ORDER BY a.id DESC limit ?"
 
-	err = node.Select(&items, sqlSelect, topicID, limit)
+	err = node.SelectContext(ctx, &items, sqlSelect, topicID, limit)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -95,9 +96,9 @@ func (p *TopicMemberRepository) GetTopicMembers(node sqalx.Node, topicID int64, 
 }
 
 // GetTopicMembersCount
-func (p *TopicMemberRepository) GetTopicMembersCount(node sqalx.Node, topicID int64) (count int, err error) {
+func (p *TopicMemberRepository) GetTopicMembersCount(ctx context.Context, node sqalx.Node, topicID int64) (count int, err error) {
 	sqlCount := "SELECT COUNT(1) as count FROM topic_members a LEFT JOIN accounts b ON a.account_id = b.id WHERE a.topic_id=?"
-	err = node.Get(&count, sqlCount, topicID)
+	err = node.GetContext(ctx, &count, sqlCount, topicID)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -106,12 +107,12 @@ func (p *TopicMemberRepository) GetTopicMembersCount(node sqalx.Node, topicID in
 }
 
 // GetTopicMembersPaged
-func (p *TopicMemberRepository) GetTopicMembersPaged(node sqalx.Node, topicID int64, page, pageSize int) (count int, items []*models.TopicMember, err error) {
+func (p *TopicMemberRepository) GetTopicMembersPaged(ctx context.Context, node sqalx.Node, topicID int64, page, pageSize int) (count int, items []*models.TopicMember, err error) {
 	items = make([]*models.TopicMember, 0)
 	offset := (page - 1) * pageSize
 
 	sqlCount := "SELECT COUNT(1) as count FROM topic_members a LEFT JOIN accounts b ON a.account_id = b.id WHERE a.topic_id=?"
-	err = node.Get(&count, sqlCount, topicID)
+	err = node.GetContext(ctx, &count, sqlCount, topicID)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -119,7 +120,7 @@ func (p *TopicMemberRepository) GetTopicMembersPaged(node sqalx.Node, topicID in
 
 	sqlSelect := "SELECT a.account_id, a.role, b.user_name, b.avatar FROM topic_members a LEFT JOIN accounts b ON a.account_id = b.id WHERE a.topic_id=? ORDER BY a.id DESC limit ?,?"
 
-	err = node.Select(&items, sqlSelect, topicID, offset, pageSize)
+	err = node.SelectContext(ctx, &items, sqlSelect, topicID, offset, pageSize)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -128,7 +129,7 @@ func (p *TopicMemberRepository) GetTopicMembersPaged(node sqalx.Node, topicID in
 }
 
 // GetAllByCondition get records by condition
-func (p *TopicMemberRepository) GetAllByCondition(node sqalx.Node, cond map[string]string) (items []*TopicMember, err error) {
+func (p *TopicMemberRepository) GetAllByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (items []*TopicMember, err error) {
 	items = make([]*TopicMember, 0)
 	condition := make(map[string]interface{})
 	clause := ""
@@ -153,7 +154,7 @@ func (p *TopicMemberRepository) GetAllByCondition(node sqalx.Node, cond map[stri
 	box := packr.NewBox("./sql/topic_member")
 	sqlSelect := fmt.Sprintf(box.String("GET_ALL_BY_CONDITION.sql"), clause)
 
-	stmtSelect, err := node.PrepareNamed(sqlSelect)
+	stmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -167,11 +168,11 @@ func (p *TopicMemberRepository) GetAllByCondition(node sqalx.Node, cond map[stri
 }
 
 // GetByID get a record by ID
-func (p *TopicMemberRepository) GetByID(node sqalx.Node, id int64) (item *TopicMember, exist bool, err error) {
+func (p *TopicMemberRepository) GetByID(ctx context.Context, node sqalx.Node, id int64) (item *TopicMember, exist bool, err error) {
 	item = new(TopicMember)
 	sqlSelect := packr.NewBox("./sql/topic_member").String("GET_BY_ID.sql")
 
-	tmtSelect, err := node.PrepareNamed(sqlSelect)
+	tmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -191,7 +192,7 @@ func (p *TopicMemberRepository) GetByID(node sqalx.Node, id int64) (item *TopicM
 }
 
 // GetByCondition get a record by condition
-func (p *TopicMemberRepository) GetByCondition(node sqalx.Node, cond map[string]string) (item *TopicMember, exist bool, err error) {
+func (p *TopicMemberRepository) GetByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (item *TopicMember, exist bool, err error) {
 	item = new(TopicMember)
 	condition := make(map[string]interface{})
 	clause := ""
@@ -216,7 +217,7 @@ func (p *TopicMemberRepository) GetByCondition(node sqalx.Node, cond map[string]
 	box := packr.NewBox("./sql/topic_member")
 	sqlSelect := fmt.Sprintf(box.String("GET_BY_CONDITION.sql"), clause)
 
-	tmtSelect, err := node.PrepareNamed(sqlSelect)
+	tmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -236,13 +237,13 @@ func (p *TopicMemberRepository) GetByCondition(node sqalx.Node, cond map[string]
 }
 
 // Insert insert a new record
-func (p *TopicMemberRepository) Insert(node sqalx.Node, item *TopicMember) (err error) {
+func (p *TopicMemberRepository) Insert(ctx context.Context, node sqalx.Node, item *TopicMember) (err error) {
 	sqlInsert := packr.NewBox("./sql/topic_member").String("INSERT.sql")
 
 	item.CreatedAt = time.Now().Unix()
 	item.UpdatedAt = time.Now().Unix()
 
-	_, err = node.NamedExec(sqlInsert, item)
+	_, err = node.NamedExecContext(ctx, sqlInsert, item)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -252,12 +253,12 @@ func (p *TopicMemberRepository) Insert(node sqalx.Node, item *TopicMember) (err 
 }
 
 // Update update a exist record
-func (p *TopicMemberRepository) Update(node sqalx.Node, item *TopicMember) (err error) {
+func (p *TopicMemberRepository) Update(ctx context.Context, node sqalx.Node, item *TopicMember) (err error) {
 	sqlUpdate := packr.NewBox("./sql/topic_member").String("UPDATE.sql")
 
 	item.UpdatedAt = time.Now().Unix()
 
-	_, err = node.NamedExec(sqlUpdate, item)
+	_, err = node.NamedExecContext(ctx, sqlUpdate, item)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -267,10 +268,10 @@ func (p *TopicMemberRepository) Update(node sqalx.Node, item *TopicMember) (err 
 }
 
 // Delete logic delete a exist record
-func (p *TopicMemberRepository) Delete(node sqalx.Node, id int64) (err error) {
+func (p *TopicMemberRepository) Delete(ctx context.Context, node sqalx.Node, id int64) (err error) {
 	sqlDelete := packr.NewBox("./sql/topic_member").String("DELETE.sql")
 
-	_, err = node.NamedExec(sqlDelete, map[string]interface{}{"id": id})
+	_, err = node.NamedExecContext(ctx, sqlDelete, map[string]interface{}{"id": id})
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -280,8 +281,8 @@ func (p *TopicMemberRepository) Delete(node sqalx.Node, id int64) (err error) {
 }
 
 // BatchDelete logic batch delete records
-func (p *TopicMemberRepository) BatchDelete(node sqalx.Node, ids []int64) (err error) {
-	tx, err := node.Beginx()
+func (p *TopicMemberRepository) BatchDelete(ctx context.Context, node sqalx.Node, ids []int64) (err error) {
+	tx, err := node.Beginx(ctx)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -289,7 +290,7 @@ func (p *TopicMemberRepository) BatchDelete(node sqalx.Node, ids []int64) (err e
 
 	defer tx.Rollback()
 	for _, id := range ids {
-		errDelete := p.Delete(tx, id)
+		errDelete := p.Delete(ctx, tx, id)
 		if errDelete != nil {
 			err = tracerr.Wrap(err)
 			return

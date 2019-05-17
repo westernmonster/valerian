@@ -50,7 +50,7 @@ func (p *AreaRepository) QueryListPaged(ctx context.Context, node sqalx.Node, pa
 	condition["limit"] = pageSize
 	condition["offset"] = offset
 
-	stmtSelect, err := node.PrepareNamed(sqlSelect)
+	stmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -68,7 +68,7 @@ func (p *AreaRepository) GetAll(ctx context.Context, node sqalx.Node) (items []*
 	items = make([]*Area, 0)
 	sqlSelect := packr.NewBox("./sql/area").String("GET_ALL.sql")
 
-	stmtSelect, err := node.PrepareNamed(sqlSelect)
+	stmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -111,7 +111,7 @@ func (p *AreaRepository) GetAllByCondition(ctx context.Context, node sqalx.Node,
 	box := packr.NewBox("./sql/area")
 	sqlSelect := fmt.Sprintf(box.String("GET_ALL_BY_CONDITION.sql"), clause)
 
-	stmtSelect, err := node.PrepareNamed(sqlSelect)
+	stmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -129,7 +129,7 @@ func (p *AreaRepository) GetByID(ctx context.Context, node sqalx.Node, id int64)
 	item = new(Area)
 	sqlSelect := packr.NewBox("./sql/area").String("GET_BY_ID.sql")
 
-	tmtSelect, err := node.PrepareNamed(sqlSelect)
+	tmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -178,7 +178,7 @@ func (p *AreaRepository) GetByCondition(ctx context.Context, node sqalx.Node, co
 	box := packr.NewBox("./sql/area")
 	sqlSelect := fmt.Sprintf(box.String("GET_BY_CONDITION.sql"), clause)
 
-	tmtSelect, err := node.PrepareNamed(sqlSelect)
+	tmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -204,7 +204,7 @@ func (p *AreaRepository) Insert(ctx context.Context, node sqalx.Node, item *Area
 	item.CreatedAt = time.Now().Unix()
 	item.UpdatedAt = time.Now().Unix()
 
-	_, err = node.NamedExec(sqlInsert, item)
+	_, err = node.NamedExecContext(ctx, sqlInsert, item)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -219,7 +219,7 @@ func (p *AreaRepository) Update(ctx context.Context, node sqalx.Node, item *Area
 
 	item.UpdatedAt = time.Now().Unix()
 
-	_, err = node.NamedExec(sqlUpdate, item)
+	_, err = node.NamedExecContext(ctx, sqlUpdate, item)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -232,7 +232,7 @@ func (p *AreaRepository) Update(ctx context.Context, node sqalx.Node, item *Area
 func (p *AreaRepository) Delete(ctx context.Context, node sqalx.Node, id int64) (err error) {
 	sqlDelete := packr.NewBox("./sql/area").String("DELETE.sql")
 
-	_, err = node.NamedExec(sqlDelete, map[string]interface{}{"id": id})
+	_, err = node.NamedExecContext(ctx, sqlDelete, map[string]interface{}{"id": id})
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -243,7 +243,7 @@ func (p *AreaRepository) Delete(ctx context.Context, node sqalx.Node, id int64) 
 
 // BatchDelete logic batch delete records
 func (p *AreaRepository) BatchDelete(ctx context.Context, node sqalx.Node, ids []int64) (err error) {
-	tx, err := node.Beginx()
+	tx, err := node.Beginx(ctx)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -251,7 +251,7 @@ func (p *AreaRepository) BatchDelete(ctx context.Context, node sqalx.Node, ids [
 
 	defer tx.Rollback()
 	for _, id := range ids {
-		errDelete := p.Delete(tx, id)
+		errDelete := p.Delete(ctx, tx, id)
 		if errDelete != nil {
 			err = tracerr.Wrap(err)
 			return

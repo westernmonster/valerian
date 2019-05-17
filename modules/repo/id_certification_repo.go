@@ -1,6 +1,7 @@
 package repo
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"time"
@@ -34,7 +35,7 @@ type IDCertification struct {
 type IDCertificationRepository struct{}
 
 // QueryListPaged get paged records by condition
-func (p *IDCertificationRepository) QueryListPaged(node sqalx.Node, page int, pageSize int, cond map[string]string) (total int, items []*IDCertification, err error) {
+func (p *IDCertificationRepository) QueryListPaged(ctx context.Context, node sqalx.Node, page int, pageSize int, cond map[string]string) (total int, items []*IDCertification, err error) {
 	offset := (page - 1) * pageSize
 	condition := make(map[string]interface{})
 	clause := ""
@@ -45,7 +46,7 @@ func (p *IDCertificationRepository) QueryListPaged(node sqalx.Node, page int, pa
 	sqlCount := fmt.Sprintf(box.String("QUERY_LIST_PAGED_COUNT.sql"), clause)
 	sqlSelect := fmt.Sprintf(box.String("QUERY_LIST_PAGED_DATA.sql"), clause)
 
-	stmtCount, err := node.PrepareNamed(sqlCount)
+	stmtCount, err := node.PrepareNamedContext(ctx, sqlCount)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -59,7 +60,7 @@ func (p *IDCertificationRepository) QueryListPaged(node sqalx.Node, page int, pa
 	condition["limit"] = pageSize
 	condition["offset"] = offset
 
-	stmtSelect, err := node.PrepareNamed(sqlSelect)
+	stmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -73,11 +74,11 @@ func (p *IDCertificationRepository) QueryListPaged(node sqalx.Node, page int, pa
 }
 
 // GetAll get all records
-func (p *IDCertificationRepository) GetAll(node sqalx.Node) (items []*IDCertification, err error) {
+func (p *IDCertificationRepository) GetAll(ctx context.Context, node sqalx.Node) (items []*IDCertification, err error) {
 	items = make([]*IDCertification, 0)
 	sqlSelect := packr.NewBox("./sql/id_certification").String("GET_ALL.sql")
 
-	stmtSelect, err := node.PrepareNamed(sqlSelect)
+	stmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -91,7 +92,7 @@ func (p *IDCertificationRepository) GetAll(node sqalx.Node) (items []*IDCertific
 }
 
 // GetAllByCondition get records by condition
-func (p *IDCertificationRepository) GetAllByCondition(node sqalx.Node, cond map[string]string) (items []*IDCertification, err error) {
+func (p *IDCertificationRepository) GetAllByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (items []*IDCertification, err error) {
 	items = make([]*IDCertification, 0)
 	condition := make(map[string]interface{})
 	clause := ""
@@ -160,7 +161,7 @@ func (p *IDCertificationRepository) GetAllByCondition(node sqalx.Node, cond map[
 	box := packr.NewBox("./sql/id_certification")
 	sqlSelect := fmt.Sprintf(box.String("GET_ALL_BY_CONDITION.sql"), clause)
 
-	stmtSelect, err := node.PrepareNamed(sqlSelect)
+	stmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -174,11 +175,11 @@ func (p *IDCertificationRepository) GetAllByCondition(node sqalx.Node, cond map[
 }
 
 // GetByID get record by ID
-func (p *IDCertificationRepository) GetByID(node sqalx.Node, id int64) (item *IDCertification, exist bool, err error) {
+func (p *IDCertificationRepository) GetByID(ctx context.Context, node sqalx.Node, id int64) (item *IDCertification, exist bool, err error) {
 	item = new(IDCertification)
 	sqlSelect := packr.NewBox("./sql/id_certification").String("GET_BY_ID.sql")
 
-	tmtSelect, err := node.PrepareNamed(sqlSelect)
+	tmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -198,7 +199,7 @@ func (p *IDCertificationRepository) GetByID(node sqalx.Node, id int64) (item *ID
 }
 
 // GetByCondition get record by condition
-func (p *IDCertificationRepository) GetByCondition(node sqalx.Node, cond map[string]string) (item *IDCertification, exist bool, err error) {
+func (p *IDCertificationRepository) GetByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (item *IDCertification, exist bool, err error) {
 	item = new(IDCertification)
 	condition := make(map[string]interface{})
 	clause := ""
@@ -267,7 +268,7 @@ func (p *IDCertificationRepository) GetByCondition(node sqalx.Node, cond map[str
 	box := packr.NewBox("./sql/id_certification")
 	sqlSelect := fmt.Sprintf(box.String("GET_BY_CONDITION.sql"), clause)
 
-	tmtSelect, err := node.PrepareNamed(sqlSelect)
+	tmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -287,13 +288,13 @@ func (p *IDCertificationRepository) GetByCondition(node sqalx.Node, cond map[str
 }
 
 // Insert insert a new record
-func (p *IDCertificationRepository) Insert(node sqalx.Node, item *IDCertification) (err error) {
+func (p *IDCertificationRepository) Insert(ctx context.Context, node sqalx.Node, item *IDCertification) (err error) {
 	sqlInsert := packr.NewBox("./sql/id_certification").String("INSERT.sql")
 
 	item.CreatedAt = time.Now().Unix()
 	item.UpdatedAt = time.Now().Unix()
 
-	_, err = node.NamedExec(sqlInsert, item)
+	_, err = node.NamedExecContext(ctx, sqlInsert, item)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -303,12 +304,12 @@ func (p *IDCertificationRepository) Insert(node sqalx.Node, item *IDCertificatio
 }
 
 // Update update a exist record
-func (p *IDCertificationRepository) Update(node sqalx.Node, item *IDCertification) (err error) {
+func (p *IDCertificationRepository) Update(ctx context.Context, node sqalx.Node, item *IDCertification) (err error) {
 	sqlUpdate := packr.NewBox("./sql/id_certification").String("UPDATE.sql")
 
 	item.UpdatedAt = time.Now().Unix()
 
-	_, err = node.NamedExec(sqlUpdate, item)
+	_, err = node.NamedExecContext(ctx, sqlUpdate, item)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -318,10 +319,10 @@ func (p *IDCertificationRepository) Update(node sqalx.Node, item *IDCertificatio
 }
 
 // Delete logic delete a exist record
-func (p *IDCertificationRepository) Delete(node sqalx.Node, id int64) (err error) {
+func (p *IDCertificationRepository) Delete(ctx context.Context, node sqalx.Node, id int64) (err error) {
 	sqlDelete := packr.NewBox("./sql/id_certification").String("DELETE.sql")
 
-	_, err = node.NamedExec(sqlDelete, map[string]interface{}{"id": id})
+	_, err = node.NamedExecContext(ctx, sqlDelete, map[string]interface{}{"id": id})
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -331,8 +332,8 @@ func (p *IDCertificationRepository) Delete(node sqalx.Node, id int64) (err error
 }
 
 // BatchDelete logic batch delete records
-func (p *IDCertificationRepository) BatchDelete(node sqalx.Node, ids []int64) (err error) {
-	tx, err := node.Beginx()
+func (p *IDCertificationRepository) BatchDelete(ctx context.Context, node sqalx.Node, ids []int64) (err error) {
+	tx, err := node.Beginx(ctx)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -340,7 +341,7 @@ func (p *IDCertificationRepository) BatchDelete(node sqalx.Node, ids []int64) (e
 
 	defer tx.Rollback()
 	for _, id := range ids {
-		errDelete := p.Delete(tx, id)
+		errDelete := p.Delete(ctx, tx, id)
 		if errDelete != nil {
 			err = tracerr.Wrap(err)
 			return

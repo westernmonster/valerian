@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"context"
 	"valerian/library/database/sqalx"
 	"valerian/library/database/sqlx"
 
@@ -17,14 +18,14 @@ type LocaleUsecase struct {
 	*sqlx.DB
 	LocaleRepository interface {
 		// GetAll get all records
-		GetAll(node sqalx.Node) (items []*repo.Locale, err error)
+		GetAll(ctx context.Context, node sqalx.Node) (items []*repo.Locale, err error)
 	}
 }
 
-func (p *LocaleUsecase) GetAll(ctx *biz.BizContext) (items []*models.Locale, err error) {
+func (p *LocaleUsecase) GetAll(c context.Context, ctx *biz.BizContext) (items []*models.Locale, err error) {
 	items = make([]*models.Locale, 0)
 
-	data, err := p.LocaleRepository.GetAll(p.Node)
+	data, err := p.LocaleRepository.GetAll(c, p.Node)
 	if err != nil {
 		err = tracerr.Wrap(err)
 	}

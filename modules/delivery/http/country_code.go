@@ -9,7 +9,6 @@ import (
 	"valerian/modules/usecase"
 
 	"valerian/library/database/sqalx"
-	"valerian/library/database/sqlx"
 
 	"github.com/gin-gonic/gin"
 	"github.com/opentracing/opentracing-go"
@@ -26,12 +25,11 @@ type CountryCodeCtrl struct {
 	}
 }
 
-func NewCountryCodeCtrl(db *sqlx.DB, node sqalx.Node, logger log.Factory) *CountryCodeCtrl {
+func NewCountryCodeCtrl(node sqalx.Node, logger log.Factory) *CountryCodeCtrl {
 	return &CountryCodeCtrl{
 		logger: logger,
 		CountryCodeUsecase: &usecase.CountryCodeUsecase{
 			Node:                  node,
-			DB:                    db,
 			CountryCodeRepository: &repo.CountryCodeRepository{},
 		},
 	}

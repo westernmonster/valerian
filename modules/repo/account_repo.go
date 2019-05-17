@@ -340,7 +340,7 @@ func (p *AccountRepository) Delete(ctx context.Context, node sqalx.Node, id int6
 
 // BatchDelete logic batch delete records
 func (p *AccountRepository) BatchDelete(ctx context.Context, node sqalx.Node, ids []int64) (err error) {
-	tx, err := node.Beginx()
+	tx, err := node.Beginx(ctx)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return

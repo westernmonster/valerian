@@ -27,7 +27,7 @@ type CountryCode struct {
 type CountryCodeRepository struct{}
 
 // QueryListPaged get paged records by condition
-func (p *CountryCodeRepository) QueryListPaged(node sqalx.Node, page int, pageSize int, cond map[string]string) (total int, items []*CountryCode, err error) {
+func (p *CountryCodeRepository) QueryListPaged(ctx context.Context, node sqalx.Node, page int, pageSize int, cond map[string]string) (total int, items []*CountryCode, err error) {
 	offset := (page - 1) * pageSize
 	condition := make(map[string]interface{})
 	clause := ""
@@ -38,7 +38,7 @@ func (p *CountryCodeRepository) QueryListPaged(node sqalx.Node, page int, pageSi
 	sqlCount := fmt.Sprintf(box.String("QUERY_LIST_PAGED_COUNT.sql"), clause)
 	sqlSelect := fmt.Sprintf(box.String("QUERY_LIST_PAGED_DATA.sql"), clause)
 
-	stmtCount, err := node.PrepareNamed(sqlCount)
+	stmtCount, err := node.PrepareNamedContext(ctx, sqlCount)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -52,7 +52,7 @@ func (p *CountryCodeRepository) QueryListPaged(node sqalx.Node, page int, pageSi
 	condition["limit"] = pageSize
 	condition["offset"] = offset
 
-	stmtSelect, err := node.PrepareNamed(sqlSelect)
+	stmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -68,14 +68,9 @@ func (p *CountryCodeRepository) QueryListPaged(node sqalx.Node, page int, pageSi
 // GetAll get all records
 func (p *CountryCodeRepository) GetAll(ctx context.Context, node sqalx.Node) (items []*CountryCode, err error) {
 	items = make([]*CountryCode, 0)
-	sqlSelect := packr.NewBox("./sql/country_code").String("GET_ALL.sql")
+	sqlSelect := "SELECT a.* FROM country_codes a WHERE a.deleted=0 ORDER BY a.id "
 
-	stmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
-	err = stmtSelect.SelectContext(ctx, &items, map[string]interface{}{})
+	err = node.SelectContext(ctx, &items, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -84,7 +79,7 @@ func (p *CountryCodeRepository) GetAll(ctx context.Context, node sqalx.Node) (it
 }
 
 // GetAllByCondition get records by condition
-func (p *CountryCodeRepository) GetAllByCondition(node sqalx.Node, cond map[string]string) (items []*CountryCode, err error) {
+func (p *CountryCodeRepository) GetAllByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (items []*CountryCode, err error) {
 	items = make([]*CountryCode, 0)
 	condition := make(map[string]interface{})
 	clause := ""
@@ -113,7 +108,7 @@ func (p *CountryCodeRepository) GetAllByCondition(node sqalx.Node, cond map[stri
 	box := packr.NewBox("./sql/country_code")
 	sqlSelect := fmt.Sprintf(box.String("GET_ALL_BY_CONDITION.sql"), clause)
 
-	stmtSelect, err := node.PrepareNamed(sqlSelect)
+	stmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -127,11 +122,11 @@ func (p *CountryCodeRepository) GetAllByCondition(node sqalx.Node, cond map[stri
 }
 
 // GetByID get record by ID
-func (p *CountryCodeRepository) GetByID(node sqalx.Node, id int64) (item *CountryCode, exist bool, err error) {
+func (p *CountryCodeRepository) GetByID(ctx context.Context, node sqalx.Node, id int64) (item *CountryCode, exist bool, err error) {
 	item = new(CountryCode)
 	sqlSelect := packr.NewBox("./sql/country_code").String("GET_BY_ID.sql")
 
-	tmtSelect, err := node.PrepareNamed(sqlSelect)
+	tmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -151,7 +146,7 @@ func (p *CountryCodeRepository) GetByID(node sqalx.Node, id int64) (item *Countr
 }
 
 // GetByCondition get record by condition
-func (p *CountryCodeRepository) GetByCondition(node sqalx.Node, cond map[string]string) (item *CountryCode, exist bool, err error) {
+func (p *CountryCodeRepository) GetByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (item *CountryCode, exist bool, err error) {
 	item = new(CountryCode)
 	condition := make(map[string]interface{})
 	clause := ""
@@ -180,7 +175,7 @@ func (p *CountryCodeRepository) GetByCondition(node sqalx.Node, cond map[string]
 	box := packr.NewBox("./sql/country_code")
 	sqlSelect := fmt.Sprintf(box.String("GET_BY_CONDITION.sql"), clause)
 
-	tmtSelect, err := node.PrepareNamed(sqlSelect)
+	tmtSelect, err := node.PrepareNamedContext(ctx, sqlSelect)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -200,13 +195,13 @@ func (p *CountryCodeRepository) GetByCondition(node sqalx.Node, cond map[string]
 }
 
 // Insert insert a new record
-func (p *CountryCodeRepository) Insert(node sqalx.Node, item *CountryCode) (err error) {
+func (p *CountryCodeRepository) Insert(ctx context.Context, node sqalx.Node, item *CountryCode) (err error) {
 	sqlInsert := packr.NewBox("./sql/country_code").String("INSERT.sql")
 
 	item.CreatedAt = time.Now().Unix()
 	item.UpdatedAt = time.Now().Unix()
 
-	_, err = node.NamedExec(sqlInsert, item)
+	_, err = node.NamedExecContext(ctx, sqlInsert, item)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -216,12 +211,12 @@ func (p *CountryCodeRepository) Insert(node sqalx.Node, item *CountryCode) (err 
 }
 
 // Update update a exist record
-func (p *CountryCodeRepository) Update(node sqalx.Node, item *CountryCode) (err error) {
+func (p *CountryCodeRepository) Update(ctx context.Context, node sqalx.Node, item *CountryCode) (err error) {
 	sqlUpdate := packr.NewBox("./sql/country_code").String("UPDATE.sql")
 
 	item.UpdatedAt = time.Now().Unix()
 
-	_, err = node.NamedExec(sqlUpdate, item)
+	_, err = node.NamedExecContext(ctx, sqlUpdate, item)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -231,10 +226,10 @@ func (p *CountryCodeRepository) Update(node sqalx.Node, item *CountryCode) (err 
 }
 
 // Delete logic delete a exist record
-func (p *CountryCodeRepository) Delete(node sqalx.Node, id int64) (err error) {
+func (p *CountryCodeRepository) Delete(ctx context.Context, node sqalx.Node, id int64) (err error) {
 	sqlDelete := packr.NewBox("./sql/country_code").String("DELETE.sql")
 
-	_, err = node.NamedExec(sqlDelete, map[string]interface{}{"id": id})
+	_, err = node.NamedExecContext(ctx, sqlDelete, map[string]interface{}{"id": id})
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -244,8 +239,8 @@ func (p *CountryCodeRepository) Delete(node sqalx.Node, id int64) (err error) {
 }
 
 // BatchDelete logic batch delete records
-func (p *CountryCodeRepository) BatchDelete(node sqalx.Node, ids []int64) (err error) {
-	tx, err := node.Beginx()
+func (p *CountryCodeRepository) BatchDelete(ctx context.Context, node sqalx.Node, ids []int64) (err error) {
+	tx, err := node.Beginx(ctx)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -253,7 +248,7 @@ func (p *CountryCodeRepository) BatchDelete(node sqalx.Node, ids []int64) (err e
 
 	defer tx.Rollback()
 	for _, id := range ids {
-		errDelete := p.Delete(tx, id)
+		errDelete := p.Delete(ctx, tx, id)
 		if errDelete != nil {
 			err = tracerr.Wrap(err)
 			return
