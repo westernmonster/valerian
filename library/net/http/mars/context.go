@@ -6,7 +6,6 @@ package mars
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -155,7 +154,7 @@ func (c *Context) AbortWithStatus(code int) {
 // It also sets the Content-Type as "application/json".
 func (c *Context) AbortWithStatusJSON(code int, jsonObj interface{}) {
 	c.Abort()
-	c.JSON(code, jsonObj)
+	c.JSON(jsonObj, nil)
 }
 
 // AbortWithError calls `AbortWithStatus()` and `Error()` internally.
@@ -821,8 +820,12 @@ func (c *Context) JSONP(code int, obj interface{}) {
 
 // JSON serializes the given struct as JSON into the response body.
 // It also sets the Content-Type as "application/json".
-func (c *Context) JSON(code int, obj interface{}) {
-	c.Render(code, render.JSON{Data: obj})
+func (c *Context) JSON(data interface{}, err error) {
+	code := http.StatusOK
+	// bcode := ecode.Cause(err)
+	c.Render(code, render.JSON{
+		Data: data,
+	})
 }
 
 // AsciiJSON serializes the given struct as JSON into the response body with unicode to ASCII string.
@@ -916,71 +919,6 @@ func (c *Context) Stream(step func(w io.Writer) bool) bool {
 			}
 		}
 	}
-}
-
-/************************************/
-/******** CONTENT NEGOTIATION *******/
-/************************************/
-
-// Negotiate contains all negotiations data.
-type Negotiate struct {
-	Offered  []string
-	HTMLName string
-	HTMLData interface{}
-	JSONData interface{}
-	XMLData  interface{}
-	Data     interface{}
-}
-
-// Negotiate calls different Render according acceptable Accept format.
-func (c *Context) Negotiate(code int, config Negotiate) {
-	switch c.NegotiateFormat(config.Offered...) {
-	case binding.MIMEJSON:
-		data := chooseData(config.JSONData, config.Data)
-		c.JSON(code, data)
-
-	case binding.MIMEHTML:
-		data := chooseData(config.HTMLData, config.Data)
-		c.HTML(code, config.HTMLName, data)
-
-	case binding.MIMEXML:
-		data := chooseData(config.XMLData, config.Data)
-		c.XML(code, data)
-
-	default:
-		c.AbortWithError(http.StatusNotAcceptable, errors.New("the accepted formats are not offered by the server")) // nolint: errcheck
-	}
-}
-
-// NegotiateFormat returns an acceptable Accept format.
-func (c *Context) NegotiateFormat(offered ...string) string {
-	assert1(len(offered) > 0, "you must provide at least one offer")
-
-	if c.Accepted == nil {
-		c.Accepted = parseAccept(c.requestHeader("Accept"))
-	}
-	if len(c.Accepted) == 0 {
-		return offered[0]
-	}
-	for _, accepted := range c.Accepted {
-		for _, offert := range offered {
-			// According to RFC 2616 and RFC 2396, non-ASCII characters are not allowed in headers,
-			// therefore we can just iterate over the string without casting it into []rune
-			i := 0
-			for ; i < len(accepted); i++ {
-				if accepted[i] == '*' || offert[i] == '*' {
-					return offert
-				}
-				if accepted[i] != offert[i] {
-					break
-				}
-			}
-			if i == len(accepted) {
-				return offert
-			}
-		}
-	}
-	return ""
 }
 
 // SetAccepted sets Accept header data.

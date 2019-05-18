@@ -103,7 +103,7 @@ func (p *OauthAccessTokenRepository) DeleteByCondition(ctx context.Context, node
 	clause := ""
 
 	if val, ok := cond["client_id"]; ok {
-		clause += " AND a.client_id ="
+		clause += " AND a.client_id =?"
 		condition = append(condition, val)
 	}
 	if val, ok := cond["account_id"]; ok {

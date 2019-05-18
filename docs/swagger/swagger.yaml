@@ -641,6 +641,9 @@ definitions:
         items:
           $ref: '#/definitions/models.TopicMember'
         type: array
+      members_count:
+        description: 成员数
+        type: integer
       mute_notification:
         description: 消息免打扰
         type: boolean
@@ -669,6 +672,11 @@ definitions:
         type: integer
       topic_type_name:
         type: string
+      version:
+        description: 版本列表
+        items:
+          $ref: '#/definitions/models.TopicVersion'
+        type: array
       version_name:
         description: 版本名
         type: string

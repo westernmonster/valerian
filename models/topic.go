@@ -81,6 +81,12 @@ type Topic struct {
 	// 成员
 	Members []*TopicMember `json:"members"`
 
+	// 成员数
+	MembersCount int `json:"members_count"`
+
+	// 版本列表
+	Versions []*TopicVersion `json:"version"`
+
 	// 封面图
 	// 必须为URL
 	Cover *string `json:"cover"`

@@ -259,6 +259,7 @@ func (p *TopicUsecase) Get(c context.Context, ctx *biz.BizContext, topicID int64
 	item.Members = make([]*models.TopicMember, 0)
 	item.RelatedTopics = make([]*models.RelatedTopicShort, 0)
 	item.Categories = make([]*models.TopicCategoryParentItem, 0)
+	item.Versions = make([]*models.TopicVersion, 0)
 
 	members, err := p.TopicMemberRepository.GetTopicMembers(c, p.Node, topicID, 10)
 	if err != nil {
@@ -266,6 +267,18 @@ func (p *TopicUsecase) Get(c context.Context, ctx *biz.BizContext, topicID int64
 		return
 	}
 	item.Members = members
+
+	item.MembersCount, err = p.TopicMemberRepository.GetTopicMembersCount(c, p.Node, topicID)
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+
+	item.Versions, err = p.TopicRepository.GetTopicVersions(c, p.Node, t.TopicSetID)
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
 
 	relatedTopics, err := p.TopicRelationRepository.GetAllRelatedTopics(c, p.Node, topicID)
 	if err != nil {

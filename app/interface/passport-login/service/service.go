@@ -5,6 +5,7 @@ import (
 	"valerian/app/interface/passport-login/conf"
 	"valerian/app/interface/passport-login/dao"
 	"valerian/app/interface/passport-login/model"
+	"valerian/library/log"
 )
 
 var (
@@ -17,6 +18,7 @@ var (
 type Service struct {
 	c      *conf.Config
 	d      *dao.Dao
+	logger log.Factory
 	missch chan func()
 }
 

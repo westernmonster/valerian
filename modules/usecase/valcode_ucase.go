@@ -47,6 +47,8 @@ func (p *ValcodeUsecase) RequestEmailValcode(c context.Context, ctx *biz.BizCont
 	}
 	defer tx.Rollback()
 
+	valcode := helper.GenerateValcode(6)
+
 	has, err := p.ValcodeRepository.HasSentRecordsInDuration(c, tx, req.Email, req.CodeType, models.ValcodeSpan)
 	if err != nil {
 		err = tracerr.Wrap(err)
@@ -54,26 +56,6 @@ func (p *ValcodeUsecase) RequestEmailValcode(c context.Context, ctx *biz.BizCont
 	}
 	if has {
 		err = berr.Errorf("60秒下发一次验证码，请不要重复请求")
-		return
-	}
-
-	valcode := helper.GenerateValcode(6)
-
-	switch req.CodeType {
-	case models.ValcodeRegister:
-		if e := p.EmailClient.SendRegisterEmail(req.Email, valcode); e != nil {
-			err = tracerr.Wrap(e)
-			return
-		}
-		break
-	case models.ValcodeForgetPassword:
-		if e := p.EmailClient.SendResetPasswordValcode(req.Email, valcode); e != nil {
-			err = tracerr.Wrap(e)
-			return
-		}
-		break
-	default:
-		err = berr.Errorf("未知的验证码类型")
 		return
 	}
 
@@ -100,6 +82,24 @@ func (p *ValcodeUsecase) RequestEmailValcode(c context.Context, ctx *biz.BizCont
 	err = tx.Commit()
 	if err != nil {
 		err = tracerr.Wrap(err)
+		return
+	}
+
+	switch req.CodeType {
+	case models.ValcodeRegister:
+		if e := p.EmailClient.SendRegisterEmail(req.Email, valcode); e != nil {
+			err = tracerr.Wrap(e)
+			return
+		}
+		break
+	case models.ValcodeForgetPassword:
+		if e := p.EmailClient.SendResetPasswordValcode(req.Email, valcode); e != nil {
+			err = tracerr.Wrap(e)
+			return
+		}
+		break
+	default:
+		err = berr.Errorf("未知的验证码类型")
 		return
 	}
 

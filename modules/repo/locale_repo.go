@@ -4,7 +4,6 @@ import (
 	"context"
 	"valerian/library/database/sqalx"
 
-	packr "github.com/gobuffalo/packr"
 	tracerr "github.com/ztrue/tracerr"
 )
 
@@ -22,7 +21,7 @@ type LocaleRepository struct{}
 // GetAll get all records
 func (p *LocaleRepository) GetAll(ctx context.Context, node sqalx.Node) (items []*Locale, err error) {
 	items = make([]*Locale, 0)
-	sqlSelect := packr.NewBox("./sql/locale").String("GET_ALL.sql")
+	sqlSelect := "SELECT a.* FROM locales a WHERE a.deleted=0 ORDER BY a.id DESC "
 
 	err = node.SelectContext(ctx, &items, sqlSelect)
 	if err != nil {

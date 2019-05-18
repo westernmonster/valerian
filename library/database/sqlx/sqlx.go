@@ -340,7 +340,7 @@ func (db *DB) Beginx(c context.Context) (t *Tx, err error) {
 		return
 	}
 
-	return &Tx{Tx: tx, span: span, driverName: db.driverName, db: db, unsafe: db.unsafe, Mapper: db.Mapper, c: c, cancel: cancel}, err
+	return &Tx{Tx: tx, span: span, driverName: db.driverName, db: db, unsafe: db.unsafe, Mapper: db.Mapper, Context: c, cancel: cancel}, err
 }
 
 // Queryx queries the database and returns an *sqlx.Rows.
@@ -409,7 +409,7 @@ type Tx struct {
 	unsafe     bool
 	Mapper     *reflectx.Mapper
 	span       opentracing.Span
-	c          context.Context
+	Context    context.Context
 	cancel     func()
 }
 

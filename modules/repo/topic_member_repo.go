@@ -9,17 +9,18 @@ import (
 
 	"valerian/library/database/sqalx"
 
+	types "github.com/jmoiron/sqlx/types"
 	tracerr "github.com/ztrue/tracerr"
 )
 
 type TopicMember struct {
-	ID        int64  `db:"id" json:"id,string"`                 // ID ID
-	TopicID   int64  `db:"topic_id" json:"topic_id,string"`     // TopicID 分类ID
-	AccountID int64  `db:"account_id" json:"account_id,string"` // AccountID 成员ID
-	Role      string `db:"role" json:"role"`                    // Role 成员角色
-	Deleted   int    `db:"deleted" json:"deleted"`              // Deleted 是否删除
-	CreatedAt int64  `db:"created_at" json:"created_at"`        // CreatedAt 创建时间
-	UpdatedAt int64  `db:"updated_at" json:"updated_at"`        // UpdatedAt 更新时间
+	ID        int64         `db:"id" json:"id,string"`                 // ID ID
+	TopicID   int64         `db:"topic_id" json:"topic_id,string"`     // TopicID 分类ID
+	AccountID int64         `db:"account_id" json:"account_id,string"` // AccountID 成员ID
+	Role      string        `db:"role" json:"role"`                    // Role 成员角色
+	Deleted   types.BitBool `db:"deleted" json:"deleted"`              // Deleted 是否删除
+	CreatedAt int64         `db:"created_at" json:"created_at"`        // CreatedAt 创建时间
+	UpdatedAt int64         `db:"updated_at" json:"updated_at"`        // UpdatedAt 更新时间
 }
 
 type TopicMemberRepository struct{}

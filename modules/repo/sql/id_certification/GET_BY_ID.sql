@@ -1,1 +1,0 @@
-SELECT a.* FROM id_certifications a WHERE a.id=? AND a.deleted=0

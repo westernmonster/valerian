@@ -108,6 +108,8 @@ type Node interface {
 	ExecContext(ctx context.Context, query string, args ...interface{}) (result sql.Result, err error)
 
 	GetContext(ctx context.Context, dest interface{}, query string, args ...interface{}) (err error)
+
+	Ping(c context.Context) (err error)
 }
 
 // A Driver can query the database. It can either be a *sqlx.DB or a *sqlx.Tx
@@ -245,7 +247,7 @@ func (n *node) SelectContext(ctx context.Context, dest interface{}, query string
 func (n *node) ExecContext(ctx context.Context, query string, args ...interface{}) (result sql.Result, err error) {
 	// 默认write库执行，如果有事务则Driver为 write 库
 	if n.tx != nil {
-		return n.Driver.ExecContext(ctx, query, args...)
+		return n.tx.ExecContext(n.tx.Context, query, args...)
 	}
 
 	return n.write.ExecContext(ctx, query, args...)

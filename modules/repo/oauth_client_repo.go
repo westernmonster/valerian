@@ -51,7 +51,7 @@ func (p *OauthClientRepository) GetByCondition(ctx context.Context, node sqalx.N
 
 	sqlSelect := fmt.Sprintf("SELECT a.* FROM oauth_clients a WHERE a.deleted=0 %s ", clause)
 
-	if e := node.GetContext(ctx, item, sqlSelect, condition); e != nil {
+	if e := node.GetContext(ctx, item, sqlSelect, condition...); e != nil {
 		if e == sql.ErrNoRows {
 			item = nil
 			return

@@ -2928,6 +2928,10 @@
                         "$ref": "#/definitions/models.TopicMember"
                     }
                 },
+                "members_count": {
+                    "description": "成员数",
+                    "type": "integer"
+                },
                 "mute_notification": {
                     "description": "消息免打扰",
                     "type": "boolean"
@@ -2957,6 +2961,13 @@
                 },
                 "topic_type_name": {
                     "type": "string"
+                },
+                "version": {
+                    "description": "版本列表",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.TopicVersion"
+                    }
                 },
                 "version_name": {
                     "description": "版本名",

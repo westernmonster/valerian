@@ -6,9 +6,9 @@ import (
 
 	"valerian/infrastructure/berr"
 	"valerian/infrastructure/biz"
+
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 	"github.com/ztrue/tracerr"
 )
 
@@ -84,14 +84,14 @@ func (p *BaseCtrl) PaginationResp(ctx *gin.Context, list interface{}, total, pag
 
 // HandleError 错误处理
 func (p *BaseCtrl) HandleError(ctx *gin.Context, err error) {
-	mode := viper.Get("MODE")
+	// mode := viper.Get("MODE")
 	message := ""
 	switch v := err.(type) {
 	case tracerr.Error:
 		message = v.Error()
-		if mode == "development" {
-			tracerr.PrintSourceColor(v, 5)
-		}
+		// if mode == "development" {
+		// 	tracerr.PrintSourceColor(v, 5)
+		// }
 		log.Error(tracerr.Sprint(v))
 		break
 	case *berr.BizError:

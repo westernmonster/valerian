@@ -8,7 +8,6 @@ import (
 
 	"valerian/library/database/sqalx"
 
-	packr "github.com/gobuffalo/packr"
 	types "github.com/jmoiron/sqlx/types"
 	tracerr "github.com/ztrue/tracerr"
 )
@@ -44,8 +43,9 @@ type AccountRepository struct{}
 // GetByID get record by ID
 func (p *AccountRepository) GetByID(ctx context.Context, node sqalx.Node, id int64) (item *Account, exist bool, err error) {
 	item = new(Account)
-	sqlSelect := ` SELECT a.* FROM accounts a WHERE a.id=? AND a.deleted=0 `
-	if e := node.GetContext(ctx, item, sqlSelect, map[string]interface{}{"id": id}); e != nil {
+	sqlSelect := "SELECT a.* FROM accounts a WHERE a.id=? AND a.deleted=0"
+
+	if e := node.GetContext(ctx, item, sqlSelect, id); e != nil {
 		if e == sql.ErrNoRows {
 			item = nil
 			return
@@ -70,6 +70,10 @@ func (p *AccountRepository) GetByCondition(ctx context.Context, node sqalx.Node,
 	}
 	if val, ok := cond["mobile"]; ok {
 		clause += " AND a.mobile =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["user_name"]; ok {
+		clause += " AND a.user_name =?"
 		condition = append(condition, val)
 	}
 	if val, ok := cond["email"]; ok {
@@ -117,16 +121,31 @@ func (p *AccountRepository) GetByCondition(ctx context.Context, node sqalx.Node,
 		condition = append(condition, val)
 	}
 	if val, ok := cond["source"]; ok {
-		clause += " AND a.source ="
+		clause += " AND a.source =?"
 		condition = append(condition, val)
 	}
 	if val, ok := cond["ip"]; ok {
 		clause += " AND a.ip =?"
 		condition = append(condition, val)
 	}
+	if val, ok := cond["id_cert"]; ok {
+		clause += " AND a.id_cert =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["work_cert"]; ok {
+		clause += " AND a.work_cert =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["is_org"]; ok {
+		clause += " AND a.is_org =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["is_vip"]; ok {
+		clause += " AND a.is_vip =?"
+		condition = append(condition, val)
+	}
 
-	box := packr.NewBox("./sql/account")
-	sqlSelect := fmt.Sprintf(box.String("GET_BY_CONDITION.sql"), clause)
+	sqlSelect := fmt.Sprintf("SELECT a.* FROM accounts a WHERE a.deleted=0 %s", clause)
 
 	if e := node.GetContext(ctx, item, sqlSelect, condition...); e != nil {
 		if e == sql.ErrNoRows {
@@ -143,38 +162,12 @@ func (p *AccountRepository) GetByCondition(ctx context.Context, node sqalx.Node,
 
 // Insert insert a new record
 func (p *AccountRepository) Insert(ctx context.Context, node sqalx.Node, item *Account) (err error) {
-	sqlInsert := `
-INSERT INTO accounts( id, mobile, email, user_name, password, role, salt, gender, birth_year, birth_month, birth_day, location, introduction, avatar, source, ip, id_cert, work_cert, is_org, is_vip, deleted, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) `
-	packr.NewBox("./sql/account").String("INSERT.sql")
+	sqlInsert := "INSERT INTO accounts( id,mobile,user_name,email,password,role,salt,gender,birth_year,birth_month,birth_day,location,introduction,avatar,source,ip,id_cert,work_cert,is_org,is_vip,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
 
 	item.CreatedAt = time.Now().Unix()
 	item.UpdatedAt = time.Now().Unix()
 
-	_, err = node.ExecContext(ctx, sqlInsert,
-		item.ID,
-		item.Mobile,
-		item.Email,
-		item.UserName,
-		item.Password,
-		item.Role,
-		item.Salt,
-		item.Gender,
-		item.BirthYear,
-		item.BirthMonth,
-		item.BirthDay,
-		item.Location,
-		item.Introduction,
-		item.Avatar,
-		item.Source,
-		item.IP,
-		item.IDCert,
-		item.WorkCert,
-		item.IsOrg,
-		item.IsVIP,
-		item.Deleted,
-		item.CreatedAt,
-		item.UpdatedAt,
-	)
+	_, err = node.ExecContext(ctx, sqlInsert, item.ID, item.Mobile, item.UserName, item.Email, item.Password, item.Role, item.Salt, item.Gender, item.BirthYear, item.BirthMonth, item.BirthDay, item.Location, item.Introduction, item.Avatar, item.Source, item.IP, item.IDCert, item.WorkCert, item.IsOrg, item.IsVIP, item.Deleted, item.CreatedAt, item.UpdatedAt)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
@@ -185,11 +178,11 @@ INSERT INTO accounts( id, mobile, email, user_name, password, role, salt, gender
 
 // Update update a exist record
 func (p *AccountRepository) Update(ctx context.Context, node sqalx.Node, item *Account) (err error) {
-	sqlUpdate := ` UPDATE accounts SET mobile=?, email=?, password=?, role=?, salt=?, gender=?, birth_year=?, birth_month=?, birth_day=?, location=?, introduction=?, avatar=?, source=?, ip=?, id_cert=?, work_cert=?, is_org=?, is_vip=?, updated_at=? WHERE id=? `
+	sqlUpdate := "UPDATE accounts SET mobile=?,user_name=?,email=?,password=?,role=?,salt=?,gender=?,birth_year=?,birth_month=?,birth_day=?,location=?,introduction=?,avatar=?,source=?,ip=?,id_cert=?,work_cert=?,is_org=?,is_vip=?,updated_at=? WHERE id=?"
 
 	item.UpdatedAt = time.Now().Unix()
 
-	_, err = node.ExecContext(ctx, sqlUpdate, item.Mobile, item.Email, item.Password, item.Role, item.Salt, item.Gender, item.BirthYear, item.BirthMonth, item.BirthDay, item.Location, item.Introduction, item.Avatar, item.Source, item.IP, item.IDCert, item.WorkCert, item.IsOrg, item.IsVIP, item.UpdatedAt, item.ID)
+	_, err = node.ExecContext(ctx, sqlUpdate, item.Mobile, item.UserName, item.Email, item.Password, item.Role, item.Salt, item.Gender, item.BirthYear, item.BirthMonth, item.BirthDay, item.Location, item.Introduction, item.Avatar, item.Source, item.IP, item.IDCert, item.WorkCert, item.IsOrg, item.IsVIP, item.UpdatedAt, item.ID)
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
