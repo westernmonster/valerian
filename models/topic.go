@@ -70,6 +70,12 @@ type TopicSearchResult struct {
 	Name string `db:"name" json:"name"`
 	// 版本名称
 	VersionName string `db:"version_name" json:"version_name"`
+
+	// 集合ID
+	TopicSetID int64 `db:"topic_set_id"  json:"topic_set_id,string"  swaggertype:"string"`
+
+	// 版本列表
+	Versions []*TopicVersion `json:"version"`
 }
 
 type Topic struct {
@@ -83,6 +89,9 @@ type Topic struct {
 
 	// 成员数
 	MembersCount int `json:"members_count"`
+
+	// 资源数量
+	ResourcesCount int `json:"resources_count"`
 
 	// 版本列表
 	Versions []*TopicVersion `json:"version"`
@@ -528,6 +537,8 @@ type TopicVersion struct {
 	TopicID int64 `db:"topic_id" json:"topic_id,string" swaggertype:"string"`
 	// 版本名称
 	VersionName string `db:"version_name" json:"version_name"`
+	// 话题名
+	TopicName string `db:"topic_name" json:"topic_name"`
 }
 
 type ChangeOwnerArg struct {

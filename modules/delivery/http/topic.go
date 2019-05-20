@@ -24,7 +24,7 @@ type TopicCtrl struct {
 		Update(c context.Context, ctx *biz.BizContext, id int64, req *models.UpdateTopicReq) (err error)
 		Delete(c context.Context, ctx *biz.BizContext, id int64) (err error)
 		Get(c context.Context, ctx *biz.BizContext, topicID int64) (item *models.Topic, err error)
-		SeachTopics(c context.Context, ctx *biz.BizContext, topicID int64, query string) (items []*models.TopicSearchResult, err error)
+		SeachTopics(c context.Context, ctx *biz.BizContext, query string) (items []*models.TopicSearchResult, err error)
 		GetTopicMembersPaged(c context.Context, ctx *biz.BizContext, topicID int64, page, pageSize int) (resp *models.TopicMembersPagedResp, err error)
 		BulkSaveMembers(c context.Context, ctx *biz.BizContext, topicID int64, req *models.BatchSavedTopicMemberReq) (err error)
 		GetTopicVersions(c context.Context, ctx *biz.BizContext, topicSetID int64) (items []*models.TopicVersion, err error)
@@ -183,23 +183,16 @@ func (p *TopicCtrl) GetTopicMembersPaged(ctx *gin.Context) {
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param q query string true  "查询条件"
 // @Param from_topic_id query string true  "排除的话题ID"
-// @Success 200 "成功,返回topic_id"
+// @Success 200 {array} models.TopicSearchResult "话题搜索结果"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /topics [get]
 func (p *TopicCtrl) Search(ctx *gin.Context) {
 	query := ctx.Query("q")
-	fromTopicID := ctx.Query("from_topic_id")
-
-	topicID, err := strconv.ParseInt(fromTopicID, 10, 64)
-	if err != nil {
-		p.HandleError(ctx, err)
-		return
-	}
 
 	bizCtx := p.GetBizContext(ctx)
-	items, err := p.TopicUsecase.SeachTopics(ctx.Request.Context(), bizCtx, topicID, query)
+	items, err := p.TopicUsecase.SeachTopics(ctx.Request.Context(), bizCtx, query)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return
@@ -467,10 +460,19 @@ func (p *TopicCtrl) Get(ctx *gin.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /topics/{id} [delete]
 func (p *TopicCtrl) Delete(ctx *gin.Context) {
-	id := ctx.GetInt64("id")
+	id, exist := ctx.Params.Get("id")
+	if !exist {
+		p.SuccessResp(ctx, nil)
+	}
+
+	topicID, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		p.HandleError(ctx, err)
+		return
+	}
 
 	bizCtx := p.GetBizContext(ctx)
-	err := p.TopicUsecase.Delete(ctx.Request.Context(), bizCtx, id)
+	err = p.TopicUsecase.Delete(ctx.Request.Context(), bizCtx, topicID)
 	if err != nil {
 		p.HandleError(ctx, err)
 		return

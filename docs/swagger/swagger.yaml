@@ -655,6 +655,9 @@ definitions:
         items:
           $ref: '#/definitions/models.RelatedTopicShort'
         type: array
+      resources_count:
+        description: 资源数量
+        type: integer
       topic_home:
         description: |-
           话题首页
@@ -807,6 +810,26 @@ definitions:
         type: array
       page_size:
         type: integer
+    type: object
+  models.TopicSearchResult:
+    properties:
+      name:
+        description: 话题名
+        type: string
+      topic_id:
+        description: 话题ID
+        type: string
+      topic_set_id:
+        description: 集合ID
+        type: string
+      version:
+        description: 版本列表
+        items:
+          $ref: '#/definitions/models.TopicVersion'
+        type: array
+      version_name:
+        description: 版本名称
+        type: string
     type: object
   models.TopicType:
     properties:
@@ -1875,7 +1898,11 @@ paths:
       - application/json
       responses:
         "200":
-          description: 成功,返回topic_id
+          description: 话题搜索结果
+          schema:
+            items:
+              $ref: '#/definitions/models.TopicSearchResult'
+            type: array
         "400":
           description: 验证请求失败
         "401":

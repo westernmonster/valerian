@@ -115,6 +115,7 @@ func Configure(p *bootstrap.Bootstrapper) {
 		api.POST("/topics", auth.User, topicCtrl.Create)
 		api.PUT("/topics/:id", auth.User, topicCtrl.Update)
 		api.GET("/topics/:id", auth.User, topicCtrl.Get)
+		api.DELETE("/topics/:id", auth.User, topicCtrl.Delete)
 		api.GET("/topics", auth.User, topicCtrl.Search)
 		api.GET("/topics/:id/members", auth.User, topicCtrl.GetTopicMembersPaged)
 		api.PATCH("/topics/:id/members", auth.User, topicCtrl.BatchSavedTopicMember)

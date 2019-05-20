@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/ztrue/tracerr"
 
@@ -13,6 +14,35 @@ import (
 	"valerian/models"
 	"valerian/modules/repo"
 )
+
+func asteriskEmailName(email string) string {
+	components := strings.Split(email, "@")
+	username := components[0]
+
+	newUserName := ""
+	for i, ch := range username {
+		if i == 1 || i == 2 || i == 3 || i == 4 {
+			newUserName += "*"
+		} else {
+			newUserName += string(ch)
+		}
+	}
+
+	return newUserName
+}
+
+func asteriskMobile(mobile string) string {
+	newUserName := ""
+	for i, ch := range mobile {
+		if i == 1 || i == 2 || i == 3 || i == 4 {
+			newUserName += "*"
+		} else {
+			newUserName += string(ch)
+		}
+	}
+
+	return newUserName
+}
 
 func (p *OauthUsecase) GetByID(c context.Context, ctx *biz.BizContext, userID int64) (item *repo.Account, err error) {
 	item, exist, err := p.AccountRepository.GetByID(c, p.Node, userID)
@@ -73,6 +103,8 @@ func (p *OauthUsecase) EmailRegister(c context.Context, ctx *biz.BizContext, req
 	item.Password = passwordHash
 	item.Salt = salt
 	item.Role = "user"
+	item.Avatar = "https://flywiki.oss-cn-hangzhou.aliyuncs.com/765-default-avatar.png"
+	item.UserName = asteriskEmailName(req.Email)
 
 	// Valcode
 	correct, valcodeItem, errValcode := p.ValcodeRepository.IsCodeCorrect(c, tx, req.Email, models.ValcodeRegister, req.Valcode)
@@ -162,6 +194,8 @@ func (p *OauthUsecase) MobileRegister(c context.Context, ctx *biz.BizContext, re
 	item.Password = passwordHash
 	item.Salt = salt
 	item.Role = "user"
+	item.Avatar = "https://flywiki.oss-cn-hangzhou.aliyuncs.com/765-default-avatar.png"
+	item.UserName = asteriskMobile(req.Mobile)
 
 	// Valcode
 	correct, valcodeItem, errValcode := p.ValcodeRepository.IsCodeCorrect(c, tx, mobile, models.ValcodeRegister, req.Valcode)

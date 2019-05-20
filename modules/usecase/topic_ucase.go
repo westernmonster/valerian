@@ -32,6 +32,8 @@ type TopicUsecase struct {
 		// Update update a exist record
 		Update(ctx context.Context, node sqalx.Node, item *repo.Topic) (err error)
 
+		Delete(ctx context.Context, node sqalx.Node, topicID int64) (err error)
+
 		SearchTopics(ctx context.Context, node sqalx.Node, cond map[string]string) (items []*models.TopicSearchResult, err error)
 
 		GetTopicVersions(ctx context.Context, node sqalx.Node, topicSetID int64) (items []*models.TopicVersion, err error)
@@ -178,14 +180,23 @@ func (p *TopicUsecase) FollowTopic(c context.Context, ctx *biz.BizContext, topic
 	return
 }
 
-func (p *TopicUsecase) SeachTopics(c context.Context, ctx *biz.BizContext, topicID int64, query string) (items []*models.TopicSearchResult, err error) {
+func (p *TopicUsecase) SeachTopics(c context.Context, ctx *biz.BizContext, query string) (items []*models.TopicSearchResult, err error) {
 	items, err = p.TopicRepository.SearchTopics(c, p.Node, map[string]string{
-		"id":    strconv.FormatInt(topicID, 10),
 		"query": query,
 	})
 	if err != nil {
 		err = tracerr.Wrap(err)
 		return
+	}
+
+	for _, v := range items {
+		versions, errInner := p.TopicRepository.GetTopicVersions(c, p.Node, v.TopicSetID)
+		if errInner != nil {
+			err = tracerr.Wrap(errInner)
+			return
+		}
+
+		v.Versions = versions
 	}
 	return
 }
@@ -260,6 +271,16 @@ func (p *TopicUsecase) Get(c context.Context, ctx *biz.BizContext, topicID int64
 	item.RelatedTopics = make([]*models.RelatedTopicShort, 0)
 	item.Categories = make([]*models.TopicCategoryParentItem, 0)
 	item.Versions = make([]*models.TopicVersion, 0)
+
+	topicType, exist, err := p.TopicTypeRepository.GetByID(c, p.Node, t.TopicType)
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+
+	if exist {
+		item.TopicTypeName = topicType.Name
+	}
 
 	members, err := p.TopicMemberRepository.GetTopicMembers(c, p.Node, topicID, 10)
 	if err != nil {
@@ -422,7 +443,7 @@ func (p *TopicUsecase) Create(c context.Context, ctx *biz.BizContext, req *model
 }
 
 func (p *TopicUsecase) Delete(c context.Context, ctx *biz.BizContext, topicID int64) (err error) {
-	return
+	return p.TopicRepository.Delete(c, p.Node, topicID)
 }
 
 func (p *TopicUsecase) Update(c context.Context, ctx *biz.BizContext, topicID int64, req *models.UpdateTopicReq) (err error) {
@@ -614,19 +635,12 @@ func (p *TopicUsecase) bulkCreateMembers(c context.Context, node sqalx.Node, acc
 	}
 	defer tx.Rollback()
 
-	ownerCount := 0
-
 	for _, v := range req.Members {
-		if v.Role == models.MemberRoleOwner {
-			ownerCount = ownerCount + 1
-
-			if v.AccountID != accountID {
-				err = berr.Errorf("主理人需为创建用户")
-				return
-			}
+		if v.AccountID == accountID {
+			continue
 		}
 
-		if ownerCount > 1 {
+		if v.Role == models.MemberRoleOwner {
 			err = berr.Errorf("主理人只能有一个")
 			return
 		}
@@ -675,29 +689,27 @@ func (p *TopicUsecase) bulkCreateMembers(c context.Context, node sqalx.Node, acc
 		}
 	}
 
-	if ownerCount == 0 {
-		id, errInner := gid.NextID()
-		if errInner != nil {
-			err = tracerr.Wrap(errInner)
-			return
-		}
-		item := &repo.TopicMember{
-			ID:        id,
-			AccountID: accountID,
-			Role:      models.MemberRoleOwner,
-			TopicID:   topicID,
-		}
-		errInner = p.TopicMemberRepository.Insert(c, tx, item)
-		if errInner != nil {
-			err = tracerr.Wrap(errInner)
-			return
-		}
+	id, errInner := gid.NextID()
+	if errInner != nil {
+		err = tracerr.Wrap(errInner)
+		return
+	}
+	item := &repo.TopicMember{
+		ID:        id,
+		AccountID: accountID,
+		Role:      models.MemberRoleOwner,
+		TopicID:   topicID,
+	}
+	errInner = p.TopicMemberRepository.Insert(c, tx, item)
+	if errInner != nil {
+		err = tracerr.Wrap(errInner)
+		return
+	}
 
-		errInner = p.followTopic(c, tx, topicID, accountID)
-		if errInner != nil {
-			err = tracerr.Wrap(errInner)
-			return
-		}
+	errInner = p.followTopic(c, tx, topicID, accountID)
+	if errInner != nil {
+		err = tracerr.Wrap(errInner)
+		return
 	}
 
 	err = tx.Commit()

@@ -1307,7 +1307,13 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "成功,返回topic_id"
+                        "description": "话题搜索结果",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.TopicSearchResult"
+                            }
+                        }
                     },
                     "400": {
                         "description": "验证请求失败"
@@ -2947,6 +2953,10 @@
                         "$ref": "#/definitions/models.RelatedTopicShort"
                     }
                 },
+                "resources_count": {
+                    "description": "资源数量",
+                    "type": "integer"
+                },
                 "topic_home": {
                     "description": "话题首页\nintroduction 简介\nfeed 动态\ncatalog 目录\ndiscussion 讨论\nchat 群聊",
                     "type": "string"
@@ -3127,6 +3137,34 @@
                 },
                 "page_size": {
                     "type": "integer"
+                }
+            }
+        },
+        "models.TopicSearchResult": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "description": "话题名",
+                    "type": "string"
+                },
+                "topic_id": {
+                    "description": "话题ID",
+                    "type": "string"
+                },
+                "topic_set_id": {
+                    "description": "集合ID",
+                    "type": "string"
+                },
+                "version": {
+                    "description": "版本列表",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.TopicVersion"
+                    }
+                },
+                "version_name": {
+                    "description": "版本名称",
+                    "type": "string"
                 }
             }
         },

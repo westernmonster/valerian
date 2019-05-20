@@ -62,10 +62,9 @@ func (p *TopicRepository) SearchTopics(ctx context.Context, node sqalx.Node, con
 
 	if val, ok := cond["query"]; ok {
 		if strings.TrimSpace(val) != "" {
-			clause += ` AND (a.name LIKE ?
-		OR a.version_name LIKE ?)`
-			condition = append(condition, val)
-			condition = append(condition, val)
+			clause += ` AND (a.name LIKE ? OR a.version_name LIKE ?)`
+			condition = append(condition, "%"+val+"%")
+			condition = append(condition, "%"+val+"%")
 		}
 	}
 
@@ -74,7 +73,7 @@ func (p *TopicRepository) SearchTopics(ctx context.Context, node sqalx.Node, con
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.id as topic_id, a.name, a.version_name FROM topics a WHERE a.deleted=0 %s ", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.id as topic_id, a.topic_set_id,a.name, a.version_name FROM topics a WHERE a.deleted=0 %s ", clause)
 
 	err = node.SelectContext(ctx, &items, sqlSelect, condition...)
 	if err != nil {
@@ -217,6 +216,19 @@ func (p *TopicRepository) Insert(ctx context.Context, node sqalx.Node, item *Top
 	return
 }
 
+//
+func (p *TopicRepository) Delete(ctx context.Context, node sqalx.Node, topicID int64) (err error) {
+	sqlUpdate := "UPDATE topics SET deleted=1 WHERE id=?"
+
+	_, err = node.ExecContext(ctx, sqlUpdate, topicID)
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+
+	return
+}
+
 // Update update a exist record
 func (p *TopicRepository) Update(ctx context.Context, node sqalx.Node, item *Topic) (err error) {
 	sqlUpdate := "UPDATE topics SET topic_set_id=?,name=?,cover=?,bg=?,introduction=?,is_private=?,allow_chat=?,allow_discuss=?,edit_permission=?,view_permission=?,join_permission=?,important=?,mute_notification=?,category_view_type=?,topic_type=?,topic_home=?,version_name=?,created_by=?,updated_at=? WHERE id=?"
@@ -234,7 +246,7 @@ func (p *TopicRepository) Update(ctx context.Context, node sqalx.Node, item *Top
 
 func (p *TopicRepository) GetTopicVersions(ctx context.Context, node sqalx.Node, topicSetID int64) (items []*models.TopicVersion, err error) {
 	items = make([]*models.TopicVersion, 0)
-	sqlSelect := "SELECT a.id AS topic_set_id,b.id AS topic_id,b.version_name FROM topic_sets a LEFT JOIN topics b ON a.id=b.topic_set_id WHERE a.id=?"
+	sqlSelect := "SELECT a.id AS topic_set_id,b.name as topic_name, b.id AS topic_id,b.version_name FROM topic_sets a LEFT JOIN topics b ON a.id=b.topic_set_id WHERE a.id=?"
 
 	err = node.SelectContext(ctx, &items, sqlSelect, topicSetID)
 	if err != nil {
