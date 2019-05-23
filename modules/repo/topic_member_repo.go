@@ -38,6 +38,19 @@ func (p *TopicMemberRepository) GetTopicMembers(ctx context.Context, node sqalx.
 	return
 }
 
+// GetAllTopicMembers
+func (p *TopicMemberRepository) GetAllTopicMembers(ctx context.Context, node sqalx.Node, topicID int64) (items []*TopicMember, err error) {
+	items = make([]*TopicMember, 0)
+	sqlSelect := "SELECT a.* FROM topic_members a WHERE a.topic_id=? ORDER BY a.id DESC"
+
+	err = node.SelectContext(ctx, &items, sqlSelect, topicID)
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+	return
+}
+
 // GetTopicMembersCount
 func (p *TopicMemberRepository) GetTopicMembersCount(ctx context.Context, node sqalx.Node, topicID int64) (count int, err error) {
 	sqlCount := "SELECT COUNT(1) as count FROM topic_members a LEFT JOIN accounts b ON a.account_id = b.id WHERE a.topic_id=?"

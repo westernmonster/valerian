@@ -73,7 +73,7 @@ func (p *TopicRepository) SearchTopics(ctx context.Context, node sqalx.Node, con
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.id as topic_id, a.topic_set_id,a.name, a.version_name FROM topics a WHERE a.deleted=0 %s ", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.id as topic_id, a.topic_set_id,a.name, a.version_name, a.introduction, a.cover FROM topics a WHERE a.deleted=0 %s ", clause)
 
 	err = node.SelectContext(ctx, &items, sqlSelect, condition...)
 	if err != nil {

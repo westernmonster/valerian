@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"strconv"
+	"time"
 
 	"valerian/library/database/sqalx"
 	"valerian/library/database/sqlx"
@@ -21,6 +22,11 @@ import (
 type TopicUsecase struct {
 	sqalx.Node
 	*sqlx.DB
+
+	AccountRepository interface {
+		// GetByID get a record by ID
+		GetByID(ctx context.Context, node sqalx.Node, id int64) (item *repo.Account, exist bool, err error)
+	}
 
 	TopicRepository interface {
 		// GetByID get a record by ID
@@ -62,6 +68,8 @@ type TopicUsecase struct {
 		// Delete logic delete a exist record
 		Delete(ctx context.Context, node sqalx.Node, id int64) (err error)
 
+		GetAllTopicMembers(ctx context.Context, node sqalx.Node, topicID int64) (items []*repo.TopicMember, err error)
+
 		GetTopicMembers(ctx context.Context, node sqalx.Node, topicID int64, limit int) (items []*models.TopicMember, err error)
 
 		GetTopicMembersPaged(ctx context.Context, node sqalx.Node, topicID int64, page, pageSize int) (count int, items []*models.TopicMember, err error)
@@ -91,6 +99,7 @@ type TopicUsecase struct {
 	}
 
 	TopicRelationRepository interface {
+		GetAllTopicRelations(ctx context.Context, node sqalx.Node, topicID int64) (items []*repo.TopicRelation, err error)
 		// GetByCondition get a record by condition
 		GetByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (item *repo.TopicRelation, exist bool, err error)
 		// Insert insert a new record
@@ -235,6 +244,10 @@ func (p *TopicUsecase) GetAllRelatedTopics(c context.Context, ctx *biz.BizContex
 }
 
 func (p *TopicUsecase) Get(c context.Context, ctx *biz.BizContext, topicID int64) (item *models.Topic, err error) {
+	return p.get(c, ctx, topicID)
+}
+
+func (p *TopicUsecase) get(c context.Context, ctx *biz.BizContext, topicID int64) (item *models.Topic, err error) {
 	t, exist, err := p.TopicRepository.GetByID(c, p.Node, topicID)
 	if err != nil {
 		err = tracerr.Wrap(err)
@@ -325,7 +338,7 @@ func (p *TopicUsecase) Get(c context.Context, ctx *biz.BizContext, topicID int64
 	}
 
 	if exist {
-		item.IsFollowed = true
+		item.TopicMeta.IsFollowed = true
 	}
 	return
 }
@@ -1023,5 +1036,216 @@ func (p *TopicUsecase) GetAllTopicTypes(c context.Context, ctx *biz.BizContext) 
 
 	copier.Copy(&items, &data)
 
+	return
+}
+
+func (p *TopicUsecase) GetTopicMeta(c context.Context, node sqalx.Node, accountID int64, topicID int64) (meta models.TopicMeta, err error) {
+	topic, exist, err := p.TopicRepository.GetByID(c, p.Node, topicID)
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+	if !exist {
+		err = berr.Errorf("话题不存在")
+		return
+	}
+
+	account, exist, err := p.AccountRepository.GetByID(c, node, accountID)
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+	if !exist {
+		err = berr.Errorf("未找到该账号")
+		return
+	}
+
+	switch topic.JoinPermission {
+	case models.JoinPermissionMember:
+		meta.CanJoin = true
+		break
+	case models.JoinPermissionIDCert:
+		if bool(account.IDCert) {
+			meta.CanJoin = true
+		}
+		break
+	case models.JoinPermissionWorkCert:
+		if bool(account.WorkCert) {
+			meta.CanJoin = true
+		}
+		break
+	case models.JoinPermissionMemberApprove:
+		break
+	case models.JoinPermissionIDCertApprove:
+		break
+	case models.JoinPermissionWorkCertApprove:
+		break
+	case models.JoinPermissionAdminAdd:
+		break
+	case models.JoinPermissionPurchase:
+		break
+	case models.JoinPermissionVIP:
+		if bool(account.WorkCert) {
+			meta.CanJoin = true
+		}
+		break
+	}
+
+	switch topic.ViewPermission {
+	case models.ViewPermissionPublic:
+		meta.CanView = true
+		break
+	case models.ViewPermissionJoin:
+		break
+	}
+
+	switch topic.EditPermission {
+	case models.EditPermissionIDCert:
+		break
+	case models.EditPermissionWorkCert:
+		break
+	case models.EditPermissionIDCertJoined:
+		break
+	case models.EditPermissionWorkCertJoined:
+		break
+	case models.EditPermissionApprovedIDCertJoined:
+		break
+	case models.EditPermissionApprovedWorkCertJoined:
+		break
+	case models.EditPermissionAdmin:
+		meta.CanEdit = true
+		break
+	}
+
+	return
+}
+
+func (p *TopicUsecase) CreateNewVersion(c context.Context, ctx *biz.BizContext, arg *models.ArgNewVersion) (id int64, err error) {
+	tx, err := p.Node.Beginx(c)
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+	defer tx.Rollback()
+
+	t, exist, err := p.TopicRepository.GetByID(c, tx, arg.FromTopicID)
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+	if !exist {
+		err = berr.Errorf("话题不存在")
+		return
+	}
+
+	_, exist, err = p.TopicRepository.GetByCondition(c, tx, map[string]string{
+		"topic_set_id": strconv.FormatInt(t.TopicSetID, 10),
+		"version_name": arg.VersionName,
+	})
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+
+	if exist {
+		err = berr.Errorf("话题版本已经存在")
+		return
+	}
+
+	id, err = gid.NextID()
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+	t.ID = id
+	t.VersionName = arg.VersionName
+	t.CreatedBy = *ctx.AccountID
+	t.CreatedAt = time.Now().Unix()
+	t.UpdatedAt = time.Now().Unix()
+
+	err = p.TopicRepository.Insert(c, tx, t)
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+
+	members, err := p.TopicMemberRepository.GetAllTopicMembers(c, tx, arg.FromTopicID)
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+
+	for _, v := range members {
+		sid, errInner := gid.NextID()
+		if errInner != nil {
+			err = tracerr.Wrap(errInner)
+			return
+		}
+
+		v.ID = sid
+		v.TopicID = t.ID
+		v.CreatedAt = time.Now().Unix()
+		v.UpdatedAt = time.Now().Unix()
+
+		errInner = p.TopicMemberRepository.Insert(c, tx, v)
+		if errInner != nil {
+			err = tracerr.Wrap(errInner)
+			return
+		}
+	}
+
+	relations, err := p.TopicRelationRepository.GetAllTopicRelations(c, tx, arg.FromTopicID)
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+
+	for _, v := range relations {
+		sid, errInner := gid.NextID()
+		if errInner != nil {
+			err = tracerr.Wrap(errInner)
+			return
+		}
+
+		v.ID = sid
+		v.FromTopicID = t.ID
+		v.CreatedAt = time.Now().Unix()
+		v.UpdatedAt = time.Now().Unix()
+
+		errInner = p.TopicRelationRepository.Insert(c, tx, v)
+		if errInner != nil {
+			err = tracerr.Wrap(errInner)
+			return
+		}
+	}
+
+	categories, err := p.TopicCategoryRepository.GetAllByCondition(c, tx, map[string]string{
+		"topic_id": strconv.FormatInt(arg.FromTopicID, 10),
+	})
+
+	for _, v := range categories {
+		sid, errInner := gid.NextID()
+		if errInner != nil {
+			err = tracerr.Wrap(errInner)
+			return
+		}
+
+		v.ID = sid
+		v.TopicID = t.ID
+		v.CreatedAt = time.Now().Unix()
+		v.UpdatedAt = time.Now().Unix()
+
+		errInner = p.TopicCategoryRepository.Insert(c, tx, v)
+		if errInner != nil {
+			err = tracerr.Wrap(errInner)
+			return
+		}
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
 	return
 }

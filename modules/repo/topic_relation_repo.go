@@ -25,6 +25,18 @@ type TopicRelation struct {
 
 type TopicRelationRepository struct{}
 
+func (p *TopicRelationRepository) GetAllTopicRelations(ctx context.Context, node sqalx.Node, topicID int64) (items []*TopicRelation, err error) {
+	items = make([]*TopicRelation, 0)
+	sqlSelect := "SELECT a.* FROM topic_relations a WHERE a.from_topic_id=?"
+
+	err = node.SelectContext(ctx, &items, sqlSelect, topicID)
+	if err != nil {
+		err = tracerr.Wrap(err)
+		return
+	}
+	return
+}
+
 func (p *TopicRelationRepository) GetAllRelatedTopics(ctx context.Context, node sqalx.Node, topicID int64) (items []*models.RelatedTopicShort, err error) {
 	items = make([]*models.RelatedTopicShort, 0)
 	sqlSelect := "SELECT a.to_topic_id AS topic_id,b.name,b.version_name,a.relation AS type FROM topic_relations a LEFT JOIN topics b ON a.to_topic_id=b.id WHERE a.from_topic_id=?"

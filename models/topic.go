@@ -76,6 +76,35 @@ type TopicSearchResult struct {
 
 	// 版本列表
 	Versions []*TopicVersion `json:"version"`
+
+	// 封面图
+	Cover *string `json:"cover"`
+
+	// 简介
+	Introduction string `json:"introduction"`
+
+	// 成员数
+	MembersCount int `json:"members_count"`
+
+	// 资源数量
+	ResourcesCount int `json:"resources_count"`
+
+	TopicMeta TopicMeta `json:"meta"`
+}
+
+type TopicMeta struct {
+	// 是否允许关注
+	CanFollow bool `json:"can_follow"`
+	// 是否能编辑
+	CanEdit bool `json:"can_edit"`
+	// 是否能查看
+	CanView bool `json:"can_view"`
+	// 是否能加入
+	CanJoin bool `json:"can_join"`
+	// 是否关注
+	IsFollowed bool `json:"is_followed"`
+	// 成员角色
+	MemberRole string `json:"member_role"`
 }
 
 type Topic struct {
@@ -179,12 +208,7 @@ type Topic struct {
 
 	CreatedAt int64 `json:"created_at" swaggertype:"integer"`
 
-	// 是否关注
-	IsFollowed bool `json:"is_followed"`
-
-	// 能否关注
-	// 根据当前用户匹配权限返回
-	CanFollow bool `json:"can_follow"`
+	TopicMeta TopicMeta `json:"meta"`
 }
 
 type CreateTopicMemberArg struct {
@@ -256,10 +280,13 @@ type CreateTopicReq struct {
 	AllowDiscuss bool `json:"allow_discuss"`
 
 	// 编辑权限
-	// auth 认证用户
-	// auth_join 认证且加入
-	// auth_join_audit 认证且加入，需审核
-	// admin 仅管理员
+	// "id_cert"
+	// "work_cert"
+	// "id_cert_joined"
+	// "work_cert_joined"
+	// "approved_id_cert_joined"
+	// "approved_work_cert_joined"
+	// "only_admin"
 	EditPermission string `json:"edit_permission"`
 
 	// 查看权限
@@ -434,10 +461,13 @@ type UpdateTopicReq struct {
 	AllowChat *bool `json:"allow_chat,omitempty"`
 
 	// 编辑权限
-	// auth 认证用户
-	// auth_join 认证且加入
-	// auth_join_audit 认证且加入，需审核
-	// admin 仅管理员
+	// "id_cert"
+	// "work_cert"
+	// "id_cert_joined"
+	// "work_cert_joined"
+	// "approved_id_cert_joined"
+	// "approved_work_cert_joined"
+	// "only_admin"
 	EditPermission *string `json:"edit_permission,omitempty"`
 
 	// 查看权限
@@ -555,4 +585,20 @@ func (p *ChangeOwnerArg) Validate() error {
 type TopicType struct {
 	ID   int    `db:"id" json:"id"`     // ID ID
 	Name string `db:"name" json:"name"` // Name 话题类型
+}
+
+type ArgNewVersion struct {
+	FromTopicID int64  `json:"from_topic_id,string" swaggertype:"string"`
+	VersionName string `json:"version_name"`
+}
+
+func (p *ArgNewVersion) Validate() error {
+	return validation.ValidateStruct(
+		p,
+		validation.Field(&p.FromTopicID, validation.Required.Error(`请输入来源话题`)),
+		validation.Field(&p.VersionName,
+			validation.Required.Error(`请输入版本名`),
+			validation.RuneLength(0, 250).Error(`版本名最大长度为250个字符`),
+		),
+	)
 }

@@ -66,6 +66,13 @@ definitions:
         description: 是否成功
         type: boolean
     type: object
+  models.ArgNewVersion:
+    properties:
+      from_topic_id:
+        type: string
+      version_name:
+        type: string
+    type: object
   models.BatchSavedTopicMemberReq:
     properties:
       members:
@@ -141,10 +148,13 @@ definitions:
       edit_permission:
         description: |-
           编辑权限
-          auth 认证用户
-          auth_join 认证且加入
-          auth_join_audit 认证且加入，需审核
-          admin 仅管理员
+          "id_cert"
+          "work_cert"
+          "id_cert_joined"
+          "work_cert_joined"
+          "approved_id_cert_joined"
+          "approved_work_cert_joined"
+          "only_admin"
         type: string
       important:
         description: 重要标记
@@ -577,11 +587,6 @@ definitions:
           背景图
           必须为URL
         type: string
-      can_follow:
-        description: |-
-          能否关注
-          根据当前用户匹配权限返回
-        type: boolean
       categories:
         description: 话题分类
         items:
@@ -616,9 +621,6 @@ definitions:
       introduction:
         description: 简介
         type: string
-      is_followed:
-        description: 是否关注
-        type: boolean
       is_private:
         description: 是否私密
         type: boolean
@@ -644,6 +646,9 @@ definitions:
       members_count:
         description: 成员数
         type: integer
+      meta:
+        $ref: '#/definitions/models.TopicMeta'
+        type: object
       mute_notification:
         description: 消息免打扰
         type: boolean
@@ -811,11 +816,47 @@ definitions:
       page_size:
         type: integer
     type: object
+  models.TopicMeta:
+    properties:
+      can_edit:
+        description: 是否能编辑
+        type: boolean
+      can_follow:
+        description: 是否允许关注
+        type: boolean
+      can_join:
+        description: 是否能加入
+        type: boolean
+      can_view:
+        description: 是否能查看
+        type: boolean
+      is_followed:
+        description: 是否关注
+        type: boolean
+      member_role:
+        description: 成员角色
+        type: string
+    type: object
   models.TopicSearchResult:
     properties:
+      cover:
+        description: 封面图
+        type: string
+      introduction:
+        description: 简介
+        type: string
+      members_count:
+        description: 成员数
+        type: integer
+      meta:
+        $ref: '#/definitions/models.TopicMeta'
+        type: object
       name:
         description: 话题名
         type: string
+      resources_count:
+        description: 资源数量
+        type: integer
       topic_id:
         description: 话题ID
         type: string
@@ -842,6 +883,9 @@ definitions:
     properties:
       topic_id:
         description: 话题ID
+        type: string
+      topic_name:
+        description: 话题名
         type: string
       topic_set_id:
         description: 集合ID
@@ -918,10 +962,13 @@ definitions:
       edit_permission:
         description: |-
           编辑权限
-          auth 认证用户
-          auth_join 认证且加入
-          auth_join_audit 认证且加入，需审核
-          admin 仅管理员
+          "id_cert"
+          "work_cert"
+          "id_cert_joined"
+          "work_cert_joined"
+          "approved_id_cert_joined"
+          "approved_work_cert_joined"
+          "only_admin"
         type: string
       important:
         description: 重要标记
@@ -999,6 +1046,60 @@ info:
   title: 飞行百科 API
   version: "1.0"
 paths:
+  //topic_sets/:
+    post:
+      consumes:
+      - application/json
+      description: 新增话题版本
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 话题集合ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: 请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/models.ArgNewVersion'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功,返回topic_id
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 新增话题版本
+      tags:
+      - topic
   /country_codes:
     get:
       consumes:

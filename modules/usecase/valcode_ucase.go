@@ -133,30 +133,6 @@ func (p *ValcodeUsecase) RequestMobileValcode(c context.Context, ctx *biz.BizCon
 		phone = req.Mobile
 	}
 
-	switch req.CodeType {
-	case models.ValcodeRegister:
-		if e := p.SMSClient.SendRegisterValcode(phone, valcode); e != nil {
-			err = tracerr.Wrap(e)
-			return
-		}
-		break
-	case models.ValcodeForgetPassword:
-		if e := p.SMSClient.SendResetPasswordValcode(phone, valcode); e != nil {
-			err = tracerr.Wrap(e)
-			return
-		}
-		break
-	case models.ValcodeLogin:
-		if e := p.SMSClient.SendResetPasswordValcode(phone, valcode); e != nil {
-			err = tracerr.Wrap(e)
-			return
-		}
-		break
-	default:
-		err = berr.Errorf("未知的验证码类型")
-		return
-	}
-
 	id, err := gid.NextID()
 	if err != nil {
 		err = tracerr.Wrap(err)
@@ -180,6 +156,30 @@ func (p *ValcodeUsecase) RequestMobileValcode(c context.Context, ctx *biz.BizCon
 	err = tx.Commit()
 	if err != nil {
 		err = tracerr.Wrap(err)
+		return
+	}
+
+	switch req.CodeType {
+	case models.ValcodeRegister:
+		if e := p.SMSClient.SendRegisterValcode(phone, valcode); e != nil {
+			err = tracerr.Wrap(e)
+			return
+		}
+		break
+	case models.ValcodeForgetPassword:
+		if e := p.SMSClient.SendResetPasswordValcode(phone, valcode); e != nil {
+			err = tracerr.Wrap(e)
+			return
+		}
+		break
+	case models.ValcodeLogin:
+		if e := p.SMSClient.SendResetPasswordValcode(phone, valcode); e != nil {
+			err = tracerr.Wrap(e)
+			return
+		}
+		break
+	default:
+		err = berr.Errorf("未知的验证码类型")
 		return
 	}
 

@@ -31,6 +31,7 @@ type TopicCtrl struct {
 		FollowTopic(c context.Context, ctx *biz.BizContext, topicID int64, isFollowed bool) (err error)
 		GetAllRelatedTopics(c context.Context, ctx *biz.BizContext, topicID int64) (items []*models.RelatedTopic, err error)
 		GetAllTopicTypes(c context.Context, ctx *biz.BizContext) (items []*models.TopicType, err error)
+		CreateNewVersion(c context.Context, ctx *biz.BizContext, arg *models.ArgNewVersion) (id int64, err error)
 	}
 }
 
@@ -518,6 +519,52 @@ func (p *TopicCtrl) GetTopicVersions(ctx *gin.Context) {
 	}
 
 	p.SuccessResp(ctx, items)
+
+	return
+
+}
+
+// @Summary 新增话题版本
+// @Description 新增话题版本
+// @Tags topic
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param id path string true  "话题集合ID"
+// @Param req body models.ArgNewVersion true "请求"
+// @Success 200 "成功,返回topic_id"
+// @Failure 400 "验证请求失败"
+// @Failure 401 "登录验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /topic_sets/{id}/versions [post]
+func (p *TopicCtrl) CreateNewVersion(ctx *gin.Context) {
+	req := new(models.ArgNewVersion)
+
+	if e := ctx.Bind(req); e != nil {
+		p.HandleError(ctx, e)
+		return
+	}
+
+	if e := req.Validate(); e != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, infrastructure.RespCommon{
+			Success: false,
+			Code:    http.StatusBadRequest,
+			Message: e.Error(),
+		})
+
+		return
+	}
+
+	bizCtx := p.GetBizContext(ctx)
+	id, err := p.TopicUsecase.CreateNewVersion(ctx.Request.Context(), bizCtx, req)
+	if err != nil {
+		p.HandleError(ctx, err)
+		return
+	}
+
+	p.SuccessResp(ctx, strconv.FormatInt(id, 10))
 
 	return
 
