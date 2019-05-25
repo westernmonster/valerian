@@ -2,11 +2,9 @@ package http
 
 import (
 	"context"
-	"net/http"
 
 	"valerian/library/database/sqalx"
-
-	"github.com/gin-gonic/gin"
+	"valerian/library/net/http/mars"
 
 	"valerian/infrastructure"
 	"valerian/infrastructure/biz"
@@ -49,32 +47,18 @@ func NewAccountCtrl(node sqalx.Node) *AccountCtrl {
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /me/password [put]
-func (p *AccountCtrl) ChangePassword(ctx *gin.Context) {
-
+func (p *AccountCtrl) ChangePassword(ctx *mars.Context) {
 	req := new(models.ChangePasswordReq)
-
-	if e := ctx.Bind(req); e != nil {
-		p.HandleError(ctx, e)
-		return
-	}
+	ctx.Bind(req)
 
 	if e := req.Validate(); e != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, infrastructure.RespCommon{
-			Success: false,
-			Code:    http.StatusBadRequest,
-			Message: e.Error(),
-		})
-
+		ctx.JSON(nil, e)
 		return
 	}
 
 	err := p.AccountUsecase.ChangePassword(ctx.Request.Context(), p.GetBizContext(ctx), req)
-	if err != nil {
-		p.HandleError(ctx, err)
-		return
-	}
 
-	p.SuccessResp(ctx, nil)
+	ctx.JSON(nil, err)
 
 	return
 }
@@ -94,7 +78,7 @@ func (p *AccountCtrl) ChangePassword(ctx *gin.Context) {
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /me [put]
-func (p *AccountCtrl) UpdateProfile(ctx *gin.Context) {
+func (p *AccountCtrl) UpdateProfile(ctx *mars.Context) {
 
 	req := new(models.UpdateProfileReq)
 
@@ -126,7 +110,7 @@ func (p *AccountCtrl) UpdateProfile(ctx *gin.Context) {
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /me [get]
-func (p *AccountCtrl) GetProfile(ctx *gin.Context) {
+func (p *AccountCtrl) GetProfile(ctx *mars.Context) {
 	item, err := p.AccountUsecase.GetProfile(ctx.Request.Context(), p.GetBizContext(ctx))
 	if err != nil {
 		p.HandleError(ctx, err)

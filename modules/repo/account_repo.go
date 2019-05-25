@@ -8,7 +8,8 @@ import (
 
 	"valerian/library/database/sqalx"
 
-	types "github.com/jmoiron/sqlx/types"
+	types "valerian/library/database/sqlx/types"
+
 	tracerr "github.com/ztrue/tracerr"
 )
 

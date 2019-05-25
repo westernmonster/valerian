@@ -15,8 +15,49 @@
 package log
 
 import (
+	"valerian/library/stat/prom"
+
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+)
+
+var errProm = prom.BusinessErrCount
+
+const (
+	_timeFormat = "2006-01-02T15:04:05.999999"
+
+	// log level defined in level.go.
+	_levelValue = "level_value"
+	//  log level name: INFO, WARN...
+	_level = "level"
+	// log time.
+	_time = "time"
+	// request path.
+	// _title = "title"
+	// log file.
+	_source = "source"
+	// common log filed.
+	_log = "log"
+	// app name.
+	_appID = "app_id"
+	// container ID.
+	_instanceID = "instance_id"
+	// uniq ID from trace.
+	_tid = "traceid"
+	// request time.
+	// _ts = "ts"
+	// requester.
+	_caller = "caller"
+	// container environment: prod, pre, uat, fat.
+	_deplyEnv = "env"
+	// container area.
+	_zone = "zone"
+	// mirror flag
+	_mirror = "mirror"
+	// color.
+	_color = "color"
+	// cluster.
+	_cluster = "cluster"
 )
 
 // Logger is a simplified abstraction of the zap.Logger
@@ -34,6 +75,7 @@ type logger struct {
 
 // Info logs an info msg with fields
 func (l logger) Info(msg string, fields ...zapcore.Field) {
+	fields = append(fields, appendFields()...)
 	l.logger.Info(msg, fields...)
 }
 
@@ -51,3 +93,9 @@ func (l logger) Fatal(msg string, fields ...zapcore.Field) {
 func (l logger) With(fields ...zapcore.Field) Logger {
 	return logger{logger: l.logger.With(fields...)}
 }
+
+// func errIncr(lv Level, source string) {
+// 	if lv == _errorLevel {
+// 		errProm.Incr(source)
+// 	}
+// }

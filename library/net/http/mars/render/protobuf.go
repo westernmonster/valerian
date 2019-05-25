@@ -1,36 +1,38 @@
-// Copyright 2018 Gin Core Team.  All rights reserved.
-// Use of this source code is governed by a MIT style
-// license that can be found in the LICENSE file.
-
 package render
 
 import (
 	"net/http"
 
-	"github.com/golang/protobuf/proto"
+	"github.com/gogo/protobuf/proto"
+	"github.com/pkg/errors"
 )
 
-// ProtoBuf contains the given interface object.
-type ProtoBuf struct {
-	Data interface{}
+var pbContentType = []string{"application/x-protobuf"}
+
+// Render (PB) writes data with protobuf ContentType.
+func (r PB) Render(w http.ResponseWriter) error {
+	if r.TTL <= 0 {
+		r.TTL = 1
+	}
+	return writePB(w, r)
 }
 
-var protobufContentType = []string{"application/x-protobuf"}
+// WriteContentType write protobuf ContentType.
+func (r PB) WriteContentType(w http.ResponseWriter) {
+	writeContentType(w, pbContentType)
+}
 
-// Render (ProtoBuf) marshals the given interface object and writes data with custom ContentType.
-func (r ProtoBuf) Render(w http.ResponseWriter) error {
-	r.WriteContentType(w)
+func writePB(w http.ResponseWriter, obj PB) (err error) {
+	var pbBytes []byte
+	writeContentType(w, pbContentType)
 
-	bytes, err := proto.Marshal(r.Data.(proto.Message))
-	if err != nil {
-		return err
+	if pbBytes, err = proto.Marshal(&obj); err != nil {
+		err = errors.WithStack(err)
+		return
 	}
 
-	_, err = w.Write(bytes)
-	return err
-}
-
-// WriteContentType (ProtoBuf) writes ProtoBuf ContentType.
-func (r ProtoBuf) WriteContentType(w http.ResponseWriter) {
-	writeContentType(w, protobufContentType)
+	if _, err = w.Write(pbBytes); err != nil {
+		err = errors.WithStack(err)
+	}
+	return
 }

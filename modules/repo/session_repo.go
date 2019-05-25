@@ -5,18 +5,19 @@ import (
 	"database/sql"
 	"time"
 	"valerian/library/database/sqalx"
+	types "valerian/library/database/sqlx/types"
 
 	tracerr "github.com/ztrue/tracerr"
 )
 
 type Session struct {
-	ID          int64 `db:"id" json:"id,string"`                 // ID ID
-	SessionType int   `db:"session_type" json:"session_type"`    // SessionType 类型
-	Used        int   `db:"used" json:"used"`                    // Used 类型, 0未使用，1使用
-	AccountID   int64 `db:"account_id" json:"account_id,string"` // AccountID 账户ID
-	Deleted     int   `db:"deleted" json:"deleted"`              // Deleted 是否删除
-	CreatedAt   int64 `db:"created_at" json:"created_at"`        // CreatedAt 创建时间
-	UpdatedAt   int64 `db:"updated_at" json:"updated_at"`        // UpdatedAt 更新时间
+	ID          int64         `db:"id" json:"id,string"`                 // ID ID
+	SessionType int           `db:"session_type" json:"session_type"`    // SessionType 类型
+	Used        int           `db:"used" json:"used"`                    // Used 类型, 0未使用，1使用
+	AccountID   int64         `db:"account_id" json:"account_id,string"` // AccountID 账户ID
+	Deleted     types.BitBool `db:"deleted" json:"deleted"`              // Deleted 是否删除
+	CreatedAt   int64         `db:"created_at" json:"created_at"`        // CreatedAt 创建时间
+	UpdatedAt   int64         `db:"updated_at" json:"updated_at"`        // UpdatedAt 更新时间
 }
 
 type SessionRepository struct{}

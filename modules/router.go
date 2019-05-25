@@ -6,8 +6,6 @@ import (
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk"
 	"github.com/opentracing-contrib/go-gin/ginhttp"
 	"github.com/spf13/viper"
-	"github.com/uber/jaeger-lib/metrics"
-	jprom "github.com/uber/jaeger-lib/metrics/prometheus"
 	"go.uber.org/zap"
 
 	"valerian/infrastructure/bootstrap"
@@ -27,14 +25,7 @@ var (
 )
 
 func Configure(p *bootstrap.Bootstrapper) {
-
-	logger, _ = zap.NewProduction()
-	vlogger := log.NewFactory(logger.With(zap.String("service", "valerian")))
-	vlogger.Bg().Info("Starting", zap.String("address", "http://localhost:7001"))
-
-	var metricsFactory metrics.Factory
-	metricsFactory = jprom.New()
-	tracer := tracing.Init("valerian", metricsFactory.Namespace(metrics.NSOptions{Name: "valerian"}), vlogger, "localhost:6831")
+	tracer := tracing.Init(nil)
 
 	node, err := db.InitDatabase()
 	if err != nil {
@@ -103,7 +94,7 @@ func Configure(p *bootstrap.Bootstrapper) {
 		api.PUT("/me", auth.User, accountCtrl.UpdateProfile)
 
 		// 电话区域码
-		countryCodeCtrl := http.NewCountryCodeCtrl(node, vlogger)
+		countryCodeCtrl := http.NewCountryCodeCtrl(node, log.NewFactory())
 		api.GET("/country_codes", countryCodeCtrl.GetAll)
 
 		// 语言
@@ -127,12 +118,12 @@ func Configure(p *bootstrap.Bootstrapper) {
 		api.POST("/me/followed/topics", auth.User, topicCtrl.FollowTopic)
 
 		// 话题分类
-		topicCategoryCtrl := http.NewTopicCategoryCtrl(node)
-		api.GET("/topics/:id/categories", auth.User, topicCategoryCtrl.GetAll)
-		api.GET("/topics/:id/categories/hierarchy", auth.User, topicCategoryCtrl.GetHierarchyOfAll)
-		// api.POST("/topics/:id/categories", auth.User, topicCategoryCtrl.Create)
-		// api.DELETE("/topic_categories/:id", auth.User, topicCategoryCtrl.Delete)
-		api.PATCH("/topics/:id/categories", auth.User, topicCategoryCtrl.BulkSave)
+		// topicCategoryCtrl := http.NewTopicCategoryCtrl(node)
+		// api.GET("/topics/:id/categories", auth.User, topicCategoryCtrl.GetAll)
+		// api.GET("/topics/:id/categories/hierarchy", auth.User, topicCategoryCtrl.GetHierarchyOfAll)
+		// // api.POST("/topics/:id/categories", auth.User, topicCategoryCtrl.Create)
+		// // api.DELETE("/topic_categories/:id", auth.User, topicCategoryCtrl.Delete)
+		api.PATCH("/topics/:id/catalogs", auth.User, topicCtrl.BatchSavedTopicCatalogs)
 
 		fileCtrl := &http.FileCtrl{}
 		api.POST("/files/oss_token", auth.User, fileCtrl.GetOSSToken)

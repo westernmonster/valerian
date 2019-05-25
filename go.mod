@@ -3,18 +3,18 @@ module valerian
 go 1.12
 
 require (
+	github.com/BurntSushi/toml v0.3.0
 	github.com/ajg/form v1.5.1 // indirect
 	github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc
 	github.com/aliyun/alibaba-cloud-sdk-go v0.0.0-20190418113227-25233c783f4e
 	github.com/asaskevich/govalidator v0.0.0-20180720115003-f9ffefc3facf
 	github.com/bitly/go-simplejson v0.5.0 // indirect
-	github.com/bouk/monkey v1.0.1
+	github.com/bouk/monkey v1.0.1 // indirect
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/fatih/structs v1.1.0 // indirect
 	github.com/gavv/httpexpect v1.0.0 // indirect
 	github.com/gavv/monotime v0.0.0-20190418164738-30dba4353424 // indirect
-	github.com/gin-contrib/sse v0.0.0-20190301062529-5545eab6dad3
 	github.com/gin-gonic/gin v1.3.0
 	github.com/go-ozzo/ozzo-validation v3.5.0+incompatible
 	github.com/go-playground/locales v0.12.1 // indirect
@@ -29,10 +29,8 @@ require (
 	github.com/jinzhu/copier v0.0.0-20180308034124-7e38e58719c3
 	github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af // indirect
 	github.com/jmoiron/sqlx v1.2.0
-	github.com/json-iterator/go v1.1.6
 	github.com/leodido/go-urn v1.1.0 // indirect
 	github.com/lib/pq v1.0.0
-	github.com/mattn/go-isatty v0.0.7
 	github.com/mattn/go-sqlite3 v1.9.0
 	github.com/moul/http2curl v1.0.0 // indirect
 	github.com/nicksnyder/go-i18n/v2 v2.0.0-beta.6
@@ -60,7 +58,6 @@ require (
 	github.com/tidwall/tinyqueue v0.0.0-20180302190814-1e39f5511563 // indirect
 	github.com/uber/jaeger-client-go v2.16.0+incompatible
 	github.com/uber/jaeger-lib v2.0.0+incompatible
-	github.com/ugorji/go/codec v0.0.0-20190320090025-2dc34c0b8780
 	github.com/valyala/quicktemplate v1.0.2
 	github.com/westernmonster/sqalx v0.3.0 // indirect
 	github.com/xeipuuv/gojsonpointer v0.0.0-20180127040702-4e3ac2762d5f // indirect
@@ -73,10 +70,8 @@ require (
 	go.uber.org/atomic v1.4.0 // indirect
 	go.uber.org/multierr v1.1.0 // indirect
 	go.uber.org/zap v1.10.0
-	golang.org/x/net v0.0.0-20190322120337-addf6b3196f6
 	golang.org/x/text v0.3.0
 	google.golang.org/appengine v1.5.0 // indirect
-	gopkg.in/go-playground/validator.v8 v8.18.2
 	gopkg.in/go-playground/validator.v9 v9.28.0
 	gopkg.in/ini.v1 v1.42.0 // indirect
 	gopkg.in/yaml.v2 v2.2.2

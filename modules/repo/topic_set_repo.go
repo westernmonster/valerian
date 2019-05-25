@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"valerian/library/database/sqalx"
+	types "valerian/library/database/sqlx/types"
 
-	"github.com/jmoiron/sqlx/types"
 	tracerr "github.com/ztrue/tracerr"
 )
 

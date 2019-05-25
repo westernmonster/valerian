@@ -3,8 +3,7 @@ package http
 import (
 	"context"
 	"valerian/library/database/sqalx"
-
-	"github.com/gin-gonic/gin"
+	"valerian/library/net/http/mars"
 
 	"valerian/infrastructure"
 	"valerian/infrastructure/biz"
@@ -41,7 +40,7 @@ func NewLocaleCtrl(node sqalx.Node) *LocaleCtrl {
 // @Success 200 {array} models.Locale "语言编码"
 // @Failure 500 "服务器端错误"
 // @Router /locales [get]
-func (p *LocaleCtrl) GetAll(ctx *gin.Context) {
+func (p *LocaleCtrl) GetAll(ctx *mars.Context) {
 
 	items, err := p.LocaleUsecase.GetAll(ctx.Request.Context(), p.GetBizContext(ctx))
 	if err != nil {

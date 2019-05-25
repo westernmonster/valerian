@@ -143,12 +143,12 @@ type Topic struct {
 	RelatedTopics []*RelatedTopicShort `json:"related_topics"`
 
 	// 话题分类
-	Categories []*TopicCategoryParentItem `json:"categories"`
+	Catalogs []*TopicLevel1Catalog `json:"catalogs"`
 
 	// 分类视图
 	// section 章节
 	// column 栏目
-	CategoryViewType string `json:"category_view_type"`
+	CatalogViewType string `json:"catalog_view_type"`
 
 	// 话题类型
 	TopicType int `json:"topic_type"`
@@ -249,12 +249,12 @@ type CreateTopicReq struct {
 	RelatedTopics []*RelatedTopicReq `json:"related_topics"`
 
 	// 话题分类
-	Categories []*TopicCategoryParentItem `json:"categories"`
+	Catalogs []*TopicLevel1Catalog `json:"catalogs"`
 
 	// 分类视图
 	// section 章节
 	// column 栏目
-	CategoryViewType string `json:"category_view_type"`
+	CatalogViewType string `json:"catalog_view_type"`
 
 	// 话题类型
 	TopicType int `json:"topic_type"`
@@ -329,14 +329,15 @@ func (p *CreateTopicReq) Validate() error {
 			validation.Required.Error(`请输入话题名`),
 			validation.RuneLength(0, 250).Error(`话题名最大长度为250个字符`),
 		),
+		validation.Field(&p.Catalogs),
 		// TODO: Web安全性
 		validation.Field(&p.Introduction,
 			validation.Required.Error(`请输入话题简介`),
 			validation.RuneLength(0, 1000).Error(`话题简介最大长度为1000个字符`),
 		),
-		validation.Field(&p.CategoryViewType,
+		validation.Field(&p.CatalogViewType,
 			validation.Required.Error(`请输入分类视图`),
-			validation.In(CategoryViewTypeiColumn, CategoryViewTypeiSection).Error("分类视图不正确"),
+			validation.In(CatalogViewTypeColumn, CatalogViewTypeSection).Error("分类视图不正确"),
 		),
 		validation.Field(&p.TopicHome,
 			validation.Required.Error(`请输入话题首页`),
@@ -433,12 +434,12 @@ type UpdateTopicReq struct {
 	RelatedTopics []*RelatedTopicReq `json:"related_topics,omitempty"`
 
 	// 话题分类
-	Categories []*TopicCategoryParentItem `json:"categories,omitempty"`
+	Catalogs []*TopicLevel1Catalog `json:"catalogs,omitempty"`
 
 	// 分类视图
 	// section 章节
 	// column 栏目
-	CategoryViewType *string `json:"category_view_type,omitempty"`
+	CatalogViewType *string `json:"catalog_view_type,omitempty"`
 
 	// 话题类型
 	TopicType *int `json:"topic_type,omitempty"`
@@ -507,8 +508,8 @@ func (p *UpdateTopicReq) Validate() error {
 		validation.Field(&p.Introduction,
 			validation.RuneLength(0, 1000).Error(`话题简介最大长度为1000个字符`),
 		),
-		validation.Field(&p.CategoryViewType,
-			validation.In(CategoryViewTypeiColumn, CategoryViewTypeiSection).Error("分类视图不正确"),
+		validation.Field(&p.CatalogViewType,
+			validation.In(CatalogViewTypeColumn, CatalogViewTypeSection).Error("分类视图不正确"),
 		),
 		validation.Field(&p.TopicHome,
 			validation.In(TopicHomeIntroduction, TopicHomeFeed, TopicHomeCataglog, TopicHomeDiscussion, TopicHomeChat).Error("话题首页不正确"),

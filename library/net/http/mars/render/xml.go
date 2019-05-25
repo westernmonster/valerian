@@ -1,28 +1,31 @@
-// Copyright 2014 Manu Martinez-Almeida.  All rights reserved.
-// Use of this source code is governed by a MIT style
-// license that can be found in the LICENSE file.
-
 package render
 
 import (
 	"encoding/xml"
 	"net/http"
+
+	"github.com/pkg/errors"
 )
 
-// XML contains the given interface object.
+// XML common xml struct.
 type XML struct {
-	Data interface{}
+	Code    int
+	Message string
+	Data    interface{}
 }
 
 var xmlContentType = []string{"application/xml; charset=utf-8"}
 
-// Render (XML) encodes the given interface object and writes data with custom ContentType.
-func (r XML) Render(w http.ResponseWriter) error {
+// Render (XML) writes data with xml ContentType.
+func (r XML) Render(w http.ResponseWriter) (err error) {
 	r.WriteContentType(w)
-	return xml.NewEncoder(w).Encode(r.Data)
+	if err = xml.NewEncoder(w).Encode(r.Data); err != nil {
+		err = errors.WithStack(err)
+	}
+	return
 }
 
-// WriteContentType (XML) writes XML ContentType for response.
+// WriteContentType write xml ContentType.
 func (r XML) WriteContentType(w http.ResponseWriter) {
 	writeContentType(w, xmlContentType)
 }

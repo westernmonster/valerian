@@ -2,16 +2,14 @@ package http
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"strconv"
-
-	"github.com/gin-gonic/gin"
 
 	"valerian/infrastructure"
 	"valerian/infrastructure/berr"
 	"valerian/infrastructure/biz"
 	"valerian/infrastructure/helper"
+	"valerian/library/net/http/mars"
 	"valerian/models"
 	"valerian/modules/repo"
 )
@@ -48,34 +46,25 @@ type AuthCtrl struct {
 // @Failure 400 "验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /oauth/login/email [post]
-func (p *AuthCtrl) EmailLogin(ctx *gin.Context) {
+func (p *AuthCtrl) EmailLogin(ctx *mars.Context) {
 	req := new(models.EmailLoginReq)
-
-	if e := ctx.Bind(req); e != nil {
-		p.HandleError(ctx, e)
-		return
-	}
+	ctx.Bind(req)
 
 	if e := req.Validate(); e != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, infrastructure.RespCommon{
-			Success: false,
-			Code:    http.StatusBadRequest,
-			Message: e.Error(),
-		})
-
+		ctx.JSON(nil, e)
 		return
 	}
 
-	ip := ctx.ClientIP()
+	ip := "0.0.0.0"
 	result, err := p.OauthUsecase.EmailLogin(ctx.Request.Context(), p.GetBizContext(ctx), req, ip)
 	if err != nil {
-		p.HandleError(ctx, err)
+		ctx.JSON(nil, err)
 		return
 	}
 
 	profile, err := p.AccountUsecase.GetProfileByID(ctx.Request.Context(), result.AccountID)
 	if err != nil {
-		p.HandleError(ctx, err)
+		ctx.JSON(nil, err)
 		return
 	}
 
@@ -83,7 +72,7 @@ func (p *AuthCtrl) EmailLogin(ctx *gin.Context) {
 
 	cookie, err := p.createCookie(result.AccessToken)
 	if err != nil {
-		p.HandleError(ctx, err)
+		ctx.JSON(nil, err)
 		return
 	}
 	http.SetCookie(ctx.Writer, cookie)
@@ -105,7 +94,7 @@ func (p *AuthCtrl) EmailLogin(ctx *gin.Context) {
 // @Failure 400 "验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /oauth/login/mobile [post]
-func (p *AuthCtrl) MobileLogin(ctx *gin.Context) {
+func (p *AuthCtrl) MobileLogin(ctx *mars.Context) {
 	req := new(models.MobileLoginReq)
 
 	if e := ctx.Bind(req); e != nil {
@@ -114,16 +103,12 @@ func (p *AuthCtrl) MobileLogin(ctx *gin.Context) {
 	}
 
 	if e := req.Validate(); e != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, infrastructure.RespCommon{
-			Success: false,
-			Code:    http.StatusBadRequest,
-			Message: e.Error(),
-		})
+		ctx.JSON(nil, e)
 
 		return
 	}
 
-	ip := ctx.ClientIP()
+	ip := "0.0.0.0"
 	bizCtx := p.GetBizContext(ctx)
 	result, err := p.OauthUsecase.MobileLogin(ctx.Request.Context(), bizCtx, req, ip)
 	if err != nil {
@@ -163,7 +148,7 @@ func (p *AuthCtrl) MobileLogin(ctx *gin.Context) {
 // @Failure 400 "验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /oauth/login/digit [post]
-func (p *AuthCtrl) DigitLogin(ctx *gin.Context) {
+func (p *AuthCtrl) DigitLogin(ctx *mars.Context) {
 	req := new(models.DigitLoginReq)
 
 	if e := ctx.Bind(req); e != nil {
@@ -172,16 +157,12 @@ func (p *AuthCtrl) DigitLogin(ctx *gin.Context) {
 	}
 
 	if e := req.Validate(); e != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, infrastructure.RespCommon{
-			Success: false,
-			Code:    http.StatusBadRequest,
-			Message: e.Error(),
-		})
+		ctx.JSON(nil, e)
 
 		return
 	}
 
-	ip := ctx.ClientIP()
+	ip := "0.0.0.0"
 	bizCtx := p.GetBizContext(ctx)
 	result, err := p.OauthUsecase.DigitLogin(ctx.Request.Context(), bizCtx, req, ip)
 	if err != nil {
@@ -220,7 +201,7 @@ func (p *AuthCtrl) DigitLogin(ctx *gin.Context) {
 // @Failure 400 "验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /oauth/registration/email [post]
-func (p *AuthCtrl) EmailRegister(ctx *gin.Context) {
+func (p *AuthCtrl) EmailRegister(ctx *mars.Context) {
 	req := new(models.EmailRegisterReq)
 
 	if e := ctx.Bind(req); e != nil {
@@ -229,17 +210,12 @@ func (p *AuthCtrl) EmailRegister(ctx *gin.Context) {
 	}
 
 	if e := req.Validate(); e != nil {
-		fmt.Println(e)
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, infrastructure.RespCommon{
-			Success: false,
-			Code:    http.StatusBadRequest,
-			Message: e.Error(),
-		})
+		ctx.JSON(nil, e)
 
 		return
 	}
 
-	ip := ctx.ClientIP()
+	ip := "0.0.0.0"
 	_, err := p.OauthUsecase.EmailRegister(ctx.Request.Context(), p.GetBizContext(ctx), req, ip)
 	if err != nil {
 		p.HandleError(ctx, err)
@@ -289,7 +265,7 @@ func (p *AuthCtrl) EmailRegister(ctx *gin.Context) {
 // @Failure 400 "验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /oauth/registration/mobile [post]
-func (p *AuthCtrl) MobileRegister(ctx *gin.Context) {
+func (p *AuthCtrl) MobileRegister(ctx *mars.Context) {
 	req := new(models.MobileRegisterReq)
 
 	if e := ctx.Bind(req); e != nil {
@@ -298,16 +274,11 @@ func (p *AuthCtrl) MobileRegister(ctx *gin.Context) {
 	}
 
 	if e := req.Validate(); e != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, infrastructure.RespCommon{
-			Success: false,
-			Code:    http.StatusBadRequest,
-			Message: e.Error(),
-		})
-
+		ctx.JSON(nil, e)
 		return
 	}
 
-	ip := ctx.ClientIP()
+	ip := "0.0.0.0"
 	_, err := p.OauthUsecase.MobileRegister(ctx.Request.Context(), p.GetBizContext(ctx), req, ip)
 	if err != nil {
 		p.HandleError(ctx, err)
@@ -358,7 +329,7 @@ func (p *AuthCtrl) MobileRegister(ctx *gin.Context) {
 // @Failure 400 {object} infrastructure.RespCommon "验证失败"
 // @Failure 500 {object} infrastructure.RespCommon "服务器端错误"
 // @Router /oauth/password/reset [put]
-func (p *AuthCtrl) ForgetPassword(ctx *gin.Context) {
+func (p *AuthCtrl) ForgetPassword(ctx *mars.Context) {
 	req := new(models.ForgetPasswordReq)
 
 	if e := ctx.Bind(req); e != nil {
@@ -367,12 +338,7 @@ func (p *AuthCtrl) ForgetPassword(ctx *gin.Context) {
 	}
 
 	if e := req.Validate(); e != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, infrastructure.RespCommon{
-			Success: false,
-			Code:    http.StatusBadRequest,
-			Message: e.Error(),
-		})
-
+		ctx.JSON(nil, e)
 		return
 	}
 
@@ -402,7 +368,7 @@ func (p *AuthCtrl) ForgetPassword(ctx *gin.Context) {
 // @Failure 400 {object} infrastructure.RespCommon "验证失败"
 // @Failure 500 {object} infrastructure.RespCommon "服务器端错误"
 // @Router /oauth/password/reset/confirm [put]
-func (p *AuthCtrl) ResetPassword(ctx *gin.Context) {
+func (p *AuthCtrl) ResetPassword(ctx *mars.Context) {
 	req := new(models.ResetPasswordReq)
 
 	if e := ctx.Bind(req); e != nil {
@@ -411,12 +377,7 @@ func (p *AuthCtrl) ResetPassword(ctx *gin.Context) {
 	}
 
 	if e := req.Validate(); e != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, infrastructure.RespCommon{
-			Success: false,
-			Code:    http.StatusBadRequest,
-			Message: e.Error(),
-		})
-
+		ctx.JSON(nil, e)
 		return
 	}
 
@@ -424,11 +385,7 @@ func (p *AuthCtrl) ResetPassword(ctx *gin.Context) {
 	if err != nil {
 		switch err.(type) {
 		case *berr.BizError:
-			ctx.AbortWithStatusJSON(http.StatusOK, infrastructure.RespCommon{
-				Success: false,
-				Code:    http.StatusTemporaryRedirect,
-				Message: "Session 错误或失效",
-			})
+			ctx.JSON(nil, err)
 			return
 		default:
 			p.HandleError(ctx, err)
@@ -465,7 +422,7 @@ func (p *AuthCtrl) createCookie(token string) (cookie *http.Cookie, err error) {
 // @Failure 400 "验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /oauth/logout [post]
-func (p *AuthCtrl) Logout(ctx *gin.Context) {
+func (p *AuthCtrl) Logout(ctx *mars.Context) {
 	cookie := new(http.Cookie)
 	cookie.Name = "token"
 	cookie.MaxAge = 1

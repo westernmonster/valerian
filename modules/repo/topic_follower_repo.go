@@ -6,17 +6,18 @@ import (
 	"fmt"
 	"time"
 	"valerian/library/database/sqalx"
+	types "valerian/library/database/sqlx/types"
 
 	tracerr "github.com/ztrue/tracerr"
 )
 
 type TopicFollower struct {
-	ID          int64 `db:"id" json:"id,string"`                     // ID ID
-	TopicID     int64 `db:"topic_id" json:"topic_id,string"`         // TopicID 话题ID
-	FollowersID int64 `db:"followers_id" json:"followers_id,string"` // FollowersID 关注者ID
-	Deleted     int   `db:"deleted" json:"deleted"`                  // Deleted 是否删除
-	CreatedAt   int64 `db:"created_at" json:"created_at"`            // CreatedAt 创建时间
-	UpdatedAt   int64 `db:"updated_at" json:"updated_at"`            // UpdatedAt 更新时间
+	ID          int64         `db:"id" json:"id,string"`                     // ID ID
+	TopicID     int64         `db:"topic_id" json:"topic_id,string"`         // TopicID 话题ID
+	FollowersID int64         `db:"followers_id" json:"followers_id,string"` // FollowersID 关注者ID
+	Deleted     types.BitBool `db:"deleted" json:"deleted"`                  // Deleted 是否删除
+	CreatedAt   int64         `db:"created_at" json:"created_at"`            // CreatedAt 创建时间
+	UpdatedAt   int64         `db:"updated_at" json:"updated_at"`            // UpdatedAt 更新时间
 }
 
 type TopicFollowerRepository struct{}

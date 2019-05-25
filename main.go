@@ -12,6 +12,7 @@ import (
 	_ "valerian/docs"
 	"valerian/infrastructure/bootstrap"
 	"valerian/infrastructure/locale"
+	"valerian/library/net/http/mars"
 	"valerian/modules"
 )
 
@@ -55,6 +56,15 @@ func newApp() *bootstrap.Bootstrapper {
 // @BasePath /api/v1
 func main() {
 	setupConfig()
+
+	httpConfig := &mars.ServerConfig{
+		Address: "0.0.0.0:7001",
+	}
+
+	httpConfig.Timeout.UnmarshalText([]byte("1s"))
+	httpConfig.ReadTimeout.UnmarshalText([]byte("1s"))
+	httpConfig.WriteTimeout.UnmarshalText([]byte("1s"))
+	engine := mars.DefaultServer(httpConfig)
 
 	app := newApp()
 

@@ -6,8 +6,8 @@ import (
 
 	"valerian/infrastructure/berr"
 	"valerian/infrastructure/biz"
+	"valerian/library/net/http/mars"
 
-	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	"github.com/ztrue/tracerr"
 )
@@ -24,7 +24,7 @@ type RespCommon struct {
 	Result interface{} `json:"result,omitempty"`
 }
 
-type Pagination struct {
+type Pamarsation struct {
 	// 总计数量
 	Total int `json:"total"`
 	// 每页数量
@@ -33,16 +33,16 @@ type Pagination struct {
 	Current int `json:"current"`
 }
 
-type PaginationResult struct {
+type PamarsationResult struct {
 	// 数据列表
 	List interface{} `json:"list,omitempty"`
 	// 分页信息
-	Pagination Pagination `json:"pagination"`
+	Pamarsation Pamarsation `json:"pamarsation"`
 }
 
 // swagger:model
 // 分页返回结果
-type RespPagination struct {
+type RespPamarsation struct {
 	// Code 状态码
 	Code int `json:"code"`
 	// 是否成功
@@ -50,67 +50,58 @@ type RespPagination struct {
 	// 返回消息
 	Message string `json:"message"`
 	// 分页返回结果
-	Result PaginationResult `json:"result"`
+	Result PamarsationResult `json:"result"`
 }
 
 type BaseCtrl struct {
 }
 
 // SuccessResp JSON 通用结果返回
-func (p *BaseCtrl) SuccessResp(ctx *gin.Context, result interface{}) {
-	ctx.JSON(http.StatusOK, RespCommon{
+func (p *BaseCtrl) SuccessResp(ctx *mars.Context, result interface{}) {
+	ctx.JSON(RespCommon{
 		Code:    http.StatusOK,
 		Success: true,
 		Message: "ok",
 		Result:  result,
-	})
+	}, nil)
 }
 
-// PaginationResp JSON 分页结果
-func (p *BaseCtrl) PaginationResp(ctx *gin.Context, list interface{}, total, page, pageSize int) {
-	ctx.JSON(http.StatusOK, RespPagination{
+// PamarsationResp JSON 分页结果
+func (p *BaseCtrl) PamarsationResp(ctx *mars.Context, list interface{}, total, page, pageSize int) {
+	ctx.JSON(RespPamarsation{
 		Code:    http.StatusOK,
 		Success: true,
-		Result: PaginationResult{
+		Result: PamarsationResult{
 			List: list,
-			Pagination: Pagination{
+			Pamarsation: Pamarsation{
 				Current:  page,
 				Total:    total,
 				PageSize: pageSize,
 			},
 		},
-	})
+	}, nil)
 }
 
 // HandleError 错误处理
-func (p *BaseCtrl) HandleError(ctx *gin.Context, err error) {
+func (p *BaseCtrl) HandleError(ctx *mars.Context, err error) {
 	// mode := viper.Get("MODE")
-	message := ""
+	// message := ""
 	switch v := err.(type) {
 	case tracerr.Error:
-		message = v.Error()
+		// message = v.Error()
 		// if mode == "development" {
 		// 	tracerr.PrintSourceColor(v, 5)
 		// }
 		log.Error(tracerr.Sprint(v))
 		break
 	case *berr.BizError:
-		ctx.AbortWithStatusJSON(http.StatusOK, RespCommon{
-			Success: false,
-			Code:    http.StatusTemporaryRedirect,
-			Message: err.Error(),
-		})
+		ctx.JSON(nil, err)
 		return
 	default:
-		message = err.Error()
+		// message = err.Error()
 		log.Error(v)
 	}
-	ctx.AbortWithStatusJSON(http.StatusInternalServerError,
-		RespCommon{
-			Code:    http.StatusInternalServerError,
-			Success: false,
-			Message: message,
-		})
+	ctx.JSON(nil, err)
 	return
 }
 
@@ -121,27 +112,29 @@ func (p *BaseCtrl) Base64Decode(b64Str string) (result string, err error) {
 }
 
 // GetAccountID 获取用户ID
-func (p *BaseCtrl) GetAccountID(ctx *gin.Context) (accountID int64, err error) {
-	accountID = ctx.GetInt64("AccountID")
-	if accountID == 0 {
+func (p *BaseCtrl) GetAccountID(ctx *mars.Context) (accountID int64, err error) {
+	aid, exist := ctx.Get("AccountID")
+	if !exist {
 		err = tracerr.New("获取当前用户信息失败")
 		return
 	}
+
+	accountID = aid.(int64)
 	return
 }
 
 // GetBizContext 获取Biz上下文
-func (p *BaseCtrl) GetBizContext(ctx *gin.Context) (bizContext *biz.BizContext) {
+func (p *BaseCtrl) GetBizContext(ctx *mars.Context) (bizContext *biz.BizContext) {
 	bizContext = &biz.BizContext{
 		Locale: "zh-CN",
 	}
 
-	accountID := ctx.GetInt64("AccountID")
+	accountID, _ := p.GetAccountID(ctx)
 	if accountID != 0 {
 		bizContext.AccountID = &accountID
 	}
 
-	locale := ctx.GetHeader("Locale")
+	locale := ctx.Request.Header.Get("Locale")
 
 	for _, v := range []string{"zh-CN", "en-US"} {
 		if locale == v {

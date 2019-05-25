@@ -12,8 +12,7 @@ import (
 	"valerian/modules/usecase"
 
 	"valerian/library/database/sqalx"
-
-	"github.com/gin-gonic/gin"
+	"valerian/library/net/http/mars"
 )
 
 type TopicCtrl struct {
@@ -32,6 +31,7 @@ type TopicCtrl struct {
 		GetAllRelatedTopics(c context.Context, ctx *biz.BizContext, topicID int64) (items []*models.RelatedTopic, err error)
 		GetAllTopicTypes(c context.Context, ctx *biz.BizContext) (items []*models.TopicType, err error)
 		CreateNewVersion(c context.Context, ctx *biz.BizContext, arg *models.ArgNewVersion) (id int64, err error)
+		SaveCatalogs(c context.Context, ctx *biz.BizContext, topicID int64, req *models.ArgSaveTopicCatalog) (err error)
 	}
 }
 
@@ -40,12 +40,12 @@ func NewTopicCtrl(node sqalx.Node) *TopicCtrl {
 		TopicUsecase: &usecase.TopicUsecase{
 			Node:                    node,
 			TopicRepository:         &repo.TopicRepository{},
+			AccountRepository:       &repo.AccountRepository{},
 			TopicMemberRepository:   &repo.TopicMemberRepository{},
-			TopicCategoryRepository: &repo.TopicCategoryRepository{},
+			TopicCatalogRepository:  &repo.TopicCatalogRepository{},
 			TopicTypeRepository:     &repo.TopicTypeRepository{},
 			TopicSetRepository:      &repo.TopicSetRepository{},
 			TopicRelationRepository: &repo.TopicRelationRepository{},
-			TopicFollowerRepository: &repo.TopicFollowerRepository{},
 		},
 	}
 
@@ -64,10 +64,10 @@ func NewTopicCtrl(node sqalx.Node) *TopicCtrl {
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /topics/{id}/related [get]
-func (p *TopicCtrl) GetAllRelatedTopics(ctx *gin.Context) {
-	id, exist := ctx.Params.Get("id")
+func (p *TopicCtrl) GetAllRelatedTopics(ctx *mars.Context) {
+	id, exist := ctx.Request.Form.Get("id")
 	if !exist {
-		p.SuccessResp(ctx, nil)
+		ctx.JSON(nil, nil)
 	}
 
 	topicID, err := strconv.ParseInt(id, 10, 64)
@@ -113,7 +113,7 @@ func (p *TopicCtrl) GetAllRelatedTopics(ctx *gin.Context) {
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /topics/{id}/members [get]
-func (p *TopicCtrl) GetTopicMembersPaged(ctx *gin.Context) {
+func (p *TopicCtrl) GetTopicMembersPaged(ctx *mars.Context) {
 	id, exist := ctx.Params.Get("id")
 	if !exist {
 		p.SuccessResp(ctx, nil)
@@ -189,7 +189,7 @@ func (p *TopicCtrl) GetTopicMembersPaged(ctx *gin.Context) {
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /topics [get]
-func (p *TopicCtrl) Search(ctx *gin.Context) {
+func (p *TopicCtrl) Search(ctx *mars.Context) {
 	query := ctx.Query("q")
 
 	bizCtx := p.GetBizContext(ctx)
@@ -219,7 +219,7 @@ func (p *TopicCtrl) Search(ctx *gin.Context) {
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /me/followed/topics [post]
-func (p *TopicCtrl) FollowTopic(ctx *gin.Context) {
+func (p *TopicCtrl) FollowTopic(ctx *mars.Context) {
 	req := new(models.TopicFollower)
 
 	if e := ctx.Bind(req); e != nil {
@@ -264,7 +264,7 @@ func (p *TopicCtrl) FollowTopic(ctx *gin.Context) {
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /topics/{id}/members [patch]
-func (p *TopicCtrl) BatchSavedTopicMember(ctx *gin.Context) {
+func (p *TopicCtrl) BatchSavedTopicMember(ctx *mars.Context) {
 	req := new(models.BatchSavedTopicMemberReq)
 
 	if e := ctx.Bind(req); e != nil {
@@ -320,7 +320,7 @@ func (p *TopicCtrl) BatchSavedTopicMember(ctx *gin.Context) {
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /topics [post]
-func (p *TopicCtrl) Create(ctx *gin.Context) {
+func (p *TopicCtrl) Create(ctx *mars.Context) {
 	req := new(models.CreateTopicReq)
 
 	if e := ctx.Bind(req); e != nil {
@@ -366,7 +366,7 @@ func (p *TopicCtrl) Create(ctx *gin.Context) {
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /topics/{id} [put]
-func (p *TopicCtrl) Update(ctx *gin.Context) {
+func (p *TopicCtrl) Update(ctx *mars.Context) {
 	req := new(models.UpdateTopicReq)
 
 	if e := ctx.Bind(req); e != nil {
@@ -421,7 +421,7 @@ func (p *TopicCtrl) Update(ctx *gin.Context) {
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /topics/{id} [get]
-func (p *TopicCtrl) Get(ctx *gin.Context) {
+func (p *TopicCtrl) Get(ctx *mars.Context) {
 
 	id, exist := ctx.Params.Get("id")
 	if !exist {
@@ -460,7 +460,7 @@ func (p *TopicCtrl) Get(ctx *gin.Context) {
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /topics/{id} [delete]
-func (p *TopicCtrl) Delete(ctx *gin.Context) {
+func (p *TopicCtrl) Delete(ctx *mars.Context) {
 	id, exist := ctx.Params.Get("id")
 	if !exist {
 		p.SuccessResp(ctx, nil)
@@ -498,7 +498,7 @@ func (p *TopicCtrl) Delete(ctx *gin.Context) {
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /topic_sets/{id}/versions [get]
-func (p *TopicCtrl) GetTopicVersions(ctx *gin.Context) {
+func (p *TopicCtrl) GetTopicVersions(ctx *mars.Context) {
 	id := ctx.Param("id")
 	topicSetID, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
@@ -539,7 +539,7 @@ func (p *TopicCtrl) GetTopicVersions(ctx *gin.Context) {
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /topic_sets/{id}/versions [post]
-func (p *TopicCtrl) CreateNewVersion(ctx *gin.Context) {
+func (p *TopicCtrl) CreateNewVersion(ctx *mars.Context) {
 	req := new(models.ArgNewVersion)
 
 	if e := ctx.Bind(req); e != nil {
@@ -582,7 +582,7 @@ func (p *TopicCtrl) CreateNewVersion(ctx *gin.Context) {
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /topic_types [get]
-func (p *TopicCtrl) GetAllTopicTypes(ctx *gin.Context) {
+func (p *TopicCtrl) GetAllTopicTypes(ctx *mars.Context) {
 
 	bizCtx := p.GetBizContext(ctx)
 	items, err := p.TopicUsecase.GetAllTopicTypes(ctx.Request.Context(), bizCtx)
@@ -592,6 +592,62 @@ func (p *TopicCtrl) GetAllTopicTypes(ctx *gin.Context) {
 	}
 
 	p.SuccessResp(ctx, items)
+
+	return
+
+}
+
+// @Summary 批量更新话题类目
+// @Description 批量更新话题类目
+// @Tags topic
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param req body models.BatchSavedTopicMemberReq true "请求"
+// @Success 200 "成功"
+// @Failure 400 "验证请求失败"
+// @Failure 401 "登录验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /topics/{id}/catalogs [patch]
+func (p *TopicCtrl) BatchSavedTopicCatalogs(ctx *mars.Context) {
+	req := new(models.ArgSaveTopicCatalog)
+
+	if e := ctx.Bind(req); e != nil {
+		p.HandleError(ctx, e)
+		return
+	}
+
+	if e := req.Validate(); e != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, infrastructure.RespCommon{
+			Success: false,
+			Code:    http.StatusBadRequest,
+			Message: e.Error(),
+		})
+
+		return
+	}
+
+	id, exist := ctx.Params.Get("id")
+	if !exist {
+		p.SuccessResp(ctx, nil)
+	}
+
+	topicID, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		p.HandleError(ctx, err)
+		return
+	}
+
+	bizCtx := p.GetBizContext(ctx)
+	err = p.TopicUsecase.SaveCatalogs(ctx.Request.Context(), bizCtx, topicID, req)
+	if err != nil {
+		p.HandleError(ctx, err)
+		return
+	}
+
+	p.SuccessResp(ctx, nil)
 
 	return
 

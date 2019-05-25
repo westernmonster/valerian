@@ -129,17 +129,17 @@ definitions:
           背景图
           必须为URL
         type: string
-      categories:
-        description: 话题分类
-        items:
-          $ref: '#/definitions/models.TopicCategoryParentItem'
-        type: array
-      category_view_type:
+      catalog_view_type:
         description: |-
           分类视图
           section 章节
           column 栏目
         type: string
+      catalogs:
+        description: 话题分类
+        items:
+          $ref: '#/definitions/models.TopicLevel1Catalog'
+        type: array
       cover:
         description: |-
           封面图
@@ -559,21 +559,6 @@ definitions:
       session_id:
         type: string
     type: object
-  models.SaveTopicCategoriesReq:
-    properties:
-      items:
-        description: |-
-          话题分类
-          required: true
-        items:
-          $ref: '#/definitions/models.TopicCategoryParentItem'
-        type: array
-      topic_id:
-        description: |-
-          话题ID
-          required: true
-        type: string
-    type: object
   models.Topic:
     properties:
       allow_chat:
@@ -587,17 +572,17 @@ definitions:
           背景图
           必须为URL
         type: string
-      categories:
-        description: 话题分类
-        items:
-          $ref: '#/definitions/models.TopicCategoryParentItem'
-        type: array
-      category_view_type:
+      catalog_view_type:
         description: |-
           分类视图
           section 章节
           column 栏目
         type: string
+      catalogs:
+        description: 话题分类
+        items:
+          $ref: '#/definitions/models.TopicLevel1Catalog'
+        type: array
       cover:
         description: |-
           封面图
@@ -695,69 +680,28 @@ definitions:
           join 加入
         type: string
     type: object
-  models.TopicCategoriesResp:
-    properties:
-      items:
-        description: 话题分类
-        items:
-          $ref: '#/definitions/models.TopicCategoryParentItem'
-        type: array
-      topic_id:
-        description: 话题ID
-        type: string
-    type: object
-  models.TopicCategory:
-    properties:
-      created_at:
-        type: integer
-      created_by:
-        type: integer
-      id:
-        type: integer
-      name:
-        type: string
-      parent_id:
-        type: integer
-      seq:
-        type: integer
-      topic_id:
-        type: integer
-      updated_at:
-        type: integer
-    type: object
-  models.TopicCategoryChildItem:
+  models.TopicChildCatalog:
     properties:
       id:
         type: string
       name:
         description: |-
-          分类名
+          名称
           required: true
+        type: string
+      ref_id:
+        description: 引用ID
         type: string
       seq:
         description: |-
           顺序
           required: true
         type: integer
-    type: object
-  models.TopicCategoryParentItem:
-    properties:
-      children:
-        items:
-          $ref: '#/definitions/models.TopicCategoryChildItem'
-        type: array
-      id:
-        type: string
-      name:
+      type:
         description: |-
-          分类名
+          类型
           required: true
         type: string
-      seq:
-        description: |-
-          顺序
-          required: true
-        type: integer
     type: object
   models.TopicFollower:
     properties:
@@ -766,6 +710,60 @@ definitions:
         type: boolean
       topic_id:
         description: 话题ID
+        type: string
+    type: object
+  models.TopicLevel1Catalog:
+    properties:
+      children:
+        items:
+          $ref: '#/definitions/models.TopicLevel2Catalog'
+        type: array
+      id:
+        type: string
+      name:
+        description: |-
+          名称
+          required: true
+        type: string
+      ref_id:
+        description: 引用ID
+        type: string
+      seq:
+        description: |-
+          顺序
+          required: true
+        type: integer
+      type:
+        description: |-
+          类型
+          required: true
+        type: string
+    type: object
+  models.TopicLevel2Catalog:
+    properties:
+      children:
+        items:
+          $ref: '#/definitions/models.TopicChildCatalog'
+        type: array
+      id:
+        type: string
+      name:
+        description: |-
+          名称
+          required: true
+        type: string
+      ref_id:
+        description: 引用ID
+        type: string
+      seq:
+        description: |-
+          顺序
+          required: true
+        type: integer
+      type:
+        description: |-
+          类型
+          required: true
         type: string
     type: object
   models.TopicMember:
@@ -943,17 +941,17 @@ definitions:
           背景图
           必须为URL
         type: string
-      categories:
-        description: 话题分类
-        items:
-          $ref: '#/definitions/models.TopicCategoryParentItem'
-        type: array
-      category_view_type:
+      catalog_view_type:
         description: |-
           分类视图
           section 章节
           column 栏目
         type: string
+      catalogs:
+        description: 话题分类
+        items:
+          $ref: '#/definitions/models.TopicLevel1Catalog'
+        type: array
       cover:
         description: |-
           封面图
@@ -1046,60 +1044,6 @@ info:
   title: 飞行百科 API
   version: "1.0"
 paths:
-  //topic_sets/:
-    post:
-      consumes:
-      - application/json
-      description: 新增话题版本
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 话题集合ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: 请求
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/models.ArgNewVersion'
-          type: object
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功,返回topic_id
-        "400":
-          description: 验证请求失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 新增话题版本
-      tags:
-      - topic
   /country_codes:
     get:
       consumes:
@@ -1913,6 +1857,59 @@ paths:
       summary: 获取话题版本
       tags:
       - topic
+    post:
+      consumes:
+      - application/json
+      description: 新增话题版本
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 话题集合ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: 请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/models.ArgNewVersion'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功,返回topic_id
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 新增话题版本
+      tags:
+      - topic
   /topic_types:
     get:
       consumes:
@@ -2210,59 +2207,11 @@ paths:
       summary: 更新话题
       tags:
       - topic
-  /topics/{id}/categories:
-    get:
-      consumes:
-      - application/json
-      description: 获取分类列表
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 话题ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 分类
-          schema:
-            items:
-              $ref: '#/definitions/models.TopicCategory'
-            type: array
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 获取分类列表
-      tags:
-      - topic
+  /topics/{id}/catalogs:
     patch:
       consumes:
       - application/json
-      description: 批量新增/更改话题分类
+      description: 批量更新话题类目
       parameters:
       - description: Bearer
         in: header
@@ -2291,13 +2240,8 @@ paths:
         name: req
         required: true
         schema:
-          $ref: '#/definitions/models.SaveTopicCategoriesReq'
+          $ref: '#/definitions/models.BatchSavedTopicMemberReq'
           type: object
-      - description: 话题ID
-        in: path
-        name: id
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -2309,55 +2253,7 @@ paths:
           description: 登录验证失败
         "500":
           description: 服务器端错误
-      summary: 批量新增/更改话题分类
-      tags:
-      - topic
-  /topics/{id}/categories/hierarchy:
-    get:
-      consumes:
-      - application/json
-      description: 按层级结构获取分类
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 话题ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 层级分类
-          schema:
-            $ref: '#/definitions/models.TopicCategoriesResp'
-            type: object
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 按层级结构获取分类
+      summary: 批量更新话题类目
       tags:
       - topic
   /topics/{id}/members:

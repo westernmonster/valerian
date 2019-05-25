@@ -119,8 +119,8 @@ const (
 )
 
 const (
-	CategoryViewTypeiSection = "section"
-	CategoryViewTypeiColumn  = "column"
+	CatalogViewTypeSection = "section"
+	CatalogViewTypeColumn  = "column"
 )
 
 const (
@@ -147,6 +147,12 @@ const (
 const (
 	TopicRelationStrong = "strong"
 	TopicRelationNormal = "normal"
+)
+
+const (
+	TopicCatalogTaxonomy = "taxonomy"
+	TopicCatalogArticle  = "article"
+	TopicCatalogTestSet  = "test_set"
 )
 
 // x-app-version App 版本号  3.22

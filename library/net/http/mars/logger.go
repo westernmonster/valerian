@@ -1,13 +1,72 @@
-// Copyright 2014 Manu Martinez-Almeida.  All rights reserved.
-// Use of this source code is governed by a MIT style
-// license that can be found in the LICENSE file.
-
 package mars
 
-// Logger instances a Logger middleware that will write the logs to gin.DefaultWriter.
-// By default gin.DefaultWriter = os.Stdout.
-func Logger() HandlerFunc {
+import (
+	"fmt"
+	"strconv"
+	"time"
+	"valerian/library/ecode"
+	"valerian/library/log"
+	"valerian/library/net/metadata"
 
+	"go.uber.org/zap"
+)
+
+// Logger is logger  middleware
+func Logger() HandlerFunc {
+	const noUser = "no_user"
 	return func(c *Context) {
+		now := time.Now()
+		ip := metadata.String(c, metadata.RemoteIP)
+		req := c.Request
+		path := req.URL.Path
+		params := req.Form
+		var quota float64
+		if deadline, ok := c.Context.Deadline(); ok {
+			quota = time.Until(deadline).Seconds()
+		}
+
+		c.Next()
+
+		mid, _ := c.Get("mid")
+		err := c.Error
+		cerr := ecode.Cause(err)
+		dt := time.Since(now)
+		caller := metadata.String(c, metadata.Caller)
+		if caller == "" {
+			caller = noUser
+		}
+
+		stats.Incr(caller, path[1:], strconv.FormatInt(int64(cerr.Code()), 10))
+		stats.Timing(caller, int64(dt/time.Millisecond), path[1:])
+
+		lf := log.Info
+		errmsg := ""
+		isSlow := dt >= (time.Millisecond * 500)
+		if err != nil {
+			errmsg = err.Error()
+			lf = log.Error
+			if cerr.Code() > 0 {
+				lf = log.Warn
+			}
+		} else {
+			if isSlow {
+				lf = log.Warn
+			}
+		}
+		lf("",
+			zap.String("method", req.Method),
+			zap.Any("mid", mid),
+			zap.String("ip", ip),
+			zap.String("user", caller),
+			zap.String("path", path),
+			zap.String("params", params.Encode()),
+			zap.Int("ret", cerr.Code()),
+			zap.String("msg", cerr.Message()),
+			zap.String("stack", fmt.Sprintf("%+v", err)),
+			zap.String("err", errmsg),
+			zap.Float64("timeout_quota", quota),
+			zap.Float64("ts", dt.Seconds()),
+			zap.String("source", "http-access-log"),
+		)
 	}
 }

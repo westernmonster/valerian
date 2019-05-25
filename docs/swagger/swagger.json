@@ -10,84 +10,6 @@
     "host": "dev.flywk.com",
     "basePath": "/api/v1",
     "paths": {
-        "//topic_sets/": {
-            "post": {
-                "description": "新增话题版本",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "topic"
-                ],
-                "summary": "新增话题版本",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Bearer",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "enum": [
-                            1,
-                            2,
-                            3
-                        ],
-                        "type": "integer",
-                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
-                        "name": "Source",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "enum": [
-                            "zh-CN",
-                            "en-US"
-                        ],
-                        "type": "string",
-                        "description": "语言",
-                        "name": "Locale",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "话题集合ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "请求",
-                        "name": "req",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "object",
-                            "$ref": "#/definitions/models.ArgNewVersion"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功,返回topic_id"
-                    },
-                    "400": {
-                        "description": "验证请求失败"
-                    },
-                    "401": {
-                        "description": "登录验证失败"
-                    },
-                    "500": {
-                        "description": "服务器端错误"
-                    }
-                }
-            }
-        },
         "/country_codes": {
             "get": {
                 "description": "获取电话国家区号",
@@ -1258,6 +1180,82 @@
                         "description": "服务器端错误"
                     }
                 }
+            },
+            "post": {
+                "description": "新增话题版本",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "topic"
+                ],
+                "summary": "新增话题版本",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "话题集合ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/models.ArgNewVersion"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功,返回topic_id"
+                    },
+                    "400": {
+                        "description": "验证请求失败"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
             }
         },
         "/topic_types": {
@@ -1688,78 +1686,9 @@
                 }
             }
         },
-        "/topics/{id}/categories": {
-            "get": {
-                "description": "获取分类列表",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "topic"
-                ],
-                "summary": "获取分类列表",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Bearer",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "enum": [
-                            1,
-                            2,
-                            3
-                        ],
-                        "type": "integer",
-                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
-                        "name": "Source",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "enum": [
-                            "zh-CN",
-                            "en-US"
-                        ],
-                        "type": "string",
-                        "description": "语言",
-                        "name": "Locale",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "话题ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "分类",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.TopicCategory"
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "登录验证失败"
-                    },
-                    "500": {
-                        "description": "服务器端错误"
-                    }
-                }
-            },
+        "/topics/{id}/catalogs": {
             "patch": {
-                "description": "批量新增/更改话题分类",
+                "description": "批量更新话题类目",
                 "consumes": [
                     "application/json"
                 ],
@@ -1769,7 +1698,7 @@
                 "tags": [
                     "topic"
                 ],
-                "summary": "批量新增/更改话题分类",
+                "summary": "批量更新话题类目",
                 "parameters": [
                     {
                         "type": "string",
@@ -1808,15 +1737,8 @@
                         "required": true,
                         "schema": {
                             "type": "object",
-                            "$ref": "#/definitions/models.SaveTopicCategoriesReq"
+                            "$ref": "#/definitions/models.BatchSavedTopicMemberReq"
                         }
-                    },
-                    {
-                        "type": "string",
-                        "description": "话题ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -1825,75 +1747,6 @@
                     },
                     "400": {
                         "description": "验证请求失败"
-                    },
-                    "401": {
-                        "description": "登录验证失败"
-                    },
-                    "500": {
-                        "description": "服务器端错误"
-                    }
-                }
-            }
-        },
-        "/topics/{id}/categories/hierarchy": {
-            "get": {
-                "description": "按层级结构获取分类",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "topic"
-                ],
-                "summary": "按层级结构获取分类",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Bearer",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "enum": [
-                            1,
-                            2,
-                            3
-                        ],
-                        "type": "integer",
-                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
-                        "name": "Source",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "enum": [
-                            "zh-CN",
-                            "en-US"
-                        ],
-                        "type": "string",
-                        "description": "语言",
-                        "name": "Locale",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "话题ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "层级分类",
-                        "schema": {
-                            "type": "object",
-                            "$ref": "#/definitions/models.TopicCategoriesResp"
-                        }
                     },
                     "401": {
                         "description": "登录验证失败"
@@ -2417,16 +2270,16 @@
                     "description": "背景图\n必须为URL",
                     "type": "string"
                 },
-                "categories": {
+                "catalog_view_type": {
+                    "description": "分类视图\nsection 章节\ncolumn 栏目",
+                    "type": "string"
+                },
+                "catalogs": {
                     "description": "话题分类",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.TopicCategoryParentItem"
+                        "$ref": "#/definitions/models.TopicLevel1Catalog"
                     }
-                },
-                "category_view_type": {
-                    "description": "分类视图\nsection 章节\ncolumn 栏目",
-                    "type": "string"
                 },
                 "cover": {
                     "description": "封面图\n必须为URL",
@@ -2936,22 +2789,6 @@
                 }
             }
         },
-        "models.SaveTopicCategoriesReq": {
-            "type": "object",
-            "properties": {
-                "items": {
-                    "description": "话题分类\nrequired: true",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.TopicCategoryParentItem"
-                    }
-                },
-                "topic_id": {
-                    "description": "话题ID\nrequired: true",
-                    "type": "string"
-                }
-            }
-        },
         "models.Topic": {
             "type": "object",
             "properties": {
@@ -2967,16 +2804,16 @@
                     "description": "背景图\n必须为URL",
                     "type": "string"
                 },
-                "categories": {
+                "catalog_view_type": {
+                    "description": "分类视图\nsection 章节\ncolumn 栏目",
+                    "type": "string"
+                },
+                "catalogs": {
                     "description": "话题分类",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.TopicCategoryParentItem"
+                        "$ref": "#/definitions/models.TopicLevel1Catalog"
                     }
-                },
-                "category_view_type": {
-                    "description": "分类视图\nsection 章节\ncolumn 栏目",
-                    "type": "string"
                 },
                 "cover": {
                     "description": "封面图\n必须为URL",
@@ -3074,86 +2911,27 @@
                 }
             }
         },
-        "models.TopicCategoriesResp": {
-            "type": "object",
-            "properties": {
-                "items": {
-                    "description": "话题分类",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.TopicCategoryParentItem"
-                    }
-                },
-                "topic_id": {
-                    "description": "话题ID",
-                    "type": "string"
-                }
-            }
-        },
-        "models.TopicCategory": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "integer"
-                },
-                "created_by": {
-                    "type": "integer"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "parent_id": {
-                    "type": "integer"
-                },
-                "seq": {
-                    "type": "integer"
-                },
-                "topic_id": {
-                    "type": "integer"
-                },
-                "updated_at": {
-                    "type": "integer"
-                }
-            }
-        },
-        "models.TopicCategoryChildItem": {
+        "models.TopicChildCatalog": {
             "type": "object",
             "properties": {
                 "id": {
                     "type": "string"
                 },
                 "name": {
-                    "description": "分类名\nrequired: true",
+                    "description": "名称\nrequired: true",
+                    "type": "string"
+                },
+                "ref_id": {
+                    "description": "引用ID",
                     "type": "string"
                 },
                 "seq": {
                     "description": "顺序\nrequired: true",
                     "type": "integer"
-                }
-            }
-        },
-        "models.TopicCategoryParentItem": {
-            "type": "object",
-            "properties": {
-                "children": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.TopicCategoryChildItem"
-                    }
                 },
-                "id": {
+                "type": {
+                    "description": "类型\nrequired: true",
                     "type": "string"
-                },
-                "name": {
-                    "description": "分类名\nrequired: true",
-                    "type": "string"
-                },
-                "seq": {
-                    "description": "顺序\nrequired: true",
-                    "type": "integer"
                 }
             }
         },
@@ -3166,6 +2944,66 @@
                 },
                 "topic_id": {
                     "description": "话题ID",
+                    "type": "string"
+                }
+            }
+        },
+        "models.TopicLevel1Catalog": {
+            "type": "object",
+            "properties": {
+                "children": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.TopicLevel2Catalog"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "description": "名称\nrequired: true",
+                    "type": "string"
+                },
+                "ref_id": {
+                    "description": "引用ID",
+                    "type": "string"
+                },
+                "seq": {
+                    "description": "顺序\nrequired: true",
+                    "type": "integer"
+                },
+                "type": {
+                    "description": "类型\nrequired: true",
+                    "type": "string"
+                }
+            }
+        },
+        "models.TopicLevel2Catalog": {
+            "type": "object",
+            "properties": {
+                "children": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.TopicChildCatalog"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "description": "名称\nrequired: true",
+                    "type": "string"
+                },
+                "ref_id": {
+                    "description": "引用ID",
+                    "type": "string"
+                },
+                "seq": {
+                    "description": "顺序\nrequired: true",
+                    "type": "integer"
+                },
+                "type": {
+                    "description": "类型\nrequired: true",
                     "type": "string"
                 }
             }
@@ -3382,16 +3220,16 @@
                     "description": "背景图\n必须为URL",
                     "type": "string"
                 },
-                "categories": {
+                "catalog_view_type": {
+                    "description": "分类视图\nsection 章节\ncolumn 栏目",
+                    "type": "string"
+                },
+                "catalogs": {
                     "description": "话题分类",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.TopicCategoryParentItem"
+                        "$ref": "#/definitions/models.TopicLevel1Catalog"
                     }
-                },
-                "category_view_type": {
-                    "description": "分类视图\nsection 章节\ncolumn 栏目",
-                    "type": "string"
                 },
                 "cover": {
                     "description": "封面图\n必须为URL",

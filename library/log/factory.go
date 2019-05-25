@@ -29,13 +29,13 @@ type Factory struct {
 }
 
 // NewFactory creates a new Factory.
-func NewFactory(logger *zap.Logger) Factory {
-	return Factory{logger: logger}
+func NewFactory() Factory {
+	return Factory{logger: l}
 }
 
 // Bg creates a context-unaware logger.
 func (b Factory) Bg() Logger {
-	return logger{logger: b.logger}
+	return logger{logger: l}
 }
 
 // For returns a context-aware Logger. If the context

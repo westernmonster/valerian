@@ -4,13 +4,13 @@ import (
 	"context"
 	"valerian/infrastructure"
 	"valerian/library/log"
+	"valerian/library/net/http/mars"
 	"valerian/models"
 	"valerian/modules/repo"
 	"valerian/modules/usecase"
 
 	"valerian/library/database/sqalx"
 
-	"github.com/gin-gonic/gin"
 	"github.com/opentracing/opentracing-go"
 	"go.uber.org/zap"
 )
@@ -45,16 +45,11 @@ func NewCountryCodeCtrl(node sqalx.Node, logger log.Factory) *CountryCodeCtrl {
 // @Success 200 {array} models.CountryCode "国家区号"
 // @Failure 500 "服务器端错误"
 // @Router /country_codes [get]
-func (p *CountryCodeCtrl) GetAll(ctx *gin.Context) {
+func (p *CountryCodeCtrl) GetAll(ctx *mars.Context) {
 	p.logger.For(ctx.Request.Context()).Info("HTTP", zap.String("method", ctx.Request.Method), zap.Stringer("url", ctx.Request.URL))
 
 	items, err := p.CountryCodeUsecase.GetAll(ctx.Request.Context())
-	if err != nil {
-		p.HandleError(ctx, err)
-		return
-	}
 
-	p.SuccessResp(ctx, items)
+	ctx.JSON(items, err)
 
-	return
 }

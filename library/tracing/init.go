@@ -15,38 +15,96 @@
 package tracing
 
 import (
+	"flag"
 	"fmt"
+	"os"
 	"time"
 
+	"valerian/library/conf/dsn"
+	"valerian/library/conf/env"
 	"valerian/library/log"
 	xtime "valerian/library/time"
 
 	"github.com/opentracing/opentracing-go"
+	"github.com/pkg/errors"
 	"github.com/uber/jaeger-client-go/config"
 	"github.com/uber/jaeger-client-go/rpcmetrics"
 	"github.com/uber/jaeger-lib/metrics"
+	jprom "github.com/uber/jaeger-lib/metrics/prometheus"
 	"go.uber.org/zap"
 )
 
+var _traceDSN = "udp://localhost:6831"
+
+func init() {
+	if v := os.Getenv("TRACE"); v != "" {
+		_traceDSN = v
+	}
+	flag.StringVar(&_traceDSN, "trace", _traceDSN, "trace report dsn, or use TRACE env.")
+}
+
 type Config struct {
-	Addr    string "dsn:address"
-	Family  string
+	Network string "dsn:network"
+	Address string "dsn:address"
+	// Report timeout
 	Timeout xtime.Duration `dsn:"query.timeout,200ms"`
+	// DisableSample
+	DisableSample bool `dsn:"query.disable_sample"`
+	// probabilitySampling
+	Probability float32 `dsn:"-"`
+}
+
+func serviceNameFromEnv() string {
+	return env.AppID
+}
+
+func isUATEnv() float64 {
+	if env.DeployEnv == env.DeployEnvUat {
+		return 0
+	}
+
+	return 1
+}
+
+func parseDSN(rawdsn string) (*Config, error) {
+	d, err := dsn.Parse(rawdsn)
+	if err != nil {
+		return nil, errors.Wrapf(err, "trace: invalid dsn: %s", rawdsn)
+	}
+	cfg := new(Config)
+	if _, err = d.Bind(cfg); err != nil {
+		return nil, errors.Wrapf(err, "trace: invalid dsn: %s", rawdsn)
+	}
+	return cfg, nil
 }
 
 // Init creates a new instance of Jaeger tracer.
-func Init(serviceName string, metricsFactory metrics.Factory, logger log.Factory, hostPort string) opentracing.Tracer {
+func Init(c *Config) opentracing.Tracer {
+	serviceName := serviceNameFromEnv()
+	metricsFactory := jprom.New().Namespace(metrics.NSOptions{Name: serviceName})
+
+	if c == nil {
+		cfg, err := parseDSN(_traceDSN)
+		if err != nil {
+			panic(fmt.Errorf("parse trace dsn error: %s", err))
+		}
+
+		c = cfg
+	}
+
 	cfg := config.Configuration{
 		Sampler: &config.SamplerConfig{
 			Type:  "const",
-			Param: 1,
+			Param: isUATEnv(),
 		},
 		Reporter: &config.ReporterConfig{
 			LogSpans:            true,
 			BufferFlushInterval: 1 * time.Second,
-			LocalAgentHostPort:  hostPort,
+			LocalAgentHostPort:  c.Address,
 		},
 	}
+
+	logger := log.NewFactory()
 	tracer, _, err := cfg.New(
 		serviceName,
 		config.Logger(jaegerLoggerAdapter{logger.Bg()}),
@@ -57,7 +115,9 @@ func Init(serviceName string, metricsFactory metrics.Factory, logger log.Factory
 	}
 
 	SetGlobalTracer(tracer)
+
 	return tracer
+
 }
 
 type jaegerLoggerAdapter struct {

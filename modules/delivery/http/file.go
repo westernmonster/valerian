@@ -8,17 +8,16 @@ import (
 	"fmt"
 	"hash"
 	"io"
-	"net/http"
 	"path/filepath"
 	"strconv"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"github.com/ztrue/tracerr"
 
 	"valerian/infrastructure"
 	"valerian/library/gid"
+	"valerian/library/net/http/mars"
 	"valerian/models"
 )
 
@@ -151,22 +150,12 @@ type FileCtrl struct {
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /files/oss_token [post]
-func (p *FileCtrl) GetOSSToken(ctx *gin.Context) {
+func (p *FileCtrl) GetOSSToken(ctx *mars.Context) {
 	req := new(models.RequestOSSTokenReq)
-
-	if e := ctx.Bind(req); e != nil {
-		p.HandleError(ctx, e)
-		return
-	}
+	ctx.Bind(req)
 
 	if e := req.Validate(); e != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, infrastructure.RespCommon{
-			Success: false,
-			Code:    http.StatusBadRequest,
-			Message: e.Error(),
-		})
-
-		return
+		ctx.JSON(nil, e)
 	}
 
 	token, err := GetPolicyToken(req.FileType, req.FileName)

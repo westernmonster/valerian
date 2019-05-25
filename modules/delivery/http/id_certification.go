@@ -1,11 +1,10 @@
 package http
 
 import (
-	"github.com/gin-gonic/gin"
-
 	"valerian/infrastructure"
 	"valerian/infrastructure/biz"
 	"valerian/library/cloudauth"
+	"valerian/library/net/http/mars"
 )
 
 type IDCertificationCtrl struct {
@@ -29,7 +28,7 @@ type IDCertificationCtrl struct {
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /me/certification/idcard [post]
-func (p *IDCertificationCtrl) Request(ctx *gin.Context) {
+func (p *IDCertificationCtrl) Request(ctx *mars.Context) {
 	token, err := p.IDCertificationUsecase.Request(p.GetBizContext(ctx))
 	if err != nil {
 		p.HandleError(ctx, err)
@@ -53,7 +52,7 @@ func (p *IDCertificationCtrl) Request(ctx *gin.Context) {
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /me/certification/idcard/status [get]
-func (p *IDCertificationCtrl) GetStatus(ctx *gin.Context) {
+func (p *IDCertificationCtrl) GetStatus(ctx *mars.Context) {
 	status, err := p.IDCertificationUsecase.GetStatus(p.GetBizContext(ctx))
 	if err != nil {
 		p.HandleError(ctx, err)
