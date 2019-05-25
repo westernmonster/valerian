@@ -168,6 +168,16 @@ func (c *Context) Render(code int, r render.Render) {
 // It also sets the Content-Type as "application/json".
 func (c *Context) JSON(data interface{}, err error) {
 	code := http.StatusOK
+	if err == nil {
+		c.Render(code, render.JSON{
+			Code:    code,
+			Success: true,
+			Message: "ok",
+			Result:  data,
+		})
+		return
+	}
+
 	c.Error = err
 	bcode := ecode.Cause(err)
 
@@ -184,9 +194,13 @@ func (c *Context) JSON(data interface{}, err error) {
 	}
 
 	writeStatusCode(c.Writer, bcode.Code())
+	success := false
+	if code != http.StatusOK {
+		success = false
+	}
 	c.Render(code, render.JSON{
 		Code:    bcode.Code(),
-		Success: false,
+		Success: success,
 		Message: bcode.Message(),
 		Result:  data,
 	})
@@ -288,7 +302,7 @@ func (c *Context) BindWith(obj interface{}, b binding.Binding) error {
 
 // Bind bind req arg with defult form binding.
 func (c *Context) Bind(obj interface{}) error {
-	return c.mustBindWith(obj, binding.Form)
+	return c.mustBindWith(obj, binding.JSON)
 }
 
 // mustBindWith binds the passed struct pointer using the specified binding engine.

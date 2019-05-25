@@ -66,7 +66,7 @@ func init() {
 		Hostname = os.Getenv("HOSTNAME")
 	}
 
-	// addFlag(flag.CommandLine)
+	addFlag(flag.CommandLine)
 }
 
 func addFlag(fs *flag.FlagSet) {

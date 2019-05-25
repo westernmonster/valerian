@@ -28,8 +28,6 @@ const (
 	PlatAndroidB = int8(9)
 	// PlatIPhoneB is int8 for Ios Blue
 	PlatIPhoneB = int8(10)
-	// PlatBilistudio is int8 for bilistudio
-	PlatBilistudio = int8(11)
 	// PlatAndroidTVYST is int8 for AndroidTV_YST Global.
 	PlatAndroidTVYST = int8(12)
 )
@@ -107,8 +105,6 @@ func (d *Device) Plat() int8 {
 		return PlatAndroidTV
 	case "android_tv_yst":
 		return PlatAndroidTVYST
-	case "bilistudio":
-		return PlatBilistudio
 	}
 	return PlatIPhone
 }
@@ -120,7 +116,6 @@ func (d *Device) IsAndroid() bool {
 		plat == PlatAndroidG ||
 		plat == PlatAndroidB ||
 		plat == PlatAndroidI ||
-		plat == PlatBilistudio ||
 		plat == PlatAndroidTV ||
 		plat == PlatAndroidTVYST
 }

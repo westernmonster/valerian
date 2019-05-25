@@ -34,7 +34,7 @@ import (
 	"go.uber.org/zap"
 )
 
-var _traceDSN = "udp://localhost:6831"
+var _traceDSN = "127.0.0.1:6831"
 
 func init() {
 	if v := os.Getenv("TRACE"); v != "" {
@@ -44,8 +44,7 @@ func init() {
 }
 
 type Config struct {
-	Network string "dsn:network"
-	Address string "dsn:address"
+	Address string
 	// Report timeout
 	Timeout xtime.Duration `dsn:"query.timeout,200ms"`
 	// DisableSample
@@ -71,6 +70,7 @@ func parseDSN(rawdsn string) (*Config, error) {
 	if err != nil {
 		return nil, errors.Wrapf(err, "trace: invalid dsn: %s", rawdsn)
 	}
+
 	cfg := new(Config)
 	if _, err = d.Bind(cfg); err != nil {
 		return nil, errors.Wrapf(err, "trace: invalid dsn: %s", rawdsn)
@@ -84,12 +84,14 @@ func Init(c *Config) opentracing.Tracer {
 	metricsFactory := jprom.New().Namespace(metrics.NSOptions{Name: serviceName})
 
 	if c == nil {
-		cfg, err := parseDSN(_traceDSN)
-		if err != nil {
-			panic(fmt.Errorf("parse trace dsn error: %s", err))
-		}
+		// cfg, err := parseDSN(_traceDSN)
+		// if err != nil {
+		// 	panic(fmt.Errorf("parse trace dsn error: %s", err))
+		// }
 
-		c = cfg
+		c = &Config{
+			Address: _traceDSN,
+		}
 	}
 
 	cfg := config.Configuration{
@@ -103,6 +105,7 @@ func Init(c *Config) opentracing.Tracer {
 			LocalAgentHostPort:  c.Address,
 		},
 	}
+	fmt.Println(c.Address)
 
 	logger := log.NewFactory()
 	tracer, _, err := cfg.New(

@@ -1,13 +1,16 @@
 package sms
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
+	"valerian/library/log"
+	"valerian/library/tracing"
 
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk"
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk/requests"
-	"github.com/sirupsen/logrus"
-	"github.com/ztrue/tracerr"
+	"github.com/opentracing/opentracing-go"
+	"github.com/opentracing/opentracing-go/ext"
 )
 
 const (
@@ -35,7 +38,16 @@ type SMSClient struct {
 	Client *sdk.Client
 }
 
-func (p *SMSClient) SendRegisterValcode(mobile string, valcode string) (err error) {
+func (p *SMSClient) SendRegisterValcode(c context.Context, mobile string, valcode string) (err error) {
+	if span := opentracing.SpanFromContext(c); span != nil {
+		span := tracing.StartSpan("sms", opentracing.ChildOf(span.Context()))
+		span.SetTag("param.mobile", mobile)
+		span.SetTag("param.type", "Register")
+		ext.SpanKindRPCClient.Set(span)
+		defer span.Finish()
+		c = opentracing.ContextWithSpan(c, span)
+	}
+
 	request := requests.NewCommonRequest()
 	request.Domain = EndPoint
 	request.Version = Version
@@ -48,25 +60,12 @@ func (p *SMSClient) SendRegisterValcode(mobile string, valcode string) (err erro
 
 	response, err := p.Client.ProcessCommonRequest(request)
 	if err != nil {
-		logrus.WithFields(logrus.Fields{
-			"prefix": "sms",
-			"method": "SendRegisterValcode",
-			"mobile": mobile,
-		}).Error(fmt.Sprintf("ProcessCommonRequest: %v", err))
-		err = tracerr.Errorf("下发短信失败")
+		log.For(c).Error(fmt.Sprintf("SMSClient.SendRegisterValcode error(%+v), mobile(%s)", err, mobile))
 		return
 	}
 
 	if !response.IsSuccess() {
-		logrus.WithFields(logrus.Fields{
-			"prefix":       "sms",
-			"method":       "SendRegisterValcode",
-			"mobile":       mobile,
-			"http_status":  response.GetHttpStatus(),
-			"http_content": response.GetHttpContentString(),
-		}).Error(fmt.Sprintf("HTTP Status: %v", err))
-
-		err = tracerr.Errorf("下发短信失败")
+		log.For(c).Error(fmt.Sprintf("SMSClient.SendRegisterValcode error(%+v), mobile(%s) resp(%+v, %+v)", err, mobile, response.GetHttpStatus(), response.GetHttpContentString()))
 		return
 	}
 	data := response.GetHttpContentBytes()
@@ -74,26 +73,12 @@ func (p *SMSClient) SendRegisterValcode(mobile string, valcode string) (err erro
 	err = json.Unmarshal(data, sr)
 
 	if err != nil {
-		logrus.WithFields(logrus.Fields{
-			"prefix":       "sms",
-			"method":       "SendRegisterValcode",
-			"mobile":       mobile,
-			"http_status":  response.GetHttpStatus(),
-			"http_content": response.GetHttpContentString(),
-		}).Error(fmt.Sprintf("Unmarshal Response: %v", err))
-		err = tracerr.Errorf("下发短信失败")
+		log.For(c).Error(fmt.Sprintf("SMSClient.SendRegisterValcode error(%+v), mobile(%s) resp(%+v, %+v)", err, mobile, response.GetHttpStatus(), response.GetHttpContentString()))
 		return
 	}
 
 	if sr.Code != "OK" {
-		logrus.WithFields(logrus.Fields{
-			"prefix":       "sms",
-			"method":       "SendRegisterValcode",
-			"mobile":       mobile,
-			"http_status":  response.GetHttpStatus(),
-			"http_content": response.GetHttpContentString(),
-		}).Error(fmt.Sprintf("Response Fail Message: %v", sr.Message))
-		err = tracerr.Errorf("下发短信失败")
+		log.For(c).Error(fmt.Sprintf("SMSClient.SendRegisterValcode error(%+v), mobile(%s) resp(%+v, %+v)", err, mobile, response.GetHttpStatus(), response.GetHttpContentString()))
 		return
 
 	}
@@ -101,7 +86,15 @@ func (p *SMSClient) SendRegisterValcode(mobile string, valcode string) (err erro
 	return
 }
 
-func (p *SMSClient) SendResetPasswordValcode(mobile string, valcode string) (err error) {
+func (p *SMSClient) SendResetPasswordValcode(c context.Context, mobile string, valcode string) (err error) {
+	if span := opentracing.SpanFromContext(c); span != nil {
+		span := tracing.StartSpan("sms", opentracing.ChildOf(span.Context()))
+		span.SetTag("param.mobile", mobile)
+		span.SetTag("param.type", "ResetPassword")
+		ext.SpanKindRPCClient.Set(span)
+		defer span.Finish()
+		c = opentracing.ContextWithSpan(c, span)
+	}
 	request := requests.NewCommonRequest()
 	request.Domain = EndPoint
 	request.Version = Version
@@ -114,25 +107,12 @@ func (p *SMSClient) SendResetPasswordValcode(mobile string, valcode string) (err
 
 	response, err := p.Client.ProcessCommonRequest(request)
 	if err != nil {
-		logrus.WithFields(logrus.Fields{
-			"prefix": "sms",
-			"method": "SendRegisterValcode",
-			"mobile": mobile,
-		}).Error(fmt.Sprintf("ProcessCommonRequest: %v", err))
-		err = tracerr.Errorf("下发短信失败")
+		log.For(c).Error(fmt.Sprintf("SMSClient.SendResetPasswordValcode error(%+v), mobile(%s)", err, mobile))
 		return
 	}
 
 	if !response.IsSuccess() {
-		logrus.WithFields(logrus.Fields{
-			"prefix":       "sms",
-			"method":       "SendRegisterValcode",
-			"mobile":       mobile,
-			"http_status":  response.GetHttpStatus(),
-			"http_content": response.GetHttpContentString(),
-		}).Error(fmt.Sprintf("HTTP Status: %v", err))
-
-		err = tracerr.Errorf("下发短信失败")
+		log.For(c).Error(fmt.Sprintf("SMSClient.SendResetPasswordValcode error(%+v), mobile(%s) resp(%+v, %+v)", err, mobile, response.GetHttpStatus(), response.GetHttpContentString()))
 		return
 	}
 	data := response.GetHttpContentBytes()
@@ -140,26 +120,12 @@ func (p *SMSClient) SendResetPasswordValcode(mobile string, valcode string) (err
 	err = json.Unmarshal(data, sr)
 
 	if err != nil {
-		logrus.WithFields(logrus.Fields{
-			"prefix":       "sms",
-			"method":       "SendRegisterValcode",
-			"mobile":       mobile,
-			"http_status":  response.GetHttpStatus(),
-			"http_content": response.GetHttpContentString(),
-		}).Error(fmt.Sprintf("Unmarshal Response: %v", err))
-		err = tracerr.Errorf("下发短信失败")
+		log.For(c).Error(fmt.Sprintf("SMSClient.SendResetPasswordValcode error(%+v), mobile(%s) resp(%+v, %+v)", err, mobile, response.GetHttpStatus(), response.GetHttpContentString()))
 		return
 	}
 
 	if sr.Code != "OK" {
-		logrus.WithFields(logrus.Fields{
-			"prefix":       "sms",
-			"method":       "SendRegisterValcode",
-			"mobile":       mobile,
-			"http_status":  response.GetHttpStatus(),
-			"http_content": response.GetHttpContentString(),
-		}).Error(fmt.Sprintf("Response Fail Message: %v", sr.Message))
-		err = tracerr.Errorf("下发短信失败")
+		log.For(c).Error(fmt.Sprintf("SMSClient.SendResetPasswordValcode error(%+v), mobile(%s) resp(%+v, %+v)", err, mobile, response.GetHttpStatus(), response.GetHttpContentString()))
 		return
 
 	}

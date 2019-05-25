@@ -45,6 +45,12 @@ func (sl spanLogger) Fatal(msg string, fields ...zapcore.Field) {
 	sl.logger.Fatal(msg, fields...)
 }
 
+func (sl spanLogger) Warn(msg string, fields ...zapcore.Field) {
+	sl.logToSpan("warn", msg, fields...)
+	tag.Error.Set(sl.span, true)
+	sl.logger.Warn(msg, fields...)
+}
+
 // With creates a child logger, and optionally adds some context fields to that logger.
 func (sl spanLogger) With(fields ...zapcore.Field) Logger {
 	return spanLogger{logger: sl.logger.With(fields...), span: sl.span}

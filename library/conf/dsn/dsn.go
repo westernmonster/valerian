@@ -94,7 +94,7 @@ func addressesAssignFunc(addresses []string) assignFunc {
 // For Unix networks, return ['path']
 func (d *DSN) Addresses() []string {
 	switch d.Scheme {
-	case "unix", "unixgram", "unixpacket":
+	case "unix", "unixgram", "unixpacket", "tcp", "udp":
 		return []string{d.Path}
 	}
 	return strings.Split(d.Host, ",")

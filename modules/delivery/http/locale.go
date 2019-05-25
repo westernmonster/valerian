@@ -42,13 +42,9 @@ func NewLocaleCtrl(node sqalx.Node) *LocaleCtrl {
 // @Router /locales [get]
 func (p *LocaleCtrl) GetAll(ctx *mars.Context) {
 
-	items, err := p.LocaleUsecase.GetAll(ctx.Request.Context(), p.GetBizContext(ctx))
-	if err != nil {
-		p.HandleError(ctx, err)
-		return
-	}
+	items, err := p.LocaleUsecase.GetAll(ctx.Context, p.GetBizContext(ctx))
 
-	p.SuccessResp(ctx, items)
+	ctx.JSON(items, err)
 
 	return
 }

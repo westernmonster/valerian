@@ -21,13 +21,13 @@ type ValcodeUsecase struct {
 	sqalx.Node
 	*sqlx.DB
 	SMSClient interface {
-		SendRegisterValcode(mobile string, valcode string) (err error)
-		SendResetPasswordValcode(mobile string, valcode string) (err error)
+		SendRegisterValcode(c context.Context, mobile string, valcode string) (err error)
+		SendResetPasswordValcode(c context.Context, mobile string, valcode string) (err error)
 	}
 
 	EmailClient interface {
-		SendRegisterEmail(email string, valcode string) (err error)
-		SendResetPasswordValcode(email string, valcode string) (err error)
+		SendRegisterEmail(c context.Context, email string, valcode string) (err error)
+		SendResetPasswordValcode(c context.Context, email string, valcode string) (err error)
 	}
 	ValcodeRepository interface {
 		// HasSentRecordsInDuration determine current identity has sent records in specified duration
@@ -87,13 +87,13 @@ func (p *ValcodeUsecase) RequestEmailValcode(c context.Context, ctx *biz.BizCont
 
 	switch req.CodeType {
 	case models.ValcodeRegister:
-		if e := p.EmailClient.SendRegisterEmail(req.Email, valcode); e != nil {
+		if e := p.EmailClient.SendRegisterEmail(c, req.Email, valcode); e != nil {
 			err = tracerr.Wrap(e)
 			return
 		}
 		break
 	case models.ValcodeForgetPassword:
-		if e := p.EmailClient.SendResetPasswordValcode(req.Email, valcode); e != nil {
+		if e := p.EmailClient.SendResetPasswordValcode(c, req.Email, valcode); e != nil {
 			err = tracerr.Wrap(e)
 			return
 		}
@@ -161,19 +161,19 @@ func (p *ValcodeUsecase) RequestMobileValcode(c context.Context, ctx *biz.BizCon
 
 	switch req.CodeType {
 	case models.ValcodeRegister:
-		if e := p.SMSClient.SendRegisterValcode(phone, valcode); e != nil {
+		if e := p.SMSClient.SendRegisterValcode(c, phone, valcode); e != nil {
 			err = tracerr.Wrap(e)
 			return
 		}
 		break
 	case models.ValcodeForgetPassword:
-		if e := p.SMSClient.SendResetPasswordValcode(phone, valcode); e != nil {
+		if e := p.SMSClient.SendResetPasswordValcode(c, phone, valcode); e != nil {
 			err = tracerr.Wrap(e)
 			return
 		}
 		break
 	case models.ValcodeLogin:
-		if e := p.SMSClient.SendResetPasswordValcode(phone, valcode); e != nil {
+		if e := p.SMSClient.SendResetPasswordValcode(c, phone, valcode); e != nil {
 			err = tracerr.Wrap(e)
 			return
 		}

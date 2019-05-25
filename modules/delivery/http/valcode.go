@@ -2,13 +2,12 @@ package http
 
 import (
 	"context"
-	"net/http"
 
 	"valerian/library/database/sqalx"
+	"valerian/library/ecode"
 	"valerian/library/email"
+	"valerian/library/net/http/mars"
 	"valerian/library/sms"
-
-	"github.com/gin-gonic/gin"
 
 	"valerian/infrastructure"
 	"valerian/infrastructure/biz"
@@ -49,33 +48,18 @@ func NewValcodeCtrl(smsClient *sms.SMSClient, emailClient *email.EmailClient, no
 // @Failure 400 "验证请求失败"
 // @Failure 500 "服务器端错误"
 // @Router /valcodes/email [post]
-func (p *ValcodeCtrl) RequestEmailValcode(ctx *gin.Context) {
+func (p *ValcodeCtrl) RequestEmailValcode(ctx *mars.Context) {
 	req := new(models.RequestEmailValcodeReq)
 
-	if e := ctx.Bind(req); e != nil {
-		p.HandleError(ctx, e)
-		return
-	}
+	ctx.Bind(req)
 
 	if e := req.Validate(); e != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, infrastructure.RespCommon{
-			Success: false,
-			Code:    http.StatusBadRequest,
-			Message: e.Error(),
-		})
-
+		ctx.JSON(nil, ecode.RequestErr)
 		return
 	}
 
-	createdTime, err := p.ValcodeUsecase.RequestEmailValcode(ctx.Request.Context(), p.GetBizContext(ctx), req)
-	if err != nil {
-		p.HandleError(ctx, err)
-		return
-	}
-
-	p.SuccessResp(ctx, createdTime)
-
-	return
+	createdTime, err := p.ValcodeUsecase.RequestEmailValcode(ctx.Context, p.GetBizContext(ctx), req)
+	ctx.JSON(createdTime, err)
 }
 
 // @Summary 请求短信验证码
@@ -90,31 +74,16 @@ func (p *ValcodeCtrl) RequestEmailValcode(ctx *gin.Context) {
 // @Failure 400 "验证请求失败"
 // @Failure 500 "服务器端错误"
 // @Router /valcodes/mobile [post]
-func (p *ValcodeCtrl) RequestMobileValcode(ctx *gin.Context) {
+func (p *ValcodeCtrl) RequestMobileValcode(ctx *mars.Context) {
 	req := new(models.RequestMobileValcodeReq)
 
-	if e := ctx.Bind(req); e != nil {
-		p.HandleError(ctx, e)
-		return
-	}
+	ctx.Bind(req)
 
 	if e := req.Validate(); e != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, infrastructure.RespCommon{
-			Success: false,
-			Code:    http.StatusBadRequest,
-			Message: e.Error(),
-		})
-
+		ctx.JSON(nil, ecode.RequestErr)
 		return
 	}
 
-	createdTime, err := p.ValcodeUsecase.RequestMobileValcode(ctx.Request.Context(), p.GetBizContext(ctx), req)
-	if err != nil {
-		p.HandleError(ctx, err)
-		return
-	}
-
-	p.SuccessResp(ctx, createdTime)
-
-	return
+	createdTime, err := p.ValcodeUsecase.RequestMobileValcode(ctx.Context, p.GetBizContext(ctx), req)
+	ctx.JSON(createdTime, err)
 }

@@ -1,13 +1,17 @@
 package email
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"valerian/library/email/tmpl"
 	"valerian/library/email/tmpl/layouts"
+	"valerian/library/tracing"
 
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk"
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk/requests"
+	"github.com/opentracing/opentracing-go"
+	"github.com/opentracing/opentracing-go/ext"
 	"github.com/sirupsen/logrus"
 	"github.com/ztrue/tracerr"
 )
@@ -28,7 +32,16 @@ type EmailClient struct {
 	Client *sdk.Client
 }
 
-func (p *EmailClient) SendRegisterEmail(email string, valcode string) (err error) {
+func (p *EmailClient) SendRegisterEmail(c context.Context, email string, valcode string) (err error) {
+	if span := opentracing.SpanFromContext(c); span != nil {
+		span := tracing.StartSpan("email", opentracing.ChildOf(span.Context()))
+		span.SetTag("param.email", email)
+		span.SetTag("param.type", "Register")
+		ext.SpanKindRPCClient.Set(span)
+		defer span.Finish()
+		c = opentracing.ContextWithSpan(c, span)
+	}
+
 	body := &tmpl.RegisterValcodeBody{
 		Head: &layouts.EmailPageHead{
 			Title:     "飞行百科注册验证码",
@@ -91,7 +104,16 @@ func (p *EmailClient) SendRegisterEmail(email string, valcode string) (err error
 	return
 }
 
-func (p *EmailClient) SendResetPasswordValcode(email string, valcode string) (err error) {
+func (p *EmailClient) SendResetPasswordValcode(c context.Context, email string, valcode string) (err error) {
+	if span := opentracing.SpanFromContext(c); span != nil {
+		span := tracing.StartSpan("email", opentracing.ChildOf(span.Context()))
+		span.SetTag("param.email", email)
+		span.SetTag("param.type", "ResetPassword")
+		ext.SpanKindRPCClient.Set(span)
+		defer span.Finish()
+		c = opentracing.ContextWithSpan(c, span)
+	}
+
 	body := &tmpl.RegisterValcodeBody{
 		Head: &layouts.EmailPageHead{
 			Title:     "飞行百科安全验证码",

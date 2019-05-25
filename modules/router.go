@@ -4,16 +4,14 @@ import (
 	"fmt"
 
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk"
-	"github.com/opentracing-contrib/go-gin/ginhttp"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 
-	"valerian/infrastructure/bootstrap"
 	"valerian/infrastructure/db"
 	"valerian/library/email"
 	"valerian/library/log"
+	"valerian/library/net/http/mars"
 	"valerian/library/sms"
-	"valerian/library/tracing"
 	"valerian/modules/delivery/http"
 	"valerian/modules/middleware"
 	"valerian/modules/repo"
@@ -24,16 +22,12 @@ var (
 	logger *zap.Logger
 )
 
-func Configure(p *bootstrap.Bootstrapper) {
-	tracer := tracing.Init(nil)
-
+func Configure(p *mars.Engine) {
 	node, err := db.InitDatabase()
 	if err != nil {
 		panic(err)
 		return
 	}
-
-	p.Use(ginhttp.Middleware(tracer))
 
 	auth := middleware.New()
 
@@ -91,7 +85,7 @@ func Configure(p *bootstrap.Bootstrapper) {
 		accountCtrl := http.NewAccountCtrl(node)
 		api.PUT("/me/password", auth.User, accountCtrl.ChangePassword)
 		api.GET("/me", auth.User, accountCtrl.GetProfile)
-		api.PUT("/me", auth.User, accountCtrl.UpdateProfile)
+		api.PUT("/me/edit", auth.User, accountCtrl.UpdateProfile)
 
 		// 电话区域码
 		countryCodeCtrl := http.NewCountryCodeCtrl(node, log.NewFactory())
@@ -103,27 +97,18 @@ func Configure(p *bootstrap.Bootstrapper) {
 
 		// 话题
 		topicCtrl := http.NewTopicCtrl(node)
-		api.POST("/topics", auth.User, topicCtrl.Create)
-		api.PUT("/topics/:id", auth.User, topicCtrl.Update)
-		api.GET("/topics/:id", auth.User, topicCtrl.Get)
-		api.DELETE("/topics/:id", auth.User, topicCtrl.Delete)
-		api.GET("/topics", auth.User, topicCtrl.Search)
-		api.GET("/topics/:id/members", auth.User, topicCtrl.GetTopicMembersPaged)
-		api.PATCH("/topics/:id/members", auth.User, topicCtrl.BatchSavedTopicMember)
-		api.GET("/topic_sets/:id/versions", auth.User, topicCtrl.GetTopicVersions)
-		api.POST("/topic_sets/:id/versions", auth.User, topicCtrl.CreateNewVersion)
-		api.GET("/topics/:id/related", auth.User, topicCtrl.GetAllRelatedTopics)
+		api.POST("/topics/add", auth.User, topicCtrl.Create)
+		api.PUT("/topics/edit", auth.User, topicCtrl.Update)
+		api.GET("/topics", auth.User, topicCtrl.Get)
+		api.DELETE("/topics/delete", auth.User, topicCtrl.Delete)
+		api.GET("/topics/search", auth.User, topicCtrl.Search)
+		api.GET("/topics_members", auth.User, topicCtrl.GetTopicMembersPaged)
+		api.POST("/topics_members/edit", auth.User, topicCtrl.BatchSavedTopicMember)
+		api.GET("/topic_sets/versions", auth.User, topicCtrl.GetTopicVersions)
+		api.POST("/topic_sets/versions/add", auth.User, topicCtrl.CreateNewVersion)
+		api.GET("/topics/related", auth.User, topicCtrl.GetAllRelatedTopics)
 		api.GET("/topic_types", auth.User, topicCtrl.GetAllTopicTypes)
-
-		api.POST("/me/followed/topics", auth.User, topicCtrl.FollowTopic)
-
-		// 话题分类
-		// topicCategoryCtrl := http.NewTopicCategoryCtrl(node)
-		// api.GET("/topics/:id/categories", auth.User, topicCategoryCtrl.GetAll)
-		// api.GET("/topics/:id/categories/hierarchy", auth.User, topicCategoryCtrl.GetHierarchyOfAll)
-		// // api.POST("/topics/:id/categories", auth.User, topicCategoryCtrl.Create)
-		// // api.DELETE("/topic_categories/:id", auth.User, topicCategoryCtrl.Delete)
-		api.PATCH("/topics/:id/catalogs", auth.User, topicCtrl.BatchSavedTopicCatalogs)
+		api.POST("/topics_catalogs", auth.User, topicCtrl.BatchSavedTopicCatalogs)
 
 		fileCtrl := &http.FileCtrl{}
 		api.POST("/files/oss_token", auth.User, fileCtrl.GetOSSToken)

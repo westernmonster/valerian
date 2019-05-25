@@ -40,7 +40,7 @@ const (
 )
 
 var (
-	_noKickUserAgent = "haoguanwei@bilibili.com "
+	_noKickUserAgent = "admin@flywiki.com "
 	clientStats      = stat.HTTPClient
 )
 
@@ -51,7 +51,7 @@ func init() {
 	}
 }
 
-// App bilibili intranet authorization.
+// App flywiki intranet authorization.
 type App struct {
 	Key    string
 	Secret string

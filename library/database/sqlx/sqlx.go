@@ -318,12 +318,12 @@ func (db *DB) Get(dest interface{}, query string, args ...interface{}) error {
 // Beginx begins a transaction and returns an *sqlx.Tx instead of an *sql.Tx.
 func (db *DB) Beginx(c context.Context) (t *Tx, err error) {
 	now := time.Now()
+	var childSpan opentracing.Span
 	span := opentracing.SpanFromContext(c)
 	if span != nil {
 		parentCtx := span.Context()
-		span = tracing.StartSpan("begin", opentracing.ChildOf(parentCtx))
-		span.SetTag("address", db.Addr)
-		defer span.Finish()
+		childSpan = tracing.StartSpan("trans", opentracing.ChildOf(parentCtx))
+		childSpan.SetTag("address", db.Addr)
 	}
 
 	if err = db.breaker.Allow(); err != nil {
@@ -340,7 +340,7 @@ func (db *DB) Beginx(c context.Context) (t *Tx, err error) {
 		return
 	}
 
-	return &Tx{Tx: tx, span: span, driverName: db.driverName, db: db, unsafe: db.unsafe, Mapper: db.Mapper, Context: c, cancel: cancel}, err
+	return &Tx{Tx: tx, span: childSpan, driverName: db.driverName, db: db, unsafe: db.unsafe, Mapper: db.Mapper, Context: c, cancel: cancel}, err
 }
 
 // Queryx queries the database and returns an *sqlx.Rows.

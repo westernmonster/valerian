@@ -16,6 +16,7 @@ import (
 	"github.com/ztrue/tracerr"
 
 	"valerian/infrastructure"
+	"valerian/library/ecode"
 	"valerian/library/gid"
 	"valerian/library/net/http/mars"
 	"valerian/models"
@@ -155,16 +156,11 @@ func (p *FileCtrl) GetOSSToken(ctx *mars.Context) {
 	ctx.Bind(req)
 
 	if e := req.Validate(); e != nil {
-		ctx.JSON(nil, e)
+		ctx.JSON(nil, ecode.RequestErr)
 	}
 
 	token, err := GetPolicyToken(req.FileType, req.FileName)
-	if err != nil {
-		p.HandleError(ctx, err)
-		return
-	}
-
-	p.SuccessResp(ctx, token)
+	ctx.JSON(token, err)
 
 	return
 }

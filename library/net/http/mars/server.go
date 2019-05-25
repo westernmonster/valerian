@@ -19,6 +19,7 @@ import (
 	"valerian/library/net/metadata"
 	"valerian/library/stat"
 	xtime "valerian/library/time"
+	"valerian/library/tracing"
 
 	"github.com/pkg/errors"
 )
@@ -207,7 +208,7 @@ func (engine *Engine) SetMethodConfig(path string, mc *MethodConfig) {
 // DefaultServer returns an Engine instance with the Recovery, Logger and CSRF middleware already attached.
 func DefaultServer(conf *ServerConfig) *Engine {
 	engine := NewServer(conf)
-	// engine.Use(Recovery(), Trace(), Logger(), CSRF(), Mobile())
+	engine.Use(Recovery(), Trace(tracing.GlobalTracer()), Logger(), CSRF(), Mobile())
 	return engine
 }
 
@@ -216,7 +217,7 @@ func DefaultServer(conf *ServerConfig) *Engine {
 // Deprecated: please use DefaultServer.
 func Default() *Engine {
 	engine := New()
-	// engine.Use(Recovery(), Trace(), Logger(), CSRF(), Mobile())
+	engine.Use(Recovery(), Trace(tracing.GlobalTracer()), Logger(), CSRF(), Mobile())
 	return engine
 }
 

@@ -56,7 +56,7 @@ func MWURLTagFunc(f func(u *url.URL) string) MWOption {
 
 // Middleware is a gin native version of the equivalent middleware in:
 //   https://github.com/opentracing-contrib/go-stdlib/
-func Middleware(tr opentracing.Tracer, options ...MWOption) HandlerFunc {
+func Trace(tr opentracing.Tracer, options ...MWOption) HandlerFunc {
 	opts := mwOptions{
 		opNameFunc: func(r *http.Request) string {
 			return "HTTP " + r.Method

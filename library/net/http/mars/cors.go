@@ -11,12 +11,8 @@ import (
 
 var (
 	allowOriginHosts = []string{
-		".bilibili.com",
-		".biligame.com",
-		".bilibili.co",
-		".im9.com",
-		".acg.tv",
-		".hdslb.com",
+		".flywiki.com",
+		".flywk.com",
 	}
 )
 

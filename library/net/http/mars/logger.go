@@ -9,6 +9,7 @@ import (
 	"valerian/library/net/metadata"
 
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
 // Logger is logger  middleware
@@ -27,7 +28,7 @@ func Logger() HandlerFunc {
 
 		c.Next()
 
-		mid, _ := c.Get("mid")
+		aid, _ := c.Get("aid")
 		err := c.Error
 		cerr := ecode.Cause(err)
 		dt := time.Since(now)
@@ -39,23 +40,12 @@ func Logger() HandlerFunc {
 		stats.Incr(caller, path[1:], strconv.FormatInt(int64(cerr.Code()), 10))
 		stats.Timing(caller, int64(dt/time.Millisecond), path[1:])
 
-		lf := log.Info
 		errmsg := ""
 		isSlow := dt >= (time.Millisecond * 500)
-		if err != nil {
-			errmsg = err.Error()
-			lf = log.Error
-			if cerr.Code() > 0 {
-				lf = log.Warn
-			}
-		} else {
-			if isSlow {
-				lf = log.Warn
-			}
-		}
-		lf("",
+
+		fields := []zapcore.Field{
 			zap.String("method", req.Method),
-			zap.Any("mid", mid),
+			zap.Any("aid", aid),
 			zap.String("ip", ip),
 			zap.String("user", caller),
 			zap.String("path", path),
@@ -63,10 +53,28 @@ func Logger() HandlerFunc {
 			zap.Int("ret", cerr.Code()),
 			zap.String("msg", cerr.Message()),
 			zap.String("stack", fmt.Sprintf("%+v", err)),
-			zap.String("err", errmsg),
 			zap.Float64("timeout_quota", quota),
 			zap.Float64("ts", dt.Seconds()),
 			zap.String("source", "http-access-log"),
-		)
+		}
+
+		if err != nil {
+			errmsg = err.Error()
+			fields = append(fields, zap.String("err", errmsg))
+			if cerr.Code() > 0 {
+				log.For(c).Warn("http", fields...)
+				return
+			}
+			log.For(c).Error("http", fields...)
+			return
+
+		} else {
+			if isSlow {
+				log.For(c).Warn("http", fields...)
+				return
+			}
+		}
+
+		log.For(c).Info("http", fields...)
 	}
 }

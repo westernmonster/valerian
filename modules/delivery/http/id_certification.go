@@ -30,14 +30,7 @@ type IDCertificationCtrl struct {
 // @Router /me/certification/idcard [post]
 func (p *IDCertificationCtrl) Request(ctx *mars.Context) {
 	token, err := p.IDCertificationUsecase.Request(p.GetBizContext(ctx))
-	if err != nil {
-		p.HandleError(ctx, err)
-		return
-	}
-
-	p.SuccessResp(ctx, token)
-
-	return
+	ctx.JSON(token, err)
 }
 
 // @Summary 获取实名认证状态
@@ -54,12 +47,8 @@ func (p *IDCertificationCtrl) Request(ctx *mars.Context) {
 // @Router /me/certification/idcard/status [get]
 func (p *IDCertificationCtrl) GetStatus(ctx *mars.Context) {
 	status, err := p.IDCertificationUsecase.GetStatus(p.GetBizContext(ctx))
-	if err != nil {
-		p.HandleError(ctx, err)
-		return
-	}
 
-	p.SuccessResp(ctx, status)
+	ctx.JSON(status, err)
 
 	return
 }

@@ -8,12 +8,8 @@ import (
 
 var (
 	_allowHosts = []string{
-		".bilibili.com",
-		".bilibili.co",
-		".biligame.com",
-		".im9.com",
-		".acg.tv",
-		".hdslb.com",
+		".flywiki.com",
+		".flywk.co",
 	}
 	_allowPatterns = []string{
 		// match by wechat appid

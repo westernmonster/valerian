@@ -57,7 +57,7 @@ package http
 // 	}
 
 // 	bizCtx := p.GetBizContext(ctx)
-// 	items, err := p.TopicCategoryUsecase.GetAll(ctx.Request.Context(), bizCtx, topicID)
+// 	items, err := p.TopicCategoryUsecase.GetAll(ctx.Context, bizCtx, topicID)
 // 	if err != nil {
 // 		p.HandleError(ctx, err)
 // 		return
@@ -104,7 +104,7 @@ package http
 // 	}
 
 // 	bizCtx := p.GetBizContext(ctx)
-// 	resp, err := p.TopicCategoryUsecase.GetHierarchyOfAll(ctx.Request.Context(), bizCtx, topicID)
+// 	resp, err := p.TopicCategoryUsecase.GetHierarchyOfAll(ctx.Context, bizCtx, topicID)
 // 	if err != nil {
 // 		p.HandleError(ctx, err)
 // 		return
@@ -150,7 +150,7 @@ package http
 // 	}
 
 // 	bizCtx := p.GetBizContext(ctx)
-// 	err := p.TopicCategoryUsecase.BulkSave(ctx.Request.Context(), bizCtx, req)
+// 	err := p.TopicCategoryUsecase.BulkSave(ctx.Context, bizCtx, req)
 // 	if err != nil {
 // 		p.HandleError(ctx, err)
 // 		return

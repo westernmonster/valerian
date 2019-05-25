@@ -53,3 +53,15 @@ func (b Factory) For(ctx context.Context) Logger {
 func (b Factory) With(fields ...zapcore.Field) Factory {
 	return Factory{logger: b.logger.With(fields...)}
 }
+
+func For(ctx context.Context) Logger {
+	if span := opentracing.SpanFromContext(ctx); span != nil {
+		// TODO for Jaeger span extract trace/span IDs as fields
+		return spanLogger{span: span, logger: l}
+	}
+	return logger{logger: l}
+}
+
+func ForSpan(span opentracing.Span) Logger {
+	return spanLogger{span: span, logger: l}
+}

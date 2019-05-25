@@ -3,7 +3,7 @@ package sqalx
 import (
 	"context"
 	"database/sql"
-	"go-common/library/log"
+	"fmt"
 	"strings"
 	"sync/atomic"
 	"time"
@@ -13,6 +13,7 @@ import (
 
 	"valerian/library/database/sqlx"
 	"valerian/library/ecode"
+	"valerian/library/log"
 	"valerian/library/net/netutil/breaker"
 	xtime "valerian/library/time"
 )
@@ -50,7 +51,7 @@ func NewMySQL(c *Config) Node {
 
 	w, err := connect(c, c.DSN, brk)
 	if err != nil {
-		log.Error("open mysql error(%v)", err)
+		log.Error(fmt.Sprintf("open mysql error(%v)", err))
 		panic(err)
 	}
 
@@ -59,7 +60,7 @@ func NewMySQL(c *Config) Node {
 		brk := brkGroup.Get(parseDSNAddr(rd))
 		d, err := connect(c, rd, brk)
 		if err != nil {
-			log.Error("open mysql error(%v)", err)
+			log.Error(fmt.Sprintf("open mysql error(%v)", err))
 			panic(err)
 		}
 		rs = append(rs, d)
@@ -115,7 +116,6 @@ type Node interface {
 // A Driver can query the database. It can either be a *sqlx.DB or a *sqlx.Tx
 // and therefore is limited to the methods they have in common.
 type Driver interface {
-	sqlx.ExecerContext
 	sqlx.QueryerContext
 	sqlx.PreparerContext
 	// BindNamed(query string, arg interface{}) (string, []interface{}, error)

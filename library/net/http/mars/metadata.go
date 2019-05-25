@@ -15,16 +15,16 @@ import (
 
 const (
 	// http head
-	_httpHeaderUser         = "x1-bilispy-user"
-	_httpHeaderColor        = "x1-bilispy-color"
-	_httpHeaderTimeout      = "x1-bilispy-timeout"
-	_httpHeaderRemoteIP     = "x-backend-bili-real-ip"
-	_httpHeaderRemoteIPPort = "x-backend-bili-real-ipport"
+	_httpHeaderUser         = "x1-flywiki-user"
+	_httpHeaderColor        = "x1-flywiki-color"
+	_httpHeaderTimeout      = "x1-flywiki-timeout"
+	_httpHeaderRemoteIP     = "x-backend-flywiki-real-ip"
+	_httpHeaderRemoteIPPort = "x-backend-flywiki-real-ipport"
 )
 
-// mirror return true if x1-bilispy-mirror in http header and its value is 1 or true.
+// mirror return true if x1-flywiki-mirror in http header and its value is 1 or true.
 func mirror(req *http.Request) bool {
-	mirrorStr := req.Header.Get("x1-bilispy-mirror")
+	mirrorStr := req.Header.Get("x1-flywiki-mirror")
 	if mirrorStr == "" {
 		return false
 	}
@@ -80,7 +80,7 @@ func timeout(req *http.Request) time.Duration {
 }
 
 // remoteIP implements a best effort algorithm to return the real client IP, it parses
-// X-BACKEND-BILI-REAL-IP or X-Real-IP or X-Forwarded-For in order to work properly with reverse-proxies such us: nginx or haproxy.
+// X-BACKEND-FLYWIKI-REAL-IP or X-Real-IP or X-Forwarded-For in order to work properly with reverse-proxies such us: nginx or haproxy.
 // Use X-Forwarded-For before X-Real-Ip as nginx uses X-Real-Ip with the proxy's IP.
 func remoteIP(req *http.Request) (remote string) {
 	if remote = req.Header.Get(_httpHeaderRemoteIP); remote != "" && remote != "null" {

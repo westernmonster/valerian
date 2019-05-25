@@ -46,9 +46,9 @@ func NewCountryCodeCtrl(node sqalx.Node, logger log.Factory) *CountryCodeCtrl {
 // @Failure 500 "服务器端错误"
 // @Router /country_codes [get]
 func (p *CountryCodeCtrl) GetAll(ctx *mars.Context) {
-	p.logger.For(ctx.Request.Context()).Info("HTTP", zap.String("method", ctx.Request.Method), zap.Stringer("url", ctx.Request.URL))
+	p.logger.For(ctx.Context).Info("HTTP", zap.String("method", ctx.Request.Method), zap.Stringer("url", ctx.Request.URL))
 
-	items, err := p.CountryCodeUsecase.GetAll(ctx.Request.Context())
+	items, err := p.CountryCodeUsecase.GetAll(ctx.Context)
 
 	ctx.JSON(items, err)
 

@@ -6,10 +6,11 @@ import (
 	"strconv"
 
 	"valerian/infrastructure"
-	"valerian/infrastructure/berr"
 	"valerian/infrastructure/biz"
 	"valerian/infrastructure/helper"
+	"valerian/library/ecode"
 	"valerian/library/net/http/mars"
+	"valerian/library/net/metadata"
 	"valerian/models"
 	"valerian/modules/repo"
 )
@@ -51,18 +52,18 @@ func (p *AuthCtrl) EmailLogin(ctx *mars.Context) {
 	ctx.Bind(req)
 
 	if e := req.Validate(); e != nil {
-		ctx.JSON(nil, e)
+		ctx.JSON(nil, ecode.RequestErr)
 		return
 	}
 
 	ip := "0.0.0.0"
-	result, err := p.OauthUsecase.EmailLogin(ctx.Request.Context(), p.GetBizContext(ctx), req, ip)
+	result, err := p.OauthUsecase.EmailLogin(ctx.Context, p.GetBizContext(ctx), req, ip)
 	if err != nil {
 		ctx.JSON(nil, err)
 		return
 	}
 
-	profile, err := p.AccountUsecase.GetProfileByID(ctx.Request.Context(), result.AccountID)
+	profile, err := p.AccountUsecase.GetProfileByID(ctx.Context, result.AccountID)
 	if err != nil {
 		ctx.JSON(nil, err)
 		return
@@ -76,8 +77,8 @@ func (p *AuthCtrl) EmailLogin(ctx *mars.Context) {
 		return
 	}
 	http.SetCookie(ctx.Writer, cookie)
-	p.SuccessResp(ctx, result)
 
+	ctx.JSON(result, err)
 	return
 }
 
@@ -96,29 +97,23 @@ func (p *AuthCtrl) EmailLogin(ctx *mars.Context) {
 // @Router /oauth/login/mobile [post]
 func (p *AuthCtrl) MobileLogin(ctx *mars.Context) {
 	req := new(models.MobileLoginReq)
-
-	if e := ctx.Bind(req); e != nil {
-		p.HandleError(ctx, e)
-		return
-	}
-
+	ctx.Bind(req)
 	if e := req.Validate(); e != nil {
-		ctx.JSON(nil, e)
-
+		ctx.JSON(nil, ecode.RequestErr)
 		return
 	}
 
-	ip := "0.0.0.0"
+	ip := metadata.String(ctx, metadata.RemoteIP)
 	bizCtx := p.GetBizContext(ctx)
-	result, err := p.OauthUsecase.MobileLogin(ctx.Request.Context(), bizCtx, req, ip)
+	result, err := p.OauthUsecase.MobileLogin(ctx.Context, bizCtx, req, ip)
 	if err != nil {
-		p.HandleError(ctx, err)
+		ctx.JSON(nil, err)
 		return
 	}
 
-	profile, err := p.AccountUsecase.GetProfileByID(ctx.Request.Context(), result.AccountID)
+	profile, err := p.AccountUsecase.GetProfileByID(ctx.Context, result.AccountID)
 	if err != nil {
-		p.HandleError(ctx, err)
+		ctx.JSON(nil, err)
 		return
 	}
 
@@ -126,11 +121,11 @@ func (p *AuthCtrl) MobileLogin(ctx *mars.Context) {
 
 	cookie, err := p.createCookie(result.AccessToken)
 	if err != nil {
-		p.HandleError(ctx, err)
+		ctx.JSON(nil, err)
 		return
 	}
 	http.SetCookie(ctx.Writer, cookie)
-	p.SuccessResp(ctx, result)
+	ctx.JSON(result, err)
 
 	return
 }
@@ -150,29 +145,24 @@ func (p *AuthCtrl) MobileLogin(ctx *mars.Context) {
 // @Router /oauth/login/digit [post]
 func (p *AuthCtrl) DigitLogin(ctx *mars.Context) {
 	req := new(models.DigitLoginReq)
-
-	if e := ctx.Bind(req); e != nil {
-		p.HandleError(ctx, e)
-		return
-	}
+	ctx.Bind(req)
 
 	if e := req.Validate(); e != nil {
-		ctx.JSON(nil, e)
-
+		ctx.JSON(nil, ecode.RequestErr)
 		return
 	}
 
-	ip := "0.0.0.0"
+	ip := metadata.String(ctx, metadata.RemoteIP)
 	bizCtx := p.GetBizContext(ctx)
-	result, err := p.OauthUsecase.DigitLogin(ctx.Request.Context(), bizCtx, req, ip)
+	result, err := p.OauthUsecase.DigitLogin(ctx.Context, bizCtx, req, ip)
 	if err != nil {
-		p.HandleError(ctx, err)
+		ctx.JSON(nil, err)
 		return
 	}
 
-	profile, err := p.AccountUsecase.GetProfileByID(ctx.Request.Context(), result.AccountID)
+	profile, err := p.AccountUsecase.GetProfileByID(ctx.Context, result.AccountID)
 	if err != nil {
-		p.HandleError(ctx, err)
+		ctx.JSON(nil, err)
 		return
 	}
 
@@ -180,11 +170,11 @@ func (p *AuthCtrl) DigitLogin(ctx *mars.Context) {
 
 	cookie, err := p.createCookie(result.AccessToken)
 	if err != nil {
-		p.HandleError(ctx, err)
+		ctx.JSON(nil, err)
 		return
 	}
 	http.SetCookie(ctx.Writer, cookie)
-	p.SuccessResp(ctx, result)
+	ctx.JSON(result, err)
 
 	return
 }
@@ -204,38 +194,34 @@ func (p *AuthCtrl) DigitLogin(ctx *mars.Context) {
 func (p *AuthCtrl) EmailRegister(ctx *mars.Context) {
 	req := new(models.EmailRegisterReq)
 
-	if e := ctx.Bind(req); e != nil {
-		p.HandleError(ctx, e)
-		return
-	}
+	ctx.Bind(req)
 
 	if e := req.Validate(); e != nil {
-		ctx.JSON(nil, e)
-
+		ctx.JSON(nil, ecode.RequestErr)
 		return
 	}
 
-	ip := "0.0.0.0"
-	_, err := p.OauthUsecase.EmailRegister(ctx.Request.Context(), p.GetBizContext(ctx), req, ip)
+	ip := metadata.String(ctx, metadata.RemoteIP)
+	_, err := p.OauthUsecase.EmailRegister(ctx.Context, p.GetBizContext(ctx), req, ip)
 	if err != nil {
-		p.HandleError(ctx, err)
+		ctx.JSON(nil, err)
 		return
 	}
 
-	result, err := p.OauthUsecase.EmailLogin(ctx.Request.Context(), p.GetBizContext(ctx), &models.EmailLoginReq{
+	result, err := p.OauthUsecase.EmailLogin(ctx.Context, p.GetBizContext(ctx), &models.EmailLoginReq{
 		Source:   req.Source,
 		Email:    req.Email,
 		Password: req.Password,
 		ClientID: "532c28d5412dd75bf975fb951c740a30",
 	}, ip)
 	if err != nil {
-		p.HandleError(ctx, err)
+		ctx.JSON(nil, err)
 		return
 	}
 
-	profile, err := p.AccountUsecase.GetProfileByID(ctx.Request.Context(), result.AccountID)
+	profile, err := p.AccountUsecase.GetProfileByID(ctx.Context, result.AccountID)
 	if err != nil {
-		p.HandleError(ctx, err)
+		ctx.JSON(nil, err)
 		return
 	}
 
@@ -243,12 +229,12 @@ func (p *AuthCtrl) EmailRegister(ctx *mars.Context) {
 
 	cookie, err := p.createCookie(result.AccessToken)
 	if err != nil {
-		p.HandleError(ctx, err)
+		ctx.JSON(nil, err)
 		return
 	}
 	http.SetCookie(ctx.Writer, cookie)
 
-	p.SuccessResp(ctx, result)
+	ctx.JSON(result, err)
 
 	return
 }
@@ -268,24 +254,20 @@ func (p *AuthCtrl) EmailRegister(ctx *mars.Context) {
 func (p *AuthCtrl) MobileRegister(ctx *mars.Context) {
 	req := new(models.MobileRegisterReq)
 
-	if e := ctx.Bind(req); e != nil {
-		p.HandleError(ctx, e)
-		return
-	}
-
+	ctx.Bind(req)
 	if e := req.Validate(); e != nil {
-		ctx.JSON(nil, e)
+		ctx.JSON(nil, ecode.RequestErr)
 		return
 	}
 
-	ip := "0.0.0.0"
-	_, err := p.OauthUsecase.MobileRegister(ctx.Request.Context(), p.GetBizContext(ctx), req, ip)
+	ip := metadata.String(ctx, metadata.RemoteIP)
+	_, err := p.OauthUsecase.MobileRegister(ctx.Context, p.GetBizContext(ctx), req, ip)
 	if err != nil {
-		p.HandleError(ctx, err)
+		ctx.JSON(nil, err)
 		return
 	}
 
-	result, err := p.OauthUsecase.MobileLogin(ctx.Request.Context(), p.GetBizContext(ctx), &models.MobileLoginReq{
+	result, err := p.OauthUsecase.MobileLogin(ctx.Context, p.GetBizContext(ctx), &models.MobileLoginReq{
 		Source:   req.Source,
 		Mobile:   req.Mobile,
 		Password: req.Password,
@@ -293,13 +275,13 @@ func (p *AuthCtrl) MobileRegister(ctx *mars.Context) {
 		ClientID: "532c28d5412dd75bf975fb951c740a30",
 	}, ip)
 	if err != nil {
-		p.HandleError(ctx, err)
+		ctx.JSON(nil, err)
 		return
 	}
 
-	profile, err := p.AccountUsecase.GetProfileByID(ctx.Request.Context(), result.AccountID)
+	profile, err := p.AccountUsecase.GetProfileByID(ctx.Context, result.AccountID)
 	if err != nil {
-		p.HandleError(ctx, err)
+		ctx.JSON(nil, err)
 		return
 	}
 
@@ -307,12 +289,12 @@ func (p *AuthCtrl) MobileRegister(ctx *mars.Context) {
 
 	cookie, err := p.createCookie(result.AccessToken)
 	if err != nil {
-		p.HandleError(ctx, err)
+		ctx.JSON(nil, err)
 		return
 	}
 	http.SetCookie(ctx.Writer, cookie)
 
-	p.SuccessResp(ctx, result)
+	ctx.JSON(result, err)
 
 	return
 }
@@ -331,27 +313,23 @@ func (p *AuthCtrl) MobileRegister(ctx *mars.Context) {
 // @Router /oauth/password/reset [put]
 func (p *AuthCtrl) ForgetPassword(ctx *mars.Context) {
 	req := new(models.ForgetPasswordReq)
-
-	if e := ctx.Bind(req); e != nil {
-		p.HandleError(ctx, e)
-		return
-	}
+	ctx.Bind(req)
 
 	if e := req.Validate(); e != nil {
-		ctx.JSON(nil, e)
+		ctx.JSON(nil, ecode.RequestErr)
 		return
 	}
 
-	sessionID, err := p.OauthUsecase.ForgetPassword(ctx.Request.Context(), p.GetBizContext(ctx), req)
+	sessionID, err := p.OauthUsecase.ForgetPassword(ctx.Context, p.GetBizContext(ctx), req)
 	if err != nil {
-		p.HandleError(ctx, err)
+		ctx.JSON(nil, err)
 		return
 	}
 
 	strID := strconv.FormatInt(sessionID, 10)
 	b64Str := helper.Base64Encode(strID)
 
-	p.SuccessResp(ctx, b64Str)
+	ctx.JSON(b64Str, err)
 
 	return
 }
@@ -370,31 +348,15 @@ func (p *AuthCtrl) ForgetPassword(ctx *mars.Context) {
 // @Router /oauth/password/reset/confirm [put]
 func (p *AuthCtrl) ResetPassword(ctx *mars.Context) {
 	req := new(models.ResetPasswordReq)
-
-	if e := ctx.Bind(req); e != nil {
-		p.HandleError(ctx, e)
-		return
-	}
+	ctx.Bind(req)
 
 	if e := req.Validate(); e != nil {
-		ctx.JSON(nil, e)
+		ctx.JSON(nil, ecode.RequestErr)
 		return
 	}
 
-	err := p.OauthUsecase.ResetPassword(ctx.Request.Context(), p.GetBizContext(ctx), req)
-	if err != nil {
-		switch err.(type) {
-		case *berr.BizError:
-			ctx.JSON(nil, err)
-			return
-		default:
-			p.HandleError(ctx, err)
-			return
-
-		}
-	}
-
-	p.SuccessResp(ctx, nil)
+	err := p.OauthUsecase.ResetPassword(ctx.Context, p.GetBizContext(ctx), req)
+	ctx.JSON(nil, err)
 
 	return
 }
@@ -430,6 +392,6 @@ func (p *AuthCtrl) Logout(ctx *mars.Context) {
 	cookie.Path = "/"
 	cookie.Value = ""
 	http.SetCookie(ctx.Writer, cookie)
-	p.SuccessResp(ctx, nil)
+	ctx.JSON(nil, nil)
 	return
 }

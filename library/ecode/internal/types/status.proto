@@ -7,7 +7,7 @@ import "google/protobuf/any.proto";
 option go_package = "valerian/library/ecode/internal/types;types";
 option java_multiple_files = true;
 option java_outer_classname = "StatusProto";
-option java_package = "com.bilibili.rpc";
+option java_package = "com.flywiki.rpc";
 option objc_class_prefix = "RPC";
 
 message Status {

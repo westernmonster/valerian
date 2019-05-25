@@ -2,36 +2,26 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/spf13/viper"
-	ginSwagger "github.com/swaggo/gin-swagger" // gin-swagger middleware
-	"github.com/swaggo/gin-swagger/swaggerFiles"
+	"github.com/spf13/viper" // gin-swagger middleware
 	"go.uber.org/zap"
 
 	_ "valerian/docs"
-	"valerian/infrastructure/bootstrap"
 	"valerian/infrastructure/locale"
+	"valerian/library/log"
 	"valerian/library/net/http/mars"
+	"valerian/library/tracing"
 	"valerian/modules"
 )
 
 var (
 	logger *zap.Logger
 )
-
-func newApp() *bootstrap.Bootstrapper {
-	app := bootstrap.New("flywk.com", "admin@flywk.com")
-	app.Bootstrap()
-
-	locale.LoadTranslateFile()
-	app.Configure(
-		modules.Configure,
-	)
-
-	app.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	return app
-}
 
 // @title 飞行百科 API
 // @version 1.0
@@ -57,18 +47,47 @@ func newApp() *bootstrap.Bootstrapper {
 func main() {
 	setupConfig()
 
-	httpConfig := &mars.ServerConfig{
-		Address: "0.0.0.0:7001",
+	locale.LoadTranslateFile()
+
+	log.Init(nil)
+	tracing.Init(nil)
+
+	InitHTTP()
+
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, syscall.SIGHUP, syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT)
+	for {
+		s := <-c
+		log.Info(fmt.Sprintf("web-interface get a signal %s", s.String()))
+		switch s {
+		case syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT:
+			log.Info("web-interface exit")
+			time.Sleep(time.Second)
+			return
+		case syscall.SIGHUP:
+		// TODO reload
+		default:
+			return
+		}
 	}
 
+}
+
+func InitHTTP() {
+	httpConfig := &mars.ServerConfig{
+		Network: "tcp",
+		Address: "0.0.0.0:7001",
+	}
 	httpConfig.Timeout.UnmarshalText([]byte("1s"))
 	httpConfig.ReadTimeout.UnmarshalText([]byte("1s"))
 	httpConfig.WriteTimeout.UnmarshalText([]byte("1s"))
 	engine := mars.DefaultServer(httpConfig)
+	modules.Configure(engine)
 
-	app := newApp()
-
-	app.Run(":7001")
+	if err := engine.Start(); err != nil {
+		log.Error(fmt.Sprintf("engine.Start error(%v)", err))
+		panic(err)
+	}
 }
 
 func setupConfig() {

@@ -6,8 +6,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"io/ioutil"
-	"path/filepath"
 	"reflect"
 	"time"
 	"valerian/library/stat"
@@ -55,19 +53,6 @@ type PreparerContext interface {
 	PrepareContext(ctx context.Context, query string) (*sql.Stmt, error)
 }
 
-// ExecerContext is an interface used by MustExecContext and LoadFileContext
-type ExecerContext interface {
-	ExecContext(ctx context.Context, query string, args ...interface{}) (sql.Result, error)
-}
-
-// ExtContext is a union interface which can bind, query, and exec, with Context
-// used by NamedQueryContext and NamedExecContext.
-type ExtContext interface {
-	binder
-	QueryerContext
-	ExecerContext
-}
-
 // SelectContext executes a query using the provided Queryer, and StructScans
 // each row into dest, which must be a slice.  If the slice elements are
 // scannable, then the result set must have only one column.  Otherwise,
@@ -103,30 +88,6 @@ func PreparexContext(ctx context.Context, p PreparerContext, query string) (*Stm
 func GetContext(ctx context.Context, q QueryerContext, dest interface{}, query string, args ...interface{}) error {
 	r := q.QueryRowxContext(ctx, query, args...)
 	return r.scanAny(dest, false)
-}
-
-// LoadFileContext exec's every statement in a file (as a single call to Exec).
-// LoadFileContext may return a nil *sql.Result if errors are encountered
-// locating or reading the file at path.  LoadFile reads the entire file into
-// memory, so it is not suitable for loading large data dumps, but can be useful
-// for initializing schemas or loading indexes.
-//
-// FIXME: this does not really work with multi-statement files for mattn/go-sqlite3
-// or the go-mysql-driver/mysql drivers;  pq seems to be an exception here.  Detecting
-// this by requiring something with DriverName() and then attempting to split the
-// queries will be difficult to get right, and its current driver-specific behavior
-// is deemed at least not complex in its incorrectness.
-func LoadFileContext(ctx context.Context, e ExecerContext, path string) (*sql.Result, error) {
-	realpath, err := filepath.Abs(path)
-	if err != nil {
-		return nil, err
-	}
-	contents, err := ioutil.ReadFile(realpath)
-	if err != nil {
-		return nil, err
-	}
-	res, err := e.ExecContext(ctx, string(contents))
-	return &res, err
 }
 
 // SelectContext using this DB.
@@ -191,6 +152,35 @@ func (db *DB) QueryRowxContext(ctx context.Context, query string, args ...interf
 	return &Row{rows: rows, err: err, unsafe: db.unsafe, Mapper: db.Mapper}
 }
 
+func (db *DB) ExecContext(ctx context.Context, query string, args ...interface{}) (result sql.Result, err error) {
+	now := time.Now()
+	span := opentracing.SpanFromContext(ctx)
+	if span != nil {
+		parentCtx := span.Context()
+		span = tracing.StartSpan("exec", opentracing.ChildOf(parentCtx))
+		span.SetTag("address", db.Addr)
+		span.SetTag("sql", query)
+		defer span.Finish()
+	}
+
+	if err = db.breaker.Allow(); err != nil {
+		stats.Incr("mysql:exec", "breaker")
+		return
+	}
+
+	_, c, cancel := db.ExecTimeout.Shrink(ctx)
+	result, err = db.DB.ExecContext(c, query, args...)
+	cancel()
+	db.onBreaker(&err)
+	stats.Timing("mysql:exec", int64(time.Since(now)/time.Millisecond))
+	if err != nil {
+		err = errors.Wrapf(err, "exec:%s, args:%+v", query, args)
+		cancel()
+		return
+	}
+	return
+}
+
 // BeginTxx begins a transaction and returns an *sqlx.Tx instead of an
 // *sql.Tx.
 //
@@ -244,6 +234,15 @@ func (tx *Tx) QueryxContext(ctx context.Context, query string, args ...interface
 // SelectContext within a transaction and context.
 // Any placeholder parameters are replaced with supplied args.
 func (tx *Tx) SelectContext(ctx context.Context, dest interface{}, query string, args ...interface{}) error {
+	if tx.span != nil {
+		tx.span.SetTag("select", query)
+	}
+
+	now := time.Now()
+	defer func() {
+		stats.Timing("mysql:tx:query", int64(time.Since(now)/time.Millisecond))
+	}()
+
 	return SelectContext(ctx, tx, dest, query, args...)
 }
 
@@ -251,7 +250,17 @@ func (tx *Tx) SelectContext(ctx context.Context, dest interface{}, query string,
 // Any placeholder parameters are replaced with supplied args.
 // An error is returned if the result set is empty.
 func (tx *Tx) GetContext(ctx context.Context, dest interface{}, query string, args ...interface{}) error {
+	if tx.span != nil {
+		tx.span.SetTag("get", query)
+	}
 	return GetContext(ctx, tx, dest, query, args...)
+}
+
+func (tx *Tx) ExecContext(ctx context.Context, query string, args ...interface{}) (result sql.Result, err error) {
+	if tx.span != nil {
+		tx.span.SetTag("exec", query)
+	}
+	return tx.Tx.ExecContext(ctx, query, args...)
 }
 
 // QueryRowxContext within a transaction and context.

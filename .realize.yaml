@@ -5,6 +5,8 @@ settings:
 schema:
 - name: api
   path: .
+  env:
+      APP_ID: valerian
   commands:
     build:
       status: true
