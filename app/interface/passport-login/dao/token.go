@@ -20,10 +20,10 @@ const (
 	_delRefreshTokenSQL = `DELETE oauth_refresh_tokens WHERE token=?`
 )
 
-func (p *Dao) GetClient(c context.Context, node sqalx.Node, clientID string) (item *model.OauthClient, err error) {
+func (p *Dao) GetClient(c context.Context, authDB sqalx.Node, clientID string) (item *model.OauthClient, err error) {
 	item = new(model.OauthClient)
 
-	if err = p.node.GetContext(c, item, _getClientSQL, clientID); err != nil {
+	if err = p.authDB.GetContext(c, item, _getClientSQL, clientID); err != nil {
 		if err == sql.ErrNoRows {
 			item = nil
 			err = nil
@@ -36,8 +36,8 @@ func (p *Dao) GetClient(c context.Context, node sqalx.Node, clientID string) (it
 	return
 }
 
-func (p *Dao) AddAccessToken(c context.Context, node sqalx.Node, t *model.OauthAccessToken) (affected int64, err error) {
-	r, err := p.node.ExecContext(c, _addAccessTokenSQL, t.ID, t.ClientID, t.AccountID, t.Token, t.ExpiresAt, t.Scope, t.Deleted, t.CreatedAt, t.UpdatedAt)
+func (p *Dao) AddAccessToken(c context.Context, authDB sqalx.Node, t *model.OauthAccessToken) (affected int64, err error) {
+	r, err := p.authDB.ExecContext(c, _addAccessTokenSQL, t.ID, t.ClientID, t.AccountID, t.Token, t.ExpiresAt, t.Scope, t.Deleted, t.CreatedAt, t.UpdatedAt)
 	if err != nil {
 		p.logger.For(c).Error(fmt.Sprintf("dao.AddAccessToken(%+v), error(%+v)", t, err))
 		return
@@ -46,8 +46,8 @@ func (p *Dao) AddAccessToken(c context.Context, node sqalx.Node, t *model.OauthA
 	return r.RowsAffected()
 }
 
-func (p *Dao) DelExpiredAccessToken(c context.Context, node sqalx.Node, clientID string, accountID int64, expiresAt int64) (affected int64, err error) {
-	r, err := p.node.ExecContext(c, _delExpiredAccessTokenSQL, clientID, accountID, expiresAt)
+func (p *Dao) DelExpiredAccessToken(c context.Context, authDB sqalx.Node, clientID string, accountID int64, expiresAt int64) (affected int64, err error) {
+	r, err := p.authDB.ExecContext(c, _delExpiredAccessTokenSQL, clientID, accountID, expiresAt)
 	if err != nil {
 		p.logger.For(c).Error(fmt.Sprintf("dao.DelExpiredAccessToken(%s, %d, %d), error(%+v)", clientID, accountID, expiresAt, err))
 		return
@@ -56,8 +56,8 @@ func (p *Dao) DelExpiredAccessToken(c context.Context, node sqalx.Node, clientID
 	return r.RowsAffected()
 }
 
-func (p *Dao) AddRefreshToken(c context.Context, node sqalx.Node, t *model.OauthRefreshToken) (affected int64, err error) {
-	r, err := p.node.ExecContext(c, _addRefreshTokenSQL, t.ID, t.ClientID, t.AccountID, t.Token, t.ExpiresAt, t.Scope, t.Deleted, t.CreatedAt, t.UpdatedAt)
+func (p *Dao) AddRefreshToken(c context.Context, authDB sqalx.Node, t *model.OauthRefreshToken) (affected int64, err error) {
+	r, err := p.authDB.ExecContext(c, _addRefreshTokenSQL, t.ID, t.ClientID, t.AccountID, t.Token, t.ExpiresAt, t.Scope, t.Deleted, t.CreatedAt, t.UpdatedAt)
 	if err != nil {
 		p.logger.For(c).Error(fmt.Sprintf("dao.AddRefreshToken(%+v), error(%+v)", t, err))
 		return
@@ -66,8 +66,8 @@ func (p *Dao) AddRefreshToken(c context.Context, node sqalx.Node, t *model.Oauth
 	return r.RowsAffected()
 }
 
-func (p *Dao) DelRefreshToken(c context.Context, node sqalx.Node, token string) (affected int64, err error) {
-	r, err := p.node.ExecContext(c, _delRefreshTokenSQL, token)
+func (p *Dao) DelRefreshToken(c context.Context, authDB sqalx.Node, token string) (affected int64, err error) {
+	r, err := p.authDB.ExecContext(c, _delRefreshTokenSQL, token)
 	if err != nil {
 		p.logger.For(c).Error(fmt.Sprintf("dao.AddRefreshToken(%+v), error(%+v)", token, err))
 		return

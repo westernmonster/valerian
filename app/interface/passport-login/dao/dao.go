@@ -2,6 +2,7 @@ package dao
 
 import (
 	"context"
+	"fmt"
 	"valerian/app/interface/passport-login/conf"
 
 	"valerian/library/cache/memcache"
@@ -11,7 +12,8 @@ import (
 
 // Dao dao struct
 type Dao struct {
-	node     sqalx.Node
+	authDB   sqalx.Node
+	db       sqalx.Node
 	mc       *memcache.Pool
 	mcExpire int32
 	logger   log.Factory
@@ -25,17 +27,19 @@ func New(c *conf.Config) (dao *Dao) {
 	return
 }
 
-func (d *Dao) Node() sqalx.Node {
-	return d.node
+func (d *Dao) DB() sqalx.Node {
+	return d.db
 }
 
 // Ping check db and mc health.
 func (d *Dao) Ping(c context.Context) (err error) {
-	if err = d.node.Ping(c); err != nil {
-		return
+	if err = d.db.Ping(c); err != nil {
+		log.Info(fmt.Sprintf("dao.db.Ping() error(%v)", err))
 	}
-	return d.pingMC(c)
-	return nil
+	if err = d.authDB.Ping(c); err != nil {
+		log.Info(fmt.Sprintf("dao.authDB.Ping() error(%v)", err))
+	}
+	return
 }
 
 // Close close connections of mc, redis, db.
@@ -43,7 +47,11 @@ func (d *Dao) Close() {
 	if d.mc != nil {
 		d.mc.Close()
 	}
-	if d.node != nil {
-		d.node.Close()
+	if d.db != nil {
+		d.db.Close()
+	}
+
+	if d.authDB != nil {
+		d.authDB.Close()
 	}
 }
