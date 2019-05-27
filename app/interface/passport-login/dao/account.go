@@ -7,6 +7,7 @@ import (
 
 	"valerian/app/interface/passport-login/model"
 	"valerian/library/database/sqalx"
+	"valerian/library/log"
 )
 
 const (
@@ -22,7 +23,7 @@ func (p *Dao) GetAccountByEmail(c context.Context, node sqalx.Node, email string
 			err = nil
 			return
 		}
-		p.logger.For(c).Error(fmt.Sprintf("dao.GetAccountByEmail error(%+v), email(%s)", err, email))
+		log.For(c).Error(fmt.Sprintf("dao.GetAccountByEmail error(%+v), email(%s)", err, email))
 	}
 
 	return
@@ -36,7 +37,7 @@ func (p *Dao) GetAccountByMobile(c context.Context, node sqalx.Node, mobile stri
 			err = nil
 			return
 		}
-		p.logger.For(c).Error(fmt.Sprintf("dao.GetAccountByMobile error(%+v), email(%s)", err, mobile))
+		log.For(c).Error(fmt.Sprintf("dao.GetAccountByMobile error(%+v), email(%s)", err, mobile))
 	}
 
 	return
