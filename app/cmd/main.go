@@ -15,7 +15,9 @@ import (
 	"valerian/library/net/http/mars"
 	"valerian/library/tracing"
 
+	httpLocation "valerian/app/interface/location/http"
 	httpLogin "valerian/app/interface/passport-login/http"
+	httpValcode "valerian/app/interface/valcode/http"
 
 	"github.com/joho/godotenv"
 )
@@ -58,6 +60,8 @@ func initHTTP(c *conf.Config) {
 	engine := mars.DefaultServer(c.HTTPServer)
 
 	httpLogin.Init(c, engine)
+	httpValcode.Init(c, engine)
+	httpLocation.Init(c, engine)
 
 	if err := engine.Start(); err != nil {
 		log.Error(fmt.Sprintf("engine.Start error(%v)", err))

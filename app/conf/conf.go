@@ -2,13 +2,12 @@ package conf
 
 import (
 	"flag"
-	"fmt"
-	"time"
 
 	"valerian/library/cache/memcache"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
 	"valerian/library/net/http/mars"
+	xtime "valerian/library/time"
 	"valerian/library/tracing"
 
 	"github.com/BurntSushi/toml"
@@ -26,6 +25,8 @@ type Config struct {
 	HTTPServer *mars.ServerConfig
 	Tracer     *tracing.Config
 	DB         *DB
+	Memcache   *Memcache
+	Aliyun     *Aliyun
 }
 
 // DB db config.
@@ -37,12 +38,18 @@ type DB struct {
 // Memcache memcache config.
 type Memcache struct {
 	Auth *MC
+	Main *MC
 }
 
 // MC .
 type MC struct {
 	*memcache.Config
-	Expire time.Duration
+	Expire xtime.Duration
+}
+
+type Aliyun struct {
+	AccessKeyID     string
+	AccessKeySecret string
 }
 
 // DC data center.
@@ -56,13 +63,16 @@ func init() {
 }
 
 // Init init conf
-func Init() error {
-	fmt.Println(confPath)
+func Init() {
 	if confPath != "" {
-		return local()
+		err := local()
+		if err != nil {
+			panic(err)
+		}
+		return
 	}
 
-	return nil
+	panic("load config file failed")
 }
 
 func local() (err error) {

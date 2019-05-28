@@ -1,13 +1,15 @@
 package model
 
 import (
+	"regexp"
+	"valerian/infrastructure/berr"
+
 	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/go-ozzo/ozzo-validation/is"
 )
 
 // 邮件验证码请求
-// swagger:model
-type RequestEmailValcodeReq struct {
+type ArgEmailValcode struct {
 	// 邮件地址
 	Email string `json:"email"`
 
@@ -15,7 +17,7 @@ type RequestEmailValcodeReq struct {
 	CodeType int `json:"code_type"`
 }
 
-func (p *RequestEmailValcodeReq) Validate() error {
+func (p *ArgEmailValcode) Validate() error {
 	return validation.ValidateStruct(
 		p,
 		validation.Field(&p.Email, validation.Required.Error(`请输入邮件地址`), is.Email.Error("邮件地址格式不正确")),
@@ -26,8 +28,7 @@ func (p *RequestEmailValcodeReq) Validate() error {
 }
 
 // 短信验证码请求
-// swagger:model
-type RequestMobileValcodeReq struct {
+type ArgMobileValcode struct {
 	// 手机号码
 	Mobile string `json:"mobile"`
 
@@ -38,7 +39,7 @@ type RequestMobileValcodeReq struct {
 	CodeType int `json:"code_type"`
 }
 
-func (p *RequestMobileValcodeReq) Validate() error {
+func (p *ArgMobileValcode) Validate() error {
 	return validation.ValidateStruct(
 		p,
 		validation.Field(&p.Mobile, validation.Required.Error(`请输入手机号或邮件地址`),
@@ -48,4 +49,33 @@ func (p *RequestMobileValcodeReq) Validate() error {
 			validation.Required.Error(`请输入验证码类型`),
 			validation.In(ValcodeRegister, ValcodeForgetPassword).Error("验证码类型不在允许范围内")),
 	)
+}
+
+func ValidateMobile(prefix string) *ValidateMobileRule {
+	return &ValidateMobileRule{
+		Prefix: prefix,
+	}
+}
+
+type ValidateMobileRule struct {
+	Prefix string
+}
+
+func (p *ValidateMobileRule) Validate(v interface{}) error {
+	mobile := v.(string)
+
+	chinaRegex := regexp.MustCompile(ChinaMobileRegex)
+	otherRegex := regexp.MustCompile(OtherMobileRegex)
+
+	if p.Prefix == "86" {
+		if !chinaRegex.MatchString(mobile) {
+			return berr.Errorf(`"mobile" format is not validate`)
+		}
+	} else { // China
+		if !otherRegex.MatchString(mobile) {
+			return berr.Errorf(`"mobile" format is not validate`)
+		}
+	} // Other Country
+
+	return nil
 }

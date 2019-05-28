@@ -2,56 +2,61 @@ package service
 
 import (
 	"context"
+	"fmt"
 
-	"valerian/app/interface/passport-login/conf"
-	"valerian/app/interface/passport-login/dao"
-	"valerian/app/interface/passport-login/model"
-	"valerian/library/database/sqalx"
+	"valerian/app/conf"
+	"valerian/app/interface/valcode/dao"
+	"valerian/library/email"
 	"valerian/library/log"
-)
+	"valerian/library/sms"
 
-var (
-	_noLogin = &model.AuthReply{
-		Login: false,
-	}
+	"github.com/aliyun/alibaba-cloud-sdk-go/sdk"
 )
 
 // Service struct of service
 type Service struct {
 	c *conf.Config
 	d interface {
-		GetClient(c context.Context, node sqalx.Node, clientID string) (item *model.Client, err error)
+		SetMobileValcodeCache(c context.Context, vtype int, mobile, code string) (err error)
+		MobileValcodeCache(c context.Context, vtype int, mobile string) (code string, err error)
+		DelMobileCache(c context.Context, vtype int, mobile string) (err error)
 
-		GetAccessToken(c context.Context, node sqalx.Node, token string) (item *model.AccessToken, err error)
-		AddAccessToken(c context.Context, node sqalx.Node, t *model.AccessToken) (affected int64, err error)
-		DelExpiredAccessToken(c context.Context, node sqalx.Node, clientID string, accountID int64, expiresAt int64) (affected int64, err error)
-
-		AddRefreshToken(c context.Context, node sqalx.Node, t *model.RefreshToken) (affected int64, err error)
-		DelRefreshToken(c context.Context, node sqalx.Node, token string) (affected int64, err error)
-
-		GetAccountByEmail(c context.Context, node sqalx.Node, email string) (item *model.Account, err error)
-		GetAccountByMobile(c context.Context, node sqalx.Node, mobile string) (item *model.Account, err error)
-
-		AccessTokenCache(c context.Context, token string) (res *model.AccessToken, err error)
-		SetAccessTokenCache(c context.Context, m *model.AccessToken) (err error)
-		DelTokenCache(c context.Context, token string) (err error)
+		SetEmailValcodeCache(c context.Context, vtype int, mobile, code string) (err error)
+		EmailValcodeCache(c context.Context, vtype int, mobile string) (code string, err error)
+		DelEmailCache(c context.Context, vtype int, mobile string) (err error)
 
 		Ping(c context.Context) (err error)
 		Close()
-		DB() sqalx.Node
-		AuthDB() sqalx.Node
 	}
-	logger log.Factory
+	sms interface {
+		SendRegisterValcode(c context.Context, mobile string, valcode string) (err error)
+		SendResetPasswordValcode(c context.Context, mobile string, valcode string) (err error)
+		SendLoginValcode(c context.Context, mobile string, valcode string) (err error)
+	}
+	email interface {
+		SendRegisterEmail(c context.Context, email string, valcode string) (err error)
+		SendResetPasswordValcode(c context.Context, email string, valcode string) (err error)
+	}
 	missch chan func()
 }
 
 // New create new service
 func New(c *conf.Config) (s *Service) {
+
 	s = &Service{
 		c:      c,
 		d:      dao.New(c),
 		missch: make(chan func(), 1024),
 	}
+
+	if aliClient, err := sdk.NewClientWithAccessKey("cn-hangzhou", c.Aliyun.AccessKeyID, c.Aliyun.AccessKeySecret); err != nil {
+		log.Error(fmt.Sprintf("init aliyun client failed(%+v)", err))
+		panic(err)
+	} else {
+		s.sms = &sms.SMSClient{Client: aliClient}
+		s.email = &email.EmailClient{Client: aliClient}
+	}
+
 	go s.cacheproc()
 	return
 }

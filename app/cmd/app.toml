@@ -1,6 +1,6 @@
 [db.auth]
     addr = "127.0.0.1:3306"
-    dsn = "flywk:flywk@tcp(127.0.0.1:3306)/auth_dev?timeout=1s&readTimeout=1s&writeTimeout=1s&parseTime=true&loc=Local&charset=utf8,utf8mb4"
+    dsn = "flywk:flywk@tcp(127.0.0.1:3306)/auth_dev?timeout=1s&readTimeout=1s&writeTimeout=1s&parseTime=true&loc=Local&charset=utf8mb4"
     active = 5
     idle = 2
     queryTimeout = "1s"
@@ -13,7 +13,7 @@
     ratio = 0.5
 [db.main]
     addr = "127.0.0.1:3306"
-    dsn = "flywk:flywk@tcp(127.0.0.1:3306)/flywk_dev?timeout=1s&readTimeout=1s&writeTimeout=1s&parseTime=true&loc=Local&charset=utf8,utf8mb4"
+    dsn = "flywk:flywk@tcp(127.0.0.1:3306)/flywk_dev?timeout=1s&readTimeout=1s&writeTimeout=1s&parseTime=true&loc=Local&charset=utf8mb4"
     active = 5
     idle = 2
     queryTimeout = "1s"
@@ -37,7 +37,6 @@
 	readTimeout = "1s"
 	writeTimeout = "1s"
 	idleTimeout = "10s"
-
 [memcache.main]
     expire = "24h"
 	name = "valerian-main"
@@ -56,3 +55,6 @@
 [httpServer]
     address = "0.0.0.0:7001"
     timeout = "5s"
+[aliyun]
+    accessKeyID = "LTAILu9eAnhmQIVi"
+    accessKeySecret = "hUNGWl0FciuSxFM9KonCz9Gzt7gjeE"

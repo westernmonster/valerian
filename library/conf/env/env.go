@@ -4,7 +4,6 @@ package env
 
 import (
 	"flag"
-	"fmt"
 	"os"
 )
 
@@ -66,8 +65,6 @@ func Init() {
 	if Hostname, err = os.Hostname(); err != nil || Hostname == "" {
 		Hostname = os.Getenv("HOSTNAME")
 	}
-
-	fmt.Println(os.Getenv("APP_ID"))
 
 	addFlag(flag.CommandLine)
 }

@@ -1,17 +1,6 @@
 package model
 
 const (
-	SourceWeb     = 1
-	SourceiOS     = 2
-	SourceAndroid = 3
-)
-
-const (
-	ResponseTypeToken = "token"
-	ResponseTypeCode  = "code"
-)
-
-const (
 	// 手机号码正则表达式
 	// Refer: https://github.com/VincentSit/ChinaMobilePhoneNumberRegex
 	// Phone number + Data only number)
@@ -23,4 +12,10 @@ const (
 const (
 	IdentityMobile = 1
 	IdentityEmail  = 2
+)
+
+const (
+	ValcodeRegister       = 1
+	ValcodeForgetPassword = 2
+	ValcodeLogin          = 3
 )

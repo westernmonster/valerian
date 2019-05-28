@@ -35,10 +35,10 @@ func startPerf() {
 		go func() {
 			d, err := dsn.Parse(_perfDSN)
 			if err != nil {
-				panic(errors.Errorf("blademaster: http perf dsn must be tcp://$host:port, %s:error(%v)", _perfDSN, err))
+				panic(errors.Errorf("mars: http perf dsn must be tcp://$host:port, %s:error(%v)", _perfDSN, err))
 			}
 			if err := http.ListenAndServe(d.Host, mux); err != nil {
-				panic(errors.Errorf("blademaster: listen %s: error(%v)", d.Host, err))
+				panic(errors.Errorf("mars: listen %s: error(%v)", d.Host, err))
 			}
 		}()
 	})

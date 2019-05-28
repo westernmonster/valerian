@@ -81,7 +81,6 @@ func parseDSN(rawdsn string) (*Config, error) {
 // Init creates a new instance of Jaeger tracer.
 func Init(c *Config) opentracing.Tracer {
 	serviceName := serviceNameFromEnv()
-	fmt.Println(serviceName)
 	metricsFactory := jprom.New().Namespace(metrics.NSOptions{Name: serviceName})
 
 	if c == nil {
@@ -106,7 +105,6 @@ func Init(c *Config) opentracing.Tracer {
 			LocalAgentHostPort:  c.Address,
 		},
 	}
-	fmt.Println(c.Address)
 
 	logger := log.NewFactory()
 	tracer, _, err := cfg.New(

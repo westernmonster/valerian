@@ -3,6 +3,7 @@ package dao
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"valerian/app/conf"
 	"valerian/library/cache/memcache"
@@ -21,7 +22,11 @@ type Dao struct {
 
 func New(c *conf.Config) (dao *Dao) {
 	dao = &Dao{
-		c: c,
+		c:            c,
+		db:           sqalx.NewMySQL(c.DB.Main),
+		authDB:       sqalx.NewMySQL(c.DB.Auth),
+		authMC:       memcache.NewPool(c.Memcache.Auth.Config),
+		authMCExpire: int32(time.Duration(c.Memcache.Auth.Expire) / time.Second),
 	}
 	return
 }
