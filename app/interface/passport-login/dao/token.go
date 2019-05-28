@@ -11,14 +11,14 @@ import (
 )
 
 const (
-	_getClientSQL             = `SELECT a.* FROM oauth_clients a WHERE a.deleted=0 AND a.client_Id=? `
-	_addAccessTokenSQL        = `INSERT INTO oauth_access_tokens(id, client_id, account_id, token, expires_at, scope, deleted, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?,?)`
-	_delExpiredAccessTokenSQL = `DELETE oauth_access_tokens WHERE token=?`
-	_delAccessTokenSQL        = `DELETE oauth_access_tokens WHERE client_id=? AND account_id=? AND expires_at <= ?`
-	_getAccessTokenSQL        = "SELECT * FROM oauth_access_tokens WHERE token=? LIMIT 1"
+	_getClientSQL             = `SELECT a.* FROM clients a WHERE a.deleted=0 AND a.client_Id=? `
+	_addAccessTokenSQL        = `INSERT INTO access_tokens(id, client_id, account_id, token, expires_at, scope, deleted, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?,?)`
+	_delExpiredAccessTokenSQL = `DELETE FROM access_tokens WHERE client_id=? AND account_id=? AND expires_at <= ?`
+	_delAccessTokenSQL        = `DELETE FROM access_tokens WHERE token=?`
+	_getAccessTokenSQL        = "SELECT * FROM access_tokens WHERE token=? LIMIT 1"
 
-	_addRefreshTokenSQL = `INSERT INTO oauth_refresh_tokens(id, client_id, account_id, token, expires_at, scope, deleted, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?,?)`
-	_delRefreshTokenSQL = `DELETE oauth_refresh_tokens WHERE token=?`
+	_addRefreshTokenSQL = `INSERT INTO refresh_tokens(id, client_id, account_id, token, expires_at, scope, deleted, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?,?)`
+	_delRefreshTokenSQL = `DELETE refresh_tokens WHERE token=?`
 )
 
 func (p *Dao) GetClient(c context.Context, node sqalx.Node, clientID string) (item *model.Client, err error) {

@@ -241,6 +241,8 @@ type Profile struct {
 
 	// 是否VIP
 	IsVIP bool `json:"is_vip"`
+
+	Role string `json:"role"`
 	// 注册时间
 	CreatedAt int64 `json:"created_at"`
 	// 更新时间

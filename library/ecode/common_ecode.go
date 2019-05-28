@@ -50,4 +50,11 @@ var (
 	RPCNoAuth   = add(-1202) // rpc服务的client没有授权
 
 	MobileValcodeLimitExceed = add(1) // 60秒下发一次验证码
+	ValcodeExpires           = add(2) // 验证码已失效
+	ValcodeWrong             = add(3) // 验证码错误
+	AccountExist             = add(4) // 用户已经存在
+	AreaNotExist             = add(5) // 地址不存在
+	ShouldNotSetRefID        = add(6) // 分类无需设置RefID
+	RefIDRequired            = add(7) // 请输入RefID
+	ChildrenIsNotAllowed     = add(8) // 该类目不能有下级
 )

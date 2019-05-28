@@ -3,10 +3,10 @@ package service
 import (
 	"context"
 	"time"
-	"valerian/app/interface/passport-login/model"
+	"valerian/app/interface/passport-auth/model"
 )
 
-func (p *Service) GetTokenInfo(c context.Context, token string) (r *model.AuthReply, err error) {
+func (p *Service) Auth(c context.Context, token string) (r *model.AuthReply, err error) {
 	var t *model.AccessToken
 
 	if t, err = p.getAccessToken(c, token); err != nil {

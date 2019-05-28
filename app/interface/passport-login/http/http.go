@@ -18,7 +18,7 @@ func Init(c *conf.Config, engine *mars.Engine) {
 }
 
 func route(e *mars.Engine) {
-	g := e.Group("/oauth")
+	g := e.Group("/api/v1/oauth")
 	{
 		g.POST("/login/mobile", mobileLogin)
 		g.POST("/login/digit", digitLogin)

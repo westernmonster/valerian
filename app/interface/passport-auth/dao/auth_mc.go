@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"valerian/app/interface/passport-login/model"
+	"valerian/app/interface/passport-auth/model"
 	"valerian/library/cache/memcache"
 	"valerian/library/log"
 )
@@ -15,12 +15,12 @@ func akKey(token string) string {
 
 // pingMC ping memcache.
 func (p *Dao) pingMC(c context.Context) (err error) {
-	conn := p.mc.Get(c)
+	conn := p.authMC.Get(c)
 	defer conn.Close()
 	if err = conn.Set(&memcache.Item{
 		Key:        "ping",
 		Value:      []byte{1},
-		Expiration: p.mcExpire,
+		Expiration: p.authMCExpire,
 	}); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.pingMC error(%+v)", err))
 	}
@@ -29,7 +29,7 @@ func (p *Dao) pingMC(c context.Context) (err error) {
 
 func (p *Dao) RefreshTokenCache(c context.Context, sd string) (item *model.RefreshToken, err error) {
 	key := akKey(sd)
-	conn := p.mc.Get(c)
+	conn := p.authMC.Get(c)
 	defer conn.Close()
 	r, err := conn.Get(key)
 	if err != nil {
@@ -49,7 +49,7 @@ func (p *Dao) RefreshTokenCache(c context.Context, sd string) (item *model.Refre
 
 func (p *Dao) SetAccessTokenCache(c context.Context, m *model.AccessToken) (err error) {
 	key := akKey(m.Token)
-	conn := p.mc.Get(c)
+	conn := p.authMC.Get(c)
 	defer conn.Close()
 
 	if m.ExpiresAt < 0 {
@@ -57,7 +57,7 @@ func (p *Dao) SetAccessTokenCache(c context.Context, m *model.AccessToken) (err 
 		return
 	}
 
-	item := &memcache.Item{Key: key, Object: m, Flags: memcache.FlagJSON, Expiration: int32(p.mcExpire)}
+	item := &memcache.Item{Key: key, Object: m, Flags: memcache.FlagProtobuf, Expiration: int32(p.authMCExpire)}
 	if err = conn.Set(item); err != nil {
 		log.For(c).Error(fmt.Sprintf("set token cache error(%s,%d,%v)", key, m.ExpiresAt, err))
 	}
@@ -66,7 +66,7 @@ func (p *Dao) SetAccessTokenCache(c context.Context, m *model.AccessToken) (err 
 
 func (p *Dao) AccessTokenCache(c context.Context, token string) (res *model.AccessToken, err error) {
 	key := akKey(token)
-	conn := p.mc.Get(c)
+	conn := p.authMC.Get(c)
 	defer conn.Close()
 	var item *memcache.Item
 	if item, err = conn.Get(key); err != nil {
@@ -86,7 +86,7 @@ func (p *Dao) AccessTokenCache(c context.Context, token string) (res *model.Acce
 
 func (p *Dao) DelTokenCache(c context.Context, token string) (err error) {
 	key := akKey(token)
-	conn := p.mc.Get(c)
+	conn := p.authMC.Get(c)
 	defer conn.Close()
 	if err = conn.Delete(key); err != nil {
 		if err == memcache.ErrNotFound {

@@ -5,8 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"valerian/app/interface/passport-login/model"
-	"valerian/library/ecode"
+	"valerian/app/interface/passport-register/model"
 	"valerian/library/gid"
 	"valerian/library/log"
 )
@@ -70,18 +69,5 @@ func (p *Service) grantToken(ctx context.Context, clientID string, accountID int
 		return
 	}
 
-	return
-}
-
-func (p *Service) checkClient(ctx context.Context, clientID string) (err error) {
-	client, err := p.d.GetClient(ctx, p.d.AuthDB(), clientID)
-	if err != nil {
-		return
-	}
-
-	if client == nil {
-		err = ecode.ClientNotExist
-		return
-	}
 	return
 }

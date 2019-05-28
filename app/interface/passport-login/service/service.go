@@ -22,6 +22,8 @@ type Service struct {
 	d interface {
 		GetClient(c context.Context, node sqalx.Node, clientID string) (item *model.Client, err error)
 
+		GetArea(ctx context.Context, node sqalx.Node, id int64) (item *model.Area, err error)
+
 		GetAccessToken(c context.Context, node sqalx.Node, token string) (item *model.AccessToken, err error)
 		AddAccessToken(c context.Context, node sqalx.Node, t *model.AccessToken) (affected int64, err error)
 		DelExpiredAccessToken(c context.Context, node sqalx.Node, clientID string, accountID int64, expiresAt int64) (affected int64, err error)
@@ -29,6 +31,7 @@ type Service struct {
 		AddRefreshToken(c context.Context, node sqalx.Node, t *model.RefreshToken) (affected int64, err error)
 		DelRefreshToken(c context.Context, node sqalx.Node, token string) (affected int64, err error)
 
+		GetAccountByID(c context.Context, node sqalx.Node, id int64) (item *model.Account, err error)
 		GetAccountByEmail(c context.Context, node sqalx.Node, email string) (item *model.Account, err error)
 		GetAccountByMobile(c context.Context, node sqalx.Node, mobile string) (item *model.Account, err error)
 

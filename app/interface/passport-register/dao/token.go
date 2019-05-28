@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	"valerian/app/interface/passport-auth/model"
+	"valerian/app/interface/passport-register/model"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
 )

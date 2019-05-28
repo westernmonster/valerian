@@ -2,11 +2,6 @@ package model
 
 import validation "github.com/go-ozzo/ozzo-validation"
 
-type AuthReply struct {
-	Login bool  `json:"login"`
-	Aid   int64 `json:"Aid,string" swaggertype:"string"`
-}
-
 type ArgAuthorize struct {
 	ResponseType string `json:"response_type"`
 	ClientID     string `json:"client_id"`

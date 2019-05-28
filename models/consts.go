@@ -135,7 +135,6 @@ const (
 	AccountRoleAdmin = "admin"
 	AccountRoleUser  = "user"
 	AccountRoleOrg   = "org"
-	AccountRoleGuest = "guest"
 )
 
 const (

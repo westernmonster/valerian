@@ -17,6 +17,7 @@ import (
 
 	httpLocation "valerian/app/interface/location/http"
 	httpLogin "valerian/app/interface/passport-login/http"
+	httpRegister "valerian/app/interface/passport-register/http"
 	httpValcode "valerian/app/interface/valcode/http"
 
 	"github.com/joho/godotenv"
@@ -62,6 +63,7 @@ func initHTTP(c *conf.Config) {
 	httpLogin.Init(c, engine)
 	httpValcode.Init(c, engine)
 	httpLocation.Init(c, engine)
+	httpRegister.Init(c, engine)
 
 	if err := engine.Start(); err != nil {
 		log.Error(fmt.Sprintf("engine.Start error(%v)", err))
