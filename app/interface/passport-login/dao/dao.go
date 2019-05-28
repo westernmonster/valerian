@@ -3,8 +3,8 @@ package dao
 import (
 	"context"
 	"fmt"
-	"valerian/app/interface/passport-login/conf"
 
+	"valerian/app/conf"
 	"valerian/library/cache/memcache"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
@@ -16,7 +16,6 @@ type Dao struct {
 	db           sqalx.Node
 	authMC       *memcache.Pool
 	authMCExpire int32
-	logger       log.Factory
 	c            *conf.Config
 }
 

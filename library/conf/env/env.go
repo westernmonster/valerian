@@ -4,6 +4,7 @@ package env
 
 import (
 	"flag"
+	"fmt"
 	"os"
 )
 
@@ -60,11 +61,13 @@ var (
 	GRPCPort string
 )
 
-func init() {
+func Init() {
 	var err error
 	if Hostname, err = os.Hostname(); err != nil || Hostname == "" {
 		Hostname = os.Getenv("HOSTNAME")
 	}
+
+	fmt.Println(os.Getenv("APP_ID"))
 
 	addFlag(flag.CommandLine)
 }

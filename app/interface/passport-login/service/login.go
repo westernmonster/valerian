@@ -89,7 +89,7 @@ func (p *Service) MobileLogin(ctx context.Context, req *model.ArgMobileLogin) (l
 	return
 }
 
-func (p *Service) DigitLogin(ctx context.Context, req *model.ArgMobileLogin) (loginResult *model.LoginResp, err error) {
+func (p *Service) DigitLogin(ctx context.Context, req *model.ArgDigitLogin) (loginResult *model.LoginResp, err error) {
 	return
 }
 

@@ -1,7 +1,7 @@
 package http
 
 import (
-	"valerian/app/interface/passport-login/conf"
+	"valerian/app/conf"
 	"valerian/app/interface/passport-login/service"
 )
 

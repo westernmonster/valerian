@@ -8,6 +8,7 @@ import (
 	"valerian/app/interface/passport-login/model"
 	"valerian/library/ecode"
 	"valerian/library/gid"
+	"valerian/library/log"
 )
 
 const (
@@ -18,7 +19,7 @@ const (
 func (p *Service) grantToken(ctx context.Context, clientID string, accountID int64) (accessToken *model.AccessToken, refreshToken *model.RefreshToken, err error) {
 	tx, err := p.d.AuthDB().Beginx(ctx)
 	if err != nil {
-		p.logger.For(ctx).Error(fmt.Sprintf("grantAccessToken Beginx err(%v) clientID(%s) accountID(%d)", err, clientID, accountID))
+		log.For(ctx).Error(fmt.Sprintf("grantAccessToken Beginx err(%v) clientID(%s) accountID(%d)", err, clientID, accountID))
 		return
 	}
 
@@ -65,7 +66,7 @@ func (p *Service) grantToken(ctx context.Context, clientID string, accountID int
 	}
 
 	if err = tx.Commit(); err != nil {
-		p.logger.For(ctx).Error(fmt.Sprintf("grantAccessToken Commit err(%v) ", err))
+		log.For(ctx).Error(fmt.Sprintf("grantAccessToken Commit err(%v) ", err))
 		return
 	}
 

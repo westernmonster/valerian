@@ -42,7 +42,7 @@ func (p *Dao) RefreshTokenCache(c context.Context, sd string) (item *model.Refre
 	}
 	item = new(model.RefreshToken)
 	if err = conn.Scan(r, item); err != nil {
-		p.logger.For(c).Error(fmt.Sprintf("conn.Scan(%v) error(%v)", string(r.Value), err))
+		log.For(c).Error(fmt.Sprintf("conn.Scan(%v) error(%v)", string(r.Value), err))
 	}
 	return
 }

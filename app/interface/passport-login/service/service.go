@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"valerian/app/interface/passport-login/conf"
+	"valerian/app/conf"
 	"valerian/app/interface/passport-login/dao"
 	"valerian/app/interface/passport-login/model"
 	"valerian/library/database/sqalx"
@@ -41,7 +41,6 @@ type Service struct {
 		DB() sqalx.Node
 		AuthDB() sqalx.Node
 	}
-	logger log.Factory
 	missch chan func()
 }
 

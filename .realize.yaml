@@ -10,7 +10,7 @@ schema:
   commands:
     build:
       status: true
-      dir: ./
+      dir: ./app/cmd
     run:
       status: true
       dir: ./

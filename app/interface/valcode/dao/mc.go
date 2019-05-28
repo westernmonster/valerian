@@ -9,8 +9,8 @@ import (
 	"valerian/library/log"
 )
 
-func akKey(token string) string {
-	return fmt.Sprintf("ak_%s", token)
+func vcMobileKey(vtype int, mobile string) string {
+	return fmt.Sprintf("rc_%d_%s", vtype, mobile)
 }
 
 // pingMC ping memcache.
@@ -27,27 +27,7 @@ func (p *Dao) pingMC(c context.Context) (err error) {
 	return
 }
 
-func (p *Dao) RefreshTokenCache(c context.Context, sd string) (item *model.RefreshToken, err error) {
-	key := akKey(sd)
-	conn := p.mc.Get(c)
-	defer conn.Close()
-	r, err := conn.Get(key)
-	if err != nil {
-		if err == memcache.ErrNotFound {
-			err = nil
-			return
-		}
-		log.For(c).Error(fmt.Sprintf("conn.Get(%s) error(%v)", key, err))
-		return
-	}
-	item = new(model.RefreshToken)
-	if err = conn.Scan(r, item); err != nil {
-		log.For(c).Error(fmt.Sprintf("conn.Scan(%v) error(%v)", string(r.Value), err))
-	}
-	return
-}
-
-func (p *Dao) SetAccessTokenCache(c context.Context, m *model.AccessToken) (err error) {
+func (p *Dao) SetValcodeCache(c context.Context, m *model.AccessToken) (err error) {
 	key := akKey(m.Token)
 	conn := p.mc.Get(c)
 	defer conn.Close()
