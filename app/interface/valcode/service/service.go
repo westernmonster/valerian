@@ -29,9 +29,9 @@ type Service struct {
 		Close()
 	}
 	sms interface {
-		SendRegisterValcode(c context.Context, mobile string, valcode string) (err error)
-		SendResetPasswordValcode(c context.Context, mobile string, valcode string) (err error)
-		SendLoginValcode(c context.Context, mobile string, valcode string) (err error)
+		SendRegisterValcode(c context.Context, prefix, mobile string, valcode string) (err error)
+		SendResetPasswordValcode(c context.Context, prefix, mobile string, valcode string) (err error)
+		SendLoginValcode(c context.Context, prefix, mobile string, valcode string) (err error)
 	}
 	email interface {
 		SendRegisterEmail(c context.Context, email string, valcode string) (err error)

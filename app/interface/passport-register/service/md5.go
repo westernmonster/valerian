@@ -8,7 +8,7 @@ import (
 	"encoding/hex"
 	"math/big"
 	"math/rand"
-	"valerian/models"
+	"valerian/app/interface/passport-register/model"
 )
 
 func md5Hex(s string) string {
@@ -42,7 +42,7 @@ func hexDecode(s string) (res []byte, err error) {
 }
 
 func hashPassword(password string, salt string) (passwordHash string, err error) {
-	mac := hmac.New(sha1.New, []byte(models.PasswordPepper))
+	mac := hmac.New(sha1.New, []byte(model.PasswordPepper))
 	_, err = mac.Write([]byte(password))
 	if err != nil {
 		return

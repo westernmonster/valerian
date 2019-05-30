@@ -3,7 +3,8 @@ package dao
 import (
 	"context"
 	"fmt"
-	"valerian/app/interface/passport-login/model"
+
+	"valerian/app/interface/account/model"
 	"valerian/library/cache/memcache"
 	"valerian/library/log"
 )
@@ -11,6 +12,7 @@ import (
 func profileKey(aid int64) string {
 	return fmt.Sprintf("profile_%d", aid)
 }
+
 func accountKey(aid int64) string {
 	return fmt.Sprintf("account_%d", aid)
 }

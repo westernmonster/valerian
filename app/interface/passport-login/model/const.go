@@ -1,6 +1,10 @@
 package model
 
 const (
+	PasswordPepper = "8PrhfDL7Qr/G6%RbaiQouFfQ"
+)
+
+const (
 	SourceWeb     = 1
 	SourceiOS     = 2
 	SourceAndroid = 3
@@ -23,4 +27,10 @@ const (
 const (
 	IdentityMobile = 1
 	IdentityEmail  = 2
+)
+
+const (
+	ValcodeRegister       = 1
+	ValcodeForgetPassword = 2
+	ValcodeLogin          = 3
 )

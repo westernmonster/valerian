@@ -20,8 +20,8 @@ const (
 
 func (p *Dao) GetAccountByEmail(c context.Context, node sqalx.Node, email string) (item *model.Account, err error) {
 	item = &model.Account{}
-	if e := node.GetContext(c, item, _getAccountByEmailSQL, email); e != nil {
-		if e == sql.ErrNoRows {
+	if err = node.GetContext(c, item, _getAccountByEmailSQL, email); err != nil {
+		if err == sql.ErrNoRows {
 			item = nil
 			err = nil
 			return
@@ -34,8 +34,8 @@ func (p *Dao) GetAccountByEmail(c context.Context, node sqalx.Node, email string
 
 func (p *Dao) GetAccountByMobile(c context.Context, node sqalx.Node, mobile string) (item *model.Account, err error) {
 	item = &model.Account{}
-	if e := node.GetContext(c, item, _getAccountByMobileSQL, mobile); e != nil {
-		if e == sql.ErrNoRows {
+	if err = node.GetContext(c, item, _getAccountByMobileSQL, mobile); err != nil {
+		if err == sql.ErrNoRows {
 			item = nil
 			err = nil
 			return
@@ -48,8 +48,8 @@ func (p *Dao) GetAccountByMobile(c context.Context, node sqalx.Node, mobile stri
 
 func (p *Dao) GetAccountByID(c context.Context, node sqalx.Node, id int64) (item *model.Account, err error) {
 	item = &model.Account{}
-	if e := node.GetContext(c, item, _getAccountByIDSQL, id); e != nil {
-		if e == sql.ErrNoRows {
+	if err = node.GetContext(c, item, _getAccountByIDSQL, id); err != nil {
+		if err == sql.ErrNoRows {
 			item = nil
 			err = nil
 			return

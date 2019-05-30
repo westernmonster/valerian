@@ -3,12 +3,12 @@ package service
 import (
 	"crypto/hmac"
 	"crypto/md5"
+	"crypto/rand"
 	"crypto/sha1"
 	"encoding/base64"
 	"encoding/hex"
 	"math/big"
-	"math/rand"
-	"valerian/app/interface/passport-login/model"
+	"valerian/app/interface/account/model"
 )
 
 func md5Hex(s string) string {

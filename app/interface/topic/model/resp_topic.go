@@ -114,8 +114,10 @@ type TopicMeta struct {
 	// 是否能查看
 	CanView bool `json:"can_view"`
 
-	// 是否关注
-	IsFollowed bool `json:"is_followed"`
+	// 关注状态
+	FollowStatus int `json:"follow_status"`
+
+	IsMember bool `json:"is_member"`
 
 	// 成员角色
 	MemberRole string `json:"member_role"`

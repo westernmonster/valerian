@@ -64,23 +64,23 @@ func (p *Service) MobileValcode(c context.Context, req *model.ArgMobileValcode) 
 
 	switch req.CodeType {
 	case models.ValcodeLogin:
-		if err = p.sms.SendLoginValcode(c, req.Mobile, code); err != nil {
+		if err = p.sms.SendLoginValcode(c, req.Prefix, req.Mobile, code); err != nil {
 			return
 		}
 		break
 	case models.ValcodeRegister:
-		if err = p.sms.SendRegisterValcode(c, req.Mobile, code); err != nil {
+		if err = p.sms.SendRegisterValcode(c, req.Prefix, req.Mobile, code); err != nil {
 			return
 		}
 		break
 	case models.ValcodeForgetPassword:
-		if err = p.sms.SendResetPasswordValcode(c, req.Mobile, code); err != nil {
+		if err = p.sms.SendResetPasswordValcode(c, req.Prefix, req.Mobile, code); err != nil {
 			return
 		}
 		break
 	}
 
-	if err = p.d.SetMobileValcodeCache(c, req.CodeType, req.Mobile, code); err != nil {
+	if err = p.d.SetMobileValcodeCache(c, req.CodeType, req.Prefix+req.Mobile, code); err != nil {
 		return
 	}
 

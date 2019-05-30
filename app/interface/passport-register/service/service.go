@@ -14,18 +14,17 @@ type Service struct {
 	c *conf.Config
 	d interface {
 		GetClient(c context.Context, node sqalx.Node, clientID string) (item *model.Client, err error)
+		GetArea(ctx context.Context, node sqalx.Node, id int64) (item *model.Area, err error)
+
 		GetAccessToken(c context.Context, node sqalx.Node, token string) (item *model.AccessToken, err error)
 		AddAccessToken(c context.Context, node sqalx.Node, t *model.AccessToken) (affected int64, err error)
-		DelExpiredAccessToken(c context.Context, node sqalx.Node, clientID string, accountID int64, expiresAt int64) (affected int64, err error)
+		DelExpiredAccessToken(c context.Context, node sqalx.Node, clientID string, accountID int64) (affected int64, err error)
+		GetClientAccessTokens(c context.Context, node sqalx.Node, aid int64, clientID string) (tokens []string, err error)
 
 		AddRefreshToken(c context.Context, node sqalx.Node, t *model.RefreshToken) (affected int64, err error)
 		DelRefreshToken(c context.Context, node sqalx.Node, token string) (affected int64, err error)
-
-		GetArea(ctx context.Context, node sqalx.Node, id int64) (item *model.Area, err error)
-
-		AccessTokenCache(c context.Context, token string) (res *model.AccessToken, err error)
-		SetAccessTokenCache(c context.Context, m *model.AccessToken) (err error)
-		DelTokenCache(c context.Context, token string) (err error)
+		DelExpiredRefreshToken(c context.Context, node sqalx.Node, clientID string, accountID int64) (affected int64, err error)
+		GetClientRefreshTokens(c context.Context, node sqalx.Node, aid int64, clientID string) (tokens []string, err error)
 
 		GetAccountByEmail(c context.Context, node sqalx.Node, email string) (item *model.Account, err error)
 		GetAccountByMobile(c context.Context, node sqalx.Node, mobile string) (item *model.Account, err error)
@@ -33,9 +32,15 @@ type Service struct {
 		AddAccount(c context.Context, node sqalx.Node, item *model.Account) (err error)
 
 		MobileValcodeCache(c context.Context, vtype int, mobile string) (code string, err error)
-		DelMobileCache(c context.Context, vtype int, mobile string) (err error)
+		DelMobileValcodeCache(c context.Context, vtype int, mobile string) (err error)
 		EmailValcodeCache(c context.Context, vtype int, mobile string) (code string, err error)
-		DelEmailCache(c context.Context, vtype int, mobile string) (err error)
+		DelEmailValcodeCache(c context.Context, vtype int, mobile string) (err error)
+
+		AccessTokenCache(c context.Context, token string) (res *model.AccessToken, err error)
+		SetAccessTokenCache(c context.Context, m *model.AccessToken) (err error)
+		DelAccessTokenCache(c context.Context, token string) (err error)
+
+		SetProfileCache(c context.Context, m *model.Profile) (err error)
 
 		Ping(c context.Context) (err error)
 		Close()

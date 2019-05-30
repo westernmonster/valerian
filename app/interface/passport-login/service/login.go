@@ -47,7 +47,7 @@ func (p *Service) EmailLogin(ctx context.Context, req *model.ArgEmailLogin) (res
 	}
 
 	p.addCache(func() {
-		p.d.SetAccessTokenCache(context.TODO(), accessToken)
+		p.d.SetProfileCache(context.TODO(), resp.Profile)
 	})
 
 	return
@@ -58,7 +58,8 @@ func (p *Service) MobileLogin(ctx context.Context, req *model.ArgMobileLogin) (r
 		return
 	} // Check Client
 
-	account, err := p.d.GetAccountByMobile(ctx, p.d.DB(), req.Mobile)
+	mobile := req.Prefix + req.Mobile
+	account, err := p.d.GetAccountByMobile(ctx, p.d.DB(), mobile)
 	if err != nil {
 		return
 	}
@@ -91,13 +92,57 @@ func (p *Service) MobileLogin(ctx context.Context, req *model.ArgMobileLogin) (r
 	}
 
 	p.addCache(func() {
-		p.d.SetAccessTokenCache(context.TODO(), accessToken)
+		p.d.SetProfileCache(context.TODO(), resp.Profile)
 	})
 
 	return
 }
 
 func (p *Service) DigitLogin(ctx context.Context, req *model.ArgDigitLogin) (resp *model.LoginResp, err error) {
+	mobile := req.Prefix + req.Mobile
+
+	var code string
+	if code, err = p.d.MobileValcodeCache(ctx, model.ValcodeLogin, mobile); err != nil {
+		return
+	} else if code == "" {
+		err = ecode.ValcodeExpires
+		return
+	} else if code != req.Valcode {
+		err = ecode.ValcodeWrong
+		return
+	}
+
+	var account *model.Account
+	if account, err = p.d.GetAccountByMobile(ctx, p.d.DB(), mobile); err != nil {
+		return
+	} else if account == nil {
+		err = ecode.UserNotExist
+		return
+	}
+
+	accessToken, refreshToken, err := p.grantToken(ctx, req.ClientID, account.ID)
+	if err != nil {
+		return
+	}
+
+	resp = &model.LoginResp{
+		AccountID:    account.ID,
+		Role:         account.Role,
+		AccessToken:  accessToken.Token,
+		ExpiresIn:    models.ExpiresIn,
+		TokenType:    "Bearer",
+		Scope:        "",
+		RefreshToken: refreshToken.Token,
+	}
+
+	if resp.Profile, err = p.GetProfile(ctx, account.ID); err != nil {
+		return
+	}
+
+	p.addCache(func() {
+		p.d.SetProfileCache(context.TODO(), resp.Profile)
+	})
+
 	return
 }
 

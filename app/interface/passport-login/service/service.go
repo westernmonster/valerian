@@ -26,10 +26,13 @@ type Service struct {
 
 		GetAccessToken(c context.Context, node sqalx.Node, token string) (item *model.AccessToken, err error)
 		AddAccessToken(c context.Context, node sqalx.Node, t *model.AccessToken) (affected int64, err error)
-		DelExpiredAccessToken(c context.Context, node sqalx.Node, clientID string, accountID int64, expiresAt int64) (affected int64, err error)
+		DelExpiredAccessToken(c context.Context, node sqalx.Node, clientID string, accountID int64) (affected int64, err error)
+		GetClientAccessTokens(c context.Context, node sqalx.Node, aid int64, clientID string) (tokens []string, err error)
 
 		AddRefreshToken(c context.Context, node sqalx.Node, t *model.RefreshToken) (affected int64, err error)
 		DelRefreshToken(c context.Context, node sqalx.Node, token string) (affected int64, err error)
+		DelExpiredRefreshToken(c context.Context, node sqalx.Node, clientID string, accountID int64) (affected int64, err error)
+		GetClientRefreshTokens(c context.Context, node sqalx.Node, aid int64, clientID string) (tokens []string, err error)
 
 		GetAccountByID(c context.Context, node sqalx.Node, id int64) (item *model.Account, err error)
 		GetAccountByEmail(c context.Context, node sqalx.Node, email string) (item *model.Account, err error)
@@ -37,7 +40,14 @@ type Service struct {
 
 		AccessTokenCache(c context.Context, token string) (res *model.AccessToken, err error)
 		SetAccessTokenCache(c context.Context, m *model.AccessToken) (err error)
-		DelTokenCache(c context.Context, token string) (err error)
+		DelAccessTokenCache(c context.Context, token string) (err error)
+
+		MobileValcodeCache(c context.Context, vtype int, mobile string) (code string, err error)
+		DelMobileValcodeCache(c context.Context, vtype int, mobile string) (err error)
+		EmailValcodeCache(c context.Context, vtype int, mobile string) (code string, err error)
+		DelEmailValcideCache(c context.Context, vtype int, mobile string) (err error)
+
+		SetProfileCache(c context.Context, m *model.Profile) (err error)
 
 		Ping(c context.Context) (err error)
 		Close()

@@ -3,7 +3,7 @@ package dao
 import (
 	"context"
 	"fmt"
-	"valerian/app/interface/passport-login/model"
+	"valerian/app/interface/passport-register/model"
 	"valerian/library/cache/memcache"
 	"valerian/library/log"
 )

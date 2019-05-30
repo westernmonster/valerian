@@ -49,12 +49,20 @@ var (
 	RPCNoClient = add(-1201) // rpc服务的client都不可用
 	RPCNoAuth   = add(-1202) // rpc服务的client没有授权
 
-	MobileValcodeLimitExceed = add(1) // 60秒下发一次验证码
-	ValcodeExpires           = add(2) // 验证码已失效
-	ValcodeWrong             = add(3) // 验证码错误
-	AccountExist             = add(4) // 用户已经存在
-	AreaNotExist             = add(5) // 地址不存在
-	ShouldNotSetRefID        = add(6) // 分类无需设置RefID
-	RefIDRequired            = add(7) // 请输入RefID
-	ChildrenIsNotAllowed     = add(8) // 该类目不能有下级
+	MobileValcodeLimitExceed = add(1)  // 60秒下发一次验证码
+	ValcodeExpires           = add(2)  // 验证码已失效
+	ValcodeWrong             = add(3)  // 验证码错误
+	AccountExist             = add(4)  // 用户已经存在
+	AreaNotExist             = add(5)  // 地址不存在
+	ShouldNotSetRefID        = add(6)  // 分类无需设置RefID
+	RefIDRequired            = add(7)  // 请输入RefID
+	ChildrenIsNotAllowed     = add(8)  // 该类目不能有下级
+	InvalidEmail             = add(9)  // 邮件地址不正确
+	InvalidMobile            = add(10) // 手机号码不正确
+	InvalidGender            = add(11) // Gender错误
+	InvalidAvatar            = add(12) // Avatar格式错误
+	InvalidBirthYear         = add(13) // 出生年不正确
+	InvalidBirthMonth        = add(14) // 出生月不正确
+	InvalidBirthDay          = add(15) // 出生日不正确
+	SessionExpires           = add(16) // Session 过期
 )

@@ -201,24 +201,11 @@ func (p *Service) loginAccount(c context.Context, id int64, clientID string) (re
 	}
 
 	p.addCache(func() {
-		p.d.SetAccessTokenCache(context.TODO(), accessToken)
+		p.d.SetProfileCache(context.TODO(), resp.Profile)
 	})
 
 	return
 
-}
-
-func (p *Service) checkClient(ctx context.Context, clientID string) (err error) {
-	client, err := p.d.GetClient(ctx, p.d.AuthDB(), clientID)
-	if err != nil {
-		return
-	}
-
-	if client == nil {
-		err = ecode.ClientNotExist
-		return
-	}
-	return
 }
 
 func (p *Service) GetProfile(c context.Context, accountID int64) (profile *model.Profile, err error) {

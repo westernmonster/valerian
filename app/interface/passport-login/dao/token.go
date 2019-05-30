@@ -11,11 +11,14 @@ import (
 )
 
 const (
-	_getClientSQL             = `SELECT a.* FROM clients a WHERE a.deleted=0 AND a.client_Id=? `
-	_addAccessTokenSQL        = `INSERT INTO access_tokens(id, client_id, account_id, token, expires_at, scope, deleted, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?,?)`
-	_delExpiredAccessTokenSQL = `DELETE FROM access_tokens WHERE client_id=? AND account_id=? AND expires_at <= ?`
-	_delAccessTokenSQL        = `DELETE FROM access_tokens WHERE token=?`
-	_getAccessTokenSQL        = "SELECT * FROM access_tokens WHERE token=? LIMIT 1"
+	_getClientSQL              = `SELECT a.* FROM clients a WHERE a.deleted=0 AND a.client_Id=? `
+	_addAccessTokenSQL         = `INSERT INTO access_tokens(id, client_id, account_id, token, expires_at, scope, deleted, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?,?)`
+	_delExpiredAccessTokenSQL  = `DELETE FROM access_tokens WHERE client_id=? AND account_id=? `
+	_delExpiredRefreshTokenSQL = `DELETE FROM refresh_tokens WHERE client_id=? AND account_id=? `
+	_getClientAccessTokensSQL  = "SELECT * FROM access_tokens WHERE client_id=? AND account_id=? "
+	_getClientRefreshTokensSQL = "SELECT * FROM refresh_tokens WHERE client_id=? AND account_id=? "
+	_delAccessTokenSQL         = `DELETE FROM access_tokens WHERE token=?`
+	_getAccessTokenSQL         = "SELECT * FROM access_tokens WHERE token=? LIMIT 1"
 
 	_addRefreshTokenSQL = `INSERT INTO refresh_tokens(id, client_id, account_id, token, expires_at, scope, deleted, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?,?)`
 	_delRefreshTokenSQL = `DELETE refresh_tokens WHERE token=?`
@@ -63,14 +66,56 @@ func (p *Dao) GetAccessToken(c context.Context, node sqalx.Node, token string) (
 	return
 }
 
-func (p *Dao) DelExpiredAccessToken(c context.Context, node sqalx.Node, clientID string, accountID int64, expiresAt int64) (affected int64, err error) {
-	r, err := node.ExecContext(c, _delExpiredAccessTokenSQL, clientID, accountID, expiresAt)
+func (p *Dao) GetClientAccessTokens(c context.Context, node sqalx.Node, aid int64, clientID string) (tokens []string, err error) {
+	tokens = make([]string, 0)
+	items := make([]*model.AccessToken, 0)
+
+	if err = node.SelectContext(c, &items, _getClientAccessTokensSQL, clientID, aid); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetClientAccessTokens error(%+v), aid(%d)", err, aid))
+		return
+	}
+
+	for _, v := range items {
+		tokens = append(tokens, v.Token)
+	}
+
+	return
+}
+
+func (p *Dao) DelExpiredAccessToken(c context.Context, node sqalx.Node, clientID string, accountID int64) (affected int64, err error) {
+	r, err := node.ExecContext(c, _delExpiredAccessTokenSQL, clientID, accountID)
 	if err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.DelExpiredAccessToken(%s, %d, %d), error(%+v)", clientID, accountID, expiresAt, err))
+		log.For(c).Error(fmt.Sprintf("dao.DelExpiredAccessToken(%s, %d), error(%+v)", clientID, accountID, err))
 		return
 	}
 
 	return r.RowsAffected()
+}
+
+func (p *Dao) DelExpiredRefreshToken(c context.Context, node sqalx.Node, clientID string, accountID int64) (affected int64, err error) {
+	r, err := node.ExecContext(c, _delExpiredRefreshTokenSQL, clientID, accountID)
+	if err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.DelExpiredRefreshToken(%s, %d), error(%+v)", clientID, accountID, err))
+		return
+	}
+
+	return r.RowsAffected()
+}
+
+func (p *Dao) GetClientRefreshTokens(c context.Context, node sqalx.Node, aid int64, clientID string) (tokens []string, err error) {
+	tokens = make([]string, 0)
+	items := make([]*model.RefreshToken, 0)
+
+	if err = node.SelectContext(c, &items, _getClientRefreshTokensSQL, clientID, aid); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetClientRefreshTokens error(%+v), aid(%d)", err, aid))
+		return
+	}
+
+	for _, v := range items {
+		tokens = append(tokens, v.Token)
+	}
+
+	return
 }
 
 func (p *Dao) AddRefreshToken(c context.Context, node sqalx.Node, t *model.RefreshToken) (affected int64, err error) {

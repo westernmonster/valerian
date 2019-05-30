@@ -1,13 +1,8 @@
 package model
 
 const (
-	PasswordPepper = "8PrhfDL7Qr/G6%RbaiQouFfQ"
-)
-
-const (
-	SourceWeb     = 1
-	SourceiOS     = 2
-	SourceAndroid = 3
+	IdentityMobile = 1
+	IdentityEmail  = 2
 )
 
 const (
@@ -20,16 +15,16 @@ const (
 )
 
 const (
+	PasswordPepper = "8PrhfDL7Qr/G6%RbaiQouFfQ"
+)
+
+const (
+	GenderMale   = 1
+	GenderFemale = 2
+)
+
+const (
 	ValcodeRegister       = 1
 	ValcodeForgetPassword = 2
 	ValcodeLogin          = 3
-)
-
-const (
-	AccountRoleUser = "user"
-	AccountRoleOrg  = "org"
-)
-
-const (
-	WebCookieExpires = 60 * 60 * 72
 )
