@@ -113,7 +113,6 @@ func (p *Service) ResetPassword(c context.Context, arg *model.ArgResetPassword) 
 	}
 
 	p.addCache(func() {
-		p.d.DelAccountCache(context.TODO(), aid)
 		p.d.DelResetPasswordCache(context.TODO(), arg.SessionID)
 	})
 
@@ -192,7 +191,6 @@ func (p *Service) UpdateProfile(c context.Context, aid int64, arg *model.ArgUpda
 	}
 
 	p.addCache(func() {
-		p.d.DelAccountCache(context.TODO(), aid)
 		p.d.DelProfileCache(context.TODO(), aid)
 	})
 
@@ -212,10 +210,6 @@ func (p *Service) ChangePassword(c context.Context, aid int64, arg *model.ArgCha
 	if err = p.d.SetPassword(c, p.d.DB(), salt, passwordHash, aid); err != nil {
 		return
 	}
-
-	p.addCache(func() {
-		p.d.DelAccountCache(context.TODO(), aid)
-	})
 
 	return
 }

@@ -2,6 +2,24 @@ package model
 
 import validation "github.com/go-ozzo/ozzo-validation"
 
+type ArgRenewToken struct {
+	RefreshToken string `json:"refresh_token"`
+	ClientID     string `json:"client_id"`
+}
+
+func (p *ArgRenewToken) Validate() error {
+	return validation.ValidateStruct(
+		p,
+		validation.Field(&p.ClientID,
+			validation.Required.Error(`"client_id" is required`),
+		),
+		validation.Field(&p.RefreshToken,
+			validation.Required.Error(`"refresh_token" is required`),
+		),
+	)
+
+}
+
 type ArgAuthorize struct {
 	ResponseType string `json:"response_type"`
 	ClientID     string `json:"client_id"`

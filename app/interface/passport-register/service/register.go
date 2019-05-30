@@ -11,7 +11,6 @@ import (
 	"valerian/library/gid"
 	"valerian/library/log"
 	"valerian/library/net/metadata"
-	"valerian/models"
 )
 
 func (p *Service) MobileRegister(c context.Context, arg *model.ArgMobile) (resp *model.LoginResp, err error) {
@@ -190,7 +189,7 @@ func (p *Service) loginAccount(c context.Context, id int64, clientID string) (re
 		AccountID:    account.ID,
 		Role:         account.Role,
 		AccessToken:  accessToken.Token,
-		ExpiresIn:    models.ExpiresIn,
+		ExpiresIn:    _accessExpireSeconds,
 		TokenType:    "Bearer",
 		Scope:        "",
 		RefreshToken: refreshToken.Token,

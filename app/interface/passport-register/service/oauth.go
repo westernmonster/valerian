@@ -12,8 +12,8 @@ import (
 )
 
 const (
-	_accessExpireSeconds  = 86400       // 1 days
-	_refreshExpireSeconds = 2592000 * 2 // 60 days
+	_accessExpireSeconds  = 60 * 60 * 24 * 30 // 30 days
+	_refreshExpireSeconds = 60 * 60 * 24 * 90 // 90 days
 )
 
 func (p *Service) grantToken(ctx context.Context, clientID string, accountID int64) (accessToken *model.AccessToken, refreshToken *model.RefreshToken, err error) {

@@ -15,7 +15,10 @@ import (
 	"valerian/library/net/http/mars"
 	"valerian/library/tracing"
 
+	httpAccount "valerian/app/interface/account/http"
+	httpFile "valerian/app/interface/file/http"
 	httpLocation "valerian/app/interface/location/http"
+	httpAuth "valerian/app/interface/passport-auth/http"
 	httpLogin "valerian/app/interface/passport-login/http"
 	httpRegister "valerian/app/interface/passport-register/http"
 	httpValcode "valerian/app/interface/valcode/http"
@@ -64,6 +67,9 @@ func initHTTP(c *conf.Config) {
 	httpValcode.Init(c, engine)
 	httpLocation.Init(c, engine)
 	httpRegister.Init(c, engine)
+	httpAuth.Init(c, engine)
+	httpAccount.Init(c, engine)
+	httpFile.Init(c, engine)
 
 	if err := engine.Start(); err != nil {
 		log.Error(fmt.Sprintf("engine.Start error(%v)", err))

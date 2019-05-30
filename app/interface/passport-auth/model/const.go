@@ -24,3 +24,7 @@ const (
 	IdentityMobile = 1
 	IdentityEmail  = 2
 )
+
+const (
+	PasswordPepper = "8PrhfDL7Qr/G6%RbaiQouFfQ"
+)

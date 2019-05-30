@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	SignName                       = "Flywiki"       // 短信签名
+	SignName                       = "flywk"         // 短信签名
 	RegisterTemplateCode           = "SMS_166865016" // 注册验证码模板
 	ResetPasswordTemplateCode      = "SMS_166865016" // 重置密码模板
 	LoginTemplateCode              = "SMS_166776690" // 注册验证码模板

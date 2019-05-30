@@ -84,7 +84,7 @@ func (p *Dao) AccessTokenCache(c context.Context, token string) (res *model.Acce
 	return
 }
 
-func (p *Dao) DelTokenCache(c context.Context, token string) (err error) {
+func (p *Dao) DelAccessTokenCache(c context.Context, token string) (err error) {
 	key := akKey(token)
 	conn := p.authMC.Get(c)
 	defer conn.Close()

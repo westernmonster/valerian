@@ -4,8 +4,7 @@ import (
 	"context"
 	"fmt"
 	"time"
-
-	"valerian/app/interface/passport-login/model"
+	"valerian/app/interface/passport-auth/model"
 	"valerian/library/ecode"
 	"valerian/library/gid"
 	"valerian/library/log"

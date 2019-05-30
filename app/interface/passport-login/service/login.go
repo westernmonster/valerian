@@ -6,7 +6,6 @@ import (
 
 	"valerian/app/interface/passport-login/model"
 	"valerian/library/ecode"
-	"valerian/models"
 )
 
 func (p *Service) EmailLogin(ctx context.Context, req *model.ArgEmailLogin) (resp *model.LoginResp, err error) {
@@ -36,7 +35,7 @@ func (p *Service) EmailLogin(ctx context.Context, req *model.ArgEmailLogin) (res
 		AccountID:    account.ID,
 		Role:         account.Role,
 		AccessToken:  accessToken.Token,
-		ExpiresIn:    models.ExpiresIn,
+		ExpiresIn:    _accessExpireSeconds,
 		TokenType:    "Bearer",
 		Scope:        "",
 		RefreshToken: refreshToken.Token,
@@ -81,7 +80,7 @@ func (p *Service) MobileLogin(ctx context.Context, req *model.ArgMobileLogin) (r
 		AccountID:    account.ID,
 		Role:         account.Role,
 		AccessToken:  accessToken.Token,
-		ExpiresIn:    models.ExpiresIn,
+		ExpiresIn:    _accessExpireSeconds,
 		TokenType:    "Bearer",
 		Scope:        "",
 		RefreshToken: refreshToken.Token,
@@ -129,7 +128,7 @@ func (p *Service) DigitLogin(ctx context.Context, req *model.ArgDigitLogin) (res
 		AccountID:    account.ID,
 		Role:         account.Role,
 		AccessToken:  accessToken.Token,
-		ExpiresIn:    models.ExpiresIn,
+		ExpiresIn:    _accessExpireSeconds,
 		TokenType:    "Bearer",
 		Scope:        "",
 		RefreshToken: refreshToken.Token,

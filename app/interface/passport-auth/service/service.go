@@ -21,19 +21,25 @@ type Service struct {
 	c *conf.Config
 	d interface {
 		GetClient(c context.Context, node sqalx.Node, clientID string) (item *model.Client, err error)
-		AddAccessToken(c context.Context, node sqalx.Node, t *model.AccessToken) (affected int64, err error)
+
 		GetAccessToken(c context.Context, node sqalx.Node, token string) (item *model.AccessToken, err error)
-		DelExpiredAccessToken(c context.Context, node sqalx.Node, clientID string, accountID int64, expiresAt int64) (affected int64, err error)
+		AddAccessToken(c context.Context, node sqalx.Node, t *model.AccessToken) (affected int64, err error)
+		DelExpiredAccessToken(c context.Context, node sqalx.Node, clientID string, accountID int64) (affected int64, err error)
+		GetClientAccessTokens(c context.Context, node sqalx.Node, aid int64, clientID string) (tokens []string, err error)
+
+		GetRefreshToken(c context.Context, node sqalx.Node, token string) (item *model.RefreshToken, err error)
 		AddRefreshToken(c context.Context, node sqalx.Node, t *model.RefreshToken) (affected int64, err error)
 		DelRefreshToken(c context.Context, node sqalx.Node, token string) (affected int64, err error)
+		DelExpiredRefreshToken(c context.Context, node sqalx.Node, clientID string, accountID int64) (affected int64, err error)
+		GetClientRefreshTokens(c context.Context, node sqalx.Node, aid int64, clientID string) (tokens []string, err error)
+
 		GetAccountByEmail(c context.Context, node sqalx.Node, email string) (item *model.Account, err error)
 		GetAccountByMobile(c context.Context, node sqalx.Node, mobile string) (item *model.Account, err error)
 		GetAccountByID(c context.Context, node sqalx.Node, id int64) (item *model.Account, err error)
 
-		RefreshTokenCache(c context.Context, sd string) (item *model.RefreshToken, err error)
-		SetAccessTokenCache(c context.Context, m *model.AccessToken) (err error)
 		AccessTokenCache(c context.Context, token string) (res *model.AccessToken, err error)
-		DelTokenCache(c context.Context, token string) (err error)
+		SetAccessTokenCache(c context.Context, m *model.AccessToken) (err error)
+		DelAccessTokenCache(c context.Context, token string) (err error)
 
 		DB() sqalx.Node
 		AuthDB() sqalx.Node

@@ -65,4 +65,5 @@ var (
 	InvalidBirthMonth        = add(14) // 出生月不正确
 	InvalidBirthDay          = add(15) // 出生日不正确
 	SessionExpires           = add(16) // Session 过期
+	RefreshTokenNotExist     = add(17) // RefreshToken不存在
 )
