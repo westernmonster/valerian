@@ -8,11 +8,6 @@ import (
 	"valerian/library/log"
 )
 
-type TopicMemberPagedData struct {
-	Count int                      `json:"count"`
-	Data  []*model.TopicMemberResp `json:"data"`
-}
-
 func topicKey(topicID int64) string {
 	return fmt.Sprintf("t_%d", topicID)
 }

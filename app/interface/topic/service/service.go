@@ -49,6 +49,10 @@ type Service struct {
 		TopicCache(c context.Context, topicID int64) (m *model.TopicResp, err error)
 		DelTopicCache(c context.Context, topicID int64) (err error)
 
+		SetTopicMembersCache(c context.Context, topicID int64, count, page, pageSize int, data []*model.TopicMember) (err error)
+		TopicMembersCache(c context.Context, topicID int64, page, pageSize int) (count int, data []*model.TopicMember, err error)
+		DelTopicMembersCache(c context.Context, topicID int64) (err error)
+
 		SetAccountCache(c context.Context, m *model.Account) (err error)
 		AccountCache(c context.Context, accountID int64) (m *model.Account, err error)
 		DelAccountCache(c context.Context, accountID int64) (err error)

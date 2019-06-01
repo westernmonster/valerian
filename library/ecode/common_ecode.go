@@ -67,4 +67,5 @@ var (
 	SessionExpires           = add(16) // Session 过期
 	RefreshTokenNotExist     = add(17) // RefreshToken不存在
 	TopicNotExist            = add(18) // 话题不存在
+	OnlyAllowOneOwner        = add(19) // 主理人只能有一个
 )

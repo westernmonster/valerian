@@ -10,10 +10,10 @@ import (
 
 const (
 	_addTopicCatalogSQL              = "INSERT INTO topic_catalogs( id,name,seq,type,parent_id,ref_id,topic_id,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?,?,?,?)"
-	_updateTopicCatalogSQL           = "UPDATE topic_catalogs SET name=?,seq=?,type=?,parent_id=?,ref_id=?,topic_id=?,updated_at=? WHERE id=?"
+	_updateTopicCatalogSQL           = "UPDATE topic_catalogs SET name=?,seq=?,type=?,parent_id=?,ref_id=?,topic_id=?,updated_at=? WHERE id=? AND deleted=0"
 	_delTopicCatalogSQL              = "UPDATE topic_catalogs SET deleted=1 WHERE id=? "
-	_getTopicCatalogChildrenCountSQL = "SELECT COUNT(1) as count FROM topic_catalogs a WHERE a.topic_id=? AND a.parent_id = ?"
-	_getTopicCatalogsByCondition     = "SELECT a.* FROM topic_catalogs a WHERE a.topic_id=? AND a.parent_id=? ORDER BY a.seq"
+	_getTopicCatalogChildrenCountSQL = "SELECT COUNT(1) as count FROM topic_catalogs a WHERE a.topic_id=? AND a.parent_id = ? AND a.deleted=0"
+	_getTopicCatalogsByCondition     = "SELECT a.* FROM topic_catalogs a WHERE a.topic_id=? AND a.parent_id=? AND a.deleted=0 ORDER BY a.seq"
 )
 
 // Insert insert a new record

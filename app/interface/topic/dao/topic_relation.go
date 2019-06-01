@@ -9,11 +9,11 @@ import (
 )
 
 const (
-	_getAllTopicRelationsSQL      = "SELECT a.* FROM topic_relations a WHERE a.from_topic_id=?"
-	_getAllRelatedTopicsSQL       = "SELECT a.to_topic_id AS topic_id,b.name,b.version_name,a.relation AS type FROM topic_relations a LEFT JOIN topics b ON a.to_topic_id=b.id WHERE a.from_topic_id=?"
-	_getAllRelatedTopicsDetailSQL = "SELECT a.to_topic_id AS topic_id,b.name,b.version_name,a.relation AS type,b.cover, b.introduction FROM topic_relations a LEFT JOIN topics b ON a.to_topic_id=b.id WHERE a.from_topic_id=?"
+	_getAllTopicRelationsSQL      = "SELECT a.* FROM topic_relations a WHERE a.from_topic_id=? AND a.deleted=0"
+	_getAllRelatedTopicsSQL       = "SELECT a.to_topic_id AS topic_id,b.name,b.version_name,a.relation AS type FROM topic_relations a LEFT JOIN topics b ON a.to_topic_id=b.id WHERE a.from_topic_id=? AND a.deleted=0"
+	_getAllRelatedTopicsDetailSQL = "SELECT a.to_topic_id AS topic_id,b.name,b.version_name,a.relation AS type,b.cover, b.introduction FROM topic_relations a LEFT JOIN topics b ON a.to_topic_id=b.id WHERE a.from_topic_id=? AND a.deleted=0"
 	_addTopicRelationSQL          = "INSERT INTO topic_relations( id,from_topic_id,to_topic_id,relation,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?)"
-	_updateTopicRelationSQL       = "UPDATE topic_relations SET from_topic_id=?,to_topic_id=?,relation=?,updated_at=? WHERE id=?"
+	_updateTopicRelationSQL       = "UPDATE topic_relations SET from_topic_id=?,to_topic_id=?,relation=?,updated_at=? WHERE id=? AND deleted=0"
 	_deleteTopicRelationSQL       = "UPDATE topic_relations SET deleted=1 WHERE id=? "
 )
 

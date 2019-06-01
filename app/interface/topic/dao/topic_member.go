@@ -2,6 +2,7 @@ package dao
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"valerian/app/interface/topic/model"
 	"valerian/library/database/sqalx"
@@ -9,13 +10,29 @@ import (
 )
 
 const (
-	_getAllTopicMembersSQL   = "SELECT a.* FROM topic_members a WHERE a.topic_id=? ORDER BY a.id DESC"
-	_getTopicMembersCountSQL = "SELECT COUNT(1) as count FROM topic_members a WHERE a.topic_id=?"
-	_getTopicMembersPagedSQL = "SELECT a.* FROM topic_members a WHERE a.topic_id=? ORDER BY a.role,a.id DESC limit ?,?"
-	_addTopicMemberSQL       = "INSERT INTO topic_members( id,topic_id,account_id,role,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?)"
-	_updateTopicMemberSQL    = "UPDATE topic_members SET topic_id=?,account_id=?,role=?,updated_at=? WHERE id=?"
-	_deleteTopicMemberSQL    = "UPDATE topic_members SET deleted=1 WHERE id=? "
+	_getTopicMemberByConditionSQL = "SELECT a.* FROM topic_members a WHERE a.deleted=0 AND a.topic_id=? AND a.account_id=?"
+	_getAllTopicMembersSQL        = "SELECT a.* FROM topic_members a WHERE a.deleted=0 AND a.topic_id=? ORDER BY a.id DESC"
+	_getTopicMembersCountSQL      = "SELECT COUNT(1) as count FROM topic_members a WHERE a.deleted=0 AND a.topic_id=?"
+	_getTopicMembersPagedSQL      = "SELECT a.* FROM topic_members a WHERE a.deleted=0 AND a.topic_id=? ORDER BY a.role,a.id DESC limit ?,?"
+	_addTopicMemberSQL            = "INSERT INTO topic_members( id,topic_id,account_id,role,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?)"
+	_updateTopicMemberSQL         = "UPDATE topic_members SET topic_id=?,account_id=?,role=?,updated_at=? WHERE a.deleted=0 AND id=?"
+	_deleteTopicMemberSQL         = "UPDATE topic_members SET deleted=1 WHERE id=? "
 )
+
+func (p *Dao) GetTopicMemberByCondition(c context.Context, node sqalx.Node, topicID, aid int64) (item *model.Topic, err error) {
+	item = new(model.Topic)
+
+	if err = node.GetContext(c, item, _getTopicMemberByConditionSQL, id); err != nil {
+		if err == sql.ErrNoRows {
+			item = nil
+			err = nil
+			return
+		}
+		log.For(c).Error(fmt.Sprintf("dao.GetTopicMemberByCondition error(%+v), id(%d)", err, id))
+	}
+
+	return
+}
 
 func (p *Dao) GetAllTopicMembers(c context.Context, node sqalx.Node, topicID int64) (items []*model.TopicMember, err error) {
 	items = make([]*model.TopicMember, 0)

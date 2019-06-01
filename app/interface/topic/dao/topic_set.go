@@ -11,7 +11,7 @@ import (
 const (
 	_addTopicSetSQL = "INSERT INTO topic_sets( id,deleted,created_at,updated_at) VALUES ( ?,?,?,?)"
 
-	_getTopicVersionsSQL = "SELECT a.id AS topic_set_id,b.name as topic_name, b.id AS topic_id,b.version_name FROM topic_sets a LEFT JOIN topics b ON a.id=b.topic_set_id WHERE a.id=?"
+	_getTopicVersionsSQL = "SELECT a.id AS topic_set_id,b.name as topic_name, b.id AS topic_id,b.version_name FROM topic_sets a LEFT JOIN topics b ON a.id=b.topic_set_id WHERE a.id=? AND a.deleted=0"
 )
 
 func (p *Dao) AddTopicSet(c context.Context, node sqalx.Node, item *model.TopicSet) (err error) {
