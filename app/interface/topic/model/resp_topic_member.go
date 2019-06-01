@@ -13,3 +13,9 @@ type TopicMemberResp struct {
 	// 用户名
 	UserName string `db:"user_name" json:"user_name"`
 }
+
+type TopicMembersPagedResp struct {
+	Count    int                `json:"count"`
+	PageSize int                `json:"page_size"`
+	Data     []*TopicMemberResp `json:"data"`
+}

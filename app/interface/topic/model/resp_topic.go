@@ -101,7 +101,7 @@ type TopicResp struct {
 
 	CreatedAt int64 `json:"created_at" swaggertype:"integer"`
 
-	TopicMeta TopicMeta `json:"meta"`
+	TopicMeta *TopicMeta `json:"meta,omitempty"`
 }
 
 type TopicMeta struct {

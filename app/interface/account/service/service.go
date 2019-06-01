@@ -24,6 +24,10 @@ type Service struct {
 		SetProfileCache(c context.Context, m *model.Profile) (err error)
 		DelProfileCache(c context.Context, id int64) (err error)
 
+		SetAccountCache(c context.Context, m *model.Account) (err error)
+		AccountCache(c context.Context, accountID int64) (m *model.Account, err error)
+		DelAccountCache(c context.Context, accountID int64) (err error)
+
 		MobileValcodeCache(c context.Context, vtype int, mobile string) (code string, err error)
 		DelMobileCache(c context.Context, vtype int, mobile string) (err error)
 		EmailValcodeCache(c context.Context, vtype int, mobile string) (code string, err error)

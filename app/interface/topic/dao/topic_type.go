@@ -23,7 +23,7 @@ func (p *Dao) GetAllTopicTypes(c context.Context, node sqalx.Node) (items []*mod
 	return
 }
 
-func (p *Dao) GetTopicType(c context.Context, node sqalx.Node, id int) (item *model.TopicType, exist bool, err error) {
+func (p *Dao) GetTopicType(c context.Context, node sqalx.Node, id int) (item *model.TopicType, err error) {
 	item = new(model.TopicType)
 
 	if err = node.GetContext(c, item, _getTopicTypeSQL, id); err != nil {

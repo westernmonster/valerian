@@ -66,4 +66,5 @@ var (
 	InvalidBirthDay          = add(15) // 出生日不正确
 	SessionExpires           = add(16) // Session 过期
 	RefreshTokenNotExist     = add(17) // RefreshToken不存在
+	TopicNotExist            = add(18) // 话题不存在
 )

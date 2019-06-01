@@ -83,6 +83,33 @@ func (p *Service) ForgetPassword(c context.Context, arg *model.ArgForgetPassword
 	return
 }
 
+func (p *Service) getAccountByID(c context.Context, aid int64) (item *model.Account, err error) {
+	var (
+		account   *model.Account
+		needCache bool
+	)
+
+	if account, err = p.d.AccountCache(c, aid); err != nil {
+		needCache = true
+	}
+
+	if account == nil {
+		if account, err = p.d.GetAccountByID(c, p.d.DB(), aid); err != nil {
+			return
+		} else if account == nil {
+			err = ecode.UserNotExist
+			return
+		}
+	}
+
+	if needCache {
+		p.addCache(func() {
+			p.d.SetAccountCache(context.TODO(), account)
+		})
+	}
+	return
+}
+
 func (p *Service) ResetPassword(c context.Context, arg *model.ArgResetPassword) (err error) {
 	var aid int64
 	if aid, err = p.d.SessionResetPasswordCache(c, arg.SessionID); err != nil {
@@ -91,11 +118,8 @@ func (p *Service) ResetPassword(c context.Context, arg *model.ArgResetPassword) 
 		return ecode.SessionExpires
 	}
 
-	var account *model.Account
-	if account, err = p.d.GetAccountByID(c, p.d.DB(), aid); err != nil {
+	if _, err = p.getAccountByID(c, aid); err != nil {
 		return
-	} else if account == nil {
-		return ecode.UserNotExist
 	}
 
 	salt, err := generateSalt(16)
@@ -113,6 +137,8 @@ func (p *Service) ResetPassword(c context.Context, arg *model.ArgResetPassword) 
 	}
 
 	p.addCache(func() {
+		// TODO: Clear this users's AccessToken Cached && Refresh Token Cache
+		p.d.DelAccountCache(context.TODO(), aid)
 		p.d.DelResetPasswordCache(context.TODO(), arg.SessionID)
 	})
 
@@ -121,10 +147,8 @@ func (p *Service) ResetPassword(c context.Context, arg *model.ArgResetPassword) 
 
 func (p *Service) UpdateProfile(c context.Context, aid int64, arg *model.ArgUpdateProfile) (err error) {
 	var account *model.Account
-	if account, err = p.d.GetAccountByID(c, p.d.DB(), aid); err != nil {
+	if account, err = p.getAccountByID(c, aid); err != nil {
 		return
-	} else if account == nil {
-		return ecode.UserNotExist
 	}
 
 	if arg.Gender != nil {
@@ -192,6 +216,7 @@ func (p *Service) UpdateProfile(c context.Context, aid int64, arg *model.ArgUpda
 
 	p.addCache(func() {
 		p.d.DelProfileCache(context.TODO(), aid)
+		p.d.DelAccountCache(context.TODO(), aid)
 	})
 
 	return
@@ -238,10 +263,7 @@ func (p *Service) GetProfile(c context.Context, aid int64) (profile *model.Profi
 
 func (p *Service) getProfile(c context.Context, accountID int64) (profile *model.Profile, err error) {
 	var item *model.Account
-	if item, err = p.d.GetAccountByID(c, p.d.DB(), accountID); err != nil {
-		return
-	} else if item == nil {
-		err = ecode.UserNotExist
+	if item, err = p.getAccountByID(c, accountID); err != nil {
 		return
 	}
 

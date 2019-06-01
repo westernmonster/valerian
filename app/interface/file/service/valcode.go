@@ -12,8 +12,6 @@ import (
 	"time"
 	"valerian/app/interface/file/model"
 	"valerian/library/gid"
-
-	"github.com/ztrue/tracerr"
 )
 
 const (
@@ -53,11 +51,7 @@ func (p *Service) GetPolicyToken(fileType, fileName string) (token model.PolicyT
 		break
 	}
 
-	id, err := gid.NextID()
-	if err != nil {
-		err = tracerr.Wrap(err)
-		return
-	}
+	id := gid.NewID()
 
 	ext := filepath.Ext(fileName)
 	name := strconv.FormatInt(id, 10)
@@ -88,7 +82,6 @@ func (p *Service) GetPolicyToken(fileType, fileName string) (token model.PolicyT
 	//calucate signature
 	result, err := json.Marshal(config)
 	if err != nil {
-		err = tracerr.Wrap(err)
 		return
 	}
 
@@ -103,7 +96,6 @@ func (p *Service) GetPolicyToken(fileType, fileName string) (token model.PolicyT
 	callbackParam.CallbackBodyType = "application/x-www-form-urlencoded"
 	callback_str, err := json.Marshal(callbackParam)
 	if err != nil {
-		err = tracerr.Wrap(err)
 		return
 	}
 	callbackBase64 := base64.StdEncoding.EncodeToString(callback_str)

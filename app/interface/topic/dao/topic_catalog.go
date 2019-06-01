@@ -13,6 +13,7 @@ const (
 	_updateTopicCatalogSQL           = "UPDATE topic_catalogs SET name=?,seq=?,type=?,parent_id=?,ref_id=?,topic_id=?,updated_at=? WHERE id=?"
 	_delTopicCatalogSQL              = "UPDATE topic_catalogs SET deleted=1 WHERE id=? "
 	_getTopicCatalogChildrenCountSQL = "SELECT COUNT(1) as count FROM topic_catalogs a WHERE a.topic_id=? AND a.parent_id = ?"
+	_getTopicCatalogsByCondition     = "SELECT a.* FROM topic_catalogs a WHERE a.topic_id=? AND a.parent_id=? ORDER BY a.seq"
 )
 
 // Insert insert a new record
@@ -44,7 +45,15 @@ func (p *Dao) DelTopicCatalog(c context.Context, node sqalx.Node, id int64) (err
 
 func (p *Dao) GetTopicCatalogChildrenCount(c context.Context, node sqalx.Node, topicID, parentID int64) (count int, err error) {
 	if err = node.GetContext(c, &count, _getTopicCatalogChildrenCountSQL, topicID, parentID); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.DelTopicCatalog error(%+v), topic id(%d) ,parent id (%d)", err, topicID, parentID))
+		log.For(c).Error(fmt.Sprintf("dao.GetTopicCatalogChildrenCount error(%+v), topic id(%d) ,parent id (%d)", err, topicID, parentID))
+	}
+	return
+}
+
+func (p *Dao) GetTopicCatalogsByCondition(c context.Context, node sqalx.Node, topicID, parentID int64) (items []*model.TopicCatalog, err error) {
+	items = make([]*model.TopicCatalog, 0)
+	if err = node.SelectContext(c, &items, _getTopicCatalogsByCondition, topicID, parentID); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetTopicCatalogsByCondition error(%+v), topic id(%d) ,parent id (%d)", err, topicID, parentID))
 	}
 	return
 }

@@ -28,6 +28,10 @@ func New(c *conf.Config) (dao *Dao) {
 	return
 }
 
+func (d *Dao) DB() sqalx.Node {
+	return d.db
+}
+
 // Ping check db and mc health.
 func (d *Dao) Ping(c context.Context) (err error) {
 	if err = d.db.Ping(c); err != nil {
