@@ -9,23 +9,13 @@ import (
 )
 
 const (
-	_getTopicMembersSQL      = "SELECT a.account_id, a.role, b.user_name, b.avatar FROM topic_members a LEFT JOIN accounts b ON a.account_id = b.id WHERE a.topic_id=? ORDER BY a.id DESC limit ?"
 	_getAllTopicMembersSQL   = "SELECT a.* FROM topic_members a WHERE a.topic_id=? ORDER BY a.id DESC"
 	_getTopicMembersCountSQL = "SELECT COUNT(1) as count FROM topic_members a WHERE a.topic_id=?"
-	_getTopicMembersPagedSQL = "SELECT a.* FROM topic_members a WHERE a.topic_id=? ORDER BY a.id DESC limit ?,?"
+	_getTopicMembersPagedSQL = "SELECT a.* FROM topic_members a WHERE a.topic_id=? ORDER BY a.role,a.id DESC limit ?,?"
 	_addTopicMemberSQL       = "INSERT INTO topic_members( id,topic_id,account_id,role,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?)"
 	_updateTopicMemberSQL    = "UPDATE topic_members SET topic_id=?,account_id=?,role=?,updated_at=? WHERE id=?"
 	_deleteTopicMemberSQL    = "UPDATE topic_members SET deleted=1 WHERE id=? "
 )
-
-func (p *Dao) GetTopicMembers(c context.Context, node sqalx.Node, topicID int64, limit int) (items []*model.TopicMember, err error) {
-	items = make([]*model.TopicMember, 0)
-
-	if err = node.SelectContext(c, &items, _getTopicMembersSQL, topicID, limit); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.GetTopicMembers error(%+v), topic id(%d) limit(%d)", err, topicID, limit))
-	}
-	return
-}
 
 func (p *Dao) GetAllTopicMembers(c context.Context, node sqalx.Node, topicID int64) (items []*model.TopicMember, err error) {
 	items = make([]*model.TopicMember, 0)

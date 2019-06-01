@@ -75,7 +75,7 @@ func (p *Service) get(c context.Context, topicID int64) (item *model.TopicResp, 
 		item.TopicTypeName = tType.Name
 	}
 
-	if item.Members, err = p.getTopicMembers(c, p.d.DB(), topicID, 10); err != nil {
+	if item.MembersCount, item.Members, err = p.getTopicMembers(c, p.d.DB(), topicID, 10); err != nil {
 		return
 	}
 

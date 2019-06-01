@@ -34,10 +34,10 @@ func (p *Service) GetTopicMembersPaged(c context.Context, topicID int64, page, p
 	return
 }
 
-func (p *Service) getTopicMembers(c context.Context, node sqalx.Node, topicID int64, limit int) (resp []*model.TopicMemberResp, err error) {
+func (p *Service) getTopicMembers(c context.Context, node sqalx.Node, topicID int64, limit int) (count int, resp []*model.TopicMemberResp, err error) {
 	resp = make([]*model.TopicMemberResp, 0)
 
-	items, err := p.d.GetTopicMembers(c, node, topicID, limit)
+	count, items, err := p.d.GetTopicMembersPaged(c, node, topicID, 1, limit)
 	if err != nil {
 		return
 	}
