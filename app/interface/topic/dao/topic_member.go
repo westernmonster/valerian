@@ -19,16 +19,16 @@ const (
 	_deleteTopicMemberSQL         = "UPDATE topic_members SET deleted=1 WHERE id=? "
 )
 
-func (p *Dao) GetTopicMemberByCondition(c context.Context, node sqalx.Node, topicID, aid int64) (item *model.Topic, err error) {
-	item = new(model.Topic)
+func (p *Dao) GetTopicMemberByCondition(c context.Context, node sqalx.Node, topicID, aid int64) (item *model.TopicMember, err error) {
+	item = new(model.TopicMember)
 
-	if err = node.GetContext(c, item, _getTopicMemberByConditionSQL, id); err != nil {
+	if err = node.GetContext(c, item, _getTopicMemberByConditionSQL, topicID, aid); err != nil {
 		if err == sql.ErrNoRows {
 			item = nil
 			err = nil
 			return
 		}
-		log.For(c).Error(fmt.Sprintf("dao.GetTopicMemberByCondition error(%+v), id(%d)", err, id))
+		log.For(c).Error(fmt.Sprintf("dao.GetTopicMemberByCondition error(%+v), topic id(%d) account id(%d)", err, topicID, aid))
 	}
 
 	return

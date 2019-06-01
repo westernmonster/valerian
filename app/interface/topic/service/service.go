@@ -24,6 +24,7 @@ type Service struct {
 		DelTopic(c context.Context, node sqalx.Node, topicID int64) (err error)
 		UpdateTopic(c context.Context, node sqalx.Node, item *model.Topic) (err error)
 
+		GetTopicMemberByCondition(c context.Context, node sqalx.Node, topicID, aid int64) (item *model.TopicMember, err error)
 		GetAllTopicMembers(c context.Context, node sqalx.Node, topicID int64) (items []*model.TopicMember, err error)
 		GetTopicMembersCount(c context.Context, node sqalx.Node, topicID int64) (count int, err error)
 		GetTopicMembersPaged(c context.Context, node sqalx.Node, topicID int64, page, pageSize int) (count int, items []*model.TopicMember, err error)

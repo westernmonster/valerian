@@ -17,11 +17,11 @@ func (p *Service) GetAllRelatedTopics(c context.Context, topicID int64) (items [
 	return
 }
 
-func (p *Service) Get(c context.Context, topicID int64) (item *model.TopicResp, err error) {
+func (p *Service) GetTopic(c context.Context, topicID int64) (item *model.TopicResp, err error) {
 	item, _ = p.d.TopicCache(c, topicID)
 
 	if item == nil {
-		if item, err = p.get(c, topicID); err != nil {
+		if item, err = p.getTopic(c, topicID); err != nil {
 			return
 		}
 	}
@@ -33,7 +33,7 @@ func (p *Service) Get(c context.Context, topicID int64) (item *model.TopicResp, 
 	return
 }
 
-func (p *Service) get(c context.Context, topicID int64) (item *model.TopicResp, err error) {
+func (p *Service) getTopic(c context.Context, topicID int64) (item *model.TopicResp, err error) {
 	var t *model.Topic
 	if t, err = p.d.GetTopicByID(c, p.d.DB(), topicID); err != nil {
 		return

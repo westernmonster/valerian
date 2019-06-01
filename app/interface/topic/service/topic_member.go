@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"fmt"
-	"strconv"
 	"time"
 	"valerian/app/interface/topic/model"
 	"valerian/library/database/sqalx"
@@ -11,9 +10,6 @@ import (
 	"valerian/library/gid"
 	"valerian/library/log"
 	"valerian/models"
-	"valerian/modules/repo"
-
-	"github.com/ztrue/tracerr"
 )
 
 func (p *Service) GetTopicMembersPaged(c context.Context, topicID int64, page, pageSize int) (resp *model.TopicMembersPagedResp, err error) {
@@ -127,61 +123,27 @@ func (p *Service) bulkCreateMembers(c context.Context, node sqalx.Node, aid, top
 			return ecode.OnlyAllowOneOwner
 		}
 
-		member, exist, errInner := p.TopicMemberRepository.GetByCondition(c, tx, map[string]string{
-			"topic_id":   strconv.FormatInt(topicID, 10),
-			"account_id": strconv.FormatInt(v.AccountID, 10),
-		})
-		if errInner != nil {
-			err = tracerr.Wrap(errInner)
-			return
+		item := &model.TopicMember{
+			ID:        gid.NewID(),
+			AccountID: v.AccountID,
+			Role:      v.Role,
+			TopicID:   topicID,
 		}
-
-		if exist {
-			member.Role = v.Role
-			errInner = p.TopicMemberRepository.Update(c, tx, member)
-			if errInner != nil {
-				err = tracerr.Wrap(errInner)
-				return
-			}
-		} else {
-			id, errInner := gid.NextID()
-			if errInner != nil {
-				err = tracerr.Wrap(errInner)
-				return
-			}
-			item := &repo.TopicMember{
-				ID:        id,
-				AccountID: v.AccountID,
-				Role:      v.Role,
-				TopicID:   topicID,
-			}
-			errInner = p.TopicMemberRepository.Insert(c, tx, item)
-			if errInner != nil {
-				err = tracerr.Wrap(errInner)
-				return
-			}
-
-			break
+		if e := p.d.AddTopicMember(c, tx, item); e != nil {
+			return e
 		}
 	}
 
-	id, errInner := gid.NextID()
-	if errInner != nil {
-		err = tracerr.Wrap(errInner)
-		return
-	}
-	item := &repo.TopicMember{
-		ID:        id,
-		AccountID: accountID,
+	item := &model.TopicMember{
+		ID:        gid.NewID(),
+		AccountID: aid,
 		Role:      models.MemberRoleOwner,
 		TopicID:   topicID,
 		Deleted:   false,
 		CreatedAt: time.Now().Unix(),
 		UpdatedAt: time.Now().Unix(),
 	}
-	errInner = p.TopicMemberRepository.Insert(c, tx, item)
-	if errInner != nil {
-		err = tracerr.Wrap(errInner)
+	if err = p.d.AddTopicMember(c, tx, item); err != nil {
 		return
 	}
 
@@ -189,4 +151,89 @@ func (p *Service) bulkCreateMembers(c context.Context, node sqalx.Node, aid, top
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 		return
 	}
+
+	return
+}
+
+func (p *Service) BulkSaveMembers(c context.Context, topicID int64, req *model.ArgBatchSavedTopicMember) (err error) {
+	var tx sqalx.Node
+	if tx, err = p.d.DB().Beginx(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		return
+	}
+
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+			}
+			return
+		}
+	}()
+
+	var t *model.Topic
+	if t, err = p.d.GetTopicByID(c, tx, topicID); err != nil {
+		return
+	} else if t == nil {
+		return ecode.TopicNotExist
+	}
+
+	for _, v := range req.Members {
+		if v.Role == models.MemberRoleOwner {
+			continue
+		}
+
+		var member *model.TopicMember
+		if member, err = p.d.GetTopicMemberByCondition(c, tx, topicID, v.AccountID); err != nil {
+			return
+		}
+
+		switch v.Opt {
+		case "C":
+			if member != nil {
+				continue
+			}
+
+			item := &model.TopicMember{
+				ID:        gid.NewID(),
+				AccountID: v.AccountID,
+				Role:      v.Role,
+				TopicID:   topicID,
+			}
+			if err = p.d.AddTopicMember(c, tx, item); err != nil {
+				return
+			}
+
+			break
+		case "U":
+			if member == nil {
+				continue
+			}
+			member.Role = v.Role
+			if err = p.d.UpdateTopicMember(c, tx, member); err != nil {
+				return
+			}
+			break
+		case "D":
+			if member == nil {
+				continue
+			}
+			if err = p.d.DeleteTopicMember(c, tx, member.ID); err != nil {
+				return
+			}
+			break
+		}
+	}
+
+	if err = tx.Commit(); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		return
+	}
+
+	p.addCache(func() {
+		p.d.DelTopicCache(context.TODO(), topicID)
+		p.d.DelTopicMembersCache(context.TODO(), topicID)
+	})
+
+	return
 }
