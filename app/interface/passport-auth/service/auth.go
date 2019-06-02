@@ -14,7 +14,7 @@ func (p *Service) Auth(c context.Context, token string) (r *model.AuthReply, err
 		return
 	}
 
-	if r == nil || time.Now().Unix() > t.ExpiresAt {
+	if t == nil || time.Now().Unix() > t.ExpiresAt {
 		r = _noLogin
 		return
 	}
@@ -32,6 +32,9 @@ func (p *Service) RenewToken(c context.Context, arg *model.ArgRenewToken) (r *mo
 	if t, err = p.d.GetRefreshToken(c, p.d.AuthDB(), arg.RefreshToken); err != nil {
 		return
 	} else if t == nil {
+		err = ecode.RefreshTokenNotExist
+		return
+	} else if t.ClientID != arg.ClientID {
 		err = ecode.RefreshTokenNotExist
 		return
 	}
@@ -52,22 +55,21 @@ func (p *Service) RenewToken(c context.Context, arg *model.ArgRenewToken) (r *mo
 }
 
 func (p *Service) getAccessToken(c context.Context, token string) (t *model.AccessToken, err error) {
-	cache := true
+	needCache := false
 	if t, err = p.d.AccessTokenCache(c, token); err != nil {
-		cache = false
+		needCache = true
 	} else if t != nil {
 		return
 	}
 
-	t, err = p.d.GetAccessToken(c, p.d.DB(), token)
-	if err != nil || !cache {
+	if t, err = p.d.GetAccessToken(c, p.d.AuthDB(), token); err != nil {
 		return
 	}
-	if t != nil {
+
+	if needCache && t != nil {
 		p.addCache(func() {
 			p.d.SetAccessTokenCache(context.TODO(), t)
 		})
-		return
 	}
 	return
 }

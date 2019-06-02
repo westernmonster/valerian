@@ -128,6 +128,8 @@ func (p *Service) bulkCreateMembers(c context.Context, node sqalx.Node, aid, top
 			AccountID: v.AccountID,
 			Role:      v.Role,
 			TopicID:   topicID,
+			CreatedAt: time.Now().Unix(),
+			UpdatedAt: time.Now().Unix(),
 		}
 		if e := p.d.AddTopicMember(c, tx, item); e != nil {
 			return e
@@ -155,7 +157,7 @@ func (p *Service) bulkCreateMembers(c context.Context, node sqalx.Node, aid, top
 	return
 }
 
-func (p *Service) BulkSaveMembers(c context.Context, topicID int64, req *model.ArgBatchSavedTopicMember) (err error) {
+func (p *Service) BulkSaveMembers(c context.Context, req *model.ArgBatchSavedTopicMember) (err error) {
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
@@ -172,7 +174,7 @@ func (p *Service) BulkSaveMembers(c context.Context, topicID int64, req *model.A
 	}()
 
 	var t *model.Topic
-	if t, err = p.d.GetTopicByID(c, tx, topicID); err != nil {
+	if t, err = p.d.GetTopicByID(c, tx, req.TopicID); err != nil {
 		return
 	} else if t == nil {
 		return ecode.TopicNotExist
@@ -184,7 +186,7 @@ func (p *Service) BulkSaveMembers(c context.Context, topicID int64, req *model.A
 		}
 
 		var member *model.TopicMember
-		if member, err = p.d.GetTopicMemberByCondition(c, tx, topicID, v.AccountID); err != nil {
+		if member, err = p.d.GetTopicMemberByCondition(c, tx, req.TopicID, v.AccountID); err != nil {
 			return
 		}
 
@@ -198,7 +200,9 @@ func (p *Service) BulkSaveMembers(c context.Context, topicID int64, req *model.A
 				ID:        gid.NewID(),
 				AccountID: v.AccountID,
 				Role:      v.Role,
-				TopicID:   topicID,
+				TopicID:   req.TopicID,
+				CreatedAt: time.Now().Unix(),
+				UpdatedAt: time.Now().Unix(),
 			}
 			if err = p.d.AddTopicMember(c, tx, item); err != nil {
 				return
@@ -231,8 +235,8 @@ func (p *Service) BulkSaveMembers(c context.Context, topicID int64, req *model.A
 	}
 
 	p.addCache(func() {
-		p.d.DelTopicCache(context.TODO(), topicID)
-		p.d.DelTopicMembersCache(context.TODO(), topicID)
+		p.d.DelTopicCache(context.TODO(), req.TopicID)
+		p.d.DelTopicMembersCache(context.TODO(), req.TopicID)
 	})
 
 	return

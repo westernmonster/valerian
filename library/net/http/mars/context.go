@@ -2,6 +2,7 @@ package mars
 
 import (
 	"context"
+	"fmt"
 	"math"
 	"net/http"
 	"strconv"
@@ -317,6 +318,7 @@ func (c *Context) mustBindWith(obj interface{}, b binding.Binding) (err error) {
 			Success: false,
 			Result:  nil,
 		})
+		fmt.Println("------------------------------")
 		c.Abort()
 	}
 	return

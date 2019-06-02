@@ -23,13 +23,15 @@ func Init(c *conf.Config, engine *mars.Engine) {
 func route(e *mars.Engine) {
 	g := e.Group("/api/v1")
 	{
-		g.GET("/files/oss_token", auth.User, ossToken)
+		g.POST("/files/oss_token", auth.User, ossToken)
 	}
 }
 
 func ossToken(c *mars.Context) {
 	arg := new(model.ArgOSSToken)
-	c.Bind(arg)
+	if e := c.Bind(arg); e != nil {
+		return
+	}
 
 	if e := arg.Validate(); e != nil {
 		c.JSON(nil, ecode.RequestErr)

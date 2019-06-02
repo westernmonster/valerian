@@ -128,6 +128,10 @@ type TopicVersionResp struct {
 	TopicSetID int64 `db:"topic_set_id" json:"topic_set_id,string"  swaggertype:"string"`
 	// 话题ID
 	TopicID int64 `db:"topic_id" json:"topic_id,string" swaggertype:"string"`
+
+	// 顺序
+	Seq int `db:"seq" json:"seq"`
+
 	// 版本名称
 	VersionName string `db:"version_name" json:"version_name"`
 	// 话题名
@@ -139,6 +143,10 @@ type RelatedTopicShort struct {
 	TopicID int64 `db:"topic_id" json:"topic_id,string" swaggertype:"string"`
 	// 话题名
 	Name string `db:"name" json:"name"`
+
+	// 顺序
+	Seq int `db:"seq" json:"seq"`
+
 	// 版本名称
 	VersionName string `db:"version_name" json:"version_name"`
 	// 关联类型

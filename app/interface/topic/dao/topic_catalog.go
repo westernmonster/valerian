@@ -2,6 +2,7 @@ package dao
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"valerian/app/interface/topic/model"
 	"valerian/library/database/sqalx"
@@ -14,7 +15,24 @@ const (
 	_delTopicCatalogSQL              = "UPDATE topic_catalogs SET deleted=1 WHERE id=? "
 	_getTopicCatalogChildrenCountSQL = "SELECT COUNT(1) as count FROM topic_catalogs a WHERE a.topic_id=? AND a.parent_id = ? AND a.deleted=0"
 	_getTopicCatalogsByCondition     = "SELECT a.* FROM topic_catalogs a WHERE a.topic_id=? AND a.parent_id=? AND a.deleted=0 ORDER BY a.seq"
+	_getTopicCatalogByCondition      = "SELECT a.* FROM topic_catalogs a WHERE a.deleted=0 %s"
+	_getTopicCatalogByID             = "SELECT a.* FROM topic_catalogs a WHERE a.deleted=0 AND a.id=?"
 )
+
+func (p *Dao) GetTopicCatalogByID(c context.Context, node sqalx.Node, id int64) (item *model.TopicCatalog, err error) {
+	item = new(model.TopicCatalog)
+
+	if err = node.GetContext(c, item, _getTopicCatalogByID, id); err != nil {
+		if err == sql.ErrNoRows {
+			item = nil
+			err = nil
+			return
+		}
+		log.For(c).Error(fmt.Sprintf("dao.GetTopicCatalogByID error(%+v), id(%d)", err, id))
+	}
+
+	return
+}
 
 // Insert insert a new record
 func (p *Dao) AddTopicCatalog(c context.Context, node sqalx.Node, item *model.TopicCatalog) (err error) {
@@ -55,5 +73,51 @@ func (p *Dao) GetTopicCatalogsByCondition(c context.Context, node sqalx.Node, to
 	if err = node.SelectContext(c, &items, _getTopicCatalogsByCondition, topicID, parentID); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetTopicCatalogsByCondition error(%+v), topic id(%d) ,parent id (%d)", err, topicID, parentID))
 	}
+	return
+}
+
+func (p *Dao) GetTopicCatalogByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (item *model.TopicCatalog, err error) {
+	item = new(model.TopicCatalog)
+	condition := make([]interface{}, 0)
+	clause := ""
+
+	if val, ok := cond["id"]; ok {
+		clause += " AND a.id =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["name"]; ok {
+		clause += " AND a.name =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["seq"]; ok {
+		clause += " AND a.seq =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["type"]; ok {
+		clause += " AND a.type =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["parent_id"]; ok {
+		clause += " AND a.parent_id =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["ref_id"]; ok {
+		clause += " AND a.ref_id =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["topic_id"]; ok {
+		clause += " AND a.topic_id =?"
+		condition = append(condition, val)
+	}
+
+	sqlSelect := fmt.Sprintf(_getTopicCatalogByCondition, clause)
+
+	if err = node.GetContext(ctx, item, sqlSelect, condition...); err != nil {
+		if err == sql.ErrNoRows {
+			item = nil
+			return
+		}
+	}
+
 	return
 }

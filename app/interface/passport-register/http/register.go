@@ -9,7 +9,9 @@ import (
 
 func emailRegister(c *mars.Context) {
 	arg := new(model.ArgEmail)
-	c.Bind(arg)
+	if e := c.Bind(arg); e != nil {
+		return
+	}
 
 	if e := arg.Validate(); e != nil {
 		c.JSON(nil, ecode.RequestErr)
@@ -36,7 +38,9 @@ func emailRegister(c *mars.Context) {
 
 func mobileRegister(c *mars.Context) {
 	arg := new(model.ArgMobile)
-	c.Bind(arg)
+	if e := c.Bind(arg); e != nil {
+		return
+	}
 
 	if e := arg.Validate(); e != nil {
 		c.JSON(nil, ecode.RequestErr)

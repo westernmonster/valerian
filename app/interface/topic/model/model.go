@@ -30,6 +30,7 @@ type TopicRelation struct {
 	FromTopicID int64         `db:"from_topic_id" json:"from_topic_id,string"` // FromTopicID 话题ID
 	ToTopicID   int64         `db:"to_topic_id" json:"to_topic_id,string"`     // ToTopicID 关联话题ID
 	Relation    string        `db:"relation" json:"relation"`                  // Relation 关系
+	Seq         int           `db:"seq" json:"seq"`                            // Seq 顺序
 	Deleted     types.BitBool `db:"deleted" json:"deleted"`                    // Deleted 是否删除
 	CreatedAt   int64         `db:"created_at" json:"created_at"`              // CreatedAt 创建时间
 	UpdatedAt   int64         `db:"updated_at" json:"updated_at"`              // UpdatedAt 更新时间
@@ -54,6 +55,7 @@ type Topic struct {
 	TopicHome        string        `db:"topic_home" json:"topic_home"`               // TopicHome 话题首页
 	TopicType        int           `db:"topic_type" json:"topic_type"`               // TopicType 话题类型
 	VersionName      string        `db:"version_name" json:"version_name"`           // VersionName 版本名称
+	Seq              int           `db:"seq" json:"seq"`                             // Seq 顺序
 	CreatedBy        int64         `db:"created_by" json:"created_by,string"`        // CreatedBy 创建人
 	Deleted          types.BitBool `db:"deleted" json:"deleted"`                     // Deleted 是否删除
 	CreatedAt        int64         `db:"created_at" json:"created_at"`               // CreatedAt 创建时间

@@ -34,3 +34,7 @@ const (
 	ValcodeForgetPassword = 2
 	ValcodeLogin          = 3
 )
+
+const (
+	WebCookieExpires = 60 * 60 * 72
+)

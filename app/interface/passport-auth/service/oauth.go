@@ -55,14 +55,6 @@ func (p *Service) grantToken(ctx context.Context, clientID string, accountID int
 
 	defer tx.Rollback()
 
-	if _, err = p.d.AddAccessToken(ctx, tx, accessToken); err != nil {
-		return
-	}
-
-	if _, err = p.d.AddRefreshToken(ctx, tx, refreshToken); err != nil {
-		return
-	}
-
 	if accessTokens, err = p.d.GetClientAccessTokens(ctx, tx, accountID, clientID); err != nil {
 		return
 	}
@@ -72,6 +64,14 @@ func (p *Service) grantToken(ctx context.Context, clientID string, accountID int
 	}
 
 	if _, err = p.d.DelExpiredRefreshToken(ctx, tx, clientID, accountID); err != nil {
+		return
+	}
+
+	if _, err = p.d.AddAccessToken(ctx, tx, accessToken); err != nil {
+		return
+	}
+
+	if _, err = p.d.AddRefreshToken(ctx, tx, refreshToken); err != nil {
 		return
 	}
 

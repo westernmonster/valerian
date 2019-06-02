@@ -13,11 +13,13 @@ import (
 type Service struct {
 	c *conf.Config
 	d interface {
+		GetTopicCatalogByID(c context.Context, node sqalx.Node, id int64) (item *model.TopicCatalog, err error)
 		AddTopicCatalog(c context.Context, node sqalx.Node, item *model.TopicCatalog) (err error)
 		UpdateTopicCatalog(c context.Context, node sqalx.Node, item *model.TopicCatalog) (err error)
 		DelTopicCatalog(c context.Context, node sqalx.Node, id int64) (err error)
 		GetTopicCatalogChildrenCount(c context.Context, node sqalx.Node, topicID, parentID int64) (count int, err error)
 		GetTopicCatalogsByCondition(c context.Context, node sqalx.Node, topicID, parentID int64) (items []*model.TopicCatalog, err error)
+		GetTopicCatalogByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (item *model.TopicCatalog, err error)
 
 		GetTopicByID(c context.Context, node sqalx.Node, id int64) (item *model.Topic, err error)
 		AddTopic(c context.Context, node sqalx.Node, item *model.Topic) (err error)
@@ -32,6 +34,7 @@ type Service struct {
 		UpdateTopicMember(c context.Context, node sqalx.Node, item *model.TopicMember) (err error)
 		DeleteTopicMember(c context.Context, node sqalx.Node, id int64) (err error)
 
+		GetTopicRelationByCondition(c context.Context, node sqalx.Node, fromTopicID, toTopicID int64) (item *model.TopicRelation, err error)
 		GetAllTopicRelations(c context.Context, node sqalx.Node, topicID int64) (items []*model.TopicRelation, err error)
 		GetAllRelatedTopics(c context.Context, node sqalx.Node, topicID int64) (items []*model.RelatedTopicShort, err error)
 		GetAllRelatedTopicsDetail(c context.Context, node sqalx.Node, topicID int64) (items []*model.RelatedTopicResp, err error)
@@ -41,6 +44,7 @@ type Service struct {
 
 		AddTopicSet(c context.Context, node sqalx.Node, item *model.TopicSet) (err error)
 		GetTopicVersions(c context.Context, node sqalx.Node, topicSetID int64) (items []*model.TopicVersionResp, err error)
+		GetTopicVersionByName(c context.Context, node sqalx.Node, topicSetID int64, versionName string) (item *model.TopicVersionResp, err error)
 		GetAllTopicTypes(c context.Context, node sqalx.Node) (items []*model.TopicType, err error)
 		GetTopicType(c context.Context, node sqalx.Node, id int) (item *model.TopicType, err error)
 

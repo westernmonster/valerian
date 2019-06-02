@@ -1,13 +1,13 @@
 package http
 
 import (
-	"valerian/app/interface/passport-auth/model"
+	"valerian/app/interface/topic/model"
 	"valerian/library/ecode"
 	"valerian/library/net/http/mars"
 )
 
-func renewToken(c *mars.Context) {
-	arg := new(model.ArgRenewToken)
+func editTopicRelations(c *mars.Context) {
+	arg := new(model.ArgBatchSaveRelatedTopics)
 	if e := c.Bind(arg); e != nil {
 		return
 	}
@@ -17,5 +17,6 @@ func renewToken(c *mars.Context) {
 		return
 	}
 
-	c.JSON(srv.RenewToken(c, arg))
+	c.JSON(nil, srv.BulkSaveRelations(c, arg))
+
 }

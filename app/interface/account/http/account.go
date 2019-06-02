@@ -8,7 +8,9 @@ import (
 
 func changePassword(c *mars.Context) {
 	arg := new(model.ArgChangePassword)
-	c.Bind(arg)
+	if e := c.Bind(arg); e != nil {
+		return
+	}
 
 	if e := arg.Validate(); e != nil {
 		c.JSON(nil, ecode.RequestErr)
@@ -26,7 +28,9 @@ func getProfile(c *mars.Context) {
 
 func updateProfile(c *mars.Context) {
 	arg := new(model.ArgUpdateProfile)
-	c.Bind(arg)
+	if e := c.Bind(arg); e != nil {
+		return
+	}
 
 	aid, _ := c.Get("aid")
 	c.JSON(nil, srv.UpdateProfile(c, aid.(int64), arg))
@@ -34,7 +38,9 @@ func updateProfile(c *mars.Context) {
 
 func forgetPassword(c *mars.Context) {
 	arg := new(model.ArgForgetPassword)
-	c.Bind(arg)
+	if e := c.Bind(arg); e != nil {
+		return
+	}
 
 	if e := arg.Validate(); e != nil {
 		c.JSON(nil, ecode.RequestErr)
@@ -46,7 +52,9 @@ func forgetPassword(c *mars.Context) {
 
 func resetPassword(c *mars.Context) {
 	arg := new(model.ArgResetPassword)
-	c.Bind(arg)
+	if e := c.Bind(arg); e != nil {
+		return
+	}
 
 	if e := arg.Validate(); e != nil {
 		c.JSON(nil, ecode.RequestErr)

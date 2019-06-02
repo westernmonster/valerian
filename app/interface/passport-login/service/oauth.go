@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"valerian/app/interface/passport-login/model"
+	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
 	"valerian/library/gid"
 	"valerian/library/log"
@@ -17,7 +18,6 @@ const (
 )
 
 func (p *Service) grantToken(ctx context.Context, clientID string, accountID int64) (accessToken *model.AccessToken, refreshToken *model.RefreshToken, err error) {
-
 	now := time.Now()
 	accessTokenStr := generateAccess(accountID, now, p.c.DC.Num)
 	refreshTokenStr := generateRefresh(accountID, now, p.c.DC.Num)
@@ -48,21 +48,20 @@ func (p *Service) grantToken(ctx context.Context, clientID string, accountID int
 
 	var accessTokens []string
 
-	tx, err := p.d.AuthDB().Beginx(ctx)
-	if err != nil {
-		log.For(ctx).Error(fmt.Sprintf("grantAccessToken Beginx err(%v) clientID(%s) accountID(%d)", err, clientID, accountID))
+	var tx sqalx.Node
+	if tx, err = p.d.AuthDB().Beginx(ctx); err != nil {
+		log.For(ctx).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
 		return
 	}
 
-	defer tx.Rollback()
-
-	if _, err = p.d.AddAccessToken(ctx, tx, accessToken); err != nil {
-		return
-	}
-
-	if _, err = p.d.AddRefreshToken(ctx, tx, refreshToken); err != nil {
-		return
-	}
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				log.For(ctx).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+			}
+			return
+		}
+	}()
 
 	if accessTokens, err = p.d.GetClientAccessTokens(ctx, tx, accountID, clientID); err != nil {
 		return
@@ -76,8 +75,16 @@ func (p *Service) grantToken(ctx context.Context, clientID string, accountID int
 		return
 	}
 
+	if _, err = p.d.AddAccessToken(ctx, tx, accessToken); err != nil {
+		return
+	}
+
+	if _, err = p.d.AddRefreshToken(ctx, tx, refreshToken); err != nil {
+		return
+	}
+
 	if err = tx.Commit(); err != nil {
-		log.For(ctx).Error(fmt.Sprintf("grantAccessToken Commit err(%v) ", err))
+		log.For(ctx).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 		return
 	}
 

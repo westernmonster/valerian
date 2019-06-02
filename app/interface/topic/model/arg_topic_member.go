@@ -28,6 +28,7 @@ func (p *ArgTopicMember) Validate() error {
 }
 
 type ArgBatchSavedTopicMember struct {
+	TopicID int64 `json:"topic_id,string" swaggertype:"string"`
 	// 成员列表
 	Members []*ArgTopicMember `json:"members"`
 }
@@ -35,6 +36,7 @@ type ArgBatchSavedTopicMember struct {
 func (p *ArgBatchSavedTopicMember) Validate() error {
 	return validation.ValidateStruct(
 		p,
+		validation.Field(&p.TopicID, validation.Required.Error(`请传入话题ID`)),
 		validation.Field(&p.Members, validation.Required.Error(`请传入成员`)),
 	)
 }

@@ -14,6 +14,10 @@ type RelatedTopicResp struct {
 	// normal 普通关联
 	// strong 强关联
 	Type string `db:"type" json:"type"`
+
+	// 顺序
+	Seq int `db:"seq" json:"seq"`
+
 	// 简介
 	Introduction string `db:"introduction" json:"introduction"`
 

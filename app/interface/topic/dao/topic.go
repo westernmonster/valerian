@@ -11,9 +11,9 @@ import (
 
 const (
 	_getTopicSQL = "SELECT a.* FROM topics a WHERE a.id=? AND a.deleted=0"
-	_addTopicSQL = "INSERT INTO topics( id,topic_set_id,name,cover,bg,introduction,is_private,allow_chat,allow_discuss,edit_permission,view_permission,join_permission,important,mute_notification,catalog_view_type,topic_type,topic_home,version_name,created_by,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+	_addTopicSQL = "INSERT INTO topics( id,topic_set_id,name,cover,bg,introduction,is_private,allow_chat,allow_discuss,edit_permission,view_permission,join_permission,important,mute_notification,catalog_view_type,topic_type,topic_home,version_name, seq,created_by,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
 	_delTopicSQL = "UPDATE topics SET deleted=1 WHERE id=?"
-	_updateTopic = "UPDATE topics SET topic_set_id=?,name=?,cover=?,bg=?,introduction=?,is_private=?,allow_chat=?,allow_discuss=?,edit_permission=?,view_permission=?,join_permission=?,important=?,mute_notification=?,catalog_view_type=?,topic_type=?,topic_home=?,version_name=?,created_by=?,updated_at=? WHERE id=? AND deleted=0"
+	_updateTopic = "UPDATE topics SET topic_set_id=?,name=?,cover=?,bg=?,introduction=?,is_private=?,allow_chat=?,allow_discuss=?,edit_permission=?,view_permission=?,join_permission=?,important=?,mute_notification=?,catalog_view_type=?,topic_type=?,topic_home=?,version_name=?, seq=?,created_by=?,updated_at=? WHERE id=? AND deleted=0"
 )
 
 // GetByID get record by ID
@@ -52,6 +52,7 @@ func (p *Dao) AddTopic(c context.Context, node sqalx.Node, item *model.Topic) (e
 		item.TopicType,
 		item.TopicHome,
 		item.VersionName,
+		item.Seq,
 		item.CreatedBy,
 		item.Deleted,
 		item.CreatedAt,
@@ -89,6 +90,7 @@ func (p *Dao) UpdateTopic(c context.Context, node sqalx.Node, item *model.Topic)
 		item.TopicType,
 		item.TopicHome,
 		item.VersionName,
+		item.Seq,
 		item.CreatedBy,
 		item.UpdatedAt,
 		item.ID); err != nil {

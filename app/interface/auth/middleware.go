@@ -57,6 +57,10 @@ func AuthToken(ctx *mars.Context) (accountID int64, err error) {
 		return 0, ecode.NoLogin
 	}
 
+	if !reply.Login {
+		return 0, ecode.NoLogin
+	}
+
 	return reply.Aid, nil
 }
 
@@ -69,6 +73,10 @@ func AuthCookie(ctx *mars.Context) (int64, error) {
 
 	reply, err := srv.Auth(ctx, cookie.Value)
 	if err != nil {
+		return 0, ecode.NoLogin
+	}
+
+	if !reply.Login {
 		return 0, ecode.NoLogin
 	}
 

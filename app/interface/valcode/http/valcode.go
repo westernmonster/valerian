@@ -8,10 +8,13 @@ import (
 
 func emailValcode(c *mars.Context) {
 	arg := new(model.ArgEmailValcode)
-	c.Bind(arg)
+	if e := c.Bind(arg); e != nil {
+		return
+	}
 
 	if e := arg.Validate(); e != nil {
 		c.JSON(nil, ecode.RequestErr)
+		return
 	}
 
 	c.JSON(srv.EmailValcode(c, arg))
@@ -19,10 +22,13 @@ func emailValcode(c *mars.Context) {
 
 func mobileValcode(c *mars.Context) {
 	arg := new(model.ArgMobileValcode)
-	c.Bind(arg)
+	if e := c.Bind(arg); e != nil {
+		return
+	}
 
 	if e := arg.Validate(); e != nil {
 		c.JSON(nil, ecode.RequestErr)
+		return
 	}
 
 	c.JSON(srv.MobileValcode(c, arg))

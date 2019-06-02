@@ -156,22 +156,112 @@ type ArgCreateTopicMember struct {
 	Role string `json:"role"`
 }
 
-type ArgRelatedTopic struct {
-	// 关联话题ID
-	TopicID int64 `json:"topic_id,string"`
+type ArgUpdateTopic struct {
+	// 话题ID
+	ID int64 `json:"id,string" swaggertype:"string"`
+	// 封面图
+	// 必须为URL
+	Cover *string `json:"cover,omitempty"`
 
-	// 类型
-	// normal
-	// strong
-	Type string `json:"type"`
+	// 背景图
+	// 必须为URL
+	Bg *string `json:"bg,omitempty"`
+
+	// 名称
+	Name *string `json:"name,omitempty"`
+
+	// 简介
+	Introduction *string `json:"introduction,omitempty"`
+
+	// 分类视图
+	// section 章节
+	// column 栏目
+	CatalogViewType *string `json:"catalog_view_type,omitempty"`
+
+	// 话题类型
+	TopicType *int `json:"topic_type,omitempty"`
+
+	// 话题首页
+	// introduction 简介
+	// feed 动态
+	// catalog 目录
+	// discussion 讨论
+	// chat 群聊
+	TopicHome *string `json:"topic_home,omitempty"`
+
+	// 版本名
+	VersionName *string `json:"version_name,omitempty"`
+
+	// 是否私密
+	IsPrivate *bool `json:"is_private,omitempty"`
+
+	// 开启群聊
+	AllowChat *bool `json:"allow_chat,omitempty"`
+
+	// 编辑权限
+	// "id_cert"
+	// "work_cert"
+	// "id_cert_joined"
+	// "work_cert_joined"
+	// "approved_id_cert_joined"
+	// "approved_work_cert_joined"
+	// "only_admin"
+	EditPermission *string `json:"edit_permission,omitempty"`
+
+	// 查看权限
+	// public 公开
+	// join 加入
+	ViewPermission *string `json:"view_permission,omitempty"`
+
+	// 加入权限
+	// free  自由加入
+	// auth_free 认证用户自由加入
+	// approve 经批准
+	// auth_approve 认证用户经批准
+	// admin 仅管理员添加
+	// purchase 购买
+	JoinPermission *string `json:"join_permission,omitempty"`
+
+	// 重要标记
+	Important *bool `json:"important,omitempty"`
+
+	// 消息免打扰
+	MuteNotification *bool `json:"mute_notification,omitempty"`
 }
 
-func (p *ArgRelatedTopic) Validate() error {
+func (p *ArgUpdateTopic) Validate() error {
 	return validation.ValidateStruct(
 		p,
-		validation.Field(&p.TopicID, validation.Required.Error(`请传入关联话题ID`)),
-		validation.Field(&p.Type, validation.Required.Error(`请传入关联话题类型`),
-			validation.In(TopicRelationStrong, TopicRelationNormal).Error("话题类型"),
+		validation.Field(&p.Cover,
+			is.URL.Error("封面图格式不正确"),
+		),
+		validation.Field(&p.Bg,
+			is.URL.Error("背景图格式不正确"),
+		),
+		validation.Field(&p.Name,
+			validation.RuneLength(0, 250).Error(`话题名最大长度为250个字符`),
+		),
+		// TODO: Web安全性
+		validation.Field(&p.Introduction,
+			validation.RuneLength(0, 1000).Error(`话题简介最大长度为1000个字符`),
+		),
+		validation.Field(&p.CatalogViewType,
+			validation.In(CatalogViewTypeColumn, CatalogViewTypeSection).Error("分类视图不正确"),
+		),
+		validation.Field(&p.TopicHome,
+			validation.In(TopicHomeIntroduction, TopicHomeFeed, TopicHomeCataglog, TopicHomeDiscussion, TopicHomeChat).Error("话题首页不正确"),
+		),
+		validation.Field(&p.EditPermission,
+			validation.In(EditPermissionIDCert, EditPermissionWorkCert, EditPermissionIDCertJoined, EditPermissionWorkCertJoined, EditPermissionApprovedIDCertJoined, EditPermissionApprovedWorkCertJoined, EditPermissionAdmin).Error("编辑权限不正确"),
+		),
+		validation.Field(&p.ViewPermission,
+			validation.In(ViewPermissionJoin, ViewPermissionPublic).Error("查看权限不正确"),
+		),
+		validation.Field(&p.JoinPermission,
+			validation.In(JoinPermissionMember, JoinPermissionIDCert, JoinPermissionWorkCert, JoinPermissionMemberApprove, JoinPermissionIDCertApprove, JoinPermissionWorkCertApprove, JoinPermissionAdminAdd, JoinPermissionPurchase, JoinPermissionVIP).Error("加入权限不正确"),
+		),
+		validation.Field(&p.VersionName,
+			validation.RuneLength(0, 250).Error(`版本名最大长度为250个字符`),
 		),
 	)
 }
