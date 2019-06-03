@@ -18,11 +18,56 @@ type dicItem struct {
 	Item *model.TopicCatalog
 }
 
-func (p *Service) GetCatalogHierarchyOfAll(c context.Context, topicID int64) (items []*model.TopicLevel1Catalog, err error) {
-	return p.getCatalogHierarchyOfAll(c, p.d.DB(), topicID)
+func (p *Service) GetCatalogHierarchy(c context.Context, topicID int64) (items []*model.TopicLevel1Catalog, err error) {
+	var (
+		addCache = true
+	)
+
+	if items, err = p.d.TopicCatalogCache(c, topicID); err != nil {
+		addCache = false
+	} else if items != nil {
+		return
+	}
+
+	if items, err = p.getCatalogHierarchyOfAll(c, p.d.DB(), topicID); err != nil {
+		return
+	}
+
+	if addCache {
+		p.addCache(func() {
+			p.d.SetTopicCatalogCache(context.TODO(), topicID, items)
+		})
+	}
+
+	return
+}
+
+func (p *Service) GetCatalogHierarchyOfAll(c context.Context, node sqalx.Node, topicID int64) (items []*model.TopicLevel1Catalog, err error) {
+	var (
+		addCache = true
+	)
+
+	if items, err = p.d.TopicCatalogCache(c, topicID); err != nil {
+		addCache = false
+	} else if items != nil {
+		return
+	}
+
+	if items, err = p.getCatalogHierarchyOfAll(c, node, topicID); err != nil {
+		return
+	}
+
+	if addCache {
+		p.addCache(func() {
+			p.d.SetTopicCatalogCache(context.TODO(), topicID, items)
+		})
+	}
+
+	return
 }
 
 func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, topicID int64) (items []*model.TopicLevel1Catalog, err error) {
+
 	items = make([]*model.TopicLevel1Catalog, 0)
 
 	parents, err := p.d.GetTopicCatalogsByCondition(c, node, topicID, 0)
@@ -240,5 +285,10 @@ func (p *Service) SaveCatalogs(c context.Context, topicID int64, req *models.Arg
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 		return
 	}
+
+	p.addCache(func() {
+		p.d.DelTopicCatalogCache(context.TODO(), topicID)
+		p.d.DelTopicCache(context.TODO(), topicID)
+	})
 	return
 }

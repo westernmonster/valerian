@@ -8,24 +8,24 @@ import (
 	"valerian/library/log"
 )
 
-func accountKey(aid int64) string {
-	return fmt.Sprintf("acc_%d", aid)
+func topicVersionKey(topicSetID int64) string {
+	return fmt.Sprintf("t_version_%d", topicSetID)
 }
 
-func (p *Dao) SetAccountCache(c context.Context, m *model.Account) (err error) {
-	key := accountKey(m.ID)
+func (p *Dao) SetTopicVersionCache(c context.Context, topicSetID int64, m []*model.TopicVersionResp) (err error) {
+	key := topicVersionKey(topicSetID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 
 	item := &memcache.Item{Key: key, Object: m, Flags: memcache.FlagJSON, Expiration: int32(p.mcExpire)}
 	if err = conn.Set(item); err != nil {
-		log.For(c).Error(fmt.Sprintf("set account cache error(%s,%d,%v)", key, p.mcExpire, err))
+		log.For(c).Error(fmt.Sprintf("set topic cache error(%s,%d,%v)", key, p.mcExpire, err))
 	}
 	return
 }
 
-func (p *Dao) AccountCache(c context.Context, accountID int64) (m *model.Account, err error) {
-	key := accountKey(accountID)
+func (p *Dao) TopicVersionCache(c context.Context, topicSetID int64) (m []*model.TopicVersionResp, err error) {
+	key := topicVersionKey(topicSetID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	var item *memcache.Item
@@ -38,15 +38,14 @@ func (p *Dao) AccountCache(c context.Context, accountID int64) (m *model.Account
 		return
 	}
 
-	m = new(model.Account)
-	if err = conn.Scan(item, m); err != nil {
+	if err = conn.Scan(item, &m); err != nil {
 		log.For(c).Error(fmt.Sprintf("conn.Scan(%v) error(%v)", string(item.Value), err))
 	}
 	return
 }
 
-func (p *Dao) DelAccountCache(c context.Context, accountID int64) (err error) {
-	key := accountKey(accountID)
+func (p *Dao) DelTopicVersionCache(c context.Context, topicSetID int64) (err error) {
+	key := topicVersionKey(topicSetID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	if err = conn.Delete(key); err != nil {

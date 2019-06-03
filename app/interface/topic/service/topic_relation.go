@@ -45,6 +45,7 @@ func (p *Service) bulkSaveRelations(c context.Context, node sqalx.Node, topicID 
 			ID:          gid.NewID(),
 			FromTopicID: topicID,
 			ToTopicID:   v.TopicID,
+			Seq:         v.Seq,
 			Relation:    v.Type,
 			CreatedAt:   time.Now().Unix(),
 			UpdatedAt:   time.Now().Unix(),
@@ -58,9 +59,99 @@ func (p *Service) bulkSaveRelations(c context.Context, node sqalx.Node, topicID 
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 	}
 
+	p.addCache(func() {
+		p.d.DelTopicRelationCache(context.TODO(), topicID)
+	})
 	return
 }
 
 func (p *Service) BulkSaveRelations(c context.Context, arg *model.ArgBatchSaveRelatedTopics) (err error) {
 	return p.bulkSaveRelations(c, p.d.DB(), arg.TopicID, arg.RelatedTopics)
+}
+
+func (p *Service) GetAllRelatedTopicsWithMeta(c context.Context, topicID int64) (items []*model.RelatedTopicResp, err error) {
+	var data []*model.TopicRelation
+	if data, err = p.getTopicRelations(c, p.d.DB(), topicID); err != nil {
+		return
+	}
+
+	items = make([]*model.RelatedTopicResp, 0)
+
+	for _, v := range data {
+		item := &model.RelatedTopicResp{
+			TopicID: v.ToTopicID,
+			Seq:     v.Seq,
+			Type:    v.Relation,
+		}
+
+		var t *model.TopicResp
+		if t, err = p.getTopic(c, item.TopicID); err != nil {
+			return
+		}
+		item.TopicName = t.Name
+		item.VersionName = t.VersionName
+		item.Cover = t.Cover
+		item.Introduction = t.Introduction
+		if item.MembersCount, _, err = p.getTopicMembers(c, p.d.DB(), topicID, 10); err != nil {
+			return
+		}
+		if item.TopicMeta, err = p.GetTopicMeta(c, t); err != nil {
+			return
+		}
+
+		items = append(items, item)
+
+	}
+
+	return
+}
+
+func (p *Service) getAllRelatedTopics(c context.Context, node sqalx.Node, topicID int64) (items []*model.RelatedTopicShort, err error) {
+	var data []*model.TopicRelation
+	if data, err = p.getTopicRelations(c, node, topicID); err != nil {
+		return
+	}
+
+	items = make([]*model.RelatedTopicShort, 0)
+
+	for _, v := range data {
+		item := &model.RelatedTopicShort{
+			TopicID: v.ToTopicID,
+			Seq:     v.Seq,
+			Type:    v.Relation,
+		}
+
+		var t *model.TopicResp
+		if t, err = p.getTopic(c, item.TopicID); err != nil {
+			return
+		}
+		item.TopicName = t.Name
+		item.VersionName = t.VersionName
+
+		items = append(items, item)
+	}
+	return
+}
+
+func (p *Service) getTopicRelations(c context.Context, node sqalx.Node, topicID int64) (items []*model.TopicRelation, err error) {
+
+	var addCache = true
+
+	if items, err = p.d.TopicRelationCache(c, topicID); err != nil {
+		addCache = false
+	} else if items != nil {
+		return
+	}
+
+	if items, err = p.d.GetAllTopicRelations(c, node, topicID); err != nil {
+		return
+	}
+
+	if addCache {
+		p.addCache(func() {
+			p.d.SetTopicRelationCache(context.TODO(), topicID, items)
+		})
+	}
+
+	return
 }

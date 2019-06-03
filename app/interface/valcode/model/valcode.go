@@ -42,12 +42,12 @@ type ArgMobileValcode struct {
 func (p *ArgMobileValcode) Validate() error {
 	return validation.ValidateStruct(
 		p,
-		validation.Field(&p.Mobile, validation.Required.Error(`请输入手机号或邮件地址`),
+		validation.Field(&p.Mobile, validation.Required.Error(`请输入手机号`),
 			ValidateMobile(p.Prefix),
 		),
 		validation.Field(&p.CodeType,
 			validation.Required.Error(`请输入验证码类型`),
-			validation.In(ValcodeRegister, ValcodeForgetPassword).Error("验证码类型不在允许范围内")),
+			validation.In(ValcodeLogin, ValcodeRegister, ValcodeForgetPassword).Error("验证码类型不在允许范围内")),
 	)
 }
 

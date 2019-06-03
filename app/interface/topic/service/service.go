@@ -36,8 +36,6 @@ type Service struct {
 
 		GetTopicRelationByCondition(c context.Context, node sqalx.Node, fromTopicID, toTopicID int64) (item *model.TopicRelation, err error)
 		GetAllTopicRelations(c context.Context, node sqalx.Node, topicID int64) (items []*model.TopicRelation, err error)
-		GetAllRelatedTopics(c context.Context, node sqalx.Node, topicID int64) (items []*model.RelatedTopicShort, err error)
-		GetAllRelatedTopicsDetail(c context.Context, node sqalx.Node, topicID int64) (items []*model.RelatedTopicResp, err error)
 		AddTopicRelation(c context.Context, node sqalx.Node, item *model.TopicRelation) (err error)
 		UpdateTopicRelation(c context.Context, node sqalx.Node, item *model.TopicRelation) (err error)
 		DeleteTopicRelation(c context.Context, node sqalx.Node, id int64) (err error)
@@ -48,11 +46,29 @@ type Service struct {
 		GetAllTopicTypes(c context.Context, node sqalx.Node) (items []*model.TopicType, err error)
 		GetTopicType(c context.Context, node sqalx.Node, id int) (item *model.TopicType, err error)
 
+		GetTopicFollowRequests(c context.Context, node sqalx.Node, topicID int64, status int) (items []*model.TopicFollowRequest, err error)
+		GetTopicFollowRequest(c context.Context, node sqalx.Node, topicID, aid int64) (item *model.TopicFollowRequest, err error)
+		AddTopicFollowRequest(c context.Context, node sqalx.Node, item *model.TopicFollowRequest) (err error)
+		UpdateTopicFollowRequest(c context.Context, node sqalx.Node, item *model.TopicFollowRequest) (err error)
+		DelTopicFollowRequest(c context.Context, node sqalx.Node, id int64) (err error)
+
 		GetAccountByID(c context.Context, node sqalx.Node, id int64) (item *model.Account, err error)
 
 		SetTopicCache(c context.Context, m *model.TopicResp) (err error)
 		TopicCache(c context.Context, topicID int64) (m *model.TopicResp, err error)
 		DelTopicCache(c context.Context, topicID int64) (err error)
+
+		SetTopicCatalogCache(c context.Context, topicID int64, m []*model.TopicLevel1Catalog) (err error)
+		TopicCatalogCache(c context.Context, topicID int64) (m []*model.TopicLevel1Catalog, err error)
+		DelTopicCatalogCache(c context.Context, topicID int64) (err error)
+
+		SetTopicRelationCache(c context.Context, topicID int64, m []*model.TopicRelation) (err error)
+		TopicRelationCache(c context.Context, topicID int64) (m []*model.TopicRelation, err error)
+		DelTopicRelationCache(c context.Context, topicID int64) (err error)
+
+		SetTopicVersionCache(c context.Context, topicSetID int64, m []*model.TopicVersionResp) (err error)
+		TopicVersionCache(c context.Context, topicSetID int64) (m []*model.TopicVersionResp, err error)
+		DelTopicVersionCache(c context.Context, topicSetID int64) (err error)
 
 		SetTopicMembersCache(c context.Context, topicID int64, count, page, pageSize int, data []*model.TopicMember) (err error)
 		TopicMembersCache(c context.Context, topicID int64, page, pageSize int) (count int, data []*model.TopicMember, err error)

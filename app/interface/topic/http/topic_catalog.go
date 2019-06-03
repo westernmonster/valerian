@@ -17,5 +17,5 @@ func topicCatalogs(c *mars.Context) {
 		return
 	}
 
-	c.JSON(srv.GetCatalogHierarchyOfAll(c, id))
+	c.JSON(srv.GetCatalogHierarchy(c, id))
 }

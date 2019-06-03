@@ -29,13 +29,27 @@ func (p *Service) DeleteTopic(c context.Context, topicID int64) (err error) {
 }
 
 func (p *Service) GetTopic(c context.Context, topicID int64) (item *model.TopicResp, err error) {
-	item, _ = p.d.TopicCache(c, topicID)
 
-	if item == nil {
-		if item, err = p.getTopic(c, topicID); err != nil {
-			return
-		}
+	fmt.Println(topicID)
+	if item, err = p.getTopic(c, topicID); err != nil {
+		return
 	}
+
+	if item.MembersCount, item.Members, err = p.getTopicMembers(c, p.d.DB(), topicID, 10); err != nil {
+		return
+	}
+
+	if item.Versions, err = p.getTopicVersions(c, p.d.DB(), item.TopicSetID); err != nil {
+		return
+	}
+
+	if item.RelatedTopics, err = p.getAllRelatedTopics(c, p.d.DB(), topicID); err != nil {
+		return
+	}
+
+	// if item.Catalogs, err = p.GetCatalogHierarchyOfAll(c, p.d.DB(), topicID); err != nil {
+	// 	return
+	// }
 
 	if item.TopicMeta, err = p.GetTopicMeta(c, item); err != nil {
 		return
@@ -45,6 +59,14 @@ func (p *Service) GetTopic(c context.Context, topicID int64) (item *model.TopicR
 }
 
 func (p *Service) getTopic(c context.Context, topicID int64) (item *model.TopicResp, err error) {
+	var addCache = true
+	if item, err = p.d.TopicCache(c, topicID); err != nil {
+		addCache = false
+	} else if item != nil {
+		return
+	}
+
+	fmt.Println(topicID)
 	var t *model.Topic
 	if t, err = p.d.GetTopicByID(c, p.d.DB(), topicID); err != nil {
 		return
@@ -86,20 +108,10 @@ func (p *Service) getTopic(c context.Context, topicID int64) (item *model.TopicR
 		item.TopicTypeName = tType.Name
 	}
 
-	if item.MembersCount, item.Members, err = p.getTopicMembers(c, p.d.DB(), topicID, 10); err != nil {
-		return
-	}
-
-	if item.Versions, err = p.d.GetTopicVersions(c, p.d.DB(), t.TopicSetID); err != nil {
-		return
-	}
-
-	if item.RelatedTopics, err = p.d.GetAllRelatedTopics(c, p.d.DB(), topicID); err != nil {
-		return
-	}
-
-	if item.Catalogs, err = p.getCatalogHierarchyOfAll(c, p.d.DB(), topicID); err != nil {
-		return
+	if addCache {
+		p.addCache(func() {
+			p.d.SetTopicCache(context.TODO(), item)
+		})
 	}
 
 	return
@@ -201,6 +213,10 @@ func (p *Service) CreateTopic(c context.Context, arg *model.ArgCreateTopic) (top
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 		return
 	}
+
+	p.addCache(func() {
+		p.d.DelTopicVersionCache(context.TODO(), item.TopicSetID)
+	})
 
 	topicID = item.ID
 	return

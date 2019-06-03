@@ -7,26 +7,25 @@ import (
 	"valerian/library/ecode"
 )
 
-func (p *Service) getAccountByID(c context.Context, node sqalx.Node, aid int64) (item *model.Account, err error) {
+func (p *Service) getAccountByID(c context.Context, node sqalx.Node, aid int64) (account *model.Account, err error) {
 	var (
-		account   *model.Account
-		needCache bool
+		addCache = true
 	)
 
 	if account, err = p.d.AccountCache(c, aid); err != nil {
-		needCache = true
+		addCache = false
+	} else if account != nil {
+		return
 	}
 
-	if account == nil {
-		if account, err = p.d.GetAccountByID(c, node, aid); err != nil {
-			return
-		} else if account == nil {
-			err = ecode.UserNotExist
-			return
-		}
+	if account, err = p.d.GetAccountByID(c, node, aid); err != nil {
+		return
+	} else if account == nil {
+		err = ecode.UserNotExist
+		return
 	}
 
-	if needCache {
+	if addCache {
 		p.addCache(func() {
 			p.d.SetAccountCache(context.TODO(), account)
 		})

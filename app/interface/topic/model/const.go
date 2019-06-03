@@ -56,3 +56,15 @@ const (
 	TopicRelationStrong = "strong"
 	TopicRelationNormal = "normal"
 )
+
+const (
+	FollowStatusUnfollowed = 0
+	FollowStatusApproving  = 1
+	FollowStatusFollowed   = 2
+)
+
+const (
+	FollowRequestStatusCommited = 0
+	FollowRequestStatusApproved = 1
+	FollowRequestStatusRejected = 2
+)

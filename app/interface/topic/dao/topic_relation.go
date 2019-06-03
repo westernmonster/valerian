@@ -10,9 +10,9 @@ import (
 )
 
 const (
-	_getAllTopicRelationsSQL      = "SELECT a.* FROM topic_relations a WHERE a.from_topic_id=? AND a.deleted=0"
-	_getAllRelatedTopicsSQL       = "SELECT a.to_topic_id AS topic_id,b.name as topic_name,b.version_name,a.relation AS type, a.seq FROM topic_relations a LEFT JOIN topics b ON a.to_topic_id=b.id WHERE a.from_topic_id=? AND a.deleted=0"
-	_getAllRelatedTopicsDetailSQL = "SELECT a.to_topic_id AS topic_id,b.name as topic_name, ,b.version_name,a.relation AS type, a.seq,b.cover, b.introduction FROM topic_relations a LEFT JOIN topics b ON a.to_topic_id=b.id WHERE a.from_topic_id=? AND a.deleted=0"
+	_getAllTopicRelationsSQL      = "SELECT a.* FROM topic_relations a WHERE a.from_topic_id=? AND a.deleted=0 ORDER BY a.seq"
+	_getAllRelatedTopicsSQL       = "SELECT a.to_topic_id AS topic_id,b.name as topic_name,b.version_name,a.relation AS type, a.seq FROM topic_relations a LEFT JOIN topics b ON a.to_topic_id=b.id WHERE a.from_topic_id=? AND a.deleted=0 ORDER BY a.seq"
+	_getAllRelatedTopicsDetailSQL = "SELECT a.to_topic_id AS topic_id,b.name as topic_name, ,b.version_name,a.relation AS type, a.seq,b.cover, b.introduction FROM topic_relations a LEFT JOIN topics b ON a.to_topic_id=b.id WHERE a.from_topic_id=? AND a.deleted=0 ORDER BY a.sql"
 	_addTopicRelationSQL          = "INSERT INTO topic_relations( id,from_topic_id,to_topic_id,relation, seq,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?,?)"
 	_updateTopicRelationSQL       = "UPDATE topic_relations SET from_topic_id=?,to_topic_id=?,relation=?,seq=?,updated_at=? WHERE id=? AND deleted=0"
 	_deleteTopicRelationSQL       = "UPDATE topic_relations SET deleted=1 WHERE id=? "
@@ -24,24 +24,6 @@ func (p *Dao) GetAllTopicRelations(c context.Context, node sqalx.Node, topicID i
 
 	if err = node.SelectContext(c, &items, _getAllTopicRelationsSQL, topicID); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetAllTopicRelations error(%+v), topic id(%d)", err, topicID))
-	}
-	return
-}
-
-func (p *Dao) GetAllRelatedTopics(c context.Context, node sqalx.Node, topicID int64) (items []*model.RelatedTopicShort, err error) {
-	items = make([]*model.RelatedTopicShort, 0)
-
-	if err = node.SelectContext(c, &items, _getAllRelatedTopicsSQL, topicID); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.GetAllTopicRelations error(%+v), topic id(%d)", err, topicID))
-	}
-	return
-}
-
-func (p *Dao) GetAllRelatedTopicsDetail(c context.Context, node sqalx.Node, topicID int64) (items []*model.RelatedTopicResp, err error) {
-	items = make([]*model.RelatedTopicResp, 0)
-
-	if err = node.SelectContext(c, &items, _getAllRelatedTopicsDetailSQL, topicID); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.GetAllRelatedTopicsDetail error(%+v), topic id(%d)", err, topicID))
 	}
 	return
 }

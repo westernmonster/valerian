@@ -18,13 +18,13 @@ func (p *Service) GetTopicMembersPaged(c context.Context, topicID int64, page, p
 	resp.Data = make([]*model.TopicMemberResp, 0)
 
 	var (
-		needCache bool
-		count     int
-		items     []*model.TopicMember
+		addCache = true
+		count    int
+		items    []*model.TopicMember
 	)
 
 	if count, items, err = p.d.TopicMembersCache(c, topicID, page, pageSize); err != nil {
-		needCache = true
+		addCache = false
 	}
 
 	if items == nil {
@@ -33,7 +33,7 @@ func (p *Service) GetTopicMembersPaged(c context.Context, topicID int64, page, p
 		}
 	}
 
-	if needCache {
+	if items != nil && addCache {
 		p.addCache(func() {
 			p.d.SetTopicMembersCache(context.TODO(), topicID, count, page, pageSize, items)
 		})
@@ -61,24 +61,23 @@ func (p *Service) getTopicMembers(c context.Context, node sqalx.Node, topicID in
 	resp = make([]*model.TopicMemberResp, 0)
 
 	var (
-		needCache bool
-		count     int
-		items     []*model.TopicMember
+		addCache = true
+		items    []*model.TopicMember
 	)
 
-	if count, items, err = p.d.TopicMembersCache(c, topicID, 1, 10); err != nil {
-		needCache = true
+	if total, items, err = p.d.TopicMembersCache(c, topicID, 1, 10); err != nil {
+		addCache = false
 	}
 
 	if items == nil {
-		if count, items, err = p.d.GetTopicMembersPaged(c, p.d.DB(), topicID, 1, 10); err != nil {
+		if total, items, err = p.d.GetTopicMembersPaged(c, p.d.DB(), topicID, 1, 10); err != nil {
 			return
 		}
 	}
 
-	if needCache {
+	if items != nil && addCache {
 		p.addCache(func() {
-			p.d.SetTopicMembersCache(context.TODO(), topicID, count, 1, 10, items)
+			p.d.SetTopicMembersCache(context.TODO(), topicID, total, 1, 10, items)
 		})
 	}
 
@@ -195,7 +194,6 @@ func (p *Service) BulkSaveMembers(c context.Context, req *model.ArgBatchSavedTop
 			if member != nil {
 				continue
 			}
-
 			item := &model.TopicMember{
 				ID:        gid.NewID(),
 				AccountID: v.AccountID,
@@ -239,5 +237,32 @@ func (p *Service) BulkSaveMembers(c context.Context, req *model.ArgBatchSavedTop
 		p.d.DelTopicMembersCache(context.TODO(), req.TopicID)
 	})
 
+	return
+}
+
+func (p *Service) addMember(c context.Context, node sqalx.Node, topicID, aid int64, role string) (err error) {
+	var member *model.TopicMember
+	if member, err = p.d.GetTopicMemberByCondition(c, node, topicID, aid); err != nil {
+		return
+	} else if member != nil {
+		return
+	}
+
+	item := &model.TopicMember{
+		ID:        gid.NewID(),
+		AccountID: aid,
+		Role:      role,
+		TopicID:   topicID,
+		CreatedAt: time.Now().Unix(),
+		UpdatedAt: time.Now().Unix(),
+	}
+	if err = p.d.AddTopicMember(c, node, item); err != nil {
+		return
+	}
+
+	p.addCache(func() {
+		p.d.DelTopicCache(context.TODO(), topicID)
+		p.d.DelTopicMembersCache(context.TODO(), topicID)
+	})
 	return
 }

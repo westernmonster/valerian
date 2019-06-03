@@ -75,4 +75,9 @@ var (
 	MustDeleteChildrenCatalogFirst = add(33) // 必须先删除类目子项
 	NotBelongToTopic               = add(34) // 不是话题成员
 	NotTopicAdmin                  = add(35) // 不是话题管理员
+	NeedIDCert                     = add(37) // 需要身份认证
+	NeedWorkCert                   = add(38) // 需要工作认证
+	OnlyAllowAdminAdded            = add(39) // 必须管理员添加
+	NeedPurchase                   = add(40) // 必须购买
+	NeedVIP                        = add(41) // 必须是VIP用户
 )

@@ -98,6 +98,10 @@ func (p *Dao) TopicMembersCache(c context.Context, topicID int64, page, pageSize
 	defer conn.Close()
 	var item *memcache.Item
 	if item, err = conn.Get(key); err != nil {
+		if err == memcache.ErrNotFound {
+			err = nil
+			return
+		}
 		log.For(c).Error(fmt.Sprintf("conn.Get(%s) error(%v)", key, err))
 		return
 	}

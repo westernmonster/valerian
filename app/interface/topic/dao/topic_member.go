@@ -87,7 +87,7 @@ func (p *Dao) UpdateTopicMember(c context.Context, node sqalx.Node, item *model.
 // Delete logic delete a exist record
 func (p *Dao) DeleteTopicMember(c context.Context, node sqalx.Node, id int64) (err error) {
 	if _, err = node.ExecContext(c, _deleteTopicMemberSQL, id); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.GetTopicMembersPaged error(%+v), topic member id(%d)", err, id))
+		log.For(c).Error(fmt.Sprintf("dao.DeleteTopicMember error(%+v), topic member id(%d)", err, id))
 	}
 
 	return

@@ -77,6 +77,7 @@ func (p *Dao) AccessTokenCache(c context.Context, token string) (res *model.Acce
 		log.For(c).Error(fmt.Sprintf("conn.Get(%s) error(%v)", key, err))
 		return
 	}
+
 	res = new(model.AccessToken)
 	if err = conn.Scan(item, res); err != nil {
 		log.For(c).Error(fmt.Sprintf("conn.Scan(%v) error(%v)", string(item.Value), err))

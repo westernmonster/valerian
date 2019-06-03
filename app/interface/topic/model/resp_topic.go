@@ -142,7 +142,7 @@ type RelatedTopicShort struct {
 	// 话题ID
 	TopicID int64 `db:"topic_id" json:"topic_id,string" swaggertype:"string"`
 	// 话题名
-	Name string `db:"name" json:"name"`
+	TopicName string `db:"topic_name" json:"topic_name"`
 
 	// 顺序
 	Seq int `db:"seq" json:"seq"`

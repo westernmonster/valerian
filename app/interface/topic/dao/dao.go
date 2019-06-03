@@ -22,6 +22,7 @@ type Dao struct {
 func New(c *conf.Config) (dao *Dao) {
 	dao = &Dao{
 		c:        c,
+		db:       sqalx.NewMySQL(c.DB.Main),
 		mc:       memcache.NewPool(c.Memcache.Main.Config),
 		mcExpire: int32(time.Duration(c.Memcache.Main.Expire) / time.Second),
 	}

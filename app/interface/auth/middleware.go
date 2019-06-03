@@ -87,6 +87,7 @@ func midAuth(ctx *mars.Context, auth authFunc) {
 	accountID, err := auth(ctx)
 	if err != nil {
 		ctx.JSON(nil, ecode.Unauthorized)
+		ctx.Abort()
 		return
 	}
 	setAccountID(ctx, accountID)

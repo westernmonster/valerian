@@ -57,6 +57,7 @@ func (p *Dao) ProfileCache(c context.Context, id int64) (m *model.Profile, err e
 		return
 	}
 
+	m = new(model.Profile)
 	if err = conn.Scan(item, m); err != nil {
 		log.For(c).Error(fmt.Sprintf("conn.Scan(%v) error(%v)", string(item.Value), err))
 	}

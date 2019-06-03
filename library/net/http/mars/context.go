@@ -183,7 +183,7 @@ func (c *Context) JSON(data interface{}, err error) {
 	bcode := ecode.Cause(err)
 
 	if bcode.Code() == -500 {
-		code = http.StatusServiceUnavailable
+		code = http.StatusInternalServerError
 	}
 
 	if bcode.Code() == -400 {
@@ -203,7 +203,7 @@ func (c *Context) JSON(data interface{}, err error) {
 		Code:    bcode.Code(),
 		Success: success,
 		Message: bcode.Message(),
-		Result:  data,
+		Result:  nil,
 	})
 }
 

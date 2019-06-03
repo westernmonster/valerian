@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	mobileExpires = 60
-	emailExpires  = 60 * 5
+	mobileExpires = 60 * 5
+	emailExpires  = 60 * 10
 )
 
 func vcMobileKey(vtype int, mobile string) string {
