@@ -37,6 +37,9 @@ func (p *Service) RenewToken(c context.Context, arg *model.ArgRenewToken) (r *mo
 	} else if t.ClientID != arg.ClientID {
 		err = ecode.RefreshTokenNotExist
 		return
+	} else if time.Now().Unix() > t.ExpiresAt {
+		err = ecode.RefreshTokenExpires
+		return
 	}
 
 	accessToken, refreshToken, err := p.grantToken(c, arg.ClientID, t.AccountID)

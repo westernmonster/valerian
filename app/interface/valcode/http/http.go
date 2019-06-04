@@ -18,7 +18,7 @@ func Init(c *conf.Config, engine *mars.Engine) {
 }
 
 func route(e *mars.Engine) {
-	g := e.Group("/api/v1/valcodes")
+	g := e.Group("/api/v1/valcode")
 	{
 		g.POST("/email", emailValcode)
 		g.POST("/mobile", mobileValcode)

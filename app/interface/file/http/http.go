@@ -27,6 +27,21 @@ func route(e *mars.Engine) {
 	}
 }
 
+// @Summary 获取阿里云OSS上传TOKEN
+// @Description 获取阿里云OSS上传TOKEN
+// @Description 阿里云文档：https://help.aliyun.com/document_detail/31926.html
+// @Tags common
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param req body model.ArgOSSToken true "请求"
+// @Success 200 {object} model.PolicyToken "Token"
+// @Failure 400 "验证失败"
+// @Failure 401 "登录验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /file/oss_token [post]
 func ossToken(c *mars.Context) {
 	arg := new(model.ArgOSSToken)
 	if e := c.Bind(arg); e != nil {

@@ -6,6 +6,7 @@ import (
 	"time"
 	"valerian/app/interface/topic/model"
 	"valerian/library/database/sqalx"
+	"valerian/library/ecode"
 	"valerian/library/gid"
 	"valerian/library/log"
 )
@@ -25,6 +26,13 @@ func (p *Service) bulkSaveRelations(c context.Context, node sqalx.Node, topicID 
 			return
 		}
 	}()
+
+	var t *model.Topic
+	if t, err = p.d.GetTopicByID(c, tx, topicID); err != nil {
+		return
+	} else if t == nil {
+		return ecode.TopicNotExist
+	}
 
 	for _, v := range relations {
 		var relation *model.TopicRelation

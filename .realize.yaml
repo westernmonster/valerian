@@ -10,12 +10,12 @@ schema:
   commands:
     build:
       status: true
-      dir: ./app/cmd
+      dir: ./
     run:
       status: true
-      dir: ./app/cmd
+      dir: ./
   args:
-  - -conf=./app/cmd/app.toml
+  - -conf=./app.toml
   watcher:
     paths:
     - /

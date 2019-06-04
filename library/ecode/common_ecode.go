@@ -80,4 +80,5 @@ var (
 	OnlyAllowAdminAdded            = add(39) // 必须管理员添加
 	NeedPurchase                   = add(40) // 必须购买
 	NeedVIP                        = add(41) // 必须是VIP用户
+	RefreshTokenExpires            = add(42) // RefreshToken过期
 )

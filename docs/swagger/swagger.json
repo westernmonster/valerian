@@ -10,6 +10,81 @@
     "host": "dev.flywk.com",
     "basePath": "/api/v1",
     "paths": {
+        "/file/oss_token": {
+            "post": {
+                "description": "获取阿里云OSS上传TOKEN\n阿里云文档：https://help.aliyun.com/document_detail/31926.html",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "common"
+                ],
+                "summary": "获取阿里云OSS上传TOKEN",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/model.ArgOSSToken"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Token",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/model.PolicyToken"
+                        }
+                    },
+                    "400": {
+                        "description": "验证失败"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
         "/oauth/login/digit": {
             "post": {
                 "description": "验证码登录",
@@ -75,7 +150,7 @@
                     "3": {
                         "description": "验证码错误"
                     },
-                    "401": {
+                    "400": {
                         "description": "验证失败"
                     },
                     "5": {
@@ -146,7 +221,7 @@
                             "$ref": "#/definitions/model.LoginResp"
                         }
                     },
-                    "401": {
+                    "400": {
                         "description": "验证失败"
                     },
                     "5": {
@@ -223,7 +298,7 @@
                             "$ref": "#/definitions/model.LoginResp"
                         }
                     },
-                    "401": {
+                    "400": {
                         "description": "验证失败"
                     },
                     "5": {
@@ -240,9 +315,1117 @@
                     }
                 }
             }
+        },
+        "/oauth/registration/email": {
+            "post": {
+                "description": "用户邮件注册",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "用户邮件注册",
+                "parameters": [
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/model.ArgEmail"
+                        }
+                    }
+                ],
+                "responses": {
+                    "116": {
+                        "description": "Client 不存在"
+                    },
+                    "2": {
+                        "description": "验证码已失效"
+                    },
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/model.LoginResp"
+                        }
+                    },
+                    "3": {
+                        "description": "验证码错误"
+                    },
+                    "4": {
+                        "description": "用户已经存在"
+                    },
+                    "400": {
+                        "description": "验证失败"
+                    },
+                    "5": {
+                        "description": "未找到地址信息"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    },
+                    "626": {
+                        "description": "用户不存在"
+                    }
+                }
+            }
+        },
+        "/oauth/registration/mobile": {
+            "post": {
+                "description": "用户手机注册",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "用户手机注册",
+                "parameters": [
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/model.ArgMobile"
+                        }
+                    }
+                ],
+                "responses": {
+                    "116": {
+                        "description": "Client 不存在"
+                    },
+                    "2": {
+                        "description": "验证码已失效"
+                    },
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/model.LoginResp"
+                        }
+                    },
+                    "3": {
+                        "description": "验证码错误"
+                    },
+                    "4": {
+                        "description": "用户已经存在"
+                    },
+                    "400": {
+                        "description": "验证失败"
+                    },
+                    "5": {
+                        "description": "未找到地址信息"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    },
+                    "626": {
+                        "description": "用户不存在"
+                    }
+                }
+            }
+        },
+        "/oauth/renew": {
+            "post": {
+                "description": "获取新Access Token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "获取新Access Token",
+                "parameters": [
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/model.ArgRenewToken"
+                        }
+                    }
+                ],
+                "responses": {
+                    "116": {
+                        "description": "Client 不存在"
+                    },
+                    "17": {
+                        "description": "RefreshToken 不存在"
+                    },
+                    "200": {
+                        "description": "成功"
+                    },
+                    "400": {
+                        "description": "验证请求失败"
+                    },
+                    "42": {
+                        "description": "RefreshToken 过期"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/topic/add": {
+            "post": {
+                "description": "新增话题",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "topic"
+                ],
+                "summary": "新增话题",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/model.ArgCreateTopic"
+                        }
+                    }
+                ],
+                "responses": {
+                    "19": {
+                        "description": "主理人只允许一个"
+                    },
+                    "20": {
+                        "description": "获取用户ID失败"
+                    },
+                    "200": {
+                        "description": "成功,返回topic_id"
+                    },
+                    "30": {
+                        "description": "话题类型不存在"
+                    },
+                    "31": {
+                        "description": "话题版本已经存在"
+                    },
+                    "400": {
+                        "description": "验证请求失败"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/topic/del": {
+            "post": {
+                "description": "删除话题",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "topic"
+                ],
+                "summary": "删除话题",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "ID",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功"
+                    },
+                    "400": {
+                        "description": "验证请求失败"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/topic/edit": {
+            "post": {
+                "description": "更新话题",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "topic"
+                ],
+                "summary": "更新话题",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/model.ArgUpdateTopic"
+                        }
+                    }
+                ],
+                "responses": {
+                    "18": {
+                        "description": "话题不存在"
+                    },
+                    "20": {
+                        "description": "获取用户ID失败"
+                    },
+                    "200": {
+                        "description": "成功"
+                    },
+                    "30": {
+                        "description": "话题类型不存在"
+                    },
+                    "31": {
+                        "description": "话题版本已经存在"
+                    },
+                    "34": {
+                        "description": "你不是话题成员"
+                    },
+                    "35": {
+                        "description": "你不是话题管理员"
+                    },
+                    "400": {
+                        "description": "验证请求失败"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/topic/get": {
+            "get": {
+                "description": "获取话题",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "topic"
+                ],
+                "summary": "获取话题",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "ID",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "话题",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/model.TopicResp"
+                        }
+                    },
+                    "400": {
+                        "description": "验证请求失败"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/topic/list/members": {
+            "get": {
+                "description": "获取成员列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "topic"
+                ],
+                "summary": "获取成员列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "话题ID",
+                        "name": "topic_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "page_size",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "话题成员",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/model.TopicMembersPagedResp"
+                        }
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/topic/list/types": {
+            "get": {
+                "description": "获取话题类型列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "topic"
+                ],
+                "summary": "获取话题类型列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "话题成员",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.TopicTypeResp"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/topic/members": {
+            "post": {
+                "description": "批量更新话题成员",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "topic"
+                ],
+                "summary": "批量更新话题成员",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/model.ArgBatchSavedTopicMember"
+                        }
+                    }
+                ],
+                "responses": {
+                    "18": {
+                        "description": "话题不存在"
+                    },
+                    "200": {
+                        "description": "成功"
+                    },
+                    "400": {
+                        "description": "验证请求失败"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/topic/related": {
+            "post": {
+                "description": "批量更新关联话题",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "topic"
+                ],
+                "summary": "批量更新关联话题",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/model.ArgBatchSaveRelatedTopics"
+                        }
+                    }
+                ],
+                "responses": {
+                    "18": {
+                        "description": "话题不存在"
+                    },
+                    "200": {
+                        "description": "成功"
+                    },
+                    "400": {
+                        "description": "验证请求失败"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/valcode/email": {
+            "post": {
+                "description": "请求邮件验证码",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "common"
+                ],
+                "summary": "请求邮件验证码",
+                "parameters": [
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/model.ArgEmailValcode"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "60秒下发一次验证码"
+                    },
+                    "200": {
+                        "description": "成功"
+                    },
+                    "400": {
+                        "description": "验证请求失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/valcode/mobile": {
+            "post": {
+                "description": "请求短信验证码",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "common"
+                ],
+                "summary": "请求短信验证码",
+                "parameters": [
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/model.ArgMobileValcode"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "60秒下发一次验证码"
+                    },
+                    "200": {
+                        "description": "成功"
+                    },
+                    "400": {
+                        "description": "验证请求失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "model.ArgBatchSaveRelatedTopics": {
+            "type": "object",
+            "properties": {
+                "related_topics": {
+                    "description": "关联话题",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.ArgRelatedTopic"
+                    }
+                },
+                "topic_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.ArgBatchSavedTopicMember": {
+            "type": "object",
+            "properties": {
+                "members": {
+                    "description": "成员列表",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.ArgTopicMember"
+                    }
+                },
+                "topic_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.ArgCreateTopic": {
+            "type": "object",
+            "properties": {
+                "allow_chat": {
+                    "description": "开启群聊",
+                    "type": "boolean"
+                },
+                "allow_discuss": {
+                    "description": "允许讨论",
+                    "type": "boolean"
+                },
+                "bg": {
+                    "description": "背景图\n必须为URL",
+                    "type": "string"
+                },
+                "catalog_view_type": {
+                    "description": "分类视图\nsection 章节\ncolumn 栏目",
+                    "type": "string"
+                },
+                "catalogs": {
+                    "description": "话题分类",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.TopicLevel1Catalog"
+                    }
+                },
+                "cover": {
+                    "description": "封面图\n必须为URL",
+                    "type": "string"
+                },
+                "edit_permission": {
+                    "description": "编辑权限\n\"id_cert\"\n\"work_cert\"\n\"id_cert_joined\"\n\"work_cert_joined\"\n\"approved_id_cert_joined\"\n\"approved_work_cert_joined\"\n\"only_admin\"",
+                    "type": "string"
+                },
+                "important": {
+                    "description": "重要标记",
+                    "type": "boolean"
+                },
+                "introduction": {
+                    "description": "简介",
+                    "type": "string"
+                },
+                "is_private": {
+                    "description": "是否私密",
+                    "type": "boolean"
+                },
+                "join_permission": {
+                    "description": "加入权限\n默认为 member\nmember 注册用户\nid_cert 身份认证自由关注\nwork_cert 业内认证自由关注\nmember_approve 注册用户，需审批\nid_cert_approve 身份认证自由关注，需审批\nwork_cert_approve 业内认证自由关注，需审批\nadmin_add 仅管理员手工添加\npurchase 付费购买\nvip Pro 用户自由关注",
+                    "type": "string"
+                },
+                "members": {
+                    "description": "成员",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.ArgCreateTopicMember"
+                    }
+                },
+                "mute_notification": {
+                    "description": "消息免打扰",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "名称",
+                    "type": "string"
+                },
+                "related_topics": {
+                    "description": "关联话题",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.ArgRelatedTopic"
+                    }
+                },
+                "topic_home": {
+                    "description": "话题首页\nintroduction 简介\nfeed 动态\ncatalog 目录\ndiscussion 讨论\nchat 群聊",
+                    "type": "string"
+                },
+                "topic_set_id": {
+                    "description": "集合ID\n如果是一个全新的创建，无需传入这个字段\n在当前话题版本上创建新的版本时候，需要将这个ID传入进来，\n后台方可在内部将不同版本归属于一个集合",
+                    "type": "integer"
+                },
+                "topic_type": {
+                    "description": "话题类型",
+                    "type": "integer"
+                },
+                "version_name": {
+                    "description": "版本名",
+                    "type": "string"
+                },
+                "view_permission": {
+                    "description": "查看权限\npublic 公开\njoin 加入",
+                    "type": "string"
+                }
+            }
+        },
+        "model.ArgCreateTopicMember": {
+            "type": "object",
+            "properties": {
+                "account_id": {
+                    "description": "成员ID",
+                    "type": "integer"
+                },
+                "role": {
+                    "description": "角色\nuser 普通用户\nadmin 管理员",
+                    "type": "string"
+                }
+            }
+        },
         "model.ArgDigitLogin": {
             "type": "object",
             "properties": {
@@ -256,6 +1439,31 @@
                 },
                 "prefix": {
                     "description": "Prefix 国际区号，例如86",
+                    "type": "string"
+                },
+                "source": {
+                    "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                    "type": "integer"
+                },
+                "valcode": {
+                    "description": "验证码 6位数字",
+                    "type": "string"
+                }
+            }
+        },
+        "model.ArgEmail": {
+            "type": "object",
+            "properties": {
+                "client_id": {
+                    "description": "ClientID OAUTH2 Client ID",
+                    "type": "string"
+                },
+                "email": {
+                    "description": "邮件地址",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "密码",
                     "type": "string"
                 },
                 "source": {
@@ -289,6 +1497,48 @@
                 }
             }
         },
+        "model.ArgEmailValcode": {
+            "type": "object",
+            "properties": {
+                "code_type": {
+                    "description": "验证码类型, 1为注册验证码, 2为重置密码验证码",
+                    "type": "integer"
+                },
+                "email": {
+                    "description": "邮件地址",
+                    "type": "string"
+                }
+            }
+        },
+        "model.ArgMobile": {
+            "type": "object",
+            "properties": {
+                "client_id": {
+                    "description": "ClientID OAUTH2 Client ID",
+                    "type": "string"
+                },
+                "mobile": {
+                    "description": "手机号码",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "密码",
+                    "type": "string"
+                },
+                "prefix": {
+                    "description": "Prefix 电话号码前缀，例如86",
+                    "type": "string"
+                },
+                "source": {
+                    "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                    "type": "integer"
+                },
+                "valcode": {
+                    "description": "验证码 6位数字",
+                    "type": "string"
+                }
+            }
+        },
         "model.ArgMobileLogin": {
             "type": "object",
             "properties": {
@@ -311,6 +1561,150 @@
                 "source": {
                     "description": "Source 来源，1:Web, 2:iOS; 3:Android",
                     "type": "integer"
+                }
+            }
+        },
+        "model.ArgMobileValcode": {
+            "type": "object",
+            "properties": {
+                "code_type": {
+                    "description": "验证码类型, 1为注册验证码, 2为重置密码验证码, 3为登录验证码",
+                    "type": "integer"
+                },
+                "mobile": {
+                    "description": "手机号码",
+                    "type": "string"
+                },
+                "prefix": {
+                    "description": "Prefix 电话号码前缀，例如86",
+                    "type": "string"
+                }
+            }
+        },
+        "model.ArgOSSToken": {
+            "type": "object",
+            "properties": {
+                "file_name": {
+                    "description": "文件名",
+                    "type": "string"
+                },
+                "file_type": {
+                    "description": "文件类型\nfile: 文章附件\nimage: 图片\ncertification: 工作证件照片\nother: 其他",
+                    "type": "string"
+                }
+            }
+        },
+        "model.ArgRelatedTopic": {
+            "type": "object",
+            "properties": {
+                "seq": {
+                    "description": "顺序",
+                    "type": "integer"
+                },
+                "topic_id": {
+                    "description": "关联话题ID",
+                    "type": "integer"
+                },
+                "type": {
+                    "description": "类型\nnormal\nstrong",
+                    "type": "string"
+                }
+            }
+        },
+        "model.ArgRenewToken": {
+            "type": "object",
+            "properties": {
+                "client_id": {
+                    "type": "string"
+                },
+                "refresh_token": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.ArgTopicMember": {
+            "type": "object",
+            "properties": {
+                "account_id": {
+                    "description": "成员ID",
+                    "type": "integer"
+                },
+                "opt": {
+                    "description": "操作\nC U D",
+                    "type": "string"
+                },
+                "role": {
+                    "description": "角色\nuser 普通用户\nadmin 管理员\nowner 主理人",
+                    "type": "string"
+                }
+            }
+        },
+        "model.ArgUpdateTopic": {
+            "type": "object",
+            "properties": {
+                "allow_chat": {
+                    "description": "开启群聊",
+                    "type": "boolean"
+                },
+                "bg": {
+                    "description": "背景图\n必须为URL",
+                    "type": "string"
+                },
+                "catalog_view_type": {
+                    "description": "分类视图\nsection 章节\ncolumn 栏目",
+                    "type": "string"
+                },
+                "cover": {
+                    "description": "封面图\n必须为URL",
+                    "type": "string"
+                },
+                "edit_permission": {
+                    "description": "编辑权限\n\"id_cert\"\n\"work_cert\"\n\"id_cert_joined\"\n\"work_cert_joined\"\n\"approved_id_cert_joined\"\n\"approved_work_cert_joined\"\n\"only_admin\"",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "话题ID",
+                    "type": "string"
+                },
+                "important": {
+                    "description": "重要标记",
+                    "type": "boolean"
+                },
+                "introduction": {
+                    "description": "简介",
+                    "type": "string"
+                },
+                "is_private": {
+                    "description": "是否私密",
+                    "type": "boolean"
+                },
+                "join_permission": {
+                    "description": "加入权限\nfree  自由加入\nauth_free 认证用户自由加入\napprove 经批准\nauth_approve 认证用户经批准\nadmin 仅管理员添加\npurchase 购买",
+                    "type": "string"
+                },
+                "mute_notification": {
+                    "description": "消息免打扰",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "名称",
+                    "type": "string"
+                },
+                "topic_home": {
+                    "description": "话题首页\nintroduction 简介\nfeed 动态\ncatalog 目录\ndiscussion 讨论\nchat 群聊",
+                    "type": "string"
+                },
+                "topic_type": {
+                    "description": "话题类型",
+                    "type": "integer"
+                },
+                "version_name": {
+                    "description": "版本名",
+                    "type": "string"
+                },
+                "view_permission": {
+                    "description": "查看权限\npublic 公开\njoin 加入",
+                    "type": "string"
                 }
             }
         },
@@ -347,6 +1741,35 @@
                 },
                 "token_type": {
                     "description": "Token 类型，默认为 Bearer",
+                    "type": "string"
+                }
+            }
+        },
+        "model.PolicyToken": {
+            "type": "object",
+            "properties": {
+                "accessid": {
+                    "type": "string"
+                },
+                "callback": {
+                    "type": "string"
+                },
+                "dir": {
+                    "type": "string"
+                },
+                "expire": {
+                    "type": "string"
+                },
+                "host": {
+                    "type": "string"
+                },
+                "key": {
+                    "type": "string"
+                },
+                "policy": {
+                    "type": "string"
+                },
+                "signature": {
                     "type": "string"
                 }
             }
@@ -440,6 +1863,339 @@
                 "work_cert": {
                     "description": "是否工作认证",
                     "type": "boolean"
+                }
+            }
+        },
+        "model.RelatedTopicShort": {
+            "type": "object",
+            "properties": {
+                "seq": {
+                    "description": "顺序",
+                    "type": "integer"
+                },
+                "topic_id": {
+                    "description": "话题ID",
+                    "type": "string"
+                },
+                "topic_name": {
+                    "description": "话题名",
+                    "type": "string"
+                },
+                "type": {
+                    "description": "关联类型\nnormal 普通关联\nstrong 强关联",
+                    "type": "string"
+                },
+                "version_name": {
+                    "description": "版本名称",
+                    "type": "string"
+                }
+            }
+        },
+        "model.TopicChildCatalog": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "description": "名称\nrequired: true",
+                    "type": "string"
+                },
+                "ref_id": {
+                    "description": "引用ID",
+                    "type": "string"
+                },
+                "seq": {
+                    "description": "顺序\nrequired: true",
+                    "type": "integer"
+                },
+                "type": {
+                    "description": "类型\nrequired: true",
+                    "type": "string"
+                }
+            }
+        },
+        "model.TopicLevel1Catalog": {
+            "type": "object",
+            "properties": {
+                "children": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.TopicLevel2Catalog"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "description": "名称\nrequired: true",
+                    "type": "string"
+                },
+                "ref_id": {
+                    "description": "引用ID",
+                    "type": "string"
+                },
+                "seq": {
+                    "description": "顺序\nrequired: true",
+                    "type": "integer"
+                },
+                "type": {
+                    "description": "类型\nrequired: true",
+                    "type": "string"
+                }
+            }
+        },
+        "model.TopicLevel2Catalog": {
+            "type": "object",
+            "properties": {
+                "children": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.TopicChildCatalog"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "description": "名称\nrequired: true",
+                    "type": "string"
+                },
+                "ref_id": {
+                    "description": "引用ID",
+                    "type": "string"
+                },
+                "seq": {
+                    "description": "顺序\nrequired: true",
+                    "type": "integer"
+                },
+                "type": {
+                    "description": "类型\nrequired: true",
+                    "type": "string"
+                }
+            }
+        },
+        "model.TopicMemberResp": {
+            "type": "object",
+            "properties": {
+                "account_id": {
+                    "description": "账户ID",
+                    "type": "string"
+                },
+                "avatar": {
+                    "description": "头像",
+                    "type": "string"
+                },
+                "role": {
+                    "description": "成员角色\nowner 所有者\nuser 普通用户\nadmin 管理员",
+                    "type": "string"
+                },
+                "user_name": {
+                    "description": "用户名",
+                    "type": "string"
+                }
+            }
+        },
+        "model.TopicMembersPagedResp": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.TopicMemberResp"
+                    }
+                },
+                "page_size": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.TopicMeta": {
+            "type": "object",
+            "properties": {
+                "can_edit": {
+                    "description": "是否能编辑",
+                    "type": "boolean"
+                },
+                "can_follow": {
+                    "description": "是否允许关注",
+                    "type": "boolean"
+                },
+                "can_view": {
+                    "description": "是否能查看",
+                    "type": "boolean"
+                },
+                "follow_status": {
+                    "description": "关注状态",
+                    "type": "integer"
+                },
+                "is_member": {
+                    "type": "boolean"
+                },
+                "member_role": {
+                    "description": "成员角色",
+                    "type": "string"
+                }
+            }
+        },
+        "model.TopicResp": {
+            "type": "object",
+            "properties": {
+                "allow_chat": {
+                    "description": "开启群聊",
+                    "type": "boolean"
+                },
+                "allow_discuss": {
+                    "description": "允许讨论",
+                    "type": "boolean"
+                },
+                "bg": {
+                    "description": "背景图\n必须为URL",
+                    "type": "string"
+                },
+                "catalog_view_type": {
+                    "description": "分类视图\nsection 章节\ncolumn 栏目",
+                    "type": "string"
+                },
+                "catalogs": {
+                    "description": "话题分类",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.TopicLevel1Catalog"
+                    }
+                },
+                "cover": {
+                    "description": "封面图\n必须为URL",
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "integer"
+                },
+                "edit_permission": {
+                    "description": "编辑权限\nauth 认证用户\nauth_join 认证且加入\nauth_join_audit 认证且加入，需审核\nadmin 仅管理员",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "important": {
+                    "description": "重要标记",
+                    "type": "boolean"
+                },
+                "introduction": {
+                    "description": "简介",
+                    "type": "string"
+                },
+                "is_private": {
+                    "description": "是否私密",
+                    "type": "boolean"
+                },
+                "join_permission": {
+                    "description": "加入权限\n默认为 member\nmember 注册用户\nid_cert 身份认证自由关注\nwork_cert 业内认证自由关注\nmember_approve 注册用户，需审批\nid_cert_approve 身份认证自由关注，需审批\nwork_cert_approve 业内认证自由关注，需审批\nadmin_add 仅管理员手工添加\npurchase 付费购买\nvip Pro 用户自由关注",
+                    "type": "string"
+                },
+                "members": {
+                    "description": "成员",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.TopicMemberResp"
+                    }
+                },
+                "members_count": {
+                    "description": "成员数",
+                    "type": "integer"
+                },
+                "meta": {
+                    "type": "object",
+                    "$ref": "#/definitions/model.TopicMeta"
+                },
+                "mute_notification": {
+                    "description": "消息免打扰",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "名称",
+                    "type": "string"
+                },
+                "related_topics": {
+                    "description": "关联话题",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.RelatedTopicShort"
+                    }
+                },
+                "resources_count": {
+                    "description": "资源数量",
+                    "type": "integer"
+                },
+                "topic_home": {
+                    "description": "话题首页\nintroduction 简介\nfeed 动态\ncatalog 目录\ndiscussion 讨论\nchat 群聊",
+                    "type": "string"
+                },
+                "topic_set_id": {
+                    "description": "集合ID",
+                    "type": "string"
+                },
+                "topic_type": {
+                    "description": "话题类型",
+                    "type": "integer"
+                },
+                "topic_type_name": {
+                    "type": "string"
+                },
+                "version": {
+                    "description": "版本列表",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.TopicVersionResp"
+                    }
+                },
+                "version_name": {
+                    "description": "版本名",
+                    "type": "string"
+                },
+                "view_permission": {
+                    "description": "查看权限\npublic 公开\njoin 加入",
+                    "type": "string"
+                }
+            }
+        },
+        "model.TopicTypeResp": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.TopicVersionResp": {
+            "type": "object",
+            "properties": {
+                "seq": {
+                    "description": "顺序",
+                    "type": "integer"
+                },
+                "topic_id": {
+                    "description": "话题ID",
+                    "type": "string"
+                },
+                "topic_name": {
+                    "description": "话题名",
+                    "type": "string"
+                },
+                "topic_set_id": {
+                    "description": "集合ID",
+                    "type": "string"
+                },
+                "version_name": {
+                    "description": "版本名称",
+                    "type": "string"
                 }
             }
         }

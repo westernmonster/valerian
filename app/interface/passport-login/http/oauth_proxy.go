@@ -16,11 +16,11 @@ import (
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param req body model.ArgEmailLogin true "用户登录"
 // @Success 200 {object} model.LoginResp "成功"
-// @Failure -626 "用户不存在"
-// @Failure -116 "Client 不存在"
-// @Failure -629 "密码错误"
+// @Failure 626 "用户不存在"
+// @Failure 116 "Client 不存在"
+// @Failure 629 "密码错误"
 // @Failure 5 "未找到地址信息"
-// @Failure 401 "验证失败"
+// @Failure 400 "验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /oauth/login/email [post]
 func emailLogin(c *mars.Context) {
@@ -58,11 +58,11 @@ func emailLogin(c *mars.Context) {
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param req body model.ArgMobileLogin true "手机登录"
 // @Success 200 {object} model.LoginResp "成功"
-// @Failure -626 "用户不存在"
-// @Failure -116 "Client 不存在"
-// @Failure -629 "密码错误"
+// @Failure 626 "用户不存在"
+// @Failure 116 "Client 不存在"
+// @Failure 629 "密码错误"
 // @Failure 5 "未找到地址信息"
-// @Failure 401 "验证失败"
+// @Failure 400 "验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /oauth/login/mobile [post]
 func mobileLogin(c *mars.Context) {
@@ -100,12 +100,12 @@ func mobileLogin(c *mars.Context) {
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param req body model.ArgDigitLogin true "手机登录"
 // @Success 200 {object} model.LoginResp "成功"
-// @Failure -626 "用户不存在"
-// @Failure -116 "Client 不存在"
+// @Failure 626 "用户不存在"
+// @Failure 116 "Client 不存在"
 // @Failure 2 "验证码已失效"
 // @Failure 3 "验证码错误"
 // @Failure 5 "未找到地址信息"
-// @Failure 401 "验证失败"
+// @Failure 400 "验证失败"
 // @Router /oauth/login/digit [post]
 func digitLogin(c *mars.Context) {
 	arg := new(model.ArgDigitLogin)

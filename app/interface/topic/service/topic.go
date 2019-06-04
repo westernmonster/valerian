@@ -30,7 +30,6 @@ func (p *Service) DeleteTopic(c context.Context, topicID int64) (err error) {
 
 func (p *Service) GetTopic(c context.Context, topicID int64) (item *model.TopicResp, err error) {
 
-	fmt.Println(topicID)
 	if item, err = p.getTopic(c, topicID); err != nil {
 		return
 	}
@@ -47,9 +46,9 @@ func (p *Service) GetTopic(c context.Context, topicID int64) (item *model.TopicR
 		return
 	}
 
-	// if item.Catalogs, err = p.GetCatalogHierarchyOfAll(c, p.d.DB(), topicID); err != nil {
-	// 	return
-	// }
+	if item.Catalogs, err = p.GetCatalogHierarchyOfAll(c, p.d.DB(), topicID); err != nil {
+		return
+	}
 
 	if item.TopicMeta, err = p.GetTopicMeta(c, item); err != nil {
 		return
@@ -234,7 +233,7 @@ func (p *Service) UpdateTopic(c context.Context, arg *model.ArgUpdateTopic) (err
 		return
 	} else if member == nil {
 		return ecode.NotBelongToTopic
-	} else if member.Role != model.MemberRoleAdmin && member.Role != model.MemberRoleAdmin {
+	} else if member.Role != model.MemberRoleAdmin || member.Role != model.MemberRoleAdmin {
 		return ecode.NotTopicAdmin
 	}
 
