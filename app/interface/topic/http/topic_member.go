@@ -19,6 +19,7 @@ import (
 // @Param page query integer true "页码"
 // @Param page_size query integer true "每页大小"
 // @Success 200 {object} model.TopicMembersPagedResp "话题成员"
+// @Failure 400 "请求验证失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /topic/list/members [get]
