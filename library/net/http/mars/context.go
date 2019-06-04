@@ -182,15 +182,15 @@ func (c *Context) JSON(data interface{}, err error) {
 	c.Error = err
 	bcode := ecode.Cause(err)
 
-	if bcode.Code() == -500 {
+	if bcode.Code() == 500 {
 		code = http.StatusInternalServerError
 	}
 
-	if bcode.Code() == -400 {
+	if bcode.Code() == 400 {
 		code = http.StatusBadRequest
 	}
 
-	if bcode.Code() == -401 {
+	if bcode.Code() == 401 {
 		code = http.StatusUnauthorized
 	}
 
