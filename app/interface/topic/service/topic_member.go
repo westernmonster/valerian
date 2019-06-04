@@ -98,7 +98,7 @@ func (p *Service) getTopicMembers(c context.Context, node sqalx.Node, topicID in
 
 func (p *Service) bulkCreateMembers(c context.Context, node sqalx.Node, aid, topicID int64, req *model.ArgCreateTopic) (err error) {
 	var tx sqalx.Node
-	if tx, err = p.d.DB().Beginx(c); err != nil {
+	if tx, err = node.Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
 		return
 	}

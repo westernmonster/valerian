@@ -504,6 +504,44 @@ definitions:
         description: 是否工作认证
         type: boolean
     type: object
+  model.RelatedTopicResp:
+    properties:
+      cover:
+        description: |-
+          封面图
+          必须为URL
+        type: string
+      introduction:
+        description: 简介
+        type: string
+      members_count:
+        description: 成员数
+        type: integer
+      meta:
+        $ref: '#/definitions/model.TopicMeta'
+        type: object
+      resources_count:
+        description: 资源数量
+        type: integer
+      seq:
+        description: 顺序
+        type: integer
+      topic_id:
+        description: 话题ID
+        type: string
+      topic_name:
+        description: 话题名
+        type: string
+      type:
+        description: |-
+          关联类型
+          normal 普通关联
+          strong 强关联
+        type: string
+      version_name:
+        description: 版本名称
+        type: string
+    type: object
   model.RelatedTopicShort:
     properties:
       seq:
@@ -1516,6 +1554,57 @@ paths:
         "500":
           description: 服务器端错误
       summary: 获取成员列表
+      tags:
+      - topic
+  /topic/list/related:
+    get:
+      consumes:
+      - application/json
+      description: 获取关联话题列表
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 话题ID
+        in: query
+        name: topic_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 关联话题
+          schema:
+            items:
+              $ref: '#/definitions/model.RelatedTopicResp'
+            type: array
+        "400":
+          description: 请求验证失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 获取关联话题列表
       tags:
       - topic
   /topic/list/types:

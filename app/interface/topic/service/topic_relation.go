@@ -13,7 +13,7 @@ import (
 
 func (p *Service) bulkSaveRelations(c context.Context, node sqalx.Node, topicID int64, relations []*model.ArgRelatedTopic) (err error) {
 	var tx sqalx.Node
-	if tx, err = p.d.DB().Beginx(c); err != nil {
+	if tx, err = node.Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
 		return
 	}

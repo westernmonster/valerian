@@ -233,7 +233,7 @@ func (p *Service) UpdateTopic(c context.Context, arg *model.ArgUpdateTopic) (err
 		return
 	} else if member == nil {
 		return ecode.NotBelongToTopic
-	} else if member.Role != model.MemberRoleAdmin || member.Role != model.MemberRoleAdmin {
+	} else if member.Role != model.MemberRoleAdmin && member.Role != model.MemberRoleOwner {
 		return ecode.NotTopicAdmin
 	}
 

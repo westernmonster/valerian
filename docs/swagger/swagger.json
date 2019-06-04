@@ -1024,6 +1024,80 @@
                 }
             }
         },
+        "/topic/list/related": {
+            "get": {
+                "description": "获取关联话题列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "topic"
+                ],
+                "summary": "获取关联话题列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "话题ID",
+                        "name": "topic_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "关联话题",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.RelatedTopicResp"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "请求验证失败"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
         "/topic/list/types": {
             "get": {
                 "description": "获取话题类型列表",
@@ -1940,6 +2014,51 @@
                 "work_cert": {
                     "description": "是否工作认证",
                     "type": "boolean"
+                }
+            }
+        },
+        "model.RelatedTopicResp": {
+            "type": "object",
+            "properties": {
+                "cover": {
+                    "description": "封面图\n必须为URL",
+                    "type": "string"
+                },
+                "introduction": {
+                    "description": "简介",
+                    "type": "string"
+                },
+                "members_count": {
+                    "description": "成员数",
+                    "type": "integer"
+                },
+                "meta": {
+                    "type": "object",
+                    "$ref": "#/definitions/model.TopicMeta"
+                },
+                "resources_count": {
+                    "description": "资源数量",
+                    "type": "integer"
+                },
+                "seq": {
+                    "description": "顺序",
+                    "type": "integer"
+                },
+                "topic_id": {
+                    "description": "话题ID",
+                    "type": "string"
+                },
+                "topic_name": {
+                    "description": "话题名",
+                    "type": "string"
+                },
+                "type": {
+                    "description": "关联类型\nnormal 普通关联\nstrong 强关联",
+                    "type": "string"
+                },
+                "version_name": {
+                    "description": "版本名称",
+                    "type": "string"
                 }
             }
         },

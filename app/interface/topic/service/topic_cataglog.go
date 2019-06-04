@@ -129,7 +129,7 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 
 func (p *Service) bulkCreateCatalogs(c context.Context, node sqalx.Node, topicID int64, catalogs []*model.TopicLevel1Catalog) (err error) {
 	var tx sqalx.Node
-	if tx, err = p.d.DB().Beginx(c); err != nil {
+	if tx, err = node.Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
 		return
 	}
