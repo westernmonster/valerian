@@ -10,7 +10,6 @@ import (
 	"valerian/library/ecode"
 	"valerian/library/gid"
 	"valerian/library/log"
-	"valerian/models"
 )
 
 type dicItem struct {
@@ -217,7 +216,7 @@ func (p *Service) updateCatalog(c context.Context, node sqalx.Node, id, topicID 
 
 }
 
-func (p *Service) SaveCatalogs(c context.Context, topicID int64, req *models.ArgSaveTopicCatalog) (err error) {
+func (p *Service) SaveCatalogs(c context.Context, topicID int64, req *model.ArgSaveTopicCatalog) (err error) {
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
@@ -265,7 +264,7 @@ func (p *Service) SaveCatalogs(c context.Context, topicID int64, req *models.Arg
 			continue
 		}
 
-		if v.Item.Type == models.TopicCatalogTaxonomy {
+		if v.Item.Type == model.TopicCatalogTaxonomy {
 			var childrenCount int
 			if childrenCount, err = p.d.GetTopicCatalogChildrenCount(c, tx, topicID, k); err != nil {
 				return

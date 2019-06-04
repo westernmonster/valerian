@@ -9,7 +9,6 @@ import (
 	"valerian/library/ecode"
 	"valerian/library/gid"
 	"valerian/library/log"
-	"valerian/models"
 )
 
 func (p *Service) GetTopicMembersPaged(c context.Context, topicID int64, page, pageSize int) (resp *model.TopicMembersPagedResp, err error) {
@@ -118,7 +117,7 @@ func (p *Service) bulkCreateMembers(c context.Context, node sqalx.Node, aid, top
 			continue
 		}
 
-		if v.Role == models.MemberRoleOwner {
+		if v.Role == model.MemberRoleOwner {
 			return ecode.OnlyAllowOneOwner
 		}
 
@@ -138,7 +137,7 @@ func (p *Service) bulkCreateMembers(c context.Context, node sqalx.Node, aid, top
 	item := &model.TopicMember{
 		ID:        gid.NewID(),
 		AccountID: aid,
-		Role:      models.MemberRoleOwner,
+		Role:      model.MemberRoleOwner,
 		TopicID:   topicID,
 		Deleted:   false,
 		CreatedAt: time.Now().Unix(),
@@ -180,7 +179,7 @@ func (p *Service) BulkSaveMembers(c context.Context, req *model.ArgBatchSavedTop
 	}
 
 	for _, v := range req.Members {
-		if v.Role == models.MemberRoleOwner {
+		if v.Role == model.MemberRoleOwner {
 			continue
 		}
 

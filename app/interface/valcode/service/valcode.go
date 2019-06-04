@@ -7,7 +7,6 @@ import (
 	"time"
 	"valerian/app/interface/valcode/model"
 	"valerian/library/ecode"
-	"valerian/models"
 )
 
 var table = [...]byte{'1', '2', '3', '4', '5', '6', '7', '8', '9', '0'}
@@ -28,12 +27,12 @@ func (p *Service) EmailValcode(c context.Context, req *model.ArgEmailValcode) (c
 	code := generateValcode(6)
 
 	switch req.CodeType {
-	case models.ValcodeRegister:
+	case model.ValcodeRegister:
 		if err = p.email.SendRegisterEmail(c, req.Email, code); err != nil {
 			return
 		}
 		break
-	case models.ValcodeForgetPassword:
+	case model.ValcodeForgetPassword:
 		if err = p.email.SendResetPasswordValcode(c, req.Email, code); err != nil {
 			return
 		}
@@ -63,17 +62,17 @@ func (p *Service) MobileValcode(c context.Context, req *model.ArgMobileValcode) 
 	code = generateValcode(6)
 
 	switch req.CodeType {
-	case models.ValcodeLogin:
+	case model.ValcodeLogin:
 		if err = p.sms.SendLoginValcode(c, req.Prefix, req.Mobile, code); err != nil {
 			return
 		}
 		break
-	case models.ValcodeRegister:
+	case model.ValcodeRegister:
 		if err = p.sms.SendRegisterValcode(c, req.Prefix, req.Mobile, code); err != nil {
 			return
 		}
 		break
-	case models.ValcodeForgetPassword:
+	case model.ValcodeForgetPassword:
 		if err = p.sms.SendResetPasswordValcode(c, req.Prefix, req.Mobile, code); err != nil {
 			return
 		}
