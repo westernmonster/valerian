@@ -20,7 +20,7 @@ import (
 // @Failure 116 "Client 不存在"
 // @Failure 629 "密码错误"
 // @Failure 5 "未找到地址信息"
-// @Failure 400 "验证失败"
+// @Failure 401 "验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /oauth/login/email [post]
 func emailLogin(c *mars.Context) {
