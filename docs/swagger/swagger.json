@@ -864,6 +864,80 @@
                 }
             }
         },
+        "/topic/list/catalogs": {
+            "get": {
+                "description": "获取话题类目",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "topic"
+                ],
+                "summary": "获取话题类目",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "话题ID",
+                        "name": "topic_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "话题类目",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.TopicLevel1Catalog"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "请求验证失败"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
         "/topic/list/members": {
             "get": {
                 "description": "获取成员列表",
@@ -937,6 +1011,9 @@
                             "type": "object",
                             "$ref": "#/definitions/model.TopicMembersPagedResp"
                         }
+                    },
+                    "400": {
+                        "description": "请求验证失败"
                     },
                     "401": {
                         "description": "登录验证失败"

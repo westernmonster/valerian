@@ -19,7 +19,7 @@ import (
 // @Failure 400 "请求验证失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /topic/list/members [get]
+// @Router /topic/list/catalogs [get]
 func topicCatalogs(c *mars.Context) {
 	var (
 		id  int64
