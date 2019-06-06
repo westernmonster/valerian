@@ -140,6 +140,7 @@ func (p *Service) DigitLogin(ctx context.Context, req *model.ArgDigitLogin) (res
 
 	p.addCache(func() {
 		p.d.SetProfileCache(context.TODO(), resp.Profile)
+		p.d.DelMobileValcodeCache(context.TODO(), model.ValcodeLogin, mobile)
 	})
 
 	return

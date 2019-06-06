@@ -387,6 +387,29 @@ definitions:
           join 加入
         type: string
     type: object
+  model.CountryCodeResp:
+    properties:
+      cn_name:
+        description: 国家中文名
+        type: string
+      code:
+        description: 编码
+        type: string
+      emoji:
+        description: 国旗
+        type: string
+      id:
+        description: ID
+        type: string
+      name:
+        description: 国家名
+        type: string
+      prefix:
+        description: |-
+          前缀/电话区号
+          example: 86
+        type: string
+    type: object
   model.LoginResp:
     properties:
       access_token:
@@ -909,6 +932,43 @@ paths:
       summary: 获取阿里云OSS上传TOKEN
       tags:
       - common
+  /list/country_codes:
+    get:
+      consumes:
+      - application/json
+      description: 获取电话国家区号
+      parameters:
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 国家区号
+          schema:
+            items:
+              $ref: '#/definitions/model.CountryCodeResp'
+            type: array
+        "500":
+          description: 服务器端错误
+      summary: 获取电话国家区号
+      tags:
+      - common
   /oauth/login/digit:
     post:
       consumes:
@@ -1004,7 +1064,7 @@ paths:
           schema:
             $ref: '#/definitions/model.LoginResp'
             type: object
-        "400":
+        "401":
           description: 验证失败
         "500":
           description: 服务器端错误
@@ -1216,9 +1276,7 @@ paths:
       - application/json
       responses:
         "17":
-          description: RefreshToken 不存在
-        "42":
-          description: RefreshToken 过期
+          description: RefreshToken 不存在或已过期
         "116":
           description: Client 不存在
         "200":

@@ -32,13 +32,13 @@ func (p *Service) RenewToken(c context.Context, arg *model.ArgRenewToken) (r *mo
 	if t, err = p.d.GetRefreshToken(c, p.d.AuthDB(), arg.RefreshToken); err != nil {
 		return
 	} else if t == nil {
-		err = ecode.RefreshTokenNotExist
+		err = ecode.RefreshTokenNotExistOrExpired
 		return
 	} else if t.ClientID != arg.ClientID {
-		err = ecode.RefreshTokenNotExist
+		err = ecode.RefreshTokenNotExistOrExpired
 		return
 	} else if time.Now().Unix() > t.ExpiresAt {
-		err = ecode.RefreshTokenExpires
+		err = ecode.RefreshTokenNotExistOrExpired
 		return
 	}
 

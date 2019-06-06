@@ -3,13 +3,13 @@ package dao
 import (
 	"context"
 	"fmt"
-	"valerian/app/interface/location/model"
+	"valerian/app/interface/locale/model"
 	"valerian/library/cache/memcache"
 	"valerian/library/log"
 )
 
 const (
-	key = "country_codes"
+	key = "locales"
 )
 
 func (p *Dao) pingMC(c context.Context) (err error) {
@@ -25,7 +25,7 @@ func (p *Dao) pingMC(c context.Context) (err error) {
 	return
 }
 
-func (p *Dao) SetCountryCodesCache(c context.Context, items []*model.CountryCode) (err error) {
+func (p *Dao) SetLocalesCache(c context.Context, items []*model.Locale) (err error) {
 	conn := p.mc.Get(c)
 	defer conn.Close()
 
@@ -36,7 +36,7 @@ func (p *Dao) SetCountryCodesCache(c context.Context, items []*model.CountryCode
 	return
 }
 
-func (p *Dao) CountryCodesCache(c context.Context) (res []*model.CountryCode, err error) {
+func (p *Dao) LocalesCache(c context.Context) (res []*model.Locale, err error) {
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	var item *memcache.Item
@@ -54,7 +54,7 @@ func (p *Dao) CountryCodesCache(c context.Context) (res []*model.CountryCode, er
 	return
 }
 
-func (p *Dao) DelCountryCodesCache(c context.Context, token string) (err error) {
+func (p *Dao) DelLocalesCache(c context.Context, token string) (err error) {
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	if err = conn.Delete(key); err != nil {

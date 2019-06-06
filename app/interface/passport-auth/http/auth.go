@@ -16,8 +16,7 @@ import (
 // @Param req body model.ArgRenewToken true "请求"
 // @Success 200 "成功"
 // @Failure 116 "Client 不存在"
-// @Failure 17 "RefreshToken 不存在"
-// @Failure 42 "RefreshToken 过期"
+// @Failure 17 "RefreshToken 不存在或已过期"
 // @Failure 400 "验证请求失败"
 // @Failure 500 "服务器端错误"
 // @Router /oauth/renew [post]

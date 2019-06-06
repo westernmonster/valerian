@@ -23,7 +23,7 @@ func Init(c *conf.Config, engine *mars.Engine) {
 func route(e *mars.Engine) {
 	g := e.Group("/api/v1")
 	{
-		g.POST("/files/oss_token", auth.User, ossToken)
+		g.POST("/file/oss_token", auth.User, ossToken)
 	}
 }
 

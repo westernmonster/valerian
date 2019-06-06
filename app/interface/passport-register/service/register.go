@@ -88,6 +88,10 @@ func (p *Service) MobileRegister(c context.Context, arg *model.ArgMobile) (resp 
 		return
 	}
 
+	p.addCache(func() {
+		p.d.DelMobileValcodeCache(context.TODO(), model.ValcodeRegister, mobile)
+	})
+
 	return p.loginAccount(c, item.ID, arg.ClientID)
 }
 
@@ -164,6 +168,10 @@ func (p *Service) EmailRegister(c context.Context, arg *model.ArgEmail) (resp *m
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 		return
 	}
+
+	p.addCache(func() {
+		p.d.DelEmailValcodeCache(context.TODO(), model.ValcodeRegister, arg.Email)
+	})
 
 	return p.loginAccount(c, item.ID, arg.ClientID)
 }

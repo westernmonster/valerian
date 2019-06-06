@@ -85,6 +85,60 @@
                 }
             }
         },
+        "/list/country_codes": {
+            "get": {
+                "description": "获取电话国家区号",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "common"
+                ],
+                "summary": "获取电话国家区号",
+                "parameters": [
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "国家区号",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.CountryCodeResp"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
         "/oauth/login/digit": {
             "post": {
                 "description": "验证码登录",
@@ -221,7 +275,7 @@
                             "$ref": "#/definitions/model.LoginResp"
                         }
                     },
-                    "400": {
+                    "401": {
                         "description": "验证失败"
                     },
                     "5": {
@@ -535,16 +589,13 @@
                         "description": "Client 不存在"
                     },
                     "17": {
-                        "description": "RefreshToken 不存在"
+                        "description": "RefreshToken 不存在或已过期"
                     },
                     "200": {
                         "description": "成功"
                     },
                     "400": {
                         "description": "验证请求失败"
-                    },
-                    "42": {
-                        "description": "RefreshToken 过期"
                     },
                     "500": {
                         "description": "服务器端错误"
@@ -1855,6 +1906,35 @@
                 },
                 "view_permission": {
                     "description": "查看权限\npublic 公开\njoin 加入",
+                    "type": "string"
+                }
+            }
+        },
+        "model.CountryCodeResp": {
+            "type": "object",
+            "properties": {
+                "cn_name": {
+                    "description": "国家中文名",
+                    "type": "string"
+                },
+                "code": {
+                    "description": "编码",
+                    "type": "string"
+                },
+                "emoji": {
+                    "description": "国旗",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "国家名",
+                    "type": "string"
+                },
+                "prefix": {
+                    "description": "前缀/电话区号\nexample: 86",
                     "type": "string"
                 }
             }

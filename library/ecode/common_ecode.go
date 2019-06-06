@@ -65,7 +65,7 @@ var (
 	InvalidBirthMonth              = add(14) // 出生月不正确
 	InvalidBirthDay                = add(15) // 出生日不正确
 	SessionExpires                 = add(16) // Session 过期
-	RefreshTokenNotExist           = add(17) // RefreshToken不存在
+	RefreshTokenNotExistOrExpired  = add(17) // RefreshToken不存在
 	TopicNotExist                  = add(18) // 话题不存在
 	OnlyAllowOneOwner              = add(19) // 主理人只能有一个
 	AcquireAccountIDFailed         = add(20) // 获取用户ID失败
@@ -80,5 +80,4 @@ var (
 	OnlyAllowAdminAdded            = add(39) // 必须管理员添加
 	NeedPurchase                   = add(40) // 必须购买
 	NeedVIP                        = add(41) // 必须是VIP用户
-	RefreshTokenExpires            = add(42) // RefreshToken过期
 )

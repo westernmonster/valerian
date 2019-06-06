@@ -20,6 +20,6 @@ func Init(c *conf.Config, engine *mars.Engine) {
 func route(e *mars.Engine) {
 	g := e.Group("/api/v1")
 	{
-		g.GET("/country_codes", countryCodes)
+		g.GET("/list/country_codes", countryCodes)
 	}
 }
