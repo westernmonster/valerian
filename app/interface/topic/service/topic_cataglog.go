@@ -216,7 +216,7 @@ func (p *Service) updateCatalog(c context.Context, node sqalx.Node, id, topicID 
 
 }
 
-func (p *Service) SaveCatalogs(c context.Context, topicID int64, req *model.ArgSaveTopicCatalog) (err error) {
+func (p *Service) SaveCatalogs(c context.Context, req *model.ArgSaveTopicCatalog) (err error) {
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
@@ -232,8 +232,15 @@ func (p *Service) SaveCatalogs(c context.Context, topicID int64, req *model.ArgS
 		}
 	}()
 
+	var t *model.Topic
+	if t, err = p.d.GetTopicByID(c, tx, req.TopicID); err != nil {
+		return
+	} else if t == nil {
+		return ecode.TopicNotExist
+	}
+
 	var dbCatalogs []*model.TopicCatalog
-	if dbCatalogs, err = p.d.GetTopicCatalogsByCondition(c, tx, topicID, req.ParentID); err != nil {
+	if dbCatalogs, err = p.d.GetTopicCatalogsByCondition(c, tx, req.TopicID, req.ParentID); err != nil {
 		return
 	}
 
@@ -247,14 +254,14 @@ func (p *Service) SaveCatalogs(c context.Context, topicID int64, req *model.ArgS
 
 	for _, v := range req.Items {
 		if v.ID == nil {
-			if _, err = p.createCatalog(c, tx, topicID, v.Name, v.Seq, v.Type, v.RefID, req.ParentID); err != nil {
+			if _, err = p.createCatalog(c, tx, req.TopicID, v.Name, v.Seq, v.Type, v.RefID, req.ParentID); err != nil {
 				return
 			}
 			continue
 		}
 
 		dic[*v.ID] = dicItem{Done: true}
-		if err = p.updateCatalog(c, tx, *v.ID, topicID, v.Name, v.Seq, v.Type, v.RefID, req.ParentID); err != nil {
+		if err = p.updateCatalog(c, tx, *v.ID, req.TopicID, v.Name, v.Seq, v.Type, v.RefID, req.ParentID); err != nil {
 			return
 		}
 	}
@@ -266,7 +273,7 @@ func (p *Service) SaveCatalogs(c context.Context, topicID int64, req *model.ArgS
 
 		if v.Item.Type == model.TopicCatalogTaxonomy {
 			var childrenCount int
-			if childrenCount, err = p.d.GetTopicCatalogChildrenCount(c, tx, topicID, k); err != nil {
+			if childrenCount, err = p.d.GetTopicCatalogChildrenCount(c, tx, req.TopicID, k); err != nil {
 				return
 			}
 			if childrenCount > 0 {
@@ -286,8 +293,8 @@ func (p *Service) SaveCatalogs(c context.Context, topicID int64, req *model.ArgS
 	}
 
 	p.addCache(func() {
-		p.d.DelTopicCatalogCache(context.TODO(), topicID)
-		p.d.DelTopicCache(context.TODO(), topicID)
+		p.d.DelTopicCatalogCache(context.TODO(), req.TopicID)
+		p.d.DelTopicCache(context.TODO(), req.TopicID)
 	})
 	return
 }
