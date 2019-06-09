@@ -2,7 +2,7 @@ package model
 
 import (
 	"regexp"
-	"valerian/infrastructure/berr"
+	"valerian/library/ecode"
 
 	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/go-ozzo/ozzo-validation/is"
@@ -100,11 +100,11 @@ func (p *ValidateMobileRule) Validate(v interface{}) error {
 
 	if p.Prefix == "86" {
 		if !chinaRegex.MatchString(mobile) {
-			return berr.Errorf(`"mobile" format is not validate`)
+			return ecode.InvalidMobile
 		}
 	} else { // China
 		if !otherRegex.MatchString(mobile) {
-			return berr.Errorf(`"mobile" format is not validate`)
+			return ecode.InvalidMobile
 		}
 	} // Other Country
 

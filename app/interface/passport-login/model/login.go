@@ -2,7 +2,7 @@ package model
 
 import (
 	"regexp"
-	"valerian/infrastructure/berr"
+	"valerian/library/ecode"
 
 	"github.com/asaskevich/govalidator"
 	validation "github.com/go-ozzo/ozzo-validation"
@@ -129,11 +129,11 @@ func (p *ValidateMobileRule) Validate(v interface{}) error {
 
 	if p.Prefix == "86" {
 		if !chinaRegex.MatchString(mobile) {
-			return berr.Errorf(`"mobile" format is not validate`)
+			return ecode.InvalidMobile
 		}
 	} else { // China
 		if !otherRegex.MatchString(mobile) {
-			return berr.Errorf(`"mobile" format is not validate`)
+			return ecode.InvalidMobile
 		}
 	} // Other Country
 
@@ -157,7 +157,7 @@ func (p *ValidateIdentityRule) Validate(v interface{}) error {
 
 	if p.IdentityType == IdentityEmail {
 		if !govalidator.IsEmail(identity) {
-			return berr.Errorf("邮件地址不正确")
+			return ecode.InvalidEmail
 		}
 	} else {
 		chinaRegex := regexp.MustCompile(ChinaMobileRegex)
@@ -165,11 +165,11 @@ func (p *ValidateIdentityRule) Validate(v interface{}) error {
 
 		if p.Prefix == "86" {
 			if !chinaRegex.MatchString(identity) {
-				return berr.Errorf("手机号码不正确")
+				return ecode.InvalidMobile
 			}
 		} else { // China
 			if !otherRegex.MatchString(identity) {
-				return berr.Errorf("手机号码不正确")
+				return ecode.InvalidMobile
 			}
 		} // Other Country
 	}
