@@ -88,11 +88,16 @@ func Trace(tr opentracing.Tracer, options ...MWOption) HandlerFunc {
 		}
 		ext.Component.Set(sp, componentName)
 
+		sct := c.Writer.(*statusCodeTracker)
+
 		c.Context = opentracing.ContextWithSpan(c.Context, sp)
 
 		c.Next()
 
-		// ext.HTTPStatusCode.Set(sp, uint16(c.Writer.Status()))
+		ext.HTTPStatusCode.Set(sp, uint16(sct.status))
+		if sct.status >= http.StatusInternalServerError || !sct.wroteheader {
+			ext.Error.Set(sp, true)
+		}
 		sp.Finish()
 	}
 }

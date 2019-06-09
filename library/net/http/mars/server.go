@@ -246,8 +246,10 @@ func (engine *Engine) addRoute(method, path string, handlers ...HandlerFunc) {
 			Error:    nil,
 		}
 
+		sct := &statusCodeTracker{ResponseWriter: w}
+
 		c.Request = req
-		c.Writer = w
+		c.Writer = sct
 		c.handlers = handlers
 		c.method = method
 
