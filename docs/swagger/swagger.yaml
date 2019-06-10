@@ -287,6 +287,46 @@ definitions:
       refresh_token:
         type: string
     type: object
+  model.ArgSaveTopicCatalog:
+    properties:
+      items:
+        description: |-
+          话题分类
+          required: true
+        items:
+          $ref: '#/definitions/model.ArgTopicCatalog'
+        type: array
+      parent_id:
+        description: |-
+          父级ID
+          required: true
+        type: string
+      topic_id:
+        type: string
+    type: object
+  model.ArgTopicCatalog:
+    properties:
+      id:
+        type: string
+      name:
+        description: |-
+          名称
+          required: true
+        type: string
+      ref_id:
+        description: 引用ID
+        type: string
+      seq:
+        description: |-
+          顺序
+          required: true
+        type: integer
+      type:
+        description: |-
+          类型
+          required: true
+        type: string
+    type: object
   model.ArgTopicMember:
     properties:
       account_id:
@@ -409,6 +449,21 @@ definitions:
           前缀/电话区号
           example: 86
         type: string
+    type: object
+  model.Locale:
+    properties:
+      created_at:
+        type: integer
+      deleted:
+        type: boolean
+      id:
+        type: integer
+      locale:
+        type: string
+      name:
+        type: string
+      updated_at:
+        type: integer
     type: object
   model.LoginResp:
     properties:
@@ -969,6 +1024,43 @@ paths:
       summary: 获取电话国家区号
       tags:
       - common
+  /list/locales:
+    get:
+      consumes:
+      - application/json
+      description: 获取系统支持语言
+      parameters:
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 国家区号
+          schema:
+            items:
+              $ref: '#/definitions/model.Locale'
+            type: array
+        "500":
+          description: 服务器端错误
+      summary: 获取系统支持语言
+      tags:
+      - common
   /oauth/login/digit:
     post:
       consumes:
@@ -1343,6 +1435,55 @@ paths:
         "500":
           description: 服务器端错误
       summary: 新增话题
+      tags:
+      - topic
+  /topic/catalogs:
+    post:
+      consumes:
+      - application/json
+      description: 更新话题类目
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/model.ArgSaveTopicCatalog'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+        "400":
+          description: 请求验证失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 更新话题类目
       tags:
       - topic
   /topic/del:

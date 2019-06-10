@@ -18,6 +18,7 @@ import (
 	httpAccount "valerian/app/interface/account/http"
 	authMiddleware "valerian/app/interface/auth"
 	httpFile "valerian/app/interface/file/http"
+	httpLocale "valerian/app/interface/locale/http"
 	httpLocation "valerian/app/interface/location/http"
 	httpAuth "valerian/app/interface/passport-auth/http"
 	httpLogin "valerian/app/interface/passport-login/http"
@@ -95,6 +96,7 @@ func initHTTP(c *conf.Config) {
 	httpAccount.Init(c, engine)
 	httpFile.Init(c, engine)
 	httpTopic.Init(c, engine)
+	httpLocale.Init(c, engine)
 
 	if err := engine.Start(); err != nil {
 		log.Error(fmt.Sprintf("engine.Start error(%v)", err))

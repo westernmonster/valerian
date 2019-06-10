@@ -139,6 +139,60 @@
                 }
             }
         },
+        "/list/locales": {
+            "get": {
+                "description": "获取系统支持语言",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "common"
+                ],
+                "summary": "获取系统支持语言",
+                "parameters": [
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "国家区号",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Locale"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
         "/oauth/login/digit": {
             "post": {
                 "description": "验证码登录",
@@ -676,6 +730,77 @@
                     },
                     "400": {
                         "description": "验证请求失败"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/topic/catalogs": {
+            "post": {
+                "description": "更新话题类目",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "topic"
+                ],
+                "summary": "更新话题类目",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/model.ArgSaveTopicCatalog"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功"
+                    },
+                    "400": {
+                        "description": "请求验证失败"
                     },
                     "401": {
                         "description": "登录验证失败"
@@ -1824,6 +1949,49 @@
                 }
             }
         },
+        "model.ArgSaveTopicCatalog": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "description": "话题分类\nrequired: true",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.ArgTopicCatalog"
+                    }
+                },
+                "parent_id": {
+                    "description": "父级ID\nrequired: true",
+                    "type": "string"
+                },
+                "topic_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.ArgTopicCatalog": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "description": "名称\nrequired: true",
+                    "type": "string"
+                },
+                "ref_id": {
+                    "description": "引用ID",
+                    "type": "string"
+                },
+                "seq": {
+                    "description": "顺序\nrequired: true",
+                    "type": "integer"
+                },
+                "type": {
+                    "description": "类型\nrequired: true",
+                    "type": "string"
+                }
+            }
+        },
         "model.ArgTopicMember": {
             "type": "object",
             "properties": {
@@ -1936,6 +2104,29 @@
                 "prefix": {
                     "description": "前缀/电话区号\nexample: 86",
                     "type": "string"
+                }
+            }
+        },
+        "model.Locale": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "integer"
+                },
+                "deleted": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "locale": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "integer"
                 }
             }
         },
