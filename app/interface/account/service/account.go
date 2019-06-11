@@ -84,12 +84,10 @@ func (p *Service) ForgetPassword(c context.Context, arg *model.ArgForgetPassword
 }
 
 func (p *Service) getAccountByID(c context.Context, aid int64) (account *model.Account, err error) {
-	var (
-		needCache bool
-	)
+	var needCache = true
 
 	if account, err = p.d.AccountCache(c, aid); err != nil {
-		needCache = true
+		needCache = false
 	} else if account != nil {
 		return
 	}

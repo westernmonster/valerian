@@ -58,9 +58,9 @@ func (p *Service) RenewToken(c context.Context, arg *model.ArgRenewToken) (r *mo
 }
 
 func (p *Service) getAccessToken(c context.Context, token string) (t *model.AccessToken, err error) {
-	needCache := false
+	needCache := true
 	if t, err = p.d.AccessTokenCache(c, token); err != nil {
-		needCache = true
+		needCache = false
 	} else if t != nil {
 		return
 	}
