@@ -17,6 +17,7 @@ import (
 
 	httpAccount "valerian/app/interface/account/http"
 	authMiddleware "valerian/app/interface/auth"
+	httpCertification "valerian/app/interface/certification/http"
 	httpFile "valerian/app/interface/file/http"
 	httpLocale "valerian/app/interface/locale/http"
 	httpLocation "valerian/app/interface/location/http"
@@ -86,8 +87,8 @@ func main() {
 
 func initHTTP(c *conf.Config) {
 	engine := mars.DefaultServer(c.HTTPServer)
-
 	authMiddleware.Init(c)
+
 	httpLogin.Init(c, engine)
 	httpValcode.Init(c, engine)
 	httpLocation.Init(c, engine)
@@ -97,6 +98,7 @@ func initHTTP(c *conf.Config) {
 	httpFile.Init(c, engine)
 	httpTopic.Init(c, engine)
 	httpLocale.Init(c, engine)
+	httpCertification.Init(c, engine)
 
 	if err := engine.Start(); err != nil {
 		log.Error(fmt.Sprintf("engine.Start error(%v)", err))

@@ -1,23 +1,19 @@
 package model
 
 import (
-	"regexp"
-
 	validation "github.com/go-ozzo/ozzo-validation"
 )
 
 type ArgAddDraftCategory struct {
-	Name string `json:"name"`
-
-	Color string `json:"color"`
+	Name    string `json:"name"`
+	ColorID int64  `json:"color_id,string" swaggertype:"string"`
 }
 
 func (p *ArgAddDraftCategory) Validate() error {
 	return validation.ValidateStruct(
 		p,
-		validation.Field(&p.Name, validation.Required.Error(`请输入颜色名`)),
-		validation.Field(&p.Color, validation.Required.Error(`请输入颜色值`),
-			validation.Match(regexp.MustCompile(`^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$`)).Error(`颜色值格式不正确`)),
+		validation.Field(&p.Name, validation.Required.Error(`请输入分类名`)),
+		validation.Field(&p.ColorID, validation.Required.Error(`请输入颜色`)),
 	)
 }
 
@@ -26,15 +22,14 @@ type ArgUpdateDraftCategory struct {
 
 	Name string `json:"name"`
 
-	Color string `json:"color"`
+	ColorID int64 `json:"color_id,string" swaggertype:"string"`
 }
 
 func (p *ArgUpdateDraftCategory) Validate() error {
 	return validation.ValidateStruct(
 		p,
-		validation.Field(&p.ID, validation.Required.Error(`请输入颜色ID`)),
-		validation.Field(&p.Name, validation.Required.Error(`请输入颜色名`)),
-		validation.Field(&p.Color, validation.Required.Error(`请输入颜色值`),
-			validation.Match(regexp.MustCompile(`^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$`)).Error(`颜色值格式不正确`)),
+		validation.Field(&p.ID, validation.Required.Error(`请输入分类ID`)),
+		validation.Field(&p.Name, validation.Required.Error(`请输入分类名`)),
+		validation.Field(&p.ColorID, validation.Required.Error(`请输入颜色`)),
 	)
 }

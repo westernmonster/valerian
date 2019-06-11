@@ -80,4 +80,8 @@ var (
 	OnlyAllowAdminAdded            = add(39) // 必须管理员添加
 	NeedPurchase                   = add(40) // 必须购买
 	NeedVIP                        = add(41) // 必须是VIP用户
+	IDCertificationNotExist        = add(42) // 尚未发起身份认证
+	ColorNotExist                  = add(43) // 颜色不存在
+	NotBelongToYou                 = add(44) // 不属于你
+	DraftCategoryNotExist          = add(45) // 草稿分类不存在
 )

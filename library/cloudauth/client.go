@@ -1,13 +1,16 @@
 package cloudauth
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
+	"valerian/library/log"
 
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk"
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk/requests"
-	"github.com/sirupsen/logrus"
-	"github.com/ztrue/tracerr"
+	"github.com/pkg/errors"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
 const (
@@ -148,7 +151,7 @@ type Material struct {
 	Type string `json:"Type"`
 }
 
-func (p *CloudAuthClient) GetVerifyToken(ticketID string) (resp *GetVerifyTokenResponse, err error) {
+func (p *CloudAuthClient) GetVerifyToken(c context.Context, ticketID string) (resp *GetVerifyTokenResponse, err error) {
 	request := requests.NewCommonRequest()
 	request.Domain = EndPoint
 	request.Version = Version
@@ -161,27 +164,29 @@ func (p *CloudAuthClient) GetVerifyToken(ticketID string) (resp *GetVerifyTokenR
 
 	response, err := p.Client.ProcessCommonRequest(request)
 	if err != nil {
-		logrus.WithFields(logrus.Fields{
-			"prefix":    "cloudauth",
-			"method":    "GetVerifyToken",
-			"biz":       "flywiki",
-			"ticket_id": ticketID,
-		}).Error(fmt.Sprintf("ProcessCommonRequest: %v", err))
-		err = tracerr.Errorf("发起实人认证请求失败")
+		fields := []zapcore.Field{
+			zap.String("prefix", "cloudauth"),
+			zap.String("method", "GetVerifyToken"),
+			zap.String("biz", "flywiki"),
+			zap.String("ticket_id", ticketID),
+		}
+
+		log.For(c).Error(fmt.Sprintf("ProcessCommonRequest: %v", err), fields...)
 		return
 	}
 
 	if !response.IsSuccess() {
-		logrus.WithFields(logrus.Fields{
-			"prefix":       "cloudauth",
-			"method":       "GetVerifyToken",
-			"biz":          "flywiki",
-			"ticket_id":    ticketID,
-			"http_status":  response.GetHttpStatus(),
-			"http_content": response.GetHttpContentString(),
-		}).Error(fmt.Sprintf("HTTP Status: %v", err))
+		fields := []zapcore.Field{
+			zap.String("prefix", "cloudauth"),
+			zap.String("method", "GetVerifyToken"),
+			zap.String("biz", "flywiki"),
+			zap.String("ticket_id", ticketID),
+			zap.Int("http_status", response.GetHttpStatus()),
+			zap.String("http_content", response.GetHttpContentString()),
+		}
 
-		err = tracerr.Errorf("发起实人认证请求失败")
+		err = errors.Errorf("CloudAuth Response Failed")
+		log.For(c).Error(fmt.Sprintf("HTTP Status: %v", err), fields...)
 		return
 	}
 	data := response.GetHttpContentBytes()
@@ -189,35 +194,38 @@ func (p *CloudAuthClient) GetVerifyToken(ticketID string) (resp *GetVerifyTokenR
 	err = json.Unmarshal(data, resp)
 
 	if err != nil {
-		logrus.WithFields(logrus.Fields{
-			"prefix":       "cloudauth",
-			"method":       "GetVerifyToken",
-			"biz":          "flywiki",
-			"ticket_id":    ticketID,
-			"http_status":  response.GetHttpStatus(),
-			"http_content": response.GetHttpContentString(),
-		}).Error(fmt.Sprintf("Unmarshal Response: %v", err))
-		err = tracerr.Errorf("发起实人认证请求失败")
+		fields := []zapcore.Field{
+			zap.String("prefix", "cloudauth"),
+			zap.String("method", "GetVerifyToken"),
+			zap.String("biz", "flywiki"),
+			zap.String("ticket_id", ticketID),
+			zap.Int("http_status", response.GetHttpStatus()),
+			zap.String("http_content", response.GetHttpContentString()),
+		}
+
+		log.For(c).Error(fmt.Sprintf("Unmarshal Response: %v", err), fields...)
 		return
 	}
 
 	if !resp.Success {
-		logrus.WithFields(logrus.Fields{
-			"prefix":       "cloudauth",
-			"method":       "GetVerifyToken",
-			"biz":          "flywiki",
-			"ticket_id":    ticketID,
-			"http_status":  response.GetHttpStatus(),
-			"http_content": response.GetHttpContentString(),
-		}).Error(fmt.Sprintf("Code: %v", resp.Code))
-		err = tracerr.Errorf("发起实人认证请求失败")
+		fields := []zapcore.Field{
+			zap.String("prefix", "cloudauth"),
+			zap.String("method", "GetVerifyToken"),
+			zap.String("biz", "flywiki"),
+			zap.String("ticket_id", ticketID),
+			zap.Int("http_status", response.GetHttpStatus()),
+			zap.String("http_content", response.GetHttpContentString()),
+		}
+
+		log.For(c).Error(fmt.Sprintf(fmt.Sprintf("Code: %v", resp.Code)), fields...)
+		err = errors.Errorf("CloudAuth Failed")
 		return
 	}
 
 	return
 }
 
-func (p *CloudAuthClient) GetStatus(ticketID string) (resp *GetStatusResponse, err error) {
+func (p *CloudAuthClient) GetStatus(c context.Context, ticketID string) (resp *GetStatusResponse, err error) {
 	request := requests.NewCommonRequest()
 	request.Domain = EndPoint
 	request.Version = Version
@@ -230,64 +238,67 @@ func (p *CloudAuthClient) GetStatus(ticketID string) (resp *GetStatusResponse, e
 
 	response, err := p.Client.ProcessCommonRequest(request)
 	if err != nil {
-		logrus.WithFields(logrus.Fields{
-			"prefix":    "cloudauth",
-			"method":    "GetStatus",
-			"biz":       "flywiki",
-			"ticket_id": ticketID,
-		}).Error(fmt.Sprintf("ProcessCommonRequest: %v", err))
-		err = tracerr.Errorf("获取实人认证状态失败")
+		fields := []zapcore.Field{
+			zap.String("prefix", "cloudauth"),
+			zap.String("method", "GetStatus"),
+			zap.String("biz", "flywiki"),
+			zap.String("ticket_id", ticketID),
+		}
+
+		log.For(c).Error(fmt.Sprintf("ProcessCommonRequest: %v", err), fields...)
 		return
 	}
 
 	if !response.IsSuccess() {
-		logrus.WithFields(logrus.Fields{
-			"prefix":       "cloudauth",
-			"method":       "GetStatus",
-			"biz":          "flywiki",
-			"ticket_id":    ticketID,
-			"http_status":  response.GetHttpStatus(),
-			"http_content": response.GetHttpContentString(),
-		}).Error(fmt.Sprintf("HTTP Status: %v", err))
+		fields := []zapcore.Field{
+			zap.String("prefix", "cloudauth"),
+			zap.String("method", "GetStatus"),
+			zap.String("biz", "flywiki"),
+			zap.String("ticket_id", ticketID),
+			zap.Int("http_status", response.GetHttpStatus()),
+			zap.String("http_content", response.GetHttpContentString()),
+		}
 
-		err = tracerr.Errorf("获取实人认证状态失败")
+		err = errors.Errorf("CloudAuth Response Failed")
+		log.For(c).Error(fmt.Sprintf("HTTP Status: %v", err), fields...)
 		return
+
 	}
 	data := response.GetHttpContentBytes()
 	resp = new(GetStatusResponse)
-	err = json.Unmarshal(data, resp)
+	if err = json.Unmarshal(data, resp); err != nil {
+		fields := []zapcore.Field{
+			zap.String("prefix", "cloudauth"),
+			zap.String("method", "GetStatus"),
+			zap.String("biz", "flywiki"),
+			zap.String("ticket_id", ticketID),
+			zap.Int("http_status", response.GetHttpStatus()),
+			zap.String("http_content", response.GetHttpContentString()),
+		}
 
-	if err != nil {
-		logrus.WithFields(logrus.Fields{
-			"prefix":       "cloudauth",
-			"method":       "GetStatus",
-			"biz":          "flywiki",
-			"ticket_id":    ticketID,
-			"http_status":  response.GetHttpStatus(),
-			"http_content": response.GetHttpContentString(),
-		}).Error(fmt.Sprintf("Unmarshal Response: %v", err))
-		err = tracerr.Errorf("获取实人认证状态失败")
+		log.For(c).Error(fmt.Sprintf("Unmarshal: %v", err), fields...)
 		return
 	}
 
 	if !resp.Success {
-		logrus.WithFields(logrus.Fields{
-			"prefix":       "cloudauth",
-			"method":       "GetVerifyToken",
-			"biz":          "flywiki",
-			"ticket_id":    ticketID,
-			"http_status":  response.GetHttpStatus(),
-			"http_content": response.GetHttpContentString(),
-		}).Error(fmt.Sprintf("Code: %v", resp.Code))
-		err = tracerr.Errorf("获取实人认证状态失败")
+		fields := []zapcore.Field{
+			zap.String("prefix", "cloudauth"),
+			zap.String("method", "GetStatus"),
+			zap.String("biz", "flywiki"),
+			zap.String("ticket_id", ticketID),
+			zap.Int("http_status", response.GetHttpStatus()),
+			zap.String("http_content", response.GetHttpContentString()),
+		}
+
+		err = errors.Errorf("CloudAuth Failed")
+		log.For(c).Error("resp not success", fields...)
 		return
 	}
 
 	return
 }
 
-func (p *CloudAuthClient) SubmitVerification(ticketID string, realName, idcardNumber, idcardFrontImage,
-	idcardBackImage string) (resp *SubmitVerificationResponse, err error) {
+func (p *CloudAuthClient) SubmitVerification(c context.Context, ticketID string, realName, idcardNumber, idcardFrontImage, idcardBackImage string) (resp *SubmitVerificationResponse, err error) {
 
 	request := requests.NewCommonRequest()
 	request.Domain = EndPoint
@@ -310,63 +321,66 @@ func (p *CloudAuthClient) SubmitVerification(ticketID string, realName, idcardNu
 
 	response, err := p.Client.ProcessCommonRequest(request)
 	if err != nil {
-		logrus.WithFields(logrus.Fields{
-			"prefix":    "cloudauth",
-			"method":    "SubmitVerification",
-			"biz":       "flywiki",
-			"ticket_id": ticketID,
-		}).Error(fmt.Sprintf("ProcessCommonRequest: %v", err))
-		err = tracerr.Errorf("实人认证请求失败")
+		fields := []zapcore.Field{
+			zap.String("prefix", "cloudauth"),
+			zap.String("method", "GetMaterials"),
+			zap.String("biz", "flywiki"),
+			zap.String("ticket_id", ticketID),
+		}
+
+		log.For(c).Error(fmt.Sprintf(fmt.Sprintf("ProcessCommonRequest: %v", err)), fields...)
 		return
 	}
 
 	if !response.IsSuccess() {
-		logrus.WithFields(logrus.Fields{
-			"prefix":       "cloudauth",
-			"method":       "SubmitVerification",
-			"biz":          "flywiki",
-			"ticket_id":    ticketID,
-			"http_status":  response.GetHttpStatus(),
-			"http_content": response.GetHttpContentString(),
-		}).Error(fmt.Sprintf("HTTP Status: %v", err))
+		fields := []zapcore.Field{
+			zap.String("prefix", "cloudauth"),
+			zap.String("method", "SubmitVerification"),
+			zap.String("biz", "flywiki"),
+			zap.String("ticket_id", ticketID),
+			zap.Int("http_status", response.GetHttpStatus()),
+			zap.String("http_content", response.GetHttpContentString()),
+		}
 
-		err = tracerr.Errorf("实人认证请求失败")
+		err = errors.Errorf("CloudAuth Response Failed")
+		log.For(c).Error(fmt.Sprintf("HTTP Status: %v", err), fields...)
 		return
 	}
 	data := response.GetHttpContentBytes()
 	resp = new(SubmitVerificationResponse)
-	err = json.Unmarshal(data, resp)
+	if err = json.Unmarshal(data, resp); err != nil {
+		fields := []zapcore.Field{
+			zap.String("prefix", "cloudauth"),
+			zap.String("method", "SubmitVerification"),
+			zap.String("biz", "flywiki"),
+			zap.String("ticket_id", ticketID),
+			zap.Int("http_status", response.GetHttpStatus()),
+			zap.String("http_content", response.GetHttpContentString()),
+		}
 
-	if err != nil {
-		logrus.WithFields(logrus.Fields{
-			"prefix":       "cloudauth",
-			"method":       "SubmitVerification",
-			"biz":          "flywiki",
-			"ticket_id":    ticketID,
-			"http_status":  response.GetHttpStatus(),
-			"http_content": response.GetHttpContentString(),
-		}).Error(fmt.Sprintf("Unmarshal Response: %v", err))
-		err = tracerr.Errorf("实人认证请求失败")
+		log.For(c).Error(fmt.Sprintf("Unmarshal: %v", err), fields...)
 		return
 	}
 
 	if !resp.Success {
-		logrus.WithFields(logrus.Fields{
-			"prefix":       "cloudauth",
-			"method":       "GetVerifyToken",
-			"biz":          "flywiki",
-			"ticket_id":    ticketID,
-			"http_status":  response.GetHttpStatus(),
-			"http_content": response.GetHttpContentString(),
-		}).Error(fmt.Sprintf("Code: %v", resp.Code))
-		err = tracerr.Errorf("实人认证请求失败")
+		fields := []zapcore.Field{
+			zap.String("prefix", "cloudauth"),
+			zap.String("method", "SubmitVerification"),
+			zap.String("biz", "flywiki"),
+			zap.String("ticket_id", ticketID),
+			zap.Int("http_status", response.GetHttpStatus()),
+			zap.String("http_content", response.GetHttpContentString()),
+		}
+
+		err = errors.Errorf("CloudAuth Failed")
+		log.For(c).Error("resp not success", fields...)
 		return
 	}
 
 	return
 }
 
-func (p *CloudAuthClient) GetMaterials(ticketID string) (resp *GetMaterialsResponse, err error) {
+func (p *CloudAuthClient) GetMaterials(c context.Context, ticketID string) (resp *GetMaterialsResponse, err error) {
 	request := requests.NewCommonRequest()
 	request.Domain = EndPoint
 	request.Version = Version
@@ -379,56 +393,59 @@ func (p *CloudAuthClient) GetMaterials(ticketID string) (resp *GetMaterialsRespo
 
 	response, err := p.Client.ProcessCommonRequest(request)
 	if err != nil {
-		logrus.WithFields(logrus.Fields{
-			"prefix":    "cloudauth",
-			"method":    "GetMaterials",
-			"biz":       "flywiki",
-			"ticket_id": ticketID,
-		}).Error(fmt.Sprintf("ProcessCommonRequest: %v", err))
-		err = tracerr.Errorf("获取实人认证资料失败")
+		fields := []zapcore.Field{
+			zap.String("prefix", "cloudauth"),
+			zap.String("method", "GetMaterials"),
+			zap.String("biz", "flywiki"),
+			zap.String("ticket_id", ticketID),
+		}
+
+		log.For(c).Error(fmt.Sprintf(fmt.Sprintf("ProcessCommonRequest: %v", err)), fields...)
 		return
 	}
 
 	if !response.IsSuccess() {
-		logrus.WithFields(logrus.Fields{
-			"prefix":       "cloudauth",
-			"method":       "GetMaterials",
-			"biz":          "flywiki",
-			"ticket_id":    ticketID,
-			"http_status":  response.GetHttpStatus(),
-			"http_content": response.GetHttpContentString(),
-		}).Error(fmt.Sprintf("HTTP Status: %v", err))
+		fields := []zapcore.Field{
+			zap.String("prefix", "cloudauth"),
+			zap.String("method", "GetMaterials"),
+			zap.String("biz", "flywiki"),
+			zap.String("ticket_id", ticketID),
+			zap.Int("http_status", response.GetHttpStatus()),
+			zap.String("http_content", response.GetHttpContentString()),
+		}
 
-		err = tracerr.Errorf("获取实人认证资料失败")
+		err = errors.Errorf("CloudAuth Response Failed")
+		log.For(c).Error(fmt.Sprintf("HTTP Status: %v", err), fields...)
 		return
 	}
 	data := response.GetHttpContentBytes()
 	resp = new(GetMaterialsResponse)
-	err = json.Unmarshal(data, resp)
+	if err = json.Unmarshal(data, resp); err != nil {
+		fields := []zapcore.Field{
+			zap.String("prefix", "cloudauth"),
+			zap.String("method", "GetMaterials"),
+			zap.String("biz", "flywiki"),
+			zap.String("ticket_id", ticketID),
+			zap.Int("http_status", response.GetHttpStatus()),
+			zap.String("http_content", response.GetHttpContentString()),
+		}
 
-	if err != nil {
-		logrus.WithFields(logrus.Fields{
-			"prefix":       "cloudauth",
-			"method":       "GetMaterials",
-			"biz":          "flywiki",
-			"ticket_id":    ticketID,
-			"http_status":  response.GetHttpStatus(),
-			"http_content": response.GetHttpContentString(),
-		}).Error(fmt.Sprintf("Unmarshal Response: %v", err))
-		err = tracerr.Errorf("获取实人认证资料失败")
+		log.For(c).Error(fmt.Sprintf("Unmarshal: %v", err), fields...)
 		return
 	}
 
 	if !resp.Success {
-		logrus.WithFields(logrus.Fields{
-			"prefix":       "cloudauth",
-			"method":       "GetVerifyToken",
-			"biz":          "flywiki",
-			"ticket_id":    ticketID,
-			"http_status":  response.GetHttpStatus(),
-			"http_content": response.GetHttpContentString(),
-		}).Error(fmt.Sprintf("Code: %v", resp.Code))
-		err = tracerr.Errorf("获取实人认证资料失败")
+		fields := []zapcore.Field{
+			zap.String("prefix", "cloudauth"),
+			zap.String("method", "GetMaterials"),
+			zap.String("biz", "flywiki"),
+			zap.String("ticket_id", ticketID),
+			zap.Int("http_status", response.GetHttpStatus()),
+			zap.String("http_content", response.GetHttpContentString()),
+		}
+
+		err = errors.Errorf("CloudAuth Failed")
+		log.For(c).Error("resp not success", fields...)
 		return
 	}
 

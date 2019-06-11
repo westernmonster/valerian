@@ -2,6 +2,7 @@ package dao
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"valerian/app/interface/draft/model"
 	"valerian/library/database/sqalx"
@@ -9,17 +10,32 @@ import (
 )
 
 const (
-	_getColorsSQL   = "SELECT a.* FROM colors a WHERE a.deleted=0 ORDER BY a.id "
-	_addColorSQL    = "INSERT INTO colors( id,name,color,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?)"
-	_updateColorSQL = "UPDATE colors SET name=?,color=?,updated_at=? WHERE id=?"
-	_delColorSQL    = "UPDATE colors SET deleted=1 WHERE id=? "
+	_getUserColorsSQL = "SELECT a.* FROM colors a WHERE a.deleted=0 AND account_id=? ORDER BY a.id "
+	_addColorSQL      = "INSERT INTO colors( id,name,color,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?)"
+	_updateColorSQL   = "UPDATE colors SET name=?,color=?,updated_at=? WHERE id=?"
+	_delColorSQL      = "UPDATE colors SET deleted=1 WHERE id=? "
+	_getColorSQL      = "SELECT a.* FROM colors a WHERE a.deleted=0 AND id=? "
 )
 
-func (p *Dao) GetAllColors(c context.Context, node sqalx.Node) (items []*model.Color, err error) {
+func (p *Dao) GetUserColors(c context.Context, node sqalx.Node, aid int64) (items []*model.Color, err error) {
 	items = make([]*model.Color, 0)
+	if err = node.SelectContext(c, &items, _getUserColorsSQL, aid); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetUserColors error(%+v) aid(%d)", err, aid))
+	}
 
-	if err = node.SelectContext(c, &items, _getColorsSQL); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.GetAllColors error(%+v)", err))
+	return
+}
+
+func (p *Dao) GetColor(c context.Context, node sqalx.Node, id int64) (item *model.Color, err error) {
+	item = new(model.Color)
+
+	if err = node.GetContext(c, item, _getColorSQL, id); err != nil {
+		if err == sql.ErrNoRows {
+			item = nil
+			err = nil
+			return
+		}
+		log.For(c).Error(fmt.Sprintf("dao.GetColor error(%+v), id(%d)", err, id))
 	}
 
 	return

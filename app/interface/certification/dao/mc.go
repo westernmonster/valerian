@@ -7,6 +7,10 @@ import (
 	"valerian/library/log"
 )
 
+const (
+	key = "country_codes"
+)
+
 func (p *Dao) pingMC(c context.Context) (err error) {
 	conn := p.mc.Get(c)
 	defer conn.Close()

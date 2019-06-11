@@ -1,5 +1,70 @@
 basePath: /api/v1
 definitions:
+  cloudauth.STSToken:
+    properties:
+      AccessKeyId:
+        description: |-
+          OSS AccessKey ID。
+          required: true
+        type: string
+      AccessKeySecret:
+        description: OSS AccessKey密钥
+        type: string
+      BucketName:
+        description: OSS bucket，认证服务指定的文件上传 Bucket。
+        type: string
+      EndPoint:
+        description: OSS endpoint
+        type: string
+      Expiration:
+        description: STS token过期时间。
+        type: string
+      Path:
+        description: 一个认证请求生成的用来上传的目录，业务方需要将文件上传到这个目录。
+        type: string
+      Token:
+        description: STS 访问Token。
+        type: string
+    type: object
+  cloudauth.VerifyToken:
+    properties:
+      DurationSeconds:
+        description: 认证会话超时时间，单位为秒。一般为1,800s。
+        type: integer
+      Token:
+        description: 一次认证会话的标识。
+        type: string
+    type: object
+  cloudauth.VerifyTokenData:
+    properties:
+      CloudauthPageUrl:
+        description: 认证流程页面入口URL。
+        type: string
+      STSToken:
+        $ref: '#/definitions/cloudauth.STSToken'
+        description: |-
+          如果业务方有额外的文件需要一并提交认证服务，可以使用STSToken将其上传到认证服务指定的地方。
+          操作方法参考使用STSToken 上传文件示例。STSToken的具体结构描述见STSToken。
+        type: object
+      VerifyToken:
+        $ref: '#/definitions/cloudauth.VerifyToken'
+        description: 认证流程页面入口URL。
+        type: object
+    type: object
+  model.ArgAddColor:
+    properties:
+      color:
+        type: string
+      name:
+        type: string
+    type: object
+  model.ArgAddDraftCategory:
+    properties:
+      color_id:
+        type: string
+      name:
+        type: string
+    type: object
   model.ArgBatchSaveRelatedTopics:
     properties:
       related_topics:
@@ -345,6 +410,24 @@ definitions:
           owner 主理人
         type: string
     type: object
+  model.ArgUpdateColor:
+    properties:
+      color:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  model.ArgUpdateDraftCategory:
+    properties:
+      color_id:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
   model.ArgUpdateTopic:
     properties:
       allow_chat:
@@ -427,6 +510,23 @@ definitions:
           join 加入
         type: string
     type: object
+  model.Color:
+    properties:
+      account_id:
+        type: integer
+      color:
+        type: string
+      created_at:
+        type: integer
+      deleted:
+        type: boolean
+      id:
+        type: integer
+      name:
+        type: string
+      updated_at:
+        type: integer
+    type: object
   model.CountryCodeResp:
     properties:
       cn_name:
@@ -448,6 +548,21 @@ definitions:
         description: |-
           前缀/电话区号
           example: 86
+        type: string
+    type: object
+  model.DraftCategoryResp:
+    properties:
+      color:
+        description: 颜色值
+        type: string
+      color_id:
+        description: 颜色ID
+        type: string
+      id:
+        description: ID
+        type: string
+      name:
+        description: 分类名
         type: string
     type: object
   model.Locale:
@@ -933,6 +1048,396 @@ info:
   title: 飞行百科 API
   version: "1.0"
 paths:
+  /draft/category/add:
+    post:
+      consumes:
+      - application/json
+      description: 添加草稿分类
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/model.ArgAddDraftCategory'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 添加草稿分类
+      tags:
+      - draft
+  /draft/category/del:
+    post:
+      consumes:
+      - application/json
+      description: 删除草稿分类
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 删除草稿分类
+      tags:
+      - draft
+  /draft/category/edit:
+    post:
+      consumes:
+      - application/json
+      description: 更新草稿分类
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/model.ArgUpdateDraftCategory'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "43":
+          description: 草稿分类不存在
+        "44":
+          description: 不属于你
+        "200":
+          description: 成功
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 更新草稿分类
+      tags:
+      - draft
+  /draft/color/add:
+    post:
+      consumes:
+      - application/json
+      description: 添加颜色
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/model.ArgAddColor'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 添加颜色
+      tags:
+      - draft
+  /draft/color/del:
+    post:
+      consumes:
+      - application/json
+      description: 删除颜色
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 删除颜色
+      tags:
+      - draft
+  /draft/color/edit:
+    post:
+      consumes:
+      - application/json
+      description: 更新颜色
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/model.ArgUpdateColor'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "43":
+          description: 颜色不存在
+        "44":
+          description: 不属于你
+        "200":
+          description: 成功
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 更新颜色
+      tags:
+      - draft
+  /draft/list/categories:
+    get:
+      consumes:
+      - application/json
+      description: 获取用户所有草稿分类列表
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 草稿分类列表
+          schema:
+            items:
+              $ref: '#/definitions/model.DraftCategoryResp'
+            type: array
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 获取用户所有草稿分类列表
+      tags:
+      - draft
+  /draft/list/colors:
+    get:
+      consumes:
+      - application/json
+      description: 获取用户所有颜色列表
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 颜色列表
+          schema:
+            items:
+              $ref: '#/definitions/model.Color'
+            type: array
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 获取用户所有颜色列表
+      tags:
+      - draft
   /file/oss_token:
     post:
       consumes:
@@ -1061,6 +1566,91 @@ paths:
       summary: 获取系统支持语言
       tags:
       - common
+  /me/certification/id:
+    post:
+      consumes:
+      - application/json
+      description: 获取实名认证Token
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Token
+          schema:
+            $ref: '#/definitions/cloudauth.VerifyTokenData'
+            type: object
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 获取实名认证Token
+      tags:
+      - account
+  /me/certification/id/status:
+    get:
+      consumes:
+      - application/json
+      description: 获取实名认证状态
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "42":
+          description: 尚未发起身份认证
+        "200":
+          description: 返回实名认证状态
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 获取实名认证状态
+      tags:
+      - account
   /oauth/login/digit:
     post:
       consumes:

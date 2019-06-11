@@ -9,7 +9,7 @@ import (
 	"valerian/library/net/metadata"
 )
 
-func (p *Service) GetUserColors(c context.Context) (items []*model.Color, err error) {
+func (p *Service) GetUserDraftCategories(c context.Context) (items []*model.DraftCategoryResp, err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed
@@ -17,108 +17,100 @@ func (p *Service) GetUserColors(c context.Context) (items []*model.Color, err er
 	}
 
 	var addCache = true
-	if items, err = p.d.ColorsCache(c, aid); err != nil {
+	if items, err = p.d.DraftCategoriesCache(c, aid); err != nil {
 		addCache = false
 	} else if items != nil {
 		return
 	}
 
-	if items, err = p.d.GetUserColors(c, p.d.DB(), aid); err != nil {
+	if items, err = p.d.GetUserDraftCategories(c, p.d.DB(), aid); err != nil {
 		return
 	}
 
 	if addCache {
 		p.addCache(func() {
-			p.d.SetColorsCache(context.TODO(), aid, items)
+			p.d.SetDraftCategoriesCache(context.TODO(), aid, items)
 		})
 	}
 	return
 }
 
-func (p *Service) AddColor(c context.Context, arg *model.ArgAddColor) (err error) {
+func (p *Service) AddDraftCategory(c context.Context, arg *model.ArgAddDraftCategory) (err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed
 		return
 	}
 
-	item := &model.Color{
+	if _, err = p.getColor(c, aid, arg.ColorID); err != nil {
+		return
+	}
+
+	item := &model.DraftCategory{
 		ID:        gid.NewID(),
 		Name:      arg.Name,
-		Color:     arg.Color,
+		ColorID:   arg.ColorID,
 		AccountID: aid,
 		CreatedAt: time.Now().Unix(),
 		UpdatedAt: time.Now().Unix(),
 	}
 
-	if err = p.d.AddColor(c, p.d.DB(), item); err != nil {
+	if err = p.d.AddDraftCategory(c, p.d.DB(), item); err != nil {
 		return
 	}
 
 	p.addCache(func() {
 		p.d.DelDraftCategoriesCache(context.TODO(), aid)
-		p.d.DelColorsCache(context.TODO(), aid)
 	})
 
 	return
 }
 
-func (p *Service) getColor(c context.Context, aid, id int64) (item *model.Color, err error) {
-	if item, err = p.d.GetColor(c, p.d.DB(), id); err != nil {
-		return
-	} else if item == nil {
-		err = ecode.ColorNotExist
-		return
-	} else if item.AccountID != aid {
-		err = ecode.NotBelongToYou
-		return
-	}
-
-	return
-}
-
-func (p *Service) UpdateColor(c context.Context, arg *model.ArgUpdateColor) (err error) {
+func (p *Service) UpdateDraftCategory(c context.Context, arg *model.ArgUpdateDraftCategory) (err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed
 		return
 	}
 
-	var item *model.Color
-	if item, err = p.d.GetColor(c, p.d.DB(), arg.ID); err != nil {
+	if _, err = p.getColor(c, aid, arg.ColorID); err != nil {
+		return
+	}
+
+	var item *model.DraftCategory
+	if item, err = p.d.GetDraftCategory(c, p.d.DB(), arg.ID); err != nil {
 		return
 	} else if item == nil {
-		err = ecode.ColorNotExist
+		err = ecode.DraftCategoryNotExist
 		return
 	} else if item.AccountID != aid {
 		err = ecode.NotBelongToYou
 		return
 	}
 
-	item.Color = arg.Color
+	item.ColorID = arg.ColorID
 	item.Name = arg.Name
 
-	if err = p.d.UpdateColor(c, p.d.DB(), item); err != nil {
+	if err = p.d.UpdateDraftCategory(c, p.d.DB(), item); err != nil {
 		return
 	}
 
 	p.addCache(func() {
 		p.d.DelDraftCategoriesCache(context.TODO(), aid)
-		p.d.DelColorsCache(context.TODO(), aid)
 	})
 
 	return
 }
 
-func (p *Service) DelColor(c context.Context, id int64) (err error) {
+func (p *Service) DelDraftCategory(c context.Context, id int64) (err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed
 		return
 	}
 
-	var item *model.Color
-	if item, err = p.d.GetColor(c, p.d.DB(), id); err != nil {
+	var item *model.DraftCategory
+	if item, err = p.d.GetDraftCategory(c, p.d.DB(), id); err != nil {
 		return
 	} else if item == nil {
 		return
@@ -127,13 +119,12 @@ func (p *Service) DelColor(c context.Context, id int64) (err error) {
 		return
 	}
 
-	if err = p.d.DelColor(c, p.d.DB(), id); err != nil {
+	if err = p.d.DelDraftCategory(c, p.d.DB(), id); err != nil {
 		return
 	}
 
 	p.addCache(func() {
 		p.d.DelDraftCategoriesCache(context.TODO(), aid)
-		p.d.DelColorsCache(context.TODO(), aid)
 	})
 
 	return
