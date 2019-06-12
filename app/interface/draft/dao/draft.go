@@ -9,15 +9,28 @@ import (
 )
 
 const (
-	_getUserDraftsSQL = "SELECT a.* FROM drafts a WHERE a.deleted=0 AND a.account_id=? ORDER BY a.id DESC "
+	_getUserDraftsSQL = "SELECT a.* FROM drafts a WHERE a.deleted=0 %s ORDER BY a.id DESC "
 	_addDraftSQL      = "INSERT INTO drafts( id,title,content,text,account_id,category_id,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?,?,?)"
 	_updateDraftSQL   = "UPDATE drafts SET title=?,content=?,text=?,account_id=?,category_id=?,updated_at=? WHERE id=?"
 	_delDraftSQL      = "UPDATE drafts SET deleted=1 WHERE id=? "
 )
 
-func (p *Dao) GetUserDrafts(c context.Context, node sqalx.Node, aid int64) (items []*model.Draft, err error) {
+func (p *Dao) GetUserDrafts(c context.Context, node sqalx.Node, aid int64, cond map[string]interface{}) (items []*model.Draft, err error) {
 	items = make([]*model.Draft, 0)
-	if err = node.SelectContext(c, &items, _getUserDraftsSQL, aid); err != nil {
+
+	condition := make([]interface{}, 0)
+	clause := ""
+	clause += " AND a.account_id =?"
+	condition = append(condition, aid)
+
+	if val, ok := cond["category_id"]; ok {
+		clause += " AND a.category_id =?"
+		condition = append(condition, val)
+	}
+
+	sqlSelect := fmt.Sprintf(_getUserDraftsSQL, clause)
+
+	if err = node.SelectContext(c, &items, sqlSelect, condition...); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetUserDrafts error(%+v) aid(%d)", err, aid))
 	}
 	return

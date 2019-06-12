@@ -129,3 +129,28 @@ func (p *Service) DelDraftCategory(c context.Context, id int64) (err error) {
 
 	return
 }
+
+func (p *Service) getDraftCategory(c context.Context, aid, id int64) (item *model.DraftCategoryResp, err error) {
+	var addCache = true
+	if item, err = p.d.DraftCategoryCache(c, id); err != nil {
+		addCache = false
+	} else if item != nil {
+		return
+	}
+
+	if item, err = p.d.GetDraftCategoryResp(c, p.d.DB(), id); err != nil {
+		return
+	} else if item == nil {
+		err = ecode.DraftCategoryNotExist
+	} else if item.AccountID != aid {
+		err = ecode.NotBelongToYou
+		return
+	}
+
+	if addCache {
+		p.addCache(func() {
+			p.d.SetDraftCategoryCache(context.TODO(), item)
+		})
+	}
+	return
+}

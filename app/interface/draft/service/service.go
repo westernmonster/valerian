@@ -13,11 +13,12 @@ import (
 type Service struct {
 	c *conf.Config
 	d interface {
-		GetUserDrafts(c context.Context, node sqalx.Node, aid int64) (items []*model.Draft, err error)
+		GetUserDrafts(c context.Context, node sqalx.Node, aid int64, cond map[string]interface{}) (items []*model.Draft, err error)
 		AddDraft(c context.Context, node sqalx.Node, item *model.Draft) (err error)
 		UpdateDraft(c context.Context, node sqalx.Node, item *model.Draft) (err error)
 		DelDraft(c context.Context, node sqalx.Node, id int64) (err error)
 
+		GetDraftCategoryResp(c context.Context, node sqalx.Node, id int64) (item *model.DraftCategoryResp, err error)
 		GetUserDraftCategories(c context.Context, node sqalx.Node, aid int64) (items []*model.DraftCategoryResp, err error)
 		AddDraftCategory(c context.Context, node sqalx.Node, item *model.DraftCategory) (err error)
 		UpdateDraftCategory(c context.Context, node sqalx.Node, item *model.DraftCategory) (err error)
@@ -37,6 +38,9 @@ type Service struct {
 		SetDraftCategoriesCache(c context.Context, aid int64, items []*model.DraftCategoryResp) (err error)
 		DraftCategoriesCache(c context.Context, aid int64) (res []*model.DraftCategoryResp, err error)
 		DelDraftCategoriesCache(c context.Context, aid int64) (err error)
+		SetDraftCategoryCache(c context.Context, m *model.DraftCategoryResp) (err error)
+		DraftCategoryCache(c context.Context, id int64) (m *model.DraftCategoryResp, err error)
+		DelDrafCategoryCache(c context.Context, id int64) (err error)
 
 		Ping(c context.Context) (err error)
 		Close()

@@ -10,11 +10,12 @@ import (
 )
 
 const (
-	_getUserDraftCategoriesSQL = "SELECT a.id,a.`name`,a.color_id,b.color FROM draft_categories a LEFT JOIN colors b ON a.color_id=b.id WHERE a.deleted=0 ORDER BY a.id"
+	_getUserDraftCategoriesSQL = "SELECT a.id,a.`name`,a.color_id,b.color, a.account_id FROM draft_categories a LEFT JOIN colors b ON a.color_id=b.id WHERE a.deleted=0 ORDER BY a.id"
 	_addDraftCategorySQL       = "INSERT INTO draft_categories( id,name,color_id, account_id,deleted,created_at,updated_at) VALUES (?,?,?,?,?,?)"
 	_updateDraftCategorySQL    = "UPDATE draft_categories SET name=?,color_id=?,account_id=?,updated_at=? WHERE id=?"
 	_delDraftCategorySQL       = "UPDATE draft_categories SET deleted=1 WHERE id=? "
 	_getDraftCategorySQL       = "SELECT a.* FROM draft_categories a WHERE a.deleted=0 AND a.id=? "
+	_getDraftCategoryRespSQL   = "SELECT a.id,a.`name`,a.color_id,b.color, a.account_id FROM draft_categories a LEFT JOIN colors b ON a.color_id=b.id WHERE a.deleted=0 AND a.id=? ORDER BY a.id"
 )
 
 func (p *Dao) GetUserDraftCategories(c context.Context, node sqalx.Node, aid int64) (items []*model.DraftCategoryResp, err error) {
@@ -58,6 +59,21 @@ func (p *Dao) GetDraftCategory(c context.Context, node sqalx.Node, id int64) (it
 			return
 		}
 		log.For(c).Error(fmt.Sprintf("dao.GetDraftCategory error(%+v), id(%d)", err, id))
+	}
+
+	return
+}
+
+func (p *Dao) GetDraftCategoryResp(c context.Context, node sqalx.Node, id int64) (item *model.DraftCategoryResp, err error) {
+	item = new(model.DraftCategoryResp)
+
+	if err = node.GetContext(c, item, _getDraftCategoryRespSQL, id); err != nil {
+		if err == sql.ErrNoRows {
+			item = nil
+			err = nil
+			return
+		}
+		log.For(c).Error(fmt.Sprintf("dao.GetDraftCategoryResp error(%+v), id(%d)", err, id))
 	}
 
 	return
