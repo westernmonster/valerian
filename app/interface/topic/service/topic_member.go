@@ -9,6 +9,7 @@ import (
 	"valerian/library/ecode"
 	"valerian/library/gid"
 	"valerian/library/log"
+	"valerian/library/net/metadata"
 )
 
 func (p *Service) GetTopicMembersPaged(c context.Context, topicID int64, page, pageSize int) (resp *model.TopicMembersPagedResp, err error) {
@@ -263,5 +264,69 @@ func (p *Service) addMember(c context.Context, node sqalx.Node, topicID, aid int
 		p.d.DelTopicCache(context.TODO(), topicID)
 		p.d.DelTopicMembersCache(context.TODO(), topicID)
 	})
+	return
+}
+
+func (p *Service) ChangeOwner(c context.Context, node sqalx.Node, arg *model.ArgChangeOwner) (err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+
+	var tx sqalx.Node
+	if tx, err = node.Beginx(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		return
+	}
+
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+			}
+			return
+		}
+	}()
+
+	var curMember *model.TopicMember
+	if curMember, err = p.d.GetTopicMemberByCondition(c, tx, arg.TopicID, aid); err != nil {
+		return
+	} else if curMember == nil {
+		err = ecode.NotBelongToTopic
+		return
+	} else if curMember.Role != model.MemberRoleOwner {
+		err = ecode.NotTopicOwner
+		return
+	}
+
+	curMember.Role = model.MemberRoleAdmin
+	if err = p.d.UpdateTopicMember(c, tx, curMember); err != nil {
+		return
+	}
+
+	var toMember *model.TopicMember
+	if toMember, err = p.d.GetTopicMemberByCondition(c, tx, arg.TopicID, aid); err != nil {
+		return
+	} else if toMember == nil {
+		err = ecode.NotBelongToTopic
+		return
+	}
+
+	toMember.Role = model.MemberRoleOwner
+	if err = p.d.UpdateTopicMember(c, tx, toMember); err != nil {
+		return
+	}
+
+	if err = tx.Commit(); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		return
+	}
+
+	p.addCache(func() {
+		p.d.DelTopicCache(context.TODO(), arg.TopicID)
+		p.d.DelTopicMembersCache(context.TODO(), arg.TopicID)
+	})
+
 	return
 }

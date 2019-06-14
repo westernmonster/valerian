@@ -84,4 +84,5 @@ var (
 	ColorNotExist                  = add(43) // 颜色不存在
 	NotBelongToYou                 = add(44) // 不属于你
 	DraftCategoryNotExist          = add(45) // 草稿分类不存在
+	NotTopicOwner                  = add(46) // 你不是主理人
 )

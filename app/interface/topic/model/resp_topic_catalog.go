@@ -1,13 +1,22 @@
 package model
 
 type TopicCatalogResp struct {
-	ID        int64  `db:"id" json:"id,string"`                   // ID ID
-	TopicID   int64  `db:"topic_id" json:"topic_id,string"`       // TopicID 分类ID
-	Name      string `db:"name" json:"name"`                      // Name 名称
-	Seq       int    `db:"seq" json:"seq"`                        // Seq 顺序
-	Type      string `db:"type" json:"type"`                      // Type 类型
-	RefID     *int64 `db:"ref_id" json:"ref_id,string,omitempty"` // RefID 引用ID
-	ParentID  int64  `db:"parent_id" json:"parent_id,string"`     // ParentID 父级ID, 一级分类的父ID为 0
-	CreatedAt int64  `db:"created_at" json:"created_at"`          // CreatedAt 创建时间
-	UpdatedAt int64  `db:"updated_at" json:"updated_at"`          // UpdatedAt 更新时间
+	ID int64 `json:"id,string" swaggertype:"string"`
+	//  名称
+	// required: true
+	Name string `json:"name"`
+
+	// 顺序
+	// required: true
+	Seq int `json:"seq"`
+
+	// 类型
+	// required: true
+	Type string `json:"type"`
+
+	// 引用ID
+	RefID *int64 `json:"ref_id,string,omitempty" swaggertype:"string"`
+
+	// 父级ID
+	ParentID int64 `json:"parent_id,string" swaggertype:"string"`
 }

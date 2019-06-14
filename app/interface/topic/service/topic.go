@@ -347,6 +347,11 @@ func (p *Service) updateTopic(c context.Context, node sqalx.Node, arg *model.Arg
 
 	p.addCache(func() {
 		p.d.DelTopicCache(context.TODO(), arg.ID)
+		p.d.DelTopicVersionCache(context.TODO(), t.TopicSetID)
 	})
+	return
+}
+
+func (p *Service) DelTopic(c context.Context, topicID int64) (err error) {
 	return
 }

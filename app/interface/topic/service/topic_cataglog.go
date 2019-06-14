@@ -17,7 +17,28 @@ type dicItem struct {
 	Item *model.TopicCatalog
 }
 
-func (p *Service) GetCatalogHierarchy(c context.Context, topicID int64) (items []*model.TopicLevel1Catalog, err error) {
+func (p *Service) GetCatalogs(c context.Context, topicID, parentID int64) (items []*model.TopicCatalogResp, err error) {
+	var data []*model.TopicCatalog
+	if data, err = p.d.GetTopicCatalogsByCondition(c, p.d.DB(), topicID, parentID); err != nil {
+		return
+	}
+
+	items = make([]*model.TopicCatalogResp, 0)
+	for _, v := range data {
+		items = append(items, &model.TopicCatalogResp{
+			ID:       v.ID,
+			Name:     v.Name,
+			Seq:      v.Seq,
+			Type:     v.Type,
+			RefID:    v.RefID,
+			ParentID: v.ParentID,
+		})
+	}
+
+	return
+}
+
+func (p *Service) GetCatalogsHierarchy(c context.Context, topicID int64) (items []*model.TopicLevel1Catalog, err error) {
 	var (
 		addCache = true
 	)
@@ -66,7 +87,6 @@ func (p *Service) GetCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 }
 
 func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, topicID int64) (items []*model.TopicLevel1Catalog, err error) {
-
 	items = make([]*model.TopicLevel1Catalog, 0)
 
 	parents, err := p.d.GetTopicCatalogsByCondition(c, node, topicID, 0)
