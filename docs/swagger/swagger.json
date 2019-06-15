@@ -2027,6 +2027,77 @@
                 }
             }
         },
+        "/topic/list/versions": {
+            "get": {
+                "description": "获取话题版本列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "topic"
+                ],
+                "summary": "获取话题版本列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "话题集合ID",
+                        "name": "topic_set_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "话题版本",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.TopicVersionResp"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
         "/topic/members": {
             "post": {
                 "description": "批量更新话题成员",
@@ -2101,6 +2172,86 @@
                 }
             }
         },
+        "/topic/owner": {
+            "post": {
+                "description": "更改主理人,需要用户都为话题成员，并且发起操作用户必须为当前主理人",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "topic"
+                ],
+                "summary": "更改主理人",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/model.ArgChangeOwner"
+                        }
+                    }
+                ],
+                "responses": {
+                    "20": {
+                        "description": "获取用户ID失败"
+                    },
+                    "200": {
+                        "description": "成功"
+                    },
+                    "34": {
+                        "description": "不是话题成员"
+                    },
+                    "400": {
+                        "description": "验证请求失败"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "46": {
+                        "description": "不是话题主理人"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
         "/topic/related": {
             "post": {
                 "description": "批量更新关联话题",
@@ -2162,6 +2313,175 @@
                     },
                     "200": {
                         "description": "成功"
+                    },
+                    "400": {
+                        "description": "验证请求失败"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/topic/versions": {
+            "post": {
+                "description": "新建话题版本",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "topic"
+                ],
+                "summary": "新建话题版本",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/model.ArgNewVersion"
+                        }
+                    }
+                ],
+                "responses": {
+                    "18": {
+                        "description": "话题不存在"
+                    },
+                    "20": {
+                        "description": "获取用户ID失败，一般是因为未登录造成"
+                    },
+                    "200": {
+                        "description": "成功"
+                    },
+                    "31": {
+                        "description": "话题名已被占用"
+                    },
+                    "34": {
+                        "description": "不属于话题成员"
+                    },
+                    "35": {
+                        "description": "不是话题主理人或管理员"
+                    },
+                    "400": {
+                        "description": "验证请求失败"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/topic/versions/merge": {
+            "post": {
+                "description": "合并话题版本，需要当前用户为合并两个话题集中，是所有话题的成员并且是管理员或主理人",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "topic"
+                ],
+                "summary": "合并话题版本",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/model.ArgNewVersion"
+                        }
+                    }
+                ],
+                "responses": {
+                    "18": {
+                        "description": "话题不存在"
+                    },
+                    "20": {
+                        "description": "获取用户ID失败，一般是因为未登录造成"
+                    },
+                    "200": {
+                        "description": "成功"
+                    },
+                    "34": {
+                        "description": "不属于话题成员"
+                    },
+                    "35": {
+                        "description": "不是话题主理人或管理员"
                     },
                     "400": {
                         "description": "验证请求失败"
@@ -2416,6 +2736,17 @@
                     "items": {
                         "$ref": "#/definitions/model.ArgTopicMember"
                     }
+                },
+                "topic_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.ArgChangeOwner": {
+            "type": "object",
+            "properties": {
+                "to_account_id": {
+                    "type": "string"
                 },
                 "topic_id": {
                     "type": "string"
@@ -2684,6 +3015,17 @@
                 }
             }
         },
+        "model.ArgNewVersion": {
+            "type": "object",
+            "properties": {
+                "from_topic_id": {
+                    "type": "integer"
+                },
+                "version_name": {
+                    "type": "string"
+                }
+            }
+        },
         "model.ArgOSSToken": {
             "type": "object",
             "properties": {
@@ -2773,7 +3115,7 @@
             "properties": {
                 "account_id": {
                     "description": "成员ID",
-                    "type": "integer"
+                    "type": "string"
                 },
                 "opt": {
                     "description": "操作\nC U D",

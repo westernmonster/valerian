@@ -142,7 +142,6 @@ func (p *Service) getAllRelatedTopics(c context.Context, node sqalx.Node, topicI
 }
 
 func (p *Service) getTopicRelations(c context.Context, node sqalx.Node, topicID int64) (items []*model.TopicRelation, err error) {
-
 	var addCache = true
 
 	if items, err = p.d.TopicRelationCache(c, topicID); err != nil {

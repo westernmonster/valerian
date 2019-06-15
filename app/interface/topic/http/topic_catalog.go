@@ -32,7 +32,7 @@ func topicCatalogs(c *mars.Context) {
 		return
 	}
 
-	c.JSON(srv.GetCatalogHierarchy(c, id))
+	c.JSON(srv.GetCatalogsHierarchy(c, id))
 }
 
 // @Summary 更新话题类目

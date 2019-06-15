@@ -85,6 +85,13 @@ definitions:
       topic_id:
         type: string
     type: object
+  model.ArgChangeOwner:
+    properties:
+      to_account_id:
+        type: string
+      topic_id:
+        type: string
+    type: object
   model.ArgCreateTopic:
     properties:
       allow_chat:
@@ -316,6 +323,13 @@ definitions:
         description: Prefix 电话号码前缀，例如86
         type: string
     type: object
+  model.ArgNewVersion:
+    properties:
+      from_topic_id:
+        type: integer
+      version_name:
+        type: string
+    type: object
   model.ArgOSSToken:
     properties:
       file_name:
@@ -396,7 +410,7 @@ definitions:
     properties:
       account_id:
         description: 成员ID
-        type: integer
+        type: string
       opt:
         description: |-
           操作
@@ -2440,6 +2454,55 @@ paths:
       summary: 获取话题类型列表
       tags:
       - topic
+  /topic/list/versions:
+    get:
+      consumes:
+      - application/json
+      description: 获取话题版本列表
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 话题集合ID
+        in: query
+        name: topic_set_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 话题版本
+          schema:
+            items:
+              $ref: '#/definitions/model.TopicVersionResp'
+            type: array
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 获取话题版本列表
+      tags:
+      - topic
   /topic/members:
     post:
       consumes:
@@ -2491,6 +2554,61 @@ paths:
       summary: 批量更新话题成员
       tags:
       - topic
+  /topic/owner:
+    post:
+      consumes:
+      - application/json
+      description: 更改主理人,需要用户都为话题成员，并且发起操作用户必须为当前主理人
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/model.ArgChangeOwner'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "20":
+          description: 获取用户ID失败
+        "34":
+          description: 不是话题成员
+        "46":
+          description: 不是话题主理人
+        "200":
+          description: 成功
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 更改主理人
+      tags:
+      - topic
   /topic/related:
     post:
       consumes:
@@ -2540,6 +2658,122 @@ paths:
         "500":
           description: 服务器端错误
       summary: 批量更新关联话题
+      tags:
+      - topic
+  /topic/versions:
+    post:
+      consumes:
+      - application/json
+      description: 新建话题版本
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/model.ArgNewVersion'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "18":
+          description: 话题不存在
+        "20":
+          description: 获取用户ID失败，一般是因为未登录造成
+        "31":
+          description: 话题名已被占用
+        "34":
+          description: 不属于话题成员
+        "35":
+          description: 不是话题主理人或管理员
+        "200":
+          description: 成功
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 新建话题版本
+      tags:
+      - topic
+  /topic/versions/merge:
+    post:
+      consumes:
+      - application/json
+      description: 合并话题版本，需要当前用户为合并两个话题集中，是所有话题的成员并且是管理员或主理人
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/model.ArgNewVersion'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "18":
+          description: 话题不存在
+        "20":
+          description: 获取用户ID失败，一般是因为未登录造成
+        "34":
+          description: 不属于话题成员
+        "35":
+          description: 不是话题主理人或管理员
+        "200":
+          description: 成功
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 合并话题版本
       tags:
       - topic
   /valcode/email:

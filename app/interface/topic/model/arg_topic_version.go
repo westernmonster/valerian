@@ -17,3 +17,16 @@ func (p *ArgNewVersion) Validate() error {
 		),
 	)
 }
+
+type ArgMergeVersion struct {
+	FromTopicSetID int64 `json:"from_topic_set_id,string", swaggertype:"string"`
+	ToTopicSetID   int64 `json:"to_topic_set_id,string", swaggertype:"string"`
+}
+
+func (p *ArgMergeVersion) Validate() error {
+	return validation.ValidateStruct(
+		p,
+		validation.Field(&p.FromTopicSetID, validation.Required.Error(`请输入来源话题集合ID`)),
+		validation.Field(&p.ToTopicSetID, validation.Required.Error(`请输入合并话题集合ID`)),
+	)
+}

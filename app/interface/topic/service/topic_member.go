@@ -267,7 +267,7 @@ func (p *Service) addMember(c context.Context, node sqalx.Node, topicID, aid int
 	return
 }
 
-func (p *Service) ChangeOwner(c context.Context, node sqalx.Node, arg *model.ArgChangeOwner) (err error) {
+func (p *Service) ChangeOwner(c context.Context, arg *model.ArgChangeOwner) (err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed
@@ -275,7 +275,7 @@ func (p *Service) ChangeOwner(c context.Context, node sqalx.Node, arg *model.Arg
 	}
 
 	var tx sqalx.Node
-	if tx, err = node.Beginx(c); err != nil {
+	if tx, err = p.d.DB().Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
 		return
 	}

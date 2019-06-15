@@ -38,7 +38,7 @@ func (p *Service) GetTopicVersions(c context.Context, topicSetID int64) (items [
 	return p.getTopicVersions(c, p.d.DB(), topicSetID)
 }
 
-func (p *Service) addTopicVersion(c context.Context, arg *model.ArgNewVersion) (err error) {
+func (p *Service) AddTopicVersion(c context.Context, arg *model.ArgNewVersion) (err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed
@@ -95,10 +95,151 @@ func (p *Service) addTopicVersion(c context.Context, arg *model.ArgNewVersion) (
 		return
 	}
 
+	if err = p.copyMembers(c, tx, aid, arg.FromTopicID, t.ID); err != nil {
+		return
+	}
+
+	if err = p.copyRelations(c, tx, aid, arg.FromTopicID, t.ID); err != nil {
+		return
+	}
+
 	if err = tx.Commit(); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 		return
 	}
+
+	return
+}
+
+func (p *Service) copyMembers(c context.Context, node sqalx.Node, aid int64, fromTopicID, toTopicID int64) (err error) {
+	var members []*model.TopicMember
+	if members, err = p.d.GetAllTopicMembers(c, node, fromTopicID); err != nil {
+		return
+	}
+
+	for _, v := range members {
+		v.ID = gid.NewID()
+		v.CreatedAt = time.Now().Unix()
+		v.UpdatedAt = time.Now().Unix()
+		v.TopicID = toTopicID
+		if v.Role == model.MemberRoleOwner && v.AccountID != aid {
+			v.Role = model.MemberRoleAdmin
+		}
+		if v.AccountID == aid {
+			v.Role = model.MemberRoleOwner
+		}
+		if err = p.d.AddTopicMember(c, node, v); err != nil {
+			return
+		}
+	}
+
+	return
+}
+
+func (p *Service) copyRelations(c context.Context, node sqalx.Node, aid int64, fromTopicID, toTopicID int64) (err error) {
+	var relations []*model.TopicRelation
+	if relations, err = p.d.GetAllTopicRelations(c, node, fromTopicID); err != nil {
+		return
+	}
+
+	for _, v := range relations {
+		v.ID = gid.NewID()
+		v.CreatedAt = time.Now().Unix()
+		v.UpdatedAt = time.Now().Unix()
+		v.FromTopicID = fromTopicID
+		if err = p.d.AddTopicRelation(c, node, v); err != nil {
+			return
+		}
+	}
+	return
+}
+
+func (p *Service) MergeTopicVersions(c context.Context, arg *model.ArgMergeVersion) (err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+	var tx sqalx.Node
+	if tx, err = p.d.DB().Beginx(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		return
+	}
+
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+			}
+			return
+		}
+	}()
+
+	var fSets []*model.TopicVersionResp
+	if fSets, err = p.d.GetTopicVersions(c, tx, arg.FromTopicSetID); err != nil {
+		return
+	}
+
+	for _, v := range fSets {
+		var curMember *model.TopicMember
+		if curMember, err = p.d.GetTopicMemberByCondition(c, tx, v.TopicID, aid); err != nil {
+			return
+		} else if curMember == nil {
+			err = ecode.NotBelongToTopic
+			return
+		} else if curMember.Role != model.MemberRoleAdmin && curMember.Role != model.MemberRoleOwner {
+			err = ecode.NotTopicAdmin
+			return
+		}
+	}
+
+	var tSets []*model.TopicVersionResp
+	if tSets, err = p.d.GetTopicVersions(c, tx, arg.ToTopicSetID); err != nil {
+		return
+	}
+	for _, v := range tSets {
+		var curMember *model.TopicMember
+		if curMember, err = p.d.GetTopicMemberByCondition(c, tx, v.TopicID, aid); err != nil {
+			return
+		} else if curMember == nil {
+			err = ecode.NotBelongToTopic
+			return
+		} else if curMember.Role != model.MemberRoleAdmin && curMember.Role != model.MemberRoleOwner {
+			err = ecode.NotTopicAdmin
+			return
+		}
+	}
+
+	for _, v := range tSets {
+		var t *model.Topic
+		if t, err = p.d.GetTopicByID(c, tx, v.TopicID); err != nil {
+			return
+		} else if t == nil {
+			return ecode.TopicNotExist
+		}
+
+		t.TopicSetID = arg.FromTopicSetID
+		if err = p.d.UpdateTopic(c, tx, t); err != nil {
+			return
+		}
+	}
+
+	if err = tx.Commit(); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		return
+	}
+
+	p.addCache(func() {
+		p.d.DelTopicVersionCache(context.TODO(), arg.FromTopicSetID)
+		p.d.DelTopicVersionCache(context.TODO(), arg.ToTopicSetID)
+
+		for _, v := range tSets {
+			p.d.DelTopicCache(context.TODO(), v.TopicID)
+			p.d.DelTopicCatalogCache(context.TODO(), v.TopicID)
+			p.d.DelTopicRelationCache(context.TODO(), v.TopicID)
+			p.d.DelTopicMembersCache(context.TODO(), v.TopicID)
+		}
+	})
 
 	return
 }

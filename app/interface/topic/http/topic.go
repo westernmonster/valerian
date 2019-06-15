@@ -131,3 +131,34 @@ func getTopic(c *mars.Context) {
 		c.JSON(srv.GetTopic(c, id))
 	}
 }
+
+// @Summary 更改主理人
+// @Description 更改主理人,需要用户都为话题成员，并且发起操作用户必须为当前主理人
+// @Tags topic
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param req body model.ArgChangeOwner true "请求"
+// @Success 200 "成功"
+// @Failure 20 "获取用户ID失败"
+// @Failure 34 "不是话题成员"
+// @Failure 46 "不是话题主理人"
+// @Failure 400 "验证请求失败"
+// @Failure 401 "登录验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /topic/owner [post]
+func changeOwner(c *mars.Context) {
+	arg := new(model.ArgChangeOwner)
+	if e := c.Bind(arg); e != nil {
+		return
+	}
+
+	if e := arg.Validate(); e != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+
+	c.JSON(nil, srv.ChangeOwner(c, arg))
+}
