@@ -29,7 +29,7 @@ func (p *Dao) GetTopicFollowRequests(c context.Context, node sqalx.Node, topicID
 func (p *Dao) GetTopicFollowRequest(c context.Context, node sqalx.Node, topicID, aid int64) (item *model.TopicFollowRequest, err error) {
 	item = new(model.TopicFollowRequest)
 
-	if err = node.GetContext(c, item, _getTopicMemberByConditionSQL, topicID, aid); err != nil {
+	if err = node.GetContext(c, item, _getTopicFollowRequestSQL, topicID, aid); err != nil {
 		if err == sql.ErrNoRows {
 			item = nil
 			err = nil

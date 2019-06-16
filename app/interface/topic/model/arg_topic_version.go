@@ -30,3 +30,17 @@ func (p *ArgMergeVersion) Validate() error {
 		validation.Field(&p.ToTopicSetID, validation.Required.Error(`请输入合并话题集合ID`)),
 	)
 }
+
+type VersionItem struct {
+	TopicID int64 `json:"topic_id,string" swaggertype:"string"`
+
+	// 顺序
+	Seq int `json:"seq"`
+
+	// 版本名称
+	VersionName string `json:"version_name"`
+}
+type ArgSaveVersions struct {
+	TopicSetID int64          `json:"topic_set_id,string" swaggertype:"string"`
+	Items      []*VersionItem `json:"items"`
+}

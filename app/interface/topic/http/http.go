@@ -37,6 +37,6 @@ func route(e *mars.Engine) {
 		g.GET("/list/members", auth.User, topicMembers)
 		g.GET("/list/types", auth.User, topicTypeList)
 		g.GET("/list/related", auth.User, relatedTopics)
-		g.GET("/list/version", auth.User, topicVersions)
+		g.GET("/list/versions", auth.User, topicVersions)
 	}
 }

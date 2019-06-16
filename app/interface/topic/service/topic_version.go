@@ -38,7 +38,7 @@ func (p *Service) GetTopicVersions(c context.Context, topicSetID int64) (items [
 	return p.getTopicVersions(c, p.d.DB(), topicSetID)
 }
 
-func (p *Service) AddTopicVersion(c context.Context, arg *model.ArgNewVersion) (err error) {
+func (p *Service) AddTopicVersion(c context.Context, arg *model.ArgNewVersion) (id int64, err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed
@@ -63,7 +63,8 @@ func (p *Service) AddTopicVersion(c context.Context, arg *model.ArgNewVersion) (
 	if t, err = p.d.GetTopicByID(c, tx, arg.FromTopicID); err != nil {
 		return
 	} else if t == nil {
-		return ecode.TopicNotExist
+		err = ecode.TopicNotExist
+		return
 	}
 
 	var curMember *model.TopicMember
@@ -107,6 +108,8 @@ func (p *Service) AddTopicVersion(c context.Context, arg *model.ArgNewVersion) (
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 		return
 	}
+
+	id = t.ID
 
 	return
 }

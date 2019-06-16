@@ -65,7 +65,7 @@ func addTopicVersion(c *mars.Context) {
 		return
 	}
 
-	c.JSON(nil, srv.AddTopicVersion(c, arg))
+	c.JSON(srv.AddTopicVersion(c, arg))
 }
 
 // @Summary 合并话题版本
