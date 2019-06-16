@@ -85,4 +85,5 @@ var (
 	NotBelongToYou                 = add(44) // 不属于你
 	DraftCategoryNotExist          = add(45) // 草稿分类不存在
 	NotTopicOwner                  = add(46) // 你不是主理人
+	DraftNotExist                  = add(47) // 草稿不存在
 )

@@ -28,7 +28,7 @@ type Draft struct {
 	Content    *string       `db:"content" json:"content,omitempty"`      // Content 内容
 	Text       *string       `db:"text" json:"text,omitempty"`            // Text 内容纯文本
 	AccountID  int64         `db:"account_id" json:"account_id,string"`   // AccountID 账户ID
-	CategoryID int64         `db:"category_id" json:"category_id,string"` // CategoryID 分类
+	CategoryID *int64        `db:"category_id" json:"category_id,string"` // CategoryID 分类
 	Deleted    types.BitBool `db:"deleted" json:"deleted"`                // Deleted 是否删除
 	CreatedAt  int64         `db:"created_at" json:"created_at"`          // CreatedAt 创建时间
 	UpdatedAt  int64         `db:"updated_at" json:"updated_at"`          // UpdatedAt 更新时间

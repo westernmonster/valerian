@@ -24,11 +24,17 @@ func route(e *mars.Engine) {
 		g.GET("/category/add", addDraftCategory)
 		g.GET("/category/edit", updateDraftCategory)
 		g.GET("/category/del", delDraftCategory)
-		g.GET("/list/categories", draftCategories)
 
 		g.GET("/color/add", addColor)
 		g.GET("/color/edit", updateColor)
 		g.GET("/color/del", delColor)
+
+		g.GET("/list/categories", draftCategories)
 		g.GET("/list/colors", colors)
+		g.GET("/list", drafts)
+
+		g.POST("/add", addDraft)
+		g.POST("/edit", updateDraft)
+		g.POST("/del", delDraft)
 	}
 }

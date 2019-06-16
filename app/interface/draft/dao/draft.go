@@ -2,6 +2,7 @@ package dao
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"valerian/app/interface/draft/model"
 	"valerian/library/database/sqalx"
@@ -9,6 +10,7 @@ import (
 )
 
 const (
+	_getDraftSQL      = "SELECT a.* FROM drafts a WHERE a.deleted=0 AND a.id=?"
 	_getUserDraftsSQL = "SELECT a.* FROM drafts a WHERE a.deleted=0 %s ORDER BY a.id DESC "
 	_addDraftSQL      = "INSERT INTO drafts( id,title,content,text,account_id,category_id,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?,?,?)"
 	_updateDraftSQL   = "UPDATE drafts SET title=?,content=?,text=?,account_id=?,category_id=?,updated_at=? WHERE id=?"
@@ -54,5 +56,19 @@ func (p *Dao) DelDraft(c context.Context, node sqalx.Node, id int64) (err error)
 	if _, err = node.ExecContext(c, _delDraftSQL, id); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.DelDraft error(%+v), id(%d)", err, id))
 	}
+	return
+}
+
+func (p *Dao) GetDraft(c context.Context, node sqalx.Node, id int64) (item *model.Draft, err error) {
+	item = new(model.Draft)
+	if err = node.GetContext(c, item, _getDraftSQL, id); err != nil {
+		if err == sql.ErrNoRows {
+			item = nil
+			err = nil
+			return
+		}
+		log.For(c).Error(fmt.Sprintf("dao.GetDraft error(%+v), id(%d)", err, id))
+	}
+
 	return
 }

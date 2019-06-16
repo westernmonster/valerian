@@ -58,6 +58,15 @@ definitions:
       name:
         type: string
     type: object
+  model.ArgAddDraft:
+    properties:
+      category_id:
+        type: string
+      content:
+        type: string
+      title:
+        type: string
+    type: object
   model.ArgAddDraftCategory:
     properties:
       color_id:
@@ -433,6 +442,17 @@ definitions:
       name:
         type: string
     type: object
+  model.ArgUpdateDraft:
+    properties:
+      category_id:
+        type: string
+      content:
+        type: string
+      id:
+        type: string
+      title:
+        type: string
+    type: object
   model.ArgUpdateDraftCategory:
     properties:
       color_id:
@@ -578,6 +598,24 @@ definitions:
       name:
         description: 分类名
         type: string
+    type: object
+  model.DraftResp:
+    properties:
+      account_id:
+        type: integer
+      category:
+        $ref: '#/definitions/model.DraftCategoryResp'
+        type: object
+      content:
+        type: string
+      created_at:
+        type: integer
+      id:
+        type: string
+      title:
+        type: string
+      updated_at:
+        type: integer
     type: object
   model.Locale:
     properties:
@@ -1062,6 +1100,55 @@ info:
   title: 飞行百科 API
   version: "1.0"
 paths:
+  /draft/add:
+    post:
+      consumes:
+      - application/json
+      description: 添加草稿
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/model.ArgAddDraft'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 添加草稿
+      tags:
+      - draft
   /draft/category/add:
     post:
       consumes:
@@ -1358,6 +1445,157 @@ paths:
         "500":
           description: 服务器端错误
       summary: 更新颜色
+      tags:
+      - draft
+  /draft/del:
+    post:
+      consumes:
+      - application/json
+      description: 删除草稿分类
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 删除草稿分类
+      tags:
+      - draft
+  /draft/edit:
+    post:
+      consumes:
+      - application/json
+      description: 更新草稿
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/model.ArgUpdateDraft'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "43":
+          description: 草稿分类不存在
+        "44":
+          description: 不属于你
+        "200":
+          description: 成功
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 更新草稿
+      tags:
+      - draft
+  /draft/list:
+    get:
+      consumes:
+      - application/json
+      description: 获取用户所有草稿列表
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 分类ID
+        in: query
+        name: category_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 草稿分类列表
+          schema:
+            items:
+              $ref: '#/definitions/model.DraftResp'
+            type: array
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 获取用户所有草稿列表
       tags:
       - draft
   /draft/list/categories:

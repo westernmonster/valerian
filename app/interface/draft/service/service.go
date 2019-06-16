@@ -17,6 +17,7 @@ type Service struct {
 		AddDraft(c context.Context, node sqalx.Node, item *model.Draft) (err error)
 		UpdateDraft(c context.Context, node sqalx.Node, item *model.Draft) (err error)
 		DelDraft(c context.Context, node sqalx.Node, id int64) (err error)
+		GetDraft(c context.Context, node sqalx.Node, id int64) (item *model.Draft, err error)
 
 		GetDraftCategoryResp(c context.Context, node sqalx.Node, id int64) (item *model.DraftCategoryResp, err error)
 		GetUserDraftCategories(c context.Context, node sqalx.Node, aid int64) (items []*model.DraftCategoryResp, err error)
