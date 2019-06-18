@@ -1,0 +1,58 @@
+package model
+
+type ArticleResp struct {
+	ID int64 `json:"id,string" swaggertype:"string"`
+
+	// 标题
+	Title string `json:"title"`
+
+	// 内容
+	Content string `json:"content"`
+
+	// 集合ID
+	ArticleSetID int64 `json:"article_set_id,string"  swaggertype:"string"`
+
+	// 文章语言
+	Locale string `json:"locale"`
+
+	//  封面图
+	Cover *string `json:"cover,omitempty"`
+	// 简介
+	Introduction string `json:"introduction"` // Introduction 话题简介
+	// 是否私有
+	Private bool `json:"private"`
+
+	// 版本名称
+	VersionName string `json:"version_name"`
+
+	// 版本顺序
+	Seq int `json:"seq"`
+
+	Files []*TopicFileResp `json:"files"`
+
+	Relations []*ArticleRelationResp `json:"relations"`
+
+	// 属性
+	ArticleMeta *ArticleMeta `json:"meta,omitempty"`
+}
+
+type ArticleRelationResp struct {
+	TopicID         int64 `json:"topic_id,string" swaggertype:"string"`
+	TopicName       int64 `json:"topic_name"`
+	TopicCatalogID  int64 `json:"topic_catalog_id_id,string" swaggertype:"string"`
+	CatalogFullName int64 `json:"catalog_full_name"`
+	// 是否主话题
+	Primary bool `json:"primary"`
+}
+
+type ArticleFileResp struct {
+	ID       int64  `json:"id,string" swaggertype:"string"`
+	FileName string `json:"file_name"` // FileName 文件名
+	FileURL  string `json:"file_url`   // FileURL 文件地址
+	Seq      int    `json:"seq"`       // Seq 文件顺序
+}
+
+type ArticleMeta struct {
+	// 是否能编辑
+	CanEdit bool `json:"can_edit"`
+}

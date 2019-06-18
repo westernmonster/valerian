@@ -280,6 +280,14 @@ func (p *Service) SaveCatalogs(c context.Context, req *model.ArgSaveTopicCatalog
 			continue
 		}
 
+		// Deal Move Logic
+		var item *model.TopicCatalog
+		if item, err = p.d.GetTopicCatalogByID(c, tx, *v.ID); err != nil {
+			return
+		} else if item == nil {
+			return ecode.TopicCatalogNotExist
+		}
+
 		dic[*v.ID] = dicItem{Done: true}
 		if err = p.updateCatalog(c, tx, *v.ID, req.TopicID, v.Name, v.Seq, v.Type, v.RefID, req.ParentID); err != nil {
 			return

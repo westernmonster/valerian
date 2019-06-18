@@ -11,7 +11,7 @@ type ArgCreateTopic struct {
 	// 如果是一个全新的创建，无需传入这个字段
 	// 在当前话题版本上创建新的版本时候，需要将这个ID传入进来，
 	// 后台方可在内部将不同版本归属于一个集合
-	TopicSetID *int64 `json:"topic_set_id,string,omitempty"`
+	TopicSetID *int64 `json:"topic_set_id,string,omitempty" swaggertype:"string"`
 
 	// 成员
 	Members []*ArgCreateTopicMember `json:"members,omitempty"`
@@ -149,7 +149,7 @@ func (p *ArgCreateTopic) Validate() error {
 
 type ArgCreateTopicMember struct {
 	// 成员ID
-	AccountID int64 `json:"account_id,string"`
+	AccountID int64 `json:"account_id,string" swaggertype:"string"`
 	// 角色
 	// user 普通用户
 	// admin 管理员
