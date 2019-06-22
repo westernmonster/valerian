@@ -12,7 +12,7 @@ import (
 	"valerian/library/net/metadata"
 )
 
-func (p *Service) getTopicVersions(c context.Context, node sqalx.Node, topicSetID int64) (items []*model.TopicVersionResp, err error) {
+func (p *Service) getTopicVersions(c context.Context, node sqalx.Node, topicSetID int64) (items []int64, err error) {
 	var addCache = true
 
 	if items, err = p.d.TopicVersionCache(c, topicSetID); err != nil {
@@ -34,8 +34,40 @@ func (p *Service) getTopicVersions(c context.Context, node sqalx.Node, topicSetI
 	return
 }
 
+func (p *Service) getTopicVersionsResp(c context.Context, node sqalx.Node, topicSetID int64) (items []*model.TopicVersionResp, err error) {
+	var data []int64
+	items = make([]*model.TopicVersionResp, 0)
+	if data, err = p.getTopicVersions(c, node, topicSetID); err != nil {
+		return
+	}
+
+	for _, v := range data {
+		t, e := p.getTopic(c, v)
+		if e != nil {
+			err = e
+			return
+		}
+
+		version := &model.TopicVersionResp{
+			TopicSetID:  t.TopicSetID,
+			TopicID:     t.ID,
+			Seq:         t.Seq,
+			VersionName: t.VersionName,
+			TopicName:   t.Name,
+		}
+
+		if version.TopicMeta, err = p.GetTopicMeta(c, t); err != nil {
+			return
+		}
+
+		items = append(items, version)
+	}
+
+	return
+}
+
 func (p *Service) GetTopicVersions(c context.Context, topicSetID int64) (items []*model.TopicVersionResp, err error) {
-	return p.getTopicVersions(c, p.d.DB(), topicSetID)
+	return p.getTopicVersionsResp(c, p.d.DB(), topicSetID)
 }
 
 func (p *Service) AddTopicVersion(c context.Context, arg *model.ArgNewVersion) (id int64, err error) {
@@ -179,7 +211,7 @@ func (p *Service) MergeTopicVersions(c context.Context, arg *model.ArgMergeVersi
 	}()
 
 	var fSets []*model.TopicVersionResp
-	if fSets, err = p.d.GetTopicVersions(c, tx, arg.FromTopicSetID); err != nil {
+	if fSets, err = p.getTopicVersionsResp(c, tx, arg.FromTopicSetID); err != nil {
 		return
 	}
 
@@ -197,7 +229,7 @@ func (p *Service) MergeTopicVersions(c context.Context, arg *model.ArgMergeVersi
 	}
 
 	var tSets []*model.TopicVersionResp
-	if tSets, err = p.d.GetTopicVersions(c, tx, arg.ToTopicSetID); err != nil {
+	if tSets, err = p.getTopicVersionsResp(c, tx, arg.ToTopicSetID); err != nil {
 		return
 	}
 	for _, v := range tSets {

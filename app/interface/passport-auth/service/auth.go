@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"time"
 	"valerian/app/interface/passport-auth/model"
 	"valerian/library/ecode"
@@ -58,9 +59,9 @@ func (p *Service) RenewToken(c context.Context, arg *model.ArgRenewToken) (r *mo
 }
 
 func (p *Service) getAccessToken(c context.Context, token string) (t *model.AccessToken, err error) {
-	needCache := true
+	addCache := true
 	if t, err = p.d.AccessTokenCache(c, token); err != nil {
-		needCache = false
+		addCache = false
 	} else if t != nil {
 		return
 	}
@@ -69,7 +70,8 @@ func (p *Service) getAccessToken(c context.Context, token string) (t *model.Acce
 		return
 	}
 
-	if needCache && t != nil {
+	if addCache {
+		fmt.Println(111111111111)
 		p.addCache(func() {
 			p.d.SetAccessTokenCache(context.TODO(), t)
 		})

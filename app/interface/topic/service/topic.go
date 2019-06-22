@@ -13,10 +13,6 @@ import (
 	"valerian/library/net/metadata"
 )
 
-func (p *Service) FollowTopic(c context.Context, mid int64, topicID int64) (err error) {
-	return
-}
-
 func (p *Service) SearchTopics(c context.Context, query string) (err error) {
 	return
 }
@@ -38,7 +34,7 @@ func (p *Service) GetTopic(c context.Context, topicID int64) (item *model.TopicR
 		return
 	}
 
-	if item.Versions, err = p.getTopicVersions(c, p.d.DB(), item.TopicSetID); err != nil {
+	if item.Versions, err = p.getTopicVersionsResp(c, p.d.DB(), item.TopicSetID); err != nil {
 		return
 	}
 
@@ -84,6 +80,7 @@ func (p *Service) getTopic(c context.Context, topicID int64) (item *model.TopicR
 		TopicType:        t.TopicType,
 		TopicHome:        t.TopicHome,
 		VersionName:      t.VersionName,
+		Seq:              t.Seq,
 		IsPrivate:        bool(t.IsPrivate),
 		AllowChat:        bool(t.AllowChat),
 		AllowDiscuss:     bool(t.AllowDiscuss),

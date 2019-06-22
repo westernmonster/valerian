@@ -2732,6 +2732,89 @@
                 }
             }
         },
+        "/topic/follow": {
+            "post": {
+                "description": "关注话题",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "topic"
+                ],
+                "summary": "关注话题",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "话题ID",
+                        "name": "topic_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "18": {
+                        "description": "话题不存在"
+                    },
+                    "200": {
+                        "description": "返回关注状态"
+                    },
+                    "37": {
+                        "description": "需要身份认证"
+                    },
+                    "38": {
+                        "description": "需要工作认证"
+                    },
+                    "39": {
+                        "description": "必须管理员添加"
+                    },
+                    "40": {
+                        "description": "需要购买"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    },
+                    "626": {
+                        "description": "用户不存在"
+                    }
+                }
+            }
+        },
         "/topic/get": {
             "get": {
                 "description": "获取话题",
@@ -3782,11 +3865,16 @@
         "model.AddArticleRelation": {
             "type": "object",
             "properties": {
+                "parent_id": {
+                    "description": "类目分类ID 如果根目录则传0",
+                    "type": "string"
+                },
                 "primary": {
                     "description": "是否主话题",
                     "type": "boolean"
                 },
-                "topic_catalog_id": {
+                "topic_id": {
+                    "description": "所关联话题 ID",
                     "type": "string"
                 }
             }
@@ -4499,7 +4587,8 @@
         "model.ArticleRelationResp": {
             "type": "object",
             "properties": {
-                "catalog_full_name": {
+                "catalog_full_path": {
+                    "description": "全路径名",
                     "type": "integer"
                 },
                 "primary": {
@@ -4507,12 +4596,15 @@
                     "type": "boolean"
                 },
                 "topic_catalog_id_id": {
+                    "description": "话题在目的中的ID",
                     "type": "string"
                 },
                 "topic_id": {
+                    "description": "话题ID",
                     "type": "string"
                 },
                 "topic_name": {
+                    "description": "话题名",
                     "type": "integer"
                 }
             }
@@ -4535,7 +4627,7 @@
                 "files": {
                     "type": "array",
                     "items": {
-                        "type": "TopicFileResp"
+                        "$ref": "#/definitions/model.ArticleFileResp"
                     }
                 },
                 "id": {
@@ -4575,6 +4667,12 @@
                 "version_name": {
                     "description": "版本名称",
                     "type": "string"
+                },
+                "versions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.ArticleVersionResp"
+                    }
                 }
             }
         },
@@ -5243,6 +5341,11 @@
         "model.TopicVersionResp": {
             "type": "object",
             "properties": {
+                "meta": {
+                    "description": "Meta",
+                    "type": "object",
+                    "$ref": "#/definitions/model.TopicMeta"
+                },
                 "seq": {
                     "description": "顺序",
                     "type": "integer"

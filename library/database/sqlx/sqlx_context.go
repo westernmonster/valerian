@@ -137,10 +137,31 @@ func (db *DB) PreparexContext(ctx context.Context, query string) (*Stmt, error) 
 
 // QueryxContext queries the database and returns an *sqlx.Rows.
 // Any placeholder parameters are replaced with supplied args.
-func (db *DB) QueryxContext(ctx context.Context, query string, args ...interface{}) (*Rows, error) {
-	r, err := db.DB.QueryContext(ctx, query, args...)
+func (db *DB) QueryxContext(ctx context.Context, query string, args ...interface{}) (rows *Rows, err error) {
+	now := time.Now()
+	span := opentracing.SpanFromContext(ctx)
+	if span != nil {
+		parentCtx := span.Context()
+		span = tracing.StartSpan("query", opentracing.ChildOf(parentCtx))
+		span.SetTag("address", db.Addr)
+		span.SetTag("sql", query)
+		defer span.Finish()
+	}
+
+	if err = db.breaker.Allow(); err != nil {
+		stats.Incr("mysql:query", "breaker")
+		return
+	}
+
+	_, c, cancel := db.QueryTimeout.Shrink(ctx)
+
+	r, err := db.DB.QueryContext(c, query, args...)
+	db.onBreaker(&err)
+	stats.Timing("mysql:query", int64(time.Since(now)/time.Millisecond))
 	if err != nil {
-		return nil, err
+		err = errors.Wrapf(err, "query:%s, args:%+v", query, args)
+		cancel()
+		return
 	}
 	return &Rows{Rows: r, unsafe: db.unsafe, Mapper: db.Mapper}, err
 }
@@ -148,8 +169,26 @@ func (db *DB) QueryxContext(ctx context.Context, query string, args ...interface
 // QueryRowxContext queries the database and returns an *sqlx.Row.
 // Any placeholder parameters are replaced with supplied args.
 func (db *DB) QueryRowxContext(ctx context.Context, query string, args ...interface{}) *Row {
-	rows, err := db.DB.QueryContext(ctx, query, args...)
-	return &Row{rows: rows, err: err, unsafe: db.unsafe, Mapper: db.Mapper}
+	now := time.Now()
+	span := opentracing.SpanFromContext(ctx)
+	if span != nil {
+		parentCtx := span.Context()
+		span = tracing.StartSpan("queryrow", opentracing.ChildOf(parentCtx))
+		span.SetTag("address", db.Addr)
+		span.SetTag("sql", query)
+		defer span.Finish()
+	}
+
+	if err := db.breaker.Allow(); err != nil {
+		stats.Incr("mysql:queryrow", "breaker")
+		return &Row{err: err, unsafe: db.unsafe, Mapper: db.Mapper}
+	}
+
+	_, c, cancel := db.QueryTimeout.Shrink(ctx)
+	rows, err := db.DB.QueryContext(c, query, args...)
+	stats.Timing("mysql:queryrow", int64(time.Since(now)/time.Millisecond))
+
+	return &Row{rows: rows, err: err, unsafe: db.unsafe, Mapper: db.Mapper, cancel: cancel}
 }
 
 func (db *DB) ExecContext(ctx context.Context, query string, args ...interface{}) (result sql.Result, err error) {
@@ -218,15 +257,28 @@ func (tx *Tx) StmtxContext(ctx context.Context, stmt interface{}) *Stmt {
 // The provided context is used for the preparation of the statement, not for
 // the execution of the statement.
 func (tx *Tx) PreparexContext(ctx context.Context, query string) (*Stmt, error) {
+	if tx.span != nil {
+		tx.span.SetTag("prepare", query)
+	}
+
 	return PreparexContext(ctx, tx, query)
 }
 
 // QueryxContext within a transaction and context.
 // Any placeholder parameters are replaced with supplied args.
 func (tx *Tx) QueryxContext(ctx context.Context, query string, args ...interface{}) (*Rows, error) {
+	if tx.span != nil {
+		tx.span.SetTag("query", query)
+	}
+
+	now := time.Now()
+	defer func() {
+		stats.Timing("mysql:tx:query", int64(time.Since(now)/time.Millisecond))
+	}()
+
 	r, err := tx.Tx.QueryContext(ctx, query, args...)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrapf(err, "query:%s, args:%+v", query, args)
 	}
 	return &Rows{Rows: r, unsafe: tx.unsafe, Mapper: tx.Mapper}, err
 }
@@ -266,6 +318,14 @@ func (tx *Tx) ExecContext(ctx context.Context, query string, args ...interface{}
 // QueryRowxContext within a transaction and context.
 // Any placeholder parameters are replaced with supplied args.
 func (tx *Tx) QueryRowxContext(ctx context.Context, query string, args ...interface{}) *Row {
+	if tx.span != nil {
+		tx.span.SetTag("queryrow", query)
+	}
+
+	now := time.Now()
+	defer func() {
+		stats.Timing("mysql:tx:queryrow", int64(time.Since(now)/time.Millisecond))
+	}()
 	rows, err := tx.Tx.QueryContext(ctx, query, args...)
 	return &Row{rows: rows, err: err, unsafe: tx.unsafe, Mapper: tx.Mapper}
 }

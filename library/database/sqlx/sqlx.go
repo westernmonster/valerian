@@ -175,6 +175,7 @@ type Row struct {
 	unsafe bool
 	rows   *sql.Rows
 	Mapper *reflectx.Mapper
+	cancel func()
 }
 
 // Scan is a fixed implementation of sql.Row.Scan, which does not discard the

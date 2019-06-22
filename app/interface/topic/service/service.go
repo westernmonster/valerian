@@ -41,7 +41,7 @@ type Service struct {
 		DeleteTopicRelation(c context.Context, node sqalx.Node, id int64) (err error)
 
 		AddTopicSet(c context.Context, node sqalx.Node, item *model.TopicSet) (err error)
-		GetTopicVersions(c context.Context, node sqalx.Node, topicSetID int64) (items []*model.TopicVersionResp, err error)
+		GetTopicVersions(c context.Context, node sqalx.Node, topicSetID int64) (items []int64, err error)
 		GetTopicVersionByName(c context.Context, node sqalx.Node, topicSetID int64, versionName string) (item *model.TopicVersionResp, err error)
 		GetAllTopicTypes(c context.Context, node sqalx.Node) (items []*model.TopicType, err error)
 		GetTopicType(c context.Context, node sqalx.Node, id int) (item *model.TopicType, err error)
@@ -66,8 +66,8 @@ type Service struct {
 		TopicRelationCache(c context.Context, topicID int64) (m []*model.TopicRelation, err error)
 		DelTopicRelationCache(c context.Context, topicID int64) (err error)
 
-		SetTopicVersionCache(c context.Context, topicSetID int64, m []*model.TopicVersionResp) (err error)
-		TopicVersionCache(c context.Context, topicSetID int64) (m []*model.TopicVersionResp, err error)
+		SetTopicVersionCache(c context.Context, topicSetID int64, m []int64) (err error)
+		TopicVersionCache(c context.Context, topicSetID int64) (m []int64, err error)
 		DelTopicVersionCache(c context.Context, topicSetID int64) (err error)
 
 		SetTopicMembersCache(c context.Context, topicID int64, count, page, pageSize int, data []*model.TopicMember) (err error)

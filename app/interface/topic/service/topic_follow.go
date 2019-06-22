@@ -9,9 +9,15 @@ import (
 	"valerian/library/ecode"
 	"valerian/library/gid"
 	"valerian/library/log"
+	"valerian/library/net/metadata"
 )
 
-func (p *Service) Follow(c context.Context, aid, topicID int64) (status int, err error) {
+func (p *Service) Follow(c context.Context, topicID int64) (status int, err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))

@@ -26,6 +26,7 @@ func route(e *mars.Engine) {
 		g.POST("/edit", auth.User, editTopic)
 		g.POST("/del", auth.User, deleteTopic)
 		g.POST("/owner", auth.User, changeOwner)
+		g.POST("/follow", auth.User, followTopic)
 
 		g.POST("/members", auth.User, editTopicMembers)
 		g.POST("/related", auth.User, editTopicRelations)

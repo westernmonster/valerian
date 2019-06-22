@@ -65,7 +65,7 @@ func (p *Dao) SetAccessTokenCache(c context.Context, m *model.AccessToken) (err 
 		return
 	}
 
-	item := &memcache.Item{Key: key, Object: m, Flags: memcache.FlagProtobuf, Expiration: int32(p.authMCExpire)}
+	item := &memcache.Item{Key: key, Object: m, Flags: memcache.FlagJSON, Expiration: int32(p.authMCExpire)}
 	if err = conn.Set(item); err != nil {
 		log.For(c).Error(fmt.Sprintf("set token cache error(%s,%d,%v)", key, m.ExpiresAt, err))
 	}

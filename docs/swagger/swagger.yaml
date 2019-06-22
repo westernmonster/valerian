@@ -62,10 +62,14 @@ definitions:
     type: object
   model.AddArticleRelation:
     properties:
+      parent_id:
+        description: 类目分类ID 如果根目录则传0
+        type: string
       primary:
         description: 是否主话题
         type: boolean
-      topic_catalog_id:
+      topic_id:
+        description: 所关联话题 ID
         type: string
     type: object
   model.ArgAddArticle:
@@ -660,16 +664,20 @@ definitions:
     type: object
   model.ArticleRelationResp:
     properties:
-      catalog_full_name:
+      catalog_full_path:
+        description: 全路径名
         type: integer
       primary:
         description: 是否主话题
         type: boolean
       topic_catalog_id_id:
+        description: 话题在目的中的ID
         type: string
       topic_id:
+        description: 话题ID
         type: string
       topic_name:
+        description: 话题名
         type: integer
     type: object
   model.ArticleResp:
@@ -685,7 +693,7 @@ definitions:
         type: string
       files:
         items:
-          type: TopicFileResp
+          $ref: '#/definitions/model.ArticleFileResp'
         type: array
       id:
         type: string
@@ -715,6 +723,10 @@ definitions:
       version_name:
         description: 版本名称
         type: string
+      versions:
+        items:
+          $ref: '#/definitions/model.ArticleVersionResp'
+        type: array
     type: object
   model.ArticleVersionResp:
     properties:
@@ -1255,6 +1267,10 @@ definitions:
     type: object
   model.TopicVersionResp:
     properties:
+      meta:
+        $ref: '#/definitions/model.TopicMeta'
+        description: Meta
+        type: object
       seq:
         description: 顺序
         type: integer
@@ -3187,6 +3203,63 @@ paths:
         "500":
           description: 服务器端错误
       summary: 更新话题
+      tags:
+      - topic
+  /topic/follow:
+    post:
+      consumes:
+      - application/json
+      description: 关注话题
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 话题ID
+        in: query
+        name: topic_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "18":
+          description: 话题不存在
+        "37":
+          description: 需要身份认证
+        "38":
+          description: 需要工作认证
+        "39":
+          description: 必须管理员添加
+        "40":
+          description: 需要购买
+        "200":
+          description: 返回关注状态
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+        "626":
+          description: 用户不存在
+      summary: 关注话题
       tags:
       - topic
   /topic/get:

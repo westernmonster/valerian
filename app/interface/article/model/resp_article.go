@@ -19,6 +19,7 @@ type ArticleResp struct {
 	Cover *string `json:"cover,omitempty"`
 	// 简介
 	Introduction string `json:"introduction"` // Introduction 话题简介
+
 	// 是否私有
 	Private bool `json:"private"`
 
@@ -28,19 +29,25 @@ type ArticleResp struct {
 	// 版本顺序
 	Seq int `json:"seq"`
 
-	Files []*TopicFileResp `json:"files"`
+	Files []*ArticleFileResp `json:"files"`
 
 	Relations []*ArticleRelationResp `json:"relations"`
+
+	Versions []*ArticleVersionResp `json:"versions"`
 
 	// 属性
 	ArticleMeta *ArticleMeta `json:"meta,omitempty"`
 }
 
 type ArticleRelationResp struct {
-	TopicID         int64 `json:"topic_id,string" swaggertype:"string"`
-	TopicName       int64 `json:"topic_name"`
-	TopicCatalogID  int64 `json:"topic_catalog_id_id,string" swaggertype:"string"`
-	CatalogFullName int64 `json:"catalog_full_name"`
+	// 话题ID
+	TopicID int64 `json:"topic_id,string" swaggertype:"string"`
+	// 话题名
+	TopicName int64 `json:"topic_name"`
+	// 话题在目的中的ID
+	TopicCatalogID int64 `json:"topic_catalog_id_id,string" swaggertype:"string"`
+	// 全路径名
+	CatalogFullPath int64 `json:"catalog_full_path"`
 	// 是否主话题
 	Primary bool `json:"primary"`
 }

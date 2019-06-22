@@ -33,7 +33,11 @@ type AddArticleFile struct {
 }
 
 type AddArticleRelation struct {
-	TopicCatalogID int64 `json:"topic_catalog_id,string" swaggertype:"string"`
+	// 类目分类ID 如果根目录则传0
+	ParentID int64 `json:"parent_id,string" swaggertype:"string"`
+
+	// 所关联话题 ID
+	TopicID int64 `json:"topic_id,string" swaggertype:"string"`
 
 	// 是否主话题
 	Primary bool `json:"primary"`

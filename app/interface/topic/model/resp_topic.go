@@ -12,6 +12,9 @@ type TopicResp struct {
 	// 成员数
 	MembersCount int `json:"members_count"`
 
+	// 顺序
+	Seq int `db:"seq" json:"seq"`
+
 	// 资源数量
 	ResourcesCount int `json:"resources_count"`
 
@@ -136,6 +139,9 @@ type TopicVersionResp struct {
 	VersionName string `db:"version_name" json:"version_name"`
 	// 话题名
 	TopicName string `db:"topic_name" json:"topic_name"`
+
+	// Meta
+	TopicMeta *TopicMeta `json:"meta,omitempty"`
 }
 
 type RelatedTopicShort struct {

@@ -110,6 +110,8 @@ type Node interface {
 
 	GetContext(ctx context.Context, dest interface{}, query string, args ...interface{}) (err error)
 
+	QueryxContext(ctx context.Context, query string, args ...interface{}) (*sqlx.Rows, error)
+
 	Ping(c context.Context) (err error)
 }
 
@@ -264,6 +266,17 @@ func (n *node) GetContext(ctx context.Context, dest interface{}, query string, a
 		}
 	}
 	return n.Driver.GetContext(ctx, dest, query, args...)
+}
+
+func (n *node) QueryxContext(ctx context.Context, query string, args ...interface{}) (rows *sqlx.Rows, err error) {
+	idx := n.readIndex()
+	for i := range n.read {
+		if rows, err = n.read[(idx+i)%len(n.read)].QueryxContext(ctx, query, args...); !ecode.ServiceUnavailable.Equal(err) {
+			return
+		}
+	}
+
+	return n.write.QueryxContext(ctx, query, args...)
 }
 
 func (n *node) readIndex() int {
