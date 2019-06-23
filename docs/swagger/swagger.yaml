@@ -51,6 +51,23 @@ definitions:
         description: 认证流程页面入口URL。
         type: object
     type: object
+  model.Actor:
+    properties:
+      avatar:
+        description: 头像
+        type: string
+      id:
+        description: ID
+        type: integer
+      name:
+        description: 用户名
+        type: string
+      type:
+        description: |-
+          类型
+          user, org
+        type: string
+    type: object
   model.AddArticleFile:
     properties:
       file_name:
@@ -78,12 +95,15 @@ definitions:
         description: 文章集合ID
         type: string
       content:
-        description: 内容
+        description: |-
+          内容
+          required: true
         type: string
       cover:
         description: 封面图
         type: string
       files:
+        description: 附件
         items:
           $ref: '#/definitions/model.AddArticleFile'
         type: array
@@ -91,20 +111,29 @@ definitions:
         description: 简介
         type: string
       locale:
-        description: 文章语言
+        description: |-
+          文章语言
+          required: true
         type: string
       private:
-        description: 是否私有
+        description: |-
+          是否私有
+          required: true
         type: boolean
       relations:
+        description: 关联话题
         items:
           $ref: '#/definitions/model.AddArticleRelation'
         type: array
       title:
-        description: 标题
+        description: |-
+          标题
+          required: true
         type: string
       version_name:
-        description: 版本名称
+        description: |-
+          版本名称
+          required: true
         type: string
     type: object
   model.ArgAddColor:
@@ -390,7 +419,7 @@ definitions:
     type: object
   model.ArgNewVersion:
     properties:
-      from_article_id:
+      from_topic_id:
         type: integer
       version_name:
         type: string
@@ -733,11 +762,11 @@ definitions:
       article_id:
         description: 文章ID
         type: string
-      article_name:
-        description: 文章名
-        type: string
       article_set_id:
         description: 集合ID
+        type: string
+      article_title:
+        description: 文章名
         type: string
       seq:
         description: 顺序
@@ -818,6 +847,91 @@ definitions:
         type: string
       updated_at:
         type: integer
+    type: object
+  model.FeedItem:
+    properties:
+      source:
+        $ref: '#/definitions/model.FeedSource'
+        description: 来源
+        type: object
+      target:
+        $ref: '#/definitions/model.FeedTarget'
+        description: 目标
+        type: object
+      target_type:
+        description: |-
+          目标类型
+          article, topic, member, comment
+        type: string
+    type: object
+  model.FeedPaging:
+    properties:
+      is_end:
+        description: 是否结束
+        type: boolean
+      next:
+        description: 下一页
+        type: string
+      prev:
+        description: 上一页
+        type: string
+    type: object
+  model.FeedResp:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/model.FeedItem'
+        type: array
+      paging:
+        $ref: '#/definitions/model.FeedPaging'
+        type: object
+    type: object
+  model.FeedSource:
+    properties:
+      action_text:
+        description: |-
+          文字内容
+          例如：编辑了文章，收藏了文章，关注了用户
+        type: string
+      action_time:
+        description: 时间
+        type: integer
+      action_type:
+        description: |-
+          类型
+          MEMBER_CREATE_ARTICLE
+          MEMBER_EDIT_ARTICLE
+          MEMBER_FOLLOW_TOPIC
+          MEMBER_FOLLOW_MEMBER
+          MEMBER_CREATE_COMMENT
+          MEMBER_LIKE_ARTICLE
+          MEMBER_FAV_ARTICLE
+        type: string
+      actor:
+        $ref: '#/definitions/model.Actor'
+        description: 动作发起者
+        type: object
+    type: object
+  model.FeedTarget:
+    properties:
+      account:
+        $ref: '#/definitions/model.TargetMember'
+        description: 用户
+        type: object
+      article:
+        $ref: '#/definitions/model.TargetComment'
+        description: 评论
+        type: object
+      id:
+        description: ID
+        type: string
+      topic:
+        $ref: '#/definitions/model.TargetTopic'
+        description: 话题
+        type: object
+      type:
+        description: '类型: article,comment,account,topic'
+        type: string
     type: object
   model.Locale:
     properties:
@@ -1009,6 +1123,96 @@ definitions:
       version_name:
         description: 版本名称
         type: string
+    type: object
+  model.TargetArticle:
+    properties:
+      comment_count:
+        description: 评论数
+        type: integer
+      cover:
+        description: 封面
+        type: string
+      excerpt:
+        description: 内容
+        type: string
+      id:
+        description: ID
+        type: string
+      like_count:
+        description: 喜欢数
+        type: integer
+      title:
+        description: 文章标题
+        type: string
+    type: object
+  model.TargetComment:
+    properties:
+      comment_count:
+        description: 子评论数
+        type: integer
+      excerpt:
+        description: 评论内容
+        type: string
+      id:
+        description: ID
+        type: string
+      title:
+        description: 文章标题
+        type: string
+    type: object
+  model.TargetMember:
+    properties:
+      article_count:
+        description: 文章数
+        type: integer
+      avatar:
+        description: 头像
+        type: string
+      fans_count:
+        description: 粉丝数
+        type: integer
+      follow_count:
+        description: 关注数
+        type: integer
+      id:
+        description: ID
+        type: string
+      id_cert:
+        description: 身份认证
+        type: boolean
+      introduction:
+        description: 简介
+        type: string
+      is_org:
+        description: 是否机构
+        type: boolean
+      is_vip:
+        description: 是否VIP
+        type: boolean
+      name:
+        description: 用户名
+        type: string
+      topic_count:
+        description: 话题数
+        type: integer
+      work_cert:
+        description: 工作认证
+        type: boolean
+    type: object
+  model.TargetTopic:
+    properties:
+      id:
+        description: ID
+        type: string
+      members_count:
+        description: 成员数
+        type: integer
+      name:
+        description: 话题名
+        type: string
+      resources_count:
+        description: 资源数量
+        type: integer
     type: object
   model.TopicChildCatalog:
     properties:
@@ -1225,6 +1429,9 @@ definitions:
         type: array
       resources_count:
         description: 资源数量
+        type: integer
+      seq:
+        description: 顺序
         type: integer
       topic_home:
         description: |-
@@ -3310,6 +3517,56 @@ paths:
         "500":
           description: 服务器端错误
       summary: 获取话题
+      tags:
+      - topic
+  /topic/list/activities:
+    get:
+      consumes:
+      - application/json
+      description: 获取话题动态
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: topic_id
+        in: query
+        name: topic_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 话题
+          schema:
+            $ref: '#/definitions/model.FeedResp'
+            type: object
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 获取话题动态
       tags:
       - topic
   /topic/list/catalogs:

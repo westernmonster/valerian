@@ -42,7 +42,7 @@ func (p *Service) getTopicVersionsResp(c context.Context, node sqalx.Node, topic
 	}
 
 	for _, v := range data {
-		t, e := p.getTopic(c, v)
+		t, e := p.getTopic(c, node, v)
 		if e != nil {
 			err = e
 			return

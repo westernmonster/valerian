@@ -40,4 +40,12 @@ func route(e *mars.Engine) {
 		g.GET("/list/related", auth.User, relatedTopics)
 		g.GET("/list/versions", auth.User, topicVersions)
 	}
+
+	x := e.Group("/api/v1/article")
+	{
+		x.GET("/get", auth.User, getArticle)
+		x.POST("/add", auth.User, addArticle)
+		x.POST("/edit", auth.User, editArticle)
+		x.POST("/del", auth.User, delArticle)
+	}
 }

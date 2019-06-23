@@ -7,26 +7,22 @@ import (
 	"valerian/library/net/http/mars"
 )
 
-// @Summary 新增话题
-// @Description 新增话题
-// @Tags topic
+// @Summary 新增文章
+// @Description 新增文章
+// @Tags article
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArgCreateTopic true "请求"
-// @Success 200 "成功,返回topic_id"
-// @Failure 20 "获取用户ID失败"
-// @Failure 30 "话题类型不存在"
-// @Failure 31 "话题版本已经存在"
-// @Failure 19 "主理人只允许一个"
+// @Param req body model.ArgAddArticle true "请求"
+// @Success 200 "成功,返回article_id"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /topic/add [post]
-func createTopic(c *mars.Context) {
-	arg := new(model.ArgCreateTopic)
+// @Router /article/add [post]
+func addArticle(c *mars.Context) {
+	arg := new(model.ArgAddArticle)
 	if e := c.Bind(arg); e != nil {
 		return
 	}
@@ -36,36 +32,29 @@ func createTopic(c *mars.Context) {
 		return
 	}
 
-	if topicID, err := srv.CreateTopic(c, arg); err != nil {
+	if id, err := srv.AddArticle(c, arg); err != nil {
 		c.JSON(nil, err)
 	} else {
-		c.JSON(strconv.FormatInt(topicID, 10), err)
+		c.JSON(strconv.FormatInt(id, 10), err)
 	}
-
 }
 
-// @Summary 更新话题
-// @Description 更新话题
-// @Tags topic
+// @Summary 更新文章
+// @Description 更新文章
+// @Tags article
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArgUpdateTopic true "请求"
+// @Param req body model.ArgUpdateArticle true "请求"
 // @Success 200 "成功"
-// @Failure 18 "话题不存在"
-// @Failure 20 "获取用户ID失败"
-// @Failure 30 "话题类型不存在"
-// @Failure 31 "话题版本已经存在"
-// @Failure 34 "你不是话题成员"
-// @Failure 35 "你不是话题管理员"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /topic/edit [post]
-func editTopic(c *mars.Context) {
-	arg := new(model.ArgUpdateTopic)
+// @Router /article/edit [post]
+func editArticle(c *mars.Context) {
+	arg := new(model.ArgUpdateArticle)
 	if e := c.Bind(arg); e != nil {
 		return
 	}
@@ -75,12 +64,12 @@ func editTopic(c *mars.Context) {
 		return
 	}
 
-	c.JSON(nil, srv.UpdateTopic(c, arg))
+	c.JSON(nil, srv.UpdateArticle(c, arg))
 }
 
-// @Summary 删除话题
-// @Description 删除话题
-// @Tags topic
+// @Summary 删除文章
+// @Description 删除文章
+// @Tags article
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer"
@@ -91,8 +80,8 @@ func editTopic(c *mars.Context) {
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /topic/del [post]
-func deleteTopic(c *mars.Context) {
+// @Router /article/del [post]
+func delArticle(c *mars.Context) {
 	idStr := c.Request.Form.Get("id")
 	if id, err := strconv.ParseInt(idStr, 10, 64); err != nil {
 		c.JSON(nil, ecode.RequestErr)
@@ -101,25 +90,25 @@ func deleteTopic(c *mars.Context) {
 		c.JSON(nil, ecode.RequestErr)
 		return
 	} else {
-		c.JSON(nil, srv.DelTopic(c, id))
+		c.JSON(nil, srv.DelArticle(c, id))
 	}
 }
 
-// @Summary 获取话题
-// @Description 获取话题
-// @Tags topic
+// @Summary 获取文章
+// @Description 获取文章
+// @Tags article
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param id query string true "ID"
-// @Success 200 {object} model.TopicResp "话题"
+// @Success 200 {object} model.ArticleResp "文章"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /topic/get [get]
-func getTopic(c *mars.Context) {
+// @Router /article/get [get]
+func getArticle(c *mars.Context) {
 	idStr := c.Request.Form.Get("id")
 	if id, err := strconv.ParseInt(idStr, 10, 64); err != nil {
 		c.JSON(nil, ecode.RequestErr)
@@ -128,37 +117,6 @@ func getTopic(c *mars.Context) {
 		c.JSON(nil, ecode.RequestErr)
 		return
 	} else {
-		c.JSON(srv.GetTopic(c, id))
+		c.JSON(srv.GetArticle(c, id))
 	}
-}
-
-// @Summary 更改主理人
-// @Description 更改主理人,需要用户都为话题成员，并且发起操作用户必须为当前主理人
-// @Tags topic
-// @Accept json
-// @Produce json
-// @Param Authorization header string true "Bearer"
-// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
-// @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArgChangeOwner true "请求"
-// @Success 200 "成功"
-// @Failure 20 "获取用户ID失败"
-// @Failure 34 "不是话题成员"
-// @Failure 46 "不是话题主理人"
-// @Failure 400 "验证请求失败"
-// @Failure 401 "登录验证失败"
-// @Failure 500 "服务器端错误"
-// @Router /topic/owner [post]
-func changeOwner(c *mars.Context) {
-	arg := new(model.ArgChangeOwner)
-	if e := c.Bind(arg); e != nil {
-		return
-	}
-
-	if e := arg.Validate(); e != nil {
-		c.JSON(nil, ecode.RequestErr)
-		return
-	}
-
-	c.JSON(nil, srv.ChangeOwner(c, arg))
 }

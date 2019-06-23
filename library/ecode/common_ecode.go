@@ -86,4 +86,10 @@ var (
 	DraftCategoryNotExist          = add(45) // 草稿分类不存在
 	NotTopicOwner                  = add(46) // 你不是主理人
 	DraftNotExist                  = add(47) // 草稿不存在
+	ArticleVersionNameExist        = add(48) // 文章版本名称已经存在
+	NeedPrimaryTopic               = add(49) // 必须有主话题
+	OnlyAllowOnePrimaryTopic       = add(50) // 只允许一个主话题
+	DuplicateTopicID               = add(51) // 关联话题重复
+	InvalidCatalog                 = add(52) // 所选节点不是类目分类
+	NeedEditPermission             = add(54) // 需要话题编辑权限
 )

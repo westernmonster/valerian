@@ -16,27 +16,6 @@ type TopicCatalog struct {
 	UpdatedAt int64         `db:"updated_at" json:"updated_at"`          // UpdatedAt 更新时间
 }
 
-type TopicMember struct {
-	ID        int64         `db:"id" json:"id,string"`                 // ID ID
-	TopicID   int64         `db:"topic_id" json:"topic_id,string"`     // TopicID 分类ID
-	AccountID int64         `db:"account_id" json:"account_id,string"` // AccountID 成员ID
-	Role      string        `db:"role" json:"role"`                    // Role 成员角色
-	Deleted   types.BitBool `db:"deleted" json:"deleted"`              // Deleted 是否删除
-	CreatedAt int64         `db:"created_at" json:"created_at"`        // CreatedAt 创建时间
-	UpdatedAt int64         `db:"updated_at" json:"updated_at"`        // UpdatedAt 更新时间
-}
-
-type TopicRelation struct {
-	ID          int64         `db:"id" json:"id,string"`                       // ID ID
-	FromTopicID int64         `db:"from_topic_id" json:"from_topic_id,string"` // FromTopicID 话题ID
-	ToTopicID   int64         `db:"to_topic_id" json:"to_topic_id,string"`     // ToTopicID 关联话题ID
-	Relation    string        `db:"relation" json:"relation"`                  // Relation 关系
-	Seq         int           `db:"seq" json:"seq"`                            // Seq 顺序
-	Deleted     types.BitBool `db:"deleted" json:"deleted"`                    // Deleted 是否删除
-	CreatedAt   int64         `db:"created_at" json:"created_at"`              // CreatedAt 创建时间
-	UpdatedAt   int64         `db:"updated_at" json:"updated_at"`              // UpdatedAt 更新时间
-}
-
 type Topic struct {
 	ID               int64         `db:"id" json:"id,string"`                        // ID ID
 	TopicSetID       int64         `db:"topic_set_id" json:"topic_set_id,string"`    // TopicSetID 话题集合ID
@@ -63,27 +42,10 @@ type Topic struct {
 	UpdatedAt        int64         `db:"updated_at" json:"updated_at"`               // UpdatedAt 更新时间
 }
 
-type TopicSet struct {
-	ID        int64         `db:"id" json:"id,string"`          // ID ID
-	Deleted   types.BitBool `db:"deleted" json:"deleted"`       // Deleted 是否删除
-	CreatedAt int64         `db:"created_at" json:"created_at"` // CreatedAt 创建时间
-	UpdatedAt int64         `db:"updated_at" json:"updated_at"` // UpdatedAt 更新时间
-}
-
 type TopicType struct {
 	ID        int           `db:"id" json:"id"`                 // ID ID
 	Name      string        `db:"name" json:"name"`             // Name 话题类型
 	Deleted   types.BitBool `db:"deleted" json:"deleted"`       // Deleted 是否删除
 	CreatedAt int64         `db:"created_at" json:"created_at"` // CreatedAt 创建时间
 	UpdatedAt int64         `db:"updated_at" json:"updated_at"` // UpdatedAt 更新时间
-}
-
-type TopicFollowRequest struct {
-	ID        int64         `db:"id" json:"id,string"`                 // ID ID
-	AccountID int64         `db:"account_id" json:"account_id,string"` // AccountID 用户ID
-	TopicID   int64         `db:"topic_id" json:"topic_id,string"`     // TopicID 话题ID
-	Status    int           `db:"status" json:"status"`                // Status 状态
-	Deleted   types.BitBool `db:"deleted" json:"deleted"`              // Deleted 是否删除
-	CreatedAt int64         `db:"created_at" json:"created_at"`        // CreatedAt 创建时间
-	UpdatedAt int64         `db:"updated_at" json:"updated_at"`        // UpdatedAt 更新时间
 }

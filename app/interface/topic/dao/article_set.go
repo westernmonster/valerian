@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"valerian/app/interface/article/model"
+	"valerian/app/interface/topic/model"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
 )

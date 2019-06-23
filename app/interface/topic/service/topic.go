@@ -16,17 +16,10 @@ import (
 func (p *Service) SearchTopics(c context.Context, query string) (err error) {
 	return
 }
-func (p *Service) GetAllRelatedTopics(c context.Context, topicID int64) (items []*model.RelatedTopicResp, err error) {
-	return
-}
-
-func (p *Service) DeleteTopic(c context.Context, topicID int64) (err error) {
-	return
-}
 
 func (p *Service) GetTopic(c context.Context, topicID int64) (item *model.TopicResp, err error) {
 
-	if item, err = p.getTopic(c, topicID); err != nil {
+	if item, err = p.getTopic(c, p.d.DB(), topicID); err != nil {
 		return
 	}
 
@@ -53,7 +46,7 @@ func (p *Service) GetTopic(c context.Context, topicID int64) (item *model.TopicR
 	return
 }
 
-func (p *Service) getTopic(c context.Context, topicID int64) (item *model.TopicResp, err error) {
+func (p *Service) getTopic(c context.Context, node sqalx.Node, topicID int64) (item *model.TopicResp, err error) {
 	var addCache = true
 	if item, err = p.d.TopicCache(c, topicID); err != nil {
 		addCache = false
@@ -61,9 +54,8 @@ func (p *Service) getTopic(c context.Context, topicID int64) (item *model.TopicR
 		return
 	}
 
-	fmt.Println(topicID)
 	var t *model.Topic
-	if t, err = p.d.GetTopicByID(c, p.d.DB(), topicID); err != nil {
+	if t, err = p.d.GetTopicByID(c, node, topicID); err != nil {
 		return
 	} else if t == nil {
 		return nil, ecode.TopicNotExist
@@ -98,7 +90,7 @@ func (p *Service) getTopic(c context.Context, topicID int64) (item *model.TopicR
 	item.Versions = make([]*model.TopicVersionResp, 0)
 
 	var tType *model.TopicType
-	if tType, err = p.d.GetTopicType(c, p.d.DB(), t.TopicType); err != nil {
+	if tType, err = p.d.GetTopicType(c, node, t.TopicType); err != nil {
 		return
 	} else if tType != nil {
 		item.TopicTypeName = tType.Name

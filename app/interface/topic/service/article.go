@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"time"
-	"valerian/app/interface/article/model"
+	"valerian/app/interface/topic/model"
 	"valerian/library/database/sqalx"
 	"valerian/library/database/sqlx/types"
 	"valerian/library/ecode"
@@ -79,7 +79,7 @@ func (p *Service) AddArticle(c context.Context, arg *model.ArgAddArticle) (id in
 		return
 	}
 
-	if err = p.bulkCreateCatalogs(c, tx, item.ID, item.Title, arg.Relations); err != nil {
+	if err = p.bulkCreateArticleCatalogs(c, tx, item.ID, item.Title, arg.Relations); err != nil {
 		return
 	}
 
@@ -87,5 +87,46 @@ func (p *Service) AddArticle(c context.Context, arg *model.ArgAddArticle) (id in
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 	}
 
+	return
+}
+
+func (p *Service) UpdateArticle(c context.Context, arg *model.ArgUpdateArticle) (err error) {
+	// aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	// if !ok {
+	// 	err = ecode.AcquireAccountIDFailed
+	// 	return
+	// }
+	var tx sqalx.Node
+	if tx, err = p.d.DB().Beginx(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		return
+	}
+
+	// var item *model.Article
+	// if item, err = p.d.GetArticleByID(c, tx, arg.ID); err != nil {
+	// 	return
+	// }
+
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+			}
+			return
+		}
+	}()
+
+	if err = tx.Commit(); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+	}
+
+	return
+}
+
+func (p *Service) DelArticle(c context.Context, id int64) (err error) {
+	return
+}
+
+func (p *Service) GetArticle(c context.Context, id int64) (item *model.ArticleResp, err error) {
 	return
 }

@@ -20,6 +20,7 @@ type Service struct {
 		GetTopicCatalogChildrenCount(c context.Context, node sqalx.Node, topicID, parentID int64) (count int, err error)
 		GetTopicCatalogsByCondition(c context.Context, node sqalx.Node, topicID, parentID int64) (items []*model.TopicCatalog, err error)
 		GetTopicCatalogByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (item *model.TopicCatalog, err error)
+		GetTopicCatalogMaxChildrenSeq(c context.Context, node sqalx.Node, topicID, parentID int64) (seq int, err error)
 
 		GetTopicByID(c context.Context, node sqalx.Node, id int64) (item *model.Topic, err error)
 		AddTopic(c context.Context, node sqalx.Node, item *model.Topic) (err error)
@@ -53,6 +54,24 @@ type Service struct {
 		DelTopicFollowRequest(c context.Context, node sqalx.Node, id int64) (err error)
 
 		GetAccountByID(c context.Context, node sqalx.Node, id int64) (item *model.Account, err error)
+
+		AddArticle(c context.Context, node sqalx.Node, item *model.Article) (err error)
+		GetArticleByID(c context.Context, node sqalx.Node, id int64) (item *model.Article, err error)
+		UpdateArticle(c context.Context, node sqalx.Node, item *model.Article) (err error)
+		DelArticle(c context.Context, node sqalx.Node, id int64) (err error)
+
+		GetArticleFiles(c context.Context, node sqalx.Node, articleID int64) (items []*model.ArticleFile, err error)
+		AddArticleFile(c context.Context, node sqalx.Node, item *model.ArticleFile) (err error)
+		UpdateArticleFile(c context.Context, node sqalx.Node, item *model.ArticleFile) (err error)
+		DelArticleFile(c context.Context, node sqalx.Node, id int64) (err error)
+
+		AddArticleSet(c context.Context, node sqalx.Node, item *model.ArticleSet) (err error)
+		DelArticleSet(c context.Context, node sqalx.Node, id int64) (err error)
+		GetArticleVersionByName(c context.Context, node sqalx.Node, articleSetID int64, versionName string) (item *model.ArticleVersionResp, err error)
+
+		AddArticleHistory(c context.Context, node sqalx.Node, item *model.ArticleHistory) (err error)
+		GetArticleHistories(c context.Context, node sqalx.Node, articleID int64) (items []*model.ArticleHistory, err error)
+		GetArticleHistoryByID(c context.Context, node sqalx.Node, id int64) (item *model.ArticleHistory, err error)
 
 		SetTopicCache(c context.Context, m *model.TopicResp) (err error)
 		TopicCache(c context.Context, topicID int64) (m *model.TopicResp, err error)

@@ -2887,6 +2887,78 @@
                 }
             }
         },
+        "/topic/list/activities": {
+            "get": {
+                "description": "获取话题动态",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "topic"
+                ],
+                "summary": "获取话题动态",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "topic_id",
+                        "name": "topic_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "话题",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/model.FeedResp"
+                        }
+                    },
+                    "400": {
+                        "description": "验证请求失败"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
         "/topic/list/catalogs": {
             "get": {
                 "description": "获取话题类目",
@@ -3848,6 +3920,27 @@
                 }
             }
         },
+        "model.Actor": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "description": "头像",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "用户名",
+                    "type": "string"
+                },
+                "type": {
+                    "description": "类型\nuser, org",
+                    "type": "string"
+                }
+            }
+        },
         "model.AddArticleFile": {
             "type": "object",
             "properties": {
@@ -3887,7 +3980,7 @@
                     "type": "string"
                 },
                 "content": {
-                    "description": "内容",
+                    "description": "内容\nrequired: true",
                     "type": "string"
                 },
                 "cover": {
@@ -3895,6 +3988,7 @@
                     "type": "string"
                 },
                 "files": {
+                    "description": "附件",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/model.AddArticleFile"
@@ -3905,25 +3999,26 @@
                     "type": "string"
                 },
                 "locale": {
-                    "description": "文章语言",
+                    "description": "文章语言\nrequired: true",
                     "type": "string"
                 },
                 "private": {
-                    "description": "是否私有",
+                    "description": "是否私有\nrequired: true",
                     "type": "boolean"
                 },
                 "relations": {
+                    "description": "关联话题",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/model.AddArticleRelation"
                     }
                 },
                 "title": {
-                    "description": "标题",
+                    "description": "标题\nrequired: true",
                     "type": "string"
                 },
                 "version_name": {
-                    "description": "版本名称",
+                    "description": "版本名称\nrequired: true",
                     "type": "string"
                 }
             }
@@ -4270,7 +4365,7 @@
         "model.ArgNewVersion": {
             "type": "object",
             "properties": {
-                "from_article_id": {
+                "from_topic_id": {
                     "type": "integer"
                 },
                 "version_name": {
@@ -4683,12 +4778,12 @@
                     "description": "文章ID",
                     "type": "string"
                 },
-                "article_name": {
-                    "description": "文章名",
-                    "type": "string"
-                },
                 "article_set_id": {
                     "description": "集合ID",
+                    "type": "string"
+                },
+                "article_title": {
+                    "description": "文章名",
                     "type": "string"
                 },
                 "seq": {
@@ -4801,6 +4896,107 @@
                 },
                 "updated_at": {
                     "type": "integer"
+                }
+            }
+        },
+        "model.FeedItem": {
+            "type": "object",
+            "properties": {
+                "source": {
+                    "description": "来源",
+                    "type": "object",
+                    "$ref": "#/definitions/model.FeedSource"
+                },
+                "target": {
+                    "description": "目标",
+                    "type": "object",
+                    "$ref": "#/definitions/model.FeedTarget"
+                },
+                "target_type": {
+                    "description": "目标类型\narticle, topic, member, comment",
+                    "type": "string"
+                }
+            }
+        },
+        "model.FeedPaging": {
+            "type": "object",
+            "properties": {
+                "is_end": {
+                    "description": "是否结束",
+                    "type": "boolean"
+                },
+                "next": {
+                    "description": "下一页",
+                    "type": "string"
+                },
+                "prev": {
+                    "description": "上一页",
+                    "type": "string"
+                }
+            }
+        },
+        "model.FeedResp": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.FeedItem"
+                    }
+                },
+                "paging": {
+                    "type": "object",
+                    "$ref": "#/definitions/model.FeedPaging"
+                }
+            }
+        },
+        "model.FeedSource": {
+            "type": "object",
+            "properties": {
+                "action_text": {
+                    "description": "文字内容\n例如：编辑了文章，收藏了文章，关注了用户",
+                    "type": "string"
+                },
+                "action_time": {
+                    "description": "时间",
+                    "type": "integer"
+                },
+                "action_type": {
+                    "description": "类型\nMEMBER_CREATE_ARTICLE\nMEMBER_EDIT_ARTICLE\nMEMBER_FOLLOW_TOPIC\nMEMBER_FOLLOW_MEMBER\nMEMBER_CREATE_COMMENT\nMEMBER_LIKE_ARTICLE\nMEMBER_FAV_ARTICLE",
+                    "type": "string"
+                },
+                "actor": {
+                    "description": "动作发起者",
+                    "type": "object",
+                    "$ref": "#/definitions/model.Actor"
+                }
+            }
+        },
+        "model.FeedTarget": {
+            "type": "object",
+            "properties": {
+                "account": {
+                    "description": "用户",
+                    "type": "object",
+                    "$ref": "#/definitions/model.TargetMember"
+                },
+                "article": {
+                    "description": "评论",
+                    "type": "object",
+                    "$ref": "#/definitions/model.TargetComment"
+                },
+                "id": {
+                    "description": "ID",
+                    "type": "string"
+                },
+                "topic": {
+                    "description": "话题",
+                    "type": "object",
+                    "$ref": "#/definitions/model.TargetTopic"
+                },
+                "type": {
+                    "description": "类型: article,comment,account,topic",
+                    "type": "string"
                 }
             }
         },
@@ -5055,6 +5251,130 @@
                 }
             }
         },
+        "model.TargetArticle": {
+            "type": "object",
+            "properties": {
+                "comment_count": {
+                    "description": "评论数",
+                    "type": "integer"
+                },
+                "cover": {
+                    "description": "封面",
+                    "type": "string"
+                },
+                "excerpt": {
+                    "description": "内容",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID",
+                    "type": "string"
+                },
+                "like_count": {
+                    "description": "喜欢数",
+                    "type": "integer"
+                },
+                "title": {
+                    "description": "文章标题",
+                    "type": "string"
+                }
+            }
+        },
+        "model.TargetComment": {
+            "type": "object",
+            "properties": {
+                "comment_count": {
+                    "description": "子评论数",
+                    "type": "integer"
+                },
+                "excerpt": {
+                    "description": "评论内容",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID",
+                    "type": "string"
+                },
+                "title": {
+                    "description": "文章标题",
+                    "type": "string"
+                }
+            }
+        },
+        "model.TargetMember": {
+            "type": "object",
+            "properties": {
+                "article_count": {
+                    "description": "文章数",
+                    "type": "integer"
+                },
+                "avatar": {
+                    "description": "头像",
+                    "type": "string"
+                },
+                "fans_count": {
+                    "description": "粉丝数",
+                    "type": "integer"
+                },
+                "follow_count": {
+                    "description": "关注数",
+                    "type": "integer"
+                },
+                "id": {
+                    "description": "ID",
+                    "type": "string"
+                },
+                "id_cert": {
+                    "description": "身份认证",
+                    "type": "boolean"
+                },
+                "introduction": {
+                    "description": "简介",
+                    "type": "string"
+                },
+                "is_org": {
+                    "description": "是否机构",
+                    "type": "boolean"
+                },
+                "is_vip": {
+                    "description": "是否VIP",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "用户名",
+                    "type": "string"
+                },
+                "topic_count": {
+                    "description": "话题数",
+                    "type": "integer"
+                },
+                "work_cert": {
+                    "description": "工作认证",
+                    "type": "boolean"
+                }
+            }
+        },
+        "model.TargetTopic": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "ID",
+                    "type": "string"
+                },
+                "members_count": {
+                    "description": "成员数",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "话题名",
+                    "type": "string"
+                },
+                "resources_count": {
+                    "description": "资源数量",
+                    "type": "integer"
+                }
+            }
+        },
         "model.TopicChildCatalog": {
             "type": "object",
             "properties": {
@@ -5293,6 +5613,10 @@
                 },
                 "resources_count": {
                     "description": "资源数量",
+                    "type": "integer"
+                },
+                "seq": {
+                    "description": "顺序",
                     "type": "integer"
                 },
                 "topic_home": {

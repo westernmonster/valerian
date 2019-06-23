@@ -93,7 +93,7 @@ func (p *Service) GetAllRelatedTopicsWithMeta(c context.Context, topicID int64) 
 		}
 
 		var t *model.TopicResp
-		if t, err = p.getTopic(c, item.TopicID); err != nil {
+		if t, err = p.getTopic(c, p.d.DB(), item.TopicID); err != nil {
 			return
 		}
 		item.TopicName = t.Name
@@ -130,7 +130,7 @@ func (p *Service) getAllRelatedTopics(c context.Context, node sqalx.Node, topicI
 		}
 
 		var t *model.TopicResp
-		if t, err = p.getTopic(c, item.TopicID); err != nil {
+		if t, err = p.getTopic(c, node, item.TopicID); err != nil {
 			return
 		}
 		item.TopicName = t.Name

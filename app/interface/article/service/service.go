@@ -4,6 +4,7 @@ import (
 	"context"
 	"valerian/app/conf"
 	"valerian/app/interface/article/dao"
+	"valerian/app/interface/article/model"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
 )
@@ -11,6 +12,26 @@ import (
 type Service struct {
 	c *conf.Config
 	d interface {
+		AddArticle(c context.Context, node sqalx.Node, item *model.Article) (err error)
+		GetArticleByID(c context.Context, node sqalx.Node, id int64) (item *model.Article, err error)
+		UpdateArticle(c context.Context, node sqalx.Node, item *model.Article) (err error)
+		DelArticle(c context.Context, node sqalx.Node, id int64) (err error)
+
+		GetArticleFiles(c context.Context, node sqalx.Node, articleID int64) (items []*model.ArticleFile, err error)
+		AddArticleFile(c context.Context, node sqalx.Node, item *model.ArticleFile) (err error)
+		UpdateArticleFile(c context.Context, node sqalx.Node, item *model.ArticleFile) (err error)
+		DelArticleFile(c context.Context, node sqalx.Node, id int64) (err error)
+
+		AddArticleSet(c context.Context, node sqalx.Node, item *model.ArticleSet) (err error)
+		DelArticleSet(c context.Context, node sqalx.Node, id int64) (err error)
+		GetArticleVersionByName(c context.Context, node sqalx.Node, articleSetID int64, versionName string) (item *model.ArticleVersionResp, err error)
+
+		GetTopicCatalogByID(c context.Context, node sqalx.Node, id int64) (item *model.TopicCatalog, err error)
+		GetTopicCatalogMaxChildrenSeq(c context.Context, node sqalx.Node, topicID, parentID int64) (seq int, err error)
+		AddTopicCatalog(c context.Context, node sqalx.Node, item *model.TopicCatalog) (err error)
+
+		GetTopicByID(c context.Context, node sqalx.Node, id int64) (item *model.Topic, err error)
+
 		Ping(c context.Context) (err error)
 		Close()
 		DB() sqalx.Node
