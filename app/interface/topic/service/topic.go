@@ -35,7 +35,7 @@ func (p *Service) GetTopic(c context.Context, topicID int64) (item *model.TopicR
 		return
 	}
 
-	if item.Catalogs, err = p.GetCatalogHierarchyOfAll(c, p.d.DB(), topicID); err != nil {
+	if item.Catalogs, err = p.getCatalogsHierarchy(c, p.d.DB(), topicID); err != nil {
 		return
 	}
 

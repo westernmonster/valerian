@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	_addTopicCatalogSQL              = "INSERT INTO topic_catalogs( id,name,seq,type,parent_id,ref_id,topic_id,is_primary,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?,?,?,?)"
-	_updateTopicCatalogSQL           = "UPDATE topic_catalogs SET name=?,seq=?,type=?,parent_id=?,ref_id=?,topic_id=?,is_primary=?,updated_at=? WHERE id=? AND deleted=0"
+	_addTopicCatalogSQL              = "INSERT INTO topic_catalogs( id,name,seq,type,parent_id,ref_id,topic_id,is_primary,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?,?,?,?,?)"
+	_updateTopicCatalogSQL           = "UPDATE topic_catalogs SET name=?,seq=?,type=?,parent_id=?,ref_id=?,topic_id=?,is_primary=?,updated_at=? WHERE id=?"
 	_delTopicCatalogSQL              = "UPDATE topic_catalogs SET deleted=1 WHERE id=? "
 	_getTopicCatalogChildrenCountSQL = "SELECT COUNT(1) as count FROM topic_catalogs a WHERE a.topic_id=? AND a.parent_id = ? AND a.deleted=0"
 	_getTopicCatalogsByCondition     = "SELECT a.* FROM topic_catalogs a WHERE a.topic_id=? AND a.parent_id=? AND a.deleted=0 ORDER BY a.seq"
@@ -69,10 +69,48 @@ func (p *Dao) GetTopicCatalogChildrenCount(c context.Context, node sqalx.Node, t
 	return
 }
 
-func (p *Dao) GetTopicCatalogsByCondition(c context.Context, node sqalx.Node, topicID, parentID int64) (items []*model.TopicCatalog, err error) {
+func (p *Dao) GetTopicCatalogsByCondition(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.TopicCatalog, err error) {
 	items = make([]*model.TopicCatalog, 0)
-	if err = node.SelectContext(c, &items, _getTopicCatalogsByCondition, topicID, parentID); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.GetTopicCatalogsByCondition error(%+v), topic id(%d) ,parent id (%d)", err, topicID, parentID))
+	condition := make([]interface{}, 0)
+	clause := ""
+
+	if val, ok := cond["id"]; ok {
+		clause += " AND a.id =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["name"]; ok {
+		clause += " AND a.name =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["seq"]; ok {
+		clause += " AND a.seq =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["type"]; ok {
+		clause += " AND a.type =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["parent_id"]; ok {
+		clause += " AND a.parent_id =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["ref_id"]; ok {
+		clause += " AND a.ref_id =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["topic_id"]; ok {
+		clause += " AND a.topic_id =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["is_primary"]; ok {
+		clause += " AND a.is_primary =?"
+		condition = append(condition, val)
+	}
+
+	sqlSelect := fmt.Sprintf(_getTopicCatalogsByCondition, clause)
+
+	if err = node.SelectContext(c, &items, sqlSelect, condition...); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetTopicCatalogsByCondition error(%+v), cond(%+v)", err, cond))
 	}
 	return
 }
@@ -110,7 +148,6 @@ func (p *Dao) GetTopicCatalogByCondition(ctx context.Context, node sqalx.Node, c
 		clause += " AND a.topic_id =?"
 		condition = append(condition, val)
 	}
-
 	if val, ok := cond["is_primary"]; ok {
 		clause += " AND a.is_primary =?"
 		condition = append(condition, val)

@@ -49,9 +49,9 @@ type FeedTarget struct {
 	// 文章
 	Article *TargetArticle `json:"article,omitempty"`
 	// 评论
-	Comment *TargetComment `json:"article,omitempty"`
+	Comment *TargetComment `json:"comment,omitempty"`
 	// 用户
-	Member *TargetMember `json:"account,omitempty"`
+	Member *TargetMember `json:"member,omitempty"`
 	// 话题
 	Topic *TargetTopic `json:"topic,omitempty"`
 }

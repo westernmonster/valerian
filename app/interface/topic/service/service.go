@@ -18,7 +18,7 @@ type Service struct {
 		UpdateTopicCatalog(c context.Context, node sqalx.Node, item *model.TopicCatalog) (err error)
 		DelTopicCatalog(c context.Context, node sqalx.Node, id int64) (err error)
 		GetTopicCatalogChildrenCount(c context.Context, node sqalx.Node, topicID, parentID int64) (count int, err error)
-		GetTopicCatalogsByCondition(c context.Context, node sqalx.Node, topicID, parentID int64) (items []*model.TopicCatalog, err error)
+		GetTopicCatalogsByCondition(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.TopicCatalog, err error)
 		GetTopicCatalogByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (item *model.TopicCatalog, err error)
 		GetTopicCatalogMaxChildrenSeq(c context.Context, node sqalx.Node, topicID, parentID int64) (seq int, err error)
 
@@ -72,6 +72,7 @@ type Service struct {
 		AddArticleHistory(c context.Context, node sqalx.Node, item *model.ArticleHistory) (err error)
 		GetArticleHistories(c context.Context, node sqalx.Node, articleID int64) (items []*model.ArticleHistory, err error)
 		GetArticleHistoryByID(c context.Context, node sqalx.Node, id int64) (item *model.ArticleHistory, err error)
+		GetArticleHistoryMaxSeq(c context.Context, node sqalx.Node, articleID int64) (seq int, err error)
 
 		SetTopicCache(c context.Context, m *model.TopicResp) (err error)
 		TopicCache(c context.Context, topicID int64) (m *model.TopicResp, err error)

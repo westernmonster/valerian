@@ -3,7 +3,11 @@ package service
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
+
+	"github.com/PuerkitoBio/goquery"
+
 	"valerian/app/interface/topic/model"
 	"valerian/library/database/sqalx"
 	"valerian/library/database/sqlx/types"
@@ -72,6 +76,28 @@ func (p *Service) AddArticle(c context.Context, arg *model.ArgAddArticle) (id in
 	}
 
 	if err = p.d.AddArticle(c, tx, item); err != nil {
+		return
+	}
+
+	h := &model.ArticleHistory{
+		ID:          gid.NewID(),
+		ArticleID:   item.ID,
+		UpdatedBy:   aid,
+		Content:     item.Content,
+		Diff:        "",
+		Description: "",
+		Seq:         1,
+		CreatedAt:   time.Now().Unix(),
+		UpdatedAt:   time.Now().Unix(),
+	}
+
+	var doc *goquery.Document
+	if doc, err = goquery.NewDocumentFromReader(strings.NewReader(item.Content)); err != nil {
+		return
+	}
+
+	h.ContentText = doc.Text()
+	if err = p.d.AddArticleHistory(c, tx, h); err != nil {
 		return
 	}
 

@@ -39,6 +39,7 @@ func route(e *mars.Engine) {
 		g.GET("/list/types", auth.User, topicTypeList)
 		g.GET("/list/related", auth.User, relatedTopics)
 		g.GET("/list/versions", auth.User, topicVersions)
+		g.GET("/list/catalog_taxonomies", auth.User, topicCatalogTaxonomies)
 	}
 
 	x := e.Group("/api/v1/article")

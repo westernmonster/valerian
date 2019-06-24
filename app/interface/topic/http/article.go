@@ -17,6 +17,13 @@ import (
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param req body model.ArgAddArticle true "请求"
 // @Success 200 "成功,返回article_id"
+// @Failure 20 "获取用户ID失败"
+// @Failure 48 "文章版本名称已经存在"
+// @Failure 49 "必须有主话题"
+// @Failure 50 "只允许一个主话题"
+// @Failure 51 "关联话题重复"
+// @Failure 52 "所选节点不是类目分类"
+// @Failure 53 "需要话题编辑权限"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"

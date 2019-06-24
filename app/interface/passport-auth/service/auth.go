@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"time"
 	"valerian/app/interface/passport-auth/model"
 	"valerian/library/ecode"
@@ -68,10 +67,11 @@ func (p *Service) getAccessToken(c context.Context, token string) (t *model.Acce
 
 	if t, err = p.d.GetAccessToken(c, p.d.AuthDB(), token); err != nil {
 		return
+	} else if t == nil {
+		return
 	}
 
 	if addCache {
-		fmt.Println(111111111111)
 		p.addCache(func() {
 			p.d.SetAccessTokenCache(context.TODO(), t)
 		})

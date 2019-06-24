@@ -19,7 +19,10 @@ type dicItem struct {
 
 func (p *Service) GetCatalogs(c context.Context, topicID, parentID int64) (items []*model.TopicCatalogResp, err error) {
 	var data []*model.TopicCatalog
-	if data, err = p.d.GetTopicCatalogsByCondition(c, p.d.DB(), topicID, parentID); err != nil {
+	if data, err = p.d.GetTopicCatalogsByCondition(c, p.d.DB(), map[string]interface{}{
+		"topic_id":  topicID,
+		"parent_id": parentID,
+	}); err != nil {
 		return
 	}
 
@@ -62,7 +65,7 @@ func (p *Service) GetCatalogsHierarchy(c context.Context, topicID int64) (items 
 	return
 }
 
-func (p *Service) GetCatalogHierarchyOfAll(c context.Context, node sqalx.Node, topicID int64) (items []*model.TopicLevel1Catalog, err error) {
+func (p *Service) getCatalogsHierarchy(c context.Context, node sqalx.Node, topicID int64) (items []*model.TopicLevel1Catalog, err error) {
 	var (
 		addCache = true
 	)
@@ -86,10 +89,21 @@ func (p *Service) GetCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 	return
 }
 
+func (p *Service) GetCatalogTaxonomiesHierarchy(c context.Context, topicID int64) (items []*model.TopicLevel1Catalog, err error) {
+	if items, err = p.getCatalogTaxonomyHierarchyOfAll(c, p.d.DB(), topicID); err != nil {
+		return
+	}
+
+	return
+}
+
 func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, topicID int64) (items []*model.TopicLevel1Catalog, err error) {
 	items = make([]*model.TopicLevel1Catalog, 0)
 
-	parents, err := p.d.GetTopicCatalogsByCondition(c, node, topicID, 0)
+	parents, err := p.d.GetTopicCatalogsByCondition(c, node, map[string]interface{}{
+		"topic_id":  topicID,
+		"parent_id": 0,
+	})
 	if err != nil {
 		return
 	}
@@ -104,7 +118,10 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 			Children: make([]*model.TopicLevel2Catalog, 0),
 		}
 
-		children, eInner := p.d.GetTopicCatalogsByCondition(c, node, topicID, lvl1.ID)
+		children, eInner := p.d.GetTopicCatalogsByCondition(c, node, map[string]interface{}{
+			"topic_id":  topicID,
+			"parent_id": lvl1.ID,
+		})
 		if eInner != nil {
 			err = eInner
 			return
@@ -120,7 +137,10 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 				Children: make([]*model.TopicChildCatalog, 0),
 			}
 
-			sub, eInner := p.d.GetTopicCatalogsByCondition(c, node, topicID, lvl2.ID)
+			sub, eInner := p.d.GetTopicCatalogsByCondition(c, node, map[string]interface{}{
+				"topic_id":  topicID,
+				"parent_id": lvl2.ID,
+			})
 			if eInner != nil {
 				err = eInner
 				return
@@ -135,6 +155,58 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 					RefID: lvl3.RefID,
 				}
 				child.Children = append(child.Children, subItem)
+			}
+
+			parent.Children = append(parent.Children, child)
+		}
+
+		items = append(items, parent)
+
+	}
+
+	return
+}
+
+func (p *Service) getCatalogTaxonomyHierarchyOfAll(c context.Context, node sqalx.Node, topicID int64) (items []*model.TopicLevel1Catalog, err error) {
+	items = make([]*model.TopicLevel1Catalog, 0)
+
+	parents, err := p.d.GetTopicCatalogsByCondition(c, node, map[string]interface{}{
+		"topic_id":  topicID,
+		"parent_id": 0,
+		"type":      model.TopicCatalogTaxonomy,
+	})
+	if err != nil {
+		return
+	}
+
+	for _, lvl1 := range parents {
+		parent := &model.TopicLevel1Catalog{
+			ID:       &lvl1.ID,
+			Name:     lvl1.Name,
+			Seq:      lvl1.Seq,
+			Type:     lvl1.Type,
+			RefID:    lvl1.RefID,
+			Children: make([]*model.TopicLevel2Catalog, 0),
+		}
+
+		children, eInner := p.d.GetTopicCatalogsByCondition(c, node, map[string]interface{}{
+			"topic_id":  topicID,
+			"parent_id": lvl1.ID,
+			"type":      model.TopicCatalogTaxonomy,
+		})
+		if eInner != nil {
+			err = eInner
+			return
+		}
+
+		for _, lvl2 := range children {
+			child := &model.TopicLevel2Catalog{
+				ID:       &lvl2.ID,
+				Name:     lvl2.Name,
+				Seq:      lvl2.Seq,
+				Type:     lvl2.Type,
+				RefID:    lvl2.RefID,
+				Children: make([]*model.TopicChildCatalog, 0),
 			}
 
 			parent.Children = append(parent.Children, child)
@@ -260,7 +332,7 @@ func (p *Service) SaveCatalogs(c context.Context, req *model.ArgSaveTopicCatalog
 	}
 
 	var dbCatalogs []*model.TopicCatalog
-	if dbCatalogs, err = p.d.GetTopicCatalogsByCondition(c, tx, req.TopicID, req.ParentID); err != nil {
+	if dbCatalogs, err = p.d.GetTopicCatalogsByCondition(c, tx, map[string]interface{}{"topic_id": req.TopicID, "parent_id": req.ParentID}); err != nil {
 		return
 	}
 
