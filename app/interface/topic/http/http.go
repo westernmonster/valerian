@@ -48,5 +48,14 @@ func route(e *mars.Engine) {
 		x.POST("/add", auth.User, addArticle)
 		x.POST("/edit", auth.User, editArticle)
 		x.POST("/del", auth.User, delArticle)
+
+		x.POST("/files", auth.User, editArticleFiles)
+		x.POST("/relations", auth.User, editArticleRelations)
+		x.POST("/versions", auth.User, addArticleVersion)
+		x.POST("/versions/merge", auth.User, mergeArticleVersion)
+
+		x.GET("/list/files", auth.User, articleFiles)
+		x.GET("/list/relations", auth.User, articleRelations)
+		x.GET("/list/versions", auth.User, articleVersions)
 	}
 }
