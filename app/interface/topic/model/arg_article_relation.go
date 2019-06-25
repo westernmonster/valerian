@@ -1,10 +1,40 @@
 package model
 
-type UpdateArticleRelation struct {
+import validation "github.com/go-ozzo/ozzo-validation"
+
+type ArgSetPrimaryArticleRelation struct {
 	// ID 文章在话题目录中的ID
-	// 当只是更新的情况，去除当前主话题，设置另一个关联为主话题时候传入
-	// 如果是增加的关联，则无需传入，还是仅仅传入 parent_id, topic_id, primary 属性就可以
-	ID *int64 `json:"id,string,omitempty" swaggertype:"string"`
+	ID int64 `json:"id,string,omitempty" swaggertype:"string"`
+
+	ArticleID int64 `json:"article_id,string" swaggertype:"string"`
+}
+
+func (p *ArgSetPrimaryArticleRelation) Validate() error {
+	return validation.ValidateStruct(
+		p,
+		validation.Field(&p.ArticleID, validation.Required),
+		validation.Field(&p.ID, validation.Required),
+	)
+}
+
+type ArgDelArticleRelation struct {
+	// ID 文章在话题目录中的ID
+	ID int64 `json:"id,string,omitempty" swaggertype:"string"`
+
+	ArticleID int64 `json:"article_id,string" swaggertype:"string"`
+}
+
+func (p *ArgDelArticleRelation) Validate() error {
+	return validation.ValidateStruct(
+		p,
+		validation.Field(&p.ArticleID, validation.Required),
+		validation.Field(&p.ID, validation.Required),
+	)
+}
+
+type ArgAddArticleRelation struct {
+	ArticleID int64 `json:"article_id,string" swaggertype:"string"`
+
 	// 类目分类ID 如果根目录则传0
 	ParentID int64 `json:"parent_id,string" swaggertype:"string"`
 
@@ -14,7 +44,11 @@ type UpdateArticleRelation struct {
 	Primary bool `json:"primary"`
 }
 
-type ArgSaveArticleRelations struct {
-	ArticleID int64                    `json:"article_id,string" swaggertype:"string"`
-	Items     []*UpdateArticleRelation `json:"items"`
+func (p *ArgAddArticleRelation) Validate() error {
+	return validation.ValidateStruct(
+		p,
+		validation.Field(&p.ArticleID, validation.Required),
+		validation.Field(&p.ParentID, validation.Required),
+		validation.Field(&p.TopicID, validation.Required),
+	)
 }

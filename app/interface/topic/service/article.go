@@ -117,21 +117,17 @@ func (p *Service) AddArticle(c context.Context, arg *model.ArgAddArticle) (id in
 }
 
 func (p *Service) UpdateArticle(c context.Context, arg *model.ArgUpdateArticle) (err error) {
-	// aid, ok := metadata.Value(c, metadata.Aid).(int64)
-	// if !ok {
-	// 	err = ecode.AcquireAccountIDFailed
-	// 	return
-	// }
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
 		return
 	}
-
-	// var item *model.Article
-	// if item, err = p.d.GetArticleByID(c, tx, arg.ID); err != nil {
-	// 	return
-	// }
 
 	defer func() {
 		if err != nil {
@@ -142,9 +138,94 @@ func (p *Service) UpdateArticle(c context.Context, arg *model.ArgUpdateArticle) 
 		}
 	}()
 
+	var primaryTopicID int64
+	if primaryTopicID, err = p.getPrimaryTopicID(c, tx, arg.ID); err != nil {
+		return
+	}
+
+	if err = p.checkEditPermission(c, tx, primaryTopicID); err != nil {
+		return
+	}
+
+	var item *model.Article
+	if item, err = p.d.GetArticleByID(c, tx, arg.ID); err != nil {
+		return
+	} else if item == nil {
+		err = ecode.ArticleNotExist
+		return
+	}
+
+	if arg.Title != nil {
+		item.Title = *arg.Title
+	}
+
+	if arg.Cover != nil {
+		item.Cover = arg.Cover
+	}
+
+	if arg.Locale != nil {
+		item.Locale = *arg.Locale
+
+		var locale *model.Locale
+		if locale, err = p.d.GetLocaleByCondition(c, tx, map[string]interface{}{"locale": *arg.Locale}); err != nil {
+			return
+		} else if locale == nil {
+			err = ecode.LocaleNotExist
+			return
+		}
+	}
+
+	if arg.Introduction != nil {
+		item.Introduction = *arg.Introduction
+	}
+
+	if arg.VersionName != nil {
+		if resp, e := p.d.GetArticleVersionByName(c, tx, item.ArticleSetID, *arg.VersionName); e != nil {
+			err = e
+			return
+		} else if resp != nil && resp.ArticleID != arg.ID {
+			err = ecode.ArticleVersionNameExist
+			return
+		}
+
+		item.VersionName = *arg.VersionName
+	}
+
+	if arg.Private != nil && aid == item.CreatedBy {
+		if *arg.Private {
+			if count, e := p.d.GetOrderMemberArticleHistoriesCount(c, tx, item.ID, item.CreatedBy); e != nil {
+				err = e
+				return
+			} else if count > 0 {
+				err = ecode.ArticleEditedByOthers
+				return
+			}
+		}
+
+		item.Private = types.BitBool(*arg.Private)
+	}
+
 	if err = tx.Commit(); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 	}
+
+	return
+}
+
+func (p *Service) getPrimaryTopicID(c context.Context, node sqalx.Node, articleID int64) (topicID int64, err error) {
+	var catalog *model.TopicCatalog
+	if catalog, err = p.d.GetTopicCatalogByCondition(c, node, map[string]interface{}{
+		"type":       model.TopicCatalogTaxonomy,
+		"ref_id":     articleID,
+		"is_primary": 1,
+	}); err != nil {
+		return
+	} else if catalog == nil {
+		err = ecode.TopicCatalogNotExist
+		return
+	}
+
+	topicID = catalog.TopicID
 
 	return
 }
@@ -154,5 +235,23 @@ func (p *Service) DelArticle(c context.Context, id int64) (err error) {
 }
 
 func (p *Service) GetArticle(c context.Context, id int64) (item *model.ArticleResp, err error) {
+	return
+}
+
+func (p *Service) checkEditPermission(c context.Context, node sqalx.Node, topicID int64) (err error) {
+	var t *model.TopicResp
+	if t, err = p.getTopic(c, node, topicID); err != nil {
+		return
+	}
+	var meta *model.TopicMeta
+	if meta, err = p.GetTopicMeta(c, t); err != nil {
+		return
+	}
+
+	if !meta.CanEdit {
+		err = ecode.NeedEditPermission
+		return
+	}
+
 	return
 }

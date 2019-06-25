@@ -22,6 +22,8 @@ func route(e *mars.Engine) {
 	g := e.Group("/api/v1/topic")
 	{
 		g.GET("/get", auth.User, getTopic)
+		g.GET("/search", auth.User, searchTopics)
+
 		g.POST("/add", auth.User, createTopic)
 		g.POST("/edit", auth.User, editTopic)
 		g.POST("/del", auth.User, deleteTopic)
@@ -50,7 +52,9 @@ func route(e *mars.Engine) {
 		x.POST("/del", auth.User, delArticle)
 
 		x.POST("/files", auth.User, editArticleFiles)
-		x.POST("/relations", auth.User, editArticleRelations)
+		x.POST("/relations/add", auth.User, addArticleRelation)
+		x.POST("/relations/del", auth.User, delArticleRelation)
+		x.POST("/relations/primary", auth.User, setArticleRelationPrimary)
 		x.POST("/versions", auth.User, addArticleVersion)
 		x.POST("/versions/merge", auth.User, mergeArticleVersion)
 

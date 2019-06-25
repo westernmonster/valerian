@@ -40,7 +40,24 @@ type ArticleVersionItem struct {
 	// 版本名称
 	VersionName string `json:"version_name"`
 }
+
+func (p *ArticleVersionItem) Valdiate() error {
+	return validation.ValidateStruct(
+		p,
+		validation.Field(&p.ArticleID, validation.Required),
+		validation.Field(&p.VersionName, validation.Required, validation.RuneLength(0, 250)),
+	)
+}
+
 type ArgSaveArticleVersions struct {
 	ArticleSetID int64          `json:"article_set_id,string" swaggertype:"string"`
 	Items        []*VersionItem `json:"items"`
+}
+
+func (p *ArgSaveArticleVersions) Validate() error {
+	return validation.ValidateStruct(
+		p,
+		validation.Field(&p.ArticleSetID, validation.Required),
+		validation.Field(&p.Items),
+	)
 }

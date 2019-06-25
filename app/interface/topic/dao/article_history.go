@@ -14,12 +14,13 @@ const (
 	_addArticleHistorySQL    = "INSERT INTO article_histories( id,article_id,updated_by,content,content_text,seq,diff,description,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?,?,?,?,?)"
 	_updateArticleHistorySQL = "UPDATE article_histories SET article_id=?,updated_by=?,content=?,content_text=?,seq=?,diff=?,description=?,updated_at=? WHERE id=?"
 
-	_getArticleHistoryMaxSeqSQL = "SELECT a.seq FROM article_histories a WHERE a.deleted=0 AND a.article_id=? ORDER BY a.seq DESC LIMIT 1"
+	_getArticleHistoryMaxSeqSQL      = "SELECT a.seq FROM article_histories a WHERE a.deleted=0 AND a.article_id=? ORDER BY a.seq DESC LIMIT 1"
+	_getOtherMemberArticleHistorySQL = "SELECT COUNT(1) as count FROM article_histories a WHERE a.deleted=0 AND a.article_id=? AND a.updated_by!=?"
 )
 
 func (p *Dao) GetArticleHistoryByID(c context.Context, node sqalx.Node, id int64) (item *model.ArticleHistory, err error) {
 	item = new(model.ArticleHistory)
-	if err = node.GetContext(c, item, _getArticleSQL, id); err != nil {
+	if err = node.GetContext(c, item, _getArticleHistorySQL, id); err != nil {
 		if err == sql.ErrNoRows {
 			item = nil
 			err = nil
@@ -48,13 +49,21 @@ func (p *Dao) UpdateArticleHistory(c context.Context, node sqalx.Node, item *mod
 	return
 }
 
-func (P *Dao) GetArticleHistories(c context.Context, node sqalx.Node, articleID int64) (items []*model.ArticleHistory, err error) {
+func (p *Dao) GetArticleHistories(c context.Context, node sqalx.Node, articleID int64) (items []*model.ArticleHistory, err error) {
 	return
 }
 
 func (p *Dao) GetArticleHistoryMaxSeq(c context.Context, node sqalx.Node, articleID int64) (seq int, err error) {
 	if err = node.GetContext(c, &seq, _getArticleHistoryMaxSeqSQL, articleID); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetArticleHistoryMaxSeq error(%+v), article id(%d)", err, articleID))
+		return
+	}
+	return
+}
+
+func (p *Dao) GetOrderMemberArticleHistoriesCount(c context.Context, node sqalx.Node, articleID int64, aid int64) (count int, err error) {
+	if err = node.GetContext(c, &count, _getOtherMemberArticleHistorySQL, articleID, aid); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetOrderMemberHistoriesCount error(%+v), article id(%d)", err, articleID))
 		return
 	}
 	return

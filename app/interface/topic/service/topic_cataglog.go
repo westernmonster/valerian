@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"fmt"
-	"strconv"
 	"time"
 	"valerian/app/interface/topic/model"
 	"valerian/library/database/sqalx"
@@ -285,11 +284,11 @@ func (p *Service) createCatalog(c context.Context, node sqalx.Node, topicID int6
 
 func (p *Service) updateCatalog(c context.Context, node sqalx.Node, id, topicID int64, name string, seq int, rtype string, refID *int64, parentID int64) (err error) {
 	var item *model.TopicCatalog
-	if item, err = p.d.GetTopicCatalogByCondition(c, node, map[string]string{
-		"topic_id":  strconv.FormatInt(topicID, 10),
-		"id":        strconv.FormatInt(id, 10),
+	if item, err = p.d.GetTopicCatalogByCondition(c, node, map[string]interface{}{
+		"topic_id":  topicID,
+		"id":        id,
 		"type":      rtype,
-		"parent_id": strconv.FormatInt(parentID, 10),
+		"parent_id": parentID,
 	}); err != nil {
 		return
 	} else if item == nil {

@@ -13,10 +13,6 @@ import (
 	"valerian/library/net/metadata"
 )
 
-func (p *Service) SearchTopics(c context.Context, query string) (err error) {
-	return
-}
-
 func (p *Service) GetTopic(c context.Context, topicID int64) (item *model.TopicResp, err error) {
 
 	if item, err = p.getTopic(c, p.d.DB(), topicID); err != nil {

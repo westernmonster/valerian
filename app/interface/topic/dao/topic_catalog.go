@@ -115,7 +115,7 @@ func (p *Dao) GetTopicCatalogsByCondition(c context.Context, node sqalx.Node, co
 	return
 }
 
-func (p *Dao) GetTopicCatalogByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (item *model.TopicCatalog, err error) {
+func (p *Dao) GetTopicCatalogByCondition(ctx context.Context, node sqalx.Node, cond map[string]interface{}) (item *model.TopicCatalog, err error) {
 	item = new(model.TopicCatalog)
 	condition := make([]interface{}, 0)
 	clause := ""

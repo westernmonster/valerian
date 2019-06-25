@@ -45,15 +45,16 @@ func (p *ArgAddArticle) Validate() error {
 		validation.Field(&p.Title, validation.Required, validation.RuneLength(0, 250)),
 		validation.Field(&p.Content, validation.Required),
 		validation.Field(&p.Locale, validation.Required),
+		validation.Field(&p.VersionName, validation.Required, validation.RuneLength(0, 250)),
 		validation.Field(&p.Files),
 		validation.Field(&p.Relations),
 	)
 }
 
 type AddArticleFile struct {
-	FileName string  `json:"file_name"`          // FileName 文件名
-	FileURL  *string `json:"file_url,omitempty"` // FileURL 文件地址
-	Seq      int     `json:"seq"`                // Seq 文件顺序
+	FileName string `json:"file_name"`          // FileName 文件名
+	FileURL  string `json:"file_url,omitempty"` // FileURL 文件地址
+	Seq      int    `json:"seq"`                // Seq 文件顺序
 }
 
 func (p *AddArticleFile) Validate() error {
@@ -85,6 +86,7 @@ func (p *AddArticleRelation) Validate() error {
 type ArgUpdateArticle struct {
 	// 文章ID
 	ID int64 `json:"id,string"  swaggertype:"string"`
+
 	// 标题
 	Title *string `json:"title,omitempty"`
 	// 内容
@@ -108,5 +110,11 @@ func (p *ArgUpdateArticle) Validate() error {
 	return validation.ValidateStruct(
 		p,
 		validation.Field(&p.ID, validation.Required),
+		validation.Field(&p.Title, validation.NilOrNotEmpty, validation.RuneLength(0, 250)),
+		validation.Field(&p.Introduction, validation.NilOrNotEmpty, validation.RuneLength(0, 500)),
+		validation.Field(&p.Content, validation.NilOrNotEmpty),
+		validation.Field(&p.Locale, validation.NilOrNotEmpty),
+		validation.Field(&p.Cover, validation.NilOrNotEmpty, is.URL),
+		validation.Field(&p.VersionName, validation.NilOrNotEmpty, validation.RuneLength(0, 250)),
 	)
 }

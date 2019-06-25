@@ -92,4 +92,8 @@ var (
 	DuplicateTopicID               = add(51) // 关联话题重复
 	InvalidCatalog                 = add(52) // 所选节点不是类目分类
 	NeedEditPermission             = add(54) // 需要话题编辑权限
+	LocaleNotExist                 = add(55) // 未找到该语言编码
+	ArticleEditedByOthers          = add(56) // 文章已经被其他人修改，无法设置为私有
+	ArticleNotExist                = add(57) // 文章不存在
+	ArticleFileNotExist            = add(58) // 文章附件不存在
 )

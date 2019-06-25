@@ -19,7 +19,7 @@ type TopicResp struct {
 	ResourcesCount int `json:"resources_count"`
 
 	// 版本列表
-	Versions []*TopicVersionResp `json:"version"`
+	Versions []*TopicVersionResp `json:"versions"`
 
 	// 封面图
 	// 必须为URL

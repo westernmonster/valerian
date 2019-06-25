@@ -2,6 +2,7 @@ package dao
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"valerian/app/interface/topic/model"
 	"valerian/library/database/sqalx"
@@ -15,6 +16,21 @@ const (
 	_delArticleFileSQL    = "UPDATE article_files SET deleted=1 WHERE id=? "
 	_getArticleFilesSQL   = "SELECT a.* FROM article_files a WHERE a.deleted=0 AND a.article_id=? ORDER BY a.seq "
 )
+
+func (p *Dao) GetArticleFileByID(c context.Context, node sqalx.Node, id int64) (item *model.ArticleFile, err error) {
+	item = new(model.ArticleFile)
+	if err = node.GetContext(c, item, _getArticleFileSQL, id); err != nil {
+		if err == sql.ErrNoRows {
+			item = nil
+			err = nil
+			return
+		}
+
+		log.For(c).Error(fmt.Sprintf("dao.GetArticleFileByID error(%+v), id(%d)", err, id))
+	}
+
+	return
+}
 
 func (p *Dao) GetArticleFiles(c context.Context, node sqalx.Node, articleID int64) (items []*model.ArticleFile, err error) {
 	items = make([]*model.ArticleFile, 0)

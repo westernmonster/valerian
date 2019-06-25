@@ -19,9 +19,10 @@ type Service struct {
 		DelTopicCatalog(c context.Context, node sqalx.Node, id int64) (err error)
 		GetTopicCatalogChildrenCount(c context.Context, node sqalx.Node, topicID, parentID int64) (count int, err error)
 		GetTopicCatalogsByCondition(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.TopicCatalog, err error)
-		GetTopicCatalogByCondition(ctx context.Context, node sqalx.Node, cond map[string]string) (item *model.TopicCatalog, err error)
+		GetTopicCatalogByCondition(ctx context.Context, node sqalx.Node, cond map[string]interface{}) (item *model.TopicCatalog, err error)
 		GetTopicCatalogMaxChildrenSeq(c context.Context, node sqalx.Node, topicID, parentID int64) (seq int, err error)
 
+		GetAllTopics(c context.Context, node sqalx.Node) (items []*model.Topic, err error)
 		GetTopicByID(c context.Context, node sqalx.Node, id int64) (item *model.Topic, err error)
 		AddTopic(c context.Context, node sqalx.Node, item *model.Topic) (err error)
 		DelTopic(c context.Context, node sqalx.Node, topicID int64) (err error)
@@ -64,6 +65,7 @@ type Service struct {
 		AddArticleFile(c context.Context, node sqalx.Node, item *model.ArticleFile) (err error)
 		UpdateArticleFile(c context.Context, node sqalx.Node, item *model.ArticleFile) (err error)
 		DelArticleFile(c context.Context, node sqalx.Node, id int64) (err error)
+		GetArticleFileByID(c context.Context, node sqalx.Node, id int64) (item *model.ArticleFile, err error)
 
 		AddArticleSet(c context.Context, node sqalx.Node, item *model.ArticleSet) (err error)
 		DelArticleSet(c context.Context, node sqalx.Node, id int64) (err error)
@@ -73,6 +75,9 @@ type Service struct {
 		GetArticleHistories(c context.Context, node sqalx.Node, articleID int64) (items []*model.ArticleHistory, err error)
 		GetArticleHistoryByID(c context.Context, node sqalx.Node, id int64) (item *model.ArticleHistory, err error)
 		GetArticleHistoryMaxSeq(c context.Context, node sqalx.Node, articleID int64) (seq int, err error)
+		GetOrderMemberArticleHistoriesCount(c context.Context, node sqalx.Node, articleID int64, aid int64) (count int, err error)
+
+		GetLocaleByCondition(c context.Context, node sqalx.Node, cond map[string]interface{}) (item *model.Locale, err error)
 
 		SetTopicCache(c context.Context, m *model.TopicResp) (err error)
 		TopicCache(c context.Context, topicID int64) (m *model.TopicResp, err error)

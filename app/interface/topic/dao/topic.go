@@ -10,11 +10,22 @@ import (
 )
 
 const (
+	_getAllTopicsSQL = "SELECT a.* FROM topics a WHERE a.deleted=0"
+
 	_getTopicSQL = "SELECT a.* FROM topics a WHERE a.id=? AND a.deleted=0"
 	_addTopicSQL = "INSERT INTO topics( id,topic_set_id,name,cover,bg,introduction,is_private,allow_chat,allow_discuss,edit_permission,view_permission,join_permission,important,mute_notification,catalog_view_type,topic_type,topic_home,version_name, seq,created_by,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
 	_delTopicSQL = "UPDATE topics SET deleted=1 WHERE id=?"
 	_updateTopic = "UPDATE topics SET topic_set_id=?,name=?,cover=?,bg=?,introduction=?,is_private=?,allow_chat=?,allow_discuss=?,edit_permission=?,view_permission=?,join_permission=?,important=?,mute_notification=?,catalog_view_type=?,topic_type=?,topic_home=?,version_name=?, seq=?,created_by=?,updated_at=? WHERE id=? AND deleted=0"
 )
+
+func (p *Dao) GetAllTopics(c context.Context, node sqalx.Node) (items []*model.Topic, err error) {
+	items = make([]*model.Topic, 0)
+
+	if err = node.SelectContext(c, &items, _getAllTopicsSQL); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetAllTopics error(%+v)", err))
+	}
+	return
+}
 
 // GetByID get record by ID
 func (p *Dao) GetTopicByID(c context.Context, node sqalx.Node, id int64) (item *model.Topic, err error) {
