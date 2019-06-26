@@ -21,6 +21,7 @@ type Service struct {
 		GetTopicCatalogsByCondition(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.TopicCatalog, err error)
 		GetTopicCatalogByCondition(ctx context.Context, node sqalx.Node, cond map[string]interface{}) (item *model.TopicCatalog, err error)
 		GetTopicCatalogMaxChildrenSeq(c context.Context, node sqalx.Node, topicID, parentID int64) (seq int, err error)
+		GetTopicCatalogsCountByCondition(c context.Context, node sqalx.Node, cond map[string]interface{}) (total int, err error)
 
 		GetAllTopics(c context.Context, node sqalx.Node) (items []*model.Topic, err error)
 		GetTopicByID(c context.Context, node sqalx.Node, id int64) (item *model.Topic, err error)
@@ -70,6 +71,7 @@ type Service struct {
 		AddArticleSet(c context.Context, node sqalx.Node, item *model.ArticleSet) (err error)
 		DelArticleSet(c context.Context, node sqalx.Node, id int64) (err error)
 		GetArticleVersionByName(c context.Context, node sqalx.Node, articleSetID int64, versionName string) (item *model.ArticleVersionResp, err error)
+		GetArticleVersions(c context.Context, node sqalx.Node, articleSetID int64) (items []int64, err error)
 
 		AddArticleHistory(c context.Context, node sqalx.Node, item *model.ArticleHistory) (err error)
 		GetArticleHistories(c context.Context, node sqalx.Node, articleID int64) (items []*model.ArticleHistory, err error)
@@ -98,6 +100,18 @@ type Service struct {
 		SetTopicMembersCache(c context.Context, topicID int64, count, page, pageSize int, data []*model.TopicMember) (err error)
 		TopicMembersCache(c context.Context, topicID int64, page, pageSize int) (count int, data []*model.TopicMember, err error)
 		DelTopicMembersCache(c context.Context, topicID int64) (err error)
+
+		SetArticleCache(c context.Context, m *model.ArticleResp) (err error)
+		ArticleCache(c context.Context, articleID int64) (m *model.ArticleResp, err error)
+		DelArticleCache(c context.Context, articleID int64) (err error)
+
+		SetArticleFileCache(c context.Context, articleID int64, m []*model.ArticleFileResp) (err error)
+		ArticleFileCache(c context.Context, articleID int64) (m []*model.ArticleFileResp, err error)
+		DelArticleFileCache(c context.Context, articleID int64) (err error)
+
+		SetArticleVersionCache(c context.Context, articleSetID int64, m []int64) (err error)
+		ArticleVersionCache(c context.Context, articleSetID int64) (m []int64, err error)
+		DelArticleVersionCache(c context.Context, articleSetID int64) (err error)
 
 		SetAccountCache(c context.Context, m *model.Account) (err error)
 		AccountCache(c context.Context, accountID int64) (m *model.Account, err error)

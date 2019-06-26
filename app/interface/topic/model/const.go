@@ -68,3 +68,11 @@ const (
 	FollowRequestStatusApproved = 1
 	FollowRequestStatusRejected = 2
 )
+
+const (
+	ReportTypeSpam       = 1 // 垃圾广告
+	ReportTypeCopyRight  = 2 // 涉嫌侵权
+	ReportTypeDiscomfort = 3 // 内容引起不适
+	ReportTypeIncorrect  = 4 // 内容有误
+	ReportTypeOther      = 5 // 其他
+)

@@ -43,11 +43,11 @@ type ArticleRelationResp struct {
 	// 话题ID
 	TopicID int64 `json:"topic_id,string" swaggertype:"string"`
 	// 话题名
-	TopicName int64 `json:"topic_name"`
+	TopicName string `json:"topic_name"`
 	// 话题在目的中的ID
-	TopicCatalogID int64 `json:"topic_catalog_id_id,string" swaggertype:"string"`
+	TopicCatalogID int64 `json:"topic_catalog_id,string" swaggertype:"string"`
 	// 全路径名
-	CatalogFullPath int64 `json:"catalog_full_path"`
+	CatalogFullPath string `json:"catalog_full_path"`
 	// 是否主话题
 	Primary bool `json:"primary"`
 }
@@ -62,4 +62,12 @@ type ArticleFileResp struct {
 type ArticleMeta struct {
 	// 是否能编辑
 	CanEdit bool `json:"can_edit"`
+
+	Like bool `json:"like"`
+
+	LikeCount int `json:"like_count"`
+
+	Read bool `json:"read"`
+
+	Fav bool `json:"fav"`
 }

@@ -127,3 +127,71 @@ func getArticle(c *mars.Context) {
 		c.JSON(srv.GetArticle(c, id))
 	}
 }
+
+// @Summary 收藏文章
+// @Description 收藏文章
+// @Tags article
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param id query string true "ID"
+// @Success 200 "成功后返回bool值"
+// @Failure 400 "验证请求失败"
+// @Failure 401 "登录验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /article/fav [post]
+func favArticle(c *mars.Context) {
+}
+
+// @Summary 点赞文章
+// @Description 点赞文章
+// @Tags article
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param id query string true "ID"
+// @Success 200 "成功后返回bool值"
+// @Failure 400 "验证请求失败"
+// @Failure 401 "登录验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /article/like [post]
+func likeArticle(c *mars.Context) {
+}
+
+// @Summary 设置是否已读
+// @Description 设置是否已读
+// @Tags article
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param id query string true "ID"
+// @Success 200 "成功后返回bool值"
+// @Failure 400 "验证请求失败"
+// @Failure 401 "登录验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /article/read [post]
+func readArticle(c *mars.Context) {
+}
+
+// @Summary 举报文章
+// @Description 举报文章
+// @Tags article
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param req body model.ArgReportArticle true "请求"
+// @Success 200 "成功"
+// @Failure 400 "验证请求失败"
+// @Failure 401 "登录验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /article/report [post]
+func reportArticle(c *mars.Context) {
+}

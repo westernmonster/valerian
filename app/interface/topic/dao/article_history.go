@@ -55,6 +55,11 @@ func (p *Dao) GetArticleHistories(c context.Context, node sqalx.Node, articleID 
 
 func (p *Dao) GetArticleHistoryMaxSeq(c context.Context, node sqalx.Node, articleID int64) (seq int, err error) {
 	if err = node.GetContext(c, &seq, _getArticleHistoryMaxSeqSQL, articleID); err != nil {
+		if err == sql.ErrNoRows {
+			seq = 0
+			err = nil
+			return
+		}
 		log.For(c).Error(fmt.Sprintf("dao.GetArticleHistoryMaxSeq error(%+v), article id(%d)", err, articleID))
 		return
 	}

@@ -1,6 +1,11 @@
 package http
 
-import "valerian/library/net/http/mars"
+import (
+	"strconv"
+	"valerian/app/interface/topic/model"
+	"valerian/library/ecode"
+	"valerian/library/net/http/mars"
+)
 
 // @Summary 批量更新文件
 // @Description 批量更新文件
@@ -17,6 +22,17 @@ import "valerian/library/net/http/mars"
 // @Failure 500 "服务器端错误"
 // @Router /article/files [post]
 func editArticleFiles(c *mars.Context) {
+	arg := new(model.ArgSaveArticleFiles)
+	if e := c.Bind(arg); e != nil {
+		return
+	}
+
+	if e := arg.Validate(); e != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+
+	c.JSON(nil, srv.SaveArticleFiles(c, arg))
 
 }
 
@@ -35,4 +51,16 @@ func editArticleFiles(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /article/list/files [get]
 func articleFiles(c *mars.Context) {
+	var (
+		articleID int64
+		err       error
+	)
+
+	params := c.Request.Form
+	if articleID, err = strconv.ParseInt(params.Get("article_id"), 10, 64); err != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+
+	c.JSON(srv.GetArticleFiles(c, articleID))
 }

@@ -9,7 +9,41 @@ import (
 	"valerian/library/ecode"
 	"valerian/library/gid"
 	"valerian/library/log"
+
+	"github.com/jinzhu/copier"
 )
+
+func (p *Service) GetArticleFiles(c context.Context, articleID int64) (items []*model.ArticleFileResp, err error) {
+	return p.getArticleFiles(c, p.d.DB(), articleID)
+}
+
+func (p *Service) getArticleFiles(c context.Context, node sqalx.Node, articleID int64) (items []*model.ArticleFileResp, err error) {
+	var addCache = true
+
+	if items, err = p.d.ArticleFileCache(c, articleID); err != nil {
+		addCache = false
+	} else if items != nil {
+		return
+	}
+
+	var data []*model.ArticleFile
+	if data, err = p.d.GetArticleFiles(c, node, articleID); err != nil {
+		return
+	}
+
+	items = make([]*model.ArticleFileResp, 0)
+	if err = copier.Copy(&items, &data); err != nil {
+		return
+	}
+
+	if addCache {
+		p.addCache(func() {
+			p.d.SetArticleFileCache(context.TODO(), articleID, items)
+		})
+	}
+
+	return
+}
 
 func (p *Service) bulkCreateFiles(c context.Context, node sqalx.Node, articleID int64, files []*model.AddArticleFile) (err error) {
 	var tx sqalx.Node
@@ -47,6 +81,10 @@ func (p *Service) bulkCreateFiles(c context.Context, node sqalx.Node, articleID 
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 		return
 	}
+
+	p.addCache(func() {
+		p.d.DelArticleFileCache(context.TODO(), articleID)
+	})
 
 	return
 }
@@ -134,5 +172,9 @@ func (p *Service) SaveArticleFiles(c context.Context, arg *model.ArgSaveArticleF
 	if err = tx.Commit(); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 	}
+
+	p.addCache(func() {
+		p.d.DelArticleFileCache(context.TODO(), arg.ArticleID)
+	})
 	return
 }

@@ -11,3 +11,7 @@ type ArgSaveArticleFiles struct {
 	ArticleID int64                `json:"article_id,string" swaggertype:"string"`
 	Items     []*UpdateArticleFile `json:"items"`
 }
+
+func (p *ArgSaveArticleFiles) Validate() error {
+	return nil
+}

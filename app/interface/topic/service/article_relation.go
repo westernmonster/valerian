@@ -12,6 +12,71 @@ import (
 	"valerian/library/log"
 )
 
+func (p *Service) getArticleRelations(c context.Context, node sqalx.Node, articleID int64) (items []*model.ArticleRelationResp, err error) {
+	var data []*model.TopicCatalog
+	if data, err = p.d.GetTopicCatalogsByCondition(c, node, map[string]interface{}{
+		"type":   model.TopicCatalogArticle,
+		"ref_id": articleID,
+	}); err != nil {
+		return
+	}
+
+	items = make([]*model.ArticleRelationResp, 0)
+	for _, v := range data {
+		item := &model.ArticleRelationResp{
+			TopicID:        v.TopicID,
+			TopicCatalogID: v.ID,
+			Primary:        bool(v.IsPrimary),
+		}
+
+		var t *model.TopicResp
+		if t, err = p.getTopic(c, node, v.TopicID); err != nil {
+			return
+		}
+
+		item.TopicName = t.Name
+		if item.CatalogFullPath, err = p.getCatalogFullPath(c, node, v); err != nil {
+			return
+		}
+
+		items = append(items, item)
+	}
+
+	return
+}
+
+func (p *Service) getCatalogFullPath(c context.Context, node sqalx.Node, articleItem *model.TopicCatalog) (path string, err error) {
+	if articleItem.ParentID == 0 {
+		path = ""
+		return
+	}
+
+	var p1 *model.TopicCatalog
+	if p1, err = p.d.GetTopicCatalogByID(c, node, articleItem.ParentID); err != nil {
+		return
+	} else if p1 == nil {
+		err = ecode.TopicCatalogNotExist
+		return
+	}
+
+	path = p1.Name
+	if p1.ParentID == 0 {
+		return
+	}
+
+	var p2 *model.TopicCatalog
+	if p2, err = p.d.GetTopicCatalogByID(c, node, articleItem.ParentID); err != nil {
+		return
+	} else if p2 == nil {
+		err = ecode.TopicCatalogNotExist
+		return
+	}
+
+	path = p2.Name + "/" + path
+
+	return
+}
+
 func (p *Service) bulkCreateArticleCatalogs(c context.Context, node sqalx.Node, articleID int64, title string, relations []*model.AddArticleRelation) (err error) {
 	var tx sqalx.Node
 	if tx, err = node.Beginx(c); err != nil {
@@ -29,6 +94,11 @@ func (p *Service) bulkCreateArticleCatalogs(c context.Context, node sqalx.Node, 
 	}()
 
 	if err = p.checkRelations(relations); err != nil {
+		return
+	}
+
+	if len(relations) == 0 {
+		err = ecode.NeedPrimaryTopic
 		return
 	}
 
@@ -62,6 +132,11 @@ func (p *Service) bulkCreateArticleCatalogs(c context.Context, node sqalx.Node, 
 		if err = p.d.AddTopicCatalog(c, tx, item); err != nil {
 			return
 		}
+
+		p.addCache(func() {
+			p.d.DelTopicCatalogCache(context.TODO(), v.TopicID)
+		})
+
 	}
 
 	if err = tx.Commit(); err != nil {

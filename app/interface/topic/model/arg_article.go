@@ -118,3 +118,21 @@ func (p *ArgUpdateArticle) Validate() error {
 		validation.Field(&p.VersionName, validation.NilOrNotEmpty, validation.RuneLength(0, 250)),
 	)
 }
+
+type ArgReportArticle struct {
+	// 文章ID
+	ID int64 `json:"id,string"  swaggertype:"string"`
+	// 举报类型
+	Type int `json:"type"`
+	// 补充信息
+	Desc *string `json:"desc"`
+}
+
+func (p *ArgReportArticle) Validate() error {
+	return validation.ValidateStruct(
+		p,
+		validation.Field(&p.ID, validation.Required),
+		validation.Field(&p.Type, validation.Required),
+		validation.Field(&p.Desc, validation.NilOrNotEmpty, validation.RuneLength(0, 500)),
+	)
+}

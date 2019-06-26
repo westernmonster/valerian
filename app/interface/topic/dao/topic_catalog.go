@@ -10,14 +10,15 @@ import (
 )
 
 const (
-	_addTopicCatalogSQL              = "INSERT INTO topic_catalogs( id,name,seq,type,parent_id,ref_id,topic_id,is_primary,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?,?,?,?,?)"
-	_updateTopicCatalogSQL           = "UPDATE topic_catalogs SET name=?,seq=?,type=?,parent_id=?,ref_id=?,topic_id=?,is_primary=?,updated_at=? WHERE id=?"
-	_delTopicCatalogSQL              = "UPDATE topic_catalogs SET deleted=1 WHERE id=? "
-	_getTopicCatalogChildrenCountSQL = "SELECT COUNT(1) as count FROM topic_catalogs a WHERE a.topic_id=? AND a.parent_id = ? AND a.deleted=0"
-	_getTopicCatalogsByCondition     = "SELECT a.* FROM topic_catalogs a WHERE a.topic_id=? AND a.parent_id=? AND a.deleted=0 ORDER BY a.seq"
-	_getTopicCatalogByCondition      = "SELECT a.* FROM topic_catalogs a WHERE a.deleted=0 %s"
-	_getTopicCatalogByID             = "SELECT a.* FROM topic_catalogs a WHERE a.deleted=0 AND a.id=?"
-	_getMaxChildrenSeqSQL            = "SELECT a.seq FROM topic_catalogs a WHERE a.deleted=0 AND a.topic_id=? AND a.parent_id=? ORDER BY a.seq DESC LIMIT 1"
+	_addTopicCatalogSQL               = "INSERT INTO topic_catalogs( id,name,seq,type,parent_id,ref_id,topic_id,is_primary,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?,?,?,?,?)"
+	_updateTopicCatalogSQL            = "UPDATE topic_catalogs SET name=?,seq=?,type=?,parent_id=?,ref_id=?,topic_id=?,is_primary=?,updated_at=? WHERE id=?"
+	_delTopicCatalogSQL               = "UPDATE topic_catalogs SET deleted=1 WHERE id=? "
+	_getTopicCatalogChildrenCountSQL  = "SELECT COUNT(1) as count FROM topic_catalogs a WHERE a.topic_id=? AND a.parent_id = ? AND a.deleted=0"
+	_getTopicCatalogsByCondition      = "SELECT a.* FROM topic_catalogs a WHERE a.deleted=0 %s ORDER BY a.seq"
+	_getTopicCatalogsCountByCondition = "SELECT COUNT(1) count FROM topic_catalogs a WHERE a.deleted=0 %s "
+	_getTopicCatalogByCondition       = "SELECT a.* FROM topic_catalogs a WHERE a.deleted=0 %s"
+	_getTopicCatalogByID              = "SELECT a.* FROM topic_catalogs a WHERE a.deleted=0 AND a.id=?"
+	_getMaxChildrenSeqSQL             = "SELECT a.seq FROM topic_catalogs a WHERE a.deleted=0 AND a.topic_id=? AND a.parent_id=? ORDER BY a.seq DESC LIMIT 1"
 )
 
 func (p *Dao) GetTopicCatalogByID(c context.Context, node sqalx.Node, id int64) (item *model.TopicCatalog, err error) {
@@ -65,6 +66,51 @@ func (p *Dao) DelTopicCatalog(c context.Context, node sqalx.Node, id int64) (err
 func (p *Dao) GetTopicCatalogChildrenCount(c context.Context, node sqalx.Node, topicID, parentID int64) (count int, err error) {
 	if err = node.GetContext(c, &count, _getTopicCatalogChildrenCountSQL, topicID, parentID); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetTopicCatalogChildrenCount error(%+v), topic id(%d) ,parent id (%d)", err, topicID, parentID))
+	}
+	return
+}
+
+func (p *Dao) GetTopicCatalogsCountByCondition(c context.Context, node sqalx.Node, cond map[string]interface{}) (total int, err error) {
+	condition := make([]interface{}, 0)
+	clause := ""
+
+	if val, ok := cond["id"]; ok {
+		clause += " AND a.id =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["name"]; ok {
+		clause += " AND a.name =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["seq"]; ok {
+		clause += " AND a.seq =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["type"]; ok {
+		clause += " AND a.type =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["parent_id"]; ok {
+		clause += " AND a.parent_id =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["ref_id"]; ok {
+		clause += " AND a.ref_id =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["topic_id"]; ok {
+		clause += " AND a.topic_id =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["is_primary"]; ok {
+		clause += " AND a.is_primary =?"
+		condition = append(condition, val)
+	}
+
+	sqlSelect := fmt.Sprintf(_getTopicCatalogsCountByCondition, clause)
+
+	if err = node.GetContext(c, &total, sqlSelect, condition...); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetTopicCatalogsCountByCondition error(%+v), cond(%+v)", err, cond))
 	}
 	return
 }
@@ -170,6 +216,11 @@ func (p *Dao) GetTopicCatalogByCondition(ctx context.Context, node sqalx.Node, c
 
 func (p *Dao) GetTopicCatalogMaxChildrenSeq(c context.Context, node sqalx.Node, topicID, parentID int64) (seq int, err error) {
 	if err = node.GetContext(c, &seq, _getMaxChildrenSeqSQL, topicID, parentID); err != nil {
+		if err == sql.ErrNoRows {
+			seq = 0
+			err = nil
+			return
+		}
 		log.For(c).Error(fmt.Sprintf("dao.GetTopicCatalogMaxChildrenSeq error(%+v), topic id(%d) parent_id(%d)", err, topicID, parentID))
 		return
 	}

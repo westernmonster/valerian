@@ -45,6 +45,7 @@ func (p *Service) AddArticle(c context.Context, arg *model.ArgAddArticle) (id in
 		Cover:        arg.Cover,
 		Introduction: arg.Introduction,
 		Private:      types.BitBool(arg.Private),
+		Locale:       arg.Locale,
 		VersionName:  arg.VersionName,
 		CreatedBy:    aid,
 		CreatedAt:    time.Now().Unix(),
@@ -73,6 +74,14 @@ func (p *Service) AddArticle(c context.Context, arg *model.ArgAddArticle) (id in
 		}
 
 		item.ArticleSetID = *arg.ArticleSetID
+	}
+
+	var locale *model.Locale
+	if locale, err = p.d.GetLocaleByCondition(c, tx, map[string]interface{}{"locale": arg.Locale}); err != nil {
+		return
+	} else if locale == nil {
+		err = ecode.LocaleNotExist
+		return
 	}
 
 	if err = p.d.AddArticle(c, tx, item); err != nil {
@@ -112,6 +121,10 @@ func (p *Service) AddArticle(c context.Context, arg *model.ArgAddArticle) (id in
 	if err = tx.Commit(); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 	}
+
+	p.addCache(func() {
+		p.d.DelArticleVersionCache(context.TODO(), item.ArticleSetID)
+	})
 
 	return
 }
@@ -209,6 +222,11 @@ func (p *Service) UpdateArticle(c context.Context, arg *model.ArgUpdateArticle) 
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 	}
 
+	p.addCache(func() {
+		p.d.DelArticleCache(context.TODO(), arg.ID)
+		p.d.DelArticleVersionCache(context.TODO(), item.ArticleSetID)
+	})
+
 	return
 }
 
@@ -235,6 +253,62 @@ func (p *Service) DelArticle(c context.Context, id int64) (err error) {
 }
 
 func (p *Service) GetArticle(c context.Context, id int64) (item *model.ArticleResp, err error) {
+	if item, err = p.getArticle(c, p.d.DB(), id); err != nil {
+		return
+	}
+
+	if item.Files, err = p.getArticleFiles(c, p.d.DB(), id); err != nil {
+		return
+	}
+
+	if item.Relations, err = p.getArticleRelations(c, p.d.DB(), id); err != nil {
+		return
+	}
+
+	if item.Versions, err = p.getArticleVersionsResp(c, p.d.DB(), id); err != nil {
+		return
+	}
+
+	return
+}
+
+func (p *Service) getArticle(c context.Context, node sqalx.Node, articleID int64) (item *model.ArticleResp, err error) {
+	var addCache = true
+	if item, err = p.d.ArticleCache(c, articleID); err != nil {
+		addCache = false
+	} else if item != nil {
+		return
+	}
+
+	var a *model.Article
+	if a, err = p.d.GetArticleByID(c, p.d.DB(), articleID); err != nil {
+		return
+	} else if a == nil {
+		err = ecode.ArticleNotExist
+		return
+	}
+
+	item = &model.ArticleResp{
+		ID:           a.ID,
+		Title:        a.Title,
+		Content:      a.Content,
+		ArticleSetID: a.ArticleSetID,
+		Locale:       a.Locale,
+		Cover:        a.Cover,
+		Introduction: a.Introduction,
+		Private:      bool(a.Private),
+		VersionName:  a.VersionName,
+		Seq:          a.Seq,
+		Files:        make([]*model.ArticleFileResp, 0),
+		Relations:    make([]*model.ArticleRelationResp, 0),
+		Versions:     make([]*model.ArticleVersionResp, 0),
+	}
+
+	if addCache {
+		p.addCache(func() {
+			p.d.SetArticleCache(context.TODO(), item)
+		})
+	}
 	return
 }
 
