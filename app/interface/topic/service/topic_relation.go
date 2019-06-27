@@ -42,6 +42,7 @@ func (p *Service) bulkSaveRelations(c context.Context, node sqalx.Node, topicID 
 
 		if relation != nil {
 			relation.Relation = v.Type
+			relation.Seq = v.Seq
 			if err = p.d.UpdateTopicRelation(c, tx, relation); err != nil {
 				return
 			}

@@ -62,6 +62,7 @@ func route(e *mars.Engine) {
 		x.POST("/relations/primary", auth.User, setArticleRelationPrimary)
 		x.POST("/versions", auth.User, addArticleVersion)
 		x.POST("/versions/merge", auth.User, mergeArticleVersion)
+		x.POST("/versions/save", auth.User, saveArticleVersions)
 
 		x.GET("/list/files", auth.User, articleFiles)
 		x.GET("/list/relations", auth.User, articleRelations)

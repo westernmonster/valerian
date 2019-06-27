@@ -1,6 +1,7 @@
 package http
 
 import (
+	"strconv"
 	"valerian/app/interface/topic/model"
 	"valerian/library/ecode"
 	"valerian/library/net/http/mars"
@@ -105,4 +106,16 @@ func setArticleRelationPrimary(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /article/list/relations [get]
 func articleRelations(c *mars.Context) {
+	var (
+		articleID int64
+		err       error
+	)
+
+	params := c.Request.Form
+	if articleID, err = strconv.ParseInt(params.Get("article_id"), 10, 64); err != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+
+	c.JSON(srv.GetArticleRelations(c, articleID))
 }

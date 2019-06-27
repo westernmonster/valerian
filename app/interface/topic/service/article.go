@@ -277,7 +277,7 @@ func (p *Service) GetArticle(c context.Context, id int64, include string) (item 
 	}
 
 	if inc["versions"] {
-		if item.Versions, err = p.getArticleVersionsResp(c, p.d.DB(), id); err != nil {
+		if item.Versions, err = p.getArticleVersionsResp(c, p.d.DB(), item.ArticleSetID); err != nil {
 			return
 		}
 	}

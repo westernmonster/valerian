@@ -163,6 +163,7 @@ func (p *Service) SaveArticleFiles(c context.Context, arg *model.ArgSaveArticleF
 		if dic[v.ID] {
 			continue
 		}
+		fmt.Println(111)
 
 		if err = p.d.DelArticleFile(c, tx, v.ID); err != nil {
 			return

@@ -307,6 +307,13 @@ func (p *Service) SaveTopicVersions(c context.Context, arg *model.ArgSaveTopicVe
 			return ecode.TopicNotExist
 		}
 
+		if m, e := p.d.GetTopicVersionByName(c, tx, arg.TopicSetID, v.VersionName); e != nil {
+			return e
+		} else if m != nil && m.TopicID != t.ID {
+			err = ecode.TopicVersionNameExist
+			return
+		}
+
 		t.VersionName = v.VersionName
 		t.Seq = v.Seq
 

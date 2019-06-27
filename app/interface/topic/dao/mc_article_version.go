@@ -30,6 +30,7 @@ func (p *Dao) ArticleVersionCache(c context.Context, articleSetID int64) (m []in
 	var item *memcache.Item
 	if item, err = conn.Get(key); err != nil {
 		if err == memcache.ErrNotFound {
+			m = nil
 			err = nil
 			return
 		}

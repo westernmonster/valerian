@@ -30,6 +30,7 @@ func (p *Dao) TopicVersionCache(c context.Context, topicSetID int64) (m []int64,
 	var item *memcache.Item
 	if item, err = conn.Get(key); err != nil {
 		if err == memcache.ErrNotFound {
+			m = nil
 			err = nil
 			return
 		}

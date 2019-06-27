@@ -34,7 +34,7 @@ func (p *Dao) GetArticleFileByID(c context.Context, node sqalx.Node, id int64) (
 
 func (p *Dao) GetArticleFiles(c context.Context, node sqalx.Node, articleID int64) (items []*model.ArticleFile, err error) {
 	items = make([]*model.ArticleFile, 0)
-	if err = node.SelectContext(c, &items, _getArticleFileSQL, articleID); err != nil {
+	if err = node.SelectContext(c, &items, _getArticleFilesSQL, articleID); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetArticleFiles error(%+v), article_id(%d)", err, articleID))
 	}
 	return

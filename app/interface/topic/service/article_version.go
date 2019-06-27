@@ -98,6 +98,10 @@ func (p *Service) AddArticleVersion(c context.Context, arg *model.ArgNewArticleV
 
 	id = a.ID
 
+	p.addCache(func() {
+		p.d.DelArticleVersionCache(context.TODO(), a.ArticleSetID)
+	})
+
 	return
 }
 
@@ -179,6 +183,8 @@ func (p *Service) getArticleVersions(c context.Context, node sqalx.Node, article
 		return
 	}
 
+	fmt.Println(articleSetID)
+
 	if items, err = p.d.GetArticleVersions(c, node, articleSetID); err != nil {
 		return
 	}
@@ -218,6 +224,13 @@ func (p *Service) SaveArticleVersions(c context.Context, arg *model.ArgSaveArtic
 			return
 		} else if t == nil {
 			return ecode.ArticleNotExist
+		}
+
+		if m, e := p.d.GetArticleVersionByName(c, tx, arg.ArticleSetID, v.VersionName); e != nil {
+			return e
+		} else if m != nil && m.ArticleID != t.ID {
+			err = ecode.ArticleVersionNameExist
+			return
 		}
 
 		t.VersionName = v.VersionName

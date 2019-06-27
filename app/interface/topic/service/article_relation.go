@@ -12,6 +12,10 @@ import (
 	"valerian/library/log"
 )
 
+func (p *Service) GetArticleRelations(c context.Context, articleID int64) (items []*model.ArticleRelationResp, err error) {
+	return p.getArticleRelations(c, p.d.DB(), articleID)
+}
+
 func (p *Service) getArticleRelations(c context.Context, node sqalx.Node, articleID int64) (items []*model.ArticleRelationResp, err error) {
 	var data []*model.TopicCatalog
 	if data, err = p.d.GetTopicCatalogsByCondition(c, node, map[string]interface{}{
@@ -229,7 +233,6 @@ func (p *Service) SetPrimary(c context.Context, arg *model.ArgSetPrimaryArticleR
 	if catalog.IsPrimary == false {
 		var orgPrimary *model.TopicCatalog
 		if orgPrimary, err = p.d.GetTopicCatalogByCondition(c, tx, map[string]interface{}{
-			"topic_id":   catalog.TopicID,
 			"type":       model.TopicCatalogArticle,
 			"ref_id":     arg.ArticleID,
 			"is_primary": 1,
@@ -287,12 +290,24 @@ func (p *Service) AddArticleRelation(c context.Context, arg *model.ArgAddArticle
 		return
 	}
 
+	var catalog *model.TopicCatalog
+	if catalog, err = p.d.GetTopicCatalogByCondition(c, tx, map[string]interface{}{
+		"topic_id": arg.TopicID,
+		"type":     model.TopicCatalogArticle,
+		"ref_id":   arg.ArticleID,
+	}); err != nil {
+		return
+	} else if catalog != nil {
+		err = ecode.ArticleRelationAlreadyAdded
+		return
+	}
+
 	if arg.Primary {
 		var catalog *model.TopicCatalog
 		if catalog, err = p.d.GetTopicCatalogByCondition(c, tx, map[string]interface{}{
 			"topic_id": arg.TopicID,
 			"type":     model.TopicCatalogArticle,
-			"ref_id":   arg.ArticleID,
+			"primary":  1,
 		}); err != nil {
 			return
 		}
