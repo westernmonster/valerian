@@ -13,9 +13,9 @@ const (
 	_getAllTopicsSQL = "SELECT a.* FROM topics a WHERE a.deleted=0"
 
 	_getTopicSQL = "SELECT a.* FROM topics a WHERE a.id=? AND a.deleted=0"
-	_addTopicSQL = "INSERT INTO topics( id,topic_set_id,name,cover,bg,introduction,is_private,allow_chat,allow_discuss,edit_permission,view_permission,join_permission,important,mute_notification,catalog_view_type,topic_type,topic_home,version_name, seq,created_by,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+	_addTopicSQL = "INSERT INTO topics( id,topic_set_id,name,cover,bg,introduction,is_private,allow_chat,allow_discuss,seq,edit_permission,view_permission,join_permission,catalog_view_type,topic_type,topic_home,version_name,created_by,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
 	_delTopicSQL = "UPDATE topics SET deleted=1 WHERE id=?"
-	_updateTopic = "UPDATE topics SET topic_set_id=?,name=?,cover=?,bg=?,introduction=?,is_private=?,allow_chat=?,allow_discuss=?,edit_permission=?,view_permission=?,join_permission=?,important=?,mute_notification=?,catalog_view_type=?,topic_type=?,topic_home=?,version_name=?, seq=?,created_by=?,updated_at=? WHERE id=? AND deleted=0"
+	_updateTopic = "UPDATE topics SET topic_set_id=?,name=?,cover=?,bg=?,introduction=?,is_private=?,allow_chat=?,allow_discuss=?,seq=?,edit_permission=?,view_permission=?,join_permission=?,catalog_view_type=?,topic_type=?,topic_home=?,version_name=?,created_by=?,updated_at=? WHERE id=?"
 )
 
 func (p *Dao) GetAllTopics(c context.Context, node sqalx.Node) (items []*model.Topic, err error) {
@@ -44,30 +44,7 @@ func (p *Dao) GetTopicByID(c context.Context, node sqalx.Node, id int64) (item *
 }
 
 func (p *Dao) AddTopic(c context.Context, node sqalx.Node, item *model.Topic) (err error) {
-	if _, err = node.ExecContext(c, _addTopicSQL,
-		item.ID,
-		item.TopicSetID,
-		item.Name,
-		item.Cover,
-		item.Bg,
-		item.Introduction,
-		item.IsPrivate,
-		item.AllowChat,
-		item.AllowDiscuss,
-		item.EditPermission,
-		item.ViewPermission,
-		item.JoinPermission,
-		item.Important,
-		item.MuteNotification,
-		item.CatalogViewType,
-		item.TopicType,
-		item.TopicHome,
-		item.VersionName,
-		item.Seq,
-		item.CreatedBy,
-		item.Deleted,
-		item.CreatedAt,
-		item.UpdatedAt); err != nil {
+	if _, err = node.ExecContext(c, _addTopicSQL, item.ID, item.TopicSetID, item.Name, item.Cover, item.Bg, item.Introduction, item.IsPrivate, item.AllowChat, item.AllowDiscuss, item.Seq, item.EditPermission, item.ViewPermission, item.JoinPermission, item.CatalogViewType, item.TopicType, item.TopicHome, item.VersionName, item.CreatedBy, item.Deleted, item.CreatedAt, item.UpdatedAt); err != nil {
 
 		log.For(c).Error(fmt.Sprintf("dao.AddTopic error(%+v), item(%+v)", err, item))
 	}
@@ -83,28 +60,7 @@ func (p *Dao) DelTopic(c context.Context, node sqalx.Node, topicID int64) (err e
 }
 
 func (p *Dao) UpdateTopic(c context.Context, node sqalx.Node, item *model.Topic) (err error) {
-	if _, err = node.ExecContext(c, _updateTopic,
-		item.TopicSetID,
-		item.Name,
-		item.Cover,
-		item.Bg,
-		item.Introduction,
-		item.IsPrivate,
-		item.AllowChat,
-		item.AllowDiscuss,
-		item.EditPermission,
-		item.ViewPermission,
-		item.JoinPermission,
-		item.Important,
-		item.MuteNotification,
-		item.CatalogViewType,
-		item.TopicType,
-		item.TopicHome,
-		item.VersionName,
-		item.Seq,
-		item.CreatedBy,
-		item.UpdatedAt,
-		item.ID); err != nil {
+	if _, err = node.ExecContext(c, _updateTopic, item.TopicSetID, item.Name, item.Cover, item.Bg, item.Introduction, item.IsPrivate, item.AllowChat, item.AllowDiscuss, item.Seq, item.EditPermission, item.ViewPermission, item.JoinPermission, item.CatalogViewType, item.TopicType, item.TopicHome, item.VersionName, item.CreatedBy, item.UpdatedAt, item.ID); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.UpdateTopic error(%+v), item(%+v)", err, item))
 	}
 	return

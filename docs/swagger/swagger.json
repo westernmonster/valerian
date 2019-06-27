@@ -430,6 +430,13 @@
                         "name": "id",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "目前支持：files,relations,versions,histories,meta,primary_topic_meta,edited_by_others",
+                        "name": "include",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -5165,6 +5172,9 @@
         "model.ArgUpdateArticle": {
             "type": "object",
             "properties": {
+                "change_desc": {
+                    "type": "string"
+                },
                 "content": {
                     "description": "内容",
                     "type": "string"
@@ -5330,15 +5340,47 @@
                 }
             }
         },
+        "model.ArticleHistoryResp": {
+            "type": "object",
+            "properties": {
+                "article_id": {
+                    "type": "string"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "content_text": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "diff": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "seq": {
+                    "type": "integer"
+                },
+                "updator": {
+                    "type": "object",
+                    "$ref": "#/definitions/model.BasicAccountResp"
+                }
+            }
+        },
         "model.ArticleMeta": {
             "type": "object",
             "properties": {
-                "can_edit": {
-                    "description": "是否能编辑",
-                    "type": "boolean"
-                },
                 "fav": {
                     "type": "boolean"
+                },
+                "fav_count": {
+                    "type": "integer"
                 },
                 "like": {
                     "type": "boolean"
@@ -5391,10 +5433,23 @@
                     "description": "封面图",
                     "type": "string"
                 },
+                "creator": {
+                    "type": "object",
+                    "$ref": "#/definitions/model.BasicAccountResp"
+                },
+                "edited_by_others": {
+                    "type": "boolean"
+                },
                 "files": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/model.ArticleFileResp"
+                    }
+                },
+                "histories": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.ArticleHistoryResp"
                     }
                 },
                 "id": {
@@ -5412,6 +5467,10 @@
                     "description": "属性",
                     "type": "object",
                     "$ref": "#/definitions/model.ArticleMeta"
+                },
+                "primary_topic_meta": {
+                    "type": "object",
+                    "$ref": "#/definitions/model.TopicMeta"
                 },
                 "private": {
                     "description": "是否私有",
@@ -5464,6 +5523,23 @@
                 },
                 "version_name": {
                     "description": "版本名称",
+                    "type": "string"
+                }
+            }
+        },
+        "model.BasicAccountResp": {
+            "type": "object",
+            "properties": {
+                "account_id": {
+                    "description": "账户ID",
+                    "type": "string"
+                },
+                "avatar": {
+                    "description": "头像",
+                    "type": "string"
+                },
+                "user_name": {
+                    "description": "用户名",
                     "type": "string"
                 }
             }

@@ -50,8 +50,8 @@ func (p *ArticleVersionItem) Valdiate() error {
 }
 
 type ArgSaveArticleVersions struct {
-	ArticleSetID int64          `json:"article_set_id,string" swaggertype:"string"`
-	Items        []*VersionItem `json:"items"`
+	ArticleSetID int64                 `json:"article_set_id,string" swaggertype:"string"`
+	Items        []*ArticleVersionItem `json:"items"`
 }
 
 func (p *ArgSaveArticleVersions) Validate() error {

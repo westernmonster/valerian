@@ -261,6 +261,30 @@ func (p *Service) bulkCreateCatalogs(c context.Context, node sqalx.Node, topicID
 }
 
 func (p *Service) createCatalog(c context.Context, node sqalx.Node, topicID int64, name string, seq int, rtype string, refID *int64, parentID int64) (id int64, err error) {
+	// 当前为分类，则不允许处于第三级
+	if parentID != 0 && rtype == model.TopicCatalogTaxonomy {
+		var parent *model.TopicCatalog
+		if parent, err = p.d.GetTopicCatalogByCondition(c, node, map[string]interface{}{
+			"topic_id": topicID,
+			"id":       parentID,
+		}); err != nil {
+			return
+		} else if parent == nil {
+			err = ecode.TopicCatalogNotExist
+			return
+		}
+
+		if parent.Type != model.TopicCatalogTaxonomy {
+			err = ecode.InvalidCatalog
+			return
+		}
+
+		if parent.ParentID != 0 {
+			err = ecode.InvalidCatalog
+			return
+		}
+	}
+
 	item := &model.TopicCatalog{
 		ID:        gid.NewID(),
 		Name:      name,
@@ -358,11 +382,36 @@ func (p *Service) SaveCatalogs(c context.Context, req *model.ArgSaveTopicCatalog
 		} else if item == nil {
 			return ecode.TopicCatalogNotExist
 		}
+		if item.ParentID != req.ParentID {
+			var parent *model.TopicCatalog
+			if parent, err = p.d.GetTopicCatalogByCondition(c, tx, map[string]interface{}{
+				"topic_id": req.TopicID,
+				"id":       req.ParentID,
+			}); err != nil {
+				return
+			} else if parent == nil {
+				err = ecode.TopicCatalogNotExist
+				return
+			}
+			if item.Type == model.TopicCatalogTaxonomy && parent.ParentID != 0 {
+				err = ecode.InvalidCatalog
+				return
+			}
+
+		}
 
 		dic[*v.ID] = dicItem{Done: true}
-		if err = p.updateCatalog(c, tx, *v.ID, req.TopicID, v.Name, v.Seq, v.Type, v.RefID, req.ParentID); err != nil {
+
+		item.Name = v.Name
+		item.Seq = v.Seq
+		item.ParentID = req.ParentID
+		item.RefID = v.RefID
+		item.UpdatedAt = time.Now().Unix()
+
+		if err = p.d.UpdateTopicCatalog(c, tx, item); err != nil {
 			return
 		}
+
 	}
 
 	for k, v := range dic {

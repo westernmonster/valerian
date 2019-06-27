@@ -56,6 +56,11 @@ type Service struct {
 		DelTopicFollowRequest(c context.Context, node sqalx.Node, id int64) (err error)
 
 		GetAccountByID(c context.Context, node sqalx.Node, id int64) (item *model.Account, err error)
+		GetAccountTopicSettings(c context.Context, node sqalx.Node, aid int64) (items []*model.AccountTopicSetting, err error)
+		AddAccountTopicSetting(c context.Context, node sqalx.Node, item *model.AccountTopicSetting) (err error)
+		UpdateAccountTopicSetting(c context.Context, node sqalx.Node, item *model.AccountTopicSetting) (err error)
+		DelAccountTopicSetting(c context.Context, node sqalx.Node, id int64) (err error)
+		GetAccountTopicSetting(c context.Context, node sqalx.Node, aid, topicID int64) (item *model.AccountTopicSetting, err error)
 
 		AddArticle(c context.Context, node sqalx.Node, item *model.Article) (err error)
 		GetArticleByID(c context.Context, node sqalx.Node, id int64) (item *model.Article, err error)
@@ -78,6 +83,13 @@ type Service struct {
 		GetArticleHistoryByID(c context.Context, node sqalx.Node, id int64) (item *model.ArticleHistory, err error)
 		GetArticleHistoryMaxSeq(c context.Context, node sqalx.Node, articleID int64) (seq int, err error)
 		GetOrderMemberArticleHistoriesCount(c context.Context, node sqalx.Node, articleID int64, aid int64) (count int, err error)
+
+		AddAccountArticleAttr(c context.Context, node sqalx.Node, item *model.AccountArticleAttr) (err error)
+		UpdateAccountArticleAttr(c context.Context, node sqalx.Node, item *model.AccountArticleAttr) (err error)
+		DelAccountArticleAttr(c context.Context, node sqalx.Node, id int64) (err error)
+		GetAccountArticleAttr(c context.Context, node sqalx.Node, aid, articleID int64) (item *model.AccountArticleAttr, err error)
+		GetArticleFavCount(c context.Context, node sqalx.Node, articleID int64) (count int, err error)
+		GetArticleLikeCount(c context.Context, node sqalx.Node, articleID int64) (count int, err error)
 
 		GetLocaleByCondition(c context.Context, node sqalx.Node, cond map[string]interface{}) (item *model.Locale, err error)
 
@@ -113,9 +125,17 @@ type Service struct {
 		ArticleVersionCache(c context.Context, articleSetID int64) (m []int64, err error)
 		DelArticleVersionCache(c context.Context, articleSetID int64) (err error)
 
+		SetArticleHistoryCache(c context.Context, articleID int64, m []*model.ArticleHistoryResp) (err error)
+		ArticleHistoryCache(c context.Context, articleID int64) (m []*model.ArticleHistoryResp, err error)
+		DelArticleHistoryCache(c context.Context, articleID int64) (err error)
+
 		SetAccountCache(c context.Context, m *model.Account) (err error)
 		AccountCache(c context.Context, accountID int64) (m *model.Account, err error)
 		DelAccountCache(c context.Context, accountID int64) (err error)
+
+		SetAccountTopicSettingCache(c context.Context, m *model.AccountTopicSetting) (err error)
+		AccountTopicSettingCache(c context.Context, aid, topicID int64) (m *model.AccountTopicSetting, err error)
+		DelAccountTopicSettingCache(c context.Context, aid, topicID int64) (err error)
 
 		Ping(c context.Context) (err error)
 		Close()

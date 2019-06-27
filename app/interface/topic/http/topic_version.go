@@ -55,7 +55,7 @@ func topicVersions(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /topic/versions [post]
 func addTopicVersion(c *mars.Context) {
-	arg := new(model.ArgNewVersion)
+	arg := new(model.ArgNewTopicVersion)
 	if e := c.Bind(arg); e != nil {
 		return
 	}
@@ -87,7 +87,7 @@ func addTopicVersion(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /topic/versions/merge [post]
 func mergeTopicVersion(c *mars.Context) {
-	arg := new(model.ArgMergeVersion)
+	arg := new(model.ArgMergeTopicVersion)
 	if e := c.Bind(arg); e != nil {
 		return
 	}
@@ -98,4 +98,36 @@ func mergeTopicVersion(c *mars.Context) {
 	}
 
 	c.JSON(nil, srv.MergeTopicVersions(c, arg))
+}
+
+// @Summary 保存话题版本（排序和重命名）
+// @Description 保存话题版本（排序和重命名）
+// @Tags topic
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param req body ArgSaveTopicVersions true "请求"
+// @Failure 20 "获取用户ID失败，一般是因为未登录造成"
+// @Failure 18 "话题不存在"
+// @Failure 34 "不属于话题成员"
+// @Failure 35 "不是话题主理人或管理员"
+// @Success 200 "成功"
+// @Failure 400 "验证请求失败"
+// @Failure 401 "登录验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /topic/versions/save [post]
+func saveTopicVersions(c *mars.Context) {
+	arg := new(model.ArgSaveTopicVersions)
+	if e := c.Bind(arg); e != nil {
+		return
+	}
+
+	if e := arg.Validate(); e != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+
+	c.JSON(nil, srv.SaveTopicVersions(c, arg))
 }

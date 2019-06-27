@@ -96,4 +96,5 @@ var (
 	ArticleEditedByOthers          = add(56) // 文章已经被其他人修改，无法设置为私有
 	ArticleNotExist                = add(57) // 文章不存在
 	ArticleFileNotExist            = add(58) // 文章附件不存在
+	AccountTopicSettingNotExist    = add(59) // 用户话题设置不存在
 )

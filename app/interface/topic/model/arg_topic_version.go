@@ -2,12 +2,12 @@ package model
 
 import validation "github.com/go-ozzo/ozzo-validation"
 
-type ArgNewVersion struct {
+type ArgNewTopicVersion struct {
 	FromTopicID int64  `json:"from_topic_id,string", swaggertype:"string"`
 	VersionName string `json:"version_name"`
 }
 
-func (p *ArgNewVersion) Validate() error {
+func (p *ArgNewTopicVersion) Validate() error {
 	return validation.ValidateStruct(
 		p,
 		validation.Field(&p.FromTopicID, validation.Required.Error(`请输入来源话题`)),
@@ -18,12 +18,12 @@ func (p *ArgNewVersion) Validate() error {
 	)
 }
 
-type ArgMergeVersion struct {
+type ArgMergeTopicVersion struct {
 	FromTopicSetID int64 `json:"from_topic_set_id,string", swaggertype:"string"`
 	ToTopicSetID   int64 `json:"to_topic_set_id,string", swaggertype:"string"`
 }
 
-func (p *ArgMergeVersion) Validate() error {
+func (p *ArgMergeTopicVersion) Validate() error {
 	return validation.ValidateStruct(
 		p,
 		validation.Field(&p.FromTopicSetID, validation.Required.Error(`请输入来源话题集合ID`)),
@@ -31,7 +31,7 @@ func (p *ArgMergeVersion) Validate() error {
 	)
 }
 
-type VersionItem struct {
+type TopicVersionItem struct {
 	TopicID int64 `json:"topic_id,string" swaggertype:"string"`
 
 	// 顺序
@@ -40,7 +40,16 @@ type VersionItem struct {
 	// 版本名称
 	VersionName string `json:"version_name"`
 }
-type ArgSaveVersions struct {
-	TopicSetID int64          `json:"topic_set_id,string" swaggertype:"string"`
-	Items      []*VersionItem `json:"items"`
+type ArgSaveTopicVersions struct {
+	TopicSetID int64               `json:"topic_set_id,string" swaggertype:"string"`
+	Items      []*TopicVersionItem `json:"items"`
+}
+
+func (p *ArgSaveTopicVersions) Validate() error {
+	return validation.ValidateStruct(
+		p,
+		validation.Field(&p.Items),
+		validation.Field(&p.TopicSetID, validation.Required),
+	)
+
 }

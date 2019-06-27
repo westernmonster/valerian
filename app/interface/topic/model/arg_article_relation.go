@@ -48,7 +48,7 @@ func (p *ArgAddArticleRelation) Validate() error {
 	return validation.ValidateStruct(
 		p,
 		validation.Field(&p.ArticleID, validation.Required),
-		validation.Field(&p.ParentID, validation.Required),
+		validation.Field(&p.ParentID),
 		validation.Field(&p.TopicID, validation.Required),
 	)
 }

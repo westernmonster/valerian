@@ -9,6 +9,8 @@ type ArticleResp struct {
 	// 内容
 	Content string `json:"content"`
 
+	Creator *BasicAccountResp `json:"creator"`
+
 	// 集合ID
 	ArticleSetID int64 `json:"article_set_id,string"  swaggertype:"string"`
 
@@ -35,8 +37,14 @@ type ArticleResp struct {
 
 	Versions []*ArticleVersionResp `json:"versions"`
 
+	Histories []*ArticleHistoryResp `json:"histories"`
+
+	EditedByOthers *bool `json:"edited_by_others,omitempty"`
+
 	// 属性
 	ArticleMeta *ArticleMeta `json:"meta,omitempty"`
+
+	PrimaryTopicMeta *TopicMeta `json:"primary_topic_meta,omitempty"`
 }
 
 type ArticleRelationResp struct {
@@ -60,9 +68,6 @@ type ArticleFileResp struct {
 }
 
 type ArticleMeta struct {
-	// 是否能编辑
-	CanEdit bool `json:"can_edit"`
-
 	Like bool `json:"like"`
 
 	LikeCount int `json:"like_count"`
@@ -70,4 +75,6 @@ type ArticleMeta struct {
 	Read bool `json:"read"`
 
 	Fav bool `json:"fav"`
+
+	FavCount int `json:"fav_count"`
 }

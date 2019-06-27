@@ -164,10 +164,6 @@ func (p *Service) getArticleVersionsResp(c context.Context, node sqalx.Node, art
 			ArticleTitle: t.Title,
 		}
 
-		// if version.TopicMeta, err = p.GetTopicMeta(c, t); err != nil {
-		// 	return
-		// }
-
 		items = append(items, version)
 	}
 
@@ -198,4 +194,51 @@ func (p *Service) getArticleVersions(c context.Context, node sqalx.Node, article
 
 func (p *Service) GetArticleVersions(c context.Context, articleSetID int64) (items []*model.ArticleVersionResp, err error) {
 	return p.getArticleVersionsResp(c, p.d.DB(), articleSetID)
+}
+
+func (p *Service) SaveArticleVersions(c context.Context, arg *model.ArgSaveArticleVersions) (err error) {
+	var tx sqalx.Node
+	if tx, err = p.d.DB().Beginx(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		return
+	}
+
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+			}
+			return
+		}
+	}()
+
+	for _, v := range arg.Items {
+		var t *model.Article
+		if t, err = p.d.GetArticleByID(c, tx, v.ArticleID); err != nil {
+			return
+		} else if t == nil {
+			return ecode.ArticleNotExist
+		}
+
+		t.VersionName = v.VersionName
+		t.Seq = v.Seq
+
+		if err = p.d.UpdateArticle(c, tx, t); err != nil {
+			return
+		}
+	}
+
+	if err = tx.Commit(); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		return
+	}
+
+	p.addCache(func() {
+		p.d.DelArticleVersionCache(context.TODO(), arg.ArticleSetID)
+		for _, v := range arg.Items {
+			p.d.DelArticleCache(context.TODO(), v.ArticleID)
+		}
+	})
+
+	return
 }

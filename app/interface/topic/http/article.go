@@ -110,12 +110,14 @@ func delArticle(c *mars.Context) {
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param id query string true "ID"
+// @Param include query string true  "目前支持：files,relations,versions,histories,meta,primary_topic_meta,edited_by_others"
 // @Success 200 {object} model.ArticleResp "文章"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /article/get [get]
 func getArticle(c *mars.Context) {
+	include := c.Request.Form.Get("include")
 	idStr := c.Request.Form.Get("id")
 	if id, err := strconv.ParseInt(idStr, 10, 64); err != nil {
 		c.JSON(nil, ecode.RequestErr)
@@ -124,7 +126,7 @@ func getArticle(c *mars.Context) {
 		c.JSON(nil, ecode.RequestErr)
 		return
 	} else {
-		c.JSON(srv.GetArticle(c, id))
+		c.JSON(srv.GetArticle(c, id, include))
 	}
 }
 
@@ -143,6 +145,16 @@ func getArticle(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /article/fav [post]
 func favArticle(c *mars.Context) {
+	idStr := c.Request.Form.Get("id")
+	if id, err := strconv.ParseInt(idStr, 10, 64); err != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	} else if id == 0 {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	} else {
+		c.JSON(srv.FavArticle(c, id))
+	}
 }
 
 // @Summary 点赞文章
@@ -160,6 +172,16 @@ func favArticle(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /article/like [post]
 func likeArticle(c *mars.Context) {
+	idStr := c.Request.Form.Get("id")
+	if id, err := strconv.ParseInt(idStr, 10, 64); err != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	} else if id == 0 {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	} else {
+		c.JSON(srv.LikeArticle(c, id))
+	}
 }
 
 // @Summary 设置是否已读
@@ -177,6 +199,16 @@ func likeArticle(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /article/read [post]
 func readArticle(c *mars.Context) {
+	idStr := c.Request.Form.Get("id")
+	if id, err := strconv.ParseInt(idStr, 10, 64); err != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	} else if id == 0 {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	} else {
+		c.JSON(srv.ReadArticle(c, id))
+	}
 }
 
 // @Summary 举报文章
@@ -194,4 +226,32 @@ func readArticle(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /article/report [post]
 func reportArticle(c *mars.Context) {
+}
+
+// @Summary 保存文章版本（排序和重命名）
+// @Description 保存文章版本（排序和重命名）
+// @Tags topic
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param req body ArgSaveArticleVersions true "请求"
+// @Success 200 "成功"
+// @Failure 400 "验证请求失败"
+// @Failure 401 "登录验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /article/versions/save [post]
+func saveArticleVersions(c *mars.Context) {
+	arg := new(model.ArgSaveArticleVersions)
+	if e := c.Bind(arg); e != nil {
+		return
+	}
+
+	if e := arg.Validate(); e != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+
+	c.JSON(nil, srv.SaveArticleVersions(c, arg))
 }

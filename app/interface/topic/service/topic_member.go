@@ -306,7 +306,7 @@ func (p *Service) ChangeOwner(c context.Context, arg *model.ArgChangeOwner) (err
 	}
 
 	var toMember *model.TopicMember
-	if toMember, err = p.d.GetTopicMemberByCondition(c, tx, arg.TopicID, aid); err != nil {
+	if toMember, err = p.d.GetTopicMemberByCondition(c, tx, arg.TopicID, arg.ToAccountID); err != nil {
 		return
 	} else if toMember == nil {
 		err = ecode.NotBelongToTopic

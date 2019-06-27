@@ -14,7 +14,6 @@ import (
 )
 
 func (p *Service) GetTopic(c context.Context, topicID int64) (item *model.TopicResp, err error) {
-
 	if item, err = p.getTopic(c, p.d.DB(), topicID); err != nil {
 		return
 	}
@@ -43,6 +42,12 @@ func (p *Service) GetTopic(c context.Context, topicID int64) (item *model.TopicR
 }
 
 func (p *Service) getTopic(c context.Context, node sqalx.Node, topicID int64) (item *model.TopicResp, err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+
 	var addCache = true
 	if item, err = p.d.TopicCache(c, topicID); err != nil {
 		addCache = false
@@ -58,26 +63,24 @@ func (p *Service) getTopic(c context.Context, node sqalx.Node, topicID int64) (i
 	}
 
 	item = &model.TopicResp{
-		ID:               t.ID,
-		TopicSetID:       t.TopicSetID,
-		Cover:            t.Cover,
-		Bg:               t.Bg,
-		Name:             t.Name,
-		Introduction:     t.Introduction,
-		CatalogViewType:  t.CatalogViewType,
-		TopicType:        t.TopicType,
-		TopicHome:        t.TopicHome,
-		VersionName:      t.VersionName,
-		Seq:              t.Seq,
-		IsPrivate:        bool(t.IsPrivate),
-		AllowChat:        bool(t.AllowChat),
-		AllowDiscuss:     bool(t.AllowDiscuss),
-		EditPermission:   t.EditPermission,
-		ViewPermission:   t.ViewPermission,
-		JoinPermission:   t.JoinPermission,
-		Important:        bool(t.Important),
-		MuteNotification: bool(t.MuteNotification),
-		CreatedAt:        t.CreatedAt,
+		ID:              t.ID,
+		TopicSetID:      t.TopicSetID,
+		Cover:           t.Cover,
+		Bg:              t.Bg,
+		Name:            t.Name,
+		Introduction:    t.Introduction,
+		CatalogViewType: t.CatalogViewType,
+		TopicType:       t.TopicType,
+		TopicHome:       t.TopicHome,
+		VersionName:     t.VersionName,
+		Seq:             t.Seq,
+		IsPrivate:       bool(t.IsPrivate),
+		AllowChat:       bool(t.AllowChat),
+		AllowDiscuss:    bool(t.AllowDiscuss),
+		EditPermission:  t.EditPermission,
+		ViewPermission:  t.ViewPermission,
+		JoinPermission:  t.JoinPermission,
+		CreatedAt:       t.CreatedAt,
 	}
 
 	item.Members = make([]*model.TopicMemberResp, 0)
@@ -91,6 +94,13 @@ func (p *Service) getTopic(c context.Context, node sqalx.Node, topicID int64) (i
 	} else if tType != nil {
 		item.TopicTypeName = tType.Name
 	}
+	var s *model.AccountTopicSetting
+	if s, err = p.getAccountTopicSetting(c, node, aid, topicID); err != nil {
+		return
+	}
+
+	item.Important = bool(s.Important)
+	item.MuteNotification = bool(s.MuteNotification)
 
 	if addCache {
 		p.addCache(func() {
@@ -123,25 +133,23 @@ func (p *Service) CreateTopic(c context.Context, arg *model.ArgCreateTopic) (top
 	}()
 
 	item := &model.Topic{
-		ID:               gid.NewID(),
-		Name:             arg.Name,
-		Cover:            arg.Cover,
-		Bg:               arg.Bg,
-		Introduction:     arg.Introduction,
-		IsPrivate:        types.BitBool(arg.IsPrivate),
-		AllowChat:        types.BitBool(arg.AllowChat),
-		AllowDiscuss:     types.BitBool(arg.AllowDiscuss),
-		EditPermission:   arg.EditPermission,
-		ViewPermission:   arg.ViewPermission,
-		JoinPermission:   arg.JoinPermission,
-		Important:        types.BitBool(arg.Important),
-		MuteNotification: types.BitBool(arg.MuteNotification),
-		CatalogViewType:  arg.CatalogViewType,
-		TopicHome:        arg.TopicHome,
-		VersionName:      arg.VersionName,
-		CreatedBy:        aid,
-		CreatedAt:        time.Now().Unix(),
-		UpdatedAt:        time.Now().Unix(),
+		ID:              gid.NewID(),
+		Name:            arg.Name,
+		Cover:           arg.Cover,
+		Bg:              arg.Bg,
+		Introduction:    arg.Introduction,
+		IsPrivate:       types.BitBool(arg.IsPrivate),
+		AllowChat:       types.BitBool(arg.AllowChat),
+		AllowDiscuss:    types.BitBool(arg.AllowDiscuss),
+		EditPermission:  arg.EditPermission,
+		ViewPermission:  arg.ViewPermission,
+		JoinPermission:  arg.JoinPermission,
+		CatalogViewType: arg.CatalogViewType,
+		TopicHome:       arg.TopicHome,
+		VersionName:     arg.VersionName,
+		CreatedBy:       aid,
+		CreatedAt:       time.Now().Unix(),
+		UpdatedAt:       time.Now().Unix(),
 	}
 
 	if v, e := p.d.GetTopicType(c, tx, arg.TopicType); e != nil {
@@ -178,6 +186,20 @@ func (p *Service) CreateTopic(c context.Context, arg *model.ArgCreateTopic) (top
 	}
 
 	if err = p.d.AddTopic(c, tx, item); err != nil {
+		return
+	}
+
+	setting := &model.AccountTopicSetting{
+		ID:               gid.NewID(),
+		AccountID:        aid,
+		TopicID:          item.ID,
+		Important:        types.BitBool(arg.Important),
+		MuteNotification: types.BitBool(arg.MuteNotification),
+		CreatedAt:        time.Now().Unix(),
+		UpdatedAt:        time.Now().Unix(),
+	}
+
+	if err = p.d.AddAccountTopicSetting(c, tx, setting); err != nil {
 		return
 	}
 
@@ -222,10 +244,10 @@ func (p *Service) UpdateTopic(c context.Context, arg *model.ArgUpdateTopic) (err
 		return ecode.NotTopicAdmin
 	}
 
-	return p.updateTopic(c, p.d.DB(), arg)
+	return p.updateTopic(c, p.d.DB(), aid, arg)
 }
 
-func (p *Service) updateTopic(c context.Context, node sqalx.Node, arg *model.ArgUpdateTopic) (err error) {
+func (p *Service) updateTopic(c context.Context, node sqalx.Node, aid int64, arg *model.ArgUpdateTopic) (err error) {
 	var tx sqalx.Node
 	if tx, err = node.Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
@@ -314,12 +336,39 @@ func (p *Service) updateTopic(c context.Context, node sqalx.Node, arg *model.Arg
 		t.AllowChat = types.BitBool(*arg.AllowChat)
 	}
 
+	important := false
+	muteNotification := false
 	if arg.Important != nil {
-		t.Important = types.BitBool(*arg.Important)
+		important = *arg.Important
 	}
 
 	if arg.MuteNotification != nil {
-		t.MuteNotification = types.BitBool(*arg.MuteNotification)
+		muteNotification = *arg.MuteNotification
+	}
+
+	var s *model.AccountTopicSetting
+	if s, err = p.d.GetAccountTopicSetting(c, tx, aid, t.ID); err != nil {
+		return
+	} else if s == nil {
+		setting := &model.AccountTopicSetting{
+			ID:               gid.NewID(),
+			AccountID:        aid,
+			TopicID:          t.ID,
+			Important:        types.BitBool(important),
+			MuteNotification: types.BitBool(muteNotification),
+			CreatedAt:        time.Now().Unix(),
+			UpdatedAt:        time.Now().Unix(),
+		}
+
+		if err = p.d.AddAccountTopicSetting(c, tx, setting); err != nil {
+			return
+		}
+	} else {
+		s.Important = types.BitBool(important)
+		s.MuteNotification = types.BitBool(muteNotification)
+		if err = p.d.UpdateAccountTopicSetting(c, tx, s); err != nil {
+			return
+		}
 	}
 
 	if err = p.d.UpdateTopic(c, tx, t); err != nil {
@@ -331,6 +380,7 @@ func (p *Service) updateTopic(c context.Context, node sqalx.Node, arg *model.Arg
 	}
 
 	p.addCache(func() {
+		p.d.DelAccountTopicSettingCache(context.TODO(), aid, t.ID)
 		p.d.DelTopicCache(context.TODO(), arg.ID)
 		p.d.DelTopicVersionCache(context.TODO(), t.TopicSetID)
 	})
@@ -338,5 +388,36 @@ func (p *Service) updateTopic(c context.Context, node sqalx.Node, arg *model.Arg
 }
 
 func (p *Service) DelTopic(c context.Context, topicID int64) (err error) {
+	return
+}
+
+func (p *Service) getAccountTopicSetting(c context.Context, node sqalx.Node, aid, topicID int64) (item *model.AccountTopicSetting, err error) {
+	var addCache = true
+	if item, err = p.d.AccountTopicSettingCache(c, aid, topicID); err != nil {
+		addCache = false
+	} else if item != nil {
+		return
+	}
+
+	if item, err = p.d.GetAccountTopicSetting(c, node, aid, topicID); err != nil {
+		return
+	} else if item == nil {
+		item = &model.AccountTopicSetting{
+			ID:               gid.NewID(),
+			AccountID:        aid,
+			TopicID:          topicID,
+			Important:        false,
+			MuteNotification: false,
+			CreatedAt:        time.Now().Unix(),
+			UpdatedAt:        time.Now().Unix(),
+		}
+	}
+
+	if addCache {
+		p.addCache(func() {
+			p.d.SetAccountTopicSettingCache(context.TODO(), item)
+		})
+	}
+
 	return
 }

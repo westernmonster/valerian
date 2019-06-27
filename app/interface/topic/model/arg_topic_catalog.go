@@ -217,7 +217,7 @@ func (p *ArgSaveTopicCatalog) Validate() error {
 	return validation.ValidateStruct(
 		p,
 		validation.Field(&p.TopicID, validation.Required.Error(`请传入话题ID`)),
-		validation.Field(&p.Items, validation.Required.Error(`请添加话题分类`)),
+		validation.Field(&p.Items),
 	)
 }
 

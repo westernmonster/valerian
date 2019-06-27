@@ -104,6 +104,8 @@ type ArgUpdateArticle struct {
 
 	// 版本名称
 	VersionName *string `json:"version_name"`
+
+	ChangeDesc string `json:"change_desc"`
 }
 
 func (p *ArgUpdateArticle) Validate() error {
@@ -116,6 +118,7 @@ func (p *ArgUpdateArticle) Validate() error {
 		validation.Field(&p.Locale, validation.NilOrNotEmpty),
 		validation.Field(&p.Cover, validation.NilOrNotEmpty, is.URL),
 		validation.Field(&p.VersionName, validation.NilOrNotEmpty, validation.RuneLength(0, 250)),
+		validation.Field(&p.ChangeDesc, validation.Required),
 	)
 }
 

@@ -70,7 +70,7 @@ func (p *Service) GetTopicVersions(c context.Context, topicSetID int64) (items [
 	return p.getTopicVersionsResp(c, p.d.DB(), topicSetID)
 }
 
-func (p *Service) AddTopicVersion(c context.Context, arg *model.ArgNewVersion) (id int64, err error) {
+func (p *Service) AddTopicVersion(c context.Context, arg *model.ArgNewTopicVersion) (id int64, err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed
@@ -143,6 +143,10 @@ func (p *Service) AddTopicVersion(c context.Context, arg *model.ArgNewVersion) (
 
 	id = t.ID
 
+	p.addCache(func() {
+		p.d.DelTopicVersionCache(context.TODO(), t.TopicSetID)
+	})
+
 	return
 }
 
@@ -189,7 +193,7 @@ func (p *Service) copyRelations(c context.Context, node sqalx.Node, aid int64, f
 	return
 }
 
-func (p *Service) MergeTopicVersions(c context.Context, arg *model.ArgMergeVersion) (err error) {
+func (p *Service) MergeTopicVersions(c context.Context, arg *model.ArgMergeTopicVersion) (err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed
@@ -273,6 +277,53 @@ func (p *Service) MergeTopicVersions(c context.Context, arg *model.ArgMergeVersi
 			p.d.DelTopicCatalogCache(context.TODO(), v.TopicID)
 			p.d.DelTopicRelationCache(context.TODO(), v.TopicID)
 			p.d.DelTopicMembersCache(context.TODO(), v.TopicID)
+		}
+	})
+
+	return
+}
+
+func (p *Service) SaveTopicVersions(c context.Context, arg *model.ArgSaveTopicVersions) (err error) {
+	var tx sqalx.Node
+	if tx, err = p.d.DB().Beginx(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		return
+	}
+
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+			}
+			return
+		}
+	}()
+
+	for _, v := range arg.Items {
+		var t *model.Topic
+		if t, err = p.d.GetTopicByID(c, tx, v.TopicID); err != nil {
+			return
+		} else if t == nil {
+			return ecode.TopicNotExist
+		}
+
+		t.VersionName = v.VersionName
+		t.Seq = v.Seq
+
+		if err = p.d.UpdateTopic(c, tx, t); err != nil {
+			return
+		}
+	}
+
+	if err = tx.Commit(); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		return
+	}
+
+	p.addCache(func() {
+		p.d.DelTopicVersionCache(context.TODO(), arg.TopicSetID)
+		for _, v := range arg.Items {
+			p.d.DelTopicCache(context.TODO(), v.TopicID)
 		}
 	})
 
