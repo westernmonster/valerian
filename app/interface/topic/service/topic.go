@@ -13,29 +13,39 @@ import (
 	"valerian/library/net/metadata"
 )
 
-func (p *Service) GetTopic(c context.Context, topicID int64) (item *model.TopicResp, err error) {
+func (p *Service) GetTopic(c context.Context, topicID int64, include string) (item *model.TopicResp, err error) {
 	if item, err = p.getTopic(c, p.d.DB(), topicID); err != nil {
 		return
 	}
-
-	if item.MembersCount, item.Members, err = p.getTopicMembers(c, p.d.DB(), topicID, 10); err != nil {
-		return
+	inc := includeParam(include)
+	if inc["members"] {
+		if item.MembersCount, item.Members, err = p.getTopicMembers(c, p.d.DB(), topicID, 10); err != nil {
+			return
+		}
 	}
 
-	if item.Versions, err = p.getTopicVersionsResp(c, p.d.DB(), item.TopicSetID); err != nil {
-		return
+	if inc["versions"] {
+		if item.Versions, err = p.getTopicVersionsResp(c, p.d.DB(), item.TopicSetID); err != nil {
+			return
+		}
 	}
 
-	if item.RelatedTopics, err = p.getAllRelatedTopics(c, p.d.DB(), topicID); err != nil {
-		return
+	if inc["related_topics"] {
+		if item.RelatedTopics, err = p.getAllRelatedTopics(c, p.d.DB(), topicID); err != nil {
+			return
+		}
 	}
 
-	if item.Catalogs, err = p.getCatalogsHierarchy(c, p.d.DB(), topicID); err != nil {
-		return
+	if inc["catalogs"] {
+		if item.Catalogs, err = p.getCatalogsHierarchy(c, p.d.DB(), topicID); err != nil {
+			return
+		}
 	}
 
-	if item.TopicMeta, err = p.GetTopicMeta(c, item); err != nil {
-		return
+	if inc["meta"] {
+		if item.TopicMeta, err = p.GetTopicMeta(c, item); err != nil {
+			return
+		}
 	}
 
 	return
