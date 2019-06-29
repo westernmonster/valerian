@@ -2,6 +2,10 @@ package model
 
 type TopicCatalogResp struct {
 	ID int64 `json:"id,string" swaggertype:"string"`
+
+	TopicVersionID int64 `json:"topic_version_id,string" swaggertype:"string"`
+
+	TopicID int64 `json:"topic_id,string" swaggertype:"string"`
 	//  名称
 	// required: true
 	Name string `json:"name"`

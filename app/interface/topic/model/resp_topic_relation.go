@@ -1,13 +1,18 @@
 package model
 
 type RelatedTopicResp struct {
+	// 话题版本ID
+	TopicVersionID int64 `db:"topic_version_id" json:"topic_version_id,string" swaggertype:"string"`
+
 	// 话题ID
 	TopicID int64 `db:"topic_id" json:"topic_id,string" swaggertype:"string"`
+
 	// 话题名
 	TopicName string `db:"topic_name" json:"topic_name"`
 	// 封面图
 	// 必须为URL
 	Cover *string `db:"cover" json:"cover"`
+
 	// 版本名称
 	VersionName string `db:"version_name" json:"version_name"`
 	// 关联类型

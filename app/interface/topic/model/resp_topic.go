@@ -38,9 +38,6 @@ type TopicResp struct {
 	// 关联话题
 	RelatedTopics []*RelatedTopicShort `json:"related_topics"`
 
-	// 话题分类
-	Catalogs []*TopicLevel1Catalog `json:"catalogs"`
-
 	// 分类视图
 	// section 章节
 	// column 栏目
