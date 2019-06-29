@@ -3,6 +3,7 @@ package dao
 import (
 	"context"
 	"fmt"
+	"valerian/app/interface/topic/model"
 	"valerian/library/cache/memcache"
 	"valerian/library/log"
 )
@@ -11,7 +12,7 @@ func topicVersionKey(topicSetID int64) string {
 	return fmt.Sprintf("t_version_%d", topicSetID)
 }
 
-func (p *Dao) SetTopicVersionCache(c context.Context, topicSetID int64, m []int64) (err error) {
+func (p *Dao) SetTopicVersionCache(c context.Context, topicSetID int64, m []*model.TopicVersionResp) (err error) {
 	key := topicVersionKey(topicSetID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
@@ -23,7 +24,7 @@ func (p *Dao) SetTopicVersionCache(c context.Context, topicSetID int64, m []int6
 	return
 }
 
-func (p *Dao) TopicVersionCache(c context.Context, topicSetID int64) (m []int64, err error) {
+func (p *Dao) TopicVersionCache(c context.Context, topicSetID int64) (m []*model.TopicVersionResp, err error) {
 	key := topicVersionKey(topicSetID)
 	conn := p.mc.Get(c)
 	defer conn.Close()

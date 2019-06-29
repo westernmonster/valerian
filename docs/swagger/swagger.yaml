@@ -395,6 +395,13 @@ definitions:
       to_article_set_id:
         type: integer
     type: object
+  model.ArgMergeTopicVersion:
+    properties:
+      from_topic_set_id:
+        type: integer
+      to_topic_set_id:
+        type: integer
+    type: object
   model.ArgMobile:
     properties:
       client_id:
@@ -453,7 +460,7 @@ definitions:
       version_name:
         type: string
     type: object
-  model.ArgNewVersion:
+  model.ArgNewTopicVersion:
     properties:
       from_topic_id:
         type: integer
@@ -1662,7 +1669,7 @@ definitions:
     properties:
       file_name:
         type: string
-      fileURL:
+      file_url:
         type: string
       id:
         type: string
@@ -2535,6 +2542,54 @@ paths:
         "500":
           description: 服务器端错误
       summary: 合并文章版本
+      tags:
+      - article
+  /article/versions/save:
+    post:
+      consumes:
+      - application/json
+      description: 保存文章版本（排序，重命名）
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 请求
+        in: body
+        name: req
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "20":
+          description: 获取用户ID失败，一般是因为未登录造成
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 保存文章版本（排序，重命名）
       tags:
       - article
   /draft/add:
@@ -3963,6 +4018,11 @@ paths:
         name: id
         required: true
         type: string
+      - description: 目前支持：members,versions,related_topics,catalogs,meta
+        in: query
+        name: include
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -4581,7 +4641,7 @@ paths:
         name: req
         required: true
         schema:
-          $ref: '#/definitions/model.ArgNewVersion'
+          $ref: '#/definitions/model.ArgNewTopicVersion'
           type: object
       produces:
       - application/json
@@ -4640,7 +4700,7 @@ paths:
         name: req
         required: true
         schema:
-          $ref: '#/definitions/model.ArgNewVersion'
+          $ref: '#/definitions/model.ArgMergeTopicVersion'
           type: object
       produces:
       - application/json
@@ -4662,6 +4722,62 @@ paths:
         "500":
           description: 服务器端错误
       summary: 合并话题版本
+      tags:
+      - topic
+  /topic/versions/save:
+    post:
+      consumes:
+      - application/json
+      description: 保存话题版本（排序和重命名）
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 请求
+        in: body
+        name: req
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "18":
+          description: 话题不存在
+        "20":
+          description: 获取用户ID失败，一般是因为未登录造成
+        "34":
+          description: 不属于话题成员
+        "35":
+          description: 不是话题主理人或管理员
+        "200":
+          description: 成功
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 保存话题版本（排序和重命名）
       tags:
       - topic
   /valcode/email:

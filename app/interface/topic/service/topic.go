@@ -74,7 +74,6 @@ func (p *Service) getTopic(c context.Context, node sqalx.Node, topicID int64) (i
 
 	item = &model.TopicResp{
 		ID:              t.ID,
-		TopicSetID:      t.TopicSetID,
 		Cover:           t.Cover,
 		Bg:              t.Bg,
 		Name:            t.Name,
@@ -82,8 +81,6 @@ func (p *Service) getTopic(c context.Context, node sqalx.Node, topicID int64) (i
 		CatalogViewType: t.CatalogViewType,
 		TopicType:       t.TopicType,
 		TopicHome:       t.TopicHome,
-		VersionName:     t.VersionName,
-		Seq:             t.Seq,
 		IsPrivate:       bool(t.IsPrivate),
 		AllowChat:       bool(t.AllowChat),
 		AllowDiscuss:    bool(t.AllowDiscuss),
@@ -156,7 +153,6 @@ func (p *Service) CreateTopic(c context.Context, arg *model.ArgCreateTopic) (top
 		JoinPermission:  arg.JoinPermission,
 		CatalogViewType: arg.CatalogViewType,
 		TopicHome:       arg.TopicHome,
-		VersionName:     arg.VersionName,
 		CreatedBy:       aid,
 		CreatedAt:       time.Now().Unix(),
 		UpdatedAt:       time.Now().Unix(),
@@ -172,27 +168,17 @@ func (p *Service) CreateTopic(c context.Context, arg *model.ArgCreateTopic) (top
 
 	item.TopicType = arg.TopicType
 
-	if arg.TopicSetID != nil {
-		if v, e := p.d.GetTopicVersionByName(c, tx, *arg.TopicSetID, arg.VersionName); e != nil {
-			err = e
-			return
-		} else if v != nil {
-			err = ecode.TopicVersionNameExist
-			return
-		}
+	set := &model.TopicVersion{
+		ID:        gid.NewID(),
+		Name:      arg.VersionName,
+		Seq:       1,
+		TopicID:   item.ID,
+		CreatedAt: time.Now().Unix(),
+		UpdatedAt: time.Now().Unix(),
+	}
 
-		item.TopicSetID = *arg.TopicSetID
-	} else {
-		set := &model.TopicSet{
-			ID:        gid.NewID(),
-			CreatedAt: time.Now().Unix(),
-			UpdatedAt: time.Now().Unix(),
-		}
-		item.TopicSetID = set.ID
-
-		if err = p.d.AddTopicSet(c, tx, set); err != nil {
-			return
-		}
+	if err = p.d.AddTopicVersion(c, tx, set); err != nil {
+		return
 	}
 
 	if err = p.d.AddTopic(c, tx, item); err != nil {
@@ -231,7 +217,7 @@ func (p *Service) CreateTopic(c context.Context, arg *model.ArgCreateTopic) (top
 	}
 
 	p.addCache(func() {
-		p.d.DelTopicVersionCache(context.TODO(), item.TopicSetID)
+		p.d.DelTopicVersionCache(context.TODO(), item.ID)
 	})
 
 	topicID = item.ID
@@ -305,17 +291,6 @@ func (p *Service) updateTopic(c context.Context, node sqalx.Node, aid int64, arg
 
 	if arg.Introduction != nil && *arg.Introduction != "" {
 		t.Introduction = *arg.Introduction
-	}
-
-	if arg.VersionName != nil && *arg.VersionName != "" {
-		var ver *model.TopicVersionResp
-		if ver, err = p.d.GetTopicVersionByName(c, tx, t.TopicSetID, *arg.VersionName); err != nil {
-			return
-		} else if ver != nil && ver.TopicID != t.ID {
-			return ecode.TopicVersionNameExist
-		}
-
-		t.VersionName = *arg.VersionName
 	}
 
 	if arg.JoinPermission != nil && *arg.JoinPermission != "" {
@@ -392,7 +367,7 @@ func (p *Service) updateTopic(c context.Context, node sqalx.Node, aid int64, arg
 	p.addCache(func() {
 		p.d.DelAccountTopicSettingCache(context.TODO(), aid, t.ID)
 		p.d.DelTopicCache(context.TODO(), arg.ID)
-		p.d.DelTopicVersionCache(context.TODO(), t.TopicSetID)
+		p.d.DelTopicVersionCache(context.TODO(), t.ID)
 	})
 	return
 }

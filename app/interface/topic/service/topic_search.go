@@ -28,8 +28,6 @@ func (p *Service) SearchTopics(c context.Context, query string, include string) 
 			Cover:        v.Cover,
 			Name:         v.Name,
 			Introduction: v.Introduction,
-			TopicSetID:   v.TopicSetID,
-			VersionName:  v.VersionName,
 		}
 
 		if inc["items[*].versions"] {

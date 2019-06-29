@@ -127,8 +127,8 @@ type TopicMeta struct {
 }
 
 type TopicVersionResp struct {
-	// 集合ID
-	TopicSetID int64 `db:"topic_set_id" json:"topic_set_id,string"  swaggertype:"string"`
+	// 版本ID
+	ID int64 `db:"id" json:"id,string"  swaggertype:"string"`
 	// 话题ID
 	TopicID int64 `db:"topic_id" json:"topic_id,string" swaggertype:"string"`
 
@@ -136,12 +136,9 @@ type TopicVersionResp struct {
 	Seq int `db:"seq" json:"seq"`
 
 	// 版本名称
-	VersionName string `db:"version_name" json:"version_name"`
+	VersionName string `db:"name" json:"name"`
 	// 话题名
 	TopicName string `db:"topic_name" json:"topic_name"`
-
-	// Meta
-	TopicMeta *TopicMeta `json:"meta,omitempty"`
 }
 
 type RelatedTopicShort struct {

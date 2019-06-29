@@ -43,7 +43,7 @@ func topicVersions(c *mars.Context) {
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArgNewVersion true "请求"
+// @Param req body model.ArgNewTopicVersion true "请求"
 // @Failure 20 "获取用户ID失败，一般是因为未登录造成"
 // @Failure 18 "话题不存在"
 // @Failure 34 "不属于话题成员"
@@ -76,7 +76,7 @@ func addTopicVersion(c *mars.Context) {
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArgNewVersion true "请求"
+// @Param req body model.ArgMergeTopicVersion true "请求"
 // @Failure 20 "获取用户ID失败，一般是因为未登录造成"
 // @Failure 18 "话题不存在"
 // @Failure 34 "不属于话题成员"

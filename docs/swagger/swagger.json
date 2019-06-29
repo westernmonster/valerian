@@ -1240,6 +1240,76 @@
                 }
             }
         },
+        "/article/versions/save": {
+            "post": {
+                "description": "保存文章版本（排序，重命名）",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "article"
+                ],
+                "summary": "保存文章版本（排序，重命名）",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                ],
+                "responses": {
+                    "20": {
+                        "description": "获取用户ID失败，一般是因为未登录造成"
+                    },
+                    "400": {
+                        "description": "验证请求失败"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
         "/draft/add": {
             "post": {
                 "description": "添加草稿",
@@ -3310,6 +3380,13 @@
                         "name": "id",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "目前支持：members,versions,related_topics,catalogs,meta",
+                        "name": "include",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -4205,7 +4282,7 @@
                         "required": true,
                         "schema": {
                             "type": "object",
-                            "$ref": "#/definitions/model.ArgNewVersion"
+                            "$ref": "#/definitions/model.ArgNewTopicVersion"
                         }
                     }
                 ],
@@ -4291,7 +4368,89 @@
                         "required": true,
                         "schema": {
                             "type": "object",
-                            "$ref": "#/definitions/model.ArgNewVersion"
+                            "$ref": "#/definitions/model.ArgMergeTopicVersion"
+                        }
+                    }
+                ],
+                "responses": {
+                    "18": {
+                        "description": "话题不存在"
+                    },
+                    "20": {
+                        "description": "获取用户ID失败，一般是因为未登录造成"
+                    },
+                    "200": {
+                        "description": "成功"
+                    },
+                    "34": {
+                        "description": "不属于话题成员"
+                    },
+                    "35": {
+                        "description": "不是话题主理人或管理员"
+                    },
+                    "400": {
+                        "description": "验证请求失败"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/topic/versions/save": {
+            "post": {
+                "description": "保存话题版本（排序和重命名）",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "topic"
+                ],
+                "summary": "保存话题版本（排序和重命名）",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object"
                         }
                     }
                 ],
@@ -4932,6 +5091,17 @@
                 }
             }
         },
+        "model.ArgMergeTopicVersion": {
+            "type": "object",
+            "properties": {
+                "from_topic_set_id": {
+                    "type": "integer"
+                },
+                "to_topic_set_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "model.ArgMobile": {
             "type": "object",
             "properties": {
@@ -5014,7 +5184,7 @@
                 }
             }
         },
-        "model.ArgNewVersion": {
+        "model.ArgNewTopicVersion": {
             "type": "object",
             "properties": {
                 "from_topic_id": {
@@ -6525,10 +6695,10 @@
         "model.UpdateArticleFile": {
             "type": "object",
             "properties": {
-                "fileURL": {
+                "file_name": {
                     "type": "string"
                 },
-                "file_name": {
+                "file_url": {
                     "type": "string"
                 },
                 "id": {

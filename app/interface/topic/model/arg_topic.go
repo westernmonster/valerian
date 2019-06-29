@@ -189,9 +189,6 @@ type ArgUpdateTopic struct {
 	// chat 群聊
 	TopicHome *string `json:"topic_home,omitempty"`
 
-	// 版本名
-	VersionName *string `json:"version_name,omitempty"`
-
 	// 是否私密
 	IsPrivate *bool `json:"is_private,omitempty"`
 
@@ -259,9 +256,6 @@ func (p *ArgUpdateTopic) Validate() error {
 		),
 		validation.Field(&p.JoinPermission,
 			validation.In(JoinPermissionMember, JoinPermissionIDCert, JoinPermissionWorkCert, JoinPermissionMemberApprove, JoinPermissionIDCertApprove, JoinPermissionWorkCertApprove, JoinPermissionAdminAdd, JoinPermissionPurchase, JoinPermissionVIP).Error("加入权限不正确"),
-		),
-		validation.Field(&p.VersionName,
-			validation.RuneLength(0, 250).Error(`版本名最大长度为250个字符`),
 		),
 	)
 }
