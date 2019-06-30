@@ -11,22 +11,22 @@ import (
 	"valerian/library/log"
 )
 
-func (p *Service) getTopicVersionsResp(c context.Context, node sqalx.Node, topicSetID int64) (items []*model.TopicVersionResp, err error) {
+func (p *Service) getTopicVersionsResp(c context.Context, node sqalx.Node, topicID int64) (items []*model.TopicVersionResp, err error) {
 	var addCache = true
 
-	if items, err = p.d.TopicVersionCache(c, topicSetID); err != nil {
+	if items, err = p.d.TopicVersionCache(c, topicID); err != nil {
 		addCache = false
 	} else if items != nil {
 		return
 	}
 
-	if items, err = p.d.GetTopicVersions(c, node, topicSetID); err != nil {
+	if items, err = p.d.GetTopicVersions(c, node, topicID); err != nil {
 		return
 	}
 
 	if addCache {
 		p.addCache(func() {
-			p.d.SetTopicVersionCache(context.TODO(), topicSetID, items)
+			p.d.SetTopicVersionCache(context.TODO(), topicID, items)
 		})
 	}
 
@@ -38,11 +38,6 @@ func (p *Service) GetTopicVersions(c context.Context, topicSetID int64) (items [
 }
 
 func (p *Service) AddTopicVersion(c context.Context, arg *model.ArgNewTopicVersion) (id int64, err error) {
-	// aid, ok := metadata.Value(c, metadata.Aid).(int64)
-	// if !ok {
-	// 	err = ecode.AcquireAccountIDFailed
-	// 	return
-	// }
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
@@ -59,10 +54,35 @@ func (p *Service) AddTopicVersion(c context.Context, arg *model.ArgNewTopicVersi
 	}()
 
 	var t *model.Topic
-	if t, err = p.d.GetTopicByID(c, tx, arg.FromTopicID); err != nil {
+	if t, err = p.d.GetTopicByID(c, tx, arg.TopicID); err != nil {
 		return
 	} else if t == nil {
 		err = ecode.TopicNotExist
+		return
+	}
+
+	if m, e := p.d.GetTopicVersionByName(c, tx, arg.TopicID, arg.VersionName); e != nil {
+		return 0, e
+	} else if m != nil {
+		err = ecode.TopicVersionNameExist
+		return
+	}
+
+	var maxSeq int
+	if maxSeq, err = p.d.GetTopicVersionMaxSeq(c, tx, t.ID); err != nil {
+		return
+	}
+
+	item := &model.TopicVersion{
+		ID:        gid.NewID(),
+		TopicID:   t.ID,
+		Name:      arg.VersionName,
+		Seq:       maxSeq + 1,
+		CreatedAt: time.Now().Unix(),
+		UpdatedAt: time.Now().Unix(),
+	}
+
+	if err = p.d.AddTopicVersion(c, tx, item); err != nil {
 		return
 	}
 
@@ -77,49 +97,6 @@ func (p *Service) AddTopicVersion(c context.Context, arg *model.ArgNewTopicVersi
 		p.d.DelTopicVersionCache(context.TODO(), t.ID)
 	})
 
-	return
-}
-
-func (p *Service) copyMembers(c context.Context, node sqalx.Node, aid int64, fromTopicID, toTopicID int64) (err error) {
-	var members []*model.TopicMember
-	if members, err = p.d.GetAllTopicMembers(c, node, fromTopicID); err != nil {
-		return
-	}
-
-	for _, v := range members {
-		v.ID = gid.NewID()
-		v.CreatedAt = time.Now().Unix()
-		v.UpdatedAt = time.Now().Unix()
-		v.TopicID = toTopicID
-		if v.Role == model.MemberRoleOwner && v.AccountID != aid {
-			v.Role = model.MemberRoleAdmin
-		}
-		if v.AccountID == aid {
-			v.Role = model.MemberRoleOwner
-		}
-		if err = p.d.AddTopicMember(c, node, v); err != nil {
-			return
-		}
-	}
-
-	return
-}
-
-func (p *Service) copyRelations(c context.Context, node sqalx.Node, aid int64, fromTopicID, toTopicID int64) (err error) {
-	var relations []*model.TopicRelation
-	if relations, err = p.d.GetAllTopicRelations(c, node, fromTopicID); err != nil {
-		return
-	}
-
-	for _, v := range relations {
-		v.ID = gid.NewID()
-		v.CreatedAt = time.Now().Unix()
-		v.UpdatedAt = time.Now().Unix()
-		v.FromTopicID = fromTopicID
-		if err = p.d.AddTopicRelation(c, node, v); err != nil {
-			return
-		}
-	}
 	return
 }
 
@@ -139,28 +116,36 @@ func (p *Service) SaveTopicVersions(c context.Context, arg *model.ArgSaveTopicVe
 		}
 	}()
 
-	// for _, v := range arg.Items {
-	// var t *model.TopicVersion
-	// if t, err = p.d.GetTopicVersionByID(c, tx, v.TopicID); err != nil {
-	// 	return
-	// } else if t == nil {
-	// 	return ecode.TopicNotExist
-	// }
+	var t *model.Topic
+	if t, err = p.d.GetTopicByID(c, tx, arg.TopicID); err != nil {
+		return
+	} else if t == nil {
+		err = ecode.TopicNotExist
+		return
+	}
 
-	// if m, e := p.d.GetTopicVersionByName(c, tx, arg.TopicSetID, v.VersionName); e != nil {
-	// 	return e
-	// } else if m != nil && m.TopicID != t.ID {
-	// 	err = ecode.TopicVersionNameExist
-	// 	return
-	// }
+	for _, v := range arg.Items {
+		var ver *model.TopicVersion
+		if ver, err = p.d.GetTopicVersion(c, tx, v.ID); err != nil {
+			return
+		} else if ver == nil {
+			return ecode.TopicVersionNotExit
+		}
 
-	// t.Name = v.VersionName
-	// t.Seq = v.Seq
+		if m, e := p.d.GetTopicVersionByName(c, tx, t.ID, v.VersionName); e != nil {
+			return e
+		} else if m != nil && m.TopicID != ver.ID {
+			err = ecode.TopicVersionNameExist
+			return
+		}
 
-	// if err = p.d.UpdateTopic(c, tx, t); err != nil {
-	// 	return
-	// }
-	// }
+		ver.Name = v.VersionName
+		ver.Seq = v.Seq
+
+		if err = p.d.UpdateTopicVersion(c, tx, ver); err != nil {
+			return
+		}
+	}
 
 	if err = tx.Commit(); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
@@ -168,10 +153,7 @@ func (p *Service) SaveTopicVersions(c context.Context, arg *model.ArgSaveTopicVe
 	}
 
 	p.addCache(func() {
-		p.d.DelTopicVersionCache(context.TODO(), arg.TopicSetID)
-		for _, v := range arg.Items {
-			p.d.DelTopicCache(context.TODO(), v.TopicID)
-		}
+		p.d.DelTopicVersionCache(context.TODO(), arg.TopicID)
 	})
 
 	return

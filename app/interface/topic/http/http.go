@@ -34,7 +34,6 @@ func route(e *mars.Engine) {
 		g.POST("/related", auth.User, editTopicRelations)
 		g.POST("/catalogs", auth.User, editTopicCatalogs)
 		g.POST("/versions", auth.User, addTopicVersion)
-		g.POST("/versions/merge", auth.User, mergeTopicVersion)
 		g.POST("/versions/save", auth.User, saveTopicVersions)
 
 		g.GET("/list/activities", auth.User, getActivites)
@@ -61,7 +60,6 @@ func route(e *mars.Engine) {
 		x.POST("/relations/del", auth.User, delArticleRelation)
 		x.POST("/relations/primary", auth.User, setArticleRelationPrimary)
 		x.POST("/versions", auth.User, addArticleVersion)
-		x.POST("/versions/merge", auth.User, mergeArticleVersion)
 		x.POST("/versions/save", auth.User, saveArticleVersions)
 
 		x.GET("/list/files", auth.User, articleFiles)

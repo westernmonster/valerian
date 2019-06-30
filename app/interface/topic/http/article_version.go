@@ -61,25 +61,11 @@ func addArticleVersion(c *mars.Context) {
 		return
 	}
 
-	id, err := srv.AddArticleVersion(c, arg)
-	c.JSON(strconv.FormatInt(id, 10), err)
-}
-
-// @Summary 合并文章版本
-// @Description 合并文章版本，需要当前用户为合并两个文章集中，是所有文章的成员并且是管理员或主理人
-// @Tags article
-// @Accept json
-// @Produce json
-// @Param Authorization header string true "Bearer"
-// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
-// @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArgMergeArticleVersion true "请求"
-// @Failure 20 "获取用户ID失败，一般是因为未登录造成"
-// @Failure 400 "验证请求失败"
-// @Failure 401 "登录验证失败"
-// @Failure 500 "服务器端错误"
-// @Router /article/versions/merge [post]
-func mergeArticleVersion(c *mars.Context) {
+	if id, err := srv.AddArticleVersion(c, arg); err != nil {
+		c.JSON(nil, err)
+	} else {
+		c.JSON(strconv.FormatInt(id, 10), err)
+	}
 }
 
 // @Summary 保存文章版本（排序，重命名）

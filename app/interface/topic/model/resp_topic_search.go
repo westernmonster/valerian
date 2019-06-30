@@ -22,9 +22,6 @@ type TopicSearchItem struct {
 	// 资源数量
 	ResourcesCount int `json:"resources_count"`
 
-	// 集合ID
-	TopicSetID int64 `json:"topic_set_id,string"  swaggertype:"string"`
-
 	VersionName string `json:"version_name"`
 
 	HasCatalogTaxonomy bool `json:"has_catalog_taxonomy"`

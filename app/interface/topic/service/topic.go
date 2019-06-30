@@ -25,7 +25,7 @@ func (p *Service) GetTopic(c context.Context, topicID int64, include string) (it
 	}
 
 	if inc["versions"] {
-		if item.Versions, err = p.getTopicVersionsResp(c, p.d.DB(), item.TopicSetID); err != nil {
+		if item.Versions, err = p.getTopicVersionsResp(c, p.d.DB(), item.ID); err != nil {
 			return
 		}
 	}
@@ -36,9 +36,11 @@ func (p *Service) GetTopic(c context.Context, topicID int64, include string) (it
 		}
 	}
 
-	if inc["catalogs"] {
-		if item.Catalogs, err = p.getCatalogsHierarchy(c, p.d.DB(), topicID); err != nil {
-			return
+	if inc["versions[*].catalogs"] {
+		for _, v := range item.Versions {
+			if v.Catalogs, err = p.getCatalogsHierarchy(c, p.d.DB(), v.ID); err != nil {
+				return
+			}
 		}
 	}
 
@@ -92,7 +94,7 @@ func (p *Service) getTopic(c context.Context, node sqalx.Node, topicID int64) (i
 
 	item.Members = make([]*model.TopicMemberResp, 0)
 	item.RelatedTopics = make([]*model.RelatedTopicShort, 0)
-	item.Catalogs = make([]*model.TopicLevel1Catalog, 0)
+	// item.Catalogs = make([]*model.TopicLevel1Catalog, 0)
 	item.Versions = make([]*model.TopicVersionResp, 0)
 
 	var tType *model.TopicType
@@ -168,17 +170,24 @@ func (p *Service) CreateTopic(c context.Context, arg *model.ArgCreateTopic) (top
 
 	item.TopicType = arg.TopicType
 
-	set := &model.TopicVersion{
-		ID:        gid.NewID(),
-		Name:      arg.VersionName,
-		Seq:       1,
-		TopicID:   item.ID,
-		CreatedAt: time.Now().Unix(),
-		UpdatedAt: time.Now().Unix(),
-	}
+	for _, v := range arg.Versions {
+		set := &model.TopicVersion{
+			ID:        gid.NewID(),
+			Name:      v.VersionName,
+			Seq:       v.Seq,
+			TopicID:   item.ID,
+			CreatedAt: time.Now().Unix(),
+			UpdatedAt: time.Now().Unix(),
+		}
 
-	if err = p.d.AddTopicVersion(c, tx, set); err != nil {
-		return
+		if err = p.d.AddTopicVersion(c, tx, set); err != nil {
+			return
+		}
+
+		if err = p.bulkCreateCatalogs(c, tx, item.ID, set.ID, v.Catalogs); err != nil {
+			return
+		}
+
 	}
 
 	if err = p.d.AddTopic(c, tx, item); err != nil {
@@ -196,10 +205,6 @@ func (p *Service) CreateTopic(c context.Context, arg *model.ArgCreateTopic) (top
 	}
 
 	if err = p.d.AddAccountTopicSetting(c, tx, setting); err != nil {
-		return
-	}
-
-	if err = p.bulkCreateCatalogs(c, tx, item.ID, arg.Catalogs); err != nil {
 		return
 	}
 
@@ -231,6 +236,7 @@ func (p *Service) UpdateTopic(c context.Context, arg *model.ArgUpdateTopic) (err
 		return
 	}
 
+	fmt.Println(aid)
 	var member *model.TopicMember
 	if member, err = p.d.GetTopicMemberByCondition(c, p.d.DB(), arg.ID, aid); err != nil {
 		return
@@ -367,7 +373,6 @@ func (p *Service) updateTopic(c context.Context, node sqalx.Node, aid int64, arg
 	p.addCache(func() {
 		p.d.DelAccountTopicSettingCache(context.TODO(), aid, t.ID)
 		p.d.DelTopicCache(context.TODO(), arg.ID)
-		p.d.DelTopicVersionCache(context.TODO(), t.ID)
 	})
 	return
 }

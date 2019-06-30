@@ -3,9 +3,6 @@ package model
 type TopicResp struct {
 	ID int64 `json:"id,string" swaggertype:"string"`
 
-	// 集合ID
-	TopicSetID int64 `json:"topic_set_id,string"  swaggertype:"string"`
-
 	// 成员
 	Members []*TopicMemberResp `json:"members"`
 
@@ -136,6 +133,8 @@ type TopicVersionResp struct {
 	VersionName string `db:"name" json:"name"`
 	// 话题名
 	TopicName string `db:"topic_name" json:"topic_name"`
+
+	Catalogs []*TopicLevel1Catalog `db:"-" json:"catalogs,omitempty"`
 }
 
 type RelatedTopicShort struct {

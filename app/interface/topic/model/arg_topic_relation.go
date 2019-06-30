@@ -3,8 +3,8 @@ package model
 import validation "github.com/go-ozzo/ozzo-validation"
 
 type ArgRelatedTopic struct {
-	// 关联话题ID
-	TopicID int64 `json:"topic_id,string"`
+	// 关联话题版本ID
+	TopicVersionID int64 `json:"topic_version_id,string"`
 
 	// 顺序
 	Seq int `json:"seq"`
@@ -18,10 +18,8 @@ type ArgRelatedTopic struct {
 func (p *ArgRelatedTopic) Validate() error {
 	return validation.ValidateStruct(
 		p,
-		validation.Field(&p.TopicID, validation.Required.Error(`请传入关联话题ID`)),
-		validation.Field(&p.Type, validation.Required.Error(`请传入关联话题类型`),
-			validation.In(TopicRelationStrong, TopicRelationNormal).Error("话题类型"),
-		),
+		validation.Field(&p.TopicVersionID, validation.Required),
+		validation.Field(&p.Type, validation.Required, validation.In(TopicRelationStrong, TopicRelationNormal)),
 	)
 }
 

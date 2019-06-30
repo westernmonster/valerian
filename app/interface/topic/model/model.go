@@ -28,14 +28,15 @@ type TopicMember struct {
 }
 
 type TopicRelation struct {
-	ID          int64         `db:"id" json:"id,string"`                       // ID ID
-	FromTopicID int64         `db:"from_topic_id" json:"from_topic_id,string"` // FromTopicID 话题ID
-	ToTopicID   int64         `db:"to_topic_id" json:"to_topic_id,string"`     // ToTopicID 关联话题ID
-	Relation    string        `db:"relation" json:"relation"`                  // Relation 关系
-	Seq         int           `db:"seq" json:"seq"`                            // Seq 顺序
-	Deleted     types.BitBool `db:"deleted" json:"deleted"`                    // Deleted 是否删除
-	CreatedAt   int64         `db:"created_at" json:"created_at"`              // CreatedAt 创建时间
-	UpdatedAt   int64         `db:"updated_at" json:"updated_at"`              // UpdatedAt 更新时间
+	ID               int64         `db:"id" json:"id,string"`                                   // ID ID
+	FromTopicID      int64         `db:"from_topic_id" json:"from_topic_id,string"`             // FromTopicID 话题ID
+	ToTopicVersionID int64         `db:"to_topic_version_id" json:"to_topic_version_id,string"` // ToTopicVersionID 关联话题版本ID
+	ToTopicID        int64         `db:"to_topic_id" json:"to_topic_id,string"`                 // ToTopicID 关联话题ID
+	Relation         string        `db:"relation" json:"relation"`                              // Relation 关系
+	Seq              int           `db:"seq" json:"seq"`                                        // Seq 顺序
+	Deleted          types.BitBool `db:"deleted" json:"deleted"`                                // Deleted 是否删除
+	CreatedAt        int64         `db:"created_at" json:"created_at"`                          // CreatedAt 创建时间
+	UpdatedAt        int64         `db:"updated_at" json:"updated_at"`                          // UpdatedAt 更新时间
 }
 
 type Topic struct {

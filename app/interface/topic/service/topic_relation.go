@@ -36,11 +36,9 @@ func (p *Service) bulkSaveRelations(c context.Context, node sqalx.Node, topicID 
 
 	for _, v := range relations {
 		var relation *model.TopicRelation
-		if relation, err = p.d.GetTopicRelationByCondition(c, tx, topicID, v.TopicID); err != nil {
+		if relation, err = p.d.GetTopicRelationByCondition(c, tx, topicID, v.TopicVersionID); err != nil {
 			return
-		}
-
-		if relation != nil {
+		} else if relation != nil {
 			relation.Relation = v.Type
 			relation.Seq = v.Seq
 			if err = p.d.UpdateTopicRelation(c, tx, relation); err != nil {
@@ -50,14 +48,22 @@ func (p *Service) bulkSaveRelations(c context.Context, node sqalx.Node, topicID 
 			continue
 		}
 
+		var ver *model.TopicVersion
+		if ver, err = p.d.GetTopicVersion(c, tx, v.TopicVersionID); err != nil {
+			return
+		} else if ver == nil {
+			return ecode.TopicVersionNotExit
+		}
+
 		item := &model.TopicRelation{
-			ID:          gid.NewID(),
-			FromTopicID: topicID,
-			ToTopicID:   v.TopicID,
-			Seq:         v.Seq,
-			Relation:    v.Type,
-			CreatedAt:   time.Now().Unix(),
-			UpdatedAt:   time.Now().Unix(),
+			ID:               gid.NewID(),
+			FromTopicID:      topicID,
+			ToTopicID:        ver.TopicID,
+			ToTopicVersionID: v.TopicVersionID,
+			Seq:              v.Seq,
+			Relation:         v.Type,
+			CreatedAt:        time.Now().Unix(),
+			UpdatedAt:        time.Now().Unix(),
 		}
 		if err = p.d.AddTopicRelation(c, tx, item); err != nil {
 			return
@@ -88,17 +94,27 @@ func (p *Service) GetAllRelatedTopicsWithMeta(c context.Context, topicID int64) 
 
 	for _, v := range data {
 		item := &model.RelatedTopicResp{
-			TopicID: v.ToTopicID,
-			Seq:     v.Seq,
-			Type:    v.Relation,
+			TopicVersionID: v.ToTopicVersionID,
+			TopicID:        v.ToTopicID,
+			Seq:            v.Seq,
+			Type:           v.Relation,
 		}
 
 		var t *model.TopicResp
 		if t, err = p.getTopic(c, p.d.DB(), item.TopicID); err != nil {
 			return
 		}
+
+		var ver *model.TopicVersion
+		if ver, err = p.d.GetTopicVersion(c, p.d.DB(), v.ToTopicVersionID); err != nil {
+			return
+		} else if ver == nil {
+			err = ecode.TopicVersionNotExit
+			return
+		}
+
 		item.TopicName = t.Name
-		item.VersionName = t.VersionName
+		item.VersionName = ver.Name
 		item.Cover = t.Cover
 		item.Introduction = t.Introduction
 		if item.MembersCount, _, err = p.getTopicMembers(c, p.d.DB(), topicID, 10); err != nil {
@@ -134,8 +150,16 @@ func (p *Service) getAllRelatedTopics(c context.Context, node sqalx.Node, topicI
 		if t, err = p.getTopic(c, node, item.TopicID); err != nil {
 			return
 		}
+
+		var ver *model.TopicVersion
+		if ver, err = p.d.GetTopicVersion(c, p.d.DB(), v.ToTopicVersionID); err != nil {
+			return
+		} else if ver == nil {
+			err = ecode.TopicVersionNotExit
+			return
+		}
 		item.TopicName = t.Name
-		item.VersionName = t.VersionName
+		item.VersionName = ver.Name
 
 		items = append(items, item)
 	}

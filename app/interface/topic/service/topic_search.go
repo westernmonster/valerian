@@ -31,7 +31,7 @@ func (p *Service) SearchTopics(c context.Context, query string, include string) 
 		}
 
 		if inc["items[*].versions"] {
-			if item.Versions, err = p.getTopicVersionsResp(c, p.d.DB(), item.TopicSetID); err != nil {
+			if item.Versions, err = p.getTopicVersionsResp(c, p.d.DB(), item.ID); err != nil {
 				return
 			}
 		}

@@ -98,4 +98,5 @@ var (
 	ArticleFileNotExist            = add(58) // 文章附件不存在
 	AccountTopicSettingNotExist    = add(59) // 用户话题设置不存在
 	ArticleRelationAlreadyAdded    = add(60) // 已经添加了该话题关联
+	TopicVersionNotExit            = add(61) // 话题版本不存在
 )

@@ -204,7 +204,7 @@ func (p *TopicChildCatalog) Validate() error {
 
 // 批量更新话题分类请求
 type ArgSaveTopicCatalog struct {
-	TopicID int64 `json:"topic_id,string" swaggertype:"string"`
+	TopicVersionID int64 `json:"topic_version_id,string" swaggertype:"string"`
 	// 话题分类
 	// required: true
 	Items []*ArgTopicCatalog `json:"items"`
@@ -216,7 +216,7 @@ type ArgSaveTopicCatalog struct {
 func (p *ArgSaveTopicCatalog) Validate() error {
 	return validation.ValidateStruct(
 		p,
-		validation.Field(&p.TopicID, validation.Required.Error(`请传入话题ID`)),
+		validation.Field(&p.TopicVersionID, validation.Required),
 		validation.Field(&p.Items),
 	)
 }

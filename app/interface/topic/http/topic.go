@@ -114,7 +114,7 @@ func deleteTopic(c *mars.Context) {
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param id query string true "ID"
-// @Param include query string true  "目前支持：members,versions,related_topics,catalogs,meta"
+// @Param include query string true  "目前支持：members,versions,related_topics,versions[*].catalogs,meta"
 // @Success 200 {object} model.TopicResp "话题"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"

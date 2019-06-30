@@ -12,8 +12,10 @@ import (
 const (
 	_addTopicVersionSQL       = "INSERT INTO topic_versions( id,topic_id,name,seq,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?)"
 	_updateTopicVersionSQL    = "UPDATE topic_versions SET topic_id=?,name=?,seq=?,updated_at=? WHERE id=?"
-	_getTopicVersionsSQL      = "SELECT a.* FROM topic_versions a WHERE a.deleted=0 AND a.topic_id=? ORDER BY a.seq "
+	_getTopicVersionSQL       = "SELECT a.* FROM topic_versions a WHERE a.deleted=0 AND a.id=?"
+	_getTopicVersionsSQL      = "SELECT a.id, a.topic_id, a.seq,a.name, b.name as topic_name FROM  topic_versions a LEFT JOIN topics b ON a.topic_id = b.id  WHERE a.topic_id=? AND a.deleted=0 ORDER BY a.seq"
 	_getTopicVersionByNameSQL = "SELECT a.id, a.topic_id,a.name, b.name as topic_name FROM  topic_versions a LEFT JOIN topics b ON a.topic_id = b.id  WHERE a.topic_id=? AND a.name=? AND a.deleted=0"
+	_getTopicVersionMaxSeqSQL = "SELECT a.seq FROM topic_versions a WHERE a.deleted=0 AND a.topic_id=? ORDER BY a.seq DESC LIMIT 1"
 )
 
 func (p *Dao) AddTopicVersion(c context.Context, node sqalx.Node, item *model.TopicVersion) (err error) {
@@ -40,6 +42,21 @@ func (p *Dao) GetTopicVersions(c context.Context, node sqalx.Node, topicID int64
 	return
 }
 
+func (p *Dao) GetTopicVersion(c context.Context, node sqalx.Node, id int64) (item *model.TopicVersion, err error) {
+	item = new(model.TopicVersion)
+
+	if err = node.GetContext(c, item, _getTopicVersionSQL, id); err != nil {
+		if err == sql.ErrNoRows {
+			item = nil
+			err = nil
+			return
+		}
+		log.For(c).Error(fmt.Sprintf("dao.GetTopicVersion error(%+v) id(%d)", err, id))
+	}
+
+	return
+}
+
 func (p *Dao) GetTopicVersionByName(c context.Context, node sqalx.Node, topicID int64, versionName string) (item *model.TopicVersionResp, err error) {
 	item = new(model.TopicVersionResp)
 
@@ -52,5 +69,17 @@ func (p *Dao) GetTopicVersionByName(c context.Context, node sqalx.Node, topicID 
 		log.For(c).Error(fmt.Sprintf("dao.GetTopicVersionByName error(%+v), topic_id(%d) version_name(%s)", err, topicID, versionName))
 	}
 
+	return
+}
+
+func (p *Dao) GetTopicVersionMaxSeq(c context.Context, node sqalx.Node, topicID int64) (seq int, err error) {
+	if err = node.GetContext(c, &seq, _getTopicVersionMaxSeqSQL, topicID); err != nil {
+		if err == sql.ErrNoRows {
+			seq = 0
+			err = nil
+			return
+		}
+		log.For(c).Error(fmt.Sprintf("dao.GetTopicVersionMaxSeq error(%+v), topic id(%d)", err, topicID))
+	}
 	return
 }

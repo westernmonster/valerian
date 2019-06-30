@@ -17,10 +17,10 @@ type Service struct {
 		AddTopicCatalog(c context.Context, node sqalx.Node, item *model.TopicCatalog) (err error)
 		UpdateTopicCatalog(c context.Context, node sqalx.Node, item *model.TopicCatalog) (err error)
 		DelTopicCatalog(c context.Context, node sqalx.Node, id int64) (err error)
-		GetTopicCatalogChildrenCount(c context.Context, node sqalx.Node, topicID, parentID int64) (count int, err error)
+		GetTopicCatalogChildrenCount(c context.Context, node sqalx.Node, topicVersionID, parentID int64) (count int, err error)
 		GetTopicCatalogsByCondition(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.TopicCatalog, err error)
 		GetTopicCatalogByCondition(ctx context.Context, node sqalx.Node, cond map[string]interface{}) (item *model.TopicCatalog, err error)
-		GetTopicCatalogMaxChildrenSeq(c context.Context, node sqalx.Node, topicID, parentID int64) (seq int, err error)
+		GetTopicCatalogMaxChildrenSeq(c context.Context, node sqalx.Node, topicVersionID, parentID int64) (seq int, err error)
 		GetTopicCatalogsCountByCondition(c context.Context, node sqalx.Node, cond map[string]interface{}) (total int, err error)
 
 		GetAllTopics(c context.Context, node sqalx.Node) (items []*model.Topic, err error)
@@ -43,10 +43,12 @@ type Service struct {
 		UpdateTopicRelation(c context.Context, node sqalx.Node, item *model.TopicRelation) (err error)
 		DeleteTopicRelation(c context.Context, node sqalx.Node, id int64) (err error)
 
+		GetTopicVersion(c context.Context, node sqalx.Node, id int64) (item *model.TopicVersion, err error)
 		AddTopicVersion(c context.Context, node sqalx.Node, item *model.TopicVersion) (err error)
 		UpdateTopicVersion(c context.Context, node sqalx.Node, item *model.TopicVersion) (err error)
 		GetTopicVersions(c context.Context, node sqalx.Node, topicID int64) (items []*model.TopicVersionResp, err error)
 		GetTopicVersionByName(c context.Context, node sqalx.Node, topicID int64, versionName string) (item *model.TopicVersionResp, err error)
+		GetTopicVersionMaxSeq(c context.Context, node sqalx.Node, topicID int64) (seq int, err error)
 
 		GetAllTopicTypes(c context.Context, node sqalx.Node) (items []*model.TopicType, err error)
 		GetTopicType(c context.Context, node sqalx.Node, id int) (item *model.TopicType, err error)

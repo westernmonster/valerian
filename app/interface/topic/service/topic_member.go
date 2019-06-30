@@ -122,6 +122,13 @@ func (p *Service) bulkCreateMembers(c context.Context, node sqalx.Node, aid, top
 			return ecode.OnlyAllowOneOwner
 		}
 
+		var acc *model.Account
+		if acc, err = p.getAccountByID(c, tx, v.AccountID); err != nil {
+			return
+		} else if acc == nil {
+			return ecode.UserNotExist
+		}
+
 		item := &model.TopicMember{
 			ID:        gid.NewID(),
 			AccountID: v.AccountID,

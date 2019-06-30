@@ -6,7 +6,6 @@ import (
 )
 
 type ArgCreateTopic struct {
-
 	// 成员
 	Members []*ArgCreateTopicMember `json:"members,omitempty"`
 
@@ -28,7 +27,7 @@ type ArgCreateTopic struct {
 	RelatedTopics []*ArgRelatedTopic `json:"related_topics"`
 
 	// 话题分类
-	Catalogs []*TopicLevel1Catalog `json:"catalogs"`
+	Versions []*ArgCreateTopicVersion `json:"versions"`
 
 	// 分类视图
 	// section 章节
@@ -45,9 +44,6 @@ type ArgCreateTopic struct {
 	// discussion 讨论
 	// chat 群聊
 	TopicHome string `json:"topic_home"`
-
-	// 版本名
-	VersionName string `json:"version_name"`
 
 	// 是否私密
 	IsPrivate bool `json:"is_private"`
@@ -96,48 +92,48 @@ type ArgCreateTopic struct {
 func (p *ArgCreateTopic) Validate() error {
 	return validation.ValidateStruct(
 		p,
-		validation.Field(&p.Members, validation.Required.Error(`请选择成员`)),
-		validation.Field(&p.TopicType, validation.Required.Error(`请选择话题类型`)),
-		validation.Field(&p.Cover,
-			is.URL.Error("封面图格式不正确"),
-		),
-		validation.Field(&p.Bg,
-			is.URL.Error("背景图格式不正确"),
-		),
-		validation.Field(&p.Name,
-			validation.Required.Error(`请输入话题名`),
-			validation.RuneLength(0, 250).Error(`话题名最大长度为250个字符`),
-		),
-		validation.Field(&p.Catalogs),
-		// TODO: Web安全性
-		validation.Field(&p.Introduction,
-			validation.Required.Error(`请输入话题简介`),
-			validation.RuneLength(0, 1000).Error(`话题简介最大长度为1000个字符`),
-		),
-		validation.Field(&p.CatalogViewType,
-			validation.Required.Error(`请输入分类视图`),
-			validation.In(CatalogViewTypeColumn, CatalogViewTypeSection).Error("分类视图不正确"),
-		),
-		validation.Field(&p.TopicHome,
-			validation.Required.Error(`请输入话题首页`),
-			validation.In(TopicHomeIntroduction, TopicHomeFeed, TopicHomeCataglog, TopicHomeDiscussion, TopicHomeChat).Error("话题首页不正确"),
+		validation.Field(&p.Members, validation.Required),
+		validation.Field(&p.TopicType, validation.Required),
+		validation.Field(&p.Cover, is.URL),
+		validation.Field(&p.Bg, is.URL),
+		validation.Field(&p.Name, validation.Required, validation.RuneLength(0, 250)),
+		validation.Field(&p.Versions, validation.Required),
+		validation.Field(&p.Introduction, validation.Required, validation.RuneLength(0, 1000)),
+		validation.Field(&p.CatalogViewType, validation.Required, validation.In(CatalogViewTypeColumn, CatalogViewTypeSection)),
+		validation.Field(&p.TopicHome, validation.Required,
+			validation.In(TopicHomeIntroduction, TopicHomeFeed, TopicHomeCataglog, TopicHomeDiscussion, TopicHomeChat),
 		),
 		validation.Field(&p.EditPermission,
-			validation.Required.Error(`请输入编辑权限`),
-			validation.In(EditPermissionIDCert, EditPermissionWorkCert, EditPermissionIDCertJoined, EditPermissionWorkCertJoined, EditPermissionApprovedIDCertJoined, EditPermissionApprovedWorkCertJoined, EditPermissionAdmin).Error("编辑权限不正确"),
+			validation.Required,
+			validation.In(EditPermissionIDCert, EditPermissionWorkCert, EditPermissionIDCertJoined, EditPermissionWorkCertJoined, EditPermissionApprovedIDCertJoined, EditPermissionApprovedWorkCertJoined, EditPermissionAdmin),
 		),
 		validation.Field(&p.ViewPermission,
-			validation.Required.Error(`请输入查看权限`),
-			validation.In(ViewPermissionJoin, ViewPermissionPublic).Error("查看权限不正确"),
+			validation.Required,
+			validation.In(ViewPermissionJoin, ViewPermissionPublic),
 		),
 		validation.Field(&p.JoinPermission,
-			validation.Required.Error(`请输入加入权限`),
-			validation.In(JoinPermissionMember, JoinPermissionIDCert, JoinPermissionWorkCert, JoinPermissionMemberApprove, JoinPermissionIDCertApprove, JoinPermissionWorkCertApprove, JoinPermissionAdminAdd, JoinPermissionPurchase, JoinPermissionVIP).Error("加入权限不正确"),
+			validation.Required,
+			validation.In(JoinPermissionMember, JoinPermissionIDCert, JoinPermissionWorkCert, JoinPermissionMemberApprove, JoinPermissionIDCertApprove, JoinPermissionWorkCertApprove, JoinPermissionAdminAdd, JoinPermissionPurchase, JoinPermissionVIP),
 		),
-		validation.Field(&p.VersionName,
-			validation.Required.Error(`请输入版本名`),
-			validation.RuneLength(0, 250).Error(`版本名最大长度为250个字符`),
-		),
+	)
+}
+
+type ArgCreateTopicVersion struct {
+	// 顺序
+	Seq int `json:"seq"`
+
+	// 版本名称
+	VersionName string `json:"version_name"`
+
+	// 话题分类
+	Catalogs []*TopicLevel1Catalog `json:"catalogs"`
+}
+
+func (p *ArgCreateTopicVersion) Validate() error {
+	return validation.ValidateStruct(
+		p,
+		validation.Field(&p.VersionName, validation.Required),
+		validation.Field(&p.Catalogs),
 	)
 }
 

@@ -3,7 +3,9 @@ package model
 import validation "github.com/go-ozzo/ozzo-validation"
 
 type ArgNewTopicVersion struct {
-	TopicID     int64  `json:"topic_id,string", swaggertype:"string"`
+	// 话题ID
+	TopicID int64 `json:"topic_id,string", swaggertype:"string"`
+	// 版本名称
 	VersionName string `json:"version_name"`
 }
 
@@ -27,6 +29,16 @@ type TopicVersionItem struct {
 	// 版本名称
 	VersionName string `json:"version_name"`
 }
+
+func (p *TopicVersionItem) Validate() error {
+	return validation.ValidateStruct(
+		p,
+		validation.Field(&p.ID, validation.Required),
+		validation.Field(&p.VersionName, validation.Required),
+	)
+
+}
+
 type ArgSaveTopicVersions struct {
 	TopicID int64               `json:"topic_id,string" swaggertype:"string"`
 	Items   []*TopicVersionItem `json:"items"`
