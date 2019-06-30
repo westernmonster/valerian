@@ -1169,77 +1169,6 @@
                 }
             }
         },
-        "/article/versions/merge": {
-            "post": {
-                "description": "合并文章版本，需要当前用户为合并两个文章集中，是所有文章的成员并且是管理员或主理人",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "article"
-                ],
-                "summary": "合并文章版本",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Bearer",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "enum": [
-                            1,
-                            2,
-                            3
-                        ],
-                        "type": "integer",
-                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
-                        "name": "Source",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "enum": [
-                            "zh-CN",
-                            "en-US"
-                        ],
-                        "type": "string",
-                        "description": "语言",
-                        "name": "Locale",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "请求",
-                        "name": "req",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "object",
-                            "$ref": "#/definitions/model.ArgMergeArticleVersion"
-                        }
-                    }
-                ],
-                "responses": {
-                    "20": {
-                        "description": "获取用户ID失败，一般是因为未登录造成"
-                    },
-                    "400": {
-                        "description": "验证请求失败"
-                    },
-                    "401": {
-                        "description": "登录验证失败"
-                    },
-                    "500": {
-                        "description": "服务器端错误"
-                    }
-                }
-            }
-        },
         "/article/versions/save": {
             "post": {
                 "description": "保存文章版本（排序，重命名）",
@@ -3383,7 +3312,7 @@
                     },
                     {
                         "type": "string",
-                        "description": "目前支持：members,versions,related_topics,catalogs,meta",
+                        "description": "目前支持：members,versions,related_topics,versions[*].catalogs,meta",
                         "name": "include",
                         "in": "query",
                         "required": true
@@ -3527,8 +3456,8 @@
                     },
                     {
                         "type": "string",
-                        "description": "话题ID",
-                        "name": "topic_id",
+                        "description": "话题版本ID",
+                        "name": "topic_version_id",
                         "in": "query",
                         "required": true
                     }
@@ -3601,8 +3530,8 @@
                     },
                     {
                         "type": "string",
-                        "description": "话题ID",
-                        "name": "topic_id",
+                        "description": "话题版本ID",
+                        "name": "topic_version_id",
                         "in": "query",
                         "required": true
                     }
@@ -3899,8 +3828,8 @@
                     },
                     {
                         "type": "string",
-                        "description": "话题集合ID",
-                        "name": "topic_set_id",
+                        "description": "话题ID",
+                        "name": "topic_id",
                         "in": "query",
                         "required": true
                     }
@@ -4298,89 +4227,6 @@
                     },
                     "31": {
                         "description": "话题名已被占用"
-                    },
-                    "34": {
-                        "description": "不属于话题成员"
-                    },
-                    "35": {
-                        "description": "不是话题主理人或管理员"
-                    },
-                    "400": {
-                        "description": "验证请求失败"
-                    },
-                    "401": {
-                        "description": "登录验证失败"
-                    },
-                    "500": {
-                        "description": "服务器端错误"
-                    }
-                }
-            }
-        },
-        "/topic/versions/merge": {
-            "post": {
-                "description": "合并话题版本，需要当前用户为合并两个话题集中，是所有话题的成员并且是管理员或主理人",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "topic"
-                ],
-                "summary": "合并话题版本",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Bearer",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "enum": [
-                            1,
-                            2,
-                            3
-                        ],
-                        "type": "integer",
-                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
-                        "name": "Source",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "enum": [
-                            "zh-CN",
-                            "en-US"
-                        ],
-                        "type": "string",
-                        "description": "语言",
-                        "name": "Locale",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "请求",
-                        "name": "req",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "object",
-                            "$ref": "#/definitions/model.ArgMergeTopicVersion"
-                        }
-                    }
-                ],
-                "responses": {
-                    "18": {
-                        "description": "话题不存在"
-                    },
-                    "20": {
-                        "description": "获取用户ID失败，一般是因为未登录造成"
-                    },
-                    "200": {
-                        "description": "成功"
                     },
                     "34": {
                         "description": "不属于话题成员"
@@ -4896,13 +4742,6 @@
                     "description": "分类视图\nsection 章节\ncolumn 栏目",
                     "type": "string"
                 },
-                "catalogs": {
-                    "description": "话题分类",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.TopicLevel1Catalog"
-                    }
-                },
                 "cover": {
                     "description": "封面图\n必须为URL",
                     "type": "string"
@@ -4953,17 +4792,16 @@
                     "description": "话题首页\nintroduction 简介\nfeed 动态\ncatalog 目录\ndiscussion 讨论\nchat 群聊",
                     "type": "string"
                 },
-                "topic_set_id": {
-                    "description": "集合ID\n如果是一个全新的创建，无需传入这个字段\n在当前话题版本上创建新的版本时候，需要将这个ID传入进来，\n后台方可在内部将不同版本归属于一个集合",
-                    "type": "string"
-                },
                 "topic_type": {
                     "description": "话题类型",
                     "type": "integer"
                 },
-                "version_name": {
-                    "description": "版本名",
-                    "type": "string"
+                "versions": {
+                    "description": "话题分类",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.ArgCreateTopicVersion"
+                    }
                 },
                 "view_permission": {
                     "description": "查看权限\npublic 公开\njoin 加入",
@@ -4980,6 +4818,26 @@
                 },
                 "role": {
                     "description": "角色\nuser 普通用户\nadmin 管理员",
+                    "type": "string"
+                }
+            }
+        },
+        "model.ArgCreateTopicVersion": {
+            "type": "object",
+            "properties": {
+                "catalogs": {
+                    "description": "话题分类",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.TopicLevel1Catalog"
+                    }
+                },
+                "seq": {
+                    "description": "顺序",
+                    "type": "integer"
+                },
+                "version_name": {
+                    "description": "版本名称",
                     "type": "string"
                 }
             }
@@ -5080,28 +4938,6 @@
                 }
             }
         },
-        "model.ArgMergeArticleVersion": {
-            "type": "object",
-            "properties": {
-                "from_article_set_id": {
-                    "type": "integer"
-                },
-                "to_article_set_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "model.ArgMergeTopicVersion": {
-            "type": "object",
-            "properties": {
-                "from_topic_set_id": {
-                    "type": "integer"
-                },
-                "to_topic_set_id": {
-                    "type": "integer"
-                }
-            }
-        },
         "model.ArgMobile": {
             "type": "object",
             "properties": {
@@ -5187,10 +5023,12 @@
         "model.ArgNewTopicVersion": {
             "type": "object",
             "properties": {
-                "from_topic_id": {
+                "topic_id": {
+                    "description": "话题ID",
                     "type": "integer"
                 },
                 "version_name": {
+                    "description": "版本名称",
                     "type": "string"
                 }
             }
@@ -5215,8 +5053,8 @@
                     "description": "顺序",
                     "type": "integer"
                 },
-                "topic_id": {
-                    "description": "关联话题ID",
+                "topic_version_id": {
+                    "description": "关联话题版本ID",
                     "type": "integer"
                 },
                 "type": {
@@ -5281,7 +5119,7 @@
                     "description": "父级ID\nrequired: true",
                     "type": "string"
                 },
-                "topic_id": {
+                "topic_version_id": {
                     "type": "string"
                 }
             }
@@ -5482,10 +5320,6 @@
                 "topic_type": {
                     "description": "话题类型",
                     "type": "integer"
-                },
-                "version_name": {
-                    "description": "版本名",
-                    "type": "string"
                 },
                 "view_permission": {
                     "description": "查看权限\npublic 公开\njoin 加入",
@@ -6139,6 +5973,10 @@
                     "description": "话题名",
                     "type": "string"
                 },
+                "topic_version_id": {
+                    "description": "话题版本ID",
+                    "type": "string"
+                },
                 "type": {
                     "description": "关联类型\nnormal 普通关联\nstrong 强关联",
                     "type": "string"
@@ -6467,13 +6305,6 @@
                     "description": "分类视图\nsection 章节\ncolumn 栏目",
                     "type": "string"
                 },
-                "catalogs": {
-                    "description": "话题分类",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.TopicLevel1Catalog"
-                    }
-                },
                 "cover": {
                     "description": "封面图\n必须为URL",
                     "type": "string"
@@ -6546,10 +6377,6 @@
                     "description": "话题首页\nintroduction 简介\nfeed 动态\ncatalog 目录\ndiscussion 讨论\nchat 群聊",
                     "type": "string"
                 },
-                "topic_set_id": {
-                    "description": "集合ID",
-                    "type": "string"
-                },
                 "topic_type": {
                     "description": "话题类型",
                     "type": "integer"
@@ -6607,10 +6434,6 @@
                     "description": "资源数量",
                     "type": "integer"
                 },
-                "topic_set_id": {
-                    "description": "集合ID",
-                    "type": "string"
-                },
                 "version_name": {
                     "type": "string"
                 },
@@ -6665,10 +6488,19 @@
         "model.TopicVersionResp": {
             "type": "object",
             "properties": {
-                "meta": {
-                    "description": "Meta",
-                    "type": "object",
-                    "$ref": "#/definitions/model.TopicMeta"
+                "catalogs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.TopicLevel1Catalog"
+                    }
+                },
+                "id": {
+                    "description": "版本ID",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "版本名称",
+                    "type": "string"
                 },
                 "seq": {
                     "description": "顺序",
@@ -6680,14 +6512,6 @@
                 },
                 "topic_name": {
                     "description": "话题名",
-                    "type": "string"
-                },
-                "topic_set_id": {
-                    "description": "集合ID",
-                    "type": "string"
-                },
-                "version_name": {
-                    "description": "版本名称",
                     "type": "string"
                 }
             }

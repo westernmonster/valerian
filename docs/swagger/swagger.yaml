@@ -219,11 +219,6 @@ definitions:
           section 章节
           column 栏目
         type: string
-      catalogs:
-        description: 话题分类
-        items:
-          $ref: '#/definitions/model.TopicLevel1Catalog'
-        type: array
       cover:
         description: |-
           封面图
@@ -288,19 +283,14 @@ definitions:
           discussion 讨论
           chat 群聊
         type: string
-      topic_set_id:
-        description: |-
-          集合ID
-          如果是一个全新的创建，无需传入这个字段
-          在当前话题版本上创建新的版本时候，需要将这个ID传入进来，
-          后台方可在内部将不同版本归属于一个集合
-        type: string
       topic_type:
         description: 话题类型
         type: integer
-      version_name:
-        description: 版本名
-        type: string
+      versions:
+        description: 话题分类
+        items:
+          $ref: '#/definitions/model.ArgCreateTopicVersion'
+        type: array
       view_permission:
         description: |-
           查看权限
@@ -318,6 +308,20 @@ definitions:
           角色
           user 普通用户
           admin 管理员
+        type: string
+    type: object
+  model.ArgCreateTopicVersion:
+    properties:
+      catalogs:
+        description: 话题分类
+        items:
+          $ref: '#/definitions/model.TopicLevel1Catalog'
+        type: array
+      seq:
+        description: 顺序
+        type: integer
+      version_name:
+        description: 版本名称
         type: string
     type: object
   model.ArgDelArticleRelation:
@@ -388,20 +392,6 @@ definitions:
         description: 邮件地址
         type: string
     type: object
-  model.ArgMergeArticleVersion:
-    properties:
-      from_article_set_id:
-        type: integer
-      to_article_set_id:
-        type: integer
-    type: object
-  model.ArgMergeTopicVersion:
-    properties:
-      from_topic_set_id:
-        type: integer
-      to_topic_set_id:
-        type: integer
-    type: object
   model.ArgMobile:
     properties:
       client_id:
@@ -462,9 +452,11 @@ definitions:
     type: object
   model.ArgNewTopicVersion:
     properties:
-      from_topic_id:
+      topic_id:
+        description: 话题ID
         type: integer
       version_name:
+        description: 版本名称
         type: string
     type: object
   model.ArgOSSToken:
@@ -486,8 +478,8 @@ definitions:
       seq:
         description: 顺序
         type: integer
-      topic_id:
-        description: 关联话题ID
+      topic_version_id:
+        description: 关联话题版本ID
         type: integer
       type:
         description: |-
@@ -538,7 +530,7 @@ definitions:
           父级ID
           required: true
         type: string
-      topic_id:
+      topic_version_id:
         type: string
     type: object
   model.ArgSetPrimaryArticleRelation:
@@ -720,9 +712,6 @@ definitions:
       topic_type:
         description: 话题类型
         type: integer
-      version_name:
-        description: 版本名
-        type: string
       view_permission:
         description: |-
           查看权限
@@ -1206,6 +1195,9 @@ definitions:
       topic_name:
         description: 话题名
         type: string
+      topic_version_id:
+        description: 话题版本ID
+        type: string
       type:
         description: |-
           关联类型
@@ -1473,11 +1465,6 @@ definitions:
           section 章节
           column 栏目
         type: string
-      catalogs:
-        description: 话题分类
-        items:
-          $ref: '#/definitions/model.TopicLevel1Catalog'
-        type: array
       cover:
         description: |-
           封面图
@@ -1555,9 +1542,6 @@ definitions:
           discussion 讨论
           chat 群聊
         type: string
-      topic_set_id:
-        description: 集合ID
-        type: string
       topic_type:
         description: 话题类型
         type: integer
@@ -1606,9 +1590,6 @@ definitions:
       resources_count:
         description: 资源数量
         type: integer
-      topic_set_id:
-        description: 集合ID
-        type: string
       version_name:
         type: string
       versions:
@@ -1645,10 +1626,16 @@ definitions:
     type: object
   model.TopicVersionResp:
     properties:
-      meta:
-        $ref: '#/definitions/model.TopicMeta'
-        description: Meta
-        type: object
+      catalogs:
+        items:
+          $ref: '#/definitions/model.TopicLevel1Catalog'
+        type: array
+      id:
+        description: 版本ID
+        type: string
+      name:
+        description: 版本名称
+        type: string
       seq:
         description: 顺序
         type: integer
@@ -1657,12 +1644,6 @@ definitions:
         type: string
       topic_name:
         description: 话题名
-        type: string
-      topic_set_id:
-        description: 集合ID
-        type: string
-      version_name:
-        description: 版本名称
         type: string
     type: object
   model.UpdateArticleFile:
@@ -2493,55 +2474,6 @@ paths:
         "500":
           description: 服务器端错误
       summary: 新建文章版本
-      tags:
-      - article
-  /article/versions/merge:
-    post:
-      consumes:
-      - application/json
-      description: 合并文章版本，需要当前用户为合并两个文章集中，是所有文章的成员并且是管理员或主理人
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 请求
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/model.ArgMergeArticleVersion'
-          type: object
-      produces:
-      - application/json
-      responses:
-        "20":
-          description: 获取用户ID失败，一般是因为未登录造成
-        "400":
-          description: 验证请求失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 合并文章版本
       tags:
       - article
   /article/versions/save:
@@ -4018,7 +3950,7 @@ paths:
         name: id
         required: true
         type: string
-      - description: 目前支持：members,versions,related_topics,catalogs,meta
+      - description: 目前支持：members,versions,related_topics,versions[*].catalogs,meta
         in: query
         name: include
         required: true
@@ -4118,9 +4050,9 @@ paths:
         name: Locale
         required: true
         type: string
-      - description: 话题ID
+      - description: 话题版本ID
         in: query
-        name: topic_id
+        name: topic_version_id
         required: true
         type: string
       produces:
@@ -4169,9 +4101,9 @@ paths:
         name: Locale
         required: true
         type: string
-      - description: 话题ID
+      - description: 话题版本ID
         in: query
-        name: topic_id
+        name: topic_version_id
         required: true
         type: string
       produces:
@@ -4375,9 +4307,9 @@ paths:
         name: Locale
         required: true
         type: string
-      - description: 话题集合ID
+      - description: 话题ID
         in: query
-        name: topic_set_id
+        name: topic_id
         required: true
         type: string
       produces:
@@ -4665,63 +4597,6 @@ paths:
         "500":
           description: 服务器端错误
       summary: 新建话题版本
-      tags:
-      - topic
-  /topic/versions/merge:
-    post:
-      consumes:
-      - application/json
-      description: 合并话题版本，需要当前用户为合并两个话题集中，是所有话题的成员并且是管理员或主理人
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 请求
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/model.ArgMergeTopicVersion'
-          type: object
-      produces:
-      - application/json
-      responses:
-        "18":
-          description: 话题不存在
-        "20":
-          description: 获取用户ID失败，一般是因为未登录造成
-        "34":
-          description: 不属于话题成员
-        "35":
-          description: 不是话题主理人或管理员
-        "200":
-          description: 成功
-        "400":
-          description: 验证请求失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 合并话题版本
       tags:
       - topic
   /topic/versions/save:

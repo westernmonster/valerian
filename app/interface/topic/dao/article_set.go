@@ -11,27 +11,33 @@ import (
 )
 
 const (
-	_addArticleSetSQL           = "INSERT INTO article_sets( id,deleted,created_at,updated_at) VALUES ( ?,?,?,?)"
+	_addArticleVersionSQL       = "INSERT INTO article_versions( id,name,content,seq,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?)"
+	_updateArticleVersionSQL    = "UPDATE article_versions SET name=?,content=?,seq=?,updated_at=? WHERE id=?"
 	_getArticleVersionsSQL      = "SELECT a.id FROM  articles a  WHERE a.article_set_id=? AND a.deleted=0"
-	_delArticleSetSQL           = "UPDATE article_sets SET deleted=1 WHERE id=?"
+	_delArticleVersionSQL       = "UPDATE article_sets SET deleted=1 WHERE id=?"
 	_getArticleVersionByNameSQL = "SELECT a.article_set_id,a.title AS article_title,a.id AS article_id,a.version_name,a.seq FROM articles a WHERE a.article_set_id=? AND a.version_name=? AND a.deleted=0 LIMIT 1"
 )
 
-func (p *Dao) AddArticleSet(c context.Context, node sqalx.Node, item *model.ArticleSet) (err error) {
-	if _, err = node.ExecContext(c, _addArticleSetSQL,
-		item.ID,
-		item.Deleted,
-		item.CreatedAt,
-		item.UpdatedAt); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.AddArticleSet error(%+v), item(%+v)", err, item))
+func (p *Dao) AddArticleVersion(c context.Context, node sqalx.Node, item *model.ArticleVersion) (err error) {
+	if _, err = node.ExecContext(c, _addArticleVersionSQL,
+		item.ID, item.Name, item.Content, item.Seq, item.Deleted, item.CreatedAt, item.UpdatedAt); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.AddArticleVersion error(%+v), item(%+v)", err, item))
 	}
 
 	return
 }
 
-func (p *Dao) DelArticleSet(c context.Context, node sqalx.Node, id int64) (err error) {
-	if _, err = node.ExecContext(c, _delArticleSetSQL, id); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.DelArticleSet error(%+v), id(%d)", err, id))
+func (p *Dao) UpdateArticleVersion(c context.Context, node sqalx.Node, item *model.ArticleVersion) (err error) {
+	if _, err = node.ExecContext(c, _updateArticleVersionSQL, item.Name, item.Content, item.Seq, item.UpdatedAt, item.ID); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.AddArticleVersion error(%+v), item(%+v)", err, item))
+	}
+
+	return
+}
+
+func (p *Dao) DelArticleVersion(c context.Context, node sqalx.Node, id int64) (err error) {
+	if _, err = node.ExecContext(c, _delArticleVersionSQL, id); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.DelArticleVersion error(%+v), id(%d)", err, id))
 	}
 	return
 }
