@@ -81,7 +81,7 @@ func (p *Service) getCatalogFullPath(c context.Context, node sqalx.Node, article
 	return
 }
 
-func (p *Service) bulkCreateArticleCatalogs(c context.Context, node sqalx.Node, articleID int64, title string, relations []*model.AddArticleRelation) (err error) {
+func (p *Service) bulkCreateArticleRelations(c context.Context, node sqalx.Node, articleID int64, title string, relations []*model.AddArticleRelation) (err error) {
 	var tx sqalx.Node
 	if tx, err = node.Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
@@ -97,7 +97,7 @@ func (p *Service) bulkCreateArticleCatalogs(c context.Context, node sqalx.Node, 
 		}
 	}()
 
-	if err = p.checkRelations(relations); err != nil {
+	if err = p.checkArticleRelations(relations); err != nil {
 		return
 	}
 
@@ -107,39 +107,41 @@ func (p *Service) bulkCreateArticleCatalogs(c context.Context, node sqalx.Node, 
 	}
 
 	for _, v := range relations {
-		if err = p.checkCatalog(c, tx, v.TopicID, v.ParentID); err != nil {
+		var ver *model.TopicVersion
+		if ver, err = p.d.GetTopicVersion(c, tx, v.TopicVersionID); err != nil {
 			return
 		}
 
-		if err = p.checkEditPermission(c, tx, v.TopicID); err != nil {
+		if err = p.checkTopicCatalog(c, tx, v.TopicVersionID, v.ParentID); err != nil {
+			return
+		}
+
+		if err = p.checkEditPermission(c, tx, v.TopicVersionID); err != nil {
 			return
 		}
 
 		var maxSeq int
-		if maxSeq, err = p.d.GetTopicCatalogMaxChildrenSeq(c, tx, v.TopicID, v.ParentID); err != nil {
+		if maxSeq, err = p.d.GetTopicCatalogMaxChildrenSeq(c, tx, v.TopicVersionID, v.ParentID); err != nil {
 			return
 		}
 
 		item := &model.TopicCatalog{
-			ID:        gid.NewID(),
-			Name:      title,
-			Seq:       maxSeq + 1,
-			Type:      model.TopicCatalogArticle,
-			ParentID:  v.ParentID,
-			TopicID:   v.TopicID,
-			IsPrimary: types.BitBool(v.Primary),
-			RefID:     &articleID,
-			CreatedAt: time.Now().Unix(),
-			UpdatedAt: time.Now().Unix(),
+			ID:             gid.NewID(),
+			Name:           title,
+			Seq:            maxSeq + 1,
+			Type:           model.TopicCatalogArticle,
+			ParentID:       v.ParentID,
+			TopicVersionID: v.TopicVersionID,
+			TopicID:        ver.TopicID,
+			IsPrimary:      types.BitBool(v.Primary),
+			RefID:          &articleID,
+			CreatedAt:      time.Now().Unix(),
+			UpdatedAt:      time.Now().Unix(),
 		}
 
 		if err = p.d.AddTopicCatalog(c, tx, item); err != nil {
 			return
 		}
-
-		p.addCache(func() {
-			p.d.DelTopicCatalogCache(context.TODO(), v.TopicID)
-		})
 
 	}
 
@@ -148,10 +150,16 @@ func (p *Service) bulkCreateArticleCatalogs(c context.Context, node sqalx.Node, 
 		return
 	}
 
+	p.addCache(func() {
+		for _, v := range relations {
+			p.d.DelTopicCatalogCache(context.TODO(), v.TopicVersionID)
+		}
+	})
+
 	return
 }
 
-func (p *Service) checkRelations(items []*model.AddArticleRelation) (err error) {
+func (p *Service) checkArticleRelations(items []*model.AddArticleRelation) (err error) {
 	if len(items) == 0 {
 		return ecode.NeedPrimaryTopic
 	}
@@ -166,15 +174,15 @@ func (p *Service) checkRelations(items []*model.AddArticleRelation) (err error) 
 			primary = true
 		}
 
-		if _, ok := dic[v.TopicID]; ok {
-			return ecode.DuplicateTopicID
+		if _, ok := dic[v.TopicVersionID]; ok {
+			return ecode.DuplicateTopicVersionID
 		}
 	}
 
 	return nil
 }
 
-func (p *Service) checkCatalog(c context.Context, node sqalx.Node, topicID, parentID int64) (err error) {
+func (p *Service) checkTopicCatalog(c context.Context, node sqalx.Node, topicVersionID, parentID int64) (err error) {
 	if parentID == 0 {
 		return
 	}
@@ -188,7 +196,7 @@ func (p *Service) checkCatalog(c context.Context, node sqalx.Node, topicID, pare
 	} else if catalog.Type != model.TopicCatalogTaxonomy {
 		err = ecode.InvalidCatalog
 		return
-	} else if catalog.TopicID != topicID {
+	} else if catalog.TopicVersionID != topicVersionID {
 		err = ecode.InvalidCatalog
 		return
 	}

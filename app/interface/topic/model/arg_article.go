@@ -9,9 +9,6 @@ type ArgAddArticle struct {
 	// 标题
 	// required: true
 	Title string `json:"title"`
-	// 内容
-	// required: true
-	Content string `json:"content"`
 	//  封面图
 	Cover *string `json:"cover,omitempty"`
 	// 简介
@@ -25,12 +22,7 @@ type ArgAddArticle struct {
 	// required: true
 	Locale string `json:"locale"`
 
-	// 文章集合ID
-	ArticleSetID *int64 `json:"article_set_id,string,omitempty"  swaggertype:"string"`
-
-	// 版本名称
-	// required: true
-	VersionName string `json:"version_name"`
+	Versions []*AddArticleVersion `json:"versions"`
 
 	// 附件
 	Files []*AddArticleFile `json:"files"`
@@ -39,13 +31,23 @@ type ArgAddArticle struct {
 	Relations []*AddArticleRelation `json:"relations"`
 }
 
+type AddArticleVersion struct {
+	// 顺序
+	Seq int `json:"seq"`
+
+	// 版本名称
+	Name string `json:"name"`
+
+	// 内容
+	// required: true
+	Content string `json:"content"`
+}
+
 func (p *ArgAddArticle) Validate() error {
 	return validation.ValidateStruct(
 		p,
 		validation.Field(&p.Title, validation.Required, validation.RuneLength(0, 250)),
-		validation.Field(&p.Content, validation.Required),
 		validation.Field(&p.Locale, validation.Required),
-		validation.Field(&p.VersionName, validation.Required, validation.RuneLength(0, 250)),
 		validation.Field(&p.Files),
 		validation.Field(&p.Relations),
 	)
@@ -69,8 +71,8 @@ type AddArticleRelation struct {
 	// 类目分类ID 如果根目录则传0
 	ParentID int64 `json:"parent_id,string" swaggertype:"string"`
 
-	// 所关联话题 ID
-	TopicID int64 `json:"topic_id,string" swaggertype:"string"`
+	// 所关联话题版本 ID
+	TopicVersionID int64 `json:"topic_version_id,string" swaggertype:"string"`
 
 	// 是否主话题
 	Primary bool `json:"primary"`
@@ -79,7 +81,7 @@ type AddArticleRelation struct {
 func (p *AddArticleRelation) Validate() error {
 	return validation.ValidateStruct(
 		p,
-		validation.Field(&p.TopicID, validation.Required),
+		validation.Field(&p.TopicVersionID, validation.Required),
 	)
 }
 
@@ -89,36 +91,52 @@ type ArgUpdateArticle struct {
 
 	// 标题
 	Title *string `json:"title,omitempty"`
-	// 内容
-	Content *string `json:"content,omitempty"`
-
-	// 文章语言
-	Locale *string `json:"locale"`
-
 	//  封面图
 	Cover *string `json:"cover,omitempty"`
-	// 简介
+
 	Introduction *string `json:"introduction,omitempty"` // Introduction 话题简介
+
 	// 是否私有
 	Private *bool `json:"private,omitempty"`
 
-	// 版本名称
-	VersionName *string `json:"version_name"`
-
-	ChangeDesc string `json:"change_desc"`
+	// 文章语言
+	Locale *string `json:"locale,omitempty"`
 }
 
 func (p *ArgUpdateArticle) Validate() error {
 	return validation.ValidateStruct(
 		p,
 		validation.Field(&p.ID, validation.Required),
-		validation.Field(&p.Title, validation.NilOrNotEmpty, validation.RuneLength(0, 250)),
-		validation.Field(&p.Introduction, validation.NilOrNotEmpty, validation.RuneLength(0, 500)),
-		validation.Field(&p.Content, validation.NilOrNotEmpty),
+		validation.Field(&p.Title, validation.NilOrNotEmpty),
+		validation.Field(&p.Cover, validation.NilOrNotEmpty),
+		validation.Field(&p.Introduction, validation.NilOrNotEmpty),
 		validation.Field(&p.Locale, validation.NilOrNotEmpty),
-		validation.Field(&p.Cover, validation.NilOrNotEmpty, is.URL),
-		validation.Field(&p.VersionName, validation.NilOrNotEmpty, validation.RuneLength(0, 250)),
+	)
+}
+
+type ArgUpdateArticleVersion struct {
+	// 文章版本ID
+	ID int64 `json:"id,string"  swaggertype:"string"`
+
+	// 内容
+	Content *string `json:"content,omitempty"`
+
+	// 版本名称
+	Name *string `json:"name"`
+
+	ChangeDesc string `json:"change_desc"`
+
+	ChangeID string `json:"change_id"`
+}
+
+func (p *ArgUpdateArticleVersion) Validate() error {
+	return validation.ValidateStruct(
+		p,
+		validation.Field(&p.ID, validation.Required),
+		validation.Field(&p.Content, validation.NilOrNotEmpty),
+		validation.Field(&p.Name, validation.NilOrNotEmpty, validation.RuneLength(0, 250)),
 		validation.Field(&p.ChangeDesc, validation.Required),
+		validation.Field(&p.ChangeID, validation.Required),
 	)
 }
 

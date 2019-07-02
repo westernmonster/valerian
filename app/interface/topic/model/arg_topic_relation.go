@@ -4,7 +4,7 @@ import validation "github.com/go-ozzo/ozzo-validation"
 
 type ArgRelatedTopic struct {
 	// 关联话题版本ID
-	TopicVersionID int64 `json:"topic_version_id,string"`
+	TopicVersionID int64 `json:"topic_version_id,string"  swaggertype:"string"`
 
 	// 顺序
 	Seq int `json:"seq"`
@@ -32,7 +32,7 @@ type ArgBatchSaveRelatedTopics struct {
 func (p *ArgBatchSaveRelatedTopics) Validate() error {
 	return validation.ValidateStruct(
 		p,
-		validation.Field(&p.TopicID, validation.Required.Error(`请传入话题ID`)),
-		validation.Field(&p.RelatedTopics, validation.Required.Error(`请传入关联话题`)),
+		validation.Field(&p.TopicID, validation.Required),
+		validation.Field(&p.RelatedTopics),
 	)
 }

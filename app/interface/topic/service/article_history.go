@@ -23,8 +23,8 @@ func (p *Service) getArticleHistoriesResp(c context.Context, node sqalx.Node, ar
 	items = make([]*model.ArticleHistoryResp, 0)
 	for _, v := range data {
 		item := &model.ArticleHistoryResp{
-			ID:          v.ID,
-			ArticleID:   v.ArticleID,
+			ID: v.ID,
+			// ArticleID:   v.ArticleID,
 			Seq:         v.Seq,
 			CreatedAt:   v.CreatedAt,
 			Description: v.Description,

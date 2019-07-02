@@ -6,8 +6,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/PuerkitoBio/goquery"
-
 	"valerian/app/interface/topic/model"
 	"valerian/library/database/sqalx"
 	"valerian/library/database/sqlx/types"
@@ -15,7 +13,60 @@ import (
 	"valerian/library/gid"
 	"valerian/library/log"
 	"valerian/library/net/metadata"
+
+	"github.com/PuerkitoBio/goquery"
 )
+
+func (p *Service) addArticleVersion(c context.Context, node sqalx.Node, articleID int64, name, content string, seq int) (err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+	var ver *model.ArticleVersionResp
+	if ver, err = p.d.GetArticleVersionByName(c, node, articleID, name); err != nil {
+		return
+	} else if ver != nil {
+		return ecode.ArticleVersionNameExist
+	}
+
+	item := &model.ArticleVersion{
+		ID:        gid.NewID(),
+		ArticleID: articleID,
+		Name:      name,
+		Content:   content,
+		Seq:       seq,
+		CreatedAt: time.Now().Unix(),
+		UpdatedAt: time.Now().Unix(),
+	}
+
+	if err = p.d.AddArticleVersion(c, node, item); err != nil {
+		return
+	}
+
+	h := &model.ArticleHistory{
+		ID:               gid.NewID(),
+		ArticleVersionID: item.ID,
+		UpdatedBy:        aid,
+		Diff:             "",
+		Description:      "",
+		Seq:              1,
+		CreatedAt:        time.Now().Unix(),
+		UpdatedAt:        time.Now().Unix(),
+	}
+
+	var doc *goquery.Document
+	if doc, err = goquery.NewDocumentFromReader(strings.NewReader(item.Content)); err != nil {
+		return
+	}
+
+	h.ContentText = doc.Text()
+	if err = p.d.AddArticleHistory(c, node, h); err != nil {
+		return
+	}
+
+	return
+}
 
 func (p *Service) AddArticle(c context.Context, arg *model.ArgAddArticle) (id int64, err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
@@ -41,39 +92,13 @@ func (p *Service) AddArticle(c context.Context, arg *model.ArgAddArticle) (id in
 	item := &model.Article{
 		ID:           gid.NewID(),
 		Title:        arg.Title,
-		Content:      arg.Content,
 		Cover:        arg.Cover,
 		Introduction: arg.Introduction,
 		Private:      types.BitBool(arg.Private),
-		Locale:       arg.Locale,
-		VersionName:  arg.VersionName,
+		Locale:       &arg.Locale,
 		CreatedBy:    aid,
 		CreatedAt:    time.Now().Unix(),
 		UpdatedAt:    time.Now().Unix(),
-	}
-
-	if arg.ArticleSetID == nil {
-		set := &model.ArticleSet{
-			ID:        gid.NewID(),
-			CreatedAt: time.Now().Unix(),
-			UpdatedAt: time.Now().Unix(),
-		}
-
-		item.ArticleSetID = set.ID
-
-		if err = p.d.AddArticleSet(c, tx, set); err != nil {
-			return
-		}
-	} else {
-		if v, e := p.d.GetArticleVersionByName(c, tx, *arg.ArticleSetID, arg.VersionName); e != nil {
-			err = e
-			return
-		} else if v != nil {
-			err = ecode.ArticleVersionNameExist
-			return
-		}
-
-		item.ArticleSetID = *arg.ArticleSetID
 	}
 
 	var locale *model.Locale
@@ -88,43 +113,23 @@ func (p *Service) AddArticle(c context.Context, arg *model.ArgAddArticle) (id in
 		return
 	}
 
-	h := &model.ArticleHistory{
-		ID:          gid.NewID(),
-		ArticleID:   item.ID,
-		UpdatedBy:   aid,
-		Content:     item.Content,
-		Diff:        "",
-		Description: "",
-		Seq:         1,
-		CreatedAt:   time.Now().Unix(),
-		UpdatedAt:   time.Now().Unix(),
-	}
-
-	var doc *goquery.Document
-	if doc, err = goquery.NewDocumentFromReader(strings.NewReader(item.Content)); err != nil {
-		return
-	}
-
-	h.ContentText = doc.Text()
-	if err = p.d.AddArticleHistory(c, tx, h); err != nil {
-		return
+	for _, v := range arg.Versions {
+		if err = p.addArticleVersion(c, tx, item.ID, v.Name, v.Content, v.Seq); err != nil {
+			return
+		}
 	}
 
 	if err = p.bulkCreateFiles(c, tx, item.ID, arg.Files); err != nil {
 		return
 	}
 
-	if err = p.bulkCreateArticleCatalogs(c, tx, item.ID, item.Title, arg.Relations); err != nil {
+	if err = p.bulkCreateArticleRelations(c, tx, item.ID, item.Title, arg.Relations); err != nil {
 		return
 	}
 
 	if err = tx.Commit(); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 	}
-
-	p.addCache(func() {
-		p.d.DelArticleVersionCache(context.TODO(), item.ArticleSetID)
-	})
 
 	id = item.ID
 
@@ -179,31 +184,19 @@ func (p *Service) UpdateArticle(c context.Context, arg *model.ArgUpdateArticle) 
 	}
 
 	if arg.Locale != nil {
-		item.Locale = *arg.Locale
+		// item.Locale = *arg.Locale
 
-		var locale *model.Locale
-		if locale, err = p.d.GetLocaleByCondition(c, tx, map[string]interface{}{"locale": *arg.Locale}); err != nil {
-			return
-		} else if locale == nil {
-			err = ecode.LocaleNotExist
-			return
-		}
+		// var locale *model.Locale
+		// if locale, err = p.d.GetLocaleByCondition(c, tx, map[string]interface{}{"locale": *arg.Locale}); err != nil {
+		// 	return
+		// } else if locale == nil {
+		// 	err = ecode.LocaleNotExist
+		// 	return
+		// }
 	}
 
 	if arg.Introduction != nil {
 		item.Introduction = *arg.Introduction
-	}
-
-	if arg.VersionName != nil {
-		if resp, e := p.d.GetArticleVersionByName(c, tx, item.ArticleSetID, *arg.VersionName); e != nil {
-			err = e
-			return
-		} else if resp != nil && resp.ArticleID != arg.ID {
-			err = ecode.ArticleVersionNameExist
-			return
-		}
-
-		item.VersionName = *arg.VersionName
 	}
 
 	if arg.Private != nil && aid == item.CreatedBy {
@@ -230,7 +223,7 @@ func (p *Service) UpdateArticle(c context.Context, arg *model.ArgUpdateArticle) 
 
 	p.addCache(func() {
 		p.d.DelArticleCache(context.TODO(), arg.ID)
-		p.d.DelArticleVersionCache(context.TODO(), item.ArticleSetID)
+		// p.d.DelArticleVersionCache(context.TODO(), item.ArticleSetID)
 	})
 
 	return
@@ -277,27 +270,27 @@ func (p *Service) GetArticle(c context.Context, id int64, include string) (item 
 	}
 
 	if inc["versions"] {
-		if item.Versions, err = p.getArticleVersionsResp(c, p.d.DB(), item.ArticleSetID); err != nil {
+		if item.Versions, err = p.getArticleVersions(c, p.d.DB(), id); err != nil {
 			return
 		}
 	}
 
-	if inc["histories"] {
-		if item.Histories, err = p.getArticleHistoriesResp(c, p.d.DB(), id); err != nil {
-			return
-		}
-	}
+	// if inc["histories"] {
+	// 	if item.Histories, err = p.getArticleHistoriesResp(c, p.d.DB(), id); err != nil {
+	// 		return
+	// 	}
+	// }
 
-	if inc["edited_by_others"] {
-		editedByOthers := false
-		if count, e := p.d.GetOrderMemberArticleHistoriesCount(c, p.d.DB(), item.ID, item.Creator.AccountID); e != nil {
-			return nil, e
-		} else if count > 0 {
-			editedByOthers = true
-		}
+	// if inc["edited_by_others"] {
+	// 	editedByOthers := false
+	// 	if count, e := p.d.GetOrderMemberArticleHistoriesCount(c, p.d.DB(), item.ID, item.Creator.AccountID); e != nil {
+	// 		return nil, e
+	// 	} else if count > 0 {
+	// 		editedByOthers = true
+	// 	}
 
-		item.EditedByOthers = &editedByOthers
-	}
+	// 	item.EditedByOthers = &editedByOthers
+	// }
 
 	if inc["primary_topic_meta"] {
 		var primaryTopicID int64
@@ -345,14 +338,10 @@ func (p *Service) getArticle(c context.Context, node sqalx.Node, articleID int64
 	item = &model.ArticleResp{
 		ID:           a.ID,
 		Title:        a.Title,
-		Content:      a.Content,
-		ArticleSetID: a.ArticleSetID,
-		Locale:       a.Locale,
+		Locale:       *a.Locale,
 		Cover:        a.Cover,
 		Introduction: a.Introduction,
 		Private:      bool(a.Private),
-		VersionName:  a.VersionName,
-		Seq:          a.Seq,
 		Files:        make([]*model.ArticleFileResp, 0),
 		Relations:    make([]*model.ArticleRelationResp, 0),
 		Versions:     make([]*model.ArticleVersionResp, 0),
@@ -376,11 +365,18 @@ func (p *Service) getArticle(c context.Context, node sqalx.Node, articleID int64
 	return
 }
 
-func (p *Service) checkEditPermission(c context.Context, node sqalx.Node, topicID int64) (err error) {
+func (p *Service) checkEditPermission(c context.Context, node sqalx.Node, topicVersionID int64) (err error) {
+	var ver *model.TopicVersion
+	if ver, err = p.d.GetTopicVersion(c, node, topicVersionID); err != nil {
+		return
+	} else if ver == nil {
+		return ecode.TopicVersionNotExit
+	}
 	var t *model.TopicResp
-	if t, err = p.getTopic(c, node, topicID); err != nil {
+	if t, err = p.getTopic(c, node, ver.TopicID); err != nil {
 		return
 	}
+
 	var meta *model.TopicMeta
 	if meta, err = p.GetTopicMeta(c, t); err != nil {
 		return

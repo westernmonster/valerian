@@ -34,11 +34,19 @@ func (p *Service) bulkSaveRelations(c context.Context, node sqalx.Node, topicID 
 		return ecode.TopicNotExist
 	}
 
+	dbItems, err := p.d.GetAllTopicRelations(c, tx, topicID)
+	if err != nil {
+		return
+	}
+
+	dic := make(map[int64]bool)
 	for _, v := range relations {
 		var relation *model.TopicRelation
 		if relation, err = p.d.GetTopicRelationByCondition(c, tx, topicID, v.TopicVersionID); err != nil {
 			return
 		} else if relation != nil {
+			// Update
+			dic[relation.ID] = true
 			relation.Relation = v.Type
 			relation.Seq = v.Seq
 			if err = p.d.UpdateTopicRelation(c, tx, relation); err != nil {
@@ -70,6 +78,16 @@ func (p *Service) bulkSaveRelations(c context.Context, node sqalx.Node, topicID 
 		}
 	}
 
+	for _, v := range dbItems {
+		if dic[v.ID] {
+			continue
+		}
+
+		if err = p.d.DelTopicRelation(c, tx, v.ID); err != nil {
+			return
+		}
+	}
+
 	if err = tx.Commit(); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 	}
@@ -84,7 +102,8 @@ func (p *Service) BulkSaveRelations(c context.Context, arg *model.ArgBatchSaveRe
 	return p.bulkSaveRelations(c, p.d.DB(), arg.TopicID, arg.RelatedTopics)
 }
 
-func (p *Service) GetAllRelatedTopicsWithMeta(c context.Context, topicID int64) (items []*model.RelatedTopicResp, err error) {
+func (p *Service) GetAllRelatedTopicsWithMeta(c context.Context, topicID int64, include string) (items []*model.RelatedTopicResp, err error) {
+	inc := includeParam(include)
 	var data []*model.TopicRelation
 	if data, err = p.getTopicRelations(c, p.d.DB(), topicID); err != nil {
 		return
@@ -120,8 +139,10 @@ func (p *Service) GetAllRelatedTopicsWithMeta(c context.Context, topicID int64) 
 		if item.MembersCount, _, err = p.getTopicMembers(c, p.d.DB(), topicID, 10); err != nil {
 			return
 		}
-		if item.TopicMeta, err = p.GetTopicMeta(c, t); err != nil {
-			return
+		if inc["meta"] {
+			if item.TopicMeta, err = p.GetTopicMeta(c, t); err != nil {
+				return
+			}
 		}
 
 		items = append(items, item)

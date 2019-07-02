@@ -6,14 +6,14 @@ type ArgNewTopicVersion struct {
 	// 话题ID
 	TopicID int64 `json:"topic_id,string", swaggertype:"string"`
 	// 版本名称
-	VersionName string `json:"version_name"`
+	Name string `json:"name"`
 }
 
 func (p *ArgNewTopicVersion) Validate() error {
 	return validation.ValidateStruct(
 		p,
 		validation.Field(&p.TopicID, validation.Required),
-		validation.Field(&p.VersionName,
+		validation.Field(&p.Name,
 			validation.Required,
 			validation.RuneLength(0, 250),
 		),
@@ -27,14 +27,14 @@ type TopicVersionItem struct {
 	Seq int `json:"seq"`
 
 	// 版本名称
-	VersionName string `json:"version_name"`
+	Name string `json:"name"`
 }
 
 func (p *TopicVersionItem) Validate() error {
 	return validation.ValidateStruct(
 		p,
 		validation.Field(&p.ID, validation.Required),
-		validation.Field(&p.VersionName, validation.Required),
+		validation.Field(&p.Name, validation.Required),
 	)
 
 }

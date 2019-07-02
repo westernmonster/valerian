@@ -89,7 +89,7 @@ var (
 	ArticleVersionNameExist        = add(48) // 文章版本名称已经存在
 	NeedPrimaryTopic               = add(49) // 必须有主话题
 	OnlyAllowOnePrimaryTopic       = add(50) // 只允许一个主话题
-	DuplicateTopicID               = add(51) // 关联话题重复
+	DuplicateTopicVersionID        = add(51) // 关联话题版本重复
 	InvalidCatalog                 = add(52) // 所选节点不是类目分类
 	NeedEditPermission             = add(54) // 需要话题编辑权限
 	LocaleNotExist                 = add(55) // 未找到该语言编码

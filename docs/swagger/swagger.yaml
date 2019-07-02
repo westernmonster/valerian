@@ -317,12 +317,12 @@ definitions:
         items:
           $ref: '#/definitions/model.TopicLevel1Catalog'
         type: array
+      name:
+        description: 版本名称
+        type: string
       seq:
         description: 顺序
         type: integer
-      version_name:
-        description: 版本名称
-        type: string
     type: object
   model.ArgDelArticleRelation:
     properties:
@@ -452,12 +452,12 @@ definitions:
     type: object
   model.ArgNewTopicVersion:
     properties:
+      name:
+        description: 版本名称
+        type: string
       topic_id:
         description: 话题ID
         type: integer
-      version_name:
-        description: 版本名称
-        type: string
     type: object
   model.ArgOSSToken:
     properties:
@@ -531,6 +531,15 @@ definitions:
           required: true
         type: string
       topic_version_id:
+        type: string
+    type: object
+  model.ArgSaveTopicVersions:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/model.TopicVersionItem'
+        type: array
+      topic_id:
         type: string
     type: object
   model.ArgSetPrimaryArticleRelation:
@@ -1624,6 +1633,17 @@ definitions:
       name:
         type: string
     type: object
+  model.TopicVersionItem:
+    properties:
+      id:
+        type: string
+      name:
+        description: 版本名称
+        type: string
+      seq:
+        description: 顺序
+        type: integer
+    type: object
   model.TopicVersionResp:
     properties:
       catalogs:
@@ -2480,7 +2500,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: 保存文章版本（排序，重命名）
+      description: 保存文章版本（排序和重命名）
       parameters:
       - description: Bearer
         in: header
@@ -2513,17 +2533,17 @@ paths:
       produces:
       - application/json
       responses:
-        "20":
-          description: 获取用户ID失败，一般是因为未登录造成
+        "200":
+          description: 成功
         "400":
           description: 验证请求失败
         "401":
           description: 登录验证失败
         "500":
           description: 服务器端错误
-      summary: 保存文章版本（排序，重命名）
+      summary: 保存文章版本（排序和重命名）
       tags:
-      - article
+      - topic
   /draft/add:
     post:
       consumes:
@@ -4632,6 +4652,7 @@ paths:
         name: req
         required: true
         schema:
+          $ref: '#/definitions/model.ArgSaveTopicVersions'
           type: object
       produces:
       - application/json

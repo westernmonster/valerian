@@ -61,7 +61,7 @@ func (p *Service) AddTopicVersion(c context.Context, arg *model.ArgNewTopicVersi
 		return
 	}
 
-	if m, e := p.d.GetTopicVersionByName(c, tx, arg.TopicID, arg.VersionName); e != nil {
+	if m, e := p.d.GetTopicVersionByName(c, tx, arg.TopicID, arg.Name); e != nil {
 		return 0, e
 	} else if m != nil {
 		err = ecode.TopicVersionNameExist
@@ -76,7 +76,7 @@ func (p *Service) AddTopicVersion(c context.Context, arg *model.ArgNewTopicVersi
 	item := &model.TopicVersion{
 		ID:        gid.NewID(),
 		TopicID:   t.ID,
-		Name:      arg.VersionName,
+		Name:      arg.Name,
 		Seq:       maxSeq + 1,
 		CreatedAt: time.Now().Unix(),
 		UpdatedAt: time.Now().Unix(),
@@ -132,14 +132,14 @@ func (p *Service) SaveTopicVersions(c context.Context, arg *model.ArgSaveTopicVe
 			return ecode.TopicVersionNotExit
 		}
 
-		if m, e := p.d.GetTopicVersionByName(c, tx, t.ID, v.VersionName); e != nil {
+		if m, e := p.d.GetTopicVersionByName(c, tx, t.ID, v.Name); e != nil {
 			return e
 		} else if m != nil && m.TopicID != ver.ID {
 			err = ecode.TopicVersionNameExist
 			return
 		}
 
-		ver.Name = v.VersionName
+		ver.Name = v.Name
 		ver.Seq = v.Seq
 
 		if err = p.d.UpdateTopicVersion(c, tx, ver); err != nil {

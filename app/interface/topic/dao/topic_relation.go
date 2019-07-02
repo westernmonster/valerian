@@ -45,7 +45,7 @@ func (p *Dao) UpdateTopicRelation(c context.Context, node sqalx.Node, item *mode
 }
 
 // Delete logic delete a exist record
-func (p *Dao) DeleteTopicRelation(c context.Context, node sqalx.Node, id int64) (err error) {
+func (p *Dao) DelTopicRelation(c context.Context, node sqalx.Node, id int64) (err error) {
 	if _, err = node.ExecContext(c, _deleteTopicRelationSQL, id); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetTopicRelationsPaged error(%+v), topic member id(%d)", err, id))
 	}

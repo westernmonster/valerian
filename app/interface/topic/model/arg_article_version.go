@@ -38,14 +38,14 @@ type ArticleVersionItem struct {
 	Seq int `json:"seq"`
 
 	// 版本名称
-	VersionName string `json:"version_name"`
+	Name string `json:"name"`
 }
 
 func (p *ArticleVersionItem) Valdiate() error {
 	return validation.ValidateStruct(
 		p,
 		validation.Field(&p.ArticleID, validation.Required),
-		validation.Field(&p.VersionName, validation.Required, validation.RuneLength(0, 250)),
+		validation.Field(&p.Name, validation.Required, validation.RuneLength(0, 250)),
 	)
 }
 

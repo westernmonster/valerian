@@ -1,8 +1,9 @@
 package model
 
 type ArticleVersionResp struct {
-	// 集合ID
-	ArticleSetID int64 `db:"article_set_id" json:"article_set_id,string"  swaggertype:"string"`
+	// 版本ID
+	ID int64 `db:"id" json:"id,string"  swaggertype:"string"`
+
 	// 文章ID
 	ArticleID int64 `db:"article_id" json:"article_id,string" swaggertype:"string"`
 
@@ -10,8 +11,8 @@ type ArticleVersionResp struct {
 	Seq int `db:"seq" json:"seq"`
 
 	// 版本名称
-	VersionName string `db:"version_name" json:"version_name"`
+	Name string `db:"name" json:"name"`
 
 	// 文章名
-	ArticleTitle string `db:"article_title" json:"article_title"`
+	Content string `db:"content" json:"content"`
 }

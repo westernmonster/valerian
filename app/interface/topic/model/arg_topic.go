@@ -123,7 +123,7 @@ type ArgCreateTopicVersion struct {
 	Seq int `json:"seq"`
 
 	// 版本名称
-	VersionName string `json:"version_name"`
+	Name string `json:"name"`
 
 	// 话题分类
 	Catalogs []*TopicLevel1Catalog `json:"catalogs"`
@@ -132,7 +132,7 @@ type ArgCreateTopicVersion struct {
 func (p *ArgCreateTopicVersion) Validate() error {
 	return validation.ValidateStruct(
 		p,
-		validation.Field(&p.VersionName, validation.Required),
+		validation.Field(&p.Name, validation.Required),
 		validation.Field(&p.Catalogs),
 	)
 }

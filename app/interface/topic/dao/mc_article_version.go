@@ -3,16 +3,17 @@ package dao
 import (
 	"context"
 	"fmt"
+	"valerian/app/interface/topic/model"
 	"valerian/library/cache/memcache"
 	"valerian/library/log"
 )
 
-func articleVersionKey(articleSetID int64) string {
-	return fmt.Sprintf("a_versions_%d", articleSetID)
+func articleVersionKey(articleID int64) string {
+	return fmt.Sprintf("a_versions_%d", articleID)
 }
 
-func (p *Dao) SetArticleVersionCache(c context.Context, articleSetID int64, m []int64) (err error) {
-	key := articleVersionKey(articleSetID)
+func (p *Dao) SetArticleVersionsCache(c context.Context, articleID int64, m []*model.ArticleVersionResp) (err error) {
+	key := articleVersionKey(articleID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 
@@ -23,8 +24,8 @@ func (p *Dao) SetArticleVersionCache(c context.Context, articleSetID int64, m []
 	return
 }
 
-func (p *Dao) ArticleVersionCache(c context.Context, articleSetID int64) (m []int64, err error) {
-	key := articleVersionKey(articleSetID)
+func (p *Dao) ArticleVersionsCache(c context.Context, articleID int64) (m []*model.ArticleVersionResp, err error) {
+	key := articleVersionKey(articleID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	var item *memcache.Item
@@ -44,8 +45,8 @@ func (p *Dao) ArticleVersionCache(c context.Context, articleSetID int64) (m []in
 	return
 }
 
-func (p *Dao) DelArticleVersionCache(c context.Context, articleSetID int64) (err error) {
-	key := articleVersionKey(articleSetID)
+func (p *Dao) DelArticleVersionsCache(c context.Context, articleID int64) (err error) {
+	key := articleVersionKey(articleID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	if err = conn.Delete(key); err != nil {

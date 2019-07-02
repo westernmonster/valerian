@@ -140,6 +140,8 @@ type TopicVersionResp struct {
 type RelatedTopicShort struct {
 	// 话题ID
 	TopicID int64 `db:"topic_id" json:"topic_id,string" swaggertype:"string"`
+
+	TopicVersionID int64 `db:"topic_id" json:"topic_id,string" swaggertype:"string"`
 	// 话题名
 	TopicName string `db:"topic_name" json:"topic_name"`
 
@@ -152,4 +154,6 @@ type RelatedTopicShort struct {
 	// normal 普通关联
 	// strong 强关联
 	Type string `db:"type" json:"type"`
+
+	TopicMeta *TopicMeta `json:"meta,omitempty"`
 }

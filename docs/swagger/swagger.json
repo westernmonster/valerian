@@ -1171,7 +1171,7 @@
         },
         "/article/versions/save": {
             "post": {
-                "description": "保存文章版本（排序，重命名）",
+                "description": "保存文章版本（排序和重命名）",
                 "consumes": [
                     "application/json"
                 ],
@@ -1179,9 +1179,9 @@
                     "application/json"
                 ],
                 "tags": [
-                    "article"
+                    "topic"
                 ],
-                "summary": "保存文章版本（排序，重命名）",
+                "summary": "保存文章版本（排序和重命名）",
                 "parameters": [
                     {
                         "type": "string",
@@ -1224,8 +1224,8 @@
                     }
                 ],
                 "responses": {
-                    "20": {
-                        "description": "获取用户ID失败，一般是因为未登录造成"
+                    "200": {
+                        "description": "成功"
                     },
                     "400": {
                         "description": "验证请求失败"
@@ -4296,7 +4296,8 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "object"
+                            "type": "object",
+                            "$ref": "#/definitions/model.ArgSaveTopicVersions"
                         }
                     }
                 ],
@@ -4832,13 +4833,13 @@
                         "$ref": "#/definitions/model.TopicLevel1Catalog"
                     }
                 },
+                "name": {
+                    "description": "版本名称",
+                    "type": "string"
+                },
                 "seq": {
                     "description": "顺序",
                     "type": "integer"
-                },
-                "version_name": {
-                    "description": "版本名称",
-                    "type": "string"
                 }
             }
         },
@@ -5023,13 +5024,13 @@
         "model.ArgNewTopicVersion": {
             "type": "object",
             "properties": {
+                "name": {
+                    "description": "版本名称",
+                    "type": "string"
+                },
                 "topic_id": {
                     "description": "话题ID",
                     "type": "integer"
-                },
-                "version_name": {
-                    "description": "版本名称",
-                    "type": "string"
                 }
             }
         },
@@ -5120,6 +5121,20 @@
                     "type": "string"
                 },
                 "topic_version_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.ArgSaveTopicVersions": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.TopicVersionItem"
+                    }
+                },
+                "topic_id": {
                     "type": "string"
                 }
             }
@@ -6482,6 +6497,22 @@
                 },
                 "name": {
                     "type": "string"
+                }
+            }
+        },
+        "model.TopicVersionItem": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "description": "版本名称",
+                    "type": "string"
+                },
+                "seq": {
+                    "description": "顺序",
+                    "type": "integer"
                 }
             }
         },

@@ -44,6 +44,18 @@ func (p *Service) GetTopic(c context.Context, topicID int64, include string) (it
 		}
 	}
 
+	if inc["related_topics[*].meta"] {
+		for _, v := range item.RelatedTopics {
+			var t *model.TopicResp
+			if t, err = p.getTopic(c, p.d.DB(), v.TopicID); err != nil {
+				return
+			}
+			if v.TopicMeta, err = p.GetTopicMeta(c, t); err != nil {
+				return
+			}
+		}
+	}
+
 	if inc["meta"] {
 		if item.TopicMeta, err = p.GetTopicMeta(c, item); err != nil {
 			return
@@ -94,7 +106,6 @@ func (p *Service) getTopic(c context.Context, node sqalx.Node, topicID int64) (i
 
 	item.Members = make([]*model.TopicMemberResp, 0)
 	item.RelatedTopics = make([]*model.RelatedTopicShort, 0)
-	// item.Catalogs = make([]*model.TopicLevel1Catalog, 0)
 	item.Versions = make([]*model.TopicVersionResp, 0)
 
 	var tType *model.TopicType
@@ -173,7 +184,7 @@ func (p *Service) CreateTopic(c context.Context, arg *model.ArgCreateTopic) (top
 	for _, v := range arg.Versions {
 		set := &model.TopicVersion{
 			ID:        gid.NewID(),
-			Name:      v.VersionName,
+			Name:      v.Name,
 			Seq:       v.Seq,
 			TopicID:   item.ID,
 			CreatedAt: time.Now().Unix(),

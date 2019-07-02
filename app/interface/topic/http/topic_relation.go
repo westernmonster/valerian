@@ -46,12 +46,14 @@ func editTopicRelations(c *mars.Context) {
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param topic_id query string true "话题ID"
+// @Param include query string true  "目前支持：meta"
 // @Success 200 {array} model.RelatedTopicResp "关联话题"
 // @Failure 400 "请求验证失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /topic/list/related [get]
 func relatedTopics(c *mars.Context) {
+	include := c.Request.Form.Get("include")
 	var (
 		id  int64
 		err error
@@ -64,5 +66,5 @@ func relatedTopics(c *mars.Context) {
 		return
 	}
 
-	c.JSON(srv.GetAllRelatedTopicsWithMeta(c, id))
+	c.JSON(srv.GetAllRelatedTopicsWithMeta(c, id, include))
 }

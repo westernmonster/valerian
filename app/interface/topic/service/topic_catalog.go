@@ -358,6 +358,7 @@ func (p *Service) SaveCatalogs(c context.Context, req *model.ArgSaveTopicCatalog
 		if item, err = p.d.GetTopicCatalogByID(c, tx, *v.ID); err != nil {
 			return
 		} else if item == nil {
+			fmt.Println(11111111111)
 			return ecode.TopicCatalogNotExist
 		}
 		if item.ParentID != req.ParentID {
