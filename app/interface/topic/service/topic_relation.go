@@ -60,7 +60,7 @@ func (p *Service) bulkSaveRelations(c context.Context, node sqalx.Node, topicID 
 		if ver, err = p.d.GetTopicVersion(c, tx, v.TopicVersionID); err != nil {
 			return
 		} else if ver == nil {
-			return ecode.TopicVersionNotExit
+			return ecode.TopicVersionNotExist
 		}
 
 		item := &model.TopicRelation{
@@ -128,7 +128,7 @@ func (p *Service) GetAllRelatedTopicsWithMeta(c context.Context, topicID int64, 
 		if ver, err = p.d.GetTopicVersion(c, p.d.DB(), v.ToTopicVersionID); err != nil {
 			return
 		} else if ver == nil {
-			err = ecode.TopicVersionNotExit
+			err = ecode.TopicVersionNotExist
 			return
 		}
 
@@ -176,7 +176,7 @@ func (p *Service) getAllRelatedTopics(c context.Context, node sqalx.Node, topicI
 		if ver, err = p.d.GetTopicVersion(c, p.d.DB(), v.ToTopicVersionID); err != nil {
 			return
 		} else if ver == nil {
-			err = ecode.TopicVersionNotExit
+			err = ecode.TopicVersionNotExist
 			return
 		}
 		item.TopicName = t.Name

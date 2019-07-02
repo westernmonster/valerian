@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 	"valerian/app/interface/topic/model"
 	"valerian/library/database/sqalx"
@@ -10,6 +11,8 @@ import (
 	"valerian/library/gid"
 	"valerian/library/log"
 	"valerian/library/net/metadata"
+
+	"github.com/PuerkitoBio/goquery"
 )
 
 func (p *Service) AddArticleVersion(c context.Context, arg *model.ArgNewArticleVersion) (id int64, err error) {
@@ -34,56 +37,58 @@ func (p *Service) AddArticleVersion(c context.Context, arg *model.ArgNewArticleV
 	}()
 
 	var a *model.Article
-	if a, err = p.d.GetArticleByID(c, tx, arg.FromArticleID); err != nil {
+	if a, err = p.d.GetArticleByID(c, tx, arg.ArticleID); err != nil {
 		return
 	} else if a == nil {
 		err = ecode.ArticleNotExist
 		return
 	}
 
-	// if v, e := p.d.GetArticleVersionByName(c, tx, a.ArticleSetID, arg.VersionName); e != nil {
-	// 	return 0, e
-	// } else if v != nil {
-	// 	err = ecode.ArticleVersionNameExist
-	// 	return
-	// }
-
-	a.ID = gid.NewID()
-	// a.VersionName = arg.VersionName
-	a.CreatedBy = aid
-	a.CreatedAt = time.Now().Unix()
-	a.UpdatedAt = time.Now().Unix()
-
-	if err = p.d.AddArticle(c, tx, a); err != nil {
+	var ver *model.ArticleVersionResp
+	if ver, err = p.d.GetArticleVersionByName(c, tx, arg.ArticleID, arg.Name); err != nil {
+		return
+	} else if ver != nil {
+		err = ecode.ArticleVersionNameExist
 		return
 	}
 
-	if err = p.copyArticleRelations(c, tx, aid, arg.FromArticleID, a.ID); err != nil {
+	var maxSeq int
+	if maxSeq, err = p.d.GetTopicVersionMaxSeq(c, tx, arg.ArticleID); err != nil {
 		return
 	}
 
-	if err = p.copyArticleFiles(c, tx, aid, arg.FromArticleID, a.ID); err != nil {
+	item := &model.ArticleVersion{
+		ID:        gid.NewID(),
+		ArticleID: arg.ArticleID,
+		Name:      arg.Name,
+		Content:   "",
+		Seq:       maxSeq + 1,
+		CreatedAt: time.Now().Unix(),
+		UpdatedAt: time.Now().Unix(),
+	}
+
+	if err = p.d.AddArticleVersion(c, tx, item); err != nil {
 		return
 	}
 
 	h := &model.ArticleHistory{
-		ID: gid.NewID(),
-		// ArticleID:   a.ID,
-		UpdatedBy: aid,
-		// Content:     a.Content,
-		Diff:        "",
-		Description: "",
-		Seq:         1,
-		CreatedAt:   time.Now().Unix(),
-		UpdatedAt:   time.Now().Unix(),
+		ID:               gid.NewID(),
+		ArticleVersionID: item.ID,
+		UpdatedBy:        aid,
+		Diff:             "",
+		ChangeID:         "",
+		Description:      "",
+		Seq:              1,
+		CreatedAt:        time.Now().Unix(),
+		UpdatedAt:        time.Now().Unix(),
 	}
 
-	// var doc *goquery.Document
-	// if doc, err = goquery.NewDocumentFromReader(strings.NewReader(a.Content)); err != nil {
-	// 	return
-	// }
+	var doc *goquery.Document
+	if doc, err = goquery.NewDocumentFromReader(strings.NewReader(item.Content)); err != nil {
+		return
+	}
 
-	// h.ContentText = doc.Text()
+	h.ContentText = doc.Text()
 	if err = p.d.AddArticleHistory(c, tx, h); err != nil {
 		return
 	}
@@ -93,53 +98,12 @@ func (p *Service) AddArticleVersion(c context.Context, arg *model.ArgNewArticleV
 		return
 	}
 
-	id = a.ID
+	id = item.ID
 
 	p.addCache(func() {
-		// p.d.DelArticleVersionCache(context.TODO(), a.ArticleSetID)
+		p.d.DelArticleVersionsCache(context.TODO(), arg.ArticleID)
 	})
 
-	return
-}
-
-func (p *Service) copyArticleRelations(c context.Context, node sqalx.Node, aid int64, fromArticleID, toArticleID int64) (err error) {
-	var catalogs []*model.TopicCatalog
-	if catalogs, err = p.d.GetTopicCatalogsByCondition(c, node, map[string]interface{}{
-		"ref_id": fromArticleID,
-		"type":   model.TopicCatalogArticle,
-	}); err != nil {
-		return
-	}
-
-	for _, v := range catalogs {
-		v.ID = gid.NewID()
-		v.CreatedAt = time.Now().Unix()
-		v.UpdatedAt = time.Now().Unix()
-		v.RefID = &toArticleID
-
-		if err = p.d.AddTopicCatalog(c, node, v); err != nil {
-			return
-		}
-	}
-
-	return
-}
-
-func (p *Service) copyArticleFiles(c context.Context, node sqalx.Node, aid int64, fromArticleID, toArticleID int64) (err error) {
-	var files []*model.ArticleFile
-	if files, err = p.d.GetArticleFiles(c, node, fromArticleID); err != nil {
-		return
-	}
-
-	for _, v := range files {
-		v.ID = gid.NewID()
-		v.CreatedAt = time.Now().Unix()
-		v.UpdatedAt = time.Now().Unix()
-		v.ArticleID = toArticleID
-		if err = p.d.AddArticleFile(c, node, v); err != nil {
-			return
-		}
-	}
 	return
 }
 
@@ -155,6 +119,7 @@ func (p *Service) getArticleVersions(c context.Context, node sqalx.Node, article
 	if items, err = p.d.GetArticleVersions(c, node, articleID); err != nil {
 		return
 	}
+	fmt.Println(articleID)
 
 	if addCache {
 		p.addCache(func() {
@@ -185,25 +150,40 @@ func (p *Service) SaveArticleVersions(c context.Context, arg *model.ArgSaveArtic
 		}
 	}()
 
+	var t *model.Article
+	if t, err = p.d.GetArticleByID(c, tx, arg.ArticleID); err != nil {
+		return
+	} else if t == nil {
+		return ecode.ArticleNotExist
+	}
+
+	var primaryTopicID int64
+	if primaryTopicID, _, err = p.getPrimaryTopicInfo(c, tx, arg.ArticleID); err != nil {
+		return
+	}
+	if err = p.checkEditPermission(c, tx, primaryTopicID); err != nil {
+		return
+	}
+
 	for _, v := range arg.Items {
-		var t *model.Article
-		if t, err = p.d.GetArticleByID(c, tx, v.ArticleID); err != nil {
+		var ver *model.ArticleVersion
+		if ver, err = p.d.GetArticleVersion(c, tx, v.ID); err != nil {
 			return
-		} else if t == nil {
-			return ecode.ArticleNotExist
+		} else if ver == nil {
+			return ecode.ArticleVersionNotExist
 		}
 
-		if m, e := p.d.GetArticleVersionByName(c, tx, arg.ArticleSetID, v.Name); e != nil {
+		if m, e := p.d.GetArticleVersionByName(c, tx, arg.ArticleID, v.Name); e != nil {
 			return e
-		} else if m != nil && m.ArticleID != t.ID {
+		} else if m != nil && m.ID != ver.ID {
 			err = ecode.ArticleVersionNameExist
 			return
 		}
 
-		// t.VersionName = v.VersionName
-		// t.Seq = v.Seq
+		ver.Name = v.Name
+		ver.Seq = v.Seq
 
-		if err = p.d.UpdateArticle(c, tx, t); err != nil {
+		if err = p.d.UpdateArticleVersion(c, tx, ver); err != nil {
 			return
 		}
 	}
@@ -214,10 +194,7 @@ func (p *Service) SaveArticleVersions(c context.Context, arg *model.ArgSaveArtic
 	}
 
 	p.addCache(func() {
-		p.d.DelArticleVersionsCache(context.TODO(), arg.ArticleSetID)
-		for _, v := range arg.Items {
-			p.d.DelArticleCache(context.TODO(), v.ArticleID)
-		}
+		p.d.DelArticleVersionsCache(context.TODO(), arg.ArticleID)
 	})
 
 	return

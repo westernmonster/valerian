@@ -329,7 +329,7 @@ func (p *Service) SaveCatalogs(c context.Context, req *model.ArgSaveTopicCatalog
 	if ver, err = p.d.GetTopicVersion(c, tx, req.TopicVersionID); err != nil {
 		return
 	} else if ver == nil {
-		return ecode.TopicVersionNotExit
+		return ecode.TopicVersionNotExist
 	}
 
 	var dbCatalogs []*model.TopicCatalog

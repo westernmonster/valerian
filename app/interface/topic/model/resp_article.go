@@ -9,13 +9,9 @@ type ArticleResp struct {
 	// 内容
 	Content string `json:"content"`
 
+	CreatedBy int64 `json:"created_by,string"`
+
 	Creator *BasicAccountResp `json:"creator"`
-
-	// 集合ID
-	ArticleSetID int64 `json:"article_set_id,string"  swaggertype:"string"`
-
-	// 文章语言
-	Locale string `json:"locale"`
 
 	//  封面图
 	Cover *string `json:"cover,omitempty"`
@@ -25,21 +21,11 @@ type ArticleResp struct {
 	// 是否私有
 	Private bool `json:"private"`
 
-	// 版本名称
-	VersionName string `json:"version_name"`
-
-	// 版本顺序
-	Seq int `json:"seq"`
-
 	Files []*ArticleFileResp `json:"files"`
 
 	Relations []*ArticleRelationResp `json:"relations"`
 
 	Versions []*ArticleVersionResp `json:"versions"`
-
-	Histories []*ArticleHistoryResp `json:"histories"`
-
-	EditedByOthers *bool `json:"edited_by_others,omitempty"`
 
 	// 属性
 	ArticleMeta *ArticleMeta `json:"meta,omitempty"`

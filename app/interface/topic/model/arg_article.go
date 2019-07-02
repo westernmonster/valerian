@@ -18,10 +18,6 @@ type ArgAddArticle struct {
 	// required: true
 	Private bool `json:"private"`
 
-	// 文章语言
-	// required: true
-	Locale string `json:"locale"`
-
 	Versions []*AddArticleVersion `json:"versions"`
 
 	// 附件
@@ -31,6 +27,17 @@ type ArgAddArticle struct {
 	Relations []*AddArticleRelation `json:"relations"`
 }
 
+func (p *ArgAddArticle) Validate() error {
+	return validation.ValidateStruct(
+		p,
+		validation.Field(&p.Title, validation.Required, validation.RuneLength(0, 250)),
+		validation.Field(&p.Files),
+		validation.Field(&p.Relations),
+		validation.Field(&p.Versions),
+		validation.Field(&p.Files),
+	)
+}
+
 type AddArticleVersion struct {
 	// 顺序
 	Seq int `json:"seq"`
@@ -38,18 +45,20 @@ type AddArticleVersion struct {
 	// 版本名称
 	Name string `json:"name"`
 
+	// 文章语言
+	// required: true
+	Locale string `json:"locale"`
+
 	// 内容
 	// required: true
 	Content string `json:"content"`
 }
 
-func (p *ArgAddArticle) Validate() error {
+func (p *AddArticleVersion) Validate() error {
 	return validation.ValidateStruct(
 		p,
-		validation.Field(&p.Title, validation.Required, validation.RuneLength(0, 250)),
+		validation.Field(&p.Name, validation.Required, validation.RuneLength(0, 250)),
 		validation.Field(&p.Locale, validation.Required),
-		validation.Field(&p.Files),
-		validation.Field(&p.Relations),
 	)
 }
 
@@ -98,9 +107,6 @@ type ArgUpdateArticle struct {
 
 	// 是否私有
 	Private *bool `json:"private,omitempty"`
-
-	// 文章语言
-	Locale *string `json:"locale,omitempty"`
 }
 
 func (p *ArgUpdateArticle) Validate() error {
@@ -110,7 +116,6 @@ func (p *ArgUpdateArticle) Validate() error {
 		validation.Field(&p.Title, validation.NilOrNotEmpty),
 		validation.Field(&p.Cover, validation.NilOrNotEmpty),
 		validation.Field(&p.Introduction, validation.NilOrNotEmpty),
-		validation.Field(&p.Locale, validation.NilOrNotEmpty),
 	)
 }
 
@@ -120,6 +125,9 @@ type ArgUpdateArticleVersion struct {
 
 	// 内容
 	Content *string `json:"content,omitempty"`
+
+	// 文章语言
+	Locale *string `json:"locale,omitempty"`
 
 	// 版本名称
 	Name *string `json:"name"`
@@ -135,6 +143,7 @@ func (p *ArgUpdateArticleVersion) Validate() error {
 		validation.Field(&p.ID, validation.Required),
 		validation.Field(&p.Content, validation.NilOrNotEmpty),
 		validation.Field(&p.Name, validation.NilOrNotEmpty, validation.RuneLength(0, 250)),
+		validation.Field(&p.Locale, validation.NilOrNotEmpty),
 		validation.Field(&p.ChangeDesc, validation.Required),
 		validation.Field(&p.ChangeID, validation.Required),
 	)

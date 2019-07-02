@@ -85,20 +85,31 @@ definitions:
       primary:
         description: 是否主话题
         type: boolean
-      topic_id:
-        description: 所关联话题 ID
+      topic_version_id:
+        description: 所关联话题版本 ID
         type: string
     type: object
-  model.ArgAddArticle:
+  model.AddArticleVersion:
     properties:
-      article_set_id:
-        description: 文章集合ID
-        type: string
       content:
         description: |-
           内容
           required: true
         type: string
+      locale:
+        description: |-
+          文章语言
+          required: true
+        type: string
+      name:
+        description: 版本名称
+        type: string
+      seq:
+        description: 顺序
+        type: integer
+    type: object
+  model.ArgAddArticle:
+    properties:
       cover:
         description: 封面图
         type: string
@@ -109,11 +120,6 @@ definitions:
         type: array
       introduction:
         description: 简介
-        type: string
-      locale:
-        description: |-
-          文章语言
-          required: true
         type: string
       private:
         description: |-
@@ -130,11 +136,10 @@ definitions:
           标题
           required: true
         type: string
-      version_name:
-        description: |-
-          版本名称
-          required: true
-        type: string
+      versions:
+        items:
+          $ref: '#/definitions/model.AddArticleVersion'
+        type: array
     type: object
   model.ArgAddArticleRelation:
     properties:
@@ -146,8 +151,8 @@ definitions:
       primary:
         description: 是否主话题
         type: boolean
-      topic_id:
-        description: 所关联话题 ID
+      topic_version_id:
+        description: 所关联话题版本 ID
         type: string
     type: object
   model.ArgAddColor:
@@ -445,9 +450,9 @@ definitions:
     type: object
   model.ArgNewArticleVersion:
     properties:
-      from_article_id:
+      article_id:
         type: integer
-      version_name:
+      name:
         type: string
     type: object
   model.ArgNewTopicVersion:
@@ -480,7 +485,7 @@ definitions:
         type: integer
       topic_version_id:
         description: 关联话题版本ID
-        type: integer
+        type: string
       type:
         description: |-
           类型
@@ -593,11 +598,6 @@ definitions:
     type: object
   model.ArgUpdateArticle:
     properties:
-      change_desc:
-        type: string
-      content:
-        description: 内容
-        type: string
       cover:
         description: 封面图
         type: string
@@ -605,19 +605,12 @@ definitions:
         description: 文章ID
         type: string
       introduction:
-        description: 简介
-        type: string
-      locale:
-        description: 文章语言
         type: string
       private:
         description: 是否私有
         type: boolean
       title:
         description: 标题
-        type: string
-      version_name:
-        description: 版本名称
         type: string
     type: object
   model.ArgUpdateColor:
@@ -741,7 +734,11 @@ definitions:
     type: object
   model.ArticleHistoryResp:
     properties:
-      article_id:
+      article_version_id:
+        type: string
+      change_desc:
+        type: string
+      change_id:
         type: string
       content:
         type: string
@@ -749,13 +746,15 @@ definitions:
         type: string
       created_at:
         type: integer
-      description:
-        type: string
       diff:
         type: string
       id:
         type: string
       seq:
+        type: integer
+      updated_at:
+        type: integer
+      updated_by:
         type: integer
       updator:
         $ref: '#/definitions/model.BasicAccountResp'
@@ -794,35 +793,25 @@ definitions:
     type: object
   model.ArticleResp:
     properties:
-      article_set_id:
-        description: 集合ID
-        type: string
       content:
         description: 内容
         type: string
       cover:
         description: 封面图
         type: string
+      created_by:
+        type: integer
       creator:
         $ref: '#/definitions/model.BasicAccountResp'
         type: object
-      edited_by_others:
-        type: boolean
       files:
         items:
           $ref: '#/definitions/model.ArticleFileResp'
-        type: array
-      histories:
-        items:
-          $ref: '#/definitions/model.ArticleHistoryResp'
         type: array
       id:
         type: string
       introduction:
         description: 简介
-        type: string
-      locale:
-        description: 文章语言
         type: string
       meta:
         $ref: '#/definitions/model.ArticleMeta'
@@ -838,14 +827,8 @@ definitions:
         items:
           $ref: '#/definitions/model.ArticleRelationResp'
         type: array
-      seq:
-        description: 版本顺序
-        type: integer
       title:
         description: 标题
-        type: string
-      version_name:
-        description: 版本名称
         type: string
       versions:
         items:
@@ -857,18 +840,22 @@ definitions:
       article_id:
         description: 文章ID
         type: string
-      article_set_id:
-        description: 集合ID
-        type: string
-      article_title:
+      content:
         description: 文章名
+        type: string
+      histories:
+        items:
+          $ref: '#/definitions/model.ArticleHistoryResp'
+        type: array
+      id:
+        description: 版本ID
+        type: string
+      name:
+        description: 版本名称
         type: string
       seq:
         description: 顺序
         type: integer
-      version_name:
-        description: 版本名称
-        type: string
     type: object
   model.BasicAccountResp:
     properties:
@@ -1219,11 +1206,13 @@ definitions:
     type: object
   model.RelatedTopicShort:
     properties:
+      meta:
+        $ref: '#/definitions/model.TopicMeta'
+        type: object
       seq:
         description: 顺序
         type: integer
       topic_id:
-        description: 话题ID
         type: string
       topic_name:
         description: 话题名
@@ -2183,9 +2172,9 @@ paths:
         name: Locale
         required: true
         type: string
-      - description: 文章集合ID
+      - description: 文章ID
         in: query
-        name: article_set_id
+        name: article_id
         required: true
         type: string
       produces:
@@ -2500,7 +2489,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: 保存文章版本（排序和重命名）
+      description: 保存文章版本（排序，重命名）
       parameters:
       - description: Bearer
         in: header
@@ -2533,17 +2522,17 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: 成功
+        "20":
+          description: 获取用户ID失败，一般是因为未登录造成
         "400":
           description: 验证请求失败
         "401":
           description: 登录验证失败
         "500":
           description: 服务器端错误
-      summary: 保存文章版本（排序和重命名）
+      summary: 保存文章版本（排序，重命名）
       tags:
-      - topic
+      - article
   /draft/add:
     post:
       consumes:
@@ -4235,6 +4224,11 @@ paths:
       - description: 话题ID
         in: query
         name: topic_id
+        required: true
+        type: string
+      - description: 目前支持：meta
+        in: query
+        name: include
         required: true
         type: string
       produces:

@@ -17,7 +17,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
-func (p *Service) addArticleVersion(c context.Context, node sqalx.Node, articleID int64, name, content string, seq int) (err error) {
+func (p *Service) addArticleVersion(c context.Context, node sqalx.Node, articleID int64, name, content string, seq int, locale string) (err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed
@@ -30,10 +30,19 @@ func (p *Service) addArticleVersion(c context.Context, node sqalx.Node, articleI
 		return ecode.ArticleVersionNameExist
 	}
 
+	var loc *model.Locale
+	if loc, err = p.d.GetLocaleByCondition(c, node, map[string]interface{}{"locale": locale}); err != nil {
+		return
+	} else if loc == nil {
+		err = ecode.LocaleNotExist
+		return
+	}
+
 	item := &model.ArticleVersion{
 		ID:        gid.NewID(),
 		ArticleID: articleID,
 		Name:      name,
+		Locale:    locale,
 		Content:   content,
 		Seq:       seq,
 		CreatedAt: time.Now().Unix(),
@@ -49,6 +58,7 @@ func (p *Service) addArticleVersion(c context.Context, node sqalx.Node, articleI
 		ArticleVersionID: item.ID,
 		UpdatedBy:        aid,
 		Diff:             "",
+		ChangeID:         "",
 		Description:      "",
 		Seq:              1,
 		CreatedAt:        time.Now().Unix(),
@@ -95,18 +105,9 @@ func (p *Service) AddArticle(c context.Context, arg *model.ArgAddArticle) (id in
 		Cover:        arg.Cover,
 		Introduction: arg.Introduction,
 		Private:      types.BitBool(arg.Private),
-		Locale:       &arg.Locale,
 		CreatedBy:    aid,
 		CreatedAt:    time.Now().Unix(),
 		UpdatedAt:    time.Now().Unix(),
-	}
-
-	var locale *model.Locale
-	if locale, err = p.d.GetLocaleByCondition(c, tx, map[string]interface{}{"locale": arg.Locale}); err != nil {
-		return
-	} else if locale == nil {
-		err = ecode.LocaleNotExist
-		return
 	}
 
 	if err = p.d.AddArticle(c, tx, item); err != nil {
@@ -114,7 +115,7 @@ func (p *Service) AddArticle(c context.Context, arg *model.ArgAddArticle) (id in
 	}
 
 	for _, v := range arg.Versions {
-		if err = p.addArticleVersion(c, tx, item.ID, v.Name, v.Content, v.Seq); err != nil {
+		if err = p.addArticleVersion(c, tx, item.ID, v.Name, v.Content, v.Seq, v.Locale); err != nil {
 			return
 		}
 	}
@@ -137,12 +138,6 @@ func (p *Service) AddArticle(c context.Context, arg *model.ArgAddArticle) (id in
 }
 
 func (p *Service) UpdateArticle(c context.Context, arg *model.ArgUpdateArticle) (err error) {
-	aid, ok := metadata.Value(c, metadata.Aid).(int64)
-	if !ok {
-		err = ecode.AcquireAccountIDFailed
-		return
-	}
-
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
@@ -159,7 +154,7 @@ func (p *Service) UpdateArticle(c context.Context, arg *model.ArgUpdateArticle) 
 	}()
 
 	var primaryTopicID int64
-	if primaryTopicID, err = p.getPrimaryTopicID(c, tx, arg.ID); err != nil {
+	if primaryTopicID, _, err = p.getPrimaryTopicInfo(c, tx, arg.ID); err != nil {
 		return
 	}
 
@@ -183,35 +178,11 @@ func (p *Service) UpdateArticle(c context.Context, arg *model.ArgUpdateArticle) 
 		item.Cover = arg.Cover
 	}
 
-	if arg.Locale != nil {
-		// item.Locale = *arg.Locale
-
-		// var locale *model.Locale
-		// if locale, err = p.d.GetLocaleByCondition(c, tx, map[string]interface{}{"locale": *arg.Locale}); err != nil {
-		// 	return
-		// } else if locale == nil {
-		// 	err = ecode.LocaleNotExist
-		// 	return
-		// }
-	}
-
 	if arg.Introduction != nil {
 		item.Introduction = *arg.Introduction
 	}
 
-	if arg.Private != nil && aid == item.CreatedBy {
-		if *arg.Private {
-			if count, e := p.d.GetOrderMemberArticleHistoriesCount(c, tx, item.ID, item.CreatedBy); e != nil {
-				err = e
-				return
-			} else if count > 0 {
-				err = ecode.ArticleEditedByOthers
-				return
-			}
-		}
-
-		item.Private = types.BitBool(*arg.Private)
-	}
+	item.Private = types.BitBool(*arg.Private)
 
 	if err = p.d.UpdateArticle(c, tx, item); err != nil {
 		return
@@ -223,13 +194,12 @@ func (p *Service) UpdateArticle(c context.Context, arg *model.ArgUpdateArticle) 
 
 	p.addCache(func() {
 		p.d.DelArticleCache(context.TODO(), arg.ID)
-		// p.d.DelArticleVersionCache(context.TODO(), item.ArticleSetID)
 	})
 
 	return
 }
 
-func (p *Service) getPrimaryTopicID(c context.Context, node sqalx.Node, articleID int64) (topicID int64, err error) {
+func (p *Service) getPrimaryTopicInfo(c context.Context, node sqalx.Node, articleID int64) (topicID, topicVersionID int64, err error) {
 	var catalog *model.TopicCatalog
 	if catalog, err = p.d.GetTopicCatalogByCondition(c, node, map[string]interface{}{
 		"type":       model.TopicCatalogArticle,
@@ -243,6 +213,7 @@ func (p *Service) getPrimaryTopicID(c context.Context, node sqalx.Node, articleI
 	}
 
 	topicID = catalog.TopicID
+	topicVersionID = catalog.ID
 
 	return
 }
@@ -254,6 +225,10 @@ func (p *Service) DelArticle(c context.Context, id int64) (err error) {
 func (p *Service) GetArticle(c context.Context, id int64, include string) (item *model.ArticleResp, err error) {
 	inc := includeParam(include)
 	if item, err = p.getArticle(c, p.d.DB(), id); err != nil {
+		return
+	}
+
+	if item.Creator, err = p.getBasicAccountResp(c, p.d.DB(), item.CreatedBy); err != nil {
 		return
 	}
 
@@ -275,26 +250,17 @@ func (p *Service) GetArticle(c context.Context, id int64, include string) (item 
 		}
 	}
 
-	// if inc["histories"] {
-	// 	if item.Histories, err = p.getArticleHistoriesResp(c, p.d.DB(), id); err != nil {
-	// 		return
-	// 	}
-	// }
-
-	// if inc["edited_by_others"] {
-	// 	editedByOthers := false
-	// 	if count, e := p.d.GetOrderMemberArticleHistoriesCount(c, p.d.DB(), item.ID, item.Creator.AccountID); e != nil {
-	// 		return nil, e
-	// 	} else if count > 0 {
-	// 		editedByOthers = true
-	// 	}
-
-	// 	item.EditedByOthers = &editedByOthers
-	// }
+	if inc["versions[*].histories"] {
+		for _, v := range item.Versions {
+			if v.Histories, err = p.getArticleHistoriesResp(c, p.d.DB(), v.ID); err != nil {
+				return
+			}
+		}
+	}
 
 	if inc["primary_topic_meta"] {
 		var primaryTopicID int64
-		if primaryTopicID, err = p.getPrimaryTopicID(c, p.d.DB(), id); err != nil {
+		if primaryTopicID, _, err = p.getPrimaryTopicInfo(c, p.d.DB(), id); err != nil {
 			return
 		}
 
@@ -338,23 +304,13 @@ func (p *Service) getArticle(c context.Context, node sqalx.Node, articleID int64
 	item = &model.ArticleResp{
 		ID:           a.ID,
 		Title:        a.Title,
-		Locale:       *a.Locale,
 		Cover:        a.Cover,
 		Introduction: a.Introduction,
+		CreatedBy:    a.CreatedBy,
 		Private:      bool(a.Private),
 		Files:        make([]*model.ArticleFileResp, 0),
 		Relations:    make([]*model.ArticleRelationResp, 0),
 		Versions:     make([]*model.ArticleVersionResp, 0),
-	}
-
-	if acc, e := p.getAccountByID(c, node, a.CreatedBy); e != nil {
-		return nil, e
-	} else {
-		item.Creator = &model.BasicAccountResp{
-			Avatar:    acc.Avatar,
-			UserName:  acc.UserName,
-			AccountID: acc.ID,
-		}
 	}
 
 	if addCache {
@@ -365,15 +321,9 @@ func (p *Service) getArticle(c context.Context, node sqalx.Node, articleID int64
 	return
 }
 
-func (p *Service) checkEditPermission(c context.Context, node sqalx.Node, topicVersionID int64) (err error) {
-	var ver *model.TopicVersion
-	if ver, err = p.d.GetTopicVersion(c, node, topicVersionID); err != nil {
-		return
-	} else if ver == nil {
-		return ecode.TopicVersionNotExit
-	}
+func (p *Service) checkEditPermission(c context.Context, node sqalx.Node, topicID int64) (err error) {
 	var t *model.TopicResp
-	if t, err = p.getTopic(c, node, ver.TopicID); err != nil {
+	if t, err = p.getTopic(c, node, topicID); err != nil {
 		return
 	}
 

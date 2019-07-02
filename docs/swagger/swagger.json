@@ -721,8 +721,8 @@
                     },
                     {
                         "type": "string",
-                        "description": "文章集合ID",
-                        "name": "article_set_id",
+                        "description": "文章ID",
+                        "name": "article_id",
                         "in": "query",
                         "required": true
                     }
@@ -1171,7 +1171,7 @@
         },
         "/article/versions/save": {
             "post": {
-                "description": "保存文章版本（排序和重命名）",
+                "description": "保存文章版本（排序，重命名）",
                 "consumes": [
                     "application/json"
                 ],
@@ -1179,9 +1179,9 @@
                     "application/json"
                 ],
                 "tags": [
-                    "topic"
+                    "article"
                 ],
-                "summary": "保存文章版本（排序和重命名）",
+                "summary": "保存文章版本（排序，重命名）",
                 "parameters": [
                     {
                         "type": "string",
@@ -1224,8 +1224,8 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "成功"
+                    "20": {
+                        "description": "获取用户ID失败，一般是因为未登录造成"
                     },
                     "400": {
                         "description": "验证请求失败"
@@ -3694,6 +3694,13 @@
                         "name": "topic_id",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "目前支持：meta",
+                        "name": "include",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -4570,23 +4577,36 @@
                     "description": "是否主话题",
                     "type": "boolean"
                 },
-                "topic_id": {
-                    "description": "所关联话题 ID",
+                "topic_version_id": {
+                    "description": "所关联话题版本 ID",
                     "type": "string"
+                }
+            }
+        },
+        "model.AddArticleVersion": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "description": "内容\nrequired: true",
+                    "type": "string"
+                },
+                "locale": {
+                    "description": "文章语言\nrequired: true",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "版本名称",
+                    "type": "string"
+                },
+                "seq": {
+                    "description": "顺序",
+                    "type": "integer"
                 }
             }
         },
         "model.ArgAddArticle": {
             "type": "object",
             "properties": {
-                "article_set_id": {
-                    "description": "文章集合ID",
-                    "type": "string"
-                },
-                "content": {
-                    "description": "内容\nrequired: true",
-                    "type": "string"
-                },
                 "cover": {
                     "description": "封面图",
                     "type": "string"
@@ -4600,10 +4620,6 @@
                 },
                 "introduction": {
                     "description": "简介",
-                    "type": "string"
-                },
-                "locale": {
-                    "description": "文章语言\nrequired: true",
                     "type": "string"
                 },
                 "private": {
@@ -4621,9 +4637,11 @@
                     "description": "标题\nrequired: true",
                     "type": "string"
                 },
-                "version_name": {
-                    "description": "版本名称\nrequired: true",
-                    "type": "string"
+                "versions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.AddArticleVersion"
+                    }
                 }
             }
         },
@@ -4641,8 +4659,8 @@
                     "description": "是否主话题",
                     "type": "boolean"
                 },
-                "topic_id": {
-                    "description": "所关联话题 ID",
+                "topic_version_id": {
+                    "description": "所关联话题版本 ID",
                     "type": "string"
                 }
             }
@@ -5013,10 +5031,10 @@
         "model.ArgNewArticleVersion": {
             "type": "object",
             "properties": {
-                "from_article_id": {
+                "article_id": {
                     "type": "integer"
                 },
-                "version_name": {
+                "name": {
                     "type": "string"
                 }
             }
@@ -5056,7 +5074,7 @@
                 },
                 "topic_version_id": {
                     "description": "关联话题版本ID",
-                    "type": "integer"
+                    "type": "string"
                 },
                 "type": {
                     "description": "类型\nnormal\nstrong",
@@ -5195,13 +5213,6 @@
         "model.ArgUpdateArticle": {
             "type": "object",
             "properties": {
-                "change_desc": {
-                    "type": "string"
-                },
-                "content": {
-                    "description": "内容",
-                    "type": "string"
-                },
                 "cover": {
                     "description": "封面图",
                     "type": "string"
@@ -5211,11 +5222,6 @@
                     "type": "string"
                 },
                 "introduction": {
-                    "description": "简介",
-                    "type": "string"
-                },
-                "locale": {
-                    "description": "文章语言",
                     "type": "string"
                 },
                 "private": {
@@ -5224,10 +5230,6 @@
                 },
                 "title": {
                     "description": "标题",
-                    "type": "string"
-                },
-                "version_name": {
-                    "description": "版本名称",
                     "type": "string"
                 }
             }
@@ -5362,7 +5364,13 @@
         "model.ArticleHistoryResp": {
             "type": "object",
             "properties": {
-                "article_id": {
+                "article_version_id": {
+                    "type": "string"
+                },
+                "change_desc": {
+                    "type": "string"
+                },
+                "change_id": {
                     "type": "string"
                 },
                 "content": {
@@ -5374,9 +5382,6 @@
                 "created_at": {
                     "type": "integer"
                 },
-                "description": {
-                    "type": "string"
-                },
                 "diff": {
                     "type": "string"
                 },
@@ -5384,6 +5389,12 @@
                     "type": "string"
                 },
                 "seq": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "integer"
+                },
+                "updated_by": {
                     "type": "integer"
                 },
                 "updator": {
@@ -5440,10 +5451,6 @@
         "model.ArticleResp": {
             "type": "object",
             "properties": {
-                "article_set_id": {
-                    "description": "集合ID",
-                    "type": "string"
-                },
                 "content": {
                     "description": "内容",
                     "type": "string"
@@ -5452,12 +5459,12 @@
                     "description": "封面图",
                     "type": "string"
                 },
+                "created_by": {
+                    "type": "integer"
+                },
                 "creator": {
                     "type": "object",
                     "$ref": "#/definitions/model.BasicAccountResp"
-                },
-                "edited_by_others": {
-                    "type": "boolean"
                 },
                 "files": {
                     "type": "array",
@@ -5465,21 +5472,11 @@
                         "$ref": "#/definitions/model.ArticleFileResp"
                     }
                 },
-                "histories": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.ArticleHistoryResp"
-                    }
-                },
                 "id": {
                     "type": "string"
                 },
                 "introduction": {
                     "description": "简介",
-                    "type": "string"
-                },
-                "locale": {
-                    "description": "文章语言",
                     "type": "string"
                 },
                 "meta": {
@@ -5501,16 +5498,8 @@
                         "$ref": "#/definitions/model.ArticleRelationResp"
                     }
                 },
-                "seq": {
-                    "description": "版本顺序",
-                    "type": "integer"
-                },
                 "title": {
                     "description": "标题",
-                    "type": "string"
-                },
-                "version_name": {
-                    "description": "版本名称",
                     "type": "string"
                 },
                 "versions": {
@@ -5528,21 +5517,27 @@
                     "description": "文章ID",
                     "type": "string"
                 },
-                "article_set_id": {
-                    "description": "集合ID",
+                "content": {
+                    "description": "文章名",
                     "type": "string"
                 },
-                "article_title": {
-                    "description": "文章名",
+                "histories": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.ArticleHistoryResp"
+                    }
+                },
+                "id": {
+                    "description": "版本ID",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "版本名称",
                     "type": "string"
                 },
                 "seq": {
                     "description": "顺序",
                     "type": "integer"
-                },
-                "version_name": {
-                    "description": "版本名称",
-                    "type": "string"
                 }
             }
         },
@@ -6005,12 +6000,15 @@
         "model.RelatedTopicShort": {
             "type": "object",
             "properties": {
+                "meta": {
+                    "type": "object",
+                    "$ref": "#/definitions/model.TopicMeta"
+                },
                 "seq": {
                     "description": "顺序",
                     "type": "integer"
                 },
                 "topic_id": {
-                    "description": "话题ID",
                     "type": "string"
                 },
                 "topic_name": {

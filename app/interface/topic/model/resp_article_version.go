@@ -15,4 +15,6 @@ type ArticleVersionResp struct {
 
 	// 文章名
 	Content string `db:"content" json:"content"`
+
+	Histories []*ArticleHistoryResp `db:"-", json:"histories,omitempty"`
 }

@@ -78,16 +78,17 @@ type Service struct {
 		GetArticleFileByID(c context.Context, node sqalx.Node, id int64) (item *model.ArticleFile, err error)
 
 		AddArticleVersion(c context.Context, node sqalx.Node, item *model.ArticleVersion) (err error)
+		UpdateArticleVersion(c context.Context, node sqalx.Node, item *model.ArticleVersion) (err error)
 		DelArticleVersion(c context.Context, node sqalx.Node, id int64) (err error)
 		GetArticleVersion(c context.Context, node sqalx.Node, id int64) (item *model.ArticleVersion, err error)
 		GetArticleVersionByName(c context.Context, node sqalx.Node, articleID int64, versionName string) (item *model.ArticleVersionResp, err error)
 		GetArticleVersions(c context.Context, node sqalx.Node, articleID int64) (items []*model.ArticleVersionResp, err error)
+		GetArticleVersionsMaxSeq(c context.Context, node sqalx.Node, articleID int64) (seq int, err error)
 
 		AddArticleHistory(c context.Context, node sqalx.Node, item *model.ArticleHistory) (err error)
-		GetArticleHistories(c context.Context, node sqalx.Node, articleID int64) (items []*model.ArticleHistory, err error)
+		GetArticleHistories(c context.Context, node sqalx.Node, articleVersionID int64) (items []*model.ArticleHistory, err error)
 		GetArticleHistoryByID(c context.Context, node sqalx.Node, id int64) (item *model.ArticleHistory, err error)
-		GetArticleHistoryMaxSeq(c context.Context, node sqalx.Node, articleID int64) (seq int, err error)
-		GetOrderMemberArticleHistoriesCount(c context.Context, node sqalx.Node, articleID int64, aid int64) (count int, err error)
+		GetArticleHistoriesMaxSeq(c context.Context, node sqalx.Node, articleVersionID int64) (seq int, err error)
 
 		AddAccountArticleAttr(c context.Context, node sqalx.Node, item *model.AccountArticleAttr) (err error)
 		UpdateAccountArticleAttr(c context.Context, node sqalx.Node, item *model.AccountArticleAttr) (err error)

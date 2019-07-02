@@ -38,8 +38,8 @@ type ArgAddArticleRelation struct {
 	// 类目分类ID 如果根目录则传0
 	ParentID int64 `json:"parent_id,string" swaggertype:"string"`
 
-	// 所关联话题 ID
-	TopicID int64 `json:"topic_id,string" swaggertype:"string"`
+	// 所关联话题版本 ID
+	TopicVersionID int64 `json:"topic_version_id,string" swaggertype:"string"`
 	// 是否主话题
 	Primary bool `json:"primary"`
 }
@@ -49,6 +49,6 @@ func (p *ArgAddArticleRelation) Validate() error {
 		p,
 		validation.Field(&p.ArticleID, validation.Required),
 		validation.Field(&p.ParentID),
-		validation.Field(&p.TopicID, validation.Required),
+		validation.Field(&p.TopicVersionID, validation.Required),
 	)
 }

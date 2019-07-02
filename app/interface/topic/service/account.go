@@ -32,3 +32,17 @@ func (p *Service) getAccountByID(c context.Context, node sqalx.Node, aid int64) 
 	}
 	return
 }
+
+func (p *Service) getBasicAccountResp(c context.Context, node sqalx.Node, aid int64) (resp *model.BasicAccountResp, err error) {
+	acc, err := p.getAccountByID(c, node, aid)
+	if err != nil {
+		return
+	}
+	resp = &model.BasicAccountResp{
+		Avatar:    acc.Avatar,
+		UserName:  acc.UserName,
+		AccountID: acc.ID,
+	}
+
+	return
+}

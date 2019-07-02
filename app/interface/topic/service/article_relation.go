@@ -116,7 +116,7 @@ func (p *Service) bulkCreateArticleRelations(c context.Context, node sqalx.Node,
 			return
 		}
 
-		if err = p.checkEditPermission(c, tx, v.TopicVersionID); err != nil {
+		if err = p.checkEditPermission(c, tx, ver.TopicID); err != nil {
 			return
 		}
 
@@ -226,6 +226,31 @@ func (p *Service) SetPrimary(c context.Context, arg *model.ArgSetPrimaryArticleR
 		return ecode.ArticleNotExist
 	}
 
+	var orgPrimary *model.TopicCatalog
+	if orgPrimary, err = p.d.GetTopicCatalogByCondition(c, tx, map[string]interface{}{
+		"type":       model.TopicCatalogArticle,
+		"ref_id":     arg.ArticleID,
+		"is_primary": 1,
+	}); err != nil {
+		return
+	} else if orgPrimary == nil {
+		err = ecode.TopicCatalogNotExist
+		return
+	}
+
+	if err = p.checkEditPermission(c, tx, orgPrimary.TopicID); err != nil {
+		return
+	}
+
+	if orgPrimary.ID == arg.ID {
+		return
+	}
+
+	orgPrimary.IsPrimary = false
+	if err = p.d.UpdateTopicCatalog(c, tx, orgPrimary); err != nil {
+		return
+	}
+
 	var catalog *model.TopicCatalog
 	if catalog, err = p.d.GetTopicCatalogByID(c, tx, arg.ID); err != nil {
 		return
@@ -238,26 +263,6 @@ func (p *Service) SetPrimary(c context.Context, arg *model.ArgSetPrimaryArticleR
 		return
 	}
 
-	if catalog.IsPrimary == false {
-		var orgPrimary *model.TopicCatalog
-		if orgPrimary, err = p.d.GetTopicCatalogByCondition(c, tx, map[string]interface{}{
-			"type":       model.TopicCatalogArticle,
-			"ref_id":     arg.ArticleID,
-			"is_primary": 1,
-		}); err != nil {
-			return
-		} else if orgPrimary == nil {
-			err = ecode.TopicCatalogNotExist
-			return
-		}
-
-		orgPrimary.IsPrimary = false
-
-		if err = p.d.UpdateTopicCatalog(c, tx, orgPrimary); err != nil {
-			return
-		}
-	}
-
 	catalog.IsPrimary = true
 	if err = p.d.UpdateTopicCatalog(c, tx, catalog); err != nil {
 		return
@@ -267,6 +272,10 @@ func (p *Service) SetPrimary(c context.Context, arg *model.ArgSetPrimaryArticleR
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 		return
 	}
+
+	p.addCache(func() {
+		p.d.DelTopicCatalogCache(context.TODO(), catalog.TopicID)
+	})
 
 	return
 }
@@ -294,15 +303,20 @@ func (p *Service) AddArticleRelation(c context.Context, arg *model.ArgAddArticle
 		return ecode.ArticleNotExist
 	}
 
-	if err = p.checkEditPermission(c, tx, arg.TopicID); err != nil {
+	var primaryTopicID int64
+	if primaryTopicID, _, err = p.getPrimaryTopicInfo(c, tx, arg.ArticleID); err != nil {
+		return
+	}
+
+	if err = p.checkEditPermission(c, tx, primaryTopicID); err != nil {
 		return
 	}
 
 	var catalog *model.TopicCatalog
 	if catalog, err = p.d.GetTopicCatalogByCondition(c, tx, map[string]interface{}{
-		"topic_id": arg.TopicID,
-		"type":     model.TopicCatalogArticle,
-		"ref_id":   arg.ArticleID,
+		"topic_version_id": arg.TopicVersionID,
+		"type":             model.TopicCatalogArticle,
+		"ref_id":           arg.ArticleID,
 	}); err != nil {
 		return
 	} else if catalog != nil {
@@ -313,9 +327,9 @@ func (p *Service) AddArticleRelation(c context.Context, arg *model.ArgAddArticle
 	if arg.Primary {
 		var catalog *model.TopicCatalog
 		if catalog, err = p.d.GetTopicCatalogByCondition(c, tx, map[string]interface{}{
-			"topic_id": arg.TopicID,
-			"type":     model.TopicCatalogArticle,
-			"primary":  1,
+			"topic_version_id": arg.TopicVersionID,
+			"type":             model.TopicCatalogArticle,
+			"primary":          1,
 		}); err != nil {
 			return
 		}
@@ -326,22 +340,31 @@ func (p *Service) AddArticleRelation(c context.Context, arg *model.ArgAddArticle
 		}
 	}
 
+	var ver *model.TopicVersion
+	if ver, err = p.d.GetTopicVersion(c, tx, arg.TopicVersionID); err != nil {
+		return
+	} else if ver == nil {
+		err = ecode.TopicVersionNotExist
+		return
+	}
+
 	var maxSeq int
-	if maxSeq, err = p.d.GetTopicCatalogMaxChildrenSeq(c, tx, arg.TopicID, arg.ParentID); err != nil {
+	if maxSeq, err = p.d.GetTopicCatalogMaxChildrenSeq(c, tx, arg.TopicVersionID, arg.ParentID); err != nil {
 		return
 	}
 
 	item := &model.TopicCatalog{
-		ID:        gid.NewID(),
-		Name:      article.Title,
-		Seq:       maxSeq + 1,
-		Type:      model.TopicCatalogArticle,
-		ParentID:  arg.ParentID,
-		RefID:     &article.ID,
-		TopicID:   arg.TopicID,
-		IsPrimary: types.BitBool(arg.Primary),
-		CreatedAt: time.Now().Unix(),
-		UpdatedAt: time.Now().Unix(),
+		ID:             gid.NewID(),
+		Name:           article.Title,
+		Seq:            maxSeq + 1,
+		Type:           model.TopicCatalogArticle,
+		ParentID:       arg.ParentID,
+		RefID:          &article.ID,
+		TopicVersionID: arg.TopicVersionID,
+		TopicID:        ver.TopicID,
+		IsPrimary:      types.BitBool(arg.Primary),
+		CreatedAt:      time.Now().Unix(),
+		UpdatedAt:      time.Now().Unix(),
 	}
 
 	if err = p.d.AddTopicCatalog(c, tx, item); err != nil {
@@ -352,6 +375,10 @@ func (p *Service) AddArticleRelation(c context.Context, arg *model.ArgAddArticle
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 		return
 	}
+
+	p.addCache(func() {
+		p.d.DelTopicCatalogCache(context.TODO(), ver.TopicID)
+	})
 
 	return
 }
@@ -379,10 +406,14 @@ func (p *Service) DelArticleRelation(c context.Context, arg *model.ArgDelArticle
 		return ecode.ArticleNotExist
 	}
 
-	// TODO: 删除关联话题需要判断什么权限？
-	// if err = p.checkEditPermission(c, tx, arg.TopicID); err != nil {
-	// 	return
-	// }
+	var primaryTopicID int64
+	if primaryTopicID, _, err = p.getPrimaryTopicInfo(c, tx, arg.ArticleID); err != nil {
+		return
+	}
+
+	if err = p.checkEditPermission(c, tx, primaryTopicID); err != nil {
+		return
+	}
 
 	var catalog *model.TopicCatalog
 	if catalog, err = p.d.GetTopicCatalogByID(c, tx, arg.ID); err != nil {
@@ -405,6 +436,10 @@ func (p *Service) DelArticleRelation(c context.Context, arg *model.ArgDelArticle
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 		return
 	}
+
+	p.addCache(func() {
+		p.d.DelTopicCatalogCache(context.TODO(), catalog.TopicID)
+	})
 
 	return
 }

@@ -129,7 +129,7 @@ func (p *Service) SaveTopicVersions(c context.Context, arg *model.ArgSaveTopicVe
 		if ver, err = p.d.GetTopicVersion(c, tx, v.ID); err != nil {
 			return
 		} else if ver == nil {
-			return ecode.TopicVersionNotExit
+			return ecode.TopicVersionNotExist
 		}
 
 		if m, e := p.d.GetTopicVersionByName(c, tx, t.ID, v.Name); e != nil {
