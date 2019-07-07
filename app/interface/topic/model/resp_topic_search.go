@@ -22,8 +22,6 @@ type TopicSearchItem struct {
 	// 资源数量
 	ResourcesCount int `json:"resources_count"`
 
-	VersionName string `json:"version_name"`
-
 	HasCatalogTaxonomy bool `json:"has_catalog_taxonomy"`
 
 	// 版本列表
