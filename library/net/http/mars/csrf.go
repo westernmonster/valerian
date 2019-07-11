@@ -9,7 +9,8 @@ import (
 var (
 	_allowHosts = []string{
 		".flywiki.com",
-		".flywk.co",
+		".flywk.com",
+		"localhost:8000",
 	}
 	_allowPatterns = []string{
 		// match by wechat appid

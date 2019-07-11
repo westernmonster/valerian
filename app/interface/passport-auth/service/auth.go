@@ -5,6 +5,7 @@ import (
 	"time"
 	"valerian/app/interface/passport-auth/model"
 	"valerian/library/ecode"
+	"valerian/library/net/metadata"
 )
 
 func (p *Service) Auth(c context.Context, token string) (r *model.AuthReply, err error) {
@@ -76,5 +77,15 @@ func (p *Service) getAccessToken(c context.Context, token string) (t *model.Acce
 			p.d.SetAccessTokenCache(context.TODO(), t)
 		})
 	}
+	return
+}
+
+func (p *Service) Logout(c context.Context, arg *model.ArgLogout) (err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+	p.deleteToken(c, arg.ClientID, aid)
 	return
 }

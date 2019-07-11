@@ -101,3 +101,40 @@ func (p *Service) checkClient(ctx context.Context, clientID string) (err error) 
 	}
 	return
 }
+
+func (p *Service) deleteToken(ctx context.Context, clientID string, accountID int64) (err error) {
+	var accessTokens []string
+
+	tx, err := p.d.AuthDB().Beginx(ctx)
+	if err != nil {
+		log.For(ctx).Error(fmt.Sprintf("grantAccessToken Beginx err(%v) clientID(%s) accountID(%d)", err, clientID, accountID))
+		return
+	}
+
+	defer tx.Rollback()
+
+	if accessTokens, err = p.d.GetClientAccessTokens(ctx, tx, accountID, clientID); err != nil {
+		return
+	}
+
+	if _, err = p.d.DelExpiredAccessToken(ctx, tx, clientID, accountID); err != nil {
+		return
+	}
+
+	if _, err = p.d.DelExpiredRefreshToken(ctx, tx, clientID, accountID); err != nil {
+		return
+	}
+
+	if err = tx.Commit(); err != nil {
+		log.For(ctx).Error(fmt.Sprintf("grantAccessToken Commit err(%v) ", err))
+		return
+	}
+
+	p.addCache(func() {
+		for _, v := range accessTokens {
+			p.d.DelAccessTokenCache(context.TODO(), v)
+		}
+	})
+
+	return
+}

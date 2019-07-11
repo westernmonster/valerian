@@ -21,5 +21,6 @@ func route(e *mars.Engine) {
 	g := e.Group("/api/v1/oauth")
 	{
 		g.POST("/renew", renewToken)
+		g.POST("/logout", logout)
 	}
 }

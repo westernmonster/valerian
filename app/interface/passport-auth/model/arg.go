@@ -72,3 +72,15 @@ type ArgGrantTypeRefreshToken struct {
 	ClientSecret string `json:"client_secret"`
 	RefreshToken string `json:"refresh_token"`
 }
+
+type ArgLogout struct {
+	ClientID string `json:"client_id"`
+}
+
+func (p *ArgLogout) Validate() error {
+	return validation.ValidateStruct(
+		p,
+		validation.Field(&p.ClientID, validation.Required),
+	)
+
+}
