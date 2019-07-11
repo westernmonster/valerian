@@ -1171,7 +1171,7 @@
         },
         "/article/versions/save": {
             "post": {
-                "description": "保存文章版本（排序，重命名）",
+                "description": "保存文章版本（排序和重命名）",
                 "consumes": [
                     "application/json"
                 ],
@@ -1179,9 +1179,9 @@
                     "application/json"
                 ],
                 "tags": [
-                    "article"
+                    "topic"
                 ],
-                "summary": "保存文章版本（排序，重命名）",
+                "summary": "保存文章版本（排序和重命名）",
                 "parameters": [
                     {
                         "type": "string",
@@ -1224,8 +1224,8 @@
                     }
                 ],
                 "responses": {
-                    "20": {
-                        "description": "获取用户ID失败，一般是因为未登录造成"
+                    "200": {
+                        "description": "成功"
                     },
                     "400": {
                         "description": "验证请求失败"
@@ -2095,6 +2095,81 @@
                 }
             }
         },
+        "/editor/link_info": {
+            "post": {
+                "description": "获取链接信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "editor"
+                ],
+                "summary": "获取链接信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/model.ArgLinkInfo"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Token",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/model.LinkInfoResp"
+                        }
+                    },
+                    "400": {
+                        "description": "验证失败"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
         "/file/oss_token": {
             "post": {
                 "description": "获取阿里云OSS上传TOKEN\n阿里云文档：https://help.aliyun.com/document_detail/31926.html",
@@ -2800,7 +2875,7 @@
         },
         "/oauth/renew": {
             "post": {
-                "description": "获取新Access Token",
+                "description": "退出登录",
                 "consumes": [
                     "application/json"
                 ],
@@ -2810,7 +2885,7 @@
                 "tags": [
                     "auth"
                 ],
-                "summary": "获取新Access Token",
+                "summary": "退出登录",
                 "parameters": [
                     {
                         "enum": [
@@ -2834,25 +2909,9 @@
                         "name": "Locale",
                         "in": "header",
                         "required": true
-                    },
-                    {
-                        "description": "请求",
-                        "name": "req",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "object",
-                            "$ref": "#/definitions/model.ArgRenewToken"
-                        }
                     }
                 ],
                 "responses": {
-                    "116": {
-                        "description": "Client 不存在"
-                    },
-                    "17": {
-                        "description": "RefreshToken 不存在或已过期"
-                    },
                     "200": {
                         "description": "成功"
                     },
@@ -4957,6 +5016,15 @@
                 }
             }
         },
+        "model.ArgLinkInfo": {
+            "type": "object",
+            "properties": {
+                "link": {
+                    "description": "外部链接",
+                    "type": "string"
+                }
+            }
+        },
         "model.ArgMobile": {
             "type": "object",
             "properties": {
@@ -5767,6 +5835,17 @@
                 }
             }
         },
+        "model.LinkInfoResp": {
+            "type": "object",
+            "properties": {
+                "link": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
         "model.Locale": {
             "type": "object",
             "properties": {
@@ -6446,9 +6525,6 @@
                 "resources_count": {
                     "description": "资源数量",
                     "type": "integer"
-                },
-                "version_name": {
-                    "type": "string"
                 },
                 "versions": {
                     "description": "版本列表",

@@ -33,6 +33,7 @@ require (
 	github.com/leodido/go-urn v1.1.0 // indirect
 	github.com/lib/pq v1.0.0
 	github.com/mattn/go-sqlite3 v1.9.0
+	github.com/mkideal/pkg v0.0.0-20170503154153-3e188c9e7ecc
 	github.com/moul/http2curl v1.0.0 // indirect
 	github.com/nicksnyder/go-i18n/v2 v2.0.0-beta.6
 	github.com/opentracing-contrib/go-gin v0.0.0-20190301172248-2e18f8b9c7d4 // indirect
@@ -70,9 +71,13 @@ require (
 	go.uber.org/atomic v1.4.0 // indirect
 	go.uber.org/multierr v1.1.0 // indirect
 	go.uber.org/zap v1.10.0
+	golang.org/x/sync v0.0.0-20190412183630-56d357773e84
 	golang.org/x/text v0.3.0
 	google.golang.org/appengine v1.5.0 // indirect
+	gopkg.in/eapache/go-resiliency.v1 v1.2.0 // indirect
 	gopkg.in/go-playground/validator.v9 v9.28.0
+	gopkg.in/h2non/gentleman-retry.v2 v2.0.1
+	gopkg.in/h2non/gentleman.v2 v2.0.3
 	gopkg.in/ini.v1 v1.42.0 // indirect
 	gopkg.in/yaml.v2 v2.2.2
 )

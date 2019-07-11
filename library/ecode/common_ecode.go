@@ -100,4 +100,6 @@ var (
 	ArticleRelationAlreadyAdded    = add(60) // 已经添加了该话题关联
 	TopicVersionNotExist           = add(61) // 话题版本不存在
 	ArticleVersionNotExist         = add(62) // 文章版本不存在
+	GrabLinkFailed                 = add(63) // 获取链接信息失败
+	ParseHTMLFailed                = add(64) // 解析HTML内容失败
 )

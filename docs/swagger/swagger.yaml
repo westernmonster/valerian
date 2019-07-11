@@ -397,6 +397,12 @@ definitions:
         description: 邮件地址
         type: string
     type: object
+  model.ArgLinkInfo:
+    properties:
+      link:
+        description: 外部链接
+        type: string
+    type: object
   model.ArgMobile:
     properties:
       client_id:
@@ -1031,6 +1037,13 @@ definitions:
         description: '类型: article,comment,account,topic'
         type: string
     type: object
+  model.LinkInfoResp:
+    properties:
+      link:
+        type: string
+      title:
+        type: string
+    type: object
   model.Locale:
     properties:
       created_at:
@@ -1588,8 +1601,6 @@ definitions:
       resources_count:
         description: 资源数量
         type: integer
-      version_name:
-        type: string
       versions:
         description: 版本列表
         items:
@@ -2489,7 +2500,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: 保存文章版本（排序，重命名）
+      description: 保存文章版本（排序和重命名）
       parameters:
       - description: Bearer
         in: header
@@ -2522,17 +2533,17 @@ paths:
       produces:
       - application/json
       responses:
-        "20":
-          description: 获取用户ID失败，一般是因为未登录造成
+        "200":
+          description: 成功
         "400":
           description: 验证请求失败
         "401":
           description: 登录验证失败
         "500":
           description: 服务器端错误
-      summary: 保存文章版本（排序，重命名）
+      summary: 保存文章版本（排序和重命名）
       tags:
-      - article
+      - topic
   /draft/add:
     post:
       consumes:
@@ -3123,6 +3134,58 @@ paths:
       summary: 获取用户所有颜色列表
       tags:
       - draft
+  /editor/link_info:
+    post:
+      consumes:
+      - application/json
+      description: 获取链接信息
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/model.ArgLinkInfo'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Token
+          schema:
+            $ref: '#/definitions/model.LinkInfoResp'
+            type: object
+        "400":
+          description: 验证失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 获取链接信息
+      tags:
+      - editor
   /file/oss_token:
     post:
       consumes:
@@ -3613,7 +3676,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: 获取新Access Token
+      description: 退出登录
       parameters:
       - description: Source 来源，1:Web, 2:iOS; 3:Android
         enum:
@@ -3632,27 +3695,16 @@ paths:
         name: Locale
         required: true
         type: string
-      - description: 请求
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/model.ArgRenewToken'
-          type: object
       produces:
       - application/json
       responses:
-        "17":
-          description: RefreshToken 不存在或已过期
-        "116":
-          description: Client 不存在
         "200":
           description: 成功
         "400":
           description: 验证请求失败
         "500":
           description: 服务器端错误
-      summary: 获取新Access Token
+      summary: 退出登录
       tags:
       - auth
   /topic/add:

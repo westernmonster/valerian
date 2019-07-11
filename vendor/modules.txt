@@ -59,7 +59,9 @@ github.com/gobuffalo/syncx
 # github.com/gogo/protobuf v1.2.1
 github.com/gogo/protobuf/proto
 github.com/gogo/protobuf/types
+github.com/gogo/protobuf/gogoproto
 github.com/gogo/protobuf/sortkeys
+github.com/gogo/protobuf/protoc-gen-gogo/descriptor
 # github.com/golang/protobuf v1.3.1
 github.com/golang/protobuf/proto
 github.com/golang/protobuf/ptypes
@@ -97,6 +99,12 @@ github.com/mailru/easyjson/buffer
 github.com/mattn/go-sqlite3
 # github.com/matttproud/golang_protobuf_extensions v1.0.1
 github.com/matttproud/golang_protobuf_extensions/pbutil
+# github.com/mkideal/pkg v0.0.0-20170503154153-3e188c9e7ecc
+github.com/mkideal/pkg/config
+github.com/mkideal/pkg/encoding/jsonx
+github.com/mkideal/pkg/netutil/httputil
+github.com/mkideal/pkg/encoding
+github.com/mkideal/pkg/option
 # github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd
 github.com/modern-go/concurrent
 # github.com/modern-go/reflect2 v1.0.1
@@ -190,8 +198,11 @@ go.uber.org/zap/internal/color
 go.uber.org/zap/internal/exit
 # golang.org/x/net v0.0.0-20190322120337-addf6b3196f6
 golang.org/x/net/html
+golang.org/x/net/publicsuffix
 golang.org/x/net/html/atom
 golang.org/x/net/idna
+# golang.org/x/sync v0.0.0-20190412183630-56d357773e84
+golang.org/x/sync/errgroup
 # golang.org/x/sys v0.0.0-20190322080309-f49334f85ddc
 golang.org/x/sys/unix
 # golang.org/x/text v0.3.0
@@ -209,8 +220,26 @@ golang.org/x/tools/go/buildutil
 golang.org/x/tools/go/internal/cgo
 # google.golang.org/appengine v1.5.0
 google.golang.org/appengine/cloudsql
+# gopkg.in/eapache/go-resiliency.v1 v1.2.0
+gopkg.in/eapache/go-resiliency.v1/retrier
 # gopkg.in/go-playground/validator.v9 v9.28.0
 gopkg.in/go-playground/validator.v9
+# gopkg.in/h2non/gentleman-retry.v2 v2.0.1
+gopkg.in/h2non/gentleman-retry.v2
+# gopkg.in/h2non/gentleman.v2 v2.0.3
+gopkg.in/h2non/gentleman.v2
+gopkg.in/h2non/gentleman.v2/context
+gopkg.in/h2non/gentleman.v2/plugin
+gopkg.in/h2non/gentleman.v2/middleware
+gopkg.in/h2non/gentleman.v2/mux
+gopkg.in/h2non/gentleman.v2/plugins/body
+gopkg.in/h2non/gentleman.v2/plugins/bodytype
+gopkg.in/h2non/gentleman.v2/plugins/cookies
+gopkg.in/h2non/gentleman.v2/plugins/headers
+gopkg.in/h2non/gentleman.v2/plugins/multipart
+gopkg.in/h2non/gentleman.v2/plugins/query
+gopkg.in/h2non/gentleman.v2/plugins/url
+gopkg.in/h2non/gentleman.v2/utils
 # gopkg.in/ini.v1 v1.42.0
 gopkg.in/ini.v1
 # gopkg.in/yaml.v2 v2.2.2
