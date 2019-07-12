@@ -208,7 +208,7 @@ func (engine *Engine) SetMethodConfig(path string, mc *MethodConfig) {
 // DefaultServer returns an Engine instance with the Recovery, Logger and CSRF middleware already attached.
 func DefaultServer(conf *ServerConfig) *Engine {
 	engine := NewServer(conf)
-	engine.Use(Recovery(), Trace(tracing.GlobalTracer()), Logger(), CSRF(), Mobile())
+	engine.Use(Recovery(), Trace(tracing.GlobalTracer()), Logger(), CORS(), CSRF(), Mobile())
 	return engine
 }
 
@@ -217,7 +217,7 @@ func DefaultServer(conf *ServerConfig) *Engine {
 // Deprecated: please use DefaultServer.
 func Default() *Engine {
 	engine := New()
-	engine.Use(Recovery(), Trace(tracing.GlobalTracer()), Logger(), CSRF(), Mobile())
+	engine.Use(Recovery(), Trace(tracing.GlobalTracer()), Logger(), CORS(), CSRF(), Mobile())
 	return engine
 }
 
