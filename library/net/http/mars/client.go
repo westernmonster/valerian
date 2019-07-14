@@ -157,7 +157,6 @@ func (client *Client) SetConfig(c *ClientConfig) {
 }
 
 // NewRequest new http request with method, uri, ip, values and headers.
-// TODO(zhoujiahui): param realIP should be removed later.
 func (client *Client) NewRequest(method, uri, realIP string, params url.Values) (req *xhttp.Request, err error) {
 	enc, err := client.sign(params)
 	if err != nil {
