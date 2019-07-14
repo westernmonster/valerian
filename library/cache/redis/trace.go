@@ -3,7 +3,7 @@ package redis
 import (
 	"context"
 	"fmt"
-	"go-common/library/net/trace"
+	"valerian/library/net/trace"
 	"valerian/library/tracing"
 
 	"github.com/opentracing/opentracing-go"

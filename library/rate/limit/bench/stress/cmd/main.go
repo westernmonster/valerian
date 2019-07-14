@@ -3,11 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
-	"go-common/library/log"
-	"go-common/library/net/trace"
 	"os"
 	"os/signal"
 	"syscall"
+	"valerian/library/log"
+	"valerian/library/net/trace"
 	"valerian/library/rate/limit/bench/stress/conf"
 	"valerian/library/rate/limit/bench/stress/http"
 )
