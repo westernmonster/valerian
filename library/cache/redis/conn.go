@@ -17,7 +17,6 @@ package redis
 import (
 	"bufio"
 	"bytes"
-	"context"
 	"crypto/tls"
 	"fmt"
 	"io"
@@ -27,10 +26,25 @@ import (
 	"strconv"
 	"sync"
 	"time"
+	"valerian/library/container/pool"
 	"valerian/library/stat"
+	xtime "valerian/library/time"
 
 	"github.com/pkg/errors"
 )
+
+// Config client settings.
+type Config struct {
+	*pool.Config
+
+	Name         string // redis name, for trace
+	Proto        string
+	Addr         string
+	Auth         string
+	DialTimeout  xtime.Duration
+	ReadTimeout  xtime.Duration
+	WriteTimeout xtime.Duration
+}
 
 var stats = stat.Cache
 
@@ -202,16 +216,46 @@ func DialUseTLS(useTLS bool) DialOption {
 // address using the specified options.
 func Dial(network, address string, options ...DialOption) (Conn, error) {
 	do := dialOptions{
-		dial: net.Dial,
+		dialer: &net.Dialer{
+			KeepAlive: time.Minute * 5,
+		},
 	}
 	for _, option := range options {
 		option.f(&do)
 	}
+	if do.dial == nil {
+		do.dial = do.dialer.Dial
+	}
 
 	netConn, err := do.dial(network, address)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, err
 	}
+
+	if do.useTLS {
+		var tlsConfig *tls.Config
+		if do.tlsConfig == nil {
+			tlsConfig = &tls.Config{InsecureSkipVerify: do.skipVerify}
+		} else {
+			tlsConfig = cloneTLSConfig(do.tlsConfig)
+		}
+		if tlsConfig.ServerName == "" {
+			host, _, err := net.SplitHostPort(address)
+			if err != nil {
+				netConn.Close()
+				return nil, err
+			}
+			tlsConfig.ServerName = host
+		}
+
+		tlsConn := tls.Client(netConn, tlsConfig)
+		if err := tlsConn.Handshake(); err != nil {
+			netConn.Close()
+			return nil, err
+		}
+		netConn = tlsConn
+	}
+
 	c := &conn{
 		conn:         netConn,
 		bw:           bufio.NewWriter(netConn),
@@ -223,6 +267,13 @@ func Dial(network, address string, options ...DialOption) (Conn, error) {
 
 	if do.password != "" {
 		if _, err := c.Do("AUTH", do.password); err != nil {
+			netConn.Close()
+			return nil, errors.WithStack(err)
+		}
+	}
+
+	if do.clientName != "" {
+		if _, err := c.Do("CLIENT", "SETNAME", do.clientName); err != nil {
 			netConn.Close()
 			return nil, errors.WithStack(err)
 		}
@@ -287,6 +338,8 @@ func DialURL(rawurl string, options ...DialOption) (Conn, error) {
 	} else if u.Path != "" {
 		return nil, errors.Errorf("invalid database: %s", u.Path[1:])
 	}
+
+	options = append(options, DialUseTLS(u.Scheme == "rediss"))
 
 	return Dial("tcp", address, options...)
 }
@@ -371,42 +424,55 @@ func (c *conn) writeFloat64(n float64) error {
 	return errors.WithStack(c.writeBytes(strconv.AppendFloat(c.numScratch[:0], n, 'g', -1, 64)))
 }
 
-func (c *conn) writeCommand(cmd string, args []interface{}) (err error) {
-	if c.writeTimeout != 0 {
-		c.conn.SetWriteDeadline(time.Now().Add(c.writeTimeout))
-	}
+func (c *conn) writeCommand(cmd string, args []interface{}) error {
 	c.writeLen('*', 1+len(args))
-	err = c.writeString(cmd)
+	if err := c.writeString(cmd); err != nil {
+		return err
+	}
 	for _, arg := range args {
-		if err != nil {
-			break
-		}
-		switch arg := arg.(type) {
-		case string:
-			err = c.writeString(arg)
-		case []byte:
-			err = c.writeBytes(arg)
-		case int:
-			err = c.writeInt64(int64(arg))
-		case int64:
-			err = c.writeInt64(arg)
-		case float64:
-			err = c.writeFloat64(arg)
-		case bool:
-			if arg {
-				err = c.writeString("1")
-			} else {
-				err = c.writeString("0")
-			}
-		case nil:
-			err = c.writeString("")
-		default:
-			var buf bytes.Buffer
-			fmt.Fprint(&buf, arg)
-			err = errors.WithStack(c.writeBytes(buf.Bytes()))
+		if err := c.writeArg(arg, true); err != nil {
+			return errors.WithStack(err)
 		}
 	}
-	return err
+	return nil
+}
+
+func (c *conn) writeArg(arg interface{}, argumentTypeOK bool) (err error) {
+	switch arg := arg.(type) {
+	case string:
+		return c.writeString(arg)
+	case []byte:
+		return c.writeBytes(arg)
+	case int:
+		return c.writeInt64(int64(arg))
+	case int64:
+		return c.writeInt64(arg)
+	case float64:
+		return c.writeFloat64(arg)
+	case bool:
+		if arg {
+			return c.writeString("1")
+		} else {
+			return c.writeString("0")
+		}
+	case nil:
+		return c.writeString("")
+	case Argument:
+		if argumentTypeOK {
+			return c.writeArg(arg.RedisArg(), false)
+		}
+		// See comment in default clause below.
+		var buf bytes.Buffer
+		fmt.Fprint(&buf, arg)
+		return c.writeBytes(buf.Bytes())
+	default:
+		// This default clause is intended to handle builtin numeric types.
+		// The function should return an error for other types, but this is not
+		// done for compatibility with previous versions of the package.
+		var buf bytes.Buffer
+		fmt.Fprint(&buf, arg)
+		return c.writeBytes(buf.Bytes())
+	}
 }
 
 type protocolError string
@@ -416,9 +482,19 @@ func (pe protocolError) Error() string {
 }
 
 func (c *conn) readLine() ([]byte, error) {
+	// To avoid allocations, attempt to read the line using ReadSlice. This
+	// call typically succeeds. The known case where the call fails is when
+	// reading the output from the MONITOR command.
 	p, err := c.br.ReadSlice('\n')
 	if err == bufio.ErrBufferFull {
-		return nil, errors.WithStack(protocolError("long response line"))
+		// The line does not fit in the bufio.Reader's buffer. Fall back to
+		// allocating a buffer for the line.
+		buf := append([]byte{}, p...)
+		for err == bufio.ErrBufferFull {
+			p, err = c.br.ReadSlice('\n')
+			buf = append(buf, p...)
+		}
+		p = buf
 	}
 	if err != nil {
 		return nil, err
@@ -548,6 +624,9 @@ func (c *conn) Send(cmd string, args ...interface{}) (err error) {
 	c.mu.Lock()
 	c.pending++
 	c.mu.Unlock()
+	if c.writeTimeout != 0 {
+		c.conn.SetWriteDeadline(time.Now().Add(c.writeTimeout))
+	}
 	if err = c.writeCommand(cmd, args); err != nil {
 		c.fatal(err)
 	}
@@ -565,9 +644,16 @@ func (c *conn) Flush() (err error) {
 }
 
 func (c *conn) Receive() (reply interface{}, err error) {
-	if c.readTimeout != 0 {
-		c.conn.SetReadDeadline(time.Now().Add(c.readTimeout))
+	return c.ReceiveWithTimeout(c.readTimeout)
+}
+
+func (c *conn) ReceiveWithTimeout(timeout time.Duration) (reply interface{}, err error) {
+	var deadline time.Time
+	if timeout != 0 {
+		deadline = time.Now().Add(timeout)
 	}
+	c.conn.SetReadDeadline(deadline)
+
 	if reply, err = c.readReply(); err != nil {
 		return nil, c.fatal(err)
 	}
@@ -580,7 +666,7 @@ func (c *conn) Receive() (reply interface{}, err error) {
 	// case where Receive is called before Send.
 	c.mu.Lock()
 	if c.pending > 0 {
-		c.pending--
+		c.pending -= 1
 	}
 	c.mu.Unlock()
 	if err, ok := reply.(Error); ok {
@@ -590,43 +676,52 @@ func (c *conn) Receive() (reply interface{}, err error) {
 }
 
 func (c *conn) Do(cmd string, args ...interface{}) (interface{}, error) {
+	return c.DoWithTimeout(c.readTimeout, cmd, args...)
+}
+
+func (c *conn) DoWithTimeout(readTimeout time.Duration, cmd string, args ...interface{}) (interface{}, error) {
 	c.mu.Lock()
 	pending := c.pending
 	c.pending = 0
 	c.mu.Unlock()
+
 	if cmd == "" && pending == 0 {
 		return nil, nil
 	}
-	var err error
-	defer c.stat(cmd, &err)()
+
+	if c.writeTimeout != 0 {
+		c.conn.SetWriteDeadline(time.Now().Add(c.writeTimeout))
+	}
+
 	if cmd != "" {
-		err = c.writeCommand(cmd, args)
+		if err := c.writeCommand(cmd, args); err != nil {
+			return nil, c.fatal(err)
+		}
 	}
-	if err == nil {
-		err = errors.WithStack(c.bw.Flush())
-	}
-	if err != nil {
+
+	if err := c.bw.Flush(); err != nil {
 		return nil, c.fatal(err)
 	}
-	if c.readTimeout != 0 {
-		c.conn.SetReadDeadline(time.Now().Add(c.readTimeout))
+
+	var deadline time.Time
+	if readTimeout != 0 {
+		deadline = time.Now().Add(readTimeout)
 	}
+	c.conn.SetReadDeadline(deadline)
+
 	if cmd == "" {
 		reply := make([]interface{}, pending)
 		for i := range reply {
-			var r interface{}
-			r, err = c.readReply()
-			if err != nil {
-				break
+			r, e := c.readReply()
+			if e != nil {
+				return nil, c.fatal(e)
 			}
 			reply[i] = r
-		}
-		if err != nil {
-			return nil, c.fatal(err)
 		}
 		return reply, nil
 	}
 
+	var err error
 	var reply interface{}
 	for i := 0; i <= pending; i++ {
 		var e error
@@ -639,6 +734,3 @@ func (c *conn) Do(cmd string, args ...interface{}) (interface{}, error) {
 	}
 	return reply, err
 }
-
-// WithContext FIXME: implement WithContext
-func (c *conn) WithContext(ctx context.Context) Conn { return c }

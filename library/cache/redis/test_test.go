@@ -30,10 +30,16 @@ import (
 	"time"
 )
 
+var nowFunc = time.Now // for testing
+func SetNowFunc(f func() time.Time) {
+	nowFunc = f
+}
+
 var (
 	ErrNegativeInt = errNegativeInt
 
 	serverPath     = flag.String("redis-server", "redis-server", "Path to redis server binary")
+	serverAddress  = flag.String("redis-address", "127.0.0.1", "The address of the server")
 	serverBasePort = flag.Int("redis-port", 16379, "Beginning of port range for test servers")
 	serverLogName  = flag.String("redis-log", "", "Write Redis server logs to `filename`")
 	serverLog      = ioutil.Discard
@@ -92,7 +98,8 @@ func (s *Server) watch(r io.Reader, ready chan error) {
 		text = scn.Text()
 		fmt.Fprintf(serverLog, "%s\n", text)
 		if !listening {
-			if strings.Contains(text, "The server is now ready to accept connections on port") {
+			if strings.Contains(text, " * Ready to accept connections") ||
+				strings.Contains(text, " * The server is now ready to accept connections on port") {
 				listening = true
 				ready <- nil
 			}
@@ -121,28 +128,32 @@ func stopDefaultServer() {
 	}
 }
 
-// startDefaultServer starts the default server if not already running.
-func startDefaultServer() error {
+// DefaultServerAddr starts the test server if not already started and returns
+// the address of that server.
+func DefaultServerAddr() (string, error) {
 	defaultServerMu.Lock()
 	defer defaultServerMu.Unlock()
+	addr := fmt.Sprintf("%v:%d", *serverAddress, *serverBasePort)
 	if defaultServer != nil || defaultServerErr != nil {
-		return defaultServerErr
+		return addr, defaultServerErr
 	}
 	defaultServer, defaultServerErr = NewServer(
 		"default",
 		"--port", strconv.Itoa(*serverBasePort),
+		"--bind", *serverAddress,
 		"--save", "",
 		"--appendonly", "no")
-	return defaultServerErr
+	return addr, defaultServerErr
 }
 
 // DialDefaultServer starts the test server if not already started and dials a
 // connection to the server.
-func DialDefaultServer() (Conn, error) {
-	// if err := startDefaultServer(); err != nil {
-	// 	return nil, err
-	// }
-	c, err := Dial("tcp", fmt.Sprintf(":%d", *serverBasePort), DialReadTimeout(1*time.Second), DialWriteTimeout(1*time.Second))
+func DialDefaultServer(options ...DialOption) (Conn, error) {
+	addr, err := DefaultServerAddr()
+	if err != nil {
+		return nil, err
+	}
+	c, err := Dial("tcp", addr, append([]DialOption{DialReadTimeout(1 * time.Second), DialWriteTimeout(1 * time.Second)}, options...)...)
 	if err != nil {
 		return nil, err
 	}
