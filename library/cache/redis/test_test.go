@@ -139,9 +139,9 @@ func startDefaultServer() error {
 // DialDefaultServer starts the test server if not already started and dials a
 // connection to the server.
 func DialDefaultServer() (Conn, error) {
-	if err := startDefaultServer(); err != nil {
-		return nil, err
-	}
+	// if err := startDefaultServer(); err != nil {
+	// 	return nil, err
+	// }
 	c, err := Dial("tcp", fmt.Sprintf(":%d", *serverBasePort), DialReadTimeout(1*time.Second), DialWriteTimeout(1*time.Second))
 	if err != nil {
 		return nil, err

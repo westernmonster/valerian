@@ -56,13 +56,13 @@ func NewPool(c *Config, options ...DialOption) (p *Pool) {
 	auop := DialPassword(c.Auth)
 	options = append(options, auop)
 	// new pool
-	// p1.New = func(ctx context.Context) (io.Closer, error) {
-	// 	conn, err := Dial(c.Proto, c.Addr, options...)
-	// 	if err != nil {
-	// 		return nil, err
-	// 	}
-	// 	// return &traceConn{Conn: conn, connTags: []trace.Tag{trace.TagString(trace.TagPeerAddress, c.Addr)}}, nil
-	// }
+	p1.New = func(ctx context.Context) (io.Closer, error) {
+		conn, err := Dial(c.Proto, c.Addr, options...)
+		if err != nil {
+			return nil, err
+		}
+		return &traceConn{Conn: conn, Addr: c.Addr}, nil
+	}
 	p = &Pool{Slice: p1, c: c}
 	return
 }

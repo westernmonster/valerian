@@ -9,7 +9,6 @@ import (
 	"time"
 	"valerian/library/container/pool"
 
-	"github.com/mkideal/pkg/config"
 	"github.com/pkg/errors"
 )
 

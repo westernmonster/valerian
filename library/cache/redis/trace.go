@@ -3,11 +3,11 @@ package redis
 import (
 	"context"
 	"fmt"
-	"valerian/library/net/trace"
 	"valerian/library/tracing"
 
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
+	"github.com/opentracing/opentracing-go/log"
 )
 
 const (
@@ -15,12 +15,6 @@ const (
 	_tracePeerService   = "redis"
 	_traceSpanKind      = "client"
 )
-
-// var _internalTags = []trace.Tag{
-// 	trace.TagString(trace.TagSpanKind, _traceSpanKind),
-// 	trace.TagString(trace.TagComponent, _traceComponentName),
-// 	trace.TagString(trace.TagPeerService, _tracePeerService),
-// }
 
 type traceConn struct {
 	// tr for pipeline, if tr != nil meaning on pipeline
@@ -62,70 +56,75 @@ func (t *traceConn) Do(commandName string, args ...interface{}) (reply interface
 
 func (t *traceConn) Send(commandName string, args ...interface{}) error {
 	t.pending++
-	root, ok := trace.FromContext(t.ctx)
-	if !ok {
+	root := opentracing.SpanFromContext(t.ctx)
+	if root == nil {
 		return t.Conn.Send(commandName, args...)
 	}
+
 	if t.span == nil {
-		t.span = root.Fork("", "Redis:Pipeline")
-		t.span.SetTag(_internalTags...)
-		t.span.SetTag(t.connTags...)
+		parentCtx := root.Context()
+		t.span = tracing.StartSpan("Redis:Pipeline", opentracing.ChildOf(parentCtx))
+		ext.Component.Set(t.span, _traceComponentName)
+		ext.SpanKind.Set(t.span, _traceSpanKind)
+		ext.PeerService.Set(t.span, _tracePeerService)
+		ext.PeerAddress.Set(t.span, t.Addr)
 	}
 
 	statement := commandName
 	if len(args) > 0 {
 		statement += fmt.Sprintf(" %v", args[0])
 	}
-	t.tr.SetLog(
-		trace.Log(trace.LogEvent, "Send"),
-		trace.Log("db.statement", statement),
+	t.span.LogFields(
+		log.String("event", "Send"),
+		log.String("db.statement", statement),
 	)
 	err := t.Conn.Send(commandName, args...)
 	if err != nil {
-		t.tr.SetTag(trace.TagBool(trace.TagError, true))
-		t.tr.SetLog(
-			trace.Log(trace.LogEvent, "Send Fail"),
-			trace.Log(trace.LogMessage, err.Error()),
+		t.span.SetTag("error", true)
+		t.span.LogFields(
+			log.String("event", "Send Fail"),
+			log.String("message", err.Error()),
 		)
 	}
 	return err
 }
 
 func (t *traceConn) Flush() error {
-	if t.tr == nil {
+	if t.span == nil {
 		return t.Conn.Flush()
 	}
-	t.tr.SetLog(trace.Log(trace.LogEvent, "Flush"))
+	t.span.LogFields(log.String("event", "Flush"))
 	err := t.Conn.Flush()
 	if err != nil {
-		t.tr.SetTag(trace.TagBool(trace.TagError, true))
-		t.tr.SetLog(
-			trace.Log(trace.LogEvent, "Flush Fail"),
-			trace.Log(trace.LogMessage, err.Error()),
+		t.span.SetTag("error", true)
+		t.span.LogFields(
+			log.String("event", "Flush Fail"),
+			log.String("message", err.Error()),
 		)
 	}
 	return err
 }
 
 func (t *traceConn) Receive() (reply interface{}, err error) {
-	if t.tr == nil {
+	if t.span == nil {
 		return t.Conn.Receive()
 	}
-	t.tr.SetLog(trace.Log(trace.LogEvent, "Receive"))
+
+	t.span.LogFields(log.String("event", "Receive"))
 	reply, err = t.Conn.Receive()
 	if err != nil {
-		t.tr.SetTag(trace.TagBool(trace.TagError, true))
-		t.tr.SetLog(
-			trace.Log(trace.LogEvent, "Receive Fail"),
-			trace.Log(trace.LogMessage, err.Error()),
+		t.span.SetTag("error", true)
+		t.span.LogFields(
+			log.String("event", "Receive Fail"),
+			log.String("message", err.Error()),
 		)
 	}
 	if t.pending > 0 {
 		t.pending--
 	}
 	if t.pending == 0 {
-		t.tr.Finish(nil)
-		t.tr = nil
+		t.span.Finish()
+		t.span = nil
 	}
 	return reply, err
 }

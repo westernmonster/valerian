@@ -18,6 +18,7 @@ import (
 	"bufio"
 	"bytes"
 	"context"
+	"crypto/tls"
 	"fmt"
 	"io"
 	"net"
@@ -91,9 +92,14 @@ type DialOption struct {
 type dialOptions struct {
 	readTimeout  time.Duration
 	writeTimeout time.Duration
+	dialer       *net.Dialer
 	dial         func(network, addr string) (net.Conn, error)
 	db           int
 	password     string
+	clientName   string
+	useTLS       bool
+	skipVerify   bool
+	tlsConfig    *tls.Config
 	stat         func(string, *error) func()
 }
 
@@ -126,6 +132,16 @@ func DialConnectTimeout(d time.Duration) DialOption {
 	}}
 }
 
+// DialKeepAlive specifies the keep-alive period for TCP connections to the Redis server
+// when no DialNetDial option is specified.
+// If zero, keep-alives are not enabled. If no DialKeepAlive option is specified then
+// the default of 5 minutes is used to ensure that half-closed TCP sessions are detected.
+func DialKeepAlive(d time.Duration) DialOption {
+	return DialOption{func(do *dialOptions) {
+		do.dialer.KeepAlive = d
+	}}
+}
+
 // DialNetDial specifies a custom dial function for creating TCP
 // connections. If this option is left out, then net.Dial is
 // used. DialNetDial overrides DialConnectTimeout.
@@ -147,6 +163,38 @@ func DialDatabase(db int) DialOption {
 func DialPassword(password string) DialOption {
 	return DialOption{func(do *dialOptions) {
 		do.password = password
+	}}
+}
+
+// DialClientName specifies a client name to be used
+// by the Redis server connection.
+func DialClientName(name string) DialOption {
+	return DialOption{func(do *dialOptions) {
+		do.clientName = name
+	}}
+}
+
+// DialTLSConfig specifies the config to use when a TLS connection is dialed.
+// Has no effect when not dialing a TLS connection.
+func DialTLSConfig(c *tls.Config) DialOption {
+	return DialOption{func(do *dialOptions) {
+		do.tlsConfig = c
+	}}
+}
+
+// DialTLSSkipVerify disables server name verification when connecting over
+// TLS. Has no effect when not dialing a TLS connection.
+func DialTLSSkipVerify(skip bool) DialOption {
+	return DialOption{func(do *dialOptions) {
+		do.skipVerify = skip
+	}}
+}
+
+// DialUseTLS specifies whether TLS should be used when connecting to the
+// server. This option is ignore by DialURL.
+func DialUseTLS(useTLS bool) DialOption {
+	return DialOption{func(do *dialOptions) {
+		do.useTLS = useTLS
 	}}
 }
 
