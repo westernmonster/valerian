@@ -16,9 +16,8 @@ package redis
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
-
-	pkgerr "github.com/pkg/errors"
 )
 
 // ErrNil indicates that a reply value is nil.
@@ -41,18 +40,18 @@ func Int(reply interface{}, err error) (int, error) {
 	case int64:
 		x := int(reply)
 		if int64(x) != reply {
-			return 0, pkgerr.WithStack(strconv.ErrRange)
+			return 0, strconv.ErrRange
 		}
 		return x, nil
 	case []byte:
 		n, err := strconv.ParseInt(string(reply), 10, 0)
-		return int(n), pkgerr.WithStack(err)
+		return int(n), err
 	case nil:
 		return 0, ErrNil
 	case Error:
 		return 0, reply
 	}
-	return 0, pkgerr.Errorf("redigo: unexpected type for Int, got type %T", reply)
+	return 0, fmt.Errorf("redigo: unexpected type for Int, got type %T", reply)
 }
 
 // Int64 is a helper that converts a command reply to 64 bit integer. If err is
@@ -73,13 +72,13 @@ func Int64(reply interface{}, err error) (int64, error) {
 		return reply, nil
 	case []byte:
 		n, err := strconv.ParseInt(string(reply), 10, 64)
-		return n, pkgerr.WithStack(err)
+		return n, err
 	case nil:
 		return 0, ErrNil
 	case Error:
 		return 0, reply
 	}
-	return 0, pkgerr.Errorf("redigo: unexpected type for Int64, got type %T", reply)
+	return 0, fmt.Errorf("redigo: unexpected type for Int64, got type %T", reply)
 }
 
 var errNegativeInt = errors.New("redigo: unexpected value for Uint64")
@@ -100,7 +99,7 @@ func Uint64(reply interface{}, err error) (uint64, error) {
 	switch reply := reply.(type) {
 	case int64:
 		if reply < 0 {
-			return 0, pkgerr.WithStack(errNegativeInt)
+			return 0, errNegativeInt
 		}
 		return uint64(reply), nil
 	case []byte:
@@ -111,7 +110,7 @@ func Uint64(reply interface{}, err error) (uint64, error) {
 	case Error:
 		return 0, reply
 	}
-	return 0, pkgerr.Errorf("redigo: unexpected type for Uint64, got type %T", reply)
+	return 0, fmt.Errorf("redigo: unexpected type for Uint64, got type %T", reply)
 }
 
 // Float64 is a helper that converts a command reply to 64 bit float. If err is
@@ -129,13 +128,13 @@ func Float64(reply interface{}, err error) (float64, error) {
 	switch reply := reply.(type) {
 	case []byte:
 		n, err := strconv.ParseFloat(string(reply), 64)
-		return n, pkgerr.WithStack(err)
+		return n, err
 	case nil:
 		return 0, ErrNil
 	case Error:
 		return 0, reply
 	}
-	return 0, pkgerr.Errorf("redigo: unexpected type for Float64, got type %T", reply)
+	return 0, fmt.Errorf("redigo: unexpected type for Float64, got type %T", reply)
 }
 
 // String is a helper that converts a command reply to a string. If err is not
@@ -161,7 +160,7 @@ func String(reply interface{}, err error) (string, error) {
 	case Error:
 		return "", reply
 	}
-	return "", pkgerr.Errorf("redigo: unexpected type for String, got type %T", reply)
+	return "", fmt.Errorf("redigo: unexpected type for String, got type %T", reply)
 }
 
 // Bytes is a helper that converts a command reply to a slice of bytes. If err
@@ -187,7 +186,7 @@ func Bytes(reply interface{}, err error) ([]byte, error) {
 	case Error:
 		return nil, reply
 	}
-	return nil, pkgerr.Errorf("redigo: unexpected type for Bytes, got type %T", reply)
+	return nil, fmt.Errorf("redigo: unexpected type for Bytes, got type %T", reply)
 }
 
 // Bool is a helper that converts a command reply to a boolean. If err is not
@@ -207,14 +206,13 @@ func Bool(reply interface{}, err error) (bool, error) {
 	case int64:
 		return reply != 0, nil
 	case []byte:
-		b, e := strconv.ParseBool(string(reply))
-		return b, pkgerr.WithStack(e)
+		return strconv.ParseBool(string(reply))
 	case nil:
 		return false, ErrNil
 	case Error:
 		return false, reply
 	}
-	return false, pkgerr.Errorf("redigo: unexpected type for Bool, got type %T", reply)
+	return false, fmt.Errorf("redigo: unexpected type for Bool, got type %T", reply)
 }
 
 // MultiBulk is a helper that converts an array command reply to a []interface{}.
@@ -242,7 +240,49 @@ func Values(reply interface{}, err error) ([]interface{}, error) {
 	case Error:
 		return nil, reply
 	}
-	return nil, pkgerr.Errorf("redigo: unexpected type for Values, got type %T", reply)
+	return nil, fmt.Errorf("redigo: unexpected type for Values, got type %T", reply)
+}
+
+func sliceHelper(reply interface{}, err error, name string, makeSlice func(int), assign func(int, interface{}) error) error {
+	if err != nil {
+		return err
+	}
+	switch reply := reply.(type) {
+	case []interface{}:
+		makeSlice(len(reply))
+		for i := range reply {
+			if reply[i] == nil {
+				continue
+			}
+			if err := assign(i, reply[i]); err != nil {
+				return err
+			}
+		}
+		return nil
+	case nil:
+		return ErrNil
+	case Error:
+		return reply
+	}
+	return fmt.Errorf("redigo: unexpected type for %s, got type %T", name, reply)
+}
+
+// Float64s is a helper that converts an array command reply to a []float64. If
+// err is not equal to nil, then Float64s returns nil, err. Nil array items are
+// converted to 0 in the output slice. Floats64 returns an error if an array
+// item is not a bulk string or nil.
+func Float64s(reply interface{}, err error) ([]float64, error) {
+	var result []float64
+	err = sliceHelper(reply, err, "Float64s", func(n int) { result = make([]float64, n) }, func(i int, v interface{}) error {
+		p, ok := v.([]byte)
+		if !ok {
+			return fmt.Errorf("redigo: unexpected element type for Floats64, got type %T", v)
+		}
+		f, err := strconv.ParseFloat(string(p), 64)
+		result[i] = f
+		return err
+	})
+	return result, err
 }
 
 // Strings is a helper that converts an array command reply to a []string. If
@@ -250,29 +290,20 @@ func Values(reply interface{}, err error) ([]interface{}, error) {
 // converted to "" in the output slice. Strings returns an error if an array
 // item is not a bulk string or nil.
 func Strings(reply interface{}, err error) ([]string, error) {
-	if err != nil {
-		return nil, err
-	}
-	switch reply := reply.(type) {
-	case []interface{}:
-		result := make([]string, len(reply))
-		for i := range reply {
-			if reply[i] == nil {
-				continue
-			}
-			p, ok := reply[i].([]byte)
-			if !ok {
-				return nil, pkgerr.Errorf("redigo: unexpected element type for Strings, got type %T", reply[i])
-			}
-			result[i] = string(p)
+	var result []string
+	err = sliceHelper(reply, err, "Strings", func(n int) { result = make([]string, n) }, func(i int, v interface{}) error {
+		switch v := v.(type) {
+		case string:
+			result[i] = v
+			return nil
+		case []byte:
+			result[i] = string(v)
+			return nil
+		default:
+			return fmt.Errorf("redigo: unexpected element type for Strings, got type %T", v)
 		}
-		return result, nil
-	case nil:
-		return nil, ErrNil
-	case Error:
-		return nil, reply
-	}
-	return nil, pkgerr.Errorf("redigo: unexpected type for Strings, got type %T", reply)
+	})
+	return result, err
 }
 
 // ByteSlices is a helper that converts an array command reply to a [][]byte.
@@ -280,57 +311,64 @@ func Strings(reply interface{}, err error) ([]string, error) {
 // items are stay nil. ByteSlices returns an error if an array item is not a
 // bulk string or nil.
 func ByteSlices(reply interface{}, err error) ([][]byte, error) {
-	if err != nil {
-		return nil, err
-	}
-	switch reply := reply.(type) {
-	case []interface{}:
-		result := make([][]byte, len(reply))
-		for i := range reply {
-			if reply[i] == nil {
-				continue
-			}
-			p, ok := reply[i].([]byte)
-			if !ok {
-				return nil, pkgerr.Errorf("redigo: unexpected element type for ByteSlices, got type %T", reply[i])
-			}
-			result[i] = p
+	var result [][]byte
+	err = sliceHelper(reply, err, "ByteSlices", func(n int) { result = make([][]byte, n) }, func(i int, v interface{}) error {
+		p, ok := v.([]byte)
+		if !ok {
+			return fmt.Errorf("redigo: unexpected element type for ByteSlices, got type %T", v)
 		}
-		return result, nil
-	case nil:
-		return nil, ErrNil
-	case Error:
-		return nil, reply
-	}
-	return nil, pkgerr.Errorf("redigo: unexpected type for ByteSlices, got type %T", reply)
+		result[i] = p
+		return nil
+	})
+	return result, err
 }
 
-// Ints is a helper that converts an array command reply to a []int. If
-// err is not equal to nil, then Ints returns nil, err.
-func Ints(reply interface{}, err error) ([]int, error) {
-	var ints []int
-	values, err := Values(reply, err)
-	if err != nil {
-		return ints, err
-	}
-	if err := ScanSlice(values, &ints); err != nil {
-		return ints, err
-	}
-	return ints, nil
-}
-
-// Int64s is a helper that converts an array command reply to a []int64. If
-// err is not equal to nil, then Int64s returns nil, err.
+// Int64s is a helper that converts an array command reply to a []int64.
+// If err is not equal to nil, then Int64s returns nil, err. Nil array
+// items are stay nil. Int64s returns an error if an array item is not a
+// bulk string or nil.
 func Int64s(reply interface{}, err error) ([]int64, error) {
-	var int64s []int64
-	values, err := Values(reply, err)
-	if err != nil {
-		return int64s, err
-	}
-	if err := ScanSlice(values, &int64s); err != nil {
-		return int64s, err
-	}
-	return int64s, nil
+	var result []int64
+	err = sliceHelper(reply, err, "Int64s", func(n int) { result = make([]int64, n) }, func(i int, v interface{}) error {
+		switch v := v.(type) {
+		case int64:
+			result[i] = v
+			return nil
+		case []byte:
+			n, err := strconv.ParseInt(string(v), 10, 64)
+			result[i] = n
+			return err
+		default:
+			return fmt.Errorf("redigo: unexpected element type for Int64s, got type %T", v)
+		}
+	})
+	return result, err
+}
+
+// Ints is a helper that converts an array command reply to a []in.
+// If err is not equal to nil, then Ints returns nil, err. Nil array
+// items are stay nil. Ints returns an error if an array item is not a
+// bulk string or nil.
+func Ints(reply interface{}, err error) ([]int, error) {
+	var result []int
+	err = sliceHelper(reply, err, "Ints", func(n int) { result = make([]int, n) }, func(i int, v interface{}) error {
+		switch v := v.(type) {
+		case int64:
+			n := int(v)
+			if int64(n) != v {
+				return strconv.ErrRange
+			}
+			result[i] = n
+			return nil
+		case []byte:
+			n, err := strconv.Atoi(string(v))
+			result[i] = n
+			return err
+		default:
+			return fmt.Errorf("redigo: unexpected element type for Ints, got type %T", v)
+		}
+	})
+	return result, err
 }
 
 // StringMap is a helper that converts an array of strings (alternating key, value)
@@ -342,14 +380,14 @@ func StringMap(result interface{}, err error) (map[string]string, error) {
 		return nil, err
 	}
 	if len(values)%2 != 0 {
-		return nil, pkgerr.New("redigo: StringMap expects even number of values result")
+		return nil, errors.New("redigo: StringMap expects even number of values result")
 	}
 	m := make(map[string]string, len(values)/2)
 	for i := 0; i < len(values); i += 2 {
 		key, okKey := values[i].([]byte)
 		value, okValue := values[i+1].([]byte)
 		if !okKey || !okValue {
-			return nil, pkgerr.New("redigo: ScanMap key not a bulk string value")
+			return nil, errors.New("redigo: StringMap key not a bulk string value")
 		}
 		m[string(key)] = string(value)
 	}
@@ -365,13 +403,13 @@ func IntMap(result interface{}, err error) (map[string]int, error) {
 		return nil, err
 	}
 	if len(values)%2 != 0 {
-		return nil, pkgerr.New("redigo: IntMap expects even number of values result")
+		return nil, errors.New("redigo: IntMap expects even number of values result")
 	}
 	m := make(map[string]int, len(values)/2)
 	for i := 0; i < len(values); i += 2 {
 		key, ok := values[i].([]byte)
 		if !ok {
-			return nil, pkgerr.New("redigo: ScanMap key not a bulk string value")
+			return nil, errors.New("redigo: IntMap key not a bulk string value")
 		}
 		value, err := Int(values[i+1], nil)
 		if err != nil {
@@ -391,13 +429,13 @@ func Int64Map(result interface{}, err error) (map[string]int64, error) {
 		return nil, err
 	}
 	if len(values)%2 != 0 {
-		return nil, pkgerr.New("redigo: Int64Map expects even number of values result")
+		return nil, errors.New("redigo: Int64Map expects even number of values result")
 	}
 	m := make(map[string]int64, len(values)/2)
 	for i := 0; i < len(values); i += 2 {
 		key, ok := values[i].([]byte)
 		if !ok {
-			return nil, pkgerr.New("redigo: ScanMap key not a bulk string value")
+			return nil, errors.New("redigo: Int64Map key not a bulk string value")
 		}
 		value, err := Int64(values[i+1], nil)
 		if err != nil {
@@ -406,4 +444,36 @@ func Int64Map(result interface{}, err error) (map[string]int64, error) {
 		m[string(key)] = value
 	}
 	return m, nil
+}
+
+// Positions is a helper that converts an array of positions (lat, long)
+// into a [][2]float64. The GEOPOS command returns replies in this format.
+func Positions(result interface{}, err error) ([]*[2]float64, error) {
+	values, err := Values(result, err)
+	if err != nil {
+		return nil, err
+	}
+	positions := make([]*[2]float64, len(values))
+	for i := range values {
+		if values[i] == nil {
+			continue
+		}
+		p, ok := values[i].([]interface{})
+		if !ok {
+			return nil, fmt.Errorf("redigo: unexpected element type for interface slice, got type %T", values[i])
+		}
+		if len(p) != 2 {
+			return nil, fmt.Errorf("redigo: unexpected number of values for a member position, got %d", len(p))
+		}
+		lat, err := Float64(p[0], nil)
+		if err != nil {
+			return nil, err
+		}
+		long, err := Float64(p[1], nil)
+		if err != nil {
+			return nil, err
+		}
+		positions[i] = &[2]float64{lat, long}
+	}
+	return positions, nil
 }

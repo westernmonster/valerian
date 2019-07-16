@@ -21,6 +21,10 @@ import (
 	"time"
 )
 
+var (
+	_ ConnWithTimeout = (*loggingConn)(nil)
+)
+
 // NewLoggingConn returns a logging wrapper around a connection.
 func NewLoggingConn(conn Conn, logger *log.Logger, prefix string) Conn {
 	if prefix != "" {

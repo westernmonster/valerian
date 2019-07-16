@@ -12,14 +12,14 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-package redis
+package redis_test
 
 import (
 	"fmt"
 	"reflect"
 	"testing"
 
-	"github.com/pkg/errors"
+	"github.com/gomodule/redigo/redis"
 )
 
 type valueError struct {
@@ -37,70 +37,95 @@ var replyTests = []struct {
 	expected valueError
 }{
 	{
-		"ints([v1, v2])",
-		ve(Ints([]interface{}{[]byte("4"), []byte("5")}, nil)),
+		"ints([[]byte, []byte])",
+		ve(redis.Ints([]interface{}{[]byte("4"), []byte("5")}, nil)),
 		ve([]int{4, 5}, nil),
 	},
 	{
-		"ints(nil)",
-		ve(Ints(nil, nil)),
-		ve([]int(nil), ErrNil),
+		"ints([nt64, int64])",
+		ve(redis.Ints([]interface{}{int64(4), int64(5)}, nil)),
+		ve([]int{4, 5}, nil),
 	},
 	{
-		"strings([v1, v2])",
-		ve(Strings([]interface{}{[]byte("v1"), []byte("v2")}, nil)),
+		"ints([[]byte, nil, []byte])",
+		ve(redis.Ints([]interface{}{[]byte("4"), nil, []byte("5")}, nil)),
+		ve([]int{4, 0, 5}, nil),
+	},
+	{
+		"ints(nil)",
+		ve(redis.Ints(nil, nil)),
+		ve([]int(nil), redis.ErrNil),
+	},
+	{
+		"int64s([[]byte, []byte])",
+		ve(redis.Int64s([]interface{}{[]byte("4"), []byte("5")}, nil)),
+		ve([]int64{4, 5}, nil),
+	},
+	{
+		"int64s([int64, int64])",
+		ve(redis.Int64s([]interface{}{int64(4), int64(5)}, nil)),
+		ve([]int64{4, 5}, nil),
+	},
+	{
+		"strings([[]byte, []bytev2])",
+		ve(redis.Strings([]interface{}{[]byte("v1"), []byte("v2")}, nil)),
 		ve([]string{"v1", "v2"}, nil),
 	},
 	{
-		"strings(nil)",
-		ve(Strings(nil, nil)),
-		ve([]string(nil), ErrNil),
+		"strings([string, string])",
+		ve(redis.Strings([]interface{}{"v1", "v2"}, nil)),
+		ve([]string{"v1", "v2"}, nil),
 	},
 	{
 		"byteslices([v1, v2])",
-		ve(ByteSlices([]interface{}{[]byte("v1"), []byte("v2")}, nil)),
+		ve(redis.ByteSlices([]interface{}{[]byte("v1"), []byte("v2")}, nil)),
 		ve([][]byte{[]byte("v1"), []byte("v2")}, nil),
 	},
 	{
-		"byteslices(nil)",
-		ve(ByteSlices(nil, nil)),
-		ve([][]byte(nil), ErrNil),
+		"float64s([v1, v2])",
+		ve(redis.Float64s([]interface{}{[]byte("1.234"), []byte("5.678")}, nil)),
+		ve([]float64{1.234, 5.678}, nil),
 	},
 	{
 		"values([v1, v2])",
-		ve(Values([]interface{}{[]byte("v1"), []byte("v2")}, nil)),
+		ve(redis.Values([]interface{}{[]byte("v1"), []byte("v2")}, nil)),
 		ve([]interface{}{[]byte("v1"), []byte("v2")}, nil),
 	},
 	{
 		"values(nil)",
-		ve(Values(nil, nil)),
-		ve([]interface{}(nil), ErrNil),
+		ve(redis.Values(nil, nil)),
+		ve([]interface{}(nil), redis.ErrNil),
 	},
 	{
 		"float64(1.0)",
-		ve(Float64([]byte("1.0"), nil)),
+		ve(redis.Float64([]byte("1.0"), nil)),
 		ve(float64(1.0), nil),
 	},
 	{
 		"float64(nil)",
-		ve(Float64(nil, nil)),
-		ve(float64(0.0), ErrNil),
+		ve(redis.Float64(nil, nil)),
+		ve(float64(0.0), redis.ErrNil),
 	},
 	{
 		"uint64(1)",
-		ve(Uint64(int64(1), nil)),
+		ve(redis.Uint64(int64(1), nil)),
 		ve(uint64(1), nil),
 	},
 	{
 		"uint64(-1)",
-		ve(Uint64(int64(-1), nil)),
-		ve(uint64(0), ErrNegativeInt),
+		ve(redis.Uint64(int64(-1), nil)),
+		ve(uint64(0), redis.ErrNegativeInt),
+	},
+	{
+		"positions([[1, 2], nil, [3, 4]])",
+		ve(redis.Positions([]interface{}{[]interface{}{[]byte("1"), []byte("2")}, nil, []interface{}{[]byte("3"), []byte("4")}}, nil)),
+		ve([]*[2]float64{{1.0, 2.0}, nil, {3.0, 4.0}}, nil),
 	},
 }
 
 func TestReply(t *testing.T) {
 	for _, rt := range replyTests {
-		if errors.Cause(rt.actual.err) != rt.expected.err {
+		if rt.actual.err != rt.expected.err {
 			t.Errorf("%s returned err %v, want %v", rt.name, rt.actual.err, rt.expected.err)
 			continue
 		}
@@ -111,8 +136,13 @@ func TestReply(t *testing.T) {
 }
 
 // dial wraps DialDefaultServer() with a more suitable function name for examples.
-func dial() (Conn, error) {
-	return DialDefaultServer()
+func dial() (redis.Conn, error) {
+	return redis.DialDefaultServer()
+}
+
+// serverAddr wraps DefaultServerAddr() with a more suitable function name for examples.
+func serverAddr() (string, error) {
+	return redis.DefaultServerAddr()
 }
 
 func ExampleBool() {
@@ -124,7 +154,7 @@ func ExampleBool() {
 	defer c.Close()
 
 	c.Do("SET", "foo", 1)
-	exists, _ := Bool(c.Do("EXISTS", "foo"))
+	exists, _ := redis.Bool(c.Do("EXISTS", "foo"))
 	fmt.Printf("%#v\n", exists)
 	// Output:
 	// true
@@ -139,9 +169,9 @@ func ExampleInt() {
 	defer c.Close()
 
 	c.Do("SET", "k1", 1)
-	n, _ := Int(c.Do("GET", "k1"))
+	n, _ := redis.Int(c.Do("GET", "k1"))
 	fmt.Printf("%#v\n", n)
-	n, _ = Int(c.Do("INCR", "k1"))
+	n, _ = redis.Int(c.Do("INCR", "k1"))
 	fmt.Printf("%#v\n", n)
 	// Output:
 	// 1
@@ -157,7 +187,7 @@ func ExampleInts() {
 	defer c.Close()
 
 	c.Do("SADD", "set_with_integers", 4, 5, 6)
-	ints, _ := Ints(c.Do("SMEMBERS", "set_with_integers"))
+	ints, _ := redis.Ints(c.Do("SMEMBERS", "set_with_integers"))
 	fmt.Printf("%#v\n", ints)
 	// Output:
 	// []int{4, 5, 6}
@@ -172,7 +202,7 @@ func ExampleString() {
 	defer c.Close()
 
 	c.Do("SET", "hello", "world")
-	s, err := String(c.Do("GET", "hello"))
+	s, err := redis.String(c.Do("GET", "hello"))
 	fmt.Printf("%#v\n", s)
 	// Output:
 	// "world"

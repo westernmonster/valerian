@@ -12,14 +12,38 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-package redis
+package redis_test
 
 import (
 	"fmt"
 	"math"
 	"reflect"
 	"testing"
+	"time"
+
+	"github.com/gomodule/redigo/redis"
 )
+
+type durationScan struct {
+	time.Duration `redis:"sd"`
+}
+
+func (t *durationScan) RedisScan(src interface{}) (err error) {
+	if t == nil {
+		return fmt.Errorf("nil pointer")
+	}
+	switch src := src.(type) {
+	case string:
+		t.Duration, err = time.ParseDuration(src)
+	case []byte:
+		t.Duration, err = time.ParseDuration(string(src))
+	case int64:
+		t.Duration = time.Duration(src)
+	default:
+		err = fmt.Errorf("cannot convert from %T to %T", src, t)
+	}
+	return err
+}
 
 var scanConversionTests = []struct {
 	src  interface{}
@@ -48,22 +72,48 @@ var scanConversionTests = []struct {
 	{"hello", "hello"},
 	{[]byte("hello"), "hello"},
 	{[]byte("world"), []byte("world")},
-	{[]interface{}{[]byte("foo")}, []interface{}{[]byte("foo")}},
-	{[]interface{}{[]byte("foo")}, []string{"foo"}},
-	{[]interface{}{[]byte("hello"), []byte("world")}, []string{"hello", "world"}},
-	{[]interface{}{[]byte("bar")}, [][]byte{[]byte("bar")}},
+	{nil, ""},
+	{nil, []byte(nil)},
+
+	{[]interface{}{[]byte("b1")}, []interface{}{[]byte("b1")}},
+	{[]interface{}{[]byte("b2")}, []string{"b2"}},
+	{[]interface{}{[]byte("b3"), []byte("b4")}, []string{"b3", "b4"}},
+	{[]interface{}{[]byte("b5")}, [][]byte{[]byte("b5")}},
 	{[]interface{}{[]byte("1")}, []int{1}},
 	{[]interface{}{[]byte("1"), []byte("2")}, []int{1, 2}},
 	{[]interface{}{[]byte("1"), []byte("2")}, []float64{1, 2}},
 	{[]interface{}{[]byte("1")}, []byte{1}},
 	{[]interface{}{[]byte("1")}, []bool{true}},
+
+	{[]interface{}{"s1"}, []interface{}{"s1"}},
+	{[]interface{}{"s2"}, [][]byte{[]byte("s2")}},
+	{[]interface{}{"s3", "s4"}, []string{"s3", "s4"}},
+	{[]interface{}{"s5"}, [][]byte{[]byte("s5")}},
+	{[]interface{}{"1"}, []int{1}},
+	{[]interface{}{"1", "2"}, []int{1, 2}},
+	{[]interface{}{"1", "2"}, []float64{1, 2}},
+	{[]interface{}{"1"}, []byte{1}},
+	{[]interface{}{"1"}, []bool{true}},
+
+	{[]interface{}{nil, "2"}, []interface{}{nil, "2"}},
+	{[]interface{}{nil, []byte("2")}, [][]byte{nil, []byte("2")}},
+
+	{[]interface{}{redis.Error("e1")}, []interface{}{redis.Error("e1")}},
+	{[]interface{}{redis.Error("e2")}, [][]byte{[]byte("e2")}},
+	{[]interface{}{redis.Error("e3")}, []string{"e3"}},
+
+	{"1m", durationScan{Duration: time.Minute}},
+	{[]byte("1m"), durationScan{Duration: time.Minute}},
+	{time.Minute.Nanoseconds(), durationScan{Duration: time.Minute}},
+	{[]interface{}{[]byte("1m")}, []durationScan{{Duration: time.Minute}}},
+	{[]interface{}{[]byte("1m")}, []*durationScan{{Duration: time.Minute}}},
 }
 
 func TestScanConversion(t *testing.T) {
 	for _, tt := range scanConversionTests {
 		values := []interface{}{tt.src}
 		dest := reflect.New(reflect.TypeOf(tt.dest))
-		values, err := Scan(values, dest.Interface())
+		values, err := redis.Scan(values, dest.Interface())
 		if err != nil {
 			t.Errorf("Scan(%v) returned error %v", tt, err)
 			continue
@@ -83,14 +133,16 @@ var scanConversionErrorTests = []struct {
 	{[]byte("-1"), byte(0)},
 	{int64(-1), byte(0)},
 	{[]byte("junk"), false},
-	{Error("blah"), false},
+	{redis.Error("blah"), false},
+	{redis.Error("blah"), durationScan{Duration: time.Minute}},
+	{"invalid", durationScan{Duration: time.Minute}},
 }
 
 func TestScanConversionError(t *testing.T) {
 	for _, tt := range scanConversionErrorTests {
 		values := []interface{}{tt.src}
 		dest := reflect.New(reflect.TypeOf(tt.dest))
-		values, err := Scan(values, dest.Interface())
+		values, err := redis.Scan(values, dest.Interface())
 		if err == nil {
 			t.Errorf("Scan(%v) did not return error", tt)
 		}
@@ -111,7 +163,7 @@ func ExampleScan() {
 	c.Send("LPUSH", "albums", "1")
 	c.Send("LPUSH", "albums", "2")
 	c.Send("LPUSH", "albums", "3")
-	values, err := Values(c.Do("SORT", "albums",
+	values, err := redis.Values(c.Do("SORT", "albums",
 		"BY", "album:*->rating",
 		"GET", "album:*->title",
 		"GET", "album:*->rating"))
@@ -123,7 +175,7 @@ func ExampleScan() {
 	for len(values) > 0 {
 		var title string
 		rating := -1 // initialize to illegal value to detect nil.
-		values, err = Scan(values, &title, &rating)
+		values, err = redis.Scan(values, &title, &rating)
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -156,6 +208,8 @@ type s1 struct {
 	Bt bool
 	Bf bool
 	s0
+	Sd  durationScan  `redis:"sd"`
+	Sdp *durationScan `redis:"sdp"`
 }
 
 var scanStructTests = []struct {
@@ -164,8 +218,35 @@ var scanStructTests = []struct {
 	value interface{}
 }{
 	{"basic",
-		[]string{"i", "-1234", "u", "5678", "s", "hello", "p", "world", "b", "t", "Bt", "1", "Bf", "0", "X", "123", "y", "456"},
-		&s1{I: -1234, U: 5678, S: "hello", P: []byte("world"), B: true, Bt: true, Bf: false, s0: s0{X: 123, Y: 456}},
+		[]string{
+			"i", "-1234",
+			"u", "5678",
+			"s", "hello",
+			"p", "world",
+			"b", "t",
+			"Bt", "1",
+			"Bf", "0",
+			"X", "123",
+			"y", "456",
+			"sd", "1m",
+			"sdp", "1m",
+		},
+		&s1{
+			I:   -1234,
+			U:   5678,
+			S:   "hello",
+			P:   []byte("world"),
+			B:   true,
+			Bt:  true,
+			Bf:  false,
+			s0:  s0{X: 123, Y: 456},
+			Sd:  durationScan{Duration: time.Minute},
+			Sdp: &durationScan{Duration: time.Minute},
+		},
+	},
+	{"absent values",
+		[]string{},
+		&s1{},
 	},
 }
 
@@ -179,7 +260,7 @@ func TestScanStruct(t *testing.T) {
 
 		value := reflect.New(reflect.ValueOf(tt.value).Type().Elem())
 
-		if err := ScanStruct(reply, value.Interface()); err != nil {
+		if err := redis.ScanStruct(reply, value.Interface()); err != nil {
 			t.Fatalf("ScanStruct(%s) returned error %v", tt.title, err)
 		}
 
@@ -192,7 +273,7 @@ func TestScanStruct(t *testing.T) {
 func TestBadScanStructArgs(t *testing.T) {
 	x := []interface{}{"A", "b"}
 	test := func(v interface{}) {
-		if err := ScanStruct(x, v); err == nil {
+		if err := redis.ScanStruct(x, v); err == nil {
 			t.Errorf("Expect error for ScanStruct(%T, %T)", x, v)
 		}
 	}
@@ -262,7 +343,7 @@ var scanSliceTests = []struct {
 		[]interface{}{[]byte("a1"), []byte("b1"), []byte("a2"), []byte("b2")},
 		nil,
 		true,
-		[]*struct{ A, B string }{{"a1", "b1"}, {"a2", "b2"}},
+		[]*struct{ A, B string }{{A: "a1", B: "b1"}, {A: "a2", B: "b2"}},
 	},
 	{
 		[]interface{}{[]byte("a1"), []byte("b1"), []byte("a2"), []byte("b2")},
@@ -284,7 +365,7 @@ func TestScanSlice(t *testing.T) {
 		typ := reflect.ValueOf(tt.dest).Type()
 		dest := reflect.New(typ)
 
-		err := ScanSlice(tt.src, dest.Interface(), tt.fieldNames...)
+		err := redis.ScanSlice(tt.src, dest.Interface(), tt.fieldNames...)
 		if tt.ok != (err == nil) {
 			t.Errorf("ScanSlice(%v, []%s, %v) returned error %v", tt.src, typ, tt.fieldNames, err)
 			continue
@@ -309,7 +390,7 @@ func ExampleScanSlice() {
 	c.Send("LPUSH", "albums", "1")
 	c.Send("LPUSH", "albums", "2")
 	c.Send("LPUSH", "albums", "3")
-	values, err := Values(c.Do("SORT", "albums",
+	values, err := redis.Values(c.Do("SORT", "albums",
 		"BY", "album:*->rating",
 		"GET", "album:*->title",
 		"GET", "album:*->rating"))
@@ -322,7 +403,7 @@ func ExampleScanSlice() {
 		Title  string
 		Rating int
 	}
-	if err := ScanSlice(values, &albums); err != nil {
+	if err := redis.ScanSlice(values, &albums); err != nil {
 		fmt.Println(err)
 		return
 	}
@@ -333,11 +414,11 @@ func ExampleScanSlice() {
 
 var argsTests = []struct {
 	title    string
-	actual   Args
-	expected Args
+	actual   redis.Args
+	expected redis.Args
 }{
 	{"struct ptr",
-		Args{}.AddFlat(&struct {
+		redis.Args{}.AddFlat(&struct {
 			I  int               `redis:"i"`
 			U  uint              `redis:"u"`
 			S  string            `redis:"s"`
@@ -348,29 +429,23 @@ var argsTests = []struct {
 		}{
 			-1234, 5678, "hello", []byte("world"), map[string]string{"hello": "world"}, true, false,
 		}),
-		Args{"i", int(-1234), "u", uint(5678), "s", "hello", "p", []byte("world"), "m", map[string]string{"hello": "world"}, "Bt", true, "Bf", false},
+		redis.Args{"i", int(-1234), "u", uint(5678), "s", "hello", "p", []byte("world"), "m", map[string]string{"hello": "world"}, "Bt", true, "Bf", false},
 	},
 	{"struct",
-		Args{}.AddFlat(struct{ I int }{123}),
-		Args{"I", 123},
+		redis.Args{}.AddFlat(struct{ I int }{123}),
+		redis.Args{"I", 123},
 	},
 	{"slice",
-		Args{}.Add(1).AddFlat([]string{"a", "b", "c"}).Add(2),
-		Args{1, "a", "b", "c", 2},
+		redis.Args{}.Add(1).AddFlat([]string{"a", "b", "c"}).Add(2),
+		redis.Args{1, "a", "b", "c", 2},
 	},
 	{"struct omitempty",
-		Args{}.AddFlat(&struct {
-			I  int               `redis:"i,omitempty"`
-			U  uint              `redis:"u,omitempty"`
-			S  string            `redis:"s,omitempty"`
-			P  []byte            `redis:"p,omitempty"`
-			M  map[string]string `redis:"m,omitempty"`
-			Bt bool              `redis:"Bt,omitempty"`
-			Bf bool              `redis:"Bf,omitempty"`
+		redis.Args{}.AddFlat(&struct {
+			Sdp *durationArg `redis:"Sdp,omitempty"`
 		}{
-			0, 0, "", []byte{}, map[string]string{}, true, false,
+			nil,
 		}),
-		Args{"Bt", true},
+		redis.Args{},
 	},
 }
 
@@ -400,7 +475,7 @@ func ExampleArgs() {
 	p1.Author = "Gary"
 	p1.Body = "Hello"
 
-	if _, err := c.Do("HMSET", Args{}.Add("id1").AddFlat(&p1)...); err != nil {
+	if _, err := c.Do("HMSET", redis.Args{}.Add("id1").AddFlat(&p1)...); err != nil {
 		fmt.Println(err)
 		return
 	}
@@ -411,20 +486,20 @@ func ExampleArgs() {
 		"body":   "Map",
 	}
 
-	if _, err := c.Do("HMSET", Args{}.Add("id2").AddFlat(m)...); err != nil {
+	if _, err := c.Do("HMSET", redis.Args{}.Add("id2").AddFlat(m)...); err != nil {
 		fmt.Println(err)
 		return
 	}
 
 	for _, id := range []string{"id1", "id2"} {
 
-		v, err := Values(c.Do("HGETALL", id))
+		v, err := redis.Values(c.Do("HGETALL", id))
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
 
-		if err := ScanStruct(v, &p2); err != nil {
+		if err := redis.ScanStruct(v, &p2); err != nil {
 			fmt.Println(err)
 			return
 		}

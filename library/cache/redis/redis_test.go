@@ -1,129 +1,71 @@
-package redis
+// Copyright 2017 Gary Burd
+//
+// Licensed under the Apache License, Version 2.0 (the "License"): you may
+// not use this file except in compliance with the License. You may obtain
+// a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+// License for the specific language governing permissions and limitations
+// under the License.
+
+package redis_test
 
 import (
+	"testing"
 	"time"
-	"valerian/library/container/pool"
-	xtime "valerian/library/time"
+
+	"github.com/gomodule/redigo/redis"
 )
 
-var p *Pool
-var config *Config
+type timeoutTestConn int
 
-func init() {
-	config = getConfig()
-	p = NewPool(config)
+func (tc timeoutTestConn) Do(string, ...interface{}) (interface{}, error) {
+	return time.Duration(-1), nil
+}
+func (tc timeoutTestConn) DoWithTimeout(timeout time.Duration, cmd string, args ...interface{}) (interface{}, error) {
+	return timeout, nil
 }
 
-func getConfig() (c *Config) {
-	c = &Config{
-		Name:         "test",
-		Proto:        "tcp",
-		Addr:         "127.0.0.1:6379",
-		DialTimeout:  xtime.Duration(time.Second),
-		ReadTimeout:  xtime.Duration(time.Second),
-		WriteTimeout: xtime.Duration(time.Second),
-	}
-	c.Config = &pool.Config{
-		Active:      20,
-		Idle:        2,
-		IdleTimeout: xtime.Duration(90 * time.Second),
-	}
-	return
+func (tc timeoutTestConn) Receive() (interface{}, error) {
+	return time.Duration(-1), nil
+}
+func (tc timeoutTestConn) ReceiveWithTimeout(timeout time.Duration) (interface{}, error) {
+	return timeout, nil
 }
 
-// func TestRedis(t *testing.T) {
-// 	testSet(t, p)
-// 	testSend(t, p)
-// 	testGet(t, p)
-// 	testErr(t, p)
-// 	if err := p.Close(); err != nil {
-// 		t.Errorf("redis: close error(%v)", err)
-// 	}
-// 	conn, err := NewConn(config)
-// 	if err != nil {
-// 		t.Errorf("redis: new conn error(%v)", err)
-// 	}
-// 	if err := conn.Close(); err != nil {
-// 		t.Errorf("redis: close error(%v)", err)
-// 	}
-// }
+func (tc timeoutTestConn) Send(string, ...interface{}) error { return nil }
+func (tc timeoutTestConn) Err() error                        { return nil }
+func (tc timeoutTestConn) Close() error                      { return nil }
+func (tc timeoutTestConn) Flush() error                      { return nil }
 
-// func testSet(t *testing.T, p *Pool) {
-// 	var (
-// 		key   = "test"
-// 		value = "test"
-// 		conn  = p.Get(context.TODO())
-// 	)
-// 	defer conn.Close()
-// 	if reply, err := conn.Do("set", key, value); err != nil {
-// 		t.Errorf("redis: conn.Do(SET, %s, %s) error(%v)", key, value, err)
-// 	} else {
-// 		t.Logf("redis: set status: %s", reply)
-// 	}
-// }
+func testTimeout(t *testing.T, c redis.Conn) {
+	r, err := c.Do("PING")
+	if r != time.Duration(-1) || err != nil {
+		t.Errorf("Do() = %v, %v, want %v, %v", r, err, time.Duration(-1), nil)
+	}
+	r, err = redis.DoWithTimeout(c, time.Minute, "PING")
+	if r != time.Minute || err != nil {
+		t.Errorf("DoWithTimeout() = %v, %v, want %v, %v", r, err, time.Minute, nil)
+	}
+	r, err = c.Receive()
+	if r != time.Duration(-1) || err != nil {
+		t.Errorf("Receive() = %v, %v, want %v, %v", r, err, time.Duration(-1), nil)
+	}
+	r, err = redis.ReceiveWithTimeout(c, time.Minute)
+	if r != time.Minute || err != nil {
+		t.Errorf("ReceiveWithTimeout() = %v, %v, want %v, %v", r, err, time.Minute, nil)
+	}
+}
 
-// func testSend(t *testing.T, p *Pool) {
-// 	var (
-// 		key    = "test"
-// 		value  = "test"
-// 		expire = 1000
-// 		conn   = p.Get(context.TODO())
-// 	)
-// 	defer conn.Close()
-// 	if err := conn.Send("SET", key, value); err != nil {
-// 		t.Errorf("redis: conn.Send(SET, %s, %s) error(%v)", key, value, err)
-// 	}
-// 	if err := conn.Send("EXPIRE", key, expire); err != nil {
-// 		t.Errorf("redis: conn.Send(EXPIRE key(%s) expire(%d)) error(%v)", key, expire, err)
-// 	}
-// 	if err := conn.Flush(); err != nil {
-// 		t.Errorf("redis: conn.Flush error(%v)", err)
-// 	}
-// 	for i := 0; i < 2; i++ {
-// 		if _, err := conn.Receive(); err != nil {
-// 			t.Errorf("redis: conn.Receive error(%v)", err)
-// 			return
-// 		}
-// 	}
-// 	t.Logf("redis: set value: %s", value)
-// }
+func TestConnTimeout(t *testing.T) {
+	testTimeout(t, timeoutTestConn(0))
+}
 
-// func testGet(t *testing.T, p *Pool) {
-// 	var (
-// 		key  = "test"
-// 		conn = p.Get(context.TODO())
-// 	)
-// 	defer conn.Close()
-// 	if reply, err := conn.Do("GET", key); err != nil {
-// 		t.Errorf("redis: conn.Do(GET, %s) error(%v)", key, err)
-// 	} else {
-// 		t.Logf("redis: get value: %s", reply)
-// 	}
-// }
-
-// func testErr(t *testing.T, p *Pool) {
-// 	conn := p.Get(context.TODO())
-// 	if err := conn.Close(); err != nil {
-// 		t.Errorf("memcache: close error(%v)", err)
-// 	}
-// 	if err := conn.Err(); err == nil {
-// 		t.Errorf("redis: err not nil")
-// 	} else {
-// 		t.Logf("redis: err: %v", err)
-// 	}
-// }
-
-// func BenchmarkMemcache(b *testing.B) {
-// 	b.ResetTimer()
-// 	b.RunParallel(func(pb *testing.PB) {
-// 		for pb.Next() {
-// 			conn := p.Get(context.TODO())
-// 			if err := conn.Close(); err != nil {
-// 				b.Errorf("memcache: close error(%v)", err)
-// 			}
-// 		}
-// 	})
-// 	if err := p.Close(); err != nil {
-// 		b.Errorf("memcache: close error(%v)", err)
-// 	}
-// }
+func TestPoolConnTimeout(t *testing.T) {
+	p := &redis.Pool{Dial: func() (redis.Conn, error) { return timeoutTestConn(0), nil }}
+	testTimeout(t, p.Get())
+}

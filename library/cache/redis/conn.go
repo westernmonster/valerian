@@ -26,31 +26,20 @@ import (
 	"strconv"
 	"sync"
 	"time"
-	"valerian/library/container/pool"
+
 	"valerian/library/stat"
-	xtime "valerian/library/time"
 
 	"github.com/pkg/errors"
 )
 
-// Config client settings.
-type Config struct {
-	*pool.Config
-
-	Name         string // redis name, for trace
-	Proto        string
-	Addr         string
-	Auth         string
-	DialTimeout  xtime.Duration
-	ReadTimeout  xtime.Duration
-	WriteTimeout xtime.Duration
-}
-
 var stats = stat.Cache
+
+var (
+	_ ConnWithTimeout = (*conn)(nil)
+)
 
 // conn is the low-level implementation of Conn
 type conn struct {
-
 	// Shared
 	mu      sync.Mutex
 	pending int
@@ -71,6 +60,7 @@ type conn struct {
 
 	// Scratch space for formatting integers and floats.
 	numScratch [40]byte
+
 	// stat func,default prom
 	stat func(string, *error) func()
 }
@@ -138,11 +128,11 @@ func DialWriteTimeout(d time.Duration) DialOption {
 	}}
 }
 
-// DialConnectTimeout specifies the timeout for connecting to the Redis server.
+// DialConnectTimeout specifies the timeout for connecting to the Redis server when
+// no DialNetDial option is specified.
 func DialConnectTimeout(d time.Duration) DialOption {
 	return DialOption{func(do *dialOptions) {
-		dialer := net.Dialer{Timeout: d}
-		do.dial = dialer.Dial
+		do.dialer.Timeout = d
 	}}
 }
 
@@ -157,8 +147,8 @@ func DialKeepAlive(d time.Duration) DialOption {
 }
 
 // DialNetDial specifies a custom dial function for creating TCP
-// connections. If this option is left out, then net.Dial is
-// used. DialNetDial overrides DialConnectTimeout.
+// connections, otherwise a net.Dialer customized via the other options is used.
+// DialNetDial overrides DialConnectTimeout and DialKeepAlive.
 func DialNetDial(dial func(network, addr string) (net.Conn, error)) DialOption {
 	return DialOption{func(do *dialOptions) {
 		do.dial = dial
@@ -262,36 +252,37 @@ func Dial(network, address string, options ...DialOption) (Conn, error) {
 		br:           bufio.NewReader(netConn),
 		readTimeout:  do.readTimeout,
 		writeTimeout: do.writeTimeout,
-		stat:         statfunc,
 	}
 
 	if do.password != "" {
 		if _, err := c.Do("AUTH", do.password); err != nil {
 			netConn.Close()
-			return nil, errors.WithStack(err)
+			return nil, err
 		}
 	}
 
 	if do.clientName != "" {
 		if _, err := c.Do("CLIENT", "SETNAME", do.clientName); err != nil {
 			netConn.Close()
-			return nil, errors.WithStack(err)
+			return nil, err
 		}
 	}
 
 	if do.db != 0 {
 		if _, err := c.Do("SELECT", do.db); err != nil {
 			netConn.Close()
-			return nil, errors.WithStack(err)
+			return nil, err
 		}
 	}
+
 	if do.stat != nil {
 		c.stat = do.stat
 	}
+
 	return c, nil
 }
 
-var pathDBRegexp = regexp.MustCompile(`/(\d+)\z`)
+var pathDBRegexp = regexp.MustCompile(`/(\d*)\z`)
 
 // DialURL connects to a Redis server at the given URL using the Redis
 // URI scheme. URLs should follow the draft IANA specification for the
@@ -299,10 +290,10 @@ var pathDBRegexp = regexp.MustCompile(`/(\d+)\z`)
 func DialURL(rawurl string, options ...DialOption) (Conn, error) {
 	u, err := url.Parse(rawurl)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, err
 	}
 
-	if u.Scheme != "redis" {
+	if u.Scheme != "redis" && u.Scheme != "rediss" {
 		return nil, fmt.Errorf("invalid redis URL scheme: %s", u.Scheme)
 	}
 
@@ -328,15 +319,18 @@ func DialURL(rawurl string, options ...DialOption) (Conn, error) {
 
 	match := pathDBRegexp.FindStringSubmatch(u.Path)
 	if len(match) == 2 {
-		db, err := strconv.Atoi(match[1])
-		if err != nil {
-			return nil, errors.Errorf("invalid database: %s", u.Path[1:])
+		db := 0
+		if len(match[1]) > 0 {
+			db, err = strconv.Atoi(match[1])
+			if err != nil {
+				return nil, fmt.Errorf("invalid database: %s", u.Path[1:])
+			}
 		}
 		if db != 0 {
 			options = append(options, DialDatabase(db))
 		}
 	} else if u.Path != "" {
-		return nil, errors.Errorf("invalid database: %s", u.Path[1:])
+		return nil, fmt.Errorf("invalid database: %s", u.Path[1:])
 	}
 
 	options = append(options, DialUseTLS(u.Scheme == "rediss"))
@@ -344,15 +338,15 @@ func DialURL(rawurl string, options ...DialOption) (Conn, error) {
 	return Dial("tcp", address, options...)
 }
 
-// NewConn new a redis conn.
-func NewConn(c *Config) (cn Conn, err error) {
-	cnop := DialConnectTimeout(time.Duration(c.DialTimeout))
-	rdop := DialReadTimeout(time.Duration(c.ReadTimeout))
-	wrop := DialWriteTimeout(time.Duration(c.WriteTimeout))
-	auop := DialPassword(c.Auth)
-	// new conn
-	cn, err = Dial(c.Proto, c.Addr, cnop, rdop, wrop, auop)
-	return
+// NewConn returns a new Redigo connection for the given net connection.
+func NewConn(netConn net.Conn, readTimeout, writeTimeout time.Duration) Conn {
+	return &conn{
+		conn:         netConn,
+		bw:           bufio.NewWriter(netConn),
+		br:           bufio.NewReader(netConn),
+		readTimeout:  readTimeout,
+		writeTimeout: writeTimeout,
+	}
 }
 
 func (c *conn) Close() error {
@@ -375,7 +369,7 @@ func (c *conn) fatal(err error) error {
 		c.conn.Close()
 	}
 	c.mu.Unlock()
-	return errors.WithStack(c.err)
+	return err
 }
 
 func (c *conn) Err() error {
@@ -391,7 +385,7 @@ func (c *conn) writeLen(prefix byte, n int) error {
 	i := len(c.lenScratch) - 3
 	for {
 		c.lenScratch[i] = byte('0' + n%10)
-		i--
+		i -= 1
 		n = n / 10
 		if n == 0 {
 			break
@@ -399,29 +393,29 @@ func (c *conn) writeLen(prefix byte, n int) error {
 	}
 	c.lenScratch[i] = prefix
 	_, err := c.bw.Write(c.lenScratch[i:])
-	return errors.WithStack(err)
+	return err
 }
 
 func (c *conn) writeString(s string) error {
 	c.writeLen('$', len(s))
 	c.bw.WriteString(s)
 	_, err := c.bw.WriteString("\r\n")
-	return errors.WithStack(err)
+	return err
 }
 
 func (c *conn) writeBytes(p []byte) error {
 	c.writeLen('$', len(p))
 	c.bw.Write(p)
 	_, err := c.bw.WriteString("\r\n")
-	return errors.WithStack(err)
+	return err
 }
 
 func (c *conn) writeInt64(n int64) error {
-	return errors.WithStack(c.writeBytes(strconv.AppendInt(c.numScratch[:0], n, 10)))
+	return c.writeBytes(strconv.AppendInt(c.numScratch[:0], n, 10))
 }
 
 func (c *conn) writeFloat64(n float64) error {
-	return errors.WithStack(c.writeBytes(strconv.AppendFloat(c.numScratch[:0], n, 'g', -1, 64)))
+	return c.writeBytes(strconv.AppendFloat(c.numScratch[:0], n, 'g', -1, 64))
 }
 
 func (c *conn) writeCommand(cmd string, args []interface{}) error {
@@ -431,7 +425,7 @@ func (c *conn) writeCommand(cmd string, args []interface{}) error {
 	}
 	for _, arg := range args {
 		if err := c.writeArg(arg, true); err != nil {
-			return errors.WithStack(err)
+			return err
 		}
 	}
 	return nil
@@ -481,6 +475,7 @@ func (pe protocolError) Error() string {
 	return fmt.Sprintf("redigo: %s (possible server error or unsupported concurrent read by application)", string(pe))
 }
 
+// readLine reads a line of input from the RESP stream.
 func (c *conn) readLine() ([]byte, error) {
 	// To avoid allocations, attempt to read the line using ReadSlice. This
 	// call typically succeeds. The known case where the call fails is when
@@ -501,7 +496,7 @@ func (c *conn) readLine() ([]byte, error) {
 	}
 	i := len(p) - 2
 	if i < 0 || p[i] != '\r' {
-		return nil, errors.WithStack(protocolError("bad response line terminator"))
+		return nil, protocolError("bad response line terminator")
 	}
 	return p[:i], nil
 }
@@ -509,7 +504,7 @@ func (c *conn) readLine() ([]byte, error) {
 // parseLen parses bulk string and array lengths.
 func parseLen(p []byte) (int, error) {
 	if len(p) == 0 {
-		return -1, errors.WithStack(protocolError("malformed length"))
+		return -1, protocolError("malformed length")
 	}
 
 	if p[0] == '-' && len(p) == 2 && p[1] == '1' {
@@ -521,7 +516,7 @@ func parseLen(p []byte) (int, error) {
 	for _, b := range p {
 		n *= 10
 		if b < '0' || b > '9' {
-			return -1, errors.WithStack(protocolError("illegal bytes in length"))
+			return -1, protocolError("illegal bytes in length")
 		}
 		n += int(b - '0')
 	}
@@ -532,7 +527,7 @@ func parseLen(p []byte) (int, error) {
 // parseInt parses an integer reply.
 func parseInt(p []byte) (interface{}, error) {
 	if len(p) == 0 {
-		return 0, errors.WithStack(protocolError("malformed integer"))
+		return 0, protocolError("malformed integer")
 	}
 
 	var negate bool
@@ -540,7 +535,7 @@ func parseInt(p []byte) (interface{}, error) {
 		negate = true
 		p = p[1:]
 		if len(p) == 0 {
-			return 0, errors.WithStack(protocolError("malformed integer"))
+			return 0, protocolError("malformed integer")
 		}
 	}
 
@@ -548,7 +543,7 @@ func parseInt(p []byte) (interface{}, error) {
 	for _, b := range p {
 		n *= 10
 		if b < '0' || b > '9' {
-			return 0, errors.WithStack(protocolError("illegal bytes in length"))
+			return 0, protocolError("illegal bytes in length")
 		}
 		n += int64(b - '0')
 	}
@@ -570,7 +565,7 @@ func (c *conn) readReply() (interface{}, error) {
 		return nil, err
 	}
 	if len(line) == 0 {
-		return nil, errors.WithStack(protocolError("short response line"))
+		return nil, protocolError("short response line")
 	}
 	switch line[0] {
 	case '+':
@@ -596,12 +591,12 @@ func (c *conn) readReply() (interface{}, error) {
 		p := make([]byte, n)
 		_, err = io.ReadFull(c.br, p)
 		if err != nil {
-			return nil, errors.WithStack(err)
-		}
-		if line1, err := c.readLine(); err != nil {
 			return nil, err
-		} else if len(line1) != 0 {
-			return nil, errors.WithStack(protocolError("bad bulk string format"))
+		}
+		if line, err := c.readLine(); err != nil {
+			return nil, err
+		} else if len(line) != 0 {
+			return nil, protocolError("bad bulk string format")
 		}
 		return p, nil
 	case '*':
@@ -618,32 +613,33 @@ func (c *conn) readReply() (interface{}, error) {
 		}
 		return r, nil
 	}
-	return nil, errors.WithStack(protocolError("unexpected response line"))
+	return nil, protocolError("unexpected response line")
 }
-func (c *conn) Send(cmd string, args ...interface{}) (err error) {
+
+func (c *conn) Send(cmd string, args ...interface{}) error {
 	c.mu.Lock()
-	c.pending++
+	c.pending += 1
 	c.mu.Unlock()
 	if c.writeTimeout != 0 {
 		c.conn.SetWriteDeadline(time.Now().Add(c.writeTimeout))
 	}
-	if err = c.writeCommand(cmd, args); err != nil {
-		c.fatal(err)
+	if err := c.writeCommand(cmd, args); err != nil {
+		return c.fatal(err)
 	}
-	return err
+	return nil
 }
 
-func (c *conn) Flush() (err error) {
+func (c *conn) Flush() error {
 	if c.writeTimeout != 0 {
 		c.conn.SetWriteDeadline(time.Now().Add(c.writeTimeout))
 	}
-	if err = c.bw.Flush(); err != nil {
-		c.fatal(err)
+	if err := c.bw.Flush(); err != nil {
+		return c.fatal(err)
 	}
-	return err
+	return nil
 }
 
-func (c *conn) Receive() (reply interface{}, err error) {
+func (c *conn) Receive() (interface{}, error) {
 	return c.ReceiveWithTimeout(c.readTimeout)
 }
 
@@ -689,6 +685,16 @@ func (c *conn) DoWithTimeout(readTimeout time.Duration, cmd string, args ...inte
 		return nil, nil
 	}
 
+	var err error
+	defer c.stat(cmd, &err)()
+
+	if err == nil {
+		err = errors.WithStack(c.bw.Flush())
+	}
+	if err != nil {
+		return nil, c.fatal(err)
+	}
+
 	if c.writeTimeout != 0 {
 		c.conn.SetWriteDeadline(time.Now().Add(c.writeTimeout))
 	}
@@ -721,7 +727,6 @@ func (c *conn) DoWithTimeout(readTimeout time.Duration, cmd string, args ...inte
 		return reply, nil
 	}
 
-	var err error
 	var reply interface{}
 	for i := 0; i <= pending; i++ {
 		var e error

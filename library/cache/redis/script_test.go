@@ -12,34 +12,37 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-package redis
+package redis_test
 
 import (
 	"fmt"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/gomodule/redigo/redis"
+)
+
+var (
+	// These variables are declared at package level to remove distracting
+	// details from the examples.
+	c     redis.Conn
+	reply interface{}
+	err   error
 )
 
 func ExampleScript() {
-	c, err := Dial("tcp", ":6379")
-	if err != nil {
-		// handle error
-	}
-	defer c.Close()
 	// Initialize a package-level variable with a script.
-	var getScript = NewScript(1, `return call('get', KEYS[1])`)
+	var getScript = redis.NewScript(1, `return redis.call('get', KEYS[1])`)
 
 	// In a function, use the script Do method to evaluate the script. The Do
 	// method optimistically uses the EVALSHA command. If the script is not
 	// loaded, then the Do method falls back to the EVAL command.
-	if _, err = getScript.Do(c, "foo"); err != nil {
-		// handle error
-	}
+	reply, err = getScript.Do(c, "foo")
 }
 
 func TestScript(t *testing.T) {
-	c, err := DialDefaultServer()
+	c, err := redis.DialDefaultServer()
 	if err != nil {
 		t.Fatalf("error connection to database, %v", err)
 	}
@@ -47,7 +50,7 @@ func TestScript(t *testing.T) {
 
 	// To test fall back in Do, we make script unique by adding comment with current time.
 	script := fmt.Sprintf("--%d\nreturn {KEYS[1],KEYS[2],ARGV[1],ARGV[2]}", time.Now().UnixNano())
-	s := NewScript(2, script)
+	s := redis.NewScript(2, script)
 	reply := []interface{}{[]byte("key1"), []byte("key2"), []byte("arg1"), []byte("arg2")}
 
 	v, err := s.Do(c, "key1", "key2", "arg1", "arg2")

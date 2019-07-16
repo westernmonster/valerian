@@ -30,7 +30,6 @@ import (
 	"time"
 )
 
-var nowFunc = time.Now // for testing
 func SetNowFunc(f func() time.Time) {
 	nowFunc = f
 }
