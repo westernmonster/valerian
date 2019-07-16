@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"time"
 
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/peer"
 
@@ -20,17 +22,19 @@ var (
 	statsServer = stat.RPCServer
 )
 
-func logFn(code int, dt time.Duration) func(context.Context, ...log.D) {
+func logFn(code int, dt time.Duration, fields []zapcore.Field) {
 	switch {
 	case code < 0:
-		return log.Errorv
+		log.Error("", fields...)
+		return
 	case dt >= time.Millisecond*500:
-		// TODO: slowlog make it configurable.
-		return log.Warnv
+		log.Warn("", fields...)
+		return
 	case code > 0:
-		return log.Warnv
+		log.Warn("", fields...)
+		return
 	}
-	return log.Infov
+	log.Info("", fields...)
 }
 
 // clientLogging warden grpc logging
@@ -54,19 +58,19 @@ func clientLogging() grpc.UnaryClientInterceptor {
 		if peerInfo.Addr != nil {
 			ip = peerInfo.Addr.String()
 		}
-		logFields := []log.D{
-			log.KV("ip", ip),
-			log.KV("path", method),
-			log.KV("ret", code),
+		logFields := []zapcore.Field{
+			zap.String("ip", ip),
+			zap.String("path", method),
+			zap.Int("ret", code),
 			// TODO: it will panic if someone remove String method from protobuf message struct that auto generate from protoc.
-			log.KV("args", req.(fmt.Stringer).String()),
-			log.KV("ts", duration.Seconds()),
-			log.KV("source", "grpc-access-log"),
+			zap.String("args", req.(fmt.Stringer).String()),
+			zap.Float64("ts", duration.Seconds()),
+			zap.String("source", "grpc-access-log"),
 		}
 		if err != nil {
-			logFields = append(logFields, log.KV("error", err.Error()), log.KV("stack", fmt.Sprintf("%+v", err)))
+			logFields = append(logFields, zap.String("error", err.Error()), zap.String("stack", fmt.Sprintf("%+v", err)))
 		}
-		logFn(code, duration)(ctx, logFields...)
+		logFn(code, duration, logFields)
 		return err
 	}
 }
@@ -95,21 +99,21 @@ func serverLogging() grpc.UnaryServerInterceptor {
 		// monitor
 		statsServer.Timing(caller, int64(duration/time.Millisecond), info.FullMethod)
 		statsServer.Incr(caller, info.FullMethod, strconv.Itoa(code))
-		logFields := []log.D{
-			log.KV("user", caller),
-			log.KV("ip", remoteIP),
-			log.KV("path", info.FullMethod),
-			log.KV("ret", code),
+		logFields := []zapcore.Field{
+			zap.String("user", caller),
+			zap.String("ip", remoteIP),
+			zap.String("path", info.FullMethod),
+			zap.Int("ret", code),
 			// TODO: it will panic if someone remove String method from protobuf message struct that auto generate from protoc.
-			log.KV("args", req.(fmt.Stringer).String()),
-			log.KV("ts", duration.Seconds()),
-			log.KV("timeout_quota", quota),
-			log.KV("source", "grpc-access-log"),
+			zap.String("args", req.(fmt.Stringer).String()),
+			zap.Float64("ts", duration.Seconds()),
+			zap.Float64("timeout_quota", quota),
+			zap.String("source", "grpc-access-log"),
 		}
 		if err != nil {
-			logFields = append(logFields, log.KV("error", err.Error()), log.KV("stack", fmt.Sprintf("%+v", err)))
+			logFields = append(logFields, zap.String("error", err.Error()), zap.String("stack", fmt.Sprintf("%+v", err)))
 		}
-		logFn(code, duration)(ctx, logFields...)
+		logFn(code, duration, logFields)
 		return resp, err
 	}
 }

@@ -2,6 +2,7 @@ package rpc
 
 import (
 	"context"
+	"fmt"
 	"reflect"
 	"sync/atomic"
 
@@ -31,7 +32,7 @@ type wrr struct {
 // NOTE: reply must be ptr.
 func (r *wrr) Boardcast(ctx context.Context, serviceMethod string, args interface{}, reply interface{}) (err error) {
 	if r.weight == 0 {
-		log.Error("wrr get() error weight:%d server:%d idx:%d", len(r.pool), r.server, r.idx)
+		log.Error(fmt.Sprintf("wrr get() error weight:%d server:%d idx:%d", len(r.pool), r.server, r.idx))
 		return ErrNoClient
 	}
 	rtp := reflect.TypeOf(reply).Elem()
@@ -48,7 +49,7 @@ func (r *wrr) Boardcast(ctx context.Context, serviceMethod string, args interfac
 
 func (r *wrr) Call(ctx context.Context, serviceMethod string, args interface{}, reply interface{}) (err error) {
 	if r.weight == 0 {
-		log.Error("wrr get() error weight:%d server:%d idx:%d", len(r.pool), r.server, r.idx)
+		log.Error(fmt.Sprintf("wrr get() error weight:%d server:%d idx:%d", len(r.pool), r.server, r.idx))
 		return ErrNoClient
 	}
 	v := atomic.AddInt64(&r.idx, 1)
@@ -76,7 +77,7 @@ type sharding struct {
 // NOTE: reply must be ptr.
 func (r *sharding) Boardcast(ctx context.Context, serviceMethod string, args interface{}, reply interface{}) (err error) {
 	if r.weight == 0 {
-		log.Error("wrr get() error weight:%d server:%d idx:%d", len(r.pool), r.server, r.idx)
+		log.Error(fmt.Sprintf("wrr get() error weight:%d server:%d idx:%d", len(r.pool), r.server, r.idx))
 		return ErrNoClient
 	}
 	rtp := reflect.TypeOf(reply).Elem()
@@ -93,7 +94,7 @@ func (r *sharding) Boardcast(ctx context.Context, serviceMethod string, args int
 
 func (r *sharding) Call(ctx context.Context, serviceMethod string, args interface{}, reply interface{}) (err error) {
 	if r.weight == 0 {
-		log.Error("wrr get() error weight:%d server:%d idx:%d", len(r.pool), r.server, r.idx)
+		log.Error(fmt.Sprintf("wrr get() error weight:%d server:%d idx:%d", len(r.pool), r.server, r.idx))
 		return ErrNoClient
 	}
 	if k, ok := args.(key); ok {

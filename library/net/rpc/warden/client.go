@@ -3,6 +3,7 @@ package warden
 import (
 	"context"
 	"fmt"
+	"go-common/library/net/trace"
 	"net/url"
 	"os"
 	"strconv"
@@ -20,7 +21,6 @@ import (
 	"valerian/library/net/rpc/warden/balancer/wrr"
 	"valerian/library/net/rpc/warden/resolver"
 	"valerian/library/net/rpc/warden/status"
-	"valerian/library/net/trace"
 	xtime "valerian/library/time"
 
 	"github.com/pkg/errors"

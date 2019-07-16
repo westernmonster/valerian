@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"go-common/library/net/trace"
 	"math"
 	"net"
 	"os"
@@ -13,13 +14,13 @@ import (
 	"valerian/library/conf/dsn"
 	"valerian/library/log"
 	nmd "valerian/library/net/metadata"
-	"valerian/library/net/trace"
 	xtime "valerian/library/time"
 
 	//this package is for json format response
 	_ "valerian/library/net/rpc/warden/encoding/json"
 	"valerian/library/net/rpc/warden/status"
 
+	"github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/keepalive"
@@ -114,7 +115,7 @@ func (s *Server) handle() grpc.UnaryServerInterceptor {
 		// get grpc metadata(trace & remote_ip & color)
 		var t trace.Trace
 		if gmd, ok := metadata.FromIncomingContext(ctx); ok {
-			t, _ = trace.Extract(trace.GRPCFormat, gmd)
+			t, _ = trace.Extract(opentracing.HTTPHeaders, gmd)
 			if strs, ok := gmd[nmd.Color]; ok {
 				color = strs[0]
 			}
@@ -296,7 +297,7 @@ func (s *Server) Run(addr string) error {
 	lis, err := net.Listen("tcp", addr)
 	if err != nil {
 		err = errors.WithStack(err)
-		log.Error("failed to listen: %v", err)
+		log.Error(fmt.Sprintf("failed to listen: %v", err))
 		return err
 	}
 	reflection.Register(s.server)
@@ -309,7 +310,7 @@ func (s *Server) RunUnix(file string) error {
 	lis, err := net.Listen("unix", file)
 	if err != nil {
 		err = errors.WithStack(err)
-		log.Error("failed to listen: %v", err)
+		log.Error(fmt.Sprintf("failed to listen: %v", err))
 		return err
 	}
 	reflection.Register(s.server)

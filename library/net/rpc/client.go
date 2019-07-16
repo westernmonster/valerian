@@ -1,7 +1,3 @@
-// Copyright 2009 The Go Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-
 package rpc
 
 import (
@@ -9,23 +5,20 @@ import (
 	"context"
 	"encoding/gob"
 	"errors"
+	"go-common/library/net/trace"
 	"io"
 	"log"
 	"net"
 	"sync"
 	"sync/atomic"
 	"time"
-
 	"valerian/library/conf/env"
 	"valerian/library/ecode"
 	xlog "valerian/library/log"
 	"valerian/library/net/metadata"
 	"valerian/library/net/netutil/breaker"
-	"valerian/library/net/trace"
 	"valerian/library/stat"
 	xtime "valerian/library/time"
-
-	perr "github.com/pkg/errors"
 )
 
 const (

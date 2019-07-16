@@ -209,7 +209,7 @@ func NewPool(c *Config, options ...DialOption) *Pool {
 			if err != nil {
 				return nil, err
 			}
-			return &traceConn{Conn: conn, Addr: c.Addr}, nil
+			return &traceConn{Conn: conn, Addr: c.Addr, ctx: ctx}, nil
 		},
 		MaxIdle:         c.MaxIdle,
 		IdleTimeout:     c.IdleTimeout,

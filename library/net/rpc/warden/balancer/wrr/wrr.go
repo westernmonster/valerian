@@ -2,6 +2,7 @@ package wrr
 
 import (
 	"context"
+	"fmt"
 	"math"
 	"strconv"
 	"sync"
@@ -270,7 +271,7 @@ func (p *wrrPicker) pick(ctx context.Context, opts balancer.PickOptions) (balanc
 			stats[i].ewt = conn.ewt
 		}
 		p.mu.Unlock()
-		log.Info("warden wrr(%s): %+v", conn.addr.ServerName, stats)
+		log.Info(fmt.Sprintf("warden wrr(%s): %+v", conn.addr.ServerName, stats))
 	}, nil
 
 }

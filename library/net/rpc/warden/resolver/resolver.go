@@ -2,6 +2,7 @@ package resolver
 
 import (
 	"context"
+	"fmt"
 	"math/rand"
 	"net/url"
 	"sort"
@@ -186,7 +187,7 @@ func (r *Resolver) newAddress(instances []*naming.Instance) {
 			}
 		}
 		if rpc == "" {
-			log.Warn("warden/resolver: invalid rpc address(%s,%s,%v) found!", ins.AppID, ins.Hostname, ins.Addrs)
+			log.Warn(fmt.Sprintf("warden/resolver: invalid rpc address(%s,%s,%v) found!", ins.AppID, ins.Hostname, ins.Addrs))
 			continue
 		}
 		addr := resolver.Address{

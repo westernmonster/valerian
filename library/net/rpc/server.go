@@ -7,6 +7,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"go-common/library/net/trace"
 	"io"
 	"log"
 	"net"
@@ -25,7 +26,6 @@ import (
 	"valerian/library/net/metadata"
 	"valerian/library/net/rpc/context"
 	"valerian/library/net/rpc/interceptor"
-	"valerian/library/net/trace"
 
 	pkgerr "github.com/pkg/errors"
 )
@@ -134,7 +134,6 @@ type Request struct {
 	Timeout       time.Duration // timeout
 	ServiceMethod string        // format: "Service.Method"
 	Seq           uint64        // sequence number chosen by client
-	Trace         TraceInfo     // trace info
 
 	ctx context.Context
 }
@@ -366,7 +365,7 @@ func (s *service) call(c context.Context, server *Server, mtype *methodType, arg
 		cv           reflect.Value
 		returnValues []reflect.Value
 	)
-	t, _ := trace.FromContext(c)
+	t, _ := tracing.FromContext(c)
 	defer func() {
 		if err1 := recover(); err1 != nil {
 			err = err1.(error)
