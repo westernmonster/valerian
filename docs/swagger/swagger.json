@@ -1171,7 +1171,7 @@
         },
         "/article/versions/save": {
             "post": {
-                "description": "保存文章版本（排序和重命名）",
+                "description": "保存文章版本（排序，重命名）",
                 "consumes": [
                     "application/json"
                 ],
@@ -1179,9 +1179,9 @@
                     "application/json"
                 ],
                 "tags": [
-                    "topic"
+                    "article"
                 ],
-                "summary": "保存文章版本（排序和重命名）",
+                "summary": "保存文章版本（排序，重命名）",
                 "parameters": [
                     {
                         "type": "string",
@@ -1224,8 +1224,8 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "成功"
+                    "20": {
+                        "description": "获取用户ID失败，一般是因为未登录造成"
                     },
                     "400": {
                         "description": "验证请求失败"
@@ -2707,6 +2707,57 @@
                 }
             }
         },
+        "/oauth/logout": {
+            "post": {
+                "description": "退出登录",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "退出登录",
+                "parameters": [
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功"
+                    },
+                    "400": {
+                        "description": "验证请求失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
         "/oauth/registration/email": {
             "post": {
                 "description": "用户邮件注册",
@@ -2875,7 +2926,7 @@
         },
         "/oauth/renew": {
             "post": {
-                "description": "退出登录",
+                "description": "获取新Access Token",
                 "consumes": [
                     "application/json"
                 ],
@@ -2885,7 +2936,7 @@
                 "tags": [
                     "auth"
                 ],
-                "summary": "退出登录",
+                "summary": "获取新Access Token",
                 "parameters": [
                     {
                         "enum": [
@@ -2909,9 +2960,25 @@
                         "name": "Locale",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "description": "请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/model.ArgRenewToken"
+                        }
                     }
                 ],
                 "responses": {
+                    "116": {
+                        "description": "Client 不存在"
+                    },
+                    "17": {
+                        "description": "RefreshToken 不存在或已过期"
+                    },
                     "200": {
                         "description": "成功"
                     },

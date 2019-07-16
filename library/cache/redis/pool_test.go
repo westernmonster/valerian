@@ -23,7 +23,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gomodule/redigo/redis"
+	"valerian/library/cache/redis"
+	xtime "valerian/library/time"
 )
 
 const (
@@ -244,7 +245,7 @@ func TestPoolClosedConn(t *testing.T) {
 	d := poolDialer{t: t}
 	p := &redis.Pool{
 		MaxIdle:     2,
-		IdleTimeout: 300 * time.Second,
+		IdleTimeout: xtime.Duration(300 * time.Second),
 		Dial:        d.dial,
 	}
 	defer p.Close()
@@ -274,7 +275,7 @@ func TestPoolIdleTimeout(t *testing.T) {
 	d := poolDialer{t: t}
 	p := &redis.Pool{
 		MaxIdle:     2,
-		IdleTimeout: 300 * time.Second,
+		IdleTimeout: xtime.Duration(300 * time.Second),
 		Dial:        d.dial,
 	}
 	defer p.Close()
@@ -289,7 +290,7 @@ func TestPoolIdleTimeout(t *testing.T) {
 
 	d.check("1", p, 1, 1, 0)
 
-	now = now.Add(p.IdleTimeout + 1)
+	now = now.Add(time.Duration(p.IdleTimeout) + 1)
 
 	c = p.Get()
 	c.Do("PING")
@@ -302,7 +303,7 @@ func TestPoolMaxLifetime(t *testing.T) {
 	d := poolDialer{t: t}
 	p := &redis.Pool{
 		MaxIdle:         2,
-		MaxConnLifetime: 300 * time.Second,
+		MaxConnLifetime: xtime.Duration(300 * time.Second),
 		Dial:            d.dial,
 	}
 	defer p.Close()
@@ -317,7 +318,7 @@ func TestPoolMaxLifetime(t *testing.T) {
 
 	d.check("1", p, 1, 1, 0)
 
-	now = now.Add(p.MaxConnLifetime + 1)
+	now = now.Add(time.Duration(p.MaxConnLifetime) + 1)
 
 	c = p.Get()
 	c.Do("PING")

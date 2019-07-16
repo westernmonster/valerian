@@ -44,7 +44,7 @@ func renewToken(c *mars.Context) {
 // @Success 200 "成功"
 // @Failure 400 "验证请求失败"
 // @Failure 500 "服务器端错误"
-// @Router /oauth/renew [post]
+// @Router /oauth/logout [post]
 func logout(c *mars.Context) {
 	arg := new(model.ArgLogout)
 	if e := c.Bind(arg); e != nil {

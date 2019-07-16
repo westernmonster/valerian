@@ -25,6 +25,8 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
+
+	xtime "valerian/library/time"
 )
 
 var (
@@ -151,7 +153,7 @@ type Pool struct {
 	// Close connections after remaining idle for this duration. If the value
 	// is zero, then idle connections are not closed. Applications should set
 	// the timeout to a value less than the server's timeout.
-	IdleTimeout time.Duration
+	IdleTimeout xtime.Duration
 
 	// If Wait is true and the pool is at the MaxActive limit, then Get() waits
 	// for a connection to be returned to the pool before returning.
@@ -159,7 +161,7 @@ type Pool struct {
 
 	// Close connections older than this duration. If the value is zero, then
 	// the pool does not close connections based on age.
-	MaxConnLifetime time.Duration
+	MaxConnLifetime xtime.Duration
 
 	chInitialized uint32 // set to 1 when field ch is initialized
 
@@ -172,11 +174,49 @@ type Pool struct {
 	waitDuration time.Duration // total time waited for new connections.
 }
 
+// Config client settings.
+type Config struct {
+	IdleTimeout     xtime.Duration
+	MaxConnLifetime xtime.Duration
+	MaxActive       int
+	MaxIdle         int
+	Wait            bool
+
+	Name         string // redis name, for trace
+	Proto        string
+	Addr         string
+	Auth         string
+	DialTimeout  xtime.Duration
+	ReadTimeout  xtime.Duration
+	WriteTimeout xtime.Duration
+}
+
 // NewPool creates a new pool.
 //
 // Deprecated: Initialize the Pool directory as shown in the example.
-func NewPool(newFn func() (Conn, error), maxIdle int) *Pool {
-	return &Pool{Dial: newFn, MaxIdle: maxIdle}
+func NewPool(c *Config, options ...DialOption) *Pool {
+	cnop := DialConnectTimeout(time.Duration(c.DialTimeout))
+	options = append(options, cnop)
+	rdop := DialReadTimeout(time.Duration(c.ReadTimeout))
+	options = append(options, rdop)
+	wrop := DialWriteTimeout(time.Duration(c.WriteTimeout))
+	options = append(options, wrop)
+	auop := DialPassword(c.Auth)
+	options = append(options, auop)
+	return &Pool{
+		DialContext: func(ctx context.Context) (Conn, error) {
+			conn, err := Dial(c.Proto, c.Addr, options...)
+			if err != nil {
+				return nil, err
+			}
+			return &traceConn{Conn: conn, Addr: c.Addr}, nil
+		},
+		MaxIdle:         c.MaxIdle,
+		IdleTimeout:     c.IdleTimeout,
+		MaxConnLifetime: c.MaxConnLifetime,
+		MaxActive:       c.MaxActive,
+		Wait:            c.Wait,
+	}
 }
 
 // Get gets a connection. The application must close the returned connection.
@@ -339,7 +379,7 @@ func (p *Pool) get(ctx context.Context) (*poolConn, error) {
 	// Prune stale connections at the back of the idle list.
 	if p.IdleTimeout > 0 {
 		n := p.idle.count
-		for i := 0; i < n && p.idle.back != nil && p.idle.back.t.Add(p.IdleTimeout).Before(nowFunc()); i++ {
+		for i := 0; i < n && p.idle.back != nil && p.idle.back.t.Add(time.Duration(p.IdleTimeout)).Before(nowFunc()); i++ {
 			pc := p.idle.back
 			p.idle.popBack()
 			p.mu.Unlock()
@@ -355,7 +395,7 @@ func (p *Pool) get(ctx context.Context) (*poolConn, error) {
 		p.idle.popFront()
 		p.mu.Unlock()
 		if (p.TestOnBorrow == nil || p.TestOnBorrow(pc.c, pc.t) == nil) &&
-			(p.MaxConnLifetime == 0 || nowFunc().Sub(pc.created) < p.MaxConnLifetime) {
+			(p.MaxConnLifetime == 0 || nowFunc().Sub(pc.created) < time.Duration(p.MaxConnLifetime)) {
 			return pc, nil
 		}
 		pc.c.Close()
@@ -387,7 +427,7 @@ func (p *Pool) get(ctx context.Context) (*poolConn, error) {
 		}
 		p.mu.Unlock()
 	}
-	return &poolConn{c: c, created: nowFunc()}, err
+	return &poolConn{c: c, ctx: ctx, created: nowFunc()}, err
 }
 
 func (p *Pool) dial(ctx context.Context) (Conn, error) {
@@ -581,6 +621,8 @@ type poolConn struct {
 	t          time.Time
 	created    time.Time
 	next, prev *poolConn
+
+	ctx context.Context
 }
 
 func (l *idleList) pushFront(pc *poolConn) {

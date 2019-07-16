@@ -2500,7 +2500,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: 保存文章版本（排序和重命名）
+      description: 保存文章版本（排序，重命名）
       parameters:
       - description: Bearer
         in: header
@@ -2533,17 +2533,17 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: 成功
+        "20":
+          description: 获取用户ID失败，一般是因为未登录造成
         "400":
           description: 验证请求失败
         "401":
           description: 登录验证失败
         "500":
           description: 服务器端错误
-      summary: 保存文章版本（排序和重命名）
+      summary: 保存文章版本（排序，重命名）
       tags:
-      - topic
+      - article
   /draft/add:
     post:
       consumes:
@@ -3558,6 +3558,41 @@ paths:
       summary: 用户手机登录
       tags:
       - auth
+  /oauth/logout:
+    post:
+      consumes:
+      - application/json
+      description: 退出登录
+      parameters:
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+        "400":
+          description: 验证请求失败
+        "500":
+          description: 服务器端错误
+      summary: 退出登录
+      tags:
+      - auth
   /oauth/registration/email:
     post:
       consumes:
@@ -3676,7 +3711,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: 退出登录
+      description: 获取新Access Token
       parameters:
       - description: Source 来源，1:Web, 2:iOS; 3:Android
         enum:
@@ -3695,16 +3730,27 @@ paths:
         name: Locale
         required: true
         type: string
+      - description: 请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/model.ArgRenewToken'
+          type: object
       produces:
       - application/json
       responses:
+        "17":
+          description: RefreshToken 不存在或已过期
+        "116":
+          description: Client 不存在
         "200":
           description: 成功
         "400":
           description: 验证请求失败
         "500":
           description: 服务器端错误
-      summary: 退出登录
+      summary: 获取新Access Token
       tags:
       - auth
   /topic/add:

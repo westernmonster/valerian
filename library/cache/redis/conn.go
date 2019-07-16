@@ -252,6 +252,7 @@ func Dial(network, address string, options ...DialOption) (Conn, error) {
 		br:           bufio.NewReader(netConn),
 		readTimeout:  do.readTimeout,
 		writeTimeout: do.writeTimeout,
+		stat:         statfunc,
 	}
 
 	if do.password != "" {

@@ -18,6 +18,8 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+
+	pkgerr "github.com/pkg/errors"
 )
 
 // ErrNil indicates that a reply value is nil.
@@ -40,12 +42,12 @@ func Int(reply interface{}, err error) (int, error) {
 	case int64:
 		x := int(reply)
 		if int64(x) != reply {
-			return 0, strconv.ErrRange
+			return 0, pkgerr.WithStack(strconv.ErrRange)
 		}
 		return x, nil
 	case []byte:
 		n, err := strconv.ParseInt(string(reply), 10, 0)
-		return int(n), err
+		return int(n), pkgerr.WithStack(err)
 	case nil:
 		return 0, ErrNil
 	case Error:
