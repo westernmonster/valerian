@@ -6,6 +6,7 @@ import (
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
 	"valerian/library/net/http/mars"
+	"valerian/library/net/http/mars/middleware/antispam"
 	"valerian/library/net/rpc"
 )
 
@@ -32,5 +33,5 @@ type Config struct {
 	//BM
 	Mars mars.ServerConfig
 	// Antispam
-	// Verify   *v.Config
+	Antispam *antispam.Config
 }

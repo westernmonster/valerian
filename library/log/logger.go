@@ -113,3 +113,7 @@ func Warn(msg string, fields ...zapcore.Field) {
 func Warnf(msg string, a ...interface{}) {
 	l.Warn(fmt.Sprintf(msg, a...))
 }
+
+func Close() {
+	l.Sync()
+}
