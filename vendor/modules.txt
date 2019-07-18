@@ -74,6 +74,8 @@ github.com/golang/protobuf/ptypes/timestamp
 github.com/golang/protobuf/protoc-gen-go/descriptor
 # github.com/gopherjs/gopherjs v0.0.0-20181017120253-0766667cb4d1
 github.com/gopherjs/gopherjs/js
+# github.com/h2non/parth v0.0.0-20190131123155-b4df798d6542
+github.com/h2non/parth
 # github.com/jinzhu/copier v0.0.0-20180308034124-7e38e58719c3
 github.com/jinzhu/copier
 # github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af
@@ -109,6 +111,11 @@ github.com/modern-go/concurrent
 github.com/modern-go/reflect2
 # github.com/montanaflynn/stats v0.5.0
 github.com/montanaflynn/stats
+# github.com/naoina/go-stringutil v0.1.0
+github.com/naoina/go-stringutil
+# github.com/naoina/toml v0.1.1
+github.com/naoina/toml
+github.com/naoina/toml/ast
 # github.com/nicksnyder/go-i18n/v2 v2.0.0-beta.6
 github.com/nicksnyder/go-i18n/v2/i18n
 github.com/nicksnyder/go-i18n/v2/internal
@@ -289,6 +296,8 @@ gopkg.in/h2non/gentleman.v2/plugins/multipart
 gopkg.in/h2non/gentleman.v2/plugins/query
 gopkg.in/h2non/gentleman.v2/plugins/url
 gopkg.in/h2non/gentleman.v2/utils
+# gopkg.in/h2non/gock.v1 v1.0.15
+gopkg.in/h2non/gock.v1
 # gopkg.in/ini.v1 v1.42.0
 gopkg.in/ini.v1
 # gopkg.in/yaml.v2 v2.2.2

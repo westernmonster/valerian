@@ -86,9 +86,17 @@ func Info(msg string, fields ...zapcore.Field) {
 	l.Info(msg, fields...)
 }
 
+func Infof(msg string, a ...interface{}) {
+	Info(fmt.Sprintf(msg, a...))
+}
+
 // Error logs an error msg with fields
 func Error(msg string, fields ...zapcore.Field) {
 	l.Error(msg, fields...)
+}
+
+func Errorf(msg string, a ...interface{}) {
+	l.Error(fmt.Sprintf(msg, a...))
 }
 
 // Fatal logs a fatal error msg with fields
@@ -99,4 +107,9 @@ func Fatal(msg string, fields ...zapcore.Field) {
 // Fatal logs a fatal error msg with fields
 func Warn(msg string, fields ...zapcore.Field) {
 	l.Warn(msg, fields...)
+}
+
+// Fatal logs a fatal error msg with fields
+func Warnf(msg string, a ...interface{}) {
+	l.Warn(fmt.Sprintf(msg, a...))
 }

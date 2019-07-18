@@ -38,6 +38,8 @@ require (
 	github.com/mkideal/pkg v0.0.0-20170503154153-3e188c9e7ecc // indirect
 	github.com/montanaflynn/stats v0.5.0
 	github.com/moul/http2curl v1.0.0 // indirect
+	github.com/naoina/go-stringutil v0.1.0 // indirect
+	github.com/naoina/toml v0.1.1
 	github.com/nicksnyder/go-i18n/v2 v2.0.0-beta.6
 	github.com/opentracing-contrib/go-gin v0.0.0-20190301172248-2e18f8b9c7d4 // indirect
 	github.com/opentracing-contrib/go-stdlib v0.0.0-20190324214902-3020fec0e66b
@@ -85,6 +87,7 @@ require (
 	gopkg.in/go-playground/validator.v9 v9.28.0
 	gopkg.in/h2non/gentleman-retry.v2 v2.0.1
 	gopkg.in/h2non/gentleman.v2 v2.0.3
+	gopkg.in/h2non/gock.v1 v1.0.15
 	gopkg.in/ini.v1 v1.42.0 // indirect
 	gopkg.in/yaml.v2 v2.2.2
 )
