@@ -1,6 +1,7 @@
 package conf
 
 import (
+	"valerian/library/conf"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
 	"valerian/library/net/http/mars"
@@ -8,11 +9,11 @@ import (
 )
 
 var (
-// confPath string
-// // Conf conf
-// Conf      = &Config{}
-// configKey = "msm-service.toml"
-// client    *conf.Client
+	confPath string
+	// Conf conf
+	Conf      = &Config{}
+	configKey = "msm-service.toml"
+	client    *conf.Client
 )
 
 type Config struct {
