@@ -12,6 +12,9 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
+
+	perr "github.com/pkg/errors"
+
 	"valerian/library/conf/env"
 	"valerian/library/ecode"
 	xlog "valerian/library/log"
@@ -101,9 +104,9 @@ func (client *client) send(call *Call) {
 	client.request.RemoteIP = call.RemoteIP
 	client.request.Timeout = call.Timeout
 	if call.Trace != nil {
-		trace.Inject(call.Trace, nil, &client.request.Trace)
+		trace.Inject(call.Trace, nil, &client.request)
 	} else {
-		client.request.Trace = TraceInfo{}
+		// client.request.Trace = TraceInfo{}
 	}
 	err := client.codec.WriteRequest(&client.request, call.Args)
 	if err != nil {
@@ -356,7 +359,7 @@ func Dial(addr string, timeout xtime.Duration, bkc *breaker.Config) *Client {
 	// dial
 	rc, err := dial("tcp", addr, time.Duration(timeout))
 	if err != nil {
-		xlog.Error("dial(%s, %s) error(%v)", "tcp", addr, err)
+		xlog.Errorf("dial(%s, %s) error(%v)", "tcp", addr, err)
 	} else {
 		client.client.Store(rc)
 	}
@@ -376,7 +379,7 @@ func (c *Client) Call(ctx context.Context, serviceMethod string, args interface{
 		timeout = time.Duration(c.timeout)
 	)
 	if rc, ok = c.client.Load().(*client); !ok || rc == errClient {
-		xlog.Error("client is errClient (no rpc client) by ping addr(%s) error", c.addr)
+		xlog.Errorf("client is errClient (no rpc client) by ping addr(%s) error", c.addr)
 		return ErrNoClient
 	}
 	if t, ok = trace.FromContext(ctx); !ok {
@@ -467,7 +470,7 @@ func (c *Client) ping() {
 		}
 		if client == nil || err != nil {
 			if client, err = dial("tcp", c.addr, time.Duration(c.timeout)); err != nil {
-				xlog.Error("dial(%s, %s) error(%v)", "tcp", c.addr, err)
+				xlog.Errorf("dial(%s, %s) error(%v)", "tcp", c.addr, err)
 				time.Sleep(_pingDuration)
 				continue
 			}
@@ -483,7 +486,7 @@ func (c *Client) ping() {
 		cancel()
 		if err != nil {
 			if err == ErrShutdown || err == io.ErrUnexpectedEOF || ecode.Deadline.Equal(err) {
-				xlog.Error("rpc ping error beiTle addr(%s)", c.addr)
+				xlog.Errorf("rpc ping error beiTle addr(%s)", c.addr)
 				c.client.Store(errClient)
 				client.Close()
 			} else {

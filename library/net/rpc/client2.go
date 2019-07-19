@@ -141,7 +141,7 @@ func (c *Client2) disc(pools map[string]*Client) (err error) {
 	)
 	insMap, ok := c.dis.Fetch(context.Background())
 	if !ok {
-		log.Error("discovery fetch instance fail(%s)", c.appID)
+		log.Errorf("discovery fetch instance fail(%s)", c.appID)
 		return
 	}
 	zone := env.Zone
@@ -165,7 +165,7 @@ func (c *Client2) disc(pools map[string]*Client) (err error) {
 		}
 		instance = append(instance, nsvr)
 	}
-	log.Info("discovery get  %d instances ", len(instance))
+	log.Infof("discovery get  %d instances ", len(instance))
 	if len(instance) > 0 {
 		nodes = make(map[string]struct{}, len(instance))
 		cs = make([]*Client, 0, len(instance))
@@ -189,7 +189,7 @@ func (c *Client2) disc(pools map[string]*Client) (err error) {
 					}
 				}
 				if addr == "" {
-					log.Warn("net/rpc: invalid rpc address(%s,%s,%v) found!", svr.AppID, svr.Hostname, svr.Addrs)
+					log.Warnf("net/rpc: invalid rpc address(%s,%s,%v) found!", svr.AppID, svr.Hostname, svr.Addrs)
 					continue
 				}
 				cli = Dial(addr, c.c.Timeout, c.c.Breaker)
@@ -197,13 +197,13 @@ func (c *Client2) disc(pools map[string]*Client) (err error) {
 			}
 			svrWeights = append(svrWeights, int(weight))
 			weights += weight // calc all weight
-			log.Info("new cli %+v instance info %+v", addr, svr)
+			log.Infof("new cli %+v instance info %+v", addr, svr)
 			cs = append(cs, cli)
 		}
 		// delete old nodes
 		for key, cli = range pools {
 			if _, ok = nodes[key]; !ok {
-				log.Info("syncproc will delete node: %s", key)
+				log.Infof("syncproc will delete node: %s", key)
 				dcs[key] = cli
 			}
 		}
@@ -224,14 +224,14 @@ func (c *Client2) disc(pools map[string]*Client) (err error) {
 				weight: int64(weights),
 				server: int64(len(instance)),
 			}
-			log.Info("discovery syncproc sharding weights:%d size:%d raw:%d", weights, weights, len(instance))
+			log.Infof("discovery syncproc sharding weights:%d size:%d raw:%d", weights, weights, len(instance))
 		default:
 			blc = &wrr{
 				pool:   wcs,
 				weight: int64(weights),
 				server: int64(len(instance)),
 			}
-			log.Info("discovery %s syncproc wrr weights:%d size:%d raw:%d", c.appID, weights, weights, len(instance))
+			log.Infof("discovery %s syncproc wrr weights:%d size:%d raw:%d", c.appID, weights, weights, len(instance))
 		}
 		c.balancer.Store(blc)
 		c.removeAndClose(pools, dcs)

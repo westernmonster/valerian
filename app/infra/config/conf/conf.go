@@ -1,13 +1,13 @@
 package conf
 
 import (
-	"time"
 	"valerian/library/cache/redis"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
 	"valerian/library/net/http/mars"
 	"valerian/library/net/http/mars/middleware/antispam"
 	"valerian/library/net/rpc"
+	xtime "valerian/library/time"
 )
 
 var (
@@ -27,11 +27,11 @@ type Config struct {
 	// redis
 	Redis *redis.Config
 	// timeout
-	PollTimeout time.Duration
+	PollTimeout xtime.Duration
 	// local cache
 	PathCache string
 	//BM
-	Mars mars.ServerConfig
+	Mars *mars.ServerConfig
 	// Antispam
 	Antispam *antispam.Config
 }

@@ -7,7 +7,6 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"go-common/library/net/trace"
 	"io"
 	"log"
 	"net"
@@ -89,17 +88,17 @@ func NewServer(c *ServerConfig) *Server {
 func rpcListen(c *ServerConfig, s *Server) {
 	l, err := net.Listen(c.Proto, c.Addr)
 	if err != nil {
-		xlog.Error("net.Listen(rpcAddr:(%v)) error(%v)", c.Addr, err)
+		xlog.Errorf("net.Listen(rpcAddr:(%v)) error(%v)", c.Addr, err)
 		panic(err)
 	}
 	// if process exit, then close the rpc bind
 	defer func() {
-		xlog.Info("rpc addr:(%s) close", c.Addr)
+		xlog.Infof("rpc addr:(%s) close", c.Addr)
 		if err := l.Close(); err != nil {
-			xlog.Error("listener.Close() error(%v)", err)
+			xlog.Errorf("listener.Close() error(%v)", err)
 		}
 	}()
-	xlog.Info("start rpc listen addr: %s", c.Addr)
+	xlog.Infof("start rpc listen addr: %s", c.Addr)
 	s.Accept(l)
 }
 
@@ -365,7 +364,7 @@ func (s *service) call(c context.Context, server *Server, mtype *methodType, arg
 		cv           reflect.Value
 		returnValues []reflect.Value
 	)
-	t, _ := tracing.FromContext(c)
+	// t, _ := tracing.FromContext(c)
 	defer func() {
 		if err1 := recover(); err1 != nil {
 			err = err1.(error)
@@ -373,14 +372,14 @@ func (s *service) call(c context.Context, server *Server, mtype *methodType, arg
 			const size = 64 << 10
 			buf := make([]byte, size)
 			buf = buf[:runtime.Stack(buf, false)]
-			xlog.Error("rpc call panic: %v \n%s", err1, buf)
+			xlog.Errorf("rpc call panic: %v \n%s", err1, buf)
 			server.sendResponse(c, codec, replyv.Interface(), errmsg)
 			if server.Interceptor != nil {
 				server.Interceptor.Stat(c, argv.Interface(), err)
 			}
-			if t != nil {
-				t.Finish(&err)
-			}
+			// if t != nil {
+			// 	t.Finish(&err)
+			// }
 		}
 	}()
 	// rate limit
@@ -405,9 +404,9 @@ func (s *service) call(c context.Context, server *Server, mtype *methodType, arg
 	if server.Interceptor != nil {
 		server.Interceptor.Stat(c, argv.Interface(), err)
 	}
-	if t != nil {
-		t.Finish(&err)
-	}
+	// if t != nil {
+	// 	t.Finish(&err)
+	// }
 }
 
 type serverCodec struct {
@@ -548,28 +547,28 @@ func (server *Server) readRequest(codec *serverCodec) (service *service, mtype *
 }
 
 func (server *Server) readRequestHeader(codec *serverCodec) (service *service, mtype *methodType, err error) {
-	var t trace.Trace
+	// var t trace.Trace
 	req := &codec.req
 	if err = codec.readRequestHeader(); err != nil {
 		return
 	}
-	if t, _ = trace.Extract(nil, &req.Trace); t == nil {
-		t = trace.New(req.ServiceMethod)
-	}
-	t.SetTitle(req.ServiceMethod)
-	t.SetTag(trace.String(trace.TagAddress, codec.addr.String()))
+	// if t, _ = trace.Extract(nil, &req.Trace); t == nil {
+	// 	t = trace.New(req.ServiceMethod)
+	// }
+	// t.SetTitle(req.ServiceMethod)
+	// t.SetTag(trace.String(trace.TagAddress, codec.addr.String()))
 	md := metadata.MD{
-		metadata.Trace:    t,
+		// metadata.Trace:    t,
 		metadata.Color:    req.Color,
 		metadata.RemoteIP: req.RemoteIP,
-		metadata.Caller:   req.Trace.Caller,
+		// metadata.Caller:   req.Trace.Caller,
 	}
 	// FIXME(maojian) Timeout?
 	c1 := metadata.NewContext(ctx.Background(), md)
 
 	caller := codec.auth.User
 	if caller == "" {
-		caller = req.Trace.Caller
+		// caller = req.Trace.Caller
 	}
 
 	// NOTE ctx not nil then keepreading
