@@ -2,8 +2,7 @@ package paladin_test
 
 import (
 	"testing"
-
-	"go-common/library/conf/paladin"
+	"valerian/library/conf/paladin"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -14,7 +13,7 @@ func TestMock(t *testing.T) {
 			key_bool = true
 			key_int = 100
 			key_float = 100.1
-			key_string = "text"	
+			key_string = "text"
 		`,
 	}
 	cli := paladin.NewMock(cs)

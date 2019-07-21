@@ -3,7 +3,6 @@ package warden
 import (
 	"context"
 	"fmt"
-	"go-common/library/net/trace"
 	"net/url"
 	"os"
 	"strconv"
@@ -23,6 +22,7 @@ import (
 	"valerian/library/net/rpc/warden/status"
 	xtime "valerian/library/time"
 
+	"github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -72,23 +72,23 @@ func (c *Client) handle() grpc.UnaryClientInterceptor {
 		var (
 			ok     bool
 			cmd    nmd.MD
-			t      trace.Trace
+			t      opentracing.Span
 			gmd    metadata.MD
 			conf   *ClientConfig
 			cancel context.CancelFunc
-			addr   string
-			p      peer.Peer
+			// addr   string
+			p peer.Peer
 		)
 		var ec ecode.Codes = ecode.OK
 		// apm tracing
-		if t, ok = trace.FromContext(ctx); ok {
-			t = t.Fork(_family, method)
-			defer t.Finish(&err)
-		}
+		// if t, ok = trace.FromContext(ctx); ok {
+		// 	t = t.Fork(_family, method)
+		// 	defer t.Finish(&err)
+		// }
 
 		// setup metadata
 		gmd = metadata.MD{}
-		trace.Inject(t, trace.GRPCFormat, gmd)
+		// trace.Inject(t, trace.GRPCFormat, gmd)
 		c.mutex.RLock()
 		if conf, ok = c.conf.Method[method]; !ok {
 			conf = c.conf
@@ -133,10 +133,10 @@ func (c *Client) handle() grpc.UnaryClientInterceptor {
 			err = errors.WithMessage(ec, gst.Message())
 		}
 		if p.Addr != nil {
-			addr = p.Addr.String()
+			// addr = p.Addr.String()
 		}
 		if t != nil {
-			t.SetTag(trace.String(trace.TagAddress, addr), trace.String(trace.TagComment, ""))
+			// t.SetTag(trace.String(trace.TagAddress, addr), trace.String(trace.TagComment, ""))
 		}
 		return
 	}

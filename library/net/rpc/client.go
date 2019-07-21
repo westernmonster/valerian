@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/gob"
 	"errors"
-	"go-common/library/net/trace"
 	"io"
 	"log"
 	"net"
@@ -13,6 +12,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/opentracing/opentracing-go"
 	perr "github.com/pkg/errors"
 
 	"valerian/library/conf/env"
@@ -53,7 +53,7 @@ type Call struct {
 	ServiceMethod string      // The name of the service and method to call.
 	Args          interface{} // The argument to the function (*struct).
 	Reply         interface{} // The reply from the function (*struct).
-	Trace         trace.Trace
+	Trace         opentracing.Span
 	Color         string
 	RemoteIP      string
 	Timeout       time.Duration
@@ -104,7 +104,7 @@ func (client *client) send(call *Call) {
 	client.request.RemoteIP = call.RemoteIP
 	client.request.Timeout = call.Timeout
 	if call.Trace != nil {
-		trace.Inject(call.Trace, nil, &client.request)
+		// trace.Inject(call.Trace, nil, &client.request)
 	} else {
 		// client.request.Trace = TraceInfo{}
 	}
@@ -203,7 +203,7 @@ func (call *Call) done() {
 // Finish must called after Go.
 func (call *Call) Finish() {
 	if call.Trace != nil {
-		call.Trace.Finish(&call.Error)
+		// call.Trace.Finish(&call.Error)
 	}
 }
 
@@ -370,24 +370,24 @@ func Dial(addr string, timeout xtime.Duration, bkc *breaker.Config) *Client {
 // Call invokes the named function, waits for it to complete, and returns its error status.
 func (c *Client) Call(ctx context.Context, serviceMethod string, args interface{}, reply interface{}) (err error) {
 	var (
-		ok      bool
-		code    string
-		rc      *client
-		call    *Call
-		cancel  func()
-		t       trace.Trace
+		ok     bool
+		code   string
+		rc     *client
+		call   *Call
+		cancel func()
+		// t       trace.Trace
 		timeout = time.Duration(c.timeout)
 	)
 	if rc, ok = c.client.Load().(*client); !ok || rc == errClient {
 		xlog.Errorf("client is errClient (no rpc client) by ping addr(%s) error", c.addr)
 		return ErrNoClient
 	}
-	if t, ok = trace.FromContext(ctx); !ok {
-		t = trace.New(serviceMethod)
-	}
-	t = t.Fork(_family, serviceMethod)
-	t.SetTag(trace.String(trace.TagAddress, rc.remoteAddr))
-	defer t.Finish(&err)
+	// if t, ok = trace.FromContext(ctx); !ok {
+	// 	t = trace.New(serviceMethod)
+	// }
+	// t = t.Fork(_family, serviceMethod)
+	// t.SetTag(trace.String(trace.TagAddress, rc.remoteAddr))
+	// defer t.Finish(&err)
 	// breaker
 	brk := c.breaker.Get(serviceMethod)
 	if err = brk.Allow(); err != nil {
@@ -424,10 +424,10 @@ func (c *Client) Call(ctx context.Context, serviceMethod string, args interface{
 		ServiceMethod: serviceMethod,
 		Args:          args,
 		Reply:         reply,
-		Trace:         t,
-		Color:         color,
-		RemoteIP:      remoteIP,
-		Timeout:       timeout,
+		// Trace:         t,
+		Color:    color,
+		RemoteIP: remoteIP,
+		Timeout:  timeout,
 	}
 	rc.Do(call)
 	select {

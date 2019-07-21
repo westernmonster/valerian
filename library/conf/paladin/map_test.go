@@ -2,8 +2,7 @@ package paladin_test
 
 import (
 	"testing"
-
-	"go-common/library/conf/paladin"
+	"valerian/library/conf/paladin"
 
 	"github.com/naoina/toml"
 	"github.com/stretchr/testify/assert"
@@ -22,7 +21,7 @@ func (f *fruit) Set(text string) error {
 func TestMap(t *testing.T) {
 	s := `
 		# kv
-		text = "hello"	
+		text = "hello"
 		number = 100
 		point = 100.1
 		boolean = true
@@ -37,7 +36,7 @@ func TestMap(t *testing.T) {
 		[[fruit]]
 		  name = "banana"
 
-		# table 
+		# table
 		[database]
 		server = "192.168.1.1"
 		connection_max = 5000

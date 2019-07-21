@@ -4,7 +4,6 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"go-common/library/net/trace"
 	"math"
 	"net"
 	"os"
@@ -15,6 +14,7 @@ import (
 	"valerian/library/log"
 	nmd "valerian/library/net/metadata"
 	xtime "valerian/library/time"
+	"valerian/library/tracing"
 
 	//this package is for json format response
 	_ "valerian/library/net/rpc/warden/encoding/json"
@@ -25,7 +25,6 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/keepalive"
 	"google.golang.org/grpc/metadata"
-	"google.golang.org/grpc/peer"
 	"google.golang.org/grpc/reflection"
 )
 
@@ -86,9 +85,9 @@ type Server struct {
 func (s *Server) handle() grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, args *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
 		var (
-			cancel     func()
-			caller     string
-			addr       string
+			cancel func()
+			caller string
+			// addr       string
 			color      string
 			remote     string
 			remotePort string
@@ -113,9 +112,9 @@ func (s *Server) handle() grpc.UnaryServerInterceptor {
 		defer cancel()
 
 		// get grpc metadata(trace & remote_ip & color)
-		var t trace.Trace
+		var t opentracing.SpanContext
 		if gmd, ok := metadata.FromIncomingContext(ctx); ok {
-			t, _ = trace.Extract(opentracing.HTTPHeaders, gmd)
+			t, _ = tracing.Extract(opentracing.HTTPHeaders, gmd)
 			if strs, ok := gmd[nmd.Color]; ok {
 				color = strs[0]
 			}
@@ -130,16 +129,16 @@ func (s *Server) handle() grpc.UnaryServerInterceptor {
 			}
 		}
 		if t == nil {
-			t = trace.New(args.FullMethod)
+			// t = trace.New(args.FullMethod)
 		} else {
-			t.SetTitle(args.FullMethod)
+			// t.SetTitle(args.FullMethod)
 		}
 
-		if pr, ok := peer.FromContext(ctx); ok {
-			addr = pr.Addr.String()
-			t.SetTag(trace.String(trace.TagAddress, addr))
-		}
-		defer t.Finish(&err)
+		// if pr, ok := peer.FromContext(ctx); ok {
+		// addr = pr.Addr.String()
+		// t.SetTag(trace.String(trace.TagAddress, addr))
+		// }
+		// defer t.Finish()
 
 		// use common meta data context instead of grpc context
 		ctx = nmd.NewContext(ctx, nmd.MD{

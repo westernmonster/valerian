@@ -1,0 +1,59 @@
+# This is a TOML document. Boom.
+
+pollTimeout = "30s"
+pathCache = "/tmp/"
+
+[log]
+stdout = true
+
+[antispam]
+    on=true
+    second=60
+    n=10
+    hour=12
+    m=500
+    [antispam.redis]
+        name = "config-service/hosts"
+        proto = "tcp"
+        addr = "127.0.0.1:6889"
+        maxIdle = 100
+        maxActive = 100
+        dialTimeout = "1s"
+        readTimeout = "1s"
+        writeTimeout = "1s"
+        idleTimeout = "10s"
+        expire = "24h"
+
+[ecode]
+    domain = "127.0.0.1:6401"
+
+[db]
+    addr = "127.0.0.1:3306"
+    dsn = "flywk:flywk@tcp(127.0.0.1:3306)/flywk_dev?timeout=1s&readTimeout=1s&writeTimeout=1s&parseTime=true&loc=Local&charset=utf8mb4"
+    active = 5
+    idle = 2
+    queryTimeout = "1s"
+    execTimeout = "2s"
+    tranTimeout = "2s"
+    [db.main.breaker]
+    window = "3s"
+    sleep = "100ms"
+    bucket = 10
+    ratio = 0.5
+    request = 100
+[redis]
+    name = "config-service/hosts"
+    proto = "tcp"
+    addr = "127.0.0.1:6889"
+    maxIdle = 100
+    maxActive = 100
+    dialTimeout = "1s"
+    readTimeout = "1s"
+    writeTimeout = "1s"
+    idleTimeout = "10s"
+
+[mars]
+    address = "127.0.0.1:7003"
+	maxListen = 10
+    timeout="2s"
+
