@@ -1,4 +1,4 @@
-package server
+package rpc
 
 import (
 	"valerian/app/infra/config/conf"

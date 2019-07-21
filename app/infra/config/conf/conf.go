@@ -1,6 +1,7 @@
 package conf
 
 import (
+	"flag"
 	"valerian/library/cache/redis"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
@@ -8,6 +9,8 @@ import (
 	"valerian/library/net/http/mars/middleware/antispam"
 	"valerian/library/net/rpc"
 	xtime "valerian/library/time"
+
+	"github.com/BurntSushi/toml"
 )
 
 var (
@@ -34,4 +37,14 @@ type Config struct {
 	Mars *mars.ServerConfig
 	// Antispam
 	Antispam *antispam.Config
+}
+
+func init() {
+	flag.StringVar(&confPath, "conf", "./config-service-example.toml", "config path")
+}
+
+// Init init.
+func Init() (err error) {
+	_, err = toml.DecodeFile(confPath, &Conf)
+	return
 }
