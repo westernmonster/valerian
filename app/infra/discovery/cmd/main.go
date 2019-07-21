@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"math/rand"
 	"os"
 	"os/signal"
@@ -16,10 +17,12 @@ import (
 
 func main() {
 	flag.Parse()
+	fmt.Println(conf.Conf)
 	if err := conf.Init(); err != nil {
 		log.Errorf("conf.Init() error(%v)", err)
 		panic(err)
 	}
+
 	// init log
 	log.Init(conf.Conf.Log)
 	defer log.Close()
