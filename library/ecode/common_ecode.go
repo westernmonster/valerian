@@ -2,7 +2,7 @@ package ecode
 
 // All common ecode
 var (
-	OK = add(0) // 正确
+	OK = add(200) // 正确
 
 	// AppKeyInvalid           = add(-1)  // 应用程序不存在或已被封禁
 	// AccessKeyErr            = add(-2)  // Access Key错误

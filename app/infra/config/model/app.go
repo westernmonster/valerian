@@ -14,11 +14,6 @@ type DBApp struct {
 	Mtime  time.Time `json:"mtime"`
 }
 
-// TableName app
-func (DBApp) TableName() string {
-	return "app"
-}
-
 // App app local cache.
 type App struct {
 	ID     int64  `json:"id"`

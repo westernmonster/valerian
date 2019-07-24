@@ -62,7 +62,7 @@ tag = "mypro"
 	"http://open.flywk.co/api/getsecret" = {timeout = "500ms"}
 
 [ecode]
-	domain = "uat-api.flywk.co"
+	domain = "uat-api.flywk.com"
 	all = "1h"
 	diff = "5m"
 	[ecode.clientconfig]

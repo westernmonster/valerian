@@ -50,6 +50,7 @@ func main() {
 				"gorpc://" + ip + ":" + env.GORPCPort,
 			},
 		}
+
 		if cancel, err = dis.Register(context.Background(), ins); err != nil {
 			panic(err)
 		}

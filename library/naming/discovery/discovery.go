@@ -101,7 +101,7 @@ type appInfo struct {
 
 func fixConfig(c *Config) {
 	if len(c.Nodes) == 0 {
-		c.Nodes = []string{"api.flywk.co"}
+		c.Nodes = []string{"api.flywk.com"}
 	}
 	if env.Region != "" {
 		c.Region = env.Region
@@ -450,6 +450,7 @@ func (d *Discovery) register(ctx context.Context, ins *naming.Instance) (err err
 	params.Set("version", ins.Version)
 	params.Set("status", _statusUP)
 	params.Set("metadata", string(metadata))
+
 	if err = d.httpClient.Post(ctx, uri, "", params, &res); err != nil {
 		d.switchNode()
 		log.Error(fmt.Sprintf("discovery: register client.Get(%v)  zone(%s) env(%s) appid(%s) addrs(%v) error(%v)",

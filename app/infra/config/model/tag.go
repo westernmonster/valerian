@@ -13,8 +13,3 @@ type DBTag struct {
 	Ctime     time.Time `json:"ctime"`
 	Mtime     time.Time `json:"mtime"`
 }
-
-// TableName tag.
-func (DBTag) TableName() string {
-	return "tag"
-}

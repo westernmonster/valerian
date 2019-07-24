@@ -8,6 +8,7 @@ import (
 	"valerian/app/infra/discovery/model"
 	"valerian/library/ecode"
 	"valerian/library/net/http/mars"
+	"valerian/library/net/http/mars/binding"
 )
 
 const (
@@ -16,9 +17,10 @@ const (
 
 func register(c *mars.Context) {
 	arg := new(model.ArgRegister)
-	if err := c.Bind(arg); err != nil {
+	if err := c.BindWith(arg, binding.Form); err != nil {
 		return
 	}
+
 	i := model.NewInstance(arg)
 	if i.Status == 0 || i.Status > 2 {
 		c.JSON(nil, ecode.RequestErr)
@@ -34,7 +36,7 @@ func register(c *mars.Context) {
 
 func renew(c *mars.Context) {
 	arg := new(model.ArgRenew)
-	if err := c.Bind(arg); err != nil {
+	if err := c.BindWith(arg, binding.Form); err != nil {
 		return
 	}
 	// renew
@@ -43,7 +45,7 @@ func renew(c *mars.Context) {
 
 func cancel(c *mars.Context) {
 	arg := new(model.ArgCancel)
-	if err := c.Bind(arg); err != nil {
+	if err := c.BindWith(arg, binding.Form); err != nil {
 		c.JSON(nil, ecode.RequestErr)
 		return
 	}
@@ -56,7 +58,7 @@ func fetchAll(c *mars.Context) {
 
 func fetch(c *mars.Context) {
 	arg := new(model.ArgFetch)
-	if err := c.Bind(arg); err != nil {
+	if err := c.BindWith(arg, binding.Query); err != nil {
 		return
 	}
 	c.JSON(svr.Fetch(c, arg))
@@ -64,7 +66,7 @@ func fetch(c *mars.Context) {
 
 func fetchs(c *mars.Context) {
 	arg := new(model.ArgFetchs)
-	if err := c.Bind(arg); err != nil {
+	if err := c.BindWith(arg, binding.Query); err != nil {
 		return
 	}
 	c.JSON(svr.Fetchs(c, arg))
@@ -72,7 +74,7 @@ func fetchs(c *mars.Context) {
 
 func poll(c *mars.Context) {
 	arg := new(model.ArgPolls)
-	if err := c.Bind(arg); err != nil {
+	if err := c.BindWith(arg, binding.Query); err != nil {
 		return
 	}
 	ch, new, err := svr.Polls(c, arg)
@@ -102,7 +104,7 @@ func poll(c *mars.Context) {
 
 func polls(c *mars.Context) {
 	arg := new(model.ArgPolls)
-	if err := c.Bind(arg); err != nil {
+	if err := c.BindWith(arg, binding.Query); err != nil {
 		return
 	}
 	if len(arg.Treeid) != len(arg.LatestTimestamp) && len(arg.Appid) != len(arg.LatestTimestamp) {
@@ -132,7 +134,7 @@ func polls(c *mars.Context) {
 
 func polling(c *mars.Context) {
 	arg := new(model.ArgPolling)
-	if err := c.Bind(arg); err != nil {
+	if err := c.BindWith(arg, binding.Query); err != nil {
 		return
 	}
 	c.JSON(svr.Polling(c, arg))
@@ -142,7 +144,7 @@ func set(c *mars.Context) {
 	var (
 		arg = new(model.ArgSet)
 	)
-	if err := c.Bind(arg); err != nil {
+	if err := c.BindWith(arg, binding.Form); err != nil {
 		return
 	}
 	// len of status,metadata must equal to len of hostname or be zero

@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"sync"
 	"valerian/app/infra/discovery/conf"
@@ -46,4 +47,6 @@ func (s *Service) getEnv() {
 		Region: os.Getenv("REGION"),
 		Zone:   os.Getenv("ZONE"),
 	}
+
+	fmt.Println(s.env)
 }

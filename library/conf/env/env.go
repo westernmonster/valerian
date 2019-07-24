@@ -60,7 +60,7 @@ var (
 	GRPCPort string
 )
 
-func Init() {
+func init() {
 	var err error
 	if Hostname, err = os.Hostname(); err != nil || Hostname == "" {
 		Hostname = os.Getenv("HOSTNAME")
@@ -79,7 +79,7 @@ func addFlag(fs *flag.FlagSet) {
 
 	// app
 	fs.StringVar(&HTTPPort, "http.port", defaultString("DISCOVERY_HTTP_PORT", _httpPort), "app listen http port, default: 8000")
-	fs.StringVar(&GORPCPort, "gorpc.port", defaultString("DISCOVERY_GORPC_PORT", _gorpcPort), "app listen gorpc port, default: 8099")
+	fs.StringVar(&GORPCPort, "gorpc.port", defaultString("DISCOVERY_GORPC_PORT", _gorpcPort), "app listen gorpc port, default: 8100")
 	fs.StringVar(&GRPCPort, "grpc.port", defaultString("DISCOVERY_GRPC_PORT", _grpcPort), "app listen grpc port, default: 9000")
 }
 
