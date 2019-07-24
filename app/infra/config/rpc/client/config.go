@@ -13,8 +13,8 @@ const (
 	_setToken   = "RPC.SetToken"
 	_pushV4     = "RPC.PushV4"
 	_force      = "RPC.Force"
-	_setTokenV4 = "RPC.SetTokenV4"
 	_hosts      = "RPC.Hosts"
+	_setTokenV4 = "RPC.SetToken"
 	_clearHost  = "RPC.ClearHost"
 )
 

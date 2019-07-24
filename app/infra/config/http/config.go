@@ -35,7 +35,7 @@ func versions(c *mars.Context) {
 			c.JSON(nil, ecode.RequestErr)
 			return
 		}
-		if svr, err = confSvc2.AppService(zone, env, token); err != nil {
+		if svr, err = confSvc.AppService(zone, env, token); err != nil {
 			c.JSON(nil, ecode.RequestErr)
 			return
 		}
@@ -44,7 +44,7 @@ func versions(c *mars.Context) {
 		c.JSON(nil, ecode.RequestErr)
 		return
 	}
-	if data, err = confSvc2.VersionSuccess(c, svr, bver); err != nil {
+	if data, err = confSvc.VersionSuccess(c, svr, bver); err != nil {
 		c.JSON(nil, err)
 		return
 	}
@@ -77,7 +77,7 @@ func config(c *mars.Context) {
 			c.JSON(nil, ecode.RequestErr)
 			return
 		}
-		if svr, err = confSvc2.AppService(zone, env, token); err != nil {
+		if svr, err = confSvc.AppService(zone, env, token); err != nil {
 			c.JSON(nil, ecode.RequestErr)
 			return
 		}
@@ -96,7 +96,7 @@ func config(c *mars.Context) {
 			return
 		}
 	}
-	data, err := confSvc2.Config(c, svr, token, version, ids)
+	data, err := confSvc.Config(c, svr, token, version, ids)
 	if err != nil {
 		c.JSON(nil, err)
 		return
@@ -138,7 +138,7 @@ func file(c *mars.Context) {
 		data = "token is null"
 	}
 	if treeID = query.Get("treeid"); treeID == "" {
-		if svr, err = confSvc2.AppService(zone, env, token); err != nil {
+		if svr, err = confSvc.AppService(zone, env, token); err != nil {
 			data = "appid is null"
 		}
 	} else {
@@ -152,7 +152,7 @@ func file(c *mars.Context) {
 	}
 	service := &model.Service{Name: svr, BuildVersion: buildVer, File: file, Token: token, Version: ver}
 	if data == "" {
-		if data, err = confSvc2.File(c, service); err != nil {
+		if data, err = confSvc.File(c, service); err != nil {
 			data = err.Error()
 			c.AbortWithStatus(http.StatusInternalServerError)
 		}
@@ -192,7 +192,7 @@ func check(c *mars.Context) {
 			c.JSON(nil, ecode.RequestErr)
 			return
 		}
-		if svr, err = confSvc2.AppService(zone, env, token); err != nil {
+		if svr, err = confSvc.AppService(zone, env, token); err != nil {
 			c.JSON(nil, ecode.RequestErr)
 			return
 		}
@@ -216,7 +216,7 @@ func check(c *mars.Context) {
 	appoint, _ = strconv.ParseInt(query.Get("appoint"), 10, 64)
 	// check config version
 	rhost := &model.Host{Service: svr, Name: host, BuildVersion: buildVer, IP: ip, ConfigVersion: ver, Appoint: appoint, Customize: query.Get("customize")}
-	evt, err := confSvc2.CheckVersion(c, rhost, token)
+	evt, err := confSvc.CheckVersion(c, rhost, token)
 	if err != nil {
 		c.JSON(nil, err)
 		return
@@ -230,7 +230,7 @@ func check(c *mars.Context) {
 	case <-c.Writer.(http.CloseNotifier).CloseNotify():
 		c.JSON(nil, ecode.NotModified)
 	}
-	confSvc2.Unsub(svr, host)
+	confSvc.Unsub(svr, host)
 }
 
 //clear  host in redis
@@ -252,12 +252,12 @@ func clearhost(c *mars.Context) {
 			c.JSON(nil, ecode.RequestErr)
 			return
 		}
-		if svr, err = confSvc2.AppService(zone, env, token); err != nil {
+		if svr, err = confSvc.AppService(zone, env, token); err != nil {
 			c.JSON(nil, ecode.RequestErr)
 			return
 		}
 	}
-	c.JSON(nil, confSvc2.ClearHost(c, svr))
+	c.JSON(nil, confSvc.ClearHost(c, svr))
 }
 
 // versions client versions which the configuration is complete
@@ -281,12 +281,12 @@ func builds(c *mars.Context) {
 			c.JSON(nil, ecode.RequestErr)
 			return
 		}
-		if svr, err = confSvc2.AppService(zone, env, token); err != nil {
+		if svr, err = confSvc.AppService(zone, env, token); err != nil {
 			c.JSON(nil, ecode.RequestErr)
 			return
 		}
 	}
-	if data, err = confSvc2.Builds(c, svr); err != nil {
+	if data, err = confSvc.Builds(c, svr); err != nil {
 		c.JSON(nil, err)
 		return
 	}
@@ -320,7 +320,7 @@ func latest(c *mars.Context) {
 			c.JSON(nil, ecode.RequestErr)
 			return
 		}
-		if svr, err = confSvc2.AppService(zone, env, token); err != nil {
+		if svr, err = confSvc.AppService(zone, env, token); err != nil {
 			c.JSON(nil, ecode.RequestErr)
 			return
 		}
@@ -337,13 +337,13 @@ func latest(c *mars.Context) {
 		}
 	} else {
 		rhost := &model.Host{Service: svr, BuildVersion: buildVer}
-		version, err = confSvc2.CheckLatest(c, rhost, token)
+		version, err = confSvc.CheckLatest(c, rhost, token)
 		if err != nil {
 			c.JSON(nil, err)
 			return
 		}
 	}
-	data, err := confSvc2.ConfigCheck(c, svr, token, version, ids)
+	data, err := confSvc.ConfigCheck(c, svr, token, version, ids)
 	if err != nil {
 		c.JSON(nil, err)
 		return

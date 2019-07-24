@@ -17,8 +17,8 @@ import (
 var (
 	cnf *conf.Config
 	// verify   *v.Verify
-	confSvc2 *service.Service
-	anti     *antispam.Antispam
+	confSvc *service.Service
+	anti    *antispam.Antispam
 )
 
 // Init init.
@@ -27,7 +27,7 @@ func Init(c *conf.Config, srv *service.Service, rpcCloser io.Closer) {
 	// verify = v.New(c.Verify)
 	cnf = c
 	// confSvc = s
-	confSvc2 = srv
+	confSvc = srv
 	engine := mars.DefaultServer(c.Mars)
 	innerRouter(engine)
 	if err := engine.Start(); err != nil {
