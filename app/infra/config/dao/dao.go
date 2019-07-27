@@ -16,7 +16,7 @@ type Dao struct {
 	// cache
 	pathCache string
 	//DB
-	DB sqalx.Node
+	db sqalx.Node
 }
 
 // New new a dao.
@@ -28,7 +28,7 @@ func New(c *conf.Config) *Dao {
 		// cache
 		pathCache: c.PathCache,
 		// orm
-		DB: sqalx.NewMySQL(c.DB),
+		db: sqalx.NewMySQL(c.DB),
 	}
 	return d
 }
@@ -38,15 +38,19 @@ func (d *Dao) Ping(c context.Context) (err error) {
 	if err = d.pingRedis(c); err != nil {
 		return
 	}
-	return d.DB.Ping(c)
+	return d.db.Ping(c)
 }
 
 // Close close resuouces.
 func (d *Dao) Close() {
 	if d.DB != nil {
-		d.DB.Close()
+		d.db.Close()
 	}
 	if d.redis != nil {
 		d.redis.Close()
 	}
+}
+
+func (d *Dao) DB() sqalx.Node {
+	return d.db
 }

@@ -4,7 +4,7 @@ package service
 type cacheTag struct {
 	Tag     int64
 	ConfIDs []int64
-	Force   int8
+	Force   int
 }
 
 // curTag current tag version.

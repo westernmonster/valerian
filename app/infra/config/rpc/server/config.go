@@ -30,15 +30,15 @@ func (r *RPC) Ping(c context.Context, arg *struct{}, res *struct{}) (err error) 
 }
 
 // PushV4 push new config change to config-service
-func (r *RPC) PushV4(c context.Context, a *model.ArgConf, res *struct{}) (err error) {
+func (r *RPC) Push(c context.Context, a *model.ArgConf, res *struct{}) (err error) {
 	service := &model.Service{Name: a.App, BuildVersion: a.BuildVer, Version: a.Ver}
 	err = r.srv.Push(c, service)
 	return
 }
 
 //SetTokenV4 update Token
-func (r *RPC) SetTokenV4(c context.Context, a *model.ArgToken, res *struct{}) (err error) {
-	r.srv.SetToken(a.App, a.Token)
+func (r *RPC) SetToken(c context.Context, a *model.ArgToken, res *struct{}) (err error) {
+	r.srv.SetToken(c, a.App, a.Token)
 	return
 }
 

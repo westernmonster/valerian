@@ -88,6 +88,6 @@ type Host struct {
 	State         int       `json:"state"`
 	Appoint       int64     `json:"appoint"`
 	Customize     string    `json:"customize"`
-	Force         int8      `json:"force"`
+	Force         int       `json:"force"`
 	ForceVersion  int64     `json:"force_version"`
 }

@@ -35,7 +35,7 @@ func versions(c *mars.Context) {
 			c.JSON(nil, ecode.RequestErr)
 			return
 		}
-		if svr, err = confSvc.AppService(zone, env, token); err != nil {
+		if svr, err = confSvc.AppService(c, zone, env, token); err != nil {
 			c.JSON(nil, ecode.RequestErr)
 			return
 		}
@@ -77,7 +77,7 @@ func config(c *mars.Context) {
 			c.JSON(nil, ecode.RequestErr)
 			return
 		}
-		if svr, err = confSvc.AppService(zone, env, token); err != nil {
+		if svr, err = confSvc.AppService(c, zone, env, token); err != nil {
 			c.JSON(nil, ecode.RequestErr)
 			return
 		}
@@ -138,7 +138,7 @@ func file(c *mars.Context) {
 		data = "token is null"
 	}
 	if treeID = query.Get("treeid"); treeID == "" {
-		if svr, err = confSvc.AppService(zone, env, token); err != nil {
+		if svr, err = confSvc.AppService(c, zone, env, token); err != nil {
 			data = "appid is null"
 		}
 	} else {
@@ -192,7 +192,7 @@ func check(c *mars.Context) {
 			c.JSON(nil, ecode.RequestErr)
 			return
 		}
-		if svr, err = confSvc.AppService(zone, env, token); err != nil {
+		if svr, err = confSvc.AppService(c, zone, env, token); err != nil {
 			c.JSON(nil, ecode.RequestErr)
 			return
 		}
@@ -252,7 +252,7 @@ func clearhost(c *mars.Context) {
 			c.JSON(nil, ecode.RequestErr)
 			return
 		}
-		if svr, err = confSvc.AppService(zone, env, token); err != nil {
+		if svr, err = confSvc.AppService(c, zone, env, token); err != nil {
 			c.JSON(nil, ecode.RequestErr)
 			return
 		}
@@ -281,7 +281,7 @@ func builds(c *mars.Context) {
 			c.JSON(nil, ecode.RequestErr)
 			return
 		}
-		if svr, err = confSvc.AppService(zone, env, token); err != nil {
+		if svr, err = confSvc.AppService(c, zone, env, token); err != nil {
 			c.JSON(nil, ecode.RequestErr)
 			return
 		}
@@ -320,7 +320,7 @@ func latest(c *mars.Context) {
 			c.JSON(nil, ecode.RequestErr)
 			return
 		}
-		if svr, err = confSvc.AppService(zone, env, token); err != nil {
+		if svr, err = confSvc.AppService(c, zone, env, token); err != nil {
 			c.JSON(nil, ecode.RequestErr)
 			return
 		}
