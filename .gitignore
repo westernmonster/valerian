@@ -3,3 +3,4 @@
 /app/cmd/cmd
 /docs
 /docs/docs.go
+**/cmd/cmd

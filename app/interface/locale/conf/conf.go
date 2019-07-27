@@ -28,7 +28,6 @@ type Config struct {
 	Tracer     *tracing.Config
 	DB         *DB
 	Memcache   *Memcache
-	Aliyun     *Aliyun
 }
 
 // DB db config.

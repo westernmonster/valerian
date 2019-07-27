@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"os"
@@ -12,7 +13,10 @@ import (
 	"valerian/library/conf/env"
 	"valerian/library/locale"
 	"valerian/library/log"
+	"valerian/library/naming"
+	"valerian/library/naming/discovery"
 	"valerian/library/net/http/mars"
+	xip "valerian/library/net/ip"
 	"valerian/library/tracing"
 
 	httpAccount "valerian/app/interface/account/http"
@@ -57,7 +61,6 @@ func main() {
 
 	// Load Environment Variables
 	godotenv.Load()
-	env.Init()
 
 	// Load locale files
 	locale.LoadTranslateFile()
@@ -68,6 +71,31 @@ func main() {
 
 	initHTTP(conf.Conf)
 
+	// start discovery register
+	var (
+		err    error
+		cancel context.CancelFunc
+	)
+	if env.IP == "" {
+		ip := xip.InternalIP()
+		hn, _ := os.Hostname()
+		dis := discovery.New(nil)
+		ins := &naming.Instance{
+			Zone:     env.Zone,
+			Env:      env.DeployEnv,
+			AppID:    "valerian",
+			Hostname: hn,
+			Addrs: []string{
+				"http://" + ip + ":" + env.HTTPPort,
+				"gorpc://" + ip + ":" + env.GORPCPort,
+			},
+		}
+
+		if cancel, err = dis.Register(context.Background(), ins); err != nil {
+			panic(err)
+		}
+	}
+
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, syscall.SIGHUP, syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT)
 	for {
@@ -75,6 +103,9 @@ func main() {
 		log.Info(fmt.Sprintf("web-interface get a signal %s", s.String()))
 		switch s {
 		case syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT:
+			if cancel != nil {
+				cancel()
+			}
 			log.Info("web-interface exit")
 			time.Sleep(time.Second)
 			return

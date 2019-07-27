@@ -29,7 +29,7 @@ stdout = true
 
 [db]
     addr = "127.0.0.1:3306"
-    dsn = "flywk:flywk@tcp(127.0.0.1:3306)/flywk_dev?timeout=1s&readTimeout=1s&writeTimeout=1s&parseTime=true&loc=Local&charset=utf8mb4"
+    dsn = "flywk:flywk@tcp(127.0.0.1:3306)/config_dev?timeout=1s&readTimeout=1s&writeTimeout=1s&parseTime=true&loc=Local&charset=utf8mb4"
     active = 5
     idle = 2
     queryTimeout = "1s"

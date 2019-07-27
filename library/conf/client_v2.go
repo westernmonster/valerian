@@ -19,11 +19,11 @@ import (
 
 const (
 	// api
-	_apiGet1    = "http://%s/config/v2/get?%s"
-	_apiCheck1  = "http://%s/config/v2/check?%s"
-	_apiCreate  = "http://%s/config/v2/create"
-	_apiUpdate  = "http://%s/config/v2/update"
-	_apiConfIng = "http://%s/config/v2/config/ing?%s"
+	_apiGet1    = "http://%s/config/get?%s"
+	_apiCheck1  = "http://%s/config/check?%s"
+	_apiCreate  = "http://%s/config/create"
+	_apiUpdate  = "http://%s/config/update"
+	_apiConfIng = "http://%s/config/config/ing?%s"
 )
 
 type version1 struct {
