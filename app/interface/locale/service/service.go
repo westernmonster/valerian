@@ -3,7 +3,8 @@ package service
 import (
 	"context"
 
-	"valerian/app/interface/locale/conf"
+	"valerian/app/conf"
+	// "valerian/app/interface/locale/conf"
 	"valerian/app/interface/locale/dao"
 	"valerian/app/interface/locale/model"
 	"valerian/library/database/sqalx"

@@ -39,11 +39,11 @@ func main() {
 	if env.IP == "" {
 		ip := xip.InternalIP()
 		hn, _ := os.Hostname()
-		dis := discovery.New(nil)
+		dis := discovery.New(conf.Conf.Discovery)
 		ins := &naming.Instance{
 			Zone:     env.Zone,
 			Env:      env.DeployEnv,
-			AppID:    "config.service",
+			AppID:    "infra.config",
 			Hostname: hn,
 			Addrs: []string{
 				"http://" + ip + ":" + env.HTTPPort,

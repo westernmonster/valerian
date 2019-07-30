@@ -156,6 +156,7 @@ func (p *CloudAuthClient) GetVerifyToken(c context.Context, ticketID string) (re
 	request.Domain = EndPoint
 	request.Version = Version
 	request.ApiName = GetVerifyToken
+	request.SetScheme("https")
 	request.QueryParams["TicketId"] = ticketID
 	// 使用实人认证服务的业务场景
 	request.QueryParams["Biz"] = "flywiki"
@@ -230,6 +231,7 @@ func (p *CloudAuthClient) GetStatus(c context.Context, ticketID string) (resp *G
 	request.Domain = EndPoint
 	request.Version = Version
 	request.ApiName = GetStatus
+	request.SetScheme("https")
 	request.QueryParams["TicketId"] = ticketID
 	// 使用实人认证服务的业务场景
 	request.QueryParams["Biz"] = "flywiki"
@@ -305,6 +307,7 @@ func (p *CloudAuthClient) SubmitVerification(c context.Context, ticketID string,
 	request.Version = Version
 	request.ApiName = SubmitVerification
 	request.Method = "POST"
+	request.SetScheme("https")
 	request.QueryParams["Action"] = SubmitVerification
 	request.QueryParams["RegionId"] = "cn-hangzhou"
 	request.FormParams["TicketId"] = ticketID
@@ -385,6 +388,7 @@ func (p *CloudAuthClient) GetMaterials(c context.Context, ticketID string) (resp
 	request.Domain = EndPoint
 	request.Version = Version
 	request.ApiName = GetMaterials
+	request.SetScheme("https")
 	request.QueryParams["TicketId"] = ticketID
 	// 使用实人认证服务的业务场景
 	request.QueryParams["Biz"] = "flywiki"

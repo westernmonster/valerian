@@ -3,7 +3,7 @@ user = "nobody"
 pid = "/tmp/discovery.pid"
 dir = "./"
 
-nodes = ["192.168.0.136:7171"]
+nodes = ["discovery1:7171", "discovery2:7172"]
 
 [zones]
 
@@ -12,7 +12,7 @@ dir = "/data/log/discovery/"
 
 [mars]
     [mars.inner]
-    address = "0.0.0.0:7171"
+    address = "0.0.0.0:7172"
     timeout = "40s"
 
 [identify]

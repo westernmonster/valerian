@@ -5,6 +5,7 @@ import (
 	"valerian/library/cache/redis"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
+	"valerian/library/naming/discovery"
 	"valerian/library/net/http/mars"
 	"valerian/library/net/http/mars/middleware/antispam"
 	"valerian/library/net/rpc"
@@ -37,6 +38,8 @@ type Config struct {
 	Mars *mars.ServerConfig
 	// Antispam
 	Antispam *antispam.Config
+
+	Discovery *discovery.Config
 }
 
 func init() {

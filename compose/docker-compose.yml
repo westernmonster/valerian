@@ -1,0 +1,96 @@
+version: '3'
+
+services:
+    redis:
+      image: redis
+      hostname: redis
+      environment:
+        - REGION=hz
+        - ZONE=hz001
+        - DEPLOY_ENV=dev
+      networks:
+        - flywk
+      restart: on-failure
+    memcached:
+      image: memcached
+      hostname: memcached
+      environment:
+        - REGION=hz
+        - ZONE=hz001
+        - DEPLOY_ENV=dev
+      networks:
+        - flywk
+      restart: on-failure
+    mysql:
+      image: mysql/mysql-server
+      hostname: mysql
+      environment:
+        - REGION=hz
+        - ZONE=hz001
+        - DEPLOY_ENV=dev
+        - MYSQL_ROOT_PASSWORD=123456
+      networks:
+        - flywk
+      ports:
+        - "3306:3306"
+      volumes:
+        - /Users/jack/projects/docker/mysql:/var/lib/mysql
+      restart: on-failure
+    discovery1:
+      image: discovery
+      hostname: discovery1
+      environment:
+        - REGION=hz
+        - ZONE=hz001
+        - DEPLOY_ENV=dev
+        - APP_ID=infra.discovery
+      networks:
+        - flywk
+      volumes:
+          - ./discovery1.toml:/go/bin/config.toml
+      ports:
+        - "7171:7171"
+      restart: on-failure
+    discovery2:
+      image: discovery
+      hostname: discovery2
+      networks:
+        - flywk
+      volumes:
+          - ./discovery2.toml:/go/bin/config.toml
+      environment:
+        - REGION=hz
+        - ZONE=hz001
+        - DEPLOY_ENV=dev
+        - APP_ID=infra.discovery
+      ports:
+        - "7172:7172"
+      restart: on-failure
+    collector:
+      image: registry.cn-hangzhou.aliyuncs.com/jaegertracing/jaeger-collector:0.1.9
+      hostname: collector
+      networks:
+        - flywk
+      environment:
+        - SPAN_STORAGE_TYPE=aliyun-log
+      command: ["/go/bin/collector-linux", "--aliyun-log.project=flywiki", "--aliyun-log.endpoint=cn-hangzhou.log.aliyuncs.com", "--aliyun-log.access-key-id=LTAILu9eAnhmQIVi", "--aliyun-log.access-key-secret=hUNGWl0FciuSxFM9KonCz9Gzt7gjeE", "--aliyun-log.span-logstore=flywiki_store"]
+      restart: on-failure
+    config:
+      image: valerian/config:latest
+      hostname: config
+      links:
+        - collector
+      environment:
+        - REGION=hz
+        - ZONE=hz001
+        - DEPLOY_ENV=dev
+        - APP_ID=infra.config
+      networks:
+        - flywk
+      ports:
+        - "9001:9001"
+      restart: on-failure
+networks:
+  flywk:
+    # Use a custom driver
+    driver: bridge

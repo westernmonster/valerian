@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"valerian/app/interface/locale/conf"
+	"valerian/app/conf"
 	"valerian/library/cache/memcache"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"

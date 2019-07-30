@@ -19,8 +19,8 @@ const (
 // env default value.
 const (
 	// env
-	_region    = "sh"
-	_zone      = "sh001"
+	_region    = "hz"
+	_zone      = "hz001"
 	_deployEnv = "dev"
 )
 

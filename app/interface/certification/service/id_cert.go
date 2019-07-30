@@ -117,6 +117,7 @@ func (p *Service) GetIDCertificationStatus(c context.Context) (status int, err e
 		item.IDCardBackPic = &material.Data.IdCardBackPic
 		item.FacePic = &material.Data.FacePic
 		item.EthnicGroup = &material.Data.EthnicGroup
+
 	}
 
 	if err = p.d.UpdateIDCertification(c, p.d.DB(), item); err != nil {

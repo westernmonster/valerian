@@ -15,7 +15,7 @@ stdout = true
     [antispam.redis]
         name = "config-service/hosts"
         proto = "tcp"
-        addr = "127.0.0.1:6889"
+        addr = "redis:6379"
         maxIdle = 100
         maxActive = 100
         dialTimeout = "1s"
@@ -25,11 +25,11 @@ stdout = true
         expire = "24h"
 
 [ecode]
-    domain = "127.0.0.1:6401"
+    domain = "ecode:6401"
 
 [db]
-    addr = "127.0.0.1:3306"
-    dsn = "flywk:flywk@tcp(127.0.0.1:3306)/config_dev?timeout=1s&readTimeout=1s&writeTimeout=1s&parseTime=true&loc=Local&charset=utf8mb4"
+    addr = "mysql:3306"
+    dsn = "flywk:flywk@tcp(mysql:3306)/config_dev?timeout=1s&readTimeout=1s&writeTimeout=1s&parseTime=true&loc=Local&charset=utf8mb4"
     active = 5
     idle = 2
     queryTimeout = "1s"
@@ -44,7 +44,7 @@ stdout = true
 [redis]
     name = "config-service/hosts"
     proto = "tcp"
-    addr = "127.0.0.1:6889"
+    addr = "redis:6379"
     maxIdle = 100
     maxActive = 100
     dialTimeout = "1s"
@@ -53,7 +53,13 @@ stdout = true
     idleTimeout = "10s"
 
 [mars]
-    address = "127.0.0.1:7003"
+    address = "0.0.0.0:7003"
 	maxListen = 10
     timeout="2s"
 
+[discovery]
+   nodes = ["discovery1:7171","discovery2:7171"]
+   key = "6a29f8ed87407c11"
+   secret = "d3c5a85f5b895a03735b5d20a273bc57"
+   env = "dev"
+   zone = "hz001"

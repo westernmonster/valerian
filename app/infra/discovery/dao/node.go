@@ -140,7 +140,7 @@ func (n *Node) call(c context.Context, action model.Action, i *model.Instance, u
 		log.Errorf("node be called(%s) instance(%v) error(%v)", uri, i, err)
 		return
 	}
-	if res.Code != 0 {
+	if !ecode.Int(res.Code).Equal(ecode.OK) {
 		log.Errorf("node be called(%s) instance(%v) responce code(%v)", uri, i, res.Code)
 		if err = ecode.Int(res.Code); err == ecode.Conflict {
 			json.Unmarshal([]byte(res.Data), data)
@@ -172,7 +172,8 @@ func (n *Node) setCall(c context.Context, arg *model.ArgSet, uri string) (err er
 		log.Errorf("node be setCalled(%s) appid(%s) env (%s) error(%v)", uri, arg.Appid, arg.Env, err)
 		return
 	}
-	if res.Code != 0 {
+
+	if !ecode.Int(res.Code).Equal(ecode.OK) {
 		log.Errorf("node be setCalled(%s) appid(%s) env (%s) responce code(%v)", uri, arg.Appid, arg.Env, res.Code)
 	}
 	return
