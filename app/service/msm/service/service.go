@@ -20,7 +20,7 @@ type Service struct {
 	c *conf.Config
 
 	// rpcconf config service Rpc
-	confSvr *confrpc.Service2
+	confSvr *confrpc.Service
 	dao     *dao.Dao
 
 	// ecode

@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"valerian/app/conf"
-	"valerian/library/conf/env"
 	"valerian/library/locale"
 	"valerian/library/log"
 	"valerian/library/net/http/mars"
@@ -57,7 +56,6 @@ func main() {
 
 	// Load Environment Variables
 	godotenv.Load()
-	env.Init()
 
 	// Load locale files
 	locale.LoadTranslateFile()

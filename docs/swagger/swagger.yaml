@@ -68,93 +68,6 @@ definitions:
           user, org
         type: string
     type: object
-  model.AddArticleFile:
-    properties:
-      file_name:
-        type: string
-      file_url:
-        type: string
-      seq:
-        type: integer
-    type: object
-  model.AddArticleRelation:
-    properties:
-      parent_id:
-        description: 类目分类ID 如果根目录则传0
-        type: string
-      primary:
-        description: 是否主话题
-        type: boolean
-      topic_version_id:
-        description: 所关联话题版本 ID
-        type: string
-    type: object
-  model.AddArticleVersion:
-    properties:
-      content:
-        description: |-
-          内容
-          required: true
-        type: string
-      locale:
-        description: |-
-          文章语言
-          required: true
-        type: string
-      name:
-        description: 版本名称
-        type: string
-      seq:
-        description: 顺序
-        type: integer
-    type: object
-  model.ArgAddArticle:
-    properties:
-      cover:
-        description: 封面图
-        type: string
-      files:
-        description: 附件
-        items:
-          $ref: '#/definitions/model.AddArticleFile'
-        type: array
-      introduction:
-        description: 简介
-        type: string
-      private:
-        description: |-
-          是否私有
-          required: true
-        type: boolean
-      relations:
-        description: 关联话题
-        items:
-          $ref: '#/definitions/model.AddArticleRelation'
-        type: array
-      title:
-        description: |-
-          标题
-          required: true
-        type: string
-      versions:
-        items:
-          $ref: '#/definitions/model.AddArticleVersion'
-        type: array
-    type: object
-  model.ArgAddArticleRelation:
-    properties:
-      article_id:
-        type: string
-      parent_id:
-        description: 类目分类ID 如果根目录则传0
-        type: string
-      primary:
-        description: 是否主话题
-        type: boolean
-      topic_version_id:
-        description: 所关联话题版本 ID
-        type: string
-    type: object
   model.ArgAddColor:
     properties:
       color:
@@ -176,16 +89,6 @@ definitions:
       color_id:
         type: string
       name:
-        type: string
-    type: object
-  model.ArgBatchSaveRelatedTopics:
-    properties:
-      related_topics:
-        description: 关联话题
-        items:
-          $ref: '#/definitions/model.ArgRelatedTopic'
-        type: array
-      topic_id:
         type: string
     type: object
   model.ArgBatchSavedTopicMember:
@@ -229,112 +132,11 @@ definitions:
           封面图
           必须为URL
         type: string
-      edit_permission:
-        description: |-
-          编辑权限
-          "id_cert"
-          "work_cert"
-          "id_cert_joined"
-          "work_cert_joined"
-          "approved_id_cert_joined"
-          "approved_work_cert_joined"
-          "only_admin"
-        type: string
-      important:
-        description: 重要标记
-        type: boolean
       introduction:
         description: 简介
         type: string
-      is_private:
-        description: 是否私密
-        type: boolean
-      join_permission:
-        description: |-
-          加入权限
-          默认为 member
-          member 注册用户
-          id_cert 身份认证自由关注
-          work_cert 业内认证自由关注
-          member_approve 注册用户，需审批
-          id_cert_approve 身份认证自由关注，需审批
-          work_cert_approve 业内认证自由关注，需审批
-          admin_add 仅管理员手工添加
-          purchase 付费购买
-          vip Pro 用户自由关注
-        type: string
-      members:
-        description: 成员
-        items:
-          $ref: '#/definitions/model.ArgCreateTopicMember'
-        type: array
-      mute_notification:
-        description: 消息免打扰
-        type: boolean
       name:
         description: 名称
-        type: string
-      related_topics:
-        description: 关联话题
-        items:
-          $ref: '#/definitions/model.ArgRelatedTopic'
-        type: array
-      topic_home:
-        description: |-
-          话题首页
-          introduction 简介
-          feed 动态
-          catalog 目录
-          discussion 讨论
-          chat 群聊
-        type: string
-      topic_type:
-        description: 话题类型
-        type: integer
-      versions:
-        description: 话题分类
-        items:
-          $ref: '#/definitions/model.ArgCreateTopicVersion'
-        type: array
-      view_permission:
-        description: |-
-          查看权限
-          public 公开
-          join 加入
-        type: string
-    type: object
-  model.ArgCreateTopicMember:
-    properties:
-      account_id:
-        description: 成员ID
-        type: string
-      role:
-        description: |-
-          角色
-          user 普通用户
-          admin 管理员
-        type: string
-    type: object
-  model.ArgCreateTopicVersion:
-    properties:
-      catalogs:
-        description: 话题分类
-        items:
-          $ref: '#/definitions/model.TopicLevel1Catalog'
-        type: array
-      name:
-        description: 版本名称
-        type: string
-      seq:
-        description: 顺序
-        type: integer
-    type: object
-  model.ArgDelArticleRelation:
-    properties:
-      article_id:
-        type: string
-      id:
-        description: ID 文章在话题目录中的ID
         type: string
     type: object
   model.ArgDigitLogin:
@@ -454,22 +256,6 @@ definitions:
         description: Prefix 电话号码前缀，例如86
         type: string
     type: object
-  model.ArgNewArticleVersion:
-    properties:
-      article_id:
-        type: integer
-      name:
-        type: string
-    type: object
-  model.ArgNewTopicVersion:
-    properties:
-      name:
-        description: 版本名称
-        type: string
-      topic_id:
-        description: 话题ID
-        type: integer
-    type: object
   model.ArgOSSToken:
     properties:
       file_name:
@@ -484,39 +270,12 @@ definitions:
           other: 其他
         type: string
     type: object
-  model.ArgRelatedTopic:
-    properties:
-      seq:
-        description: 顺序
-        type: integer
-      topic_version_id:
-        description: 关联话题版本ID
-        type: string
-      type:
-        description: |-
-          类型
-          normal
-          strong
-        type: string
-    type: object
   model.ArgRenewToken:
     properties:
       client_id:
         type: string
       refresh_token:
         type: string
-    type: object
-  model.ArgReportArticle:
-    properties:
-      desc:
-        description: 补充信息
-        type: string
-      id:
-        description: 文章ID
-        type: string
-      type:
-        description: 举报类型
-        type: integer
     type: object
   model.ArgSaveArticleFiles:
     properties:
@@ -541,24 +300,7 @@ definitions:
           父级ID
           required: true
         type: string
-      topic_version_id:
-        type: string
-    type: object
-  model.ArgSaveTopicVersions:
-    properties:
-      items:
-        items:
-          $ref: '#/definitions/model.TopicVersionItem'
-        type: array
       topic_id:
-        type: string
-    type: object
-  model.ArgSetPrimaryArticleRelation:
-    properties:
-      article_id:
-        type: string
-      id:
-        description: ID 文章在话题目录中的ID
         type: string
     type: object
   model.ArgTopicCatalog:
@@ -602,23 +344,6 @@ definitions:
           owner 主理人
         type: string
     type: object
-  model.ArgUpdateArticle:
-    properties:
-      cover:
-        description: 封面图
-        type: string
-      id:
-        description: 文章ID
-        type: string
-      introduction:
-        type: string
-      private:
-        description: 是否私有
-        type: boolean
-      title:
-        description: 标题
-        type: string
-    type: object
   model.ArgUpdateColor:
     properties:
       color:
@@ -653,6 +378,9 @@ definitions:
       allow_chat:
         description: 开启群聊
         type: boolean
+      allow_discuss:
+        description: 允许讨论
+        type: boolean
       bg:
         description: |-
           背景图
@@ -672,13 +400,8 @@ definitions:
       edit_permission:
         description: |-
           编辑权限
-          "id_cert"
-          "work_cert"
-          "id_cert_joined"
-          "work_cert_joined"
-          "approved_id_cert_joined"
-          "approved_work_cert_joined"
-          "only_admin"
+          "member"
+          "admin"
         type: string
       id:
         description: 话题ID
@@ -695,12 +418,11 @@ definitions:
       join_permission:
         description: |-
           加入权限
-          free  自由加入
-          auth_free 认证用户自由加入
-          approve 经批准
-          auth_approve 认证用户经批准
-          admin 仅管理员添加
-          purchase 购买
+          默认为 member
+          member 注册用户
+          member_approve 用户需审批
+          cert_approve 认证需审批
+          manual_add 仅管理员手工添加
         type: string
       mute_notification:
         description: 消息免打扰
@@ -708,18 +430,6 @@ definitions:
       name:
         description: 名称
         type: string
-      topic_home:
-        description: |-
-          话题首页
-          introduction 简介
-          feed 动态
-          catalog 目录
-          discussion 讨论
-          chat 群聊
-        type: string
-      topic_type:
-        description: 话题类型
-        type: integer
       view_permission:
         description: |-
           查看权限
@@ -737,143 +447,6 @@ definitions:
         type: string
       seq:
         type: integer
-    type: object
-  model.ArticleHistoryResp:
-    properties:
-      article_version_id:
-        type: string
-      change_desc:
-        type: string
-      change_id:
-        type: string
-      content:
-        type: string
-      content_text:
-        type: string
-      created_at:
-        type: integer
-      diff:
-        type: string
-      id:
-        type: string
-      seq:
-        type: integer
-      updated_at:
-        type: integer
-      updated_by:
-        type: integer
-      updator:
-        $ref: '#/definitions/model.BasicAccountResp'
-        type: object
-    type: object
-  model.ArticleMeta:
-    properties:
-      fav:
-        type: boolean
-      fav_count:
-        type: integer
-      like:
-        type: boolean
-      like_count:
-        type: integer
-      read:
-        type: boolean
-    type: object
-  model.ArticleRelationResp:
-    properties:
-      catalog_full_path:
-        description: 全路径名
-        type: string
-      primary:
-        description: 是否主话题
-        type: boolean
-      topic_catalog_id:
-        description: 话题在目的中的ID
-        type: string
-      topic_id:
-        description: 话题ID
-        type: string
-      topic_name:
-        description: 话题名
-        type: string
-    type: object
-  model.ArticleResp:
-    properties:
-      content:
-        description: 内容
-        type: string
-      cover:
-        description: 封面图
-        type: string
-      created_by:
-        type: integer
-      creator:
-        $ref: '#/definitions/model.BasicAccountResp'
-        type: object
-      files:
-        items:
-          $ref: '#/definitions/model.ArticleFileResp'
-        type: array
-      id:
-        type: string
-      introduction:
-        description: 简介
-        type: string
-      meta:
-        $ref: '#/definitions/model.ArticleMeta'
-        description: 属性
-        type: object
-      primary_topic_meta:
-        $ref: '#/definitions/model.TopicMeta'
-        type: object
-      private:
-        description: 是否私有
-        type: boolean
-      relations:
-        items:
-          $ref: '#/definitions/model.ArticleRelationResp'
-        type: array
-      title:
-        description: 标题
-        type: string
-      versions:
-        items:
-          $ref: '#/definitions/model.ArticleVersionResp'
-        type: array
-    type: object
-  model.ArticleVersionResp:
-    properties:
-      article_id:
-        description: 文章ID
-        type: string
-      content:
-        description: 文章名
-        type: string
-      histories:
-        items:
-          $ref: '#/definitions/model.ArticleHistoryResp'
-        type: array
-      id:
-        description: 版本ID
-        type: string
-      name:
-        description: 版本名称
-        type: string
-      seq:
-        description: 顺序
-        type: integer
-    type: object
-  model.BasicAccountResp:
-    properties:
-      account_id:
-        description: 账户ID
-        type: string
-      avatar:
-        description: 头像
-        type: string
-      user_name:
-        description: 用户名
-        type: string
     type: object
   model.Color:
     properties:
@@ -1176,70 +749,6 @@ definitions:
         description: 是否工作认证
         type: boolean
     type: object
-  model.RelatedTopicResp:
-    properties:
-      cover:
-        description: |-
-          封面图
-          必须为URL
-        type: string
-      introduction:
-        description: 简介
-        type: string
-      members_count:
-        description: 成员数
-        type: integer
-      meta:
-        $ref: '#/definitions/model.TopicMeta'
-        type: object
-      resources_count:
-        description: 资源数量
-        type: integer
-      seq:
-        description: 顺序
-        type: integer
-      topic_id:
-        description: 话题ID
-        type: string
-      topic_name:
-        description: 话题名
-        type: string
-      topic_version_id:
-        description: 话题版本ID
-        type: string
-      type:
-        description: |-
-          关联类型
-          normal 普通关联
-          strong 强关联
-        type: string
-      version_name:
-        description: 版本名称
-        type: string
-    type: object
-  model.RelatedTopicShort:
-    properties:
-      meta:
-        $ref: '#/definitions/model.TopicMeta'
-        type: object
-      seq:
-        description: 顺序
-        type: integer
-      topic_id:
-        type: string
-      topic_name:
-        description: 话题名
-        type: string
-      type:
-        description: |-
-          关联类型
-          normal 普通关联
-          strong 强关联
-        type: string
-      version_name:
-        description: 版本名称
-        type: string
-    type: object
   model.TargetArticle:
     properties:
       comment_count:
@@ -1486,10 +995,8 @@ definitions:
       edit_permission:
         description: |-
           编辑权限
-          auth 认证用户
-          auth_join 认证且加入
-          auth_join_audit 认证且加入，需审核
-          admin 仅管理员
+          "member"
+          "admin"
         type: string
       id:
         type: string
@@ -1507,14 +1014,9 @@ definitions:
           加入权限
           默认为 member
           member 注册用户
-          id_cert 身份认证自由关注
-          work_cert 业内认证自由关注
-          member_approve 注册用户，需审批
-          id_cert_approve 身份认证自由关注，需审批
-          work_cert_approve 业内认证自由关注，需审批
-          admin_add 仅管理员手工添加
-          purchase 付费购买
-          vip Pro 用户自由关注
+          member_approve 用户需审批
+          cert_approve 认证需审批
+          manual_add 仅管理员手工添加
         type: string
       members:
         description: 成员
@@ -1533,39 +1035,13 @@ definitions:
       name:
         description: 名称
         type: string
-      related_topics:
-        description: 关联话题
-        items:
-          $ref: '#/definitions/model.RelatedTopicShort'
-        type: array
-      resources_count:
-        description: 资源数量
-        type: integer
-      seq:
-        description: 顺序
-        type: integer
       topic_home:
         description: |-
           话题首页
-          introduction 简介
           feed 动态
           catalog 目录
-          discussion 讨论
-          chat 群聊
+          discuss 讨论
         type: string
-      topic_type:
-        description: 话题类型
-        type: integer
-      topic_type_name:
-        type: string
-      version_name:
-        description: 版本名
-        type: string
-      versions:
-        description: 版本列表
-        items:
-          $ref: '#/definitions/model.TopicVersionResp'
-        type: array
       view_permission:
         description: |-
           查看权限
@@ -1601,11 +1077,6 @@ definitions:
       resources_count:
         description: 资源数量
         type: integer
-      versions:
-        description: 版本列表
-        items:
-          $ref: '#/definitions/model.TopicVersionResp'
-        type: array
     type: object
   model.TopicSearchPaging:
     properties:
@@ -1625,46 +1096,6 @@ definitions:
       paging:
         $ref: '#/definitions/model.TopicSearchPaging'
         type: object
-    type: object
-  model.TopicTypeResp:
-    properties:
-      id:
-        type: integer
-      name:
-        type: string
-    type: object
-  model.TopicVersionItem:
-    properties:
-      id:
-        type: string
-      name:
-        description: 版本名称
-        type: string
-      seq:
-        description: 顺序
-        type: integer
-    type: object
-  model.TopicVersionResp:
-    properties:
-      catalogs:
-        items:
-          $ref: '#/definitions/model.TopicLevel1Catalog'
-        type: array
-      id:
-        description: 版本ID
-        type: string
-      name:
-        description: 版本名称
-        type: string
-      seq:
-        description: 顺序
-        type: integer
-      topic_id:
-        description: 话题ID
-        type: string
-      topic_name:
-        description: 话题名
-        type: string
     type: object
   model.UpdateArticleFile:
     properties:
@@ -1696,212 +1127,6 @@ info:
   title: 飞行百科 API
   version: "1.0"
 paths:
-  /article/add:
-    post:
-      consumes:
-      - application/json
-      description: 新增文章
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 请求
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/model.ArgAddArticle'
-          type: object
-      produces:
-      - application/json
-      responses:
-        "20":
-          description: 获取用户ID失败
-        "48":
-          description: 文章版本名称已经存在
-        "49":
-          description: 必须有主话题
-        "50":
-          description: 只允许一个主话题
-        "51":
-          description: 关联话题重复
-        "52":
-          description: 所选节点不是类目分类
-        "53":
-          description: 需要话题编辑权限
-        "200":
-          description: 成功,返回article_id
-        "400":
-          description: 验证请求失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 新增文章
-      tags:
-      - article
-  /article/del:
-    post:
-      consumes:
-      - application/json
-      description: 删除文章
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: ID
-        in: query
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-        "400":
-          description: 验证请求失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 删除文章
-      tags:
-      - article
-  /article/edit:
-    post:
-      consumes:
-      - application/json
-      description: 更新文章
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 请求
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/model.ArgUpdateArticle'
-          type: object
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-        "400":
-          description: 验证请求失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 更新文章
-      tags:
-      - article
-  /article/fav:
-    post:
-      consumes:
-      - application/json
-      description: 收藏文章
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: ID
-        in: query
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功后返回bool值
-        "400":
-          description: 验证请求失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 收藏文章
-      tags:
-      - article
   /article/files:
     post:
       consumes:
@@ -1949,108 +1174,6 @@ paths:
         "500":
           description: 服务器端错误
       summary: 批量更新文件
-      tags:
-      - article
-  /article/get:
-    get:
-      consumes:
-      - application/json
-      description: 获取文章
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: ID
-        in: query
-        name: id
-        required: true
-        type: string
-      - description: 目前支持：files,relations,versions,histories,meta,primary_topic_meta,edited_by_others
-        in: query
-        name: include
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 文章
-          schema:
-            $ref: '#/definitions/model.ArticleResp'
-            type: object
-        "400":
-          description: 验证请求失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 获取文章
-      tags:
-      - article
-  /article/like:
-    post:
-      consumes:
-      - application/json
-      description: 点赞文章
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: ID
-        in: query
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功后返回bool值
-        "400":
-          description: 验证请求失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 点赞文章
       tags:
       - article
   /article/list/files:
@@ -2102,446 +1225,6 @@ paths:
         "500":
           description: 服务器端错误
       summary: 获取文件列表
-      tags:
-      - article
-  /article/list/relations:
-    get:
-      consumes:
-      - application/json
-      description: 获取关联话题列表
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 文章ID
-        in: query
-        name: article_id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 关联话题
-          schema:
-            items:
-              $ref: '#/definitions/model.ArticleRelationResp'
-            type: array
-        "400":
-          description: 请求验证失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 获取关联话题列表
-      tags:
-      - article
-  /article/list/versions:
-    get:
-      consumes:
-      - application/json
-      description: 获取文章版本列表
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 文章ID
-        in: query
-        name: article_id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 文章版本
-          schema:
-            items:
-              $ref: '#/definitions/model.ArticleVersionResp'
-            type: array
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 获取文章版本列表
-      tags:
-      - article
-  /article/read:
-    post:
-      consumes:
-      - application/json
-      description: 设置是否已读
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: ID
-        in: query
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功后返回bool值
-        "400":
-          description: 验证请求失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 设置是否已读
-      tags:
-      - article
-  /article/relations/add:
-    post:
-      consumes:
-      - application/json
-      description: 新增关联话题
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 请求
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/model.ArgAddArticleRelation'
-          type: object
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-        "400":
-          description: 验证请求失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 新增关联话题
-      tags:
-      - article
-  /article/relations/del:
-    post:
-      consumes:
-      - application/json
-      description: 删除关联话题
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 请求
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/model.ArgDelArticleRelation'
-          type: object
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-        "400":
-          description: 验证请求失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 删除关联话题
-      tags:
-      - article
-  /article/relations/primary:
-    post:
-      consumes:
-      - application/json
-      description: 设置主话题
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 请求
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/model.ArgSetPrimaryArticleRelation'
-          type: object
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-        "400":
-          description: 验证请求失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 设置主话题
-      tags:
-      - article
-  /article/report:
-    post:
-      consumes:
-      - application/json
-      description: 举报文章
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 请求
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/model.ArgReportArticle'
-          type: object
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-        "400":
-          description: 验证请求失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 举报文章
-      tags:
-      - article
-  /article/versions:
-    post:
-      consumes:
-      - application/json
-      description: 新建文章版本
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 请求
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/model.ArgNewArticleVersion'
-          type: object
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-        "400":
-          description: 验证请求失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 新建文章版本
-      tags:
-      - article
-  /article/versions/save:
-    post:
-      consumes:
-      - application/json
-      description: 保存文章版本（排序，重命名）
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 请求
-        in: body
-        name: req
-        required: true
-        schema:
-          type: object
-      produces:
-      - application/json
-      responses:
-        "20":
-          description: 获取用户ID失败，一般是因为未登录造成
-        "400":
-          description: 验证请求失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 保存文章版本（排序，重命名）
       tags:
       - article
   /draft/add:
@@ -4291,155 +2974,6 @@ paths:
       summary: 获取成员列表
       tags:
       - topic
-  /topic/list/related:
-    get:
-      consumes:
-      - application/json
-      description: 获取关联话题列表
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 话题ID
-        in: query
-        name: topic_id
-        required: true
-        type: string
-      - description: 目前支持：meta
-        in: query
-        name: include
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 关联话题
-          schema:
-            items:
-              $ref: '#/definitions/model.RelatedTopicResp'
-            type: array
-        "400":
-          description: 请求验证失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 获取关联话题列表
-      tags:
-      - topic
-  /topic/list/types:
-    get:
-      consumes:
-      - application/json
-      description: 获取话题类型列表
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 话题成员
-          schema:
-            items:
-              $ref: '#/definitions/model.TopicTypeResp'
-            type: array
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 获取话题类型列表
-      tags:
-      - topic
-  /topic/list/versions:
-    get:
-      consumes:
-      - application/json
-      description: 获取话题版本列表
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 话题ID
-        in: query
-        name: topic_id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 话题版本
-          schema:
-            items:
-              $ref: '#/definitions/model.TopicVersionResp'
-            type: array
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 获取话题版本列表
-      tags:
-      - topic
   /topic/members:
     post:
       consumes:
@@ -4546,57 +3080,6 @@ paths:
       summary: 更改主理人
       tags:
       - topic
-  /topic/related:
-    post:
-      consumes:
-      - application/json
-      description: 批量更新关联话题
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 请求
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/model.ArgBatchSaveRelatedTopics'
-          type: object
-      produces:
-      - application/json
-      responses:
-        "18":
-          description: 话题不存在
-        "200":
-          description: 成功
-        "400":
-          description: 验证请求失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 批量更新关联话题
-      tags:
-      - topic
   /topic/search:
     get:
       consumes:
@@ -4650,122 +3133,6 @@ paths:
         "500":
           description: 服务器端错误
       summary: 搜索话题
-      tags:
-      - topic
-  /topic/versions:
-    post:
-      consumes:
-      - application/json
-      description: 新建话题版本
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 请求
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/model.ArgNewTopicVersion'
-          type: object
-      produces:
-      - application/json
-      responses:
-        "18":
-          description: 话题不存在
-        "20":
-          description: 获取用户ID失败，一般是因为未登录造成
-        "31":
-          description: 话题名已被占用
-        "34":
-          description: 不属于话题成员
-        "35":
-          description: 不是话题主理人或管理员
-        "200":
-          description: 成功
-        "400":
-          description: 验证请求失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 新建话题版本
-      tags:
-      - topic
-  /topic/versions/save:
-    post:
-      consumes:
-      - application/json
-      description: 保存话题版本（排序和重命名）
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 请求
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/model.ArgSaveTopicVersions'
-          type: object
-      produces:
-      - application/json
-      responses:
-        "18":
-          description: 话题不存在
-        "20":
-          description: 获取用户ID失败，一般是因为未登录造成
-        "34":
-          description: 不属于话题成员
-        "35":
-          description: 不是话题主理人或管理员
-        "200":
-          description: 成功
-        "400":
-          description: 验证请求失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 保存话题版本（排序和重命名）
       tags:
       - topic
   /valcode/email:

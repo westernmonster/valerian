@@ -13,49 +13,49 @@ import (
 	"valerian/library/net/metadata"
 )
 
-// func (p *Service) GetTopic(c context.Context, topicID int64, include string) (item *model.TopicResp, err error) {
-// 	if item, err = p.getTopic(c, p.d.DB(), topicID); err != nil {
-// 		return
-// 	}
-// 	inc := includeParam(include)
-// 	if inc["members"] {
-// 		if item.MembersCount, item.Members, err = p.getTopicMembers(c, p.d.DB(), topicID, 10); err != nil {
-// 			return
-// 		}
-// 	}
+func (p *Service) GetTopic(c context.Context, topicID int64, include string) (item *model.TopicResp, err error) {
+	if item, err = p.getTopic(c, p.d.DB(), topicID); err != nil {
+		return
+	}
+	inc := includeParam(include)
+	if inc["members"] {
+		if item.MembersCount, item.Members, err = p.getTopicMembers(c, p.d.DB(), topicID, 10); err != nil {
+			return
+		}
+	}
 
-// 	// if inc["related_topics"] {
-// 	// 	if item.RelatedTopics, err = p.getAllRelatedTopics(c, p.d.DB(), topicID); err != nil {
-// 	// 		return
-// 	// 	}
-// 	// }
+	// if inc["related_topics"] {
+	// 	if item.RelatedTopics, err = p.getAllRelatedTopics(c, p.d.DB(), topicID); err != nil {
+	// 		return
+	// 	}
+	// }
 
-// 	if inc["catalogs"] {
-// 		// if v.Catalogs, err = p.getCatalogsHierarchy(c, p.d.DB(), topicID); err != nil {
-// 		// 	return
-// 		// }
-// 	}
+	if inc["catalogs"] {
+		// if item.Catalogs, err = p.getCatalogsHierarchy(c, p.d.DB(), topicID); err != nil {
+		// 	return
+		// }
+	}
 
-// 	if inc["related_topics[*].meta"] {
-// 		// for _, v := range item.RelatedTopics {
-// 		// 	var t *model.TopicResp
-// 		// 	if t, err = p.getTopic(c, p.d.DB(), v.TopicID); err != nil {
-// 		// 		return
-// 		// 	}
-// 		// 	if v.TopicMeta, err = p.GetTopicMeta(c, t); err != nil {
-// 		// 		return
-// 		// 	}
-// 		// }
-// 	}
+	if inc["related_topics[*].meta"] {
+		// for _, v := range item.RelatedTopics {
+		// 	var t *model.TopicResp
+		// 	if t, err = p.getTopic(c, p.d.DB(), v.TopicID); err != nil {
+		// 		return
+		// 	}
+		// 	if v.TopicMeta, err = p.GetTopicMeta(c, t); err != nil {
+		// 		return
+		// 	}
+		// }
+	}
 
-// 	if inc["meta"] {
-// 		// if item.TopicMeta, err = p.GetTopicMeta(c, item); err != nil {
-// 		// 	return
-// 		// }
-// 	}
+	if inc["meta"] {
+		if item.TopicMeta, err = p.GetTopicMeta(c, item); err != nil {
+			return
+		}
+	}
 
-// 	return
-// }
+	return
+}
 
 func (p *Service) getTopic(c context.Context, node sqalx.Node, topicID int64) (item *model.TopicResp, err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
@@ -154,14 +154,14 @@ func (p *Service) CreateTopic(c context.Context, arg *model.ArgCreateTopic) (top
 		Cover:           arg.Cover,
 		Bg:              arg.Bg,
 		Introduction:    arg.Introduction,
-		IsPrivate:       types.BitBool(arg.IsPrivate),
+		TopicHome:       model.TopicHomeFeed,
+		IsPrivate:       false,
 		AllowChat:       types.BitBool(arg.AllowChat),
 		AllowDiscuss:    types.BitBool(arg.AllowDiscuss),
-		ViewPermission:  arg.ViewPermission,
-		EditPermission:  arg.EditPermission,
-		JoinPermission:  arg.JoinPermission,
+		ViewPermission:  model.ViewPermissionJoin,
+		EditPermission:  model.EditPermissionAdmin,
+		JoinPermission:  model.JoinPermissionMemberApprove,
 		CatalogViewType: arg.CatalogViewType,
-		TopicHome:       arg.TopicHome,
 		CreatedBy:       aid,
 		CreatedAt:       time.Now().Unix(),
 		UpdatedAt:       time.Now().Unix(),
@@ -175,8 +175,8 @@ func (p *Service) CreateTopic(c context.Context, arg *model.ArgCreateTopic) (top
 		ID:               gid.NewID(),
 		AccountID:        aid,
 		TopicID:          item.ID,
-		Important:        types.BitBool(arg.Important),
-		MuteNotification: types.BitBool(arg.MuteNotification),
+		Important:        types.BitBool(false),
+		MuteNotification: types.BitBool(false),
 		CreatedAt:        time.Now().Unix(),
 		UpdatedAt:        time.Now().Unix(),
 	}
@@ -185,11 +185,7 @@ func (p *Service) CreateTopic(c context.Context, arg *model.ArgCreateTopic) (top
 		return
 	}
 
-	if err = p.bulkCreateMembers(c, tx, aid, item.ID, arg); err != nil {
-		return
-	}
-
-	if err = p.bulkCreateCatalogs(c, tx, item.ID, arg.Catalogs); err != nil {
+	if err = p.createTopicMemberOwner(c, tx, aid, item.ID); err != nil {
 		return
 	}
 
@@ -273,10 +269,6 @@ func (p *Service) updateTopic(c context.Context, node sqalx.Node, aid int64, arg
 
 	if arg.CatalogViewType != nil && *arg.CatalogViewType != "" {
 		t.CatalogViewType = *arg.CatalogViewType
-	}
-
-	if arg.TopicHome != nil && *arg.TopicHome != "" {
-		t.TopicHome = *arg.TopicHome
 	}
 
 	if arg.IsPrivate != nil {

@@ -28,13 +28,6 @@ type Code struct {
 	Msg  string
 }
 
-// Codes all codes local map cache.
-type Codes struct {
-	Ver  int64
-	MD5  string
-	Code map[int]string
-}
-
 // Version list and map.
 type Version struct {
 	List *list.List

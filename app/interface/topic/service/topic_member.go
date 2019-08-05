@@ -98,7 +98,7 @@ func (p *Service) getTopicMembers(c context.Context, node sqalx.Node, topicID in
 	return
 }
 
-func (p *Service) bulkCreateMembers(c context.Context, node sqalx.Node, aid, topicID int64, req *model.ArgCreateTopic) (err error) {
+func (p *Service) createTopicMemberOwner(c context.Context, node sqalx.Node, aid, topicID int64) (err error) {
 	var tx sqalx.Node
 	if tx, err = node.Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
@@ -113,41 +113,6 @@ func (p *Service) bulkCreateMembers(c context.Context, node sqalx.Node, aid, top
 			return
 		}
 	}()
-
-	dic := make(map[int64]bool)
-	for _, v := range req.Members {
-		if v.AccountID == aid {
-			continue
-		}
-		if v.Role == model.MemberRoleOwner {
-			return ecode.OnlyAllowOneOwner
-		}
-
-		if dic[v.AccountID] {
-			continue
-		}
-
-		var acc *model.Account
-		if acc, err = p.getAccountByID(c, tx, v.AccountID); err != nil {
-			return
-		} else if acc == nil {
-			return ecode.UserNotExist
-		}
-
-		item := &model.TopicMember{
-			ID:        gid.NewID(),
-			AccountID: v.AccountID,
-			Role:      v.Role,
-			TopicID:   topicID,
-			CreatedAt: time.Now().Unix(),
-			UpdatedAt: time.Now().Unix(),
-		}
-		if e := p.d.AddTopicMember(c, tx, item); e != nil {
-			return e
-		}
-
-		dic[v.AccountID] = true
-	}
 
 	item := &model.TopicMember{
 		ID:        gid.NewID(),

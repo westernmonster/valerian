@@ -18,8 +18,8 @@ import "valerian/library/net/http/mars"
 // @Failure 500 "服务器端错误"
 // @Router /topic/search [get]
 func searchTopics(c *mars.Context) {
-	params := c.Request.Form
-	query := params.Get("query")
-	include := params.Get("include")
-	c.JSON(srv.SearchTopics(c, query, include))
+	// params := c.Request.Form
+	// query := params.Get("query")
+	// include := params.Get("include")
+	// c.JSON(srv.SearchTopics(c, query, include))
 }
