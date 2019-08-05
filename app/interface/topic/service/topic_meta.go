@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+
 	"valerian/app/interface/topic/model"
 	"valerian/library/ecode"
 	"valerian/library/net/metadata"
@@ -22,7 +23,7 @@ func (p *Service) GetTopicMeta(c context.Context, t *model.TopicResp) (meta *mod
 
 	var isMember bool
 	var member *model.TopicMember
-	if member, err = p.d.GetTopicMemberByCondition(c, p.d.DB(), t.ID, aid); err != nil {
+	if member, err = p.d.GetTopicMemberByCond(c, p.d.DB(), map[string]interface{}{"account_id": aid, "topic_id": t.ID}); err != nil {
 		return
 	} else if member != nil {
 		isMember = true
@@ -56,12 +57,7 @@ func (p *Service) GetTopicMeta(c context.Context, t *model.TopicResp) (meta *mod
 	case model.JoinPermissionMember:
 		meta.CanFollow = true
 		break
-	case model.JoinPermissionIDCert:
-		if account.IDCert {
-			meta.CanFollow = true
-		}
-		break
-	case model.JoinPermissionWorkCert:
+	case model.JoinPermissionCertApprove:
 		if account.IDCert && account.WorkCert {
 			meta.CanFollow = true
 		}
@@ -69,64 +65,47 @@ func (p *Service) GetTopicMeta(c context.Context, t *model.TopicResp) (meta *mod
 	case model.JoinPermissionMemberApprove:
 		meta.CanFollow = true
 		break
-	case model.JoinPermissionIDCertApprove:
-		if account.IDCert {
-			meta.CanFollow = true
-		}
-		break
-	case model.JoinPermissionWorkCertApprove:
-		if account.IDCert && account.WorkCert {
-			meta.CanFollow = true
-		}
-		break
-	case model.JoinPermissionAdminAdd:
+	case model.JoinPermissionManualAdd:
 		meta.CanFollow = false
-		break
-	case model.JoinPermissionPurchase:
-		break
-	case model.JoinPermissionVIP:
-		if account.IsVIP {
-			meta.CanFollow = true
-		}
 		break
 	}
 
 	switch t.EditPermission {
-	case model.EditPermissionIDCert:
-		if account.IDCert {
-			meta.CanEdit = true
-		}
-		break
-	case model.EditPermissionWorkCert:
-		if account.IDCert && account.WorkCert {
-			meta.CanEdit = true
-		}
-		break
-	case model.EditPermissionIDCertJoined:
-		if bool(account.IDCert) && isMember {
-			meta.CanEdit = true
-		}
-		break
-	case model.EditPermissionWorkCertJoined:
-		if bool(account.IDCert) && bool(account.WorkCert) && isMember {
-			meta.CanEdit = true
-		}
-		break
-	case model.EditPermissionApprovedIDCertJoined:
-		if bool(account.IDCert) && isMember {
-			meta.CanEdit = true
-		}
-		break
-	case model.EditPermissionApprovedWorkCertJoined:
-		if bool(account.IDCert) && bool(account.WorkCert) && isMember {
-			meta.CanEdit = true
-		}
-		break
-		// case model.EditPermissionAdmin:
-		// 	if isMember && (member.Role == model.MemberRoleAdmin || member.Role == model.MemberRoleOwner) {
-		// 		meta.CanEdit = true
-		// 	}
-		// 	break
+	// case model.EditPermissionIDCert:
+	// 	if account.IDCert {
+	// 		meta.CanEdit = true
+	// 	}
+	// 	break
+	// case model.EditPermissionWorkCert:
+	// 	if account.IDCert && account.WorkCert {
+	// 		meta.CanEdit = true
+	// 	}
+	// 	break
+	// case model.EditPermissionIDCertJoined:
+	// 	if bool(account.IDCert) && isMember {
+	// 		meta.CanEdit = true
+	// 	}
+	// 	break
+	// case model.EditPermissionWorkCertJoined:
+	// 	if bool(account.IDCert) && bool(account.WorkCert) && isMember {
+	// 		meta.CanEdit = true
+	// 	}
+	// 	break
+	// case model.EditPermissionApprovedIDCertJoined:
+	// 	if bool(account.IDCert) && isMember {
+	// 		meta.CanEdit = true
+	// 	}
+	// 	break
+	// case model.EditPermissionApprovedWorkCertJoined:
+	// 	if bool(account.IDCert) && bool(account.WorkCert) && isMember {
+	// 		meta.CanEdit = true
+	// 	}
+	// 	break
+	// case model.EditPermissionAdmin:
+	// 	if isMember && (member.Role == model.MemberRoleAdmin || member.Role == model.MemberRoleOwner) {
+	// 		meta.CanEdit = true
+	// 	}
+	// 	break
 	}
 
 	if isMember && (member.Role == model.MemberRoleAdmin || member.Role == model.MemberRoleOwner) {

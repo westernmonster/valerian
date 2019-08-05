@@ -69,11 +69,9 @@ var (
 	TopicNotExist                  = add(18) // 话题不存在
 	OnlyAllowOneOwner              = add(19) // 主理人只能有一个
 	AcquireAccountIDFailed         = add(20) // 获取用户ID失败
-	TopicTypeNotExist              = add(30) // 话题类型不存在
-	TopicVersionNameExist          = add(31) // 话题版本已经存在
 	TopicCatalogNotExist           = add(32) // 话题类目不存在
 	MustDeleteChildrenCatalogFirst = add(33) // 必须先删除类目子项
-	NotBelongToTopic               = add(34) // 不是话题成员
+	NotTopicMember                 = add(34) // 不是话题成员
 	NotTopicAdmin                  = add(35) // 不是话题管理员
 	NeedIDCert                     = add(37) // 需要身份认证
 	NeedWorkCert                   = add(38) // 需要工作认证
@@ -86,10 +84,8 @@ var (
 	DraftCategoryNotExist          = add(45) // 草稿分类不存在
 	NotTopicOwner                  = add(46) // 你不是主理人
 	DraftNotExist                  = add(47) // 草稿不存在
-	ArticleVersionNameExist        = add(48) // 文章版本名称已经存在
 	NeedPrimaryTopic               = add(49) // 必须有主话题
 	OnlyAllowOnePrimaryTopic       = add(50) // 只允许一个主话题
-	DuplicateTopicVersionID        = add(51) // 关联话题版本重复
 	InvalidCatalog                 = add(52) // 所选节点不是类目分类
 	NeedEditPermission             = add(54) // 需要话题编辑权限
 	LocaleNotExist                 = add(55) // 未找到该语言编码
@@ -97,9 +93,9 @@ var (
 	ArticleNotExist                = add(57) // 文章不存在
 	ArticleFileNotExist            = add(58) // 文章附件不存在
 	AccountTopicSettingNotExist    = add(59) // 用户话题设置不存在
-	ArticleRelationAlreadyAdded    = add(60) // 已经添加了该话题关联
-	TopicVersionNotExist           = add(61) // 话题版本不存在
-	ArticleVersionNotExist         = add(62) // 文章版本不存在
 	GrabLinkFailed                 = add(63) // 获取链接信息失败
 	ParseHTMLFailed                = add(64) // 解析HTML内容失败
+	TopicMemberDuplicate           = add(65) // 话题成员重复
+	AuthTopicDuplicate             = add(66) // 授权话题重复
+	MustNotUseCurrentTopic         = add(67) // 不允许授权自身
 )

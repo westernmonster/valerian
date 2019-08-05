@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"time"
+
 	"valerian/app/interface/topic/model"
 	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
@@ -32,15 +33,10 @@ func (p *Service) Follow(c context.Context, topicID int64) (status int, err erro
 			return
 		}
 	}()
-	var isMember bool
 	var member *model.TopicMember
-	if member, err = p.d.GetTopicMemberByCondition(c, p.d.DB(), topicID, aid); err != nil {
+	if member, err = p.d.GetTopicMemberByCond(c, tx, map[string]interface{}{"account_id": aid, "topic_id": topicID}); err != nil {
 		return
 	} else if member != nil {
-		isMember = true
-	}
-
-	if isMember {
 		return model.FollowStatusFollowed, nil
 	}
 
@@ -54,7 +50,7 @@ func (p *Service) Follow(c context.Context, topicID int64) (status int, err erro
 		case model.FollowRequestStatusCommited:
 			return model.FollowStatusApproving, nil
 		case model.FollowRequestStatusApproved:
-			return
+			return model.FollowStatusFollowed, nil
 		case model.FollowRequestStatusRejected:
 			break
 		}
@@ -77,36 +73,14 @@ func (p *Service) Follow(c context.Context, topicID int64) (status int, err erro
 	switch t.JoinPermission {
 	case model.JoinPermissionMember:
 		return model.FollowStatusFollowed, p.addMember(c, tx, topicID, aid, model.MemberRoleUser)
-	case model.JoinPermissionIDCert:
-		if account.IDCert {
-			return model.FollowStatusFollowed, p.addMember(c, tx, topicID, aid, model.MemberRoleUser)
-		}
-		return model.FollowStatusUnfollowed, ecode.NeedIDCert
-	case model.JoinPermissionWorkCert:
-		if account.IDCert && account.WorkCert {
-			return model.FollowStatusFollowed, p.addMember(c, tx, topicID, aid, model.MemberRoleUser)
-		}
-
-		return model.FollowStatusUnfollowed, ecode.NeedWorkCert
-	case model.JoinPermissionIDCertApprove:
-		if !account.IDCert {
-			return model.FollowStatusUnfollowed, ecode.NeedIDCert
-		}
+	case model.JoinPermissionMemberApprove:
 		break
-	case model.JoinPermissionWorkCertApprove:
+	case model.JoinPermissionCertApprove:
 		if !account.IDCert || !account.WorkCert {
 			return model.FollowStatusUnfollowed, ecode.NeedWorkCert
 		}
-		break
-	case model.JoinPermissionAdminAdd:
+	case model.JoinPermissionManualAdd:
 		return model.FollowStatusUnfollowed, ecode.OnlyAllowAdminAdded
-	case model.JoinPermissionPurchase:
-		return model.FollowStatusUnfollowed, ecode.NeedPurchase
-	case model.JoinPermissionVIP:
-		if account.IsVIP {
-			return model.FollowStatusFollowed, p.addMember(c, tx, topicID, aid, model.MemberRoleUser)
-		}
-		return model.FollowStatusUnfollowed, ecode.NeedPurchase
 	}
 
 	item := &model.TopicFollowRequest{

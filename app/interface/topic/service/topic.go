@@ -13,57 +13,49 @@ import (
 	"valerian/library/net/metadata"
 )
 
-func (p *Service) GetTopic(c context.Context, topicID int64, include string) (item *model.TopicResp, err error) {
-	if item, err = p.getTopic(c, p.d.DB(), topicID); err != nil {
-		return
-	}
-	inc := includeParam(include)
-	if inc["members"] {
-		if item.MembersCount, item.Members, err = p.getTopicMembers(c, p.d.DB(), topicID, 10); err != nil {
-			return
-		}
-	}
+// func (p *Service) GetTopic(c context.Context, topicID int64, include string) (item *model.TopicResp, err error) {
+// 	if item, err = p.getTopic(c, p.d.DB(), topicID); err != nil {
+// 		return
+// 	}
+// 	inc := includeParam(include)
+// 	if inc["members"] {
+// 		if item.MembersCount, item.Members, err = p.getTopicMembers(c, p.d.DB(), topicID, 10); err != nil {
+// 			return
+// 		}
+// 	}
 
-	if inc["versions"] {
-		if item.Versions, err = p.getTopicVersionsResp(c, p.d.DB(), item.ID); err != nil {
-			return
-		}
-	}
+// 	// if inc["related_topics"] {
+// 	// 	if item.RelatedTopics, err = p.getAllRelatedTopics(c, p.d.DB(), topicID); err != nil {
+// 	// 		return
+// 	// 	}
+// 	// }
 
-	if inc["related_topics"] {
-		if item.RelatedTopics, err = p.getAllRelatedTopics(c, p.d.DB(), topicID); err != nil {
-			return
-		}
-	}
+// 	if inc["catalogs"] {
+// 		// if v.Catalogs, err = p.getCatalogsHierarchy(c, p.d.DB(), topicID); err != nil {
+// 		// 	return
+// 		// }
+// 	}
 
-	if inc["versions[*].catalogs"] {
-		for _, v := range item.Versions {
-			if v.Catalogs, err = p.getCatalogsHierarchy(c, p.d.DB(), v.ID); err != nil {
-				return
-			}
-		}
-	}
+// 	if inc["related_topics[*].meta"] {
+// 		// for _, v := range item.RelatedTopics {
+// 		// 	var t *model.TopicResp
+// 		// 	if t, err = p.getTopic(c, p.d.DB(), v.TopicID); err != nil {
+// 		// 		return
+// 		// 	}
+// 		// 	if v.TopicMeta, err = p.GetTopicMeta(c, t); err != nil {
+// 		// 		return
+// 		// 	}
+// 		// }
+// 	}
 
-	if inc["related_topics[*].meta"] {
-		for _, v := range item.RelatedTopics {
-			var t *model.TopicResp
-			if t, err = p.getTopic(c, p.d.DB(), v.TopicID); err != nil {
-				return
-			}
-			if v.TopicMeta, err = p.GetTopicMeta(c, t); err != nil {
-				return
-			}
-		}
-	}
+// 	if inc["meta"] {
+// 		// if item.TopicMeta, err = p.GetTopicMeta(c, item); err != nil {
+// 		// 	return
+// 		// }
+// 	}
 
-	if inc["meta"] {
-		if item.TopicMeta, err = p.GetTopicMeta(c, item); err != nil {
-			return
-		}
-	}
-
-	return
-}
+// 	return
+// }
 
 func (p *Service) getTopic(c context.Context, node sqalx.Node, topicID int64) (item *model.TopicResp, err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
@@ -93,27 +85,20 @@ func (p *Service) getTopic(c context.Context, node sqalx.Node, topicID int64) (i
 		Name:            t.Name,
 		Introduction:    t.Introduction,
 		CatalogViewType: t.CatalogViewType,
-		TopicType:       t.TopicType,
 		TopicHome:       t.TopicHome,
 		IsPrivate:       bool(t.IsPrivate),
 		AllowChat:       bool(t.AllowChat),
 		AllowDiscuss:    bool(t.AllowDiscuss),
-		EditPermission:  t.EditPermission,
 		ViewPermission:  t.ViewPermission,
+		EditPermission:  t.EditPermission,
 		JoinPermission:  t.JoinPermission,
 		CreatedAt:       t.CreatedAt,
 	}
 
 	item.Members = make([]*model.TopicMemberResp, 0)
-	item.RelatedTopics = make([]*model.RelatedTopicShort, 0)
-	item.Versions = make([]*model.TopicVersionResp, 0)
+	// item.RelatedTopics = make([]*model.RelatedTopicShort, 0)
+	// item.Versions = make([]*model.TopicVersionResp, 0)
 
-	var tType *model.TopicType
-	if tType, err = p.d.GetTopicType(c, node, t.TopicType); err != nil {
-		return
-	} else if tType != nil {
-		item.TopicTypeName = tType.Name
-	}
 	var s *model.AccountTopicSetting
 	if s, err = p.getAccountTopicSetting(c, node, aid, topicID); err != nil {
 		return
@@ -126,6 +111,17 @@ func (p *Service) getTopic(c context.Context, node sqalx.Node, topicID int64) (i
 		p.addCache(func() {
 			p.d.SetTopicCache(context.TODO(), item)
 		})
+	}
+
+	return
+}
+
+func (p *Service) checkTopic(c context.Context, node sqalx.Node, topicID int64) (err error) {
+	var t *model.Topic
+	if t, err = p.d.GetTopicByID(c, node, topicID); err != nil {
+		return
+	} else if t == nil {
+		return ecode.TopicNotExist
 	}
 
 	return
@@ -161,44 +157,14 @@ func (p *Service) CreateTopic(c context.Context, arg *model.ArgCreateTopic) (top
 		IsPrivate:       types.BitBool(arg.IsPrivate),
 		AllowChat:       types.BitBool(arg.AllowChat),
 		AllowDiscuss:    types.BitBool(arg.AllowDiscuss),
-		EditPermission:  arg.EditPermission,
 		ViewPermission:  arg.ViewPermission,
+		EditPermission:  arg.EditPermission,
 		JoinPermission:  arg.JoinPermission,
 		CatalogViewType: arg.CatalogViewType,
 		TopicHome:       arg.TopicHome,
 		CreatedBy:       aid,
 		CreatedAt:       time.Now().Unix(),
 		UpdatedAt:       time.Now().Unix(),
-	}
-
-	if v, e := p.d.GetTopicType(c, tx, arg.TopicType); e != nil {
-		err = e
-		return
-	} else if v == nil {
-		err = ecode.TopicTypeNotExist
-		return
-	}
-
-	item.TopicType = arg.TopicType
-
-	for _, v := range arg.Versions {
-		set := &model.TopicVersion{
-			ID:        gid.NewID(),
-			Name:      v.Name,
-			Seq:       v.Seq,
-			TopicID:   item.ID,
-			CreatedAt: time.Now().Unix(),
-			UpdatedAt: time.Now().Unix(),
-		}
-
-		if err = p.d.AddTopicVersion(c, tx, set); err != nil {
-			return
-		}
-
-		if err = p.bulkCreateCatalogs(c, tx, item.ID, set.ID, v.Catalogs); err != nil {
-			return
-		}
-
 	}
 
 	if err = p.d.AddTopic(c, tx, item); err != nil {
@@ -223,7 +189,7 @@ func (p *Service) CreateTopic(c context.Context, arg *model.ArgCreateTopic) (top
 		return
 	}
 
-	if err = p.bulkSaveRelations(c, tx, item.ID, arg.RelatedTopics); err != nil {
+	if err = p.bulkCreateCatalogs(c, tx, item.ID, arg.Catalogs); err != nil {
 		return
 	}
 
@@ -231,10 +197,6 @@ func (p *Service) CreateTopic(c context.Context, arg *model.ArgCreateTopic) (top
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 		return
 	}
-
-	p.addCache(func() {
-		p.d.DelTopicVersionCache(context.TODO(), item.ID)
-	})
 
 	topicID = item.ID
 	return
@@ -247,14 +209,12 @@ func (p *Service) UpdateTopic(c context.Context, arg *model.ArgUpdateTopic) (err
 		return
 	}
 
-	fmt.Println(aid)
-	var member *model.TopicMember
-	if member, err = p.d.GetTopicMemberByCondition(c, p.d.DB(), arg.ID, aid); err != nil {
+	if err = p.checkTopic(c, p.d.DB(), arg.ID); err != nil {
 		return
-	} else if member == nil {
-		return ecode.NotBelongToTopic
-	} else if member.Role != model.MemberRoleAdmin && member.Role != model.MemberRoleOwner {
-		return ecode.NotTopicAdmin
+	}
+
+	if err = p.checkTopicMemberAdmin(c, p.d.DB(), arg.ID, aid); err != nil {
+		return
 	}
 
 	return p.updateTopic(c, p.d.DB(), aid, arg)
@@ -281,17 +241,6 @@ func (p *Service) updateTopic(c context.Context, node sqalx.Node, aid int64, arg
 		return
 	} else if t == nil {
 		return ecode.TopicNotExist
-	}
-
-	if arg.TopicType != nil {
-		var topicType *model.TopicType
-		if topicType, err = p.d.GetTopicType(c, tx, *arg.TopicType); err != nil {
-			return
-		} else if topicType == nil {
-			return ecode.TopicTypeNotExist
-		}
-		t.TopicType = *arg.TopicType
-
 	}
 
 	if arg.Cover != nil && *arg.Cover != "" {

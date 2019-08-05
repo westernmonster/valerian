@@ -9,117 +9,28 @@ import (
 	"valerian/library/log"
 )
 
-const (
-	_addTopicCatalogSQL               = "INSERT INTO topic_catalogs( id,name,seq,type,parent_id,ref_id,topic_id,topic_version_id,is_primary,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?)"
-	_updateTopicCatalogSQL            = "UPDATE topic_catalogs SET name=?,seq=?,type=?,parent_id=?,ref_id=?,topic_id=?,topic_version_id=?,is_primary=?,updated_at=? WHERE id=?"
-	_delTopicCatalogSQL               = "UPDATE topic_catalogs SET deleted=1 WHERE id=? "
-	_getTopicCatalogChildrenCountSQL  = "SELECT COUNT(1) as count FROM topic_catalogs a WHERE a.topic_id=? AND a.parent_id = ? AND a.deleted=0"
-	_getTopicCatalogsByCondition      = "SELECT a.* FROM topic_catalogs a WHERE a.deleted=0 %s ORDER BY a.seq"
-	_getTopicCatalogsCountByCondition = "SELECT COUNT(1) count FROM topic_catalogs a WHERE a.deleted=0 %s "
-	_getTopicCatalogByCondition       = "SELECT a.* FROM topic_catalogs a WHERE a.deleted=0 %s"
-	_getTopicCatalogByID              = "SELECT a.* FROM topic_catalogs a WHERE a.deleted=0 AND a.id=?"
-	_getMaxChildrenSeqSQL             = "SELECT a.seq FROM topic_catalogs a WHERE a.deleted=0 AND a.topic_id=? AND a.parent_id=? ORDER BY a.seq DESC LIMIT 1"
-)
-
-func (p *Dao) GetTopicCatalogByID(c context.Context, node sqalx.Node, id int64) (item *model.TopicCatalog, err error) {
-	item = new(model.TopicCatalog)
-
-	if err = node.GetContext(c, item, _getTopicCatalogByID, id); err != nil {
-		if err == sql.ErrNoRows {
-			item = nil
-			err = nil
-			return
-		}
-		log.For(c).Error(fmt.Sprintf("dao.GetTopicCatalogByID error(%+v), id(%d)", err, id))
-	}
-
-	return
-}
-
-// Insert insert a new record
-func (p *Dao) AddTopicCatalog(c context.Context, node sqalx.Node, item *model.TopicCatalog) (err error) {
-	if _, err = node.ExecContext(c, _addTopicCatalogSQL, item.ID, item.Name, item.Seq, item.Type, item.ParentID, item.RefID, item.TopicID, item.TopicVersionID, item.IsPrimary, item.Deleted, item.CreatedAt, item.UpdatedAt); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.AddTopicCatalog error(%+v), item(%+v)", err, item))
-	}
-
-	return
-}
-
-// Update update a exist record
-func (p *Dao) UpdateTopicCatalog(c context.Context, node sqalx.Node, item *model.TopicCatalog) (err error) {
-	if _, err = node.ExecContext(c, _updateTopicCatalogSQL, item.Name, item.Seq, item.Type, item.ParentID, item.RefID, item.TopicID, item.TopicVersionID, item.IsPrimary, item.UpdatedAt, item.ID); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.UpdateTopicCatalog error(%+v), item(%+v)", err, item))
-	}
-
-	return
-}
-
-// Delete logic delete a exist record
-func (p *Dao) DelTopicCatalog(c context.Context, node sqalx.Node, id int64) (err error) {
-	if _, err = node.ExecContext(c, _delTopicCatalogSQL, id); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.DelTopicCatalog error(%+v), id(%d)", err, id))
-	}
-
-	return
-}
-
-func (p *Dao) GetTopicCatalogChildrenCount(c context.Context, node sqalx.Node, topicVersionID, parentID int64) (count int, err error) {
-	if err = node.GetContext(c, &count, _getTopicCatalogChildrenCountSQL, topicVersionID, parentID); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.GetTopicCatalogChildrenCount error(%+v), topic_version_id(%d) ,parent id (%d)", err, topicVersionID, parentID))
+func (p *Dao) GetTopicCatalogChildrenCount(c context.Context, node sqalx.Node, topicID, parentID int64) (count int, err error) {
+	sqlSelect := "SELECT COUNT(1) as count FROM topic_catalogs a WHERE a.topic_id=? AND a.parent_id = ? AND a.deleted=0"
+	if err = node.GetContext(c, &count, sqlSelect, topicID, parentID); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetTopicCatalogChildrenCount error(%+v), topic_id(%d) ,parent id (%d)", err, topicID, parentID))
 	}
 	return
 }
 
-func (p *Dao) GetTopicCatalogsCountByCondition(c context.Context, node sqalx.Node, cond map[string]interface{}) (total int, err error) {
-	condition := make([]interface{}, 0)
-	clause := ""
+// GetAll get all records
+func (p *Dao) GetTopicCatalogs(c context.Context, node sqalx.Node) (items []*model.TopicCatalog, err error) {
+	items = make([]*model.TopicCatalog, 0)
+	sqlSelect := "SELECT a.* FROM topic_catalogs a WHERE a.deleted=0 ORDER BY a.id DESC "
 
-	if val, ok := cond["id"]; ok {
-		clause += " AND a.id =?"
-		condition = append(condition, val)
-	}
-	if val, ok := cond["name"]; ok {
-		clause += " AND a.name =?"
-		condition = append(condition, val)
-	}
-	if val, ok := cond["seq"]; ok {
-		clause += " AND a.seq =?"
-		condition = append(condition, val)
-	}
-	if val, ok := cond["type"]; ok {
-		clause += " AND a.type =?"
-		condition = append(condition, val)
-	}
-	if val, ok := cond["parent_id"]; ok {
-		clause += " AND a.parent_id =?"
-		condition = append(condition, val)
-	}
-	if val, ok := cond["ref_id"]; ok {
-		clause += " AND a.ref_id =?"
-		condition = append(condition, val)
-	}
-	if val, ok := cond["topic_id"]; ok {
-		clause += " AND a.topic_id =?"
-		condition = append(condition, val)
-	}
-	if val, ok := cond["topic_version_id"]; ok {
-		clause += " AND a.topic_version_id =?"
-		condition = append(condition, val)
-	}
-	if val, ok := cond["is_primary"]; ok {
-		clause += " AND a.is_primary =?"
-		condition = append(condition, val)
-	}
-
-	sqlSelect := fmt.Sprintf(_getTopicCatalogsCountByCondition, clause)
-
-	if err = node.GetContext(c, &total, sqlSelect, condition...); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.GetTopicCatalogsCountByCondition error(%+v), cond(%+v)", err, cond))
+	if err = node.SelectContext(c, &items, sqlSelect); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetTopicCatalogs err(%+v)", err))
+		return
 	}
 	return
 }
 
-func (p *Dao) GetTopicCatalogsByCondition(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.TopicCatalog, err error) {
+// GetAllByCondition get records by condition
+func (p *Dao) GetTopicCatalogsByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.TopicCatalog, err error) {
 	items = make([]*model.TopicCatalog, 0)
 	condition := make([]interface{}, 0)
 	clause := ""
@@ -152,24 +63,39 @@ func (p *Dao) GetTopicCatalogsByCondition(c context.Context, node sqalx.Node, co
 		clause += " AND a.topic_id =?"
 		condition = append(condition, val)
 	}
-	if val, ok := cond["topic_version_id"]; ok {
-		clause += " AND a.topic_version_id =?"
-		condition = append(condition, val)
-	}
 	if val, ok := cond["is_primary"]; ok {
 		clause += " AND a.is_primary =?"
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf(_getTopicCatalogsByCondition, clause)
+	sqlSelect := fmt.Sprintf("SELECT a.* FROM topic_catalogs a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
 
 	if err = node.SelectContext(c, &items, sqlSelect, condition...); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.GetTopicCatalogsByCondition error(%+v), cond(%+v)", err, cond))
+		log.For(c).Error(fmt.Sprintf("dao.GetTopicCatalogsByCond err(%+v), condition(%+v)", err, cond))
+		return
 	}
 	return
 }
 
-func (p *Dao) GetTopicCatalogByCondition(ctx context.Context, node sqalx.Node, cond map[string]interface{}) (item *model.TopicCatalog, err error) {
+// GetByID get a record by ID
+func (p *Dao) GetTopicCatalogByID(c context.Context, node sqalx.Node, id int64) (item *model.TopicCatalog, err error) {
+	item = new(model.TopicCatalog)
+	sqlSelect := "SELECT a.* FROM topic_catalogs a WHERE a.id=? AND a.deleted=0"
+
+	if err = node.GetContext(c, item, sqlSelect, id); err != nil {
+		if err == sql.ErrNoRows {
+			item = nil
+			err = nil
+			return
+		}
+		log.For(c).Error(fmt.Sprintf("dao.GetTopicCatalogByID err(%+v), id(%+v)", err, id))
+	}
+
+	return
+}
+
+// GetByCondition get a record by condition
+func (p *Dao) GetTopicCatalogByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (item *model.TopicCatalog, err error) {
 	item = new(model.TopicCatalog)
 	condition := make([]interface{}, 0)
 	clause := ""
@@ -202,39 +128,59 @@ func (p *Dao) GetTopicCatalogByCondition(ctx context.Context, node sqalx.Node, c
 		clause += " AND a.topic_id =?"
 		condition = append(condition, val)
 	}
-	if val, ok := cond["topic_version_id"]; ok {
-		clause += " AND a.topic_version_id =?"
-		condition = append(condition, val)
-	}
 	if val, ok := cond["is_primary"]; ok {
 		clause += " AND a.is_primary =?"
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf(_getTopicCatalogByCondition, clause)
+	sqlSelect := fmt.Sprintf("SELECT a.* FROM topic_catalogs a WHERE a.deleted=0 %s", clause)
 
-	if err = node.GetContext(ctx, item, sqlSelect, condition...); err != nil {
+	if err = node.GetContext(c, item, sqlSelect, condition...); err != nil {
 		if err == sql.ErrNoRows {
 			item = nil
 			err = nil
 			return
 		}
-
-		log.For(ctx).Error(fmt.Sprintf("dao.GetTopicCatalogByCondition error(%+v), condition(%+v)", err, cond))
+		log.For(c).Error(fmt.Sprintf("dao.GetTopicCatalogsByCond err(%+v), condition(%+v)", err, cond))
+		return
 	}
 
 	return
 }
 
-func (p *Dao) GetTopicCatalogMaxChildrenSeq(c context.Context, node sqalx.Node, topicVersionID, parentID int64) (seq int, err error) {
-	if err = node.GetContext(c, &seq, _getMaxChildrenSeqSQL, topicVersionID, parentID); err != nil {
-		if err == sql.ErrNoRows {
-			seq = 0
-			err = nil
-			return
-		}
-		log.For(c).Error(fmt.Sprintf("dao.GetTopicCatalogMaxChildrenSeq error(%+v), topic_version_id(%d) parent_id(%d)", err, topicVersionID, parentID))
+// Insert insert a new record
+func (p *Dao) AddTopicCatalog(c context.Context, node sqalx.Node, item *model.TopicCatalog) (err error) {
+	sqlInsert := "INSERT INTO topic_catalogs( id,name,seq,type,parent_id,ref_id,topic_id,is_primary,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?,?,?,?,?)"
+
+	if _, err = node.ExecContext(c, sqlInsert, item.ID, item.Name, item.Seq, item.Type, item.ParentID, item.RefID, item.TopicID, item.IsPrimary, item.Deleted, item.CreatedAt, item.UpdatedAt); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.AddTopicCatalogs err(%+v), item(%+v)", err, item))
 		return
 	}
+
+	return
+}
+
+// Update update a exist record
+func (p *Dao) UpdateTopicCatalog(c context.Context, node sqalx.Node, item *model.TopicCatalog) (err error) {
+	sqlUpdate := "UPDATE topic_catalogs SET name=?,seq=?,type=?,parent_id=?,ref_id=?,topic_id=?,is_primary=?,updated_at=? WHERE id=?"
+
+	_, err = node.ExecContext(c, sqlUpdate, item.Name, item.Seq, item.Type, item.ParentID, item.RefID, item.TopicID, item.IsPrimary, item.UpdatedAt, item.ID)
+	if err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.UpdateTopicCatalogs err(%+v), item(%+v)", err, item))
+		return
+	}
+
+	return
+}
+
+// Delete logic delete a exist record
+func (p *Dao) DelTopicCatalog(c context.Context, node sqalx.Node, id int64) (err error) {
+	sqlDelete := "UPDATE topic_catalogs SET deleted=1 WHERE id=? "
+
+	if _, err = node.ExecContext(c, sqlDelete, id); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.DelTopicCatalogs err(%+v), item(%+v)", err, id))
+		return
+	}
+
 	return
 }

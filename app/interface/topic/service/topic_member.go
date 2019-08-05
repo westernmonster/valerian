@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"time"
+
 	"valerian/app/interface/topic/model"
 	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
@@ -113,13 +114,17 @@ func (p *Service) bulkCreateMembers(c context.Context, node sqalx.Node, aid, top
 		}
 	}()
 
+	dic := make(map[int64]bool)
 	for _, v := range req.Members {
 		if v.AccountID == aid {
 			continue
 		}
-
 		if v.Role == model.MemberRoleOwner {
 			return ecode.OnlyAllowOneOwner
+		}
+
+		if dic[v.AccountID] {
+			continue
 		}
 
 		var acc *model.Account
@@ -140,6 +145,8 @@ func (p *Service) bulkCreateMembers(c context.Context, node sqalx.Node, aid, top
 		if e := p.d.AddTopicMember(c, tx, item); e != nil {
 			return e
 		}
+
+		dic[v.AccountID] = true
 	}
 
 	item := &model.TopicMember{
@@ -163,7 +170,27 @@ func (p *Service) bulkCreateMembers(c context.Context, node sqalx.Node, aid, top
 	return
 }
 
+func (p *Service) checkTopicMemberAdmin(c context.Context, node sqalx.Node, topicID, aid int64) (err error) {
+	var member *model.TopicMember
+	if member, err = p.d.GetTopicMemberByCond(c, node, map[string]interface{}{"account_id": aid, "topic_id": topicID}); err != nil {
+		return
+	} else if member == nil {
+		err = ecode.NotTopicMember
+		return
+	} else if member.Role == model.MemberRoleUser {
+		err = ecode.NotTopicAdmin
+		return
+	}
+
+	return nil
+}
+
 func (p *Service) BulkSaveMembers(c context.Context, req *model.ArgBatchSavedTopicMember) (err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
@@ -179,20 +206,26 @@ func (p *Service) BulkSaveMembers(c context.Context, req *model.ArgBatchSavedTop
 		}
 	}()
 
-	var t *model.Topic
-	if t, err = p.d.GetTopicByID(c, tx, req.TopicID); err != nil {
+	if err = p.checkTopic(c, tx, req.TopicID); err != nil {
 		return
-	} else if t == nil {
-		return ecode.TopicNotExist
+	}
+	if err = p.checkTopicMemberAdmin(c, tx, req.TopicID, aid); err != nil {
+		return
 	}
 
+	dic := make(map[int64]bool)
 	for _, v := range req.Members {
 		if v.Role == model.MemberRoleOwner {
 			continue
 		}
 
+		if dic[v.AccountID] {
+			err = ecode.TopicMemberDuplicate
+			return
+		}
+
 		var member *model.TopicMember
-		if member, err = p.d.GetTopicMemberByCondition(c, tx, req.TopicID, v.AccountID); err != nil {
+		if member, err = p.d.GetTopicMemberByCond(c, tx, map[string]interface{}{"account_id": v.AccountID, "topic_id": req.TopicID}); err != nil {
 			return
 		}
 
@@ -227,11 +260,13 @@ func (p *Service) BulkSaveMembers(c context.Context, req *model.ArgBatchSavedTop
 			if member == nil {
 				continue
 			}
-			if err = p.d.DeleteTopicMember(c, tx, member.ID); err != nil {
+			if err = p.d.DelTopicMember(c, tx, member.ID); err != nil {
 				return
 			}
 			break
 		}
+
+		dic[v.AccountID] = true
 	}
 
 	if err = tx.Commit(); err != nil {
@@ -249,7 +284,7 @@ func (p *Service) BulkSaveMembers(c context.Context, req *model.ArgBatchSavedTop
 
 func (p *Service) addMember(c context.Context, node sqalx.Node, topicID, aid int64, role string) (err error) {
 	var member *model.TopicMember
-	if member, err = p.d.GetTopicMemberByCondition(c, node, topicID, aid); err != nil {
+	if member, err = p.d.GetTopicMemberByCond(c, node, map[string]interface{}{"account_id": aid, "topic_id": topicID}); err != nil {
 		return
 	} else if member != nil {
 		return
@@ -297,10 +332,13 @@ func (p *Service) ChangeOwner(c context.Context, arg *model.ArgChangeOwner) (err
 	}()
 
 	var curMember *model.TopicMember
-	if curMember, err = p.d.GetTopicMemberByCondition(c, tx, arg.TopicID, aid); err != nil {
+	if curMember, err = p.d.GetTopicMemberByCond(c, tx, map[string]interface{}{
+		"topic_id":   arg.TopicID,
+		"account_id": aid,
+	}); err != nil {
 		return
 	} else if curMember == nil {
-		err = ecode.NotBelongToTopic
+		err = ecode.NotTopicMember
 		return
 	} else if curMember.Role != model.MemberRoleOwner {
 		err = ecode.NotTopicOwner
@@ -313,10 +351,13 @@ func (p *Service) ChangeOwner(c context.Context, arg *model.ArgChangeOwner) (err
 	}
 
 	var toMember *model.TopicMember
-	if toMember, err = p.d.GetTopicMemberByCondition(c, tx, arg.TopicID, arg.ToAccountID); err != nil {
+	if toMember, err = p.d.GetTopicMemberByCond(c, tx, map[string]interface{}{
+		"topic_id":   arg.TopicID,
+		"account_id": arg.ToAccountID,
+	}); err != nil {
 		return
 	} else if toMember == nil {
-		err = ecode.NotBelongToTopic
+		err = ecode.NotTopicMember
 		return
 	}
 

@@ -5,20 +5,12 @@
 
 * 数据库采用 MYSQL
 
-* Web 框架采用
-> github.com/gin-gonic/gin
-
-* API 文档采用
-> github.com/swaggo/gin-swagger
 
 * SQL 版本管理采用 sql-migrate
 > github.com/rubenv/sql-migrate
 
 * ID 生成采用预先生成，不使用数据库自增长
 > github.com/bwmarrin/snowflake
-
-* error 处理采用
-> github.com/ztrue/tracerr
 
 
 * 本地开发采用 realize 自动编译、重启

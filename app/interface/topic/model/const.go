@@ -7,15 +7,10 @@ const (
 )
 
 const (
-	JoinPermissionMember          = "member"
-	JoinPermissionIDCert          = "id_cert"
-	JoinPermissionWorkCert        = "work_cert"
-	JoinPermissionMemberApprove   = "member_approve"
-	JoinPermissionIDCertApprove   = "id_cert_approve"
-	JoinPermissionWorkCertApprove = "work_cert_approve"
-	JoinPermissionAdminAdd        = "admin_add"
-	JoinPermissionPurchase        = "purchase"
-	JoinPermissionVIP             = "vip"
+	JoinPermissionMember        = "member"
+	JoinPermissionMemberApprove = "member_approve"
+	JoinPermissionCertApprove   = "cert_approve"
+	JoinPermissionManualAdd     = "manual_add"
 )
 
 const (
@@ -24,13 +19,8 @@ const (
 )
 
 const (
-	EditPermissionIDCert                 = "id_cert"
-	EditPermissionWorkCert               = "work_cert"
-	EditPermissionIDCertJoined           = "id_cert_joined"
-	EditPermissionWorkCertJoined         = "work_cert_joined"
-	EditPermissionApprovedIDCertJoined   = "approved_id_cert_joined"
-	EditPermissionApprovedWorkCertJoined = "approved_work_cert_joined"
-	EditPermissionAdmin                  = "only_admin"
+	EditPermissionMember = "member"
+	EditPermissionAdmin  = "admin"
 )
 
 const (
@@ -39,11 +29,9 @@ const (
 )
 
 const (
-	TopicHomeIntroduction = "introduction"
-	TopicHomeFeed         = "feed"
-	TopicHomeCataglog     = "catalog"
-	TopicHomeDiscussion   = "discussion"
-	TopicHomeChat         = "chat"
+	TopicHomeFeed     = "feed"
+	TopicHomeCataglog = "catalog"
+	TopicHomeDiscuss  = "discuss"
 )
 
 const (
@@ -53,8 +41,9 @@ const (
 )
 
 const (
-	TopicRelationStrong = "strong"
-	TopicRelationNormal = "normal"
+	AuthPermissionView      = "view"
+	AuthPermissionEdit      = "edit"
+	AuthPermissionAdminEdit = "admin_edit"
 )
 
 const (

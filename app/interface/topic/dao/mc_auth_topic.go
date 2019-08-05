@@ -8,12 +8,12 @@ import (
 	"valerian/library/log"
 )
 
-func topicVersionKey(topicSetID int64) string {
-	return fmt.Sprintf("t_version_%d", topicSetID)
+func authTopicsKey(topicID int64) string {
+	return fmt.Sprintf("auth_topics_%d", topicID)
 }
 
-func (p *Dao) SetTopicVersionCache(c context.Context, topicSetID int64, m []*model.TopicVersionResp) (err error) {
-	key := topicVersionKey(topicSetID)
+func (p *Dao) SetAuthTopicsCache(c context.Context, topicID int64, m []*model.AuthTopic) (err error) {
+	key := authTopicsKey(topicID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 
@@ -24,14 +24,13 @@ func (p *Dao) SetTopicVersionCache(c context.Context, topicSetID int64, m []*mod
 	return
 }
 
-func (p *Dao) TopicVersionCache(c context.Context, topicSetID int64) (m []*model.TopicVersionResp, err error) {
-	key := topicVersionKey(topicSetID)
+func (p *Dao) AuthTopicsCache(c context.Context, topicID int64) (m []*model.AuthTopic, err error) {
+	key := authTopicsKey(topicID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	var item *memcache.Item
 	if item, err = conn.Get(key); err != nil {
 		if err == memcache.ErrNotFound {
-			m = nil
 			err = nil
 			return
 		}
@@ -45,8 +44,8 @@ func (p *Dao) TopicVersionCache(c context.Context, topicSetID int64) (m []*model
 	return
 }
 
-func (p *Dao) DelTopicVersionCache(c context.Context, topicSetID int64) (err error) {
-	key := topicVersionKey(topicSetID)
+func (p *Dao) DelAuthTopicsCache(c context.Context, topicID int64) (err error) {
+	key := authTopicsKey(topicID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	if err = conn.Delete(key); err != nil {

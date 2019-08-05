@@ -25,8 +25,6 @@ type ArticleResp struct {
 
 	Relations []*ArticleRelationResp `json:"relations"`
 
-	Versions []*ArticleVersionResp `json:"versions"`
-
 	// 属性
 	ArticleMeta *ArticleMeta `json:"meta,omitempty"`
 

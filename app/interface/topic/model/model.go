@@ -42,17 +42,16 @@ type TopicRelation struct {
 type Topic struct {
 	ID              int64         `db:"id" json:"id,string"`                        // ID ID
 	Name            string        `db:"name" json:"name"`                           // Name 话题名
-	Cover           *string       `db:"cover" json:"cover,omitempty"`               // Cover 封面图
+	Cover           *string       `db:"cover" json:"cover,omitempty"`               // Cover 话题头像
 	Bg              *string       `db:"bg" json:"bg,omitempty"`                     // Bg 背景图
 	Introduction    string        `db:"introduction" json:"introduction"`           // Introduction 话题简介
-	IsPrivate       types.BitBool `db:"is_private" json:"is_private"`               // IsPrivate 是否私密
-	AllowChat       types.BitBool `db:"allow_chat" json:"allow_chat"`               // AllowChat 开启群聊
 	AllowDiscuss    types.BitBool `db:"allow_discuss" json:"allow_discuss"`         // AllowDiscuss 允许讨论
-	EditPermission  string        `db:"edit_permission" json:"edit_permission"`     // EditPermission 编辑权限
+	AllowChat       types.BitBool `db:"allow_chat" json:"allow_chat"`               // AllowChat 开启群聊
+	IsPrivate       types.BitBool `db:"is_private" json:"is_private"`               // IsPrivate 是否私密
 	ViewPermission  string        `db:"view_permission" json:"view_permission"`     // ViewPermission 查看权限
+	EditPermission  string        `db:"edit_permission" json:"edit_permission"`     // EditPermission 编辑权限
 	JoinPermission  string        `db:"join_permission" json:"join_permission"`     // JoinPermission 加入权限
 	CatalogViewType string        `db:"catalog_view_type" json:"catalog_view_type"` // CatalogViewType 分类视图
-	TopicType       int           `db:"topic_type" json:"topic_type"`               // TopicType 话题类型
 	TopicHome       string        `db:"topic_home" json:"topic_home"`               // TopicHome 话题首页
 	CreatedBy       int64         `db:"created_by" json:"created_by,string"`        // CreatedBy 创建人
 	Deleted         types.BitBool `db:"deleted" json:"deleted"`                     // Deleted 是否删除
@@ -109,4 +108,14 @@ type AccountArticleAttr struct {
 	Deleted   types.BitBool `db:"deleted" json:"deleted"`              // Deleted 是否删除
 	CreatedAt int64         `db:"created_at" json:"created_at"`        // CreatedAt 创建时间
 	UpdatedAt int64         `db:"updated_at" json:"updated_at"`        // UpdatedAt 更新时间
+}
+
+type AuthTopic struct {
+	ID         int64         `db:"id" json:"id,string"`                   // ID ID
+	TopicID    int64         `db:"topic_id" json:"topic_id,string"`       // TopicID Topic ID
+	ToTopicID  int64         `db:"to_topic_id" json:"to_topic_id,string"` // ToTopicID To Topic ID
+	Permission string        `db:"permission" json:"permission"`          // Permission 权限
+	Deleted    types.BitBool `db:"deleted" json:"deleted"`                // Deleted 是否删除
+	CreatedAt  int64         `db:"created_at" json:"created_at"`          // CreatedAt 创建时间
+	UpdatedAt  int64         `db:"updated_at" json:"updated_at"`          // UpdatedAt 更新时间
 }

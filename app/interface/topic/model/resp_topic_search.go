@@ -23,9 +23,6 @@ type TopicSearchItem struct {
 	ResourcesCount int `json:"resources_count"`
 
 	HasCatalogTaxonomy bool `json:"has_catalog_taxonomy"`
-
-	// 版本列表
-	Versions []*TopicVersionResp `json:"versions,omitempty"`
 }
 
 type TopicSearchPaging struct {
