@@ -22,6 +22,19 @@ func (p *Dao) GetAuthTopics(c context.Context, node sqalx.Node) (items []*model.
 	return
 }
 
+func (p *Dao) GetAuthTopicsResp(c context.Context, node sqalx.Node, topicID int64) (items []*model.AuthTopicResp, err error) {
+	items = make([]*model.AuthTopicResp, 0)
+	sqlSelect := `SELECT a.to_topic_id,a.permission,b.cover,b.name
+	              FROM auth_topics a LEFT JOIN topics b ON a.to_topic_id
+				  WHERE a.to_topic_id=? AND a.deleted=0 ORDER BY a.id DESC`
+
+	if err = node.SelectContext(c, &items, sqlSelect, topicID); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetAuthTopicsResp err(%+v), topic_id(%+v)", err, topicID))
+		return
+	}
+	return
+}
+
 // GetAllByCondition get records by condition
 func (p *Dao) GetAuthTopicsByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.AuthTopic, err error) {
 	items = make([]*model.AuthTopic, 0)

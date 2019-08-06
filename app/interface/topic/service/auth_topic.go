@@ -117,7 +117,7 @@ func (p *Service) bulkSaveAuthTopics(c context.Context, node sqalx.Node, topicID
 	}
 
 	p.addCache(func() {
-		// p.d.DelAuthTopicsCache(context.TODO(), topicID)
+		p.d.DelAuthTopicsCache(context.TODO(), topicID)
 	})
 	return
 }
@@ -126,52 +126,17 @@ func (p *Service) SaveAuthTopics(c context.Context, arg *model.ArgSaveAuthTopics
 	return p.bulkSaveAuthTopics(c, p.d.DB(), arg.TopicID, arg.AuthTopics)
 }
 
-func (p *Service) GetAllAuthTopics(c context.Context, topicID int64, include string) (items []*model.AuthTopicResp, err error) {
-	// inc := includeParam(include)
-	// var data []*model.TopicRelation
-	// if data, err = p.getTopicRelations(c, p.d.DB(), topicID); err != nil {
-	// 	return
-	// }
+func (p *Service) GetAllAuthTopics(c context.Context, topicID int64) (items []*model.AuthTopicResp, err error) {
+	items = make([]*model.AuthTopicResp, 0)
+	if items, err = p.d.GetAuthTopicsResp(c, p.d.DB(), topicID); err != nil {
+		return
+	}
 
-	// items = make([]*model.RelatedTopicResp, 0)
-
-	// for _, v := range data {
-	// 	item := &model.RelatedTopicResp{
-	// 		TopicVersionID: v.ToTopicVersionID,
-	// 		TopicID:        v.ToTopicID,
-	// 		Seq:            v.Seq,
-	// 		Type:           v.Relation,
-	// 	}
-
-	// 	var t *model.TopicResp
-	// 	if t, err = p.getTopic(c, p.d.DB(), item.TopicID); err != nil {
-	// 		return
-	// 	}
-
-	// 	var ver *model.TopicVersion
-	// 	if ver, err = p.d.GetTopicVersion(c, p.d.DB(), v.ToTopicVersionID); err != nil {
-	// 		return
-	// 	} else if ver == nil {
-	// 		err = ecode.TopicVersionNotExist
-	// 		return
-	// 	}
-
-	// 	item.TopicName = t.Name
-	// 	item.VersionName = ver.Name
-	// 	item.Cover = t.Cover
-	// 	item.Introduction = t.Introduction
-	// 	if item.MembersCount, _, err = p.getTopicMembers(c, p.d.DB(), topicID, 10); err != nil {
-	// 		return
-	// 	}
-	// 	if inc["meta"] {
-	// 		if item.TopicMeta, err = p.GetTopicMeta(c, t); err != nil {
-	// 			return
-	// 		}
-	// 	}
-
-	// 	items = append(items, item)
-
-	// }
+	for _, v := range items {
+		if v.MembersCount, _, err = p.getTopicMembers(c, p.d.DB(), topicID, 10); err != nil {
+			return
+		}
+	}
 
 	return
 }

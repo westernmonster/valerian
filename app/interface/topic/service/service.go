@@ -22,6 +22,7 @@ type Service struct {
 		UpdateTopicCatalog(c context.Context, node sqalx.Node, item *model.TopicCatalog) (err error)
 		DelTopicCatalog(c context.Context, node sqalx.Node, id int64) (err error)
 
+		GetAuthTopicsResp(c context.Context, node sqalx.Node, topicID int64) (items []*model.AuthTopicResp, err error)
 		GetAuthTopicsByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.AuthTopic, err error)
 		GetAuthTopics(c context.Context, node sqalx.Node) (items []*model.AuthTopic, err error)
 		GetAuthTopicByID(c context.Context, node sqalx.Node, id int64) (item *model.AuthTopic, err error)
@@ -97,6 +98,10 @@ type Service struct {
 		SetTopicMembersCache(c context.Context, topicID int64, count, page, pageSize int, data []*model.TopicMember) (err error)
 		TopicMembersCache(c context.Context, topicID int64, page, pageSize int) (count int, data []*model.TopicMember, err error)
 		DelTopicMembersCache(c context.Context, topicID int64) (err error)
+
+		SetAuthTopicsCache(c context.Context, topicID int64, m []*model.AuthTopic) (err error)
+		AuthTopicsCache(c context.Context, topicID int64) (m []*model.AuthTopic, err error)
+		DelAuthTopicsCache(c context.Context, topicID int64) (err error)
 
 		SetArticleCache(c context.Context, m *model.ArticleResp) (err error)
 		ArticleCache(c context.Context, articleID int64) (m *model.ArticleResp, err error)

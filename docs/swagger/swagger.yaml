@@ -68,27 +68,17 @@ definitions:
           user, org
         type: string
     type: object
-  model.ArgAddColor:
+  model.ArgAuthTopic:
     properties:
-      color:
+      permission:
+        description: |-
+          类型
+          view  // 只允许查看
+          edit // 允许所有成员编辑
+          admin_edit // 只允许管理员和主理人编辑
         type: string
-      name:
-        type: string
-    type: object
-  model.ArgAddDraft:
-    properties:
-      category_id:
-        type: string
-      content:
-        type: string
-      title:
-        type: string
-    type: object
-  model.ArgAddDraftCategory:
-    properties:
-      color_id:
-        type: string
-      name:
+      topic_id:
+        description: 授权话题ID
         type: string
     type: object
   model.ArgBatchSavedTopicMember:
@@ -286,6 +276,17 @@ definitions:
           $ref: '#/definitions/model.UpdateArticleFile'
         type: array
     type: object
+  model.ArgSaveAuthTopics:
+    properties:
+      auth_topics:
+        description: 授权话题
+        items:
+          $ref: '#/definitions/model.ArgAuthTopic'
+        type: array
+      topic_id:
+        description: 话题ID
+        type: string
+    type: object
   model.ArgSaveTopicCatalog:
     properties:
       items:
@@ -342,35 +343,6 @@ definitions:
           user 普通用户
           admin 管理员
           owner 主理人
-        type: string
-    type: object
-  model.ArgUpdateColor:
-    properties:
-      color:
-        type: string
-      id:
-        type: integer
-      name:
-        type: string
-    type: object
-  model.ArgUpdateDraft:
-    properties:
-      category_id:
-        type: string
-      content:
-        type: string
-      id:
-        type: string
-      title:
-        type: string
-    type: object
-  model.ArgUpdateDraftCategory:
-    properties:
-      color_id:
-        type: string
-      id:
-        type: integer
-      name:
         type: string
     type: object
   model.ArgUpdateTopic:
@@ -448,21 +420,22 @@ definitions:
       seq:
         type: integer
     type: object
-  model.Color:
+  model.AuthTopicResp:
     properties:
-      account_id:
-        type: integer
-      color:
+      cover:
+        description: |-
+          封面图
+          必须为URL
         type: string
-      created_at:
-        type: integer
-      deleted:
-        type: boolean
-      id:
+      members_count:
+        description: 成员数
         type: integer
       name:
+        description: 名称
         type: string
-      updated_at:
+      permission:
+        type: string
+      to_topic_id:
         type: integer
     type: object
   model.CountryCodeResp:
@@ -487,39 +460,6 @@ definitions:
           前缀/电话区号
           example: 86
         type: string
-    type: object
-  model.DraftCategoryResp:
-    properties:
-      color:
-        description: 颜色值
-        type: string
-      color_id:
-        description: 颜色ID
-        type: string
-      id:
-        description: ID
-        type: string
-      name:
-        description: 分类名
-        type: string
-    type: object
-  model.DraftResp:
-    properties:
-      account_id:
-        type: integer
-      category:
-        $ref: '#/definitions/model.DraftCategoryResp'
-        type: object
-      content:
-        type: string
-      created_at:
-        type: integer
-      id:
-        type: string
-      title:
-        type: string
-      updated_at:
-        type: integer
     type: object
   model.FeedItem:
     properties:
@@ -1227,596 +1167,6 @@ paths:
       summary: 获取文件列表
       tags:
       - article
-  /draft/add:
-    post:
-      consumes:
-      - application/json
-      description: 添加草稿
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 请求
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/model.ArgAddDraft'
-          type: object
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-        "400":
-          description: 验证请求失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 添加草稿
-      tags:
-      - draft
-  /draft/category/add:
-    post:
-      consumes:
-      - application/json
-      description: 添加草稿分类
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 请求
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/model.ArgAddDraftCategory'
-          type: object
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-        "400":
-          description: 验证请求失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 添加草稿分类
-      tags:
-      - draft
-  /draft/category/del:
-    post:
-      consumes:
-      - application/json
-      description: 删除草稿分类
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: ID
-        in: query
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-        "400":
-          description: 验证请求失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 删除草稿分类
-      tags:
-      - draft
-  /draft/category/edit:
-    post:
-      consumes:
-      - application/json
-      description: 更新草稿分类
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 请求
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/model.ArgUpdateDraftCategory'
-          type: object
-      produces:
-      - application/json
-      responses:
-        "43":
-          description: 草稿分类不存在
-        "44":
-          description: 不属于你
-        "200":
-          description: 成功
-        "400":
-          description: 验证请求失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 更新草稿分类
-      tags:
-      - draft
-  /draft/color/add:
-    post:
-      consumes:
-      - application/json
-      description: 添加颜色
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 请求
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/model.ArgAddColor'
-          type: object
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-        "400":
-          description: 验证请求失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 添加颜色
-      tags:
-      - draft
-  /draft/color/del:
-    post:
-      consumes:
-      - application/json
-      description: 删除颜色
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: ID
-        in: query
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-        "400":
-          description: 验证请求失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 删除颜色
-      tags:
-      - draft
-  /draft/color/edit:
-    post:
-      consumes:
-      - application/json
-      description: 更新颜色
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 请求
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/model.ArgUpdateColor'
-          type: object
-      produces:
-      - application/json
-      responses:
-        "43":
-          description: 颜色不存在
-        "44":
-          description: 不属于你
-        "200":
-          description: 成功
-        "400":
-          description: 验证请求失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 更新颜色
-      tags:
-      - draft
-  /draft/del:
-    post:
-      consumes:
-      - application/json
-      description: 删除草稿分类
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: ID
-        in: query
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-        "400":
-          description: 验证请求失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 删除草稿分类
-      tags:
-      - draft
-  /draft/edit:
-    post:
-      consumes:
-      - application/json
-      description: 更新草稿
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 请求
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/model.ArgUpdateDraft'
-          type: object
-      produces:
-      - application/json
-      responses:
-        "43":
-          description: 草稿分类不存在
-        "44":
-          description: 不属于你
-        "200":
-          description: 成功
-        "400":
-          description: 验证请求失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 更新草稿
-      tags:
-      - draft
-  /draft/list:
-    get:
-      consumes:
-      - application/json
-      description: 获取用户所有草稿列表
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 分类ID
-        in: query
-        name: category_id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 草稿分类列表
-          schema:
-            items:
-              $ref: '#/definitions/model.DraftResp'
-            type: array
-        "400":
-          description: 验证请求失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 获取用户所有草稿列表
-      tags:
-      - draft
-  /draft/list/categories:
-    get:
-      consumes:
-      - application/json
-      description: 获取用户所有草稿分类列表
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 草稿分类列表
-          schema:
-            items:
-              $ref: '#/definitions/model.DraftCategoryResp'
-            type: array
-        "400":
-          description: 验证请求失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 获取用户所有草稿分类列表
-      tags:
-      - draft
-  /draft/list/colors:
-    get:
-      consumes:
-      - application/json
-      description: 获取用户所有颜色列表
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 颜色列表
-          schema:
-            items:
-              $ref: '#/definitions/model.Color'
-            type: array
-        "400":
-          description: 验证请求失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 获取用户所有颜色列表
-      tags:
-      - draft
   /editor/link_info:
     post:
       consumes:
@@ -2493,6 +1843,57 @@ paths:
       summary: 新增话题
       tags:
       - topic
+  /topic/auth_topics:
+    post:
+      consumes:
+      - application/json
+      description: 批量更新授权话题
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/model.ArgSaveAuthTopics'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "18":
+          description: 话题不存在
+        "200":
+          description: 成功
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 批量更新授权话题
+      tags:
+      - topic
   /topic/catalogs:
     post:
       consumes:
@@ -2810,6 +2211,57 @@ paths:
         "500":
           description: 服务器端错误
       summary: 获取话题动态
+      tags:
+      - topic
+  /topic/list/auth_topics:
+    get:
+      consumes:
+      - application/json
+      description: 获取授权话题列表
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 话题ID
+        in: query
+        name: topic_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 授权话题
+          schema:
+            items:
+              $ref: '#/definitions/model.AuthTopicResp'
+            type: array
+        "400":
+          description: 请求验证失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 获取授权话题列表
       tags:
       - topic
   /topic/list/catalog_taxonomies:
