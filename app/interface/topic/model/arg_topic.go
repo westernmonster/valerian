@@ -15,9 +15,9 @@ type ArgInnerTopicMember struct {
 }
 
 type ArgCreateTopic struct {
-	// 封面图
+	// 头像
 	// 必须为URL
-	Cover *string `json:"cover,omitempty"`
+	Avatar *string `json:"avatar,omitempty"`
 
 	// 背景图
 	// 必须为URL
@@ -46,7 +46,7 @@ func (p *ArgCreateTopic) Validate() error {
 		p,
 		validation.Field(&p.Name, validation.Required, validation.RuneLength(0, 250)),
 		validation.Field(&p.Introduction, validation.Required, validation.RuneLength(0, 1000)),
-		validation.Field(&p.Cover, is.URL),
+		validation.Field(&p.Avatar, is.URL),
 		validation.Field(&p.Bg, is.URL),
 		validation.Field(&p.CatalogViewType, validation.Required, validation.In(CatalogViewTypeColumn, CatalogViewTypeSection)),
 	)
@@ -57,7 +57,7 @@ type ArgUpdateTopic struct {
 	ID int64 `json:"id,string" swaggertype:"string"`
 	// 封面图
 	// 必须为URL
-	Cover *string `json:"cover,omitempty"`
+	Avatar *string `json:"avatar,omitempty"`
 
 	// 背景图
 	// 必须为URL
@@ -111,7 +111,7 @@ type ArgUpdateTopic struct {
 func (p *ArgUpdateTopic) Validate() error {
 	return validation.ValidateStruct(
 		p,
-		validation.Field(&p.Cover, is.URL), validation.Field(&p.Bg, is.URL),
+		validation.Field(&p.Avatar, is.URL), validation.Field(&p.Bg, is.URL),
 		validation.Field(&p.Name, validation.RuneLength(0, 250)),
 		// TODO: Web安全性
 		validation.Field(&p.Introduction, validation.RuneLength(0, 1000)),

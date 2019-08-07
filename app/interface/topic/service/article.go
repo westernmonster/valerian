@@ -24,7 +24,7 @@ package service
 // 	item := &model.Article{
 // 		ID:           gid.NewID(),
 // 		Title:        arg.Title,
-// 		Cover:        arg.Cover,
+// 		Avatar:        arg.Avatar,
 // 		Introduction: arg.Introduction,
 // 		Private:      types.BitBool(arg.Private),
 // 		CreatedBy:    aid,
@@ -90,8 +90,8 @@ package service
 // 		item.Title = *arg.Title
 // 	}
 
-// 	if arg.Cover != nil {
-// 		item.Cover = arg.Cover
+// 	if arg.Avatar != nil {
+// 		item.Avatar = arg.Avatar
 // 	}
 
 // 	if arg.Introduction != nil {
@@ -214,7 +214,7 @@ package service
 // 	item = &model.ArticleResp{
 // 		ID:           a.ID,
 // 		Title:        a.Title,
-// 		Cover:        a.Cover,
+// 		Avatar:        a.Avatar,
 // 		Introduction: a.Introduction,
 // 		CreatedBy:    a.CreatedBy,
 // 		Private:      bool(a.Private),

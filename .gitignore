@@ -4,3 +4,4 @@
 /docs
 /docs/docs.go
 **/cmd/cmd
+/.idea

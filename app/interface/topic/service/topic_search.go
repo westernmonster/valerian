@@ -21,7 +21,7 @@ import "strings"
 // 	for _, v := range items {
 // 		item := &model.TopicSearchItem{
 // 			ID:           v.ID,
-// 			Cover:        v.Cover,
+// 			Avatar:        v.Avatar,
 // 			Name:         v.Name,
 // 			Introduction: v.Introduction,
 // 		}

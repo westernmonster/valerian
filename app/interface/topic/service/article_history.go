@@ -6,7 +6,7 @@ import (
 	"valerian/library/database/sqalx"
 )
 
-func (p *Service) getArticleHistoriesResp(c context.Context, node sqalx.Node, articleVersionID int64) (items []*model.ArticleHistoryResp, err error) {
+func (p *Service) GetArticleHistoriesResp(c context.Context, node sqalx.Node, articleVersionID int64) (items []*model.ArticleHistoryResp, err error) {
 	var addCache = true
 
 	if items, err = p.d.ArticleHistoryCache(c, articleVersionID); err != nil {

@@ -36,8 +36,8 @@ func (p *Dao) GetTopicsByCond(c context.Context, node sqalx.Node, cond map[strin
 		clause += " AND a.name =?"
 		condition = append(condition, val)
 	}
-	if val, ok := cond["cover"]; ok {
-		clause += " AND a.cover =?"
+	if val, ok := cond["avatar"]; ok {
+		clause += " AND a.avatar =?"
 		condition = append(condition, val)
 	}
 	if val, ok := cond["bg"]; ok {
@@ -125,8 +125,8 @@ func (p *Dao) GetTopicByCond(c context.Context, node sqalx.Node, cond map[string
 		clause += " AND a.name =?"
 		condition = append(condition, val)
 	}
-	if val, ok := cond["cover"]; ok {
-		clause += " AND a.cover =?"
+	if val, ok := cond["avatar"]; ok {
+		clause += " AND a.avatar =?"
 		condition = append(condition, val)
 	}
 	if val, ok := cond["bg"]; ok {
@@ -191,9 +191,9 @@ func (p *Dao) GetTopicByCond(c context.Context, node sqalx.Node, cond map[string
 
 // Insert insert a new record
 func (p *Dao) AddTopic(c context.Context, node sqalx.Node, item *model.Topic) (err error) {
-	sqlInsert := "INSERT INTO topics( id,name,cover,bg,introduction,allow_discuss,allow_chat,is_private,view_permission,edit_permission,join_permission,catalog_view_type,topic_home,created_by,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+	sqlInsert := "INSERT INTO topics( id,name,avatar,bg,introduction,allow_discuss,allow_chat,is_private,view_permission,edit_permission,join_permission,catalog_view_type,topic_home,created_by,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
 
-	if _, err = node.ExecContext(c, sqlInsert, item.ID, item.Name, item.Cover, item.Bg, item.Introduction, item.AllowDiscuss, item.AllowChat, item.IsPrivate, item.ViewPermission, item.EditPermission, item.JoinPermission, item.CatalogViewType, item.TopicHome, item.CreatedBy, item.Deleted, item.CreatedAt, item.UpdatedAt); err != nil {
+	if _, err = node.ExecContext(c, sqlInsert, item.ID, item.Name, item.Avatar, item.Bg, item.Introduction, item.AllowDiscuss, item.AllowChat, item.IsPrivate, item.ViewPermission, item.EditPermission, item.JoinPermission, item.CatalogViewType, item.TopicHome, item.CreatedBy, item.Deleted, item.CreatedAt, item.UpdatedAt); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.AddTopics err(%+v), item(%+v)", err, item))
 		return
 	}
@@ -203,9 +203,9 @@ func (p *Dao) AddTopic(c context.Context, node sqalx.Node, item *model.Topic) (e
 
 // Update update a exist record
 func (p *Dao) UpdateTopic(c context.Context, node sqalx.Node, item *model.Topic) (err error) {
-	sqlUpdate := "UPDATE topics SET name=?,cover=?,bg=?,introduction=?,allow_discuss=?,allow_chat=?,is_private=?,view_permission=?,edit_permission=?,join_permission=?,catalog_view_type=?,topic_home=?,created_by=?,updated_at=? WHERE id=?"
+	sqlUpdate := "UPDATE topics SET name=?,avatar=?,bg=?,introduction=?,allow_discuss=?,allow_chat=?,is_private=?,view_permission=?,edit_permission=?,join_permission=?,catalog_view_type=?,topic_home=?,created_by=?,updated_at=? WHERE id=?"
 
-	_, err = node.ExecContext(c, sqlUpdate, item.Name, item.Cover, item.Bg, item.Introduction, item.AllowDiscuss, item.AllowChat, item.IsPrivate, item.ViewPermission, item.EditPermission, item.JoinPermission, item.CatalogViewType, item.TopicHome, item.CreatedBy, item.UpdatedAt, item.ID)
+	_, err = node.ExecContext(c, sqlUpdate, item.Name, item.Avatar, item.Bg, item.Introduction, item.AllowDiscuss, item.AllowChat, item.IsPrivate, item.ViewPermission, item.EditPermission, item.JoinPermission, item.CatalogViewType, item.TopicHome, item.CreatedBy, item.UpdatedAt, item.ID)
 	if err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.UpdateTopics err(%+v), item(%+v)", err, item))
 		return

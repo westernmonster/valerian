@@ -80,7 +80,7 @@ func (p *Service) getTopic(c context.Context, node sqalx.Node, topicID int64) (i
 
 	item = &model.TopicResp{
 		ID:              t.ID,
-		Cover:           t.Cover,
+		Avatar:          t.Avatar,
 		Bg:              t.Bg,
 		Name:            t.Name,
 		Introduction:    t.Introduction,
@@ -151,7 +151,7 @@ func (p *Service) CreateTopic(c context.Context, arg *model.ArgCreateTopic) (top
 	item := &model.Topic{
 		ID:              gid.NewID(),
 		Name:            arg.Name,
-		Cover:           arg.Cover,
+		Avatar:          arg.Avatar,
 		Bg:              arg.Bg,
 		Introduction:    arg.Introduction,
 		TopicHome:       model.TopicHomeFeed,
@@ -239,8 +239,8 @@ func (p *Service) updateTopic(c context.Context, node sqalx.Node, aid int64, arg
 		return ecode.TopicNotExist
 	}
 
-	if arg.Cover != nil && *arg.Cover != "" {
-		t.Cover = arg.Cover
+	if arg.Avatar != nil && *arg.Avatar != "" {
+		t.Avatar = arg.Avatar
 	}
 
 	if arg.Bg != nil && *arg.Bg != "" {

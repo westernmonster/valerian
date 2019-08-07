@@ -9,9 +9,9 @@ type TopicResp struct {
 	// 成员数
 	MembersCount int `json:"members_count"`
 
-	// 封面图
+	// 头像
 	// 必须为URL
-	Cover *string `json:"cover"`
+	Avatar *string `json:"avatar"`
 
 	// 背景图
 	// 必须为URL

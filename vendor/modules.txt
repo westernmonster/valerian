@@ -164,8 +164,11 @@ github.com/smartystreets/assertions/internal/oglematchers
 github.com/smartystreets/goconvey/convey
 github.com/smartystreets/goconvey/convey/reporting
 github.com/smartystreets/goconvey/convey/gotest
+# github.com/stretchr/objx v0.1.1
+github.com/stretchr/objx
 # github.com/stretchr/testify v1.3.0
 github.com/stretchr/testify/assert
+github.com/stretchr/testify/mock
 # github.com/swaggo/swag v1.5.0
 github.com/swaggo/swag
 # github.com/uber/jaeger-client-go v2.16.0+incompatible

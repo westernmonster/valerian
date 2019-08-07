@@ -14,7 +14,7 @@ type ArticleResp struct {
 	Creator *BasicAccountResp `json:"creator"`
 
 	//  封面图
-	Cover *string `json:"cover,omitempty"`
+	Avatar *string `json:"avatar,omitempty"`
 	// 简介
 	Introduction string `json:"introduction"` // Introduction 话题简介
 

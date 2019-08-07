@@ -24,7 +24,7 @@ func (p *Dao) GetAuthTopics(c context.Context, node sqalx.Node) (items []*model.
 
 func (p *Dao) GetAuthTopicsResp(c context.Context, node sqalx.Node, topicID int64) (items []*model.AuthTopicResp, err error) {
 	items = make([]*model.AuthTopicResp, 0)
-	sqlSelect := `SELECT a.to_topic_id,a.permission,b.cover,b.name
+	sqlSelect := `SELECT a.to_topic_id,a.permission,b.avatar,b.name
 	              FROM auth_topics a LEFT JOIN topics b ON a.to_topic_id
 				  WHERE a.to_topic_id=? AND a.deleted=0 ORDER BY a.id DESC`
 

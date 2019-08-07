@@ -10,7 +10,7 @@ type ArgAddArticle struct {
 	// required: true
 	Title string `json:"title"`
 	//  封面图
-	Cover *string `json:"cover,omitempty"`
+	Avatar *string `json:"avatar,omitempty"`
 	// 简介
 	Introduction string `json:"introduction"` // Introduction 话题简介
 
@@ -101,7 +101,7 @@ type ArgUpdateArticle struct {
 	// 标题
 	Title *string `json:"title,omitempty"`
 	//  封面图
-	Cover *string `json:"cover,omitempty"`
+	Avatar *string `json:"avatar,omitempty"`
 
 	Introduction *string `json:"introduction,omitempty"` // Introduction 话题简介
 
@@ -114,7 +114,7 @@ func (p *ArgUpdateArticle) Validate() error {
 		p,
 		validation.Field(&p.ID, validation.Required),
 		validation.Field(&p.Title, validation.NilOrNotEmpty),
-		validation.Field(&p.Cover, validation.NilOrNotEmpty),
+		validation.Field(&p.Avatar, validation.NilOrNotEmpty),
 		validation.Field(&p.Introduction, validation.NilOrNotEmpty),
 	)
 }

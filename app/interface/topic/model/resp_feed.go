@@ -62,7 +62,7 @@ type TargetArticle struct {
 	// 文章标题
 	Title string `json:"title"`
 	// 封面
-	Cover *string `json:"cover,omitempty"`
+	Avatar *string `json:"avatar,omitempty"`
 	// 内容
 	Excerpt string `json:"excerpt"`
 	// 喜欢数

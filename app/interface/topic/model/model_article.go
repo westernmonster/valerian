@@ -5,7 +5,7 @@ import "valerian/library/database/sqlx/types"
 type Article struct {
 	ID           int64         `db:"id" json:"id,string"`                 // ID ID
 	Title        string        `db:"title" json:"title"`                  // Title 标题
-	Cover        *string       `db:"cover" json:"cover,omitempty"`        // Cover 封面图
+	Avatar       *string       `db:"avatar" json:"avatar,omitempty"`      // Avatar 封面图
 	Introduction string        `db:"introduction" json:"introduction"`    // Introduction 话题简介
 	Private      types.BitBool `db:"private" json:"private"`              // Private 是否私有
 	CreatedBy    int64         `db:"created_by" json:"created_by,string"` // CreatedBy 创建人

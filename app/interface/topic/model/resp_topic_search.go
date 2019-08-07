@@ -4,7 +4,7 @@ type TopicSearchItem struct {
 	ID int64 `json:"id,string" swaggertype:"string"`
 	// 封面图
 	// 必须为URL
-	Cover *string `json:"cover"`
+	Avatar *string `json:"avatar"`
 
 	// 背景图
 	// 必须为URL
