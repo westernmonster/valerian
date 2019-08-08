@@ -4,10 +4,13 @@ type TopicResp struct {
 	ID int64 `json:"id,string" swaggertype:"string"`
 
 	// 成员
-	Members []*TopicMemberResp `json:"members"`
+	Members []*TopicMemberResp `json:"members,omitempty"`
 
 	// 成员数
-	MembersCount int `json:"members_count"`
+	MembersCount int `json:"members_count,omitempty"`
+
+	// 目录
+	Catalogs []*TopicLevel1Catalog `json:"catalogs,omitempty"`
 
 	// 头像
 	// 必须为URL

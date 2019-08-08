@@ -1,0 +1,1 @@
+go build && APP_ID=valerian ./valerian -conf=app.toml

@@ -15,7 +15,7 @@ import (
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param topic_version_id query string true "话题版本ID"
+// @Param topic_id query string true "话题ID"
 // @Success 200 {array} model.TopicLevel1Catalog "话题类目"
 // @Failure 400 "请求验证失败"
 // @Failure 401 "登录验证失败"
@@ -27,7 +27,7 @@ func topicCatalogTaxonomies(c *mars.Context) {
 		err error
 	)
 	params := c.Request.Form
-	if id, err = strconv.ParseInt(params.Get("topic_version_id"), 10, 64); err != nil {
+	if id, err = strconv.ParseInt(params.Get("topic_id"), 10, 64); err != nil {
 		c.JSON(nil, ecode.RequestErr)
 		return
 	}
@@ -43,7 +43,7 @@ func topicCatalogTaxonomies(c *mars.Context) {
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param topic_version_id query string true "话题版本ID"
+// @Param topic_id query string true "话题ID"
 // @Success 200 {array} model.TopicLevel1Catalog "话题类目"
 // @Failure 400 "请求验证失败"
 // @Failure 401 "登录验证失败"
@@ -55,7 +55,7 @@ func topicCatalogs(c *mars.Context) {
 		err error
 	)
 	params := c.Request.Form
-	if id, err = strconv.ParseInt(params.Get("topic_version_id"), 10, 64); err != nil {
+	if id, err = strconv.ParseInt(params.Get("topic_id"), 10, 64); err != nil {
 		c.JSON(nil, ecode.RequestErr)
 		return
 	}

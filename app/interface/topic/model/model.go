@@ -3,18 +3,17 @@ package model
 import "valerian/library/database/sqlx/types"
 
 type TopicCatalog struct {
-	ID             int64         `db:"id" json:"id,string"`                             // ID ID
-	Name           string        `db:"name" json:"name"`                                // Name 名称
-	Seq            int           `db:"seq" json:"seq"`                                  // Seq 顺序
-	Type           string        `db:"type" json:"type"`                                // Type 类型
-	ParentID       int64         `db:"parent_id" json:"parent_id,string"`               // ParentID 父ID
-	RefID          *int64        `db:"ref_id" json:"ref_id,omitempty,string"`           // RefID 引用ID
-	TopicID        int64         `db:"topic_id" json:"topic_id,string"`                 // TopicID 话题ID
-	TopicVersionID int64         `db:"topic_version_id" json:"topic_version_id,string"` // TopicVersionID 话题类目ID
-	IsPrimary      types.BitBool `db:"is_primary" json:"is_primary"`                    // IsPrimary
-	Deleted        types.BitBool `db:"deleted" json:"deleted"`                          // Deleted 是否删除
-	CreatedAt      int64         `db:"created_at" json:"created_at"`                    // CreatedAt 创建时间
-	UpdatedAt      int64         `db:"updated_at" json:"updated_at"`                    // UpdatedAt 更新时间
+	ID        int64         `db:"id" json:"id,string"`                   // ID ID
+	Name      string        `db:"name" json:"name"`                      // Name 名称
+	Seq       int           `db:"seq" json:"seq"`                        // Seq 顺序
+	Type      string        `db:"type" json:"type"`                      // Type 类型
+	ParentID  int64         `db:"parent_id" json:"parent_id,string"`     // ParentID 父ID
+	RefID     *int64        `db:"ref_id" json:"ref_id,omitempty,string"` // RefID 引用ID
+	TopicID   int64         `db:"topic_id" json:"topic_id,string"`       // TopicID 话题ID
+	IsPrimary types.BitBool `db:"is_primary" json:"is_primary"`          // IsPrimary
+	Deleted   types.BitBool `db:"deleted" json:"deleted"`                // Deleted 是否删除
+	CreatedAt int64         `db:"created_at" json:"created_at"`          // CreatedAt 创建时间
+	UpdatedAt int64         `db:"updated_at" json:"updated_at"`          // UpdatedAt 更新时间
 }
 
 type TopicMember struct {
@@ -25,18 +24,6 @@ type TopicMember struct {
 	Deleted   types.BitBool `db:"deleted" json:"deleted"`              // Deleted 是否删除
 	CreatedAt int64         `db:"created_at" json:"created_at"`        // CreatedAt 创建时间
 	UpdatedAt int64         `db:"updated_at" json:"updated_at"`        // UpdatedAt 更新时间
-}
-
-type TopicRelation struct {
-	ID               int64         `db:"id" json:"id,string"`                                   // ID ID
-	FromTopicID      int64         `db:"from_topic_id" json:"from_topic_id,string"`             // FromTopicID 话题ID
-	ToTopicVersionID int64         `db:"to_topic_version_id" json:"to_topic_version_id,string"` // ToTopicVersionID 关联话题版本ID
-	ToTopicID        int64         `db:"to_topic_id" json:"to_topic_id,string"`                 // ToTopicID 关联话题ID
-	Relation         string        `db:"relation" json:"relation"`                              // Relation 关系
-	Seq              int           `db:"seq" json:"seq"`                                        // Seq 顺序
-	Deleted          types.BitBool `db:"deleted" json:"deleted"`                                // Deleted 是否删除
-	CreatedAt        int64         `db:"created_at" json:"created_at"`                          // CreatedAt 创建时间
-	UpdatedAt        int64         `db:"updated_at" json:"updated_at"`                          // UpdatedAt 更新时间
 }
 
 type Topic struct {
@@ -57,24 +44,6 @@ type Topic struct {
 	Deleted         types.BitBool `db:"deleted" json:"deleted"`                     // Deleted 是否删除
 	CreatedAt       int64         `db:"created_at" json:"created_at"`               // CreatedAt 创建时间
 	UpdatedAt       int64         `db:"updated_at" json:"updated_at"`               // UpdatedAt 更新时间
-}
-
-type TopicVersion struct {
-	ID        int64         `db:"id" json:"id,string"`             // ID ID
-	TopicID   int64         `db:"topic_id" json:"topic_id,string"` // TopicID 话题ID
-	Name      string        `db:"name" json:"name"`                // Name 版本名
-	Seq       int           `db:"seq" json:"seq"`                  // Seq 顺序
-	Deleted   types.BitBool `db:"deleted" json:"deleted"`          // Deleted 是否删除
-	CreatedAt int64         `db:"created_at" json:"created_at"`    // CreatedAt 创建时间
-	UpdatedAt int64         `db:"updated_at" json:"updated_at"`    // UpdatedAt 更新时间
-}
-
-type TopicType struct {
-	ID        int           `db:"id" json:"id"`                 // ID ID
-	Name      string        `db:"name" json:"name"`             // Name 话题类型
-	Deleted   types.BitBool `db:"deleted" json:"deleted"`       // Deleted 是否删除
-	CreatedAt int64         `db:"created_at" json:"created_at"` // CreatedAt 创建时间
-	UpdatedAt int64         `db:"updated_at" json:"updated_at"` // UpdatedAt 更新时间
 }
 
 type TopicFollowRequest struct {

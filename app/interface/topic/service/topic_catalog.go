@@ -195,48 +195,6 @@ func (p *Service) getCatalogTaxonomyHierarchyOfAll(c context.Context, node sqalx
 	return
 }
 
-func (p *Service) bulkCreateCatalogs(c context.Context, node sqalx.Node, topicID int64, catalogs []*model.TopicLevel1Catalog) (err error) {
-	var tx sqalx.Node
-	if tx, err = node.Beginx(c); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
-		return
-	}
-
-	defer func() {
-		if err != nil {
-			if err1 := tx.Rollback(); err1 != nil {
-				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
-			}
-			return
-		}
-	}()
-
-	for _, v := range catalogs {
-		var idLvl1 int64
-		if idLvl1, err = p.createCatalog(c, tx, topicID, v.Name, v.Seq, v.Type, v.RefID, 0); err != nil {
-			return
-		}
-		for _, x := range v.Children {
-			var idLvl2 int64
-			if idLvl2, err = p.createCatalog(c, tx, topicID, x.Name, x.Seq, x.Type, x.RefID, idLvl1); err != nil {
-				return
-			}
-
-			for _, y := range x.Children {
-				if _, err = p.createCatalog(c, tx, topicID, y.Name, y.Seq, y.Type, y.RefID, idLvl2); err != nil {
-					return
-				}
-			}
-		}
-	}
-
-	if err = tx.Commit(); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
-		return
-	}
-	return
-}
-
 func (p *Service) createCatalog(c context.Context, node sqalx.Node, topicID int64, name string, seq int, rtype string, refID *int64, parentID int64) (id int64, err error) {
 	// // 当前为分类，则不允许处于第三级
 	if parentID != 0 && rtype == model.TopicCatalogTaxonomy {

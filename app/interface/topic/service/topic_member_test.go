@@ -2,18 +2,33 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"testing"
 	"valerian/app/interface/topic/model"
 	"valerian/app/interface/topic/service/mocks"
 	"valerian/library/net/metadata"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
 
 type MockDao struct {
 	mock.Mock
 }
+
+var (
+	acc = &model.Account{
+		ID:       1,
+		Mobile:   "17761292244",
+		Email:    "a@a.com",
+		UserName: "aaa",
+		Role:     "user",
+		Avatar:   "avatar",
+		IDCert:   true,
+		WorkCert: true,
+		IsOrg:    false,
+		IsVIP:    false,
+	}
+)
 
 func TestGetTopicMembersPaged(t *testing.T) {
 	mockDao := &mocks.IDao{}
@@ -22,8 +37,11 @@ func TestGetTopicMembersPaged(t *testing.T) {
 	c := metadata.NewContext(context.Background(), md)
 
 	srv := &Service{
-		d: mockDao,
+		d:      mockDao,
+		missch: make(chan func(), 1024),
 	}
+
+	go srv.cacheproc()
 
 	data := []*model.TopicMember{
 		&model.TopicMember{
@@ -32,31 +50,26 @@ func TestGetTopicMembersPaged(t *testing.T) {
 			AccountID: 1,
 			Role:      "owner",
 		},
+		&model.TopicMember{
+			ID:        2,
+			TopicID:   1,
+			AccountID: 2,
+			Role:      "admin",
+		},
 	}
-	// resp := &model.TopicMembersPagedResp{
-	// 	Count:    100,
-	// 	PageSize: 10,
-	// 	Data:     make([]*model.TopicMemberResp, 0),
-	// }
-	// for i := 0; i < 10; i++ {
-	// 	resp.Data = append(resp.Data, &model.TopicMemberResp{
-	// 		AccountID: 1,
-	// 		Role:      "owner",
-	// 		Avatar:    "avatar",
-	// 		UserName:  "username",
-	// 	})
-	// }
 
 	mockDao.On("DB").Return(nil, nil)
+	mockDao.On("AccountCache", c, int64(1)).Return(acc, nil)
+	mockDao.On("AccountCache", c, int64(2)).Return(acc, nil)
 	mockDao.On("TopicMembersCache", c, int64(1), 1, 10).Return(100, data, nil)
-	mockDao.On("GetTopicMembersPaged", c, int64(1), 1, 10).Return(100, data, nil)
-	mockDao.On("SetTopicMembersCache", c, int64(1), 100, 1, 10, data).Return(nil)
+	mockDao.On("GetTopicMembersPaged", c, mockDao.DB(), int64(1), 1, 10).Return(100, data, nil)
 	mockDao.On("SetTopicMembersCache", c, int64(1), 100, 1, 10, data).Return(nil)
 
 	resp, err := srv.GetTopicMembersPaged(c, int64(1), 1, 10)
 
-	mockDao.AssertExpectations(t)
+	assert.Equal(t, 100, resp.Count)
+	assert.Equal(t, 10, resp.PageSize)
+	assert.Equal(t, nil, err)
+	// assert.Equal(t, 2, len(resp.Data))
 
-	fmt.Println(resp)
-	fmt.Println(err)
 }

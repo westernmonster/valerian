@@ -1790,8 +1790,8 @@
                     },
                     {
                         "type": "string",
-                        "description": "话题版本ID",
-                        "name": "topic_version_id",
+                        "description": "话题ID",
+                        "name": "topic_id",
                         "in": "query",
                         "required": true
                     }
@@ -1864,8 +1864,8 @@
                     },
                     {
                         "type": "string",
-                        "description": "话题版本ID",
-                        "name": "topic_version_id",
+                        "description": "话题ID",
+                        "name": "topic_id",
                         "in": "query",
                         "required": true
                     }
@@ -2477,16 +2477,16 @@
                     "description": "允许讨论",
                     "type": "boolean"
                 },
+                "avatar": {
+                    "description": "头像\n必须为URL",
+                    "type": "string"
+                },
                 "bg": {
                     "description": "背景图\n必须为URL",
                     "type": "string"
                 },
                 "catalog_view_type": {
                     "description": "分类视图\nsection 章节\ncolumn 栏目",
-                    "type": "string"
-                },
-                "cover": {
-                    "description": "封面图\n必须为URL",
                     "type": "string"
                 },
                 "introduction": {
@@ -2788,16 +2788,16 @@
                     "description": "允许讨论",
                     "type": "boolean"
                 },
+                "avatar": {
+                    "description": "封面图\n必须为URL",
+                    "type": "string"
+                },
                 "bg": {
                     "description": "背景图\n必须为URL",
                     "type": "string"
                 },
                 "catalog_view_type": {
                     "description": "分类视图\nsection 章节\ncolumn 栏目",
-                    "type": "string"
-                },
-                "cover": {
-                    "description": "封面图\n必须为URL",
                     "type": "string"
                 },
                 "edit_permission": {
@@ -2858,7 +2858,7 @@
         "model.AuthTopicResp": {
             "type": "object",
             "properties": {
-                "cover": {
+                "avatar": {
                     "description": "封面图\n必须为URL",
                     "type": "string"
                 },
@@ -3208,13 +3208,13 @@
         "model.TargetArticle": {
             "type": "object",
             "properties": {
+                "avatar": {
+                    "description": "封面",
+                    "type": "string"
+                },
                 "comment_count": {
                     "description": "评论数",
                     "type": "integer"
-                },
-                "cover": {
-                    "description": "封面",
-                    "type": "string"
                 },
                 "excerpt": {
                     "description": "内容",
@@ -3490,6 +3490,10 @@
                     "description": "允许讨论",
                     "type": "boolean"
                 },
+                "avatar": {
+                    "description": "头像\n必须为URL",
+                    "type": "string"
+                },
                 "bg": {
                     "description": "背景图\n必须为URL",
                     "type": "string"
@@ -3498,9 +3502,12 @@
                     "description": "分类视图\nsection 章节\ncolumn 栏目",
                     "type": "string"
                 },
-                "cover": {
-                    "description": "封面图\n必须为URL",
-                    "type": "string"
+                "catalogs": {
+                    "description": "目录",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.TopicLevel1Catalog"
+                    }
                 },
                 "created_at": {
                     "type": "integer"
@@ -3564,12 +3571,12 @@
         "model.TopicSearchItem": {
             "type": "object",
             "properties": {
-                "bg": {
-                    "description": "背景图\n必须为URL",
+                "avatar": {
+                    "description": "封面图\n必须为URL",
                     "type": "string"
                 },
-                "cover": {
-                    "description": "封面图\n必须为URL",
+                "bg": {
+                    "description": "背景图\n必须为URL",
                     "type": "string"
                 },
                 "has_catalog_taxonomy": {

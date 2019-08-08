@@ -86,7 +86,7 @@ var (
 	DraftNotExist                  = add(47) // 草稿不存在
 	NeedPrimaryTopic               = add(49) // 必须有主话题
 	OnlyAllowOnePrimaryTopic       = add(50) // 只允许一个主话题
-	InvalidCatalog                 = add(52) // 所选节点不是类目分类
+	InvalidCatalog                 = add(52) // 不正确的类目
 	NeedEditPermission             = add(54) // 需要话题编辑权限
 	LocaleNotExist                 = add(55) // 未找到该语言编码
 	ArticleEditedByOthers          = add(56) // 文章已经被其他人修改，无法设置为私有

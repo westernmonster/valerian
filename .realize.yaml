@@ -3,24 +3,14 @@ settings:
     force: false
     interval: 0s
 schema:
-- name: api
+- name: valerian
   path: .
-  env:
-      APP_ID: valerian
-  commands:
-    build:
-      status: true
-      dir: ./
-    run:
-      status: true
-      dir: ./
-  args:
-  - -conf=./app.toml
+  commands: {}
   watcher:
-    paths:
-    - /
     extensions:
     - go
+    paths:
+    - /
     ignored_paths:
     - .git
     - .realize

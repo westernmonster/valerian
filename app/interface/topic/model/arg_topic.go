@@ -116,8 +116,8 @@ func (p *ArgUpdateTopic) Validate() error {
 		// TODO: Web安全性
 		validation.Field(&p.Introduction, validation.RuneLength(0, 1000)),
 		validation.Field(&p.CatalogViewType, validation.In(CatalogViewTypeColumn, CatalogViewTypeSection)),
-		validation.Field(&p.ViewPermission, validation.Required, validation.In(ViewPermissionJoin, ViewPermissionPublic)),
-		validation.Field(&p.EditPermission, validation.Required, validation.In(EditPermissionMember, EditPermissionAdmin)),
-		validation.Field(&p.JoinPermission, validation.Required, validation.In(JoinPermissionMember, JoinPermissionMemberApprove, JoinPermissionCertApprove, JoinPermissionManualAdd)),
+		validation.Field(&p.ViewPermission, validation.In(ViewPermissionJoin, ViewPermissionPublic)),
+		validation.Field(&p.EditPermission, validation.In(EditPermissionMember, EditPermissionAdmin)),
+		validation.Field(&p.JoinPermission, validation.In(JoinPermissionMember, JoinPermissionMemberApprove, JoinPermissionCertApprove, JoinPermissionManualAdd)),
 	)
 }

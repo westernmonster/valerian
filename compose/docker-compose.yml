@@ -10,6 +10,8 @@ services:
         - DEPLOY_ENV=dev
       networks:
         - flywk
+      ports:
+        - "6379:6379"
       restart: on-failure
     memcached:
       image: memcached
@@ -20,6 +22,8 @@ services:
         - DEPLOY_ENV=dev
       networks:
         - flywk
+      ports:
+        - "11211:11211"
       restart: on-failure
     mysql:
       image: mysql/mysql-server

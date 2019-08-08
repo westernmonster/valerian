@@ -1,6 +1,7 @@
 package http
 
 import (
+	"fmt"
 	"strconv"
 	"valerian/app/interface/topic/model"
 	"valerian/library/ecode"
@@ -71,6 +72,7 @@ func editTopic(c *mars.Context) {
 	}
 
 	if e := arg.Validate(); e != nil {
+		fmt.Println(e)
 		c.JSON(nil, ecode.RequestErr)
 		return
 	}

@@ -24,28 +24,10 @@ func (p *Service) GetTopic(c context.Context, topicID int64, include string) (it
 		}
 	}
 
-	// if inc["related_topics"] {
-	// 	if item.RelatedTopics, err = p.getAllRelatedTopics(c, p.d.DB(), topicID); err != nil {
-	// 		return
-	// 	}
-	// }
-
 	if inc["catalogs"] {
-		// if item.Catalogs, err = p.getCatalogsHierarchy(c, p.d.DB(), topicID); err != nil {
-		// 	return
-		// }
-	}
-
-	if inc["related_topics[*].meta"] {
-		// for _, v := range item.RelatedTopics {
-		// 	var t *model.TopicResp
-		// 	if t, err = p.getTopic(c, p.d.DB(), v.TopicID); err != nil {
-		// 		return
-		// 	}
-		// 	if v.TopicMeta, err = p.GetTopicMeta(c, t); err != nil {
-		// 		return
-		// 	}
-		// }
+		if item.Catalogs, err = p.getCatalogsHierarchy(c, p.d.DB(), topicID); err != nil {
+			return
+		}
 	}
 
 	if inc["meta"] {

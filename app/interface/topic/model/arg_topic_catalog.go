@@ -23,7 +23,7 @@ type TopicLevel1Catalog struct {
 	// 引用ID
 	RefID *int64 `json:"ref_id,string,omitempty" swaggertype:"string"`
 
-	Children []*TopicLevel2Catalog `json:"children"`
+	Children []*TopicLevel2Catalog `json:"children,omitempty"`
 }
 
 func (p *TopicLevel1Catalog) Validate() error {
@@ -154,7 +154,7 @@ type TopicLevel2Catalog struct {
 	// 引用ID
 	RefID *int64 `json:"ref_id,string,omitempty" swaggertype:"string"`
 
-	Children []*TopicChildCatalog `json:"children"`
+	Children []*TopicChildCatalog `json:"children,omitempty"`
 }
 
 func (p *TopicLevel2Catalog) Validate() error {
