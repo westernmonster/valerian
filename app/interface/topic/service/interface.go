@@ -56,6 +56,14 @@ type IDao interface {
 	DelAccountTopicSetting(c context.Context, node sqalx.Node, id int64) (err error)
 	GetAccountTopicSetting(c context.Context, node sqalx.Node, aid, topicID int64) (item *model.AccountTopicSetting, err error)
 
+	GetDiscussCategoriesByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.DiscussCategory, err error)
+	GetDiscussCategories(c context.Context, node sqalx.Node) (items []*model.DiscussCategory, err error)
+	GetDiscussCategoryByID(c context.Context, node sqalx.Node, id int64) (item *model.DiscussCategory, err error)
+	GetDiscussCategoryByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (item *model.DiscussCategory, err error)
+	AddDiscussCategory(c context.Context, node sqalx.Node, item *model.DiscussCategory) (err error)
+	UpdateDiscussCategory(c context.Context, node sqalx.Node, item *model.DiscussCategory) (err error)
+	DelDiscussCategory(c context.Context, node sqalx.Node, id int64) (err error)
+
 	AddArticle(c context.Context, node sqalx.Node, item *model.Article) (err error)
 	GetArticleByID(c context.Context, node sqalx.Node, id int64) (item *model.Article, err error)
 	UpdateArticle(c context.Context, node sqalx.Node, item *model.Article) (err error)

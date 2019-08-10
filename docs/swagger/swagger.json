@@ -1347,6 +1347,80 @@
                 }
             }
         },
+        "/topic/discuss_categories": {
+            "post": {
+                "description": "批量更新讨论分类",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "topic"
+                ],
+                "summary": "批量更新讨论分类",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/model.ArgSaveDiscussCategories"
+                        }
+                    }
+                ],
+                "responses": {
+                    "18": {
+                        "description": "话题不存在"
+                    },
+                    "200": {
+                        "description": "成功"
+                    },
+                    "400": {
+                        "description": "验证请求失败"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
         "/topic/edit": {
             "post": {
                 "description": "更新话题",
@@ -1594,6 +1668,80 @@
                     },
                     "500": {
                         "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/topic/leave": {
+            "post": {
+                "description": "退出话题",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "topic"
+                ],
+                "summary": "退出话题",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "话题ID",
+                        "name": "topic_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功"
+                    },
+                    "34": {
+                        "description": "不是话题成员"
+                    },
+                    "400": {
+                        "description": "验证请求失败"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    },
+                    "68": {
+                        "description": "主理人不可退出，只可转让后再退出"
                     }
                 }
             }
@@ -2524,6 +2672,22 @@
                 }
             }
         },
+        "model.ArgDisucssCategory": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "description": "名称\nrequired: true",
+                    "type": "string"
+                },
+                "seq": {
+                    "description": "顺序\nrequired: true",
+                    "type": "integer"
+                }
+            }
+        },
         "model.ArgEmail": {
             "type": "object",
             "properties": {
@@ -2717,6 +2881,21 @@
                 }
             }
         },
+        "model.ArgSaveDiscussCategories": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "description": "话题分类\nrequired: true",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.ArgDisucssCategory"
+                    }
+                },
+                "topic_id": {
+                    "type": "string"
+                }
+            }
+        },
         "model.ArgSaveTopicCatalog": {
             "type": "object",
             "properties": {
@@ -2874,7 +3053,7 @@
                     "type": "string"
                 },
                 "to_topic_id": {
-                    "type": "integer"
+                    "type": "string"
                 }
             }
         },

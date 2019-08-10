@@ -29,16 +29,18 @@ func route(e *mars.Engine) {
 		g.POST("/del", auth.User, deleteTopic)
 		g.POST("/owner", auth.User, changeOwner)
 		g.POST("/follow", auth.User, followTopic)
+		g.POST("/leave", auth.User, leave)
 
+		g.POST("/discuss_categories", auth.User, editDiscussCategories)
 		g.POST("/members", auth.User, editTopicMembers)
-		// g.POST("/related", auth.User, editTopicRelations)
+		g.POST("/auth_topics", auth.User, editAuthTopics)
 		g.POST("/catalogs", auth.User, editTopicCatalogs)
 
 		g.GET("/list/activities", auth.User, getActivites)
+		g.GET("/list/discuss_categories", auth.User, discussCategories)
 		g.GET("/list/catalogs", auth.User, topicCatalogs)
 		g.GET("/list/members", auth.User, topicMembers)
-		// g.GET("/list/related", auth.User, relatedTopics)
-		// g.GET("/list/versions", auth.User, topicVersions)
+		g.GET("/list/auth_topics", auth.User, authTopics)
 		g.GET("/list/catalog_taxonomies", auth.User, topicCatalogTaxonomies)
 	}
 

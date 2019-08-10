@@ -98,4 +98,6 @@ var (
 	TopicMemberDuplicate           = add(65) // 话题成员重复
 	AuthTopicDuplicate             = add(66) // 授权话题重复
 	MustNotUseCurrentTopic         = add(67) // 不允许授权自身
+	OwnerNeedTransfer              = add(68) // 主理人不可退出，只可转让后再退出
+	DiscussCategoryNotExist        = add(69) // 讨论分类不存在
 )

@@ -147,6 +147,21 @@ definitions:
         description: 验证码 6位数字
         type: string
     type: object
+  model.ArgDisucssCategory:
+    properties:
+      id:
+        type: string
+      name:
+        description: |-
+          名称
+          required: true
+        type: string
+      seq:
+        description: |-
+          顺序
+          required: true
+        type: integer
+    type: object
   model.ArgEmail:
     properties:
       client_id:
@@ -285,6 +300,18 @@ definitions:
         type: array
       topic_id:
         description: 话题ID
+        type: string
+    type: object
+  model.ArgSaveDiscussCategories:
+    properties:
+      items:
+        description: |-
+          话题分类
+          required: true
+        items:
+          $ref: '#/definitions/model.ArgDisucssCategory'
+        type: array
+      topic_id:
         type: string
     type: object
   model.ArgSaveTopicCatalog:
@@ -436,7 +463,7 @@ definitions:
       permission:
         type: string
       to_topic_id:
-        type: integer
+        type: string
     type: object
   model.CountryCodeResp:
     properties:
@@ -1995,6 +2022,57 @@ paths:
       summary: 删除话题
       tags:
       - topic
+  /topic/discuss_categories:
+    post:
+      consumes:
+      - application/json
+      description: 批量更新讨论分类
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/model.ArgSaveDiscussCategories'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "18":
+          description: 话题不存在
+        "200":
+          description: 成功
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 批量更新讨论分类
+      tags:
+      - topic
   /topic/edit:
     post:
       consumes:
@@ -2166,6 +2244,57 @@ paths:
         "500":
           description: 服务器端错误
       summary: 获取话题
+      tags:
+      - topic
+  /topic/leave:
+    post:
+      consumes:
+      - application/json
+      description: 退出话题
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 话题ID
+        in: query
+        name: topic_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "34":
+          description: 不是话题成员
+        "68":
+          description: 主理人不可退出，只可转让后再退出
+        "200":
+          description: 成功
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 退出话题
       tags:
       - topic
   /topic/list/activities:

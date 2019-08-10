@@ -126,7 +126,7 @@ func (p *Service) SaveAuthTopics(c context.Context, arg *model.ArgSaveAuthTopics
 	return p.bulkSaveAuthTopics(c, p.d.DB(), arg.TopicID, arg.AuthTopics)
 }
 
-func (p *Service) GetAllAuthTopics(c context.Context, topicID int64) (items []*model.AuthTopicResp, err error) {
+func (p *Service) GetAuthTopics(c context.Context, topicID int64) (items []*model.AuthTopicResp, err error) {
 	items = make([]*model.AuthTopicResp, 0)
 	if items, err = p.d.GetAuthTopicsResp(c, p.d.DB(), topicID); err != nil {
 		return

@@ -13,6 +13,38 @@ import (
 	"valerian/library/net/metadata"
 )
 
+func (p *Service) Leave(c context.Context, topicID int64) (err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+
+	var member *model.TopicMember
+	if member, err = p.d.GetTopicMemberByCond(c, p.d.DB(), map[string]interface{}{"account_id": aid, "topic_id": topicID}); err != nil {
+		return
+	} else if member == nil {
+		err = ecode.NotTopicMember
+		return
+	}
+
+	if member.Role == model.MemberRoleOwner {
+		err = ecode.OwnerNeedTransfer
+		return
+	}
+
+	if err = p.d.DelTopicMember(c, p.d.DB(), member.ID); err != nil {
+		return
+	}
+
+	p.addCache(func() {
+		p.d.DelTopicCache(context.TODO(), topicID)
+		p.d.DelTopicMembersCache(context.TODO(), topicID)
+	})
+
+	return
+}
+
 func (p *Service) GetTopicMembersPaged(c context.Context, topicID int64, page, pageSize int) (resp *model.TopicMembersPagedResp, err error) {
 	resp = new(model.TopicMembersPagedResp)
 	resp.PageSize = pageSize

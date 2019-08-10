@@ -242,12 +242,8 @@ type ArgTopicCatalog struct {
 func (p *ArgTopicCatalog) Validate() error {
 	return validation.ValidateStruct(
 		p,
-		validation.Field(&p.Name,
-			validation.Required.Error(`请输入名称`),
-			validation.RuneLength(0, 100).Error(`名称最大长度为100个字符`)),
-		validation.Field(&p.Type,
-			validation.Required.Error(`请输入类型`),
-			validation.In(TopicCatalogTaxonomy, TopicCatalogArticle, TopicCatalogTestSet).Error("类型不正确")),
+		validation.Field(&p.Name, validation.Required, validation.RuneLength(0, 100)),
+		validation.Field(&p.Type, validation.Required, validation.In(TopicCatalogTaxonomy, TopicCatalogArticle, TopicCatalogTestSet)),
 		validation.Field(&p.RefID, ValidateRefID(p.Type)),
 	)
 }
