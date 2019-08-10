@@ -3041,6 +3041,9 @@
                     "description": "封面图\n必须为URL",
                     "type": "string"
                 },
+                "edit_permission": {
+                    "type": "string"
+                },
                 "members_count": {
                     "description": "成员数",
                     "type": "integer"

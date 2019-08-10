@@ -454,6 +454,8 @@ definitions:
           封面图
           必须为URL
         type: string
+      edit_permission:
+        type: string
       members_count:
         description: 成员数
         type: integer
