@@ -185,6 +185,8 @@ github.com/nbio/st v0.0.0-20140626010706-e9e8d9816f32 h1:W6apQkHrMkS0Muv8G/TipAy
 github.com/nbio/st v0.0.0-20140626010706-e9e8d9816f32/go.mod h1:9wM+0iRr9ahx58uYLpLIr5fm8diHn0JbqRycJi6w0Ms=
 github.com/nicksnyder/go-i18n/v2 v2.0.0-beta.6 h1:SooTCzUOOs899x/M7gmSS+dgL+AUfSWqAcHLN3auCic=
 github.com/nicksnyder/go-i18n/v2 v2.0.0-beta.6/go.mod h1:4Opqa6/HIv0lhG3WRAkqzO0afezkRhxXI0P8EJkqeRU=
+github.com/olivere/elastic v6.2.22+incompatible h1:kfNhtWbbRep8LXUpHo4siKjnbqfy21BE0GwlquWx2bc=
+github.com/olivere/elastic v6.2.22+incompatible/go.mod h1:J+q1zQJTgAz9woqsbVRqGeB5G1iqDKVBWLNSYW8yfJ8=
 github.com/opentracing-contrib/go-gin v0.0.0-20190301172248-2e18f8b9c7d4 h1:5K7bCin0mzyxunRwxgW58Kej+0vaHcRmpKt6mI4YJvY=
 github.com/opentracing-contrib/go-gin v0.0.0-20190301172248-2e18f8b9c7d4/go.mod h1:vmEf0cuv3vQlaxQ0gqCTzD03KF6ITlRksJXmi2NwYI4=
 github.com/opentracing-contrib/go-stdlib v0.0.0-20190324214902-3020fec0e66b h1:N/+vVH19UEwFml23XATspYXdbpBU/oPvXy3CnkODjc0=
@@ -370,6 +372,8 @@ gopkg.in/h2non/gock.v1 v1.0.15 h1:SzLqcIlb/fDfg7UvukMpNcWsu7sI5tWwL+KCATZqks0=
 gopkg.in/h2non/gock.v1 v1.0.15/go.mod h1:sX4zAkdYX1TRGJ2JY156cFspQn4yRWn6p9EMdODlynE=
 gopkg.in/ini.v1 v1.42.0 h1:7N3gPTt50s8GuLortA00n8AqRTk75qOP98+mTPpgzRk=
 gopkg.in/ini.v1 v1.42.0/go.mod h1:pNLf8WUiyNEtQjuu5G5vTm06TEv9tsIgeAvK8hOrP4k=
+gopkg.in/olivere/elastic.v6 v6.2.22 h1:kELB6519O38lz4RN6OzRzxB3RsXo2nA7ZCGPW0gjlaY=
+gopkg.in/olivere/elastic.v6 v6.2.22/go.mod h1:2cTT8Z+/LcArSWpCgvZqBgt3VOqXiy7v00w12Lz8bd4=
 gopkg.in/yaml.v2 v2.2.1/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
 gopkg.in/yaml.v2 v2.2.2 h1:ZCJp+EgiOT7lHqUV2J862kp8Qj64Jo6az82+3Td9dZw=
 gopkg.in/yaml.v2 v2.2.2/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=

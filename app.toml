@@ -58,3 +58,7 @@
 [aliyun]
     accessKeyID = "LTAILu9eAnhmQIVi"
     accessKeySecret = "hUNGWl0FciuSxFM9KonCz9Gzt7gjeE"
+
+[es]
+    [es.external]
+    addr = ["http://es-cn-mp9169ffl0006wsbv.public.elasticsearch.aliyuncs.com:9200"]

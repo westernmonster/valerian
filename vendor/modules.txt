@@ -98,6 +98,7 @@ github.com/lib/pq/oid
 # github.com/logrusorgru/aurora v0.0.0-20181002194514-a7b3b318ed4e
 github.com/logrusorgru/aurora
 # github.com/mailru/easyjson v0.0.0-20190312143242-1de009706dbe
+github.com/mailru/easyjson
 github.com/mailru/easyjson/jlexer
 github.com/mailru/easyjson/jwriter
 github.com/mailru/easyjson/buffer
@@ -120,6 +121,9 @@ github.com/naoina/toml/ast
 github.com/nicksnyder/go-i18n/v2/i18n
 github.com/nicksnyder/go-i18n/v2/internal
 github.com/nicksnyder/go-i18n/v2/internal/plural
+# github.com/olivere/elastic v6.2.22+incompatible
+github.com/olivere/elastic/config
+github.com/olivere/elastic/uritemplates
 # github.com/opentracing-contrib/go-stdlib v0.0.0-20190324214902-3020fec0e66b
 github.com/opentracing-contrib/go-stdlib/nethttp
 # github.com/opentracing/opentracing-go v1.1.0
@@ -167,8 +171,8 @@ github.com/smartystreets/goconvey/convey/gotest
 # github.com/stretchr/objx v0.1.1
 github.com/stretchr/objx
 # github.com/stretchr/testify v1.3.0
-github.com/stretchr/testify/assert
 github.com/stretchr/testify/mock
+github.com/stretchr/testify/assert
 # github.com/swaggo/swag v1.5.0
 github.com/swaggo/swag
 # github.com/uber/jaeger-client-go v2.16.0+incompatible
@@ -303,5 +307,7 @@ gopkg.in/h2non/gentleman.v2/utils
 gopkg.in/h2non/gock.v1
 # gopkg.in/ini.v1 v1.42.0
 gopkg.in/ini.v1
+# gopkg.in/olivere/elastic.v6 v6.2.22
+gopkg.in/olivere/elastic.v6
 # gopkg.in/yaml.v2 v2.2.2
 gopkg.in/yaml.v2

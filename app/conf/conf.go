@@ -29,6 +29,13 @@ type Config struct {
 	DB         *DB
 	Memcache   *Memcache
 	Aliyun     *Aliyun
+	// es cluster
+	Es map[string]*EsInfo
+}
+
+// EsInfo .
+type EsInfo struct {
+	Addr []string
 }
 
 // DB db config.
