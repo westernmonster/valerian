@@ -13,6 +13,14 @@ import (
 	"valerian/library/net/metadata"
 )
 
+func (p *Service) MemberFansList(c context.Context, topicID int64) (err error) {
+	return
+}
+
+func (p *Service) InviteFans(c context.Context, topicID int64) (err error) {
+	return
+}
+
 func (p *Service) Leave(c context.Context, topicID int64) (err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {

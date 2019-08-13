@@ -53,3 +53,11 @@ func (p *ArgChangeOwner) Validate() error {
 		validation.Field(&p.ToAccountID, validation.Required.Error(`请传入成员ID`)),
 	)
 }
+
+type ArgInvite struct {
+	// 成员ID
+	AccountID int64 `json:"account_id,string" swaggertype:"string"`
+
+	// 话题ID
+	TopicID int64 `json:"topic_id,string" swaggertype:"string"`
+}

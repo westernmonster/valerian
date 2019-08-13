@@ -13,7 +13,7 @@ import (
 	"valerian/library/net/metadata"
 )
 
-func (p *Service) Follow(c context.Context, topicID int64) (status int, err error) {
+func (p *Service) Follow(c context.Context, arg *model.ArgTopicFollow) (status int, err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed
@@ -34,14 +34,14 @@ func (p *Service) Follow(c context.Context, topicID int64) (status int, err erro
 		}
 	}()
 	var member *model.TopicMember
-	if member, err = p.d.GetTopicMemberByCond(c, tx, map[string]interface{}{"account_id": aid, "topic_id": topicID}); err != nil {
+	if member, err = p.d.GetTopicMemberByCond(c, tx, map[string]interface{}{"account_id": aid, "topic_id": arg.TopicID}); err != nil {
 		return
 	} else if member != nil {
 		return model.FollowStatusFollowed, nil
 	}
 
 	var req *model.TopicFollowRequest
-	if req, err = p.d.GetTopicFollowRequest(c, p.d.DB(), topicID, aid); err != nil {
+	if req, err = p.d.GetTopicFollowRequest(c, p.d.DB(), arg.TopicID, aid); err != nil {
 		return
 	}
 
@@ -57,7 +57,7 @@ func (p *Service) Follow(c context.Context, topicID int64) (status int, err erro
 	}
 
 	var t *model.Topic
-	if t, err = p.d.GetTopicByID(c, tx, topicID); err != nil {
+	if t, err = p.d.GetTopicByID(c, tx, arg.TopicID); err != nil {
 		return
 	} else if t == nil {
 		return 0, ecode.TopicNotExist
@@ -72,7 +72,7 @@ func (p *Service) Follow(c context.Context, topicID int64) (status int, err erro
 
 	switch t.JoinPermission {
 	case model.JoinPermissionMember:
-		return model.FollowStatusFollowed, p.addMember(c, tx, topicID, aid, model.MemberRoleUser)
+		return model.FollowStatusFollowed, p.addMember(c, tx, arg.TopicID, aid, model.MemberRoleUser)
 	case model.JoinPermissionMemberApprove:
 		break
 	case model.JoinPermissionCertApprove:
@@ -86,7 +86,7 @@ func (p *Service) Follow(c context.Context, topicID int64) (status int, err erro
 	item := &model.TopicFollowRequest{
 		ID:        gid.NewID(),
 		Status:    model.FollowRequestStatusCommited,
-		TopicID:   topicID,
+		TopicID:   arg.TopicID,
 		AccountID: aid,
 		CreatedAt: time.Now().Unix(),
 		UpdatedAt: time.Now().Unix(),

@@ -72,13 +72,14 @@ func PromError(c context.Context, name, format string, args ...interface{}) {
 func newEsPool(c *conf.Config, d *Dao) (esCluster map[string]*elastic.Client) {
 	esCluster = make(map[string]*elastic.Client)
 	for esName, e := range c.Es {
-		if client, err := elastic.NewClient(elastic.SetURL(e.Addr...)); err == nil {
+		if client, err := elastic.NewClient(elastic.SetURL(e.Addr...),
+			elastic.SetSniff(false),
+		); err == nil {
 			esCluster[esName] = client
 		} else {
+			fmt.Println(esName)
+			fmt.Println(e.Addr)
 			PromError(context.TODO(), "es:集群连接失败", "cluster: %s, %v", esName, err)
-			// if err := d.SendSMS(fmt.Sprintf("[search-job]%s集群连接失败", esName)); err != nil {
-			// 	PromError("es:集群连接短信失败", "cluster: %s, %v", esName, err)
-			// }
 		}
 	}
 	return

@@ -166,3 +166,37 @@ func changeOwner(c *mars.Context) {
 
 	c.JSON(nil, srv.ChangeOwner(c, arg))
 }
+
+// @Summary 收藏话题
+// @Description 收藏话题
+// @Tags topic
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param id query string true "ID"
+// @Success 200 "成功后返回bool值"
+// @Failure 400 "验证请求失败"
+// @Failure 401 "登录验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /topic/fav [post]
+func favTopic(c *mars.Context) {
+}
+
+// @Summary 举报话题
+// @Description 举报话题
+// @Tags topic
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param req body model.ArgReportTopic true "请求"
+// @Success 200 "成功"
+// @Failure 400 "验证请求失败"
+// @Failure 401 "登录验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /topic/report [post]
+func reportTopic(c *mars.Context) {
+}

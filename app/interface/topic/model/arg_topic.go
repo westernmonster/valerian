@@ -121,3 +121,12 @@ func (p *ArgUpdateTopic) Validate() error {
 		validation.Field(&p.JoinPermission, validation.In(JoinPermissionMember, JoinPermissionMemberApprove, JoinPermissionCertApprove, JoinPermissionManualAdd)),
 	)
 }
+
+type ArgReportTopic struct {
+	// 话题ID
+	ID int64 `json:"id,string"  swaggertype:"string"`
+	// 举报类型
+	Type int `json:"type"`
+	// 补充信息
+	Desc *string `json:"desc"`
+}

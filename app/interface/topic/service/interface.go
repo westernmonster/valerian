@@ -125,6 +125,8 @@ type IDao interface {
 	AccountTopicSettingCache(c context.Context, aid, topicID int64) (m *model.AccountTopicSetting, err error)
 	DelAccountTopicSettingCache(c context.Context, aid, topicID int64) (err error)
 
+	AccountSearch(c context.Context, arg *model.AccountSearchParams) (res *model.SearchResult, err error)
+
 	Ping(c context.Context) (err error)
 	Close()
 	DB() sqalx.Node

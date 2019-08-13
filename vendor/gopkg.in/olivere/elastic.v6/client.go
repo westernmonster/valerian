@@ -1090,6 +1090,7 @@ func (c *Client) healthcheck(parentCtx context.Context, timeout time.Duration, f
 			if basicAuth {
 				req.SetBasicAuth(basicAuthUsername, basicAuthPassword)
 			}
+
 			res, err := c.c.Do((*http.Request)(req).WithContext(ctx))
 			if res != nil {
 				status = res.StatusCode

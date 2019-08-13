@@ -44,6 +44,10 @@ func route(e *mars.Engine) {
 		g.GET("/list/catalog_taxonomies", auth.User, topicCatalogTaxonomies)
 	}
 
+	x := e.Group("/api/v1/search")
+	{
+		x.POST("/account", auth.User, searchAccounts)
+	}
 	// x := e.Group("/api/v1/article")
 	// {
 	// 	x.GET("/get", auth.User, getArticle)

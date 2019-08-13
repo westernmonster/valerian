@@ -46,3 +46,9 @@ func (p *Service) getBasicAccountResp(c context.Context, node sqalx.Node, aid in
 
 	return
 }
+func (p *Service) AccountSearch(c context.Context, arg *model.AccountSearchParams) (res *model.SearchResult, err error) {
+	if res, err = p.d.AccountSearch(c, arg); err != nil {
+		err = ecode.SearchAccountFailed
+	}
+	return
+}

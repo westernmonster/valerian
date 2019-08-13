@@ -61,4 +61,4 @@
 
 [es]
     [es.external]
-    addr = ["http://es-cn-mp9169ffl0006wsbv.public.elasticsearch.aliyuncs.com:9200"]
+    addr = ["http://elastic:^EIj7UIjd@es-cn-mp9169ffl0006wsbv.public.elasticsearch.aliyuncs.com:9200"]

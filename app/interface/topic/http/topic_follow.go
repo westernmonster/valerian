@@ -1,7 +1,7 @@
 package http
 
 import (
-	"strconv"
+	"valerian/app/interface/topic/model"
 	"valerian/library/ecode"
 	"valerian/library/net/http/mars"
 )
@@ -14,7 +14,7 @@ import (
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param topic_id query string true "话题ID"
+// @Param req body model.ArgTopicFollow true "请求"
 // @Success 200  "返回关注状态"
 // @Failure 18 "话题不存在"
 // @Failure 626 "用户不存在"
@@ -26,15 +26,15 @@ import (
 // @Failure 500 "服务器端错误"
 // @Router /topic/follow [post]
 func followTopic(c *mars.Context) {
-	var (
-		id  int64
-		err error
-	)
-	params := c.Request.Form
-	if id, err = strconv.ParseInt(params.Get("topic_id"), 10, 64); err != nil {
+	arg := new(model.ArgTopicFollow)
+	if e := c.Bind(arg); e != nil {
+		return
+	}
+
+	if e := arg.Validate(); e != nil {
 		c.JSON(nil, ecode.RequestErr)
 		return
 	}
 
-	c.JSON(srv.Follow(c, id))
+	c.JSON(srv.Follow(c, arg))
 }
