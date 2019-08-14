@@ -2935,7 +2935,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: 获取讨论分类列表
+      description: 获取成员列表
       parameters:
       - description: Bearer
         in: header
@@ -2964,22 +2964,31 @@ paths:
         name: topic_id
         required: true
         type: string
+      - description: 页码
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: 每页大小
+        in: query
+        name: page_size
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
         "200":
-          description: 讨论分类
+          description: 话题成员
           schema:
-            items:
-              $ref: '#/definitions/DiscussCategoryResp'
-            type: array
+            $ref: '#/definitions/model.TopicMembersPagedResp'
+            type: object
         "400":
           description: 请求验证失败
         "401":
           description: 登录验证失败
         "500":
           description: 服务器端错误
-      summary: 获取讨论分类列表
+      summary: 获取成员列表
       tags:
       - topic
   /topic/members:

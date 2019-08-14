@@ -89,6 +89,9 @@ type IDao interface {
 
 	GetLocaleByCondition(c context.Context, node sqalx.Node, cond map[string]interface{}) (item *model.Locale, err error)
 
+	GetAccountFollowersByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.AccountFollower, err error)
+	GetAccountFollowersPaged(c context.Context, node sqalx.Node, accountID int64, page, pageSize int) (count int, items []*model.AccountFollower, err error)
+
 	SetTopicCache(c context.Context, m *model.TopicResp) (err error)
 	TopicCache(c context.Context, topicID int64) (m *model.TopicResp, err error)
 	DelTopicCache(c context.Context, topicID int64) (err error)

@@ -72,8 +72,11 @@ func PromError(c context.Context, name, format string, args ...interface{}) {
 func newEsPool(c *conf.Config, d *Dao) (esCluster map[string]*elastic.Client) {
 	esCluster = make(map[string]*elastic.Client)
 	for esName, e := range c.Es {
-		if client, err := elastic.NewClient(elastic.SetURL(e.Addr...),
+		if client, err := elastic.NewClient(
 			elastic.SetSniff(false),
+			elastic.SetHealthcheck(false),
+			elastic.SetBasicAuth("elastic", "^EIj7UIjd"),
+			elastic.SetURL(e.Addr...),
 		); err == nil {
 			esCluster[esName] = client
 		} else {

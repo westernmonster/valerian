@@ -1,6 +1,9 @@
 package model
 
-import "container/list"
+import (
+	"container/list"
+	"valerian/library/database/sqlx/types"
+)
 
 const (
 	// CodePlatDefaut db common plat code.
@@ -19,13 +22,6 @@ type RPC struct {
 	Addr   string `json:"Addr"`
 	Group  string `json:"Group"`
 	Weight int    `json:"Weight"`
-}
-
-// Code ver and message.
-type Code struct {
-	Ver  int64
-	Code int
-	Msg  string
 }
 
 // Version list and map.
@@ -84,4 +80,14 @@ type CodeLangs struct {
 	Ver  int64
 	Code int
 	Msg  map[string]string
+}
+
+type Code struct {
+	ID        int64         `db:"id" json:"id,string"`          // ID ID
+	Code      int           `db:"code" json:"code"`             // Code 编码
+	Locale    string        `db:"locale" json:"locale"`         // Locale 语言
+	Message   string        `db:"message" json:"message"`       // Message 消息
+	Deleted   types.BitBool `db:"deleted" json:"deleted"`       // Deleted 是否删除
+	CreatedAt int64         `db:"created_at" json:"created_at"` // CreatedAt 创建时间
+	UpdatedAt int64         `db:"updated_at" json:"updated_at"` // UpdatedAt 更新时间
 }

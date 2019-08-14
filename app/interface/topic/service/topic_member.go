@@ -14,6 +14,12 @@ import (
 )
 
 func (p *Service) MemberFansList(c context.Context, topicID int64) (err error) {
+	// aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	// if !ok {
+	// 	err = ecode.AcquireAccountIDFailed
+	// 	return
+	// }
+
 	return
 }
 

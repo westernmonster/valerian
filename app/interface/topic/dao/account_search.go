@@ -13,8 +13,12 @@ func (p *Dao) AccountSearch(c context.Context, arg *model.AccountSearchParams) (
 		query = elastic.NewBoolQuery()
 	)
 
-	if len(arg.Query) > 0 {
-		query = query.Must(elastic.NewMatchQuery("user_name", arg.Query))
+	// if len(arg.Query) > 0 {
+	// 	query = query.Must(elastic.NewTermQuery("deleted", false))
+	// }
+
+	if arg.Bsp.KW != "" {
+		query = query.Must(elastic.NewMultiMatchQuery(arg.Bsp.KW, arg.Bsp.KwFields...).Type("best_fields").TieBreaker(0.6))
 	}
 
 	if res, err = p.searchResult(c, "external", "accounts", query, arg.Bsp); err != nil {

@@ -2502,7 +2502,7 @@
         },
         "/topic/list/members": {
             "get": {
-                "description": "获取讨论分类列表",
+                "description": "获取成员列表",
                 "consumes": [
                     "application/json"
                 ],
@@ -2512,7 +2512,7 @@
                 "tags": [
                     "topic"
                 ],
-                "summary": "获取讨论分类列表",
+                "summary": "获取成员列表",
                 "parameters": [
                     {
                         "type": "string",
@@ -2550,16 +2550,28 @@
                         "name": "topic_id",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "page_size",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "讨论分类",
+                        "description": "话题成员",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/DiscussCategoryResp"
-                            }
+                            "type": "object",
+                            "$ref": "#/definitions/model.TopicMembersPagedResp"
                         }
                     },
                     "400": {

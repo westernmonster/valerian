@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"valerian/app/conf"
+	_ "valerian/library/conf/env"
 	"valerian/library/locale"
 	"valerian/library/log"
 	"valerian/library/net/http/mars"
