@@ -2,6 +2,7 @@ package http
 
 import (
 	"valerian/app/interface/topic/model"
+	"valerian/library/ecode"
 	"valerian/library/net/http/mars"
 )
 
@@ -13,18 +14,24 @@ import (
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param query query string true "查询条件"
-// @Param include query string true "支持字段: items[\*].versions,items[\*].has_catalog_taxonomy"
-// @Success 200 {object} model.TopicSearchResp "话题"
+// @Param req body model.TopicSearchParams true "请求"
+// @Success 200 {object} model.TopicSearchResult "话题"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /search/topic [get]
+// @Router /topic/search/topics [post]
 func searchTopics(c *mars.Context) {
-	// params := c.Request.Form
-	// query := params.Get("query")
-	// include := params.Get("include")
-	// c.JSON(srv.SearchTopics(c, query, include))
+	arg := new(model.TopicSearchParams)
+	if e := c.Bind(arg); e != nil {
+		return
+	}
+
+	if e := arg.Validate(); e != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+
+	c.JSON(srv.TopicSearch(c, arg))
 }
 
 // @Summary 搜索账户
@@ -35,23 +42,22 @@ func searchTopics(c *mars.Context) {
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param query query string true "查询条件"
-// @Param include query string true "支持字段: items[\*].versions,items[\*].has_catalog_taxonomy"
-// @Success 200 {object} model.TopicSearchResp "话题"
+// @Param req body model.AccountSearchParams true "请求"
+// @Success 200 {object} model.AccountSearchResult "话题"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /search/account [post]
+// @Router /topic/search/accounts [post]
 func searchAccounts(c *mars.Context) {
 	arg := new(model.AccountSearchParams)
 	if e := c.Bind(arg); e != nil {
 		return
 	}
 
-	// if e := arg.Validate(); e != nil {
-	// 	c.JSON(nil, ecode.RequestErr)
-	// 	return
-	// }
+	if e := arg.Validate(); e != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
 
 	c.JSON(srv.AccountSearch(c, arg))
 }

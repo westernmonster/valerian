@@ -1,6 +1,12 @@
 package service
 
-import "strings"
+import (
+	"context"
+	"encoding/json"
+	"strings"
+	"valerian/app/interface/topic/model"
+	"valerian/library/ecode"
+)
 
 // func (p *Service) SearchTopics(c context.Context, query string, include string) (resp *model.TopicSearchResp, err error) {
 // 	inc := includeParam(include)
@@ -52,11 +58,40 @@ import "strings"
 
 func includeParam(include string) (dic map[string]bool) {
 	arr := strings.Split(include, ",")
-
 	dic = make(map[string]bool)
 	for _, v := range arr {
 		dic[v] = true
 	}
 
+	return
+}
+
+func (p *Service) TopicSearch(c context.Context, arg *model.TopicSearchParams) (res *model.TopicSearchResult, err error) {
+	var data *model.SearchResult
+	if data, err = p.d.TopicSearch(c, arg); err != nil {
+		err = ecode.SearchAccountFailed
+	}
+
+	res = &model.TopicSearchResult{
+		Order: data.Order,
+		Sort:  data.Sort,
+		Page:  data.Page,
+		Debug: data.Debug,
+		Data:  make([]*model.ESTopic, 0),
+	}
+
+	for _, v := range data.Result {
+		acc := new(model.ESTopic)
+		err = json.Unmarshal(v, acc)
+		if err != nil {
+			return
+		}
+
+		if acc.IsAuthed, err = p.isAuthTopic(c, p.d.DB(), *acc.ID, arg.TopicID); err != nil {
+			return
+		}
+
+		res.Data = append(res.Data, acc)
+	}
 	return
 }

@@ -7,6 +7,7 @@ import (
 
 	"valerian/app/interface/topic/model"
 	"valerian/library/database/sqalx"
+	"valerian/library/database/sqlx/types"
 	"valerian/library/ecode"
 	"valerian/library/gid"
 	"valerian/library/log"
@@ -24,6 +25,17 @@ func (p *Service) MemberFansList(c context.Context, topicID int64) (err error) {
 }
 
 func (p *Service) InviteFans(c context.Context, topicID int64) (err error) {
+	return
+}
+
+func (p *Service) isTopicMember(c context.Context, node sqalx.Node, accountID, topicID int64) (isMember bool, err error) {
+	var member *model.TopicMember
+	if member, err = p.d.GetTopicMemberByCond(c, node, map[string]interface{}{"account_id": accountID, "topic_id": topicID}); err != nil {
+		return
+	} else if member != nil {
+		isMember = true
+	}
+
 	return
 }
 
@@ -257,6 +269,21 @@ func (p *Service) BulkSaveMembers(c context.Context, req *model.ArgBatchSavedTop
 				return
 			}
 
+			setting := &model.AccountTopicSetting{
+				ID:               gid.NewID(),
+				AccountID:        v.AccountID,
+				TopicID:          req.TopicID,
+				Important:        types.BitBool(false),
+				Fav:              types.BitBool(false),
+				MuteNotification: types.BitBool(false),
+				CreatedAt:        time.Now().Unix(),
+				UpdatedAt:        time.Now().Unix(),
+			}
+
+			if err = p.d.AddAccountTopicSetting(c, tx, setting); err != nil {
+				return
+			}
+
 			break
 		case "U":
 			if member == nil {
@@ -310,6 +337,21 @@ func (p *Service) addMember(c context.Context, node sqalx.Node, topicID, aid int
 		UpdatedAt: time.Now().Unix(),
 	}
 	if err = p.d.AddTopicMember(c, node, item); err != nil {
+		return
+	}
+
+	setting := &model.AccountTopicSetting{
+		ID:               gid.NewID(),
+		AccountID:        aid,
+		TopicID:          topicID,
+		Important:        types.BitBool(false),
+		Fav:              types.BitBool(false),
+		MuteNotification: types.BitBool(false),
+		CreatedAt:        time.Now().Unix(),
+		UpdatedAt:        time.Now().Unix(),
+	}
+
+	if err = p.d.AddAccountTopicSetting(c, node, setting); err != nil {
 		return
 	}
 

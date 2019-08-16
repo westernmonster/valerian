@@ -22,7 +22,9 @@ func route(e *mars.Engine) {
 	g := e.Group("/api/v1/topic")
 	{
 		g.GET("/get", auth.User, getTopic)
-		g.GET("/search", auth.User, searchTopics)
+
+		g.POST("/search/accounts", auth.User, searchAccounts)
+		g.POST("/search/topics", auth.User, searchTopics)
 
 		g.POST("/add", auth.User, createTopic)
 		g.POST("/edit", auth.User, editTopic)
@@ -44,10 +46,6 @@ func route(e *mars.Engine) {
 		g.GET("/list/catalog_taxonomies", auth.User, topicCatalogTaxonomies)
 	}
 
-	x := e.Group("/api/v1/search")
-	{
-		x.POST("/account", auth.User, searchAccounts)
-	}
 	// x := e.Group("/api/v1/article")
 	// {
 	// 	x.GET("/get", auth.User, getArticle)

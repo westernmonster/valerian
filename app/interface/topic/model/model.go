@@ -62,6 +62,7 @@ type AccountTopicSetting struct {
 	TopicID          int64         `db:"topic_id" json:"topic_id,string"`            // TopicID 话题ID
 	Important        types.BitBool `db:"important" json:"important"`                 // Important 重要话题
 	MuteNotification types.BitBool `db:"mute_notification" json:"mute_notification"` // MuteNotification 消息免打扰
+	Fav              types.BitBool `db:"fav" json:"fav"`                             // Fav 是否收藏
 	Deleted          types.BitBool `db:"deleted" json:"deleted"`                     // Deleted 是否删除
 	CreatedAt        int64         `db:"created_at" json:"created_at"`               // CreatedAt 创建时间
 	UpdatedAt        int64         `db:"updated_at" json:"updated_at"`               // UpdatedAt 更新时间

@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"valerian/app/interface/topic/model"
 	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
@@ -46,9 +47,29 @@ func (p *Service) getBasicAccountResp(c context.Context, node sqalx.Node, aid in
 
 	return
 }
-func (p *Service) AccountSearch(c context.Context, arg *model.AccountSearchParams) (res *model.SearchResult, err error) {
-	if res, err = p.d.AccountSearch(c, arg); err != nil {
+
+func (p *Service) AccountSearch(c context.Context, arg *model.AccountSearchParams) (res *model.AccountSearchResult, err error) {
+	var data *model.SearchResult
+	if data, err = p.d.AccountSearch(c, arg); err != nil {
 		err = ecode.SearchAccountFailed
+	}
+
+	res = &model.AccountSearchResult{
+		Order: data.Order,
+		Sort:  data.Sort,
+		Page:  data.Page,
+		Debug: data.Debug,
+		Data:  make([]*model.ESAccount, 0),
+	}
+
+	for _, v := range data.Result {
+		acc := new(model.ESAccount)
+		err = json.Unmarshal(v, acc)
+		if err != nil {
+			return
+		}
+
+		res.Data = append(res.Data, acc)
 	}
 	return
 }

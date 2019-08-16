@@ -32,15 +32,15 @@ func (d *Dao) searchResult(c context.Context, esClusterName, indexName string, q
 	if bsp.KW != "" {
 		sorterSlice = append(sorterSlice, elastic.NewScoreSort().Desc())
 	}
-	for i, d := range bsp.Order {
-		if len(bsp.Sort) < i+1 {
-			if bsp.Sort[0] == "desc" {
+	for i, d := range bsp.Sort {
+		if len(bsp.Order) < i+1 {
+			if bsp.Order[0] == "desc" {
 				sorterSlice = append(sorterSlice, elastic.NewFieldSort(d).Desc())
 			} else {
 				sorterSlice = append(sorterSlice, elastic.NewFieldSort(d).Asc())
 			}
 		} else {
-			if bsp.Sort[i] == "desc" {
+			if bsp.Order[i] == "desc" {
 				sorterSlice = append(sorterSlice, elastic.NewFieldSort(d).Desc())
 			} else {
 				sorterSlice = append(sorterSlice, elastic.NewFieldSort(d).Asc())

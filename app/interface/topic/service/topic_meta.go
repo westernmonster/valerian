@@ -71,41 +71,16 @@ func (p *Service) GetTopicMeta(c context.Context, t *model.TopicResp) (meta *mod
 	}
 
 	switch t.EditPermission {
-	// case model.EditPermissionIDCert:
-	// 	if account.IDCert {
-	// 		meta.CanEdit = true
-	// 	}
-	// 	break
-	// case model.EditPermissionWorkCert:
-	// 	if account.IDCert && account.WorkCert {
-	// 		meta.CanEdit = true
-	// 	}
-	// 	break
-	// case model.EditPermissionIDCertJoined:
-	// 	if bool(account.IDCert) && isMember {
-	// 		meta.CanEdit = true
-	// 	}
-	// 	break
-	// case model.EditPermissionWorkCertJoined:
-	// 	if bool(account.IDCert) && bool(account.WorkCert) && isMember {
-	// 		meta.CanEdit = true
-	// 	}
-	// 	break
-	// case model.EditPermissionApprovedIDCertJoined:
-	// 	if bool(account.IDCert) && isMember {
-	// 		meta.CanEdit = true
-	// 	}
-	// 	break
-	// case model.EditPermissionApprovedWorkCertJoined:
-	// 	if bool(account.IDCert) && bool(account.WorkCert) && isMember {
-	// 		meta.CanEdit = true
-	// 	}
-	// 	break
-	// case model.EditPermissionAdmin:
-	// 	if isMember && (member.Role == model.MemberRoleAdmin || member.Role == model.MemberRoleOwner) {
-	// 		meta.CanEdit = true
-	// 	}
-	// 	break
+	case model.EditPermissionMember:
+		if isMember {
+			meta.CanEdit = true
+		}
+		break
+	case model.EditPermissionAdmin:
+		if isMember && (member.Role == model.MemberRoleAdmin || member.Role == model.MemberRoleOwner) {
+			meta.CanEdit = true
+		}
+		break
 	}
 
 	if isMember && (member.Role == model.MemberRoleAdmin || member.Role == model.MemberRoleOwner) {

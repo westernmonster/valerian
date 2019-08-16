@@ -50,11 +50,14 @@ type IDao interface {
 	DelTopicFollowRequest(c context.Context, node sqalx.Node, id int64) (err error)
 
 	GetAccountByID(c context.Context, node sqalx.Node, id int64) (item *model.Account, err error)
-	GetAccountTopicSettings(c context.Context, node sqalx.Node, aid int64) (items []*model.AccountTopicSetting, err error)
+
+	GetAccountTopicSettingsByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.AccountTopicSetting, err error)
+	GetAccountTopicSettings(c context.Context, node sqalx.Node) (items []*model.AccountTopicSetting, err error)
+	GetAccountTopicSettingByID(c context.Context, node sqalx.Node, id int64) (item *model.AccountTopicSetting, err error)
+	GetAccountTopicSettingByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (item *model.AccountTopicSetting, err error)
 	AddAccountTopicSetting(c context.Context, node sqalx.Node, item *model.AccountTopicSetting) (err error)
 	UpdateAccountTopicSetting(c context.Context, node sqalx.Node, item *model.AccountTopicSetting) (err error)
 	DelAccountTopicSetting(c context.Context, node sqalx.Node, id int64) (err error)
-	GetAccountTopicSetting(c context.Context, node sqalx.Node, aid, topicID int64) (item *model.AccountTopicSetting, err error)
 
 	GetDiscussCategoriesByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.DiscussCategory, err error)
 	GetDiscussCategories(c context.Context, node sqalx.Node) (items []*model.DiscussCategory, err error)
@@ -129,6 +132,7 @@ type IDao interface {
 	DelAccountTopicSettingCache(c context.Context, aid, topicID int64) (err error)
 
 	AccountSearch(c context.Context, arg *model.AccountSearchParams) (res *model.SearchResult, err error)
+	TopicSearch(c context.Context, arg *model.TopicSearchParams) (res *model.SearchResult, err error)
 
 	Ping(c context.Context) (err error)
 	Close()

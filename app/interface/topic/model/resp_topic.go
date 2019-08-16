@@ -12,6 +12,12 @@ type TopicResp struct {
 	// 目录
 	Catalogs []*TopicLevel1Catalog `json:"catalogs,omitempty"`
 
+	// 授权话题
+	AuthTopics []*AuthTopicResp `json:"auth_topics,omitempty"`
+
+	// 讨论分类
+	DiscussCategories []*DiscussCategoryResp `json:"discuss_categories,omitempty"`
+
 	// 头像
 	// 必须为URL
 	Avatar *string `json:"avatar"`

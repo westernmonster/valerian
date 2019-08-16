@@ -30,6 +30,18 @@ func (p *Service) GetTopic(c context.Context, topicID int64, include string) (it
 		}
 	}
 
+	if inc["discuss_categories"] {
+		if item.DiscussCategories, err = p.getDiscussCategories(c, p.d.DB(), topicID); err != nil {
+			return
+		}
+	}
+
+	if inc["auth_topics"] {
+		if item.AuthTopics, err = p.getAuthTopics(c, p.d.DB(), topicID); err != nil {
+			return
+		}
+	}
+
 	if inc["meta"] {
 		if item.TopicMeta, err = p.GetTopicMeta(c, item); err != nil {
 			return
@@ -76,10 +88,6 @@ func (p *Service) getTopic(c context.Context, node sqalx.Node, topicID int64) (i
 		JoinPermission:  t.JoinPermission,
 		CreatedAt:       t.CreatedAt,
 	}
-
-	item.Members = make([]*model.TopicMemberResp, 0)
-	// item.RelatedTopics = make([]*model.RelatedTopicShort, 0)
-	// item.Versions = make([]*model.TopicVersionResp, 0)
 
 	var s *model.AccountTopicSetting
 	if s, err = p.getAccountTopicSetting(c, node, aid, topicID); err != nil {
@@ -272,7 +280,7 @@ func (p *Service) updateTopic(c context.Context, node sqalx.Node, aid int64, arg
 	}
 
 	var s *model.AccountTopicSetting
-	if s, err = p.d.GetAccountTopicSetting(c, tx, aid, t.ID); err != nil {
+	if s, err = p.d.GetAccountTopicSettingByCond(c, tx, map[string]interface{}{"account_id": aid, "topic_id": t.ID}); err != nil {
 		return
 	} else if s == nil {
 		setting := &model.AccountTopicSetting{
@@ -280,6 +288,7 @@ func (p *Service) updateTopic(c context.Context, node sqalx.Node, aid int64, arg
 			AccountID:        aid,
 			TopicID:          t.ID,
 			Important:        types.BitBool(important),
+			Fav:              types.BitBool(false),
 			MuteNotification: types.BitBool(muteNotification),
 			CreatedAt:        time.Now().Unix(),
 			UpdatedAt:        time.Now().Unix(),
@@ -311,6 +320,63 @@ func (p *Service) updateTopic(c context.Context, node sqalx.Node, aid int64, arg
 	return
 }
 
+func (p *Service) FavTopic(c context.Context, topicID int64) (faved bool, err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+
+	var tx sqalx.Node
+	if tx, err = p.d.DB().Beginx(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		return
+	}
+
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+			}
+			return
+		}
+	}()
+
+	var item *model.AccountTopicSetting
+	if item, err = p.d.GetAccountTopicSettingByCond(c, tx, map[string]interface{}{"account_id": aid, "topic_id": topicID}); err != nil {
+		return
+	} else if item == nil {
+		item = &model.AccountTopicSetting{
+			ID:               gid.NewID(),
+			AccountID:        aid,
+			TopicID:          topicID,
+			Important:        false,
+			MuteNotification: false,
+			Fav:              true,
+			CreatedAt:        time.Now().Unix(),
+			UpdatedAt:        time.Now().Unix(),
+		}
+
+		faved = true
+		if err = p.d.AddAccountTopicSetting(c, tx, item); err != nil {
+			return
+		}
+	} else {
+		item.Fav = !item.Fav
+		faved = bool(item.Fav)
+
+		if err = p.d.UpdateAccountTopicSetting(c, tx, item); err != nil {
+			return
+		}
+	}
+
+	if err = tx.Commit(); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		return
+	}
+	return
+}
+
 func (p *Service) DelTopic(c context.Context, topicID int64) (err error) {
 	return
 }
@@ -323,7 +389,7 @@ func (p *Service) getAccountTopicSetting(c context.Context, node sqalx.Node, aid
 		return
 	}
 
-	if item, err = p.d.GetAccountTopicSetting(c, node, aid, topicID); err != nil {
+	if item, err = p.d.GetAccountTopicSettingByCond(c, node, map[string]interface{}{"account_id": aid, "topic_id": topicID}); err != nil {
 		return
 	} else if item == nil {
 		item = &model.AccountTopicSetting{
@@ -332,6 +398,7 @@ func (p *Service) getAccountTopicSetting(c context.Context, node sqalx.Node, aid
 			TopicID:          topicID,
 			Important:        false,
 			MuteNotification: false,
+			Fav:              false,
 			CreatedAt:        time.Now().Unix(),
 			UpdatedAt:        time.Now().Unix(),
 		}

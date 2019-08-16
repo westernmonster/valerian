@@ -116,7 +116,7 @@ func deleteTopic(c *mars.Context) {
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param id query string true "ID"
-// @Param include query string true  "目前支持：members,versions,related_topics,versions[*].catalogs,meta"
+// @Param include query string true  "目前支持：members,catalogs,auth_topics,catalogs,meta"
 // @Success 200 {object} model.TopicResp "话题"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
@@ -182,6 +182,16 @@ func changeOwner(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /topic/fav [post]
 func favTopic(c *mars.Context) {
+	idStr := c.Request.Form.Get("id")
+	if id, err := strconv.ParseInt(idStr, 10, 64); err != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	} else if id == 0 {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	} else {
+		c.JSON(srv.FavTopic(c, id))
+	}
 }
 
 // @Summary 举报话题

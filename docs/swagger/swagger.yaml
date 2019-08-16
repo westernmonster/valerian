@@ -51,6 +51,35 @@ definitions:
         description: 认证流程页面入口URL。
         type: object
     type: object
+  model.AccountSearchParams:
+    properties:
+      bsp:
+        $ref: '#/definitions/model.BasicSearchParams'
+        type: object
+      topic_id:
+        type: string
+    type: object
+  model.AccountSearchResult:
+    properties:
+      data:
+        description: 会员数据
+        items:
+          $ref: '#/definitions/model.ESAccount'
+        type: array
+      debug:
+        description: 调试
+        type: string
+      order:
+        description: 排序顺序
+        type: string
+      page:
+        $ref: '#/definitions/model.Page'
+        description: 分页
+        type: object
+      sort:
+        description: 排序的字段
+        type: string
+    type: object
   model.Actor:
     properties:
       avatar:
@@ -497,6 +526,43 @@ definitions:
       to_topic_id:
         type: string
     type: object
+  model.BasicSearchParams:
+    properties:
+      debug:
+        description: 是否输出Debug信息
+        type: boolean
+      kw:
+        description: 搜索关键词
+        type: string
+      kw_fields:
+        description: 搜索关键词所用的字段
+        items:
+          type: string
+        type: array
+      order:
+        description: |-
+          排序的顺序
+          desc, asc
+        items:
+          type: string
+        type: array
+      pn:
+        description: 页码
+        type: integer
+      ps:
+        description: 每页大小
+        type: integer
+      sort:
+        description: 排序的字段
+        items:
+          type: string
+        type: array
+      source:
+        description: 输出的字段
+        items:
+          type: string
+        type: array
+    type: object
   model.CountryCodeResp:
     properties:
       cn_name:
@@ -555,6 +621,139 @@ definitions:
         type: string
       topic_id:
         description: 话题ID
+        type: string
+    type: object
+  model.ESAccount:
+    properties:
+      avatar:
+        description: 头像
+        type: string
+      birth_day:
+        description: 出生日
+        type: integer
+      birth_month:
+        description: 出生月
+        type: integer
+      birth_year:
+        description: 出生年
+        type: integer
+      created_at:
+        description: 创建时间
+        type: string
+      email:
+        description: 邮件地址
+        type: string
+      gender:
+        description: 性别
+        type: integer
+      id:
+        description: ID
+        type: string
+      id_cert:
+        description: 是否身份认证
+        type: boolean
+      introduction:
+        description: 自我介绍
+        type: string
+      is_org:
+        description: 是否机构用户
+        type: boolean
+      is_topic_member:
+        description: 是否话题成员
+        type: boolean
+      is_vip:
+        description: 是否VIP用户
+        type: boolean
+      location:
+        description: 地区
+        type: string
+      mobile:
+        description: 手机
+        type: string
+      role:
+        description: 角色
+        type: string
+      source:
+        description: 注册来源
+        type: integer
+      updated_at:
+        description: 更新时间
+        type: string
+      user_name:
+        description: 用户名
+        type: string
+      work_cert:
+        description: 是否工作认证
+        type: boolean
+    type: object
+  model.ESTopic:
+    properties:
+      allow_chat:
+        description: AllowChat 开启群聊
+        type: boolean
+      allow_discuss:
+        description: AllowDiscuss 允许讨论
+        type: boolean
+      avatar:
+        description: Avatar 话题头像
+        type: string
+      bg:
+        description: Bg 背景图
+        type: string
+      catalog_view_type:
+        description: CatalogViewType 分类视图
+        type: string
+      created_at:
+        description: CreatedAt 创建时间
+        type: string
+      created_by:
+        $ref: '#/definitions/model.ESTopicMember'
+        description: CreatedBy 创建人
+        type: object
+      edit_permission:
+        description: EditPermission 编辑权限
+        type: string
+      id:
+        description: ID ID
+        type: string
+      introduction:
+        description: Introduction 话题简介
+        type: string
+      is_authed:
+        description: 是否已经授权
+        type: boolean
+      is_private:
+        description: IsPrivate 是否私密
+        type: boolean
+      join_permission:
+        description: JoinPermission 加入权限
+        type: string
+      name:
+        description: Name 话题名
+        type: string
+      updated_at:
+        description: UpdatedAt 更新时间
+        type: string
+      view_permission:
+        description: ViewPermission 查看权限
+        type: string
+    type: object
+  model.ESTopicMember:
+    properties:
+      avatar:
+        description: 头像
+        type: string
+      email:
+        description: 邮件地址
+        type: string
+      id:
+        description: ID ID
+        type: string
+      mobile:
+        description: 手机
+        type: string
+      user_name:
+        description: 用户名
         type: string
     type: object
   model.FeedItem:
@@ -696,6 +895,18 @@ definitions:
       token_type:
         description: Token 类型，默认为 Bearer
         type: string
+    type: object
+  model.Page:
+    properties:
+      num:
+        description: 页码
+        type: integer
+      size:
+        description: 页大小
+        type: integer
+      total:
+        description: 统计数量
+        type: integer
     type: object
   model.Paging:
     properties:
@@ -1133,53 +1344,34 @@ definitions:
           join 加入
         type: string
     type: object
-  model.TopicSearchItem:
+  model.TopicSearchParams:
     properties:
-      avatar:
-        description: |-
-          封面图
-          必须为URL
-        type: string
-      bg:
-        description: |-
-          背景图
-          必须为URL
-        type: string
-      has_catalog_taxonomy:
-        type: boolean
-      id:
-        type: string
-      introduction:
-        description: 简介
-        type: string
-      members_count:
-        description: 成员数
-        type: integer
-      name:
-        description: 名称
-        type: string
-      resources_count:
-        description: 资源数量
-        type: integer
-    type: object
-  model.TopicSearchPaging:
-    properties:
-      is_end:
-        description: 是否结束
-        type: boolean
-      next:
-        description: 下一页
-        type: string
-    type: object
-  model.TopicSearchResp:
-    properties:
-      items:
-        items:
-          $ref: '#/definitions/model.TopicSearchItem'
-        type: array
-      paging:
-        $ref: '#/definitions/model.TopicSearchPaging'
+      bsp:
+        $ref: '#/definitions/model.BasicSearchParams'
         type: object
+      topic_id:
+        type: string
+    type: object
+  model.TopicSearchResult:
+    properties:
+      data:
+        description: 会员数据
+        items:
+          $ref: '#/definitions/model.ESTopic'
+        type: array
+      debug:
+        description: 调试
+        type: string
+      order:
+        description: 排序顺序
+        type: string
+      page:
+        $ref: '#/definitions/model.Page'
+        description: 分页
+        type: object
+      sort:
+        description: 排序的字段
+        type: string
     type: object
   model.UpdateArticleFile:
     properties:
@@ -1930,116 +2122,6 @@ paths:
       summary: 获取新Access Token
       tags:
       - auth
-  /search/account:
-    post:
-      consumes:
-      - application/json
-      description: 搜索账户
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 查询条件
-        in: query
-        name: query
-        required: true
-        type: string
-      - description: '支持字段: items[\*].versions,items[\*].has_catalog_taxonomy'
-        in: query
-        name: include
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 话题
-          schema:
-            $ref: '#/definitions/model.TopicSearchResp'
-            type: object
-        "400":
-          description: 验证请求失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 搜索账户
-      tags:
-      - topic
-  /search/topic:
-    get:
-      consumes:
-      - application/json
-      description: 搜索话题
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 查询条件
-        in: query
-        name: query
-        required: true
-        type: string
-      - description: '支持字段: items[\*].versions,items[\*].has_catalog_taxonomy'
-        in: query
-        name: include
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 话题
-          schema:
-            $ref: '#/definitions/model.TopicSearchResp'
-            type: object
-        "400":
-          description: 验证请求失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 搜索话题
-      tags:
-      - topic
   /topic/add:
     post:
       consumes:
@@ -3144,6 +3226,110 @@ paths:
         "500":
           description: 服务器端错误
       summary: 举报话题
+      tags:
+      - topic
+  /topic/search/accounts:
+    post:
+      consumes:
+      - application/json
+      description: 搜索账户
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/model.AccountSearchParams'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 话题
+          schema:
+            $ref: '#/definitions/model.AccountSearchResult'
+            type: object
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 搜索账户
+      tags:
+      - topic
+  /topic/search/topics:
+    post:
+      consumes:
+      - application/json
+      description: 搜索话题
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/model.TopicSearchParams'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 话题
+          schema:
+            $ref: '#/definitions/model.TopicSearchResult'
+            type: object
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 搜索话题
       tags:
       - topic
   /valcode/email:

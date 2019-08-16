@@ -12,6 +12,17 @@ import (
 	"valerian/library/log"
 )
 
+func (p *Service) isAuthTopic(c context.Context, node sqalx.Node, toTopicID, fromTopicID int64) (isAuth bool, err error) {
+	var t *model.AuthTopic
+	if t, err = p.d.GetAuthTopicByCond(c, node, map[string]interface{}{"to_topic_id": toTopicID, "topic_id": fromTopicID}); err != nil {
+		return
+	} else if t != nil {
+		isAuth = true
+	}
+
+	return
+}
+
 func (p *Service) checkAuthTopics(c context.Context, topicID int64, items []*model.ArgAuthTopic) (err error) {
 	// must unique  and could equal to current topic
 	dic := make(map[int64]bool)
@@ -127,13 +138,17 @@ func (p *Service) SaveAuthTopics(c context.Context, arg *model.ArgSaveAuthTopics
 }
 
 func (p *Service) GetAuthTopics(c context.Context, topicID int64) (items []*model.AuthTopicResp, err error) {
+	return p.getAuthTopics(c, p.d.DB(), topicID)
+}
+
+func (p *Service) getAuthTopics(c context.Context, node sqalx.Node, topicID int64) (items []*model.AuthTopicResp, err error) {
 	items = make([]*model.AuthTopicResp, 0)
-	if items, err = p.d.GetAuthTopicsResp(c, p.d.DB(), topicID); err != nil {
+	if items, err = p.d.GetAuthTopicsResp(c, node, topicID); err != nil {
 		return
 	}
 
 	for _, v := range items {
-		if v.MembersCount, _, err = p.getTopicMembers(c, p.d.DB(), topicID, 10); err != nil {
+		if v.MembersCount, _, err = p.getTopicMembers(c, node, topicID, 10); err != nil {
 			return
 		}
 	}

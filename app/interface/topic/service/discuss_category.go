@@ -13,7 +13,7 @@ import (
 	"valerian/library/net/metadata"
 )
 
-func (p *Service) GetDiscussCategories(c context.Context, topicID int64) (items []*model.DiscussCategoryResp, err error) {
+func (p *Service) getDiscussCategories(c context.Context, node sqalx.Node, topicID int64) (items []*model.DiscussCategoryResp, err error) {
 	var dbItems []*model.DiscussCategory
 	if dbItems, err = p.d.GetDiscussCategoriesByCond(c, p.d.DB(), map[string]interface{}{"topic_id": topicID}); err != nil {
 		return
@@ -30,6 +30,10 @@ func (p *Service) GetDiscussCategories(c context.Context, topicID int64) (items 
 	}
 
 	return
+}
+
+func (p *Service) GetDiscussCategories(c context.Context, topicID int64) (items []*model.DiscussCategoryResp, err error) {
+	return p.getDiscussCategories(c, p.d.DB(), topicID)
 }
 
 func (p *Service) loadDiscussCategoriesMap(c context.Context, node sqalx.Node, topicID int64) (dic map[int64]bool, err error) {
