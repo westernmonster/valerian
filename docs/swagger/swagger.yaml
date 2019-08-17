@@ -563,6 +563,32 @@ definitions:
           type: string
         type: array
     type: object
+  model.CatalogArticleItem:
+    properties:
+      avatar:
+        description: 头像
+        type: string
+      comment_count:
+        description: 评论数
+        type: integer
+      created_at:
+        description: 发布日期
+        type: integer
+      excerpt:
+        description: 内容
+        type: string
+      id:
+        type: string
+      like_count:
+        description: 喜欢数
+        type: integer
+      revise_count:
+        description: 补充个数
+        type: integer
+      title:
+        description: 标题
+        type: string
+    type: object
   model.CountryCodeResp:
     properties:
       cn_name:
@@ -586,6 +612,42 @@ definitions:
           example: 86
         type: string
     type: object
+  model.Creator:
+    properties:
+      avatar:
+        description: 头像
+        type: string
+      id:
+        description: 用户ID
+        type: string
+      user_name:
+        description: 用户名
+        type: string
+    type: object
+  model.DiscussCategoryResp:
+    properties:
+      id:
+        description: ID
+        type: string
+      name:
+        description: 名称
+        type: string
+      seq:
+        description: 顺序
+        type: integer
+      topic_id:
+        description: 话题ID
+        type: string
+    type: object
+  model.DiscussItemCategory:
+    properties:
+      id:
+        description: ID
+        type: string
+      name:
+        description: 名称
+        type: string
+    type: object
   model.DiscussListResp:
     properties:
       items:
@@ -598,21 +660,31 @@ definitions:
     type: object
   model.DisucssItem:
     properties:
+      category:
+        $ref: '#/definitions/model.DiscussItemCategory'
+        description: 讨论分类
+        type: object
       comment_count:
         description: 评论数
         type: integer
       created_at:
         description: 发布日期
         type: integer
-      discuss_category_id:
-        description: 讨论分类ID
-        type: string
-      discuss_category_name:
-        description: 讨论分类名称
-        type: string
+      creator:
+        $ref: '#/definitions/model.Creator'
+        description: 发布人
+        type: object
       excerpt:
         description: 摘录
         type: string
+      id:
+        description: 讨论ID
+        type: string
+      img_urls:
+        description: 图片
+        items:
+          type: string
+        type: array
       like_count:
         description: 喜欢数
         type: integer
@@ -728,6 +800,9 @@ definitions:
       join_permission:
         description: JoinPermission 加入权限
         type: string
+      member_count:
+        description: 成员数
+        type: integer
       name:
         description: Name 话题名
         type: string
@@ -1025,6 +1100,9 @@ definitions:
       like_count:
         description: 喜欢数
         type: integer
+      revise_count:
+        description: 补充个数
+        type: integer
       title:
         description: 文章标题
         type: string
@@ -1100,6 +1178,10 @@ definitions:
     type: object
   model.TopicChildCatalog:
     properties:
+      article:
+        $ref: '#/definitions/model.CatalogArticleItem'
+        description: 文章
+        type: object
       id:
         type: string
       name:
@@ -1123,6 +1205,10 @@ definitions:
     type: object
   model.TopicLevel1Catalog:
     properties:
+      article:
+        $ref: '#/definitions/model.CatalogArticleItem'
+        description: 文章
+        type: object
       children:
         items:
           $ref: '#/definitions/model.TopicLevel2Catalog'
@@ -1150,6 +1236,10 @@ definitions:
     type: object
   model.TopicLevel2Catalog:
     properties:
+      article:
+        $ref: '#/definitions/model.CatalogArticleItem'
+        description: 文章
+        type: object
       children:
         items:
           $ref: '#/definitions/model.TopicChildCatalog'
@@ -1192,6 +1282,9 @@ definitions:
       introduction:
         description: 自我介绍
         type: string
+      invited:
+        description: 是否邀请
+        type: boolean
       is_member:
         description: 是否当前粉丝
         type: boolean
@@ -1250,6 +1343,9 @@ definitions:
       follow_status:
         description: 关注状态
         type: integer
+      is_fav:
+        description: 是否收藏
+        type: boolean
       is_member:
         type: boolean
       member_role:
@@ -1264,6 +1360,11 @@ definitions:
       allow_discuss:
         description: 允许讨论
         type: boolean
+      auth_topics:
+        description: 授权话题
+        items:
+          $ref: '#/definitions/model.AuthTopicResp'
+        type: array
       avatar:
         description: |-
           头像
@@ -1287,6 +1388,11 @@ definitions:
         type: array
       created_at:
         type: integer
+      discuss_categories:
+        description: 讨论分类
+        items:
+          $ref: '#/definitions/model.DiscussCategoryResp'
+        type: array
       edit_permission:
         description: |-
           编辑权限
@@ -2577,7 +2683,7 @@ paths:
         name: id
         required: true
         type: string
-      - description: 目前支持：members,versions,related_topics,versions[*].catalogs,meta
+      - description: 目前支持：members,catalogs,auth_topics,catalogs,meta
         in: query
         name: include
         required: true
@@ -2886,6 +2992,11 @@ paths:
         name: topic_id
         required: true
         type: string
+      - description: ref_item
+        in: query
+        name: include
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -2902,6 +3013,57 @@ paths:
         "500":
           description: 服务器端错误
       summary: 获取话题类目
+      tags:
+      - topic
+  /topic/list/discuss_categories:
+    get:
+      consumes:
+      - application/json
+      description: 获取讨论分类列表
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 话题ID
+        in: query
+        name: topic_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 讨论分类
+          schema:
+            items:
+              $ref: '#/definitions/DiscussCategoryResp'
+            type: array
+        "400":
+          description: 请求验证失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 获取讨论分类列表
       tags:
       - topic
   /topic/list/discussions:

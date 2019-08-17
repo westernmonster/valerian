@@ -67,6 +67,8 @@ type TargetArticle struct {
 	Excerpt string `json:"excerpt"`
 	// 喜欢数
 	LikeCount int `json:"like_count"`
+	// 补充个数
+	ReviseCount int `json:"revise_count"`
 	// 评论数
 	CommentCount int `json:"comment_count"`
 }

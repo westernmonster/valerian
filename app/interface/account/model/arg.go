@@ -98,8 +98,7 @@ type ArgChangePassword struct {
 func (p *ArgChangePassword) Validate() error {
 	return validation.ValidateStruct(
 		p,
-		validation.Field(&p.Password,
-			validation.Required.Error(`请输入密码`)),
+		validation.Field(&p.Password, validation.Required),
 	)
 }
 
@@ -133,4 +132,15 @@ type ArgUpdateProfile struct {
 	// 密码
 	// 如果无需更改该字段，在提交JSON请求中请不要包含该字段
 	Password *string `json:"password,omitempty"`
+}
+
+type ArgFollow struct {
+	AccountID int64 `json:"account_id,string" swaggertype:"string"`
+}
+
+func (p *ArgFollow) Validate() error {
+	return validation.ValidateStruct(
+		p,
+		validation.Field(&p.AccountID, validation.Required),
+	)
 }

@@ -269,6 +269,10 @@ func (p *Service) updateTopic(c context.Context, node sqalx.Node, aid int64, arg
 		t.AllowChat = types.BitBool(*arg.AllowChat)
 	}
 
+	if arg.AllowDiscuss != nil {
+		t.AllowDiscuss = types.BitBool(*arg.AllowDiscuss)
+	}
+
 	important := false
 	muteNotification := false
 	if arg.Important != nil {

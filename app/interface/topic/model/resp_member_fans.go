@@ -16,6 +16,9 @@ type TopicMemberFans struct {
 
 	// 是否当前粉丝
 	IsMember bool `json:"is_member"`
+
+	// 是否邀请
+	Invited bool `json:"invited"`
 }
 
 type TopicMemberFansResp struct {

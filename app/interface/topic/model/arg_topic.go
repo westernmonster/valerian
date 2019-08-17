@@ -78,7 +78,7 @@ type ArgUpdateTopic struct {
 	AllowChat *bool `json:"allow_chat,omitempty"`
 
 	// 允许讨论
-	AllowDiscuss bool `json:"allow_discuss"`
+	AllowDiscuss *bool `json:"allow_discuss"`
 
 	// 是否私密
 	IsPrivate *bool `json:"is_private,omitempty"`

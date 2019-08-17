@@ -13,7 +13,7 @@ import (
 // GetAll get all records
 func (p *Dao) GetDiscussCategories(c context.Context, node sqalx.Node) (items []*model.DiscussCategory, err error) {
 	items = make([]*model.DiscussCategory, 0)
-	sqlSelect := "SELECT a.* FROM discuss_categories a WHERE a.deleted=0 ORDER BY a.id DESC "
+	sqlSelect := "SELECT a.* FROM discuss_categories a WHERE a.deleted=0 ORDER BY a.seq "
 
 	if err = node.SelectContext(c, &items, sqlSelect); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetDiscussCategories err(%+v)", err))
@@ -45,7 +45,7 @@ func (p *Dao) GetDiscussCategoriesByCond(c context.Context, node sqalx.Node, con
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.* FROM discuss_categories a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.* FROM discuss_categories a WHERE a.deleted=0 %s ORDER BY a.seq", clause)
 
 	if err = node.SelectContext(c, &items, sqlSelect, condition...); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetDiscussCategoriesByCond err(%+v), condition(%+v)", err, cond))

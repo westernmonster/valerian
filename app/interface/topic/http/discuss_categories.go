@@ -20,7 +20,7 @@ import (
 // @Failure 400 "请求验证失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /topic/list/members [get]
+// @Router /topic/list/discuss_categories [get]
 func discussCategories(c *mars.Context) {
 	var (
 		id  int64

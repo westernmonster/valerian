@@ -88,6 +88,9 @@ type TopicMeta struct {
 	// 是否能编辑
 	CanEdit bool `json:"can_edit"`
 
+	// 是否收藏
+	IsFav bool `json:"is_fav"`
+
 	// 是否能查看
 	CanView bool `json:"can_view"`
 

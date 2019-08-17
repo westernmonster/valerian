@@ -6,6 +6,26 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation"
 )
 
+type CatalogArticleItem struct {
+	ID int64 `json:"id,string" swaggertype:"string"`
+	// 标题
+	Title string `json:"title"`
+	// 内容
+	Excerpt string `json:"excerpt"`
+	// 喜欢数
+	LikeCount int `json:"like_count"`
+	// 补充个数
+	ReviseCount int `json:"revise_count"`
+	// 评论数
+	CommentCount int `json:"comment_count"`
+
+	// 头像
+	Avatar string `json:"avatar,omitempty"`
+
+	// 发布日期
+	CreatedAt int64 `json:"created_at"`
+}
+
 type TopicLevel1Catalog struct {
 	ID *int64 `json:"id,string" swaggertype:"string"`
 	//  名称
@@ -24,6 +44,9 @@ type TopicLevel1Catalog struct {
 	RefID *int64 `json:"ref_id,string,omitempty" swaggertype:"string"`
 
 	Children []*TopicLevel2Catalog `json:"children,omitempty"`
+
+	// 文章
+	Article *CatalogArticleItem `json:"article,omitempty"`
 }
 
 func (p *TopicLevel1Catalog) Validate() error {
@@ -155,6 +178,9 @@ type TopicLevel2Catalog struct {
 	RefID *int64 `json:"ref_id,string,omitempty" swaggertype:"string"`
 
 	Children []*TopicChildCatalog `json:"children,omitempty"`
+
+	// 文章
+	Article *CatalogArticleItem `json:"article,omitempty"`
 }
 
 func (p *TopicLevel2Catalog) Validate() error {
@@ -187,6 +213,9 @@ type TopicChildCatalog struct {
 
 	// 引用ID
 	RefID *int64 `json:"ref_id,string,omitempty" swaggertype:"string"`
+
+	// 文章
+	Article *CatalogArticleItem `json:"article,omitempty"`
 }
 
 func (p *TopicChildCatalog) Validate() error {

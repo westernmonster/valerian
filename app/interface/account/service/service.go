@@ -20,6 +20,19 @@ type Service struct {
 		SetPassword(c context.Context, node sqalx.Node, password, salt string, aid int64) (err error)
 		UpdateAccount(c context.Context, node sqalx.Node, item *model.Account) (err error)
 
+		GetAccountFollowersByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.AccountFollower, err error)
+		GetAccountFollowers(c context.Context, node sqalx.Node) (items []*model.AccountFollower, err error)
+		GetAccountFollowerByID(c context.Context, node sqalx.Node, id int64) (item *model.AccountFollower, err error)
+		GetAccountFollowerByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (item *model.AccountFollower, err error)
+		AddAccountFollower(c context.Context, node sqalx.Node, item *model.AccountFollower) (err error)
+		UpdateAccountFollower(c context.Context, node sqalx.Node, item *model.AccountFollower) (err error)
+		DelAccountFollower(c context.Context, node sqalx.Node, id int64) (err error)
+
+		GetFansCount(c context.Context, node sqalx.Node, aid int64) (count int, err error)
+		GetFansPaged(c context.Context, node sqalx.Node, aid int64, page, pageSize int) (count int, items []*model.AccountFollower, err error)
+		GetFollowingCount(c context.Context, node sqalx.Node, aid int64) (count int, err error)
+		GetFollowingPaged(c context.Context, node sqalx.Node, aid int64, page, pageSize int) (count int, items []*model.AccountFollower, err error)
+
 		ProfileCache(c context.Context, id int64) (m *model.Profile, err error)
 		SetProfileCache(c context.Context, m *model.Profile) (err error)
 		DelProfileCache(c context.Context, id int64) (err error)

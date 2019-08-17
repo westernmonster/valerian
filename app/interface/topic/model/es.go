@@ -205,6 +205,9 @@ type ESTopic struct {
 	// UpdatedAt 更新时间
 	UpdatedAt *int64 `json:"updated_at,string"  swaggertype:"string"`
 
+	// 成员数
+	MemberCount int `json:"member_count"`
+
 	// 是否已经授权
 	IsAuthed bool `json:"is_authed"`
 }

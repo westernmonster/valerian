@@ -87,6 +87,15 @@ func (p *Service) GetTopicMeta(c context.Context, t *model.TopicResp) (meta *mod
 		meta.CanEdit = true
 	}
 
+	var setting *model.AccountTopicSetting
+	if setting, err = p.getAccountTopicSetting(c, p.d.DB(), aid, t.ID); err != nil {
+		return
+	} else if setting == nil {
+		meta.IsFav = false
+	} else {
+		meta.IsFav = bool(setting.Fav)
+	}
+
 	return
 }
 
