@@ -54,10 +54,18 @@ func (p *ArgChangeOwner) Validate() error {
 	)
 }
 
-type ArgInvite struct {
+type ArgTopicInvite struct {
 	// 成员ID
 	AccountID int64 `json:"account_id,string" swaggertype:"string"`
 
 	// 话题ID
 	TopicID int64 `json:"topic_id,string" swaggertype:"string"`
+}
+
+func (p *ArgTopicInvite) Validate() error {
+	return validation.ValidateStruct(
+		p,
+		validation.Field(&p.TopicID, validation.Required),
+		validation.Field(&p.AccountID, validation.Required),
+	)
 }

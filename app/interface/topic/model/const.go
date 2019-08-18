@@ -53,6 +53,10 @@ const (
 )
 
 const (
+	InviteStatusSent = 1
+)
+
+const (
 	FollowRequestStatusCommited = 0
 	FollowRequestStatusApproved = 1
 	FollowRequestStatusRejected = 2

@@ -15,7 +15,6 @@ const (
 	_getFansCountSQL = "SELECT COUNT(1) as count FROM account_followers  a WHERE a.deleted=0 AND a.account_id=?"
 
 	_getFollowingCountSQL = "SELECT COUNT(1) as count FROM account_followers  a WHERE a.deleted=0 AND a.follower_id=?"
-	_getFollowingPagedSQL = "SELECT a.* FROM account_followers a WHERE a.deleted=0 AND a.follower_id=? ORDER BY a.id DESC limit ?,?"
 )
 
 func (p *Dao) GetFansCount(c context.Context, node sqalx.Node, aid int64) (count int, err error) {
@@ -57,23 +56,41 @@ func (p *Dao) GetFansPaged(c context.Context, node sqalx.Node, aid int64, query 
 	return
 }
 
-func (p *Dao) GetFollowingCount(c context.Context, node sqalx.Node, aid int64) (count int, err error) {
+func (p *Dao) GetFollowCount(c context.Context, node sqalx.Node, aid int64) (count int, err error) {
 	if err = node.GetContext(c, &count, _getFollowingCountSQL, aid); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetFollowingCount error(%+v), account_id(%d)", err, aid))
 	}
 	return
 }
 
-func (p *Dao) GetFollowingPaged(c context.Context, node sqalx.Node, aid int64, page, pageSize int) (count int, items []*model.AccountFollower, err error) {
-	items = make([]*model.AccountFollower, 0)
-	offset := (page - 1) * pageSize
+func (p *Dao) GetFollowPaged(c context.Context, node sqalx.Node, aid int64, query string, limit, offset int) (items []*model.MemberItem, err error) {
+	items = make([]*model.MemberItem, 0)
 
-	if err = node.GetContext(c, &count, _getFollowingCountSQL, aid); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.GetFollowingCount error(%+v), follower_id(%d)", err, aid))
+	condition := make([]interface{}, 0)
+	clause := ""
+
+	clause += " AND a.follower_id =?"
+	condition = append(condition, aid)
+
+	qry := strings.TrimSpace(query)
+	if qry != "" {
+		clause += " AND b.user_name LIKE ?"
+		condition = append(condition, "%"+qry+"%")
 	}
 
-	if err = node.SelectContext(c, &items, _getFollowingPagedSQL, aid, offset, pageSize); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.GetFollowingPaged error(%+v), follower_id(%d) page(%d) pageSize(%d)", err, aid, page, pageSize))
+	selectSQL := `
+    SELECT b.id,b.introduction,b.avatar,b.user_name,b.gender,b.id_cert,b.work_cert,b.is_org,b.is_vip
+	FROM account_followers a LEFT JOIN accounts b ON a.account_id=b.id
+	WHERE a.deleted=0 %s
+	ORDER BY a.id DESC limit ?,?`
+
+	selectSQL = fmt.Sprintf(selectSQL, clause)
+
+	condition = append(condition, offset)
+	condition = append(condition, limit)
+
+	if err = node.SelectContext(c, &items, selectSQL, condition...); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetFansPaged error(%+v), follower_id(%d) qry=(%s) offset(%d) limit(%d)", err, aid, qry, offset, limit))
 	}
 	return
 }

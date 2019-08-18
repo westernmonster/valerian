@@ -30,8 +30,8 @@ type Service struct {
 
 		GetFansCount(c context.Context, node sqalx.Node, aid int64) (count int, err error)
 		GetFansPaged(c context.Context, node sqalx.Node, aid int64, query string, limit, offset int) (items []*model.MemberItem, err error)
-		GetFollowingCount(c context.Context, node sqalx.Node, aid int64) (count int, err error)
-		GetFollowingPaged(c context.Context, node sqalx.Node, aid int64, page, pageSize int) (count int, items []*model.AccountFollower, err error)
+		GetFollowCount(c context.Context, node sqalx.Node, aid int64) (count int, err error)
+		GetFollowPaged(c context.Context, node sqalx.Node, aid int64, query string, limit, offset int) (items []*model.MemberItem, err error)
 
 		ProfileCache(c context.Context, id int64) (m *model.Profile, err error)
 		SetProfileCache(c context.Context, m *model.Profile) (err error)

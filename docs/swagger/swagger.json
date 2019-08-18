@@ -10,6 +10,97 @@
     "host": "dev.flywk.com",
     "basePath": "/api/v1",
     "paths": {
+        "/account/list/fans": {
+            "get": {
+                "description": "获取关注用户列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "account"
+                ],
+                "summary": "获取关注用户列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "account_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "查询条件",
+                        "name": "query",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成员",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/model.MemberResp"
+                        }
+                    },
+                    "400": {
+                        "description": "请求验证失败"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
         "/article/files": {
             "post": {
                 "description": "批量更新文件",
@@ -1794,7 +1885,7 @@
                         "required": true,
                         "schema": {
                             "type": "object",
-                            "$ref": "#/definitions/model.ArgInvite"
+                            "$ref": "#/definitions/model.ArgTopicInvite"
                         }
                     }
                 ],
@@ -2399,8 +2490,19 @@
                         "type": "string",
                         "description": "查询条件",
                         "name": "query",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -3313,19 +3415,6 @@
                 }
             }
         },
-        "model.ArgInvite": {
-            "type": "object",
-            "properties": {
-                "account_id": {
-                    "description": "成员ID",
-                    "type": "string"
-                },
-                "topic_id": {
-                    "description": "话题ID",
-                    "type": "string"
-                }
-            }
-        },
         "model.ArgLinkInfo": {
             "type": "object",
             "properties": {
@@ -3545,6 +3634,19 @@
                     "type": "string"
                 },
                 "topic_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.ArgTopicInvite": {
+            "type": "object",
+            "properties": {
+                "account_id": {
+                    "description": "成员ID",
+                    "type": "string"
+                },
+                "topic_id": {
+                    "description": "话题ID",
                     "type": "string"
                 }
             }
@@ -4190,6 +4292,64 @@
                 }
             }
         },
+        "model.FollowItem": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "description": "头像",
+                    "type": "string"
+                },
+                "fans_count": {
+                    "description": "粉丝数",
+                    "type": "integer"
+                },
+                "follow_count": {
+                    "description": "关注数",
+                    "type": "integer"
+                },
+                "gender": {
+                    "description": "性别 1为男， 2为女",
+                    "type": "integer"
+                },
+                "id": {
+                    "description": "账户ID",
+                    "type": "string",
+                    "format": "int64"
+                },
+                "id_cert": {
+                    "description": "是否身份认证",
+                    "type": "boolean"
+                },
+                "introduction": {
+                    "description": "自我介绍",
+                    "type": "string"
+                },
+                "invited": {
+                    "description": "是否邀请",
+                    "type": "boolean"
+                },
+                "is_member": {
+                    "description": "是否当前粉丝",
+                    "type": "boolean"
+                },
+                "is_org": {
+                    "description": "是否机构用户",
+                    "type": "boolean"
+                },
+                "is_vip": {
+                    "description": "是否VIP",
+                    "type": "boolean"
+                },
+                "user_name": {
+                    "description": "用户名",
+                    "type": "string"
+                },
+                "work_cert": {
+                    "description": "是否工作认证",
+                    "type": "boolean"
+                }
+            }
+        },
         "model.LinkInfoResp": {
             "type": "object",
             "properties": {
@@ -4258,6 +4418,70 @@
                 "token_type": {
                     "description": "Token 类型，默认为 Bearer",
                     "type": "string"
+                }
+            }
+        },
+        "model.MemberItem": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "description": "头像",
+                    "type": "string"
+                },
+                "fans_count": {
+                    "description": "粉丝数",
+                    "type": "integer"
+                },
+                "follow_count": {
+                    "description": "关注数",
+                    "type": "integer"
+                },
+                "gender": {
+                    "description": "性别 1为男， 2为女",
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string",
+                    "format": "int64"
+                },
+                "id_cert": {
+                    "description": "是否身份认证",
+                    "type": "boolean"
+                },
+                "introduction": {
+                    "description": "自我介绍",
+                    "type": "string"
+                },
+                "is_org": {
+                    "description": "是否机构用户",
+                    "type": "boolean"
+                },
+                "is_vip": {
+                    "description": "是否VIP",
+                    "type": "boolean"
+                },
+                "user_name": {
+                    "description": "用户名",
+                    "type": "string"
+                },
+                "work_cert": {
+                    "description": "是否工作认证",
+                    "type": "boolean"
+                }
+            }
+        },
+        "model.MemberResp": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.MemberItem"
+                    }
+                },
+                "paging": {
+                    "type": "object",
+                    "$ref": "#/definitions/model.Paging"
                 }
             }
         },
@@ -4643,46 +4867,13 @@
                 }
             }
         },
-        "model.TopicMemberFans": {
-            "type": "object",
-            "properties": {
-                "account_id": {
-                    "description": "账户ID",
-                    "type": "string"
-                },
-                "avatar": {
-                    "description": "头像",
-                    "type": "string"
-                },
-                "fans_count": {
-                    "description": "粉丝数",
-                    "type": "integer"
-                },
-                "follow_count": {
-                    "description": "关注数",
-                    "type": "integer"
-                },
-                "introduction": {
-                    "description": "自我介绍",
-                    "type": "string"
-                },
-                "invited": {
-                    "description": "是否邀请",
-                    "type": "boolean"
-                },
-                "is_member": {
-                    "description": "是否当前粉丝",
-                    "type": "boolean"
-                }
-            }
-        },
         "model.TopicMemberFansResp": {
             "type": "object",
             "properties": {
                 "items": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/model.TopicMemberFans"
+                        "$ref": "#/definitions/model.FollowItem"
                     }
                 },
                 "paging": {

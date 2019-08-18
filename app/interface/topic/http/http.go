@@ -32,6 +32,7 @@ func route(e *mars.Engine) {
 		g.POST("/owner", auth.User, changeOwner)
 		g.POST("/follow", auth.User, followTopic)
 		g.POST("/leave", auth.User, leave)
+		g.POST("/invite", auth.User, inviteFans)
 
 		g.POST("/discuss_categories", auth.User, editDiscussCategories)
 		g.POST("/members", auth.User, editTopicMembers)
@@ -42,6 +43,7 @@ func route(e *mars.Engine) {
 		g.GET("/list/discuss_categories", auth.User, discussCategories)
 		g.GET("/list/catalogs", auth.User, topicCatalogs)
 		g.GET("/list/members", auth.User, topicMembers)
+		g.GET("/list/member_fans", auth.User, memberFansList)
 		g.GET("/list/auth_topics", auth.User, authTopics)
 		g.GET("/list/catalog_taxonomies", auth.User, topicCatalogTaxonomies)
 	}

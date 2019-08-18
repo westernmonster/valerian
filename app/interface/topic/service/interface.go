@@ -67,6 +67,14 @@ type IDao interface {
 	UpdateDiscussCategory(c context.Context, node sqalx.Node, item *model.DiscussCategory) (err error)
 	DelDiscussCategory(c context.Context, node sqalx.Node, id int64) (err error)
 
+	GetTopicInviteRequestsByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.TopicInviteRequest, err error)
+	GetTopicInviteRequests(c context.Context, node sqalx.Node) (items []*model.TopicInviteRequest, err error)
+	GetTopicInviteRequestByID(c context.Context, node sqalx.Node, id int64) (item *model.TopicInviteRequest, err error)
+	GetTopicInviteRequestByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (item *model.TopicInviteRequest, err error)
+	AddTopicInviteRequest(c context.Context, node sqalx.Node, item *model.TopicInviteRequest) (err error)
+	UpdateTopicInviteRequest(c context.Context, node sqalx.Node, item *model.TopicInviteRequest) (err error)
+	DelTopicInviteRequest(c context.Context, node sqalx.Node, id int64) (err error)
+
 	AddArticle(c context.Context, node sqalx.Node, item *model.Article) (err error)
 	GetArticleByID(c context.Context, node sqalx.Node, id int64) (item *model.Article, err error)
 	UpdateArticle(c context.Context, node sqalx.Node, item *model.Article) (err error)
@@ -93,7 +101,11 @@ type IDao interface {
 	GetLocaleByCondition(c context.Context, node sqalx.Node, cond map[string]interface{}) (item *model.Locale, err error)
 
 	GetAccountFollowersByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.AccountFollower, err error)
-	GetAccountFollowersPaged(c context.Context, node sqalx.Node, accountID int64, page, pageSize int) (count int, items []*model.AccountFollower, err error)
+
+	GetFansCount(c context.Context, node sqalx.Node, aid int64) (count int, err error)
+	GetFansPaged(c context.Context, node sqalx.Node, aid int64, query string, limit, offset int) (items []*model.FollowItem, err error)
+	GetFollowCount(c context.Context, node sqalx.Node, aid int64) (count int, err error)
+	GetFollowPaged(c context.Context, node sqalx.Node, aid int64, query string, limit, offset int) (items []*model.FollowItem, err error)
 
 	SetTopicCache(c context.Context, m *model.TopicResp) (err error)
 	TopicCache(c context.Context, topicID int64) (m *model.TopicResp, err error)

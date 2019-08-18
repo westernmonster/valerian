@@ -14,20 +14,6 @@ import (
 	"valerian/library/net/metadata"
 )
 
-func (p *Service) MemberFansList(c context.Context, topicID int64) (err error) {
-	// aid, ok := metadata.Value(c, metadata.Aid).(int64)
-	// if !ok {
-	// 	err = ecode.AcquireAccountIDFailed
-	// 	return
-	// }
-
-	return
-}
-
-func (p *Service) InviteFans(c context.Context, topicID int64) (err error) {
-	return
-}
-
 func (p *Service) isTopicMember(c context.Context, node sqalx.Node, accountID, topicID int64) (isMember bool, err error) {
 	var member *model.TopicMember
 	if member, err = p.d.GetTopicMemberByCond(c, node, map[string]interface{}{"account_id": accountID, "topic_id": topicID}); err != nil {

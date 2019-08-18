@@ -89,3 +89,39 @@ func genURL(path string, param url.Values) (uri string, err error) {
 
 	return u.String(), nil
 }
+
+func (p *Service) FollowPaged(c context.Context, aid int64, query string, limit, offset int) (resp *model.MemberResp, err error) {
+	resp = &model.MemberResp{
+		Items:  make([]*model.MemberItem, 0),
+		Paging: &model.Paging{},
+	}
+
+	if resp.Items, err = p.d.GetFollowPaged(c, p.d.DB(), aid, query, limit, offset); err != nil {
+		return
+	}
+
+	param := url.Values{}
+	param.Set("account_id", strconv.FormatInt(aid, 10))
+	param.Set("query", query)
+	param.Set("limit", strconv.Itoa(limit))
+	param.Set("offset", strconv.Itoa(offset-limit))
+
+	if resp.Paging.Prev, err = genURL("/api/v1/account/list/follow", param); err != nil {
+		return
+	}
+	param.Set("offset", strconv.Itoa(offset+limit))
+	if resp.Paging.Next, err = genURL("/api/v1/account/list/follow", param); err != nil {
+		return
+	}
+
+	if len(resp.Items) < limit {
+		resp.Paging.IsEnd = true
+		resp.Paging.Next = ""
+	}
+
+	if offset == 0 {
+		resp.Paging.Prev = ""
+	}
+
+	return
+}

@@ -233,15 +233,6 @@ definitions:
         description: 邮件地址
         type: string
     type: object
-  model.ArgInvite:
-    properties:
-      account_id:
-        description: 成员ID
-        type: string
-      topic_id:
-        description: 话题ID
-        type: string
-    type: object
   model.ArgLinkInfo:
     properties:
       link:
@@ -411,6 +402,15 @@ definitions:
       reason:
         type: string
       topic_id:
+        type: string
+    type: object
+  model.ArgTopicInvite:
+    properties:
+      account_id:
+        description: 成员ID
+        type: string
+      topic_id:
+        description: 话题ID
         type: string
     type: object
   model.ArgTopicMember:
@@ -920,6 +920,49 @@ definitions:
         description: '类型: article,comment,account,topic'
         type: string
     type: object
+  model.FollowItem:
+    properties:
+      avatar:
+        description: 头像
+        type: string
+      fans_count:
+        description: 粉丝数
+        type: integer
+      follow_count:
+        description: 关注数
+        type: integer
+      gender:
+        description: 性别 1为男， 2为女
+        type: integer
+      id:
+        description: 账户ID
+        format: int64
+        type: string
+      id_cert:
+        description: 是否身份认证
+        type: boolean
+      introduction:
+        description: 自我介绍
+        type: string
+      invited:
+        description: 是否邀请
+        type: boolean
+      is_member:
+        description: 是否当前粉丝
+        type: boolean
+      is_org:
+        description: 是否机构用户
+        type: boolean
+      is_vip:
+        description: 是否VIP
+        type: boolean
+      user_name:
+        description: 用户名
+        type: string
+      work_cert:
+        description: 是否工作认证
+        type: boolean
+    type: object
   model.LinkInfoResp:
     properties:
       link:
@@ -970,6 +1013,52 @@ definitions:
       token_type:
         description: Token 类型，默认为 Bearer
         type: string
+    type: object
+  model.MemberItem:
+    properties:
+      avatar:
+        description: 头像
+        type: string
+      fans_count:
+        description: 粉丝数
+        type: integer
+      follow_count:
+        description: 关注数
+        type: integer
+      gender:
+        description: 性别 1为男， 2为女
+        type: integer
+      id:
+        format: int64
+        type: string
+      id_cert:
+        description: 是否身份认证
+        type: boolean
+      introduction:
+        description: 自我介绍
+        type: string
+      is_org:
+        description: 是否机构用户
+        type: boolean
+      is_vip:
+        description: 是否VIP
+        type: boolean
+      user_name:
+        description: 用户名
+        type: string
+      work_cert:
+        description: 是否工作认证
+        type: boolean
+    type: object
+  model.MemberResp:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/model.MemberItem'
+        type: array
+      paging:
+        $ref: '#/definitions/model.Paging'
+        type: object
     type: object
   model.Page:
     properties:
@@ -1265,35 +1354,11 @@ definitions:
           required: true
         type: string
     type: object
-  model.TopicMemberFans:
-    properties:
-      account_id:
-        description: 账户ID
-        type: string
-      avatar:
-        description: 头像
-        type: string
-      fans_count:
-        description: 粉丝数
-        type: integer
-      follow_count:
-        description: 关注数
-        type: integer
-      introduction:
-        description: 自我介绍
-        type: string
-      invited:
-        description: 是否邀请
-        type: boolean
-      is_member:
-        description: 是否当前粉丝
-        type: boolean
-    type: object
   model.TopicMemberFansResp:
     properties:
       items:
         items:
-          $ref: '#/definitions/model.TopicMemberFans'
+          $ref: '#/definitions/model.FollowItem'
         type: array
       paging:
         $ref: '#/definitions/model.Paging'
@@ -1509,6 +1574,69 @@ info:
   title: 飞行百科 API
   version: "1.0"
 paths:
+  /account/list/fans:
+    get:
+      consumes:
+      - application/json
+      description: 获取关注用户列表
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 用户ID
+        in: query
+        name: account_id
+        required: true
+        type: string
+      - description: 查询条件
+        in: query
+        name: query
+        required: true
+        type: string
+      - description: 每页大小
+        in: query
+        name: limit
+        type: integer
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成员
+          schema:
+            $ref: '#/definitions/model.MemberResp'
+            type: object
+        "400":
+          description: 请求验证失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 获取关注用户列表
+      tags:
+      - account
   /article/files:
     post:
       consumes:
@@ -2738,7 +2866,7 @@ paths:
         name: req
         required: true
         schema:
-          $ref: '#/definitions/model.ArgInvite'
+          $ref: '#/definitions/model.ArgTopicInvite'
           type: object
       produces:
       - application/json
@@ -3156,8 +3284,15 @@ paths:
       - description: 查询条件
         in: query
         name: query
-        required: true
         type: string
+      - description: 每页大小
+        in: query
+        name: limit
+        type: integer
+      - description: offset
+        in: query
+        name: offset
+        type: integer
       produces:
       - application/json
       responses:
