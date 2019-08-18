@@ -25,6 +25,8 @@ func route(e *mars.Engine) {
 		g.GET("/me", auth.User, getProfile)
 		g.PUT("/me/edit", auth.User, updateProfile)
 
+		g.GET("/account/list/fans", auth.User, fans)
+
 		g.PUT("/oauth/password/reset", forgetPassword)
 		g.PUT("/oauth/password/reset/confirm", resetPassword)
 	}

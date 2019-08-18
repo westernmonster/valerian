@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strings"
 
 	"valerian/app/interface/account/model"
 	"valerian/library/database/sqalx"
@@ -12,7 +13,6 @@ import (
 
 const (
 	_getFansCountSQL = "SELECT COUNT(1) as count FROM account_followers  a WHERE a.deleted=0 AND a.account_id=?"
-	_getFansPagedSQL = "SELECT a.* FROM account_followers a WHERE a.deleted=0 AND a.account_id=? ORDER BY a.id DESC limit ?,?"
 
 	_getFollowingCountSQL = "SELECT COUNT(1) as count FROM account_followers  a WHERE a.deleted=0 AND a.follower_id=?"
 	_getFollowingPagedSQL = "SELECT a.* FROM account_followers a WHERE a.deleted=0 AND a.follower_id=? ORDER BY a.id DESC limit ?,?"
@@ -25,16 +25,34 @@ func (p *Dao) GetFansCount(c context.Context, node sqalx.Node, aid int64) (count
 	return
 }
 
-func (p *Dao) GetFansPaged(c context.Context, node sqalx.Node, aid int64, page, pageSize int) (count int, items []*model.AccountFollower, err error) {
-	items = make([]*model.AccountFollower, 0)
-	offset := (page - 1) * pageSize
+func (p *Dao) GetFansPaged(c context.Context, node sqalx.Node, aid int64, query string, limit, offset int) (items []*model.MemberItem, err error) {
+	items = make([]*model.MemberItem, 0)
 
-	if err = node.GetContext(c, &count, _getFansCountSQL, aid); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.GetFansCount error(%+v), account_id(%d)", err, aid))
+	condition := make([]interface{}, 0)
+	clause := ""
+
+	clause += " AND a.account_id =?"
+	condition = append(condition, aid)
+
+	qry := strings.TrimSpace(query)
+	if qry != "" {
+		clause += " AND b.user_name LIKE ?"
+		condition = append(condition, "%"+qry+"%")
 	}
 
-	if err = node.SelectContext(c, &items, _getFansPagedSQL, aid, offset, pageSize); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.GetFansPaged error(%+v), account_id(%d) page(%d) pageSize(%d)", err, aid, page, pageSize))
+	selectSQL := `
+    SELECT b.id,b.introduction,b.avatar,b.user_name,b.gender,b.id_cert,b.work_cert,b.is_org,b.is_vip
+	FROM account_followers a LEFT JOIN accounts b ON a.follower_id=b.id
+	WHERE a.deleted=0 %s
+	ORDER BY a.id DESC limit ?,?`
+
+	selectSQL = fmt.Sprintf(selectSQL, clause)
+
+	condition = append(condition, offset)
+	condition = append(condition, limit)
+
+	if err = node.SelectContext(c, &items, selectSQL, condition...); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetFansPaged error(%+v), account_id(%d) qry=(%s) offset(%d) limit(%d)", err, aid, qry, offset, limit))
 	}
 	return
 }

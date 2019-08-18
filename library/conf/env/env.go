@@ -27,7 +27,7 @@ const (
 // env configuration.
 var (
 	// Site
-	URL string
+	SiteURL string
 
 	// Region avaliable region where app at.
 	Region string
@@ -74,7 +74,7 @@ func init() {
 
 func addFlag(fs *flag.FlagSet) {
 	// env
-	fs.StringVar(&URL, "url", os.Getenv("URL"), "URL is site url")
+	fs.StringVar(&SiteURL, "siteurl", os.Getenv("SITE_URL"), "site url, example: http://dev.flywk.com")
 	fs.StringVar(&Region, "region", defaultString("REGION", _region), "avaliable region. or use REGION env variable, value: sh etc.")
 	fs.StringVar(&Zone, "zone", defaultString("ZONE", _zone), "avaliable zone. or use ZONE env variable, value: sh001/sh002 etc.")
 	fs.StringVar(&DeployEnv, "deploy.env", defaultString("DEPLOY_ENV", _deployEnv), "deploy env. or use DEPLOY_ENV env variable, value: dev/fat1/uat/pre/prod etc.")

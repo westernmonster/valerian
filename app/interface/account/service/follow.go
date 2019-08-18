@@ -2,8 +2,11 @@ package service
 
 import (
 	"context"
+	"net/url"
+	"strconv"
 	"time"
 	"valerian/app/interface/account/model"
+	"valerian/library/conf/env"
 	"valerian/library/ecode"
 	"valerian/library/gid"
 	"valerian/library/net/metadata"
@@ -41,6 +44,48 @@ func (p *Service) Follow(c context.Context, arg *model.ArgFollow) (isFollow bool
 	return
 }
 
-func (p *Service) FansPaged(c context.Context, aid int64) (isFollow bool, err error) {
+func (p *Service) FansPaged(c context.Context, aid int64, query string, limit, offset int) (resp *model.MemberResp, err error) {
+	resp = &model.MemberResp{
+		Items:  make([]*model.MemberItem, 0),
+		Paging: &model.Paging{},
+	}
+
+	if resp.Items, err = p.d.GetFansPaged(c, p.d.DB(), aid, query, limit, offset); err != nil {
+		return
+	}
+
+	param := url.Values{}
+	param.Set("account_id", strconv.FormatInt(aid, 10))
+	param.Set("query", query)
+	param.Set("limit", strconv.Itoa(limit))
+	param.Set("offset", strconv.Itoa(offset-limit))
+
+	if resp.Paging.Prev, err = genURL("/api/v1/account/list/fans", param); err != nil {
+		return
+	}
+	param.Set("offset", strconv.Itoa(offset+limit))
+	if resp.Paging.Next, err = genURL("/api/v1/account/list/fans", param); err != nil {
+		return
+	}
+
+	if len(resp.Items) < limit {
+		resp.Paging.IsEnd = true
+		resp.Paging.Next = ""
+	}
+
+	if offset == 0 {
+		resp.Paging.Prev = ""
+	}
+
 	return
+}
+
+func genURL(path string, param url.Values) (uri string, err error) {
+	u, err := url.Parse(env.SiteURL + path)
+	if err != nil {
+		return
+	}
+	u.RawQuery = param.Encode()
+
+	return u.String(), nil
 }
