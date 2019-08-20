@@ -19,6 +19,7 @@ import (
 	authMiddleware "valerian/app/interface/auth"
 	httpCertification "valerian/app/interface/certification/http"
 	httpEditor "valerian/app/interface/editor/http"
+	httpFeedback "valerian/app/interface/feedback/http"
 	httpFile "valerian/app/interface/file/http"
 	httpLocale "valerian/app/interface/locale/http"
 	httpLocation "valerian/app/interface/location/http"
@@ -100,6 +101,7 @@ func initHTTP(c *conf.Config) {
 	httpLocale.Init(c, engine)
 	httpCertification.Init(c, engine)
 	httpEditor.Init(c, engine)
+	httpFeedback.Init(c, engine)
 
 	if err := engine.Start(); err != nil {
 		log.Error(fmt.Sprintf("engine.Start error(%v)", err))

@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.18.0 (HEAD)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: discovery2
+  name: discovery2
+spec:
+  ports:
+  - name: "7172"
+    port: 7172
+    targetPort: 7172
+  selector:
+    io.kompose.service: discovery2
+status:
+  loadBalancer: {}

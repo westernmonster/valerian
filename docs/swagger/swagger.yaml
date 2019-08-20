@@ -97,6 +97,33 @@ definitions:
           user, org
         type: string
     type: object
+  model.ArgAddFeedback:
+    properties:
+      desc:
+        description: 备注
+        type: string
+      target_id:
+        description: |-
+          目标ID
+           会员、话题、文章、讨论、补充的ID
+           如果是反馈，传-1
+        type: integer
+      target_type:
+        description: |-
+          目标类型
+           1 反馈
+           2 成员
+           3 话题
+           4 文章
+           5 讨论
+           6 补充
+        type: integer
+      type:
+        description: |-
+          举报类型
+           通过 /list/feedback_types 获取
+        type: integer
+    type: object
   model.ArgAuthTopic:
     properties:
       permission:
@@ -310,18 +337,6 @@ definitions:
         type: string
       refresh_token:
         type: string
-    type: object
-  model.ArgReportTopic:
-    properties:
-      desc:
-        description: 补充信息
-        type: string
-      id:
-        description: 话题ID
-        type: string
-      type:
-        description: 举报类型
-        type: integer
     type: object
   model.ArgSaveArticleFiles:
     properties:
@@ -918,6 +933,15 @@ definitions:
         type: object
       type:
         description: '类型: article,comment,account,topic'
+        type: string
+    type: object
+  model.FeedbackTypeResp:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      type:
         type: string
     type: object
   model.FollowItem:
@@ -1789,6 +1813,57 @@ paths:
       summary: 获取链接信息
       tags:
       - editor
+  /feedback:
+    post:
+      consumes:
+      - application/json
+      description: 提交反馈、投诉
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/model.ArgAddFeedback'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "18":
+          description: 话题不存在
+        "200":
+          description: 成功
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 提交反馈、投诉
+      tags:
+      - feedback
   /file/oss_token:
     post:
       consumes:
@@ -1880,6 +1955,48 @@ paths:
       summary: 获取电话国家区号
       tags:
       - common
+  /list/feedback_types:
+    get:
+      consumes:
+      - application/json
+      description: 获取反馈类型,需要传入type参数，accuse_people,accuse_content,feedback
+      parameters:
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: accuse_people,accuse_content,feedback
+        in: query
+        name: type
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 反馈类型
+          schema:
+            items:
+              $ref: '#/definitions/model.FeedbackTypeResp'
+            type: array
+        "500":
+          description: 服务器端错误
+      summary: 获取反馈类型
+      tags:
+      - feedback
   /list/locales:
     get:
       consumes:
@@ -3474,55 +3591,6 @@ paths:
         "500":
           description: 服务器端错误
       summary: 更改主理人
-      tags:
-      - topic
-  /topic/report:
-    post:
-      consumes:
-      - application/json
-      description: 举报话题
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 请求
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/model.ArgReportTopic'
-          type: object
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-        "400":
-          description: 验证请求失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 举报话题
       tags:
       - topic
   /topic/search/accounts:

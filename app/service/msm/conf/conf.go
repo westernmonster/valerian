@@ -35,6 +35,7 @@ type Config struct {
 type DB struct {
 	Main *sqalx.Config
 	Auth *sqalx.Config
+	Apm  *sqalx.Config
 }
 
 // ServiceTree ServiceTree.

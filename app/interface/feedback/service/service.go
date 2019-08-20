@@ -26,11 +26,11 @@ type Service struct {
 
 		GetFeedbackTypesByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.FeedbackType, err error)
 		GetFeedbackTypes(c context.Context, node sqalx.Node) (items []*model.FeedbackType, err error)
-		GetFeedbackTypeByID(c context.Context, node sqalx.Node, id int64) (item *model.FeedbackType, err error)
+		GetFeedbackTypeByID(c context.Context, node sqalx.Node, id int) (item *model.FeedbackType, err error)
 		GetFeedbackTypeByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (item *model.FeedbackType, err error)
 		AddFeedbackType(c context.Context, node sqalx.Node, item *model.FeedbackType) (err error)
 		UpdateFeedbackType(c context.Context, node sqalx.Node, item *model.FeedbackType) (err error)
-		DelFeedbackType(c context.Context, node sqalx.Node, id int64) (err error)
+		DelFeedbackType(c context.Context, node sqalx.Node, id int) (err error)
 
 		Ping(c context.Context) (err error)
 		Close()

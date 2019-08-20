@@ -2,7 +2,7 @@ package http
 
 import (
 	"valerian/app/conf"
-	"valerian/app/interface/locale/service"
+	"valerian/app/interface/feedback/service"
 	"valerian/library/net/http/mars"
 )
 
@@ -20,6 +20,7 @@ func Init(c *conf.Config, engine *mars.Engine) {
 func route(e *mars.Engine) {
 	g := e.Group("/api/v1")
 	{
-		g.GET("/list/locales", locales)
+		g.GET("/list/feedback_types", feedbackTypes)
+		g.POST("/feedbacks", addFeedback)
 	}
 }

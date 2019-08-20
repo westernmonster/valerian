@@ -321,6 +321,80 @@
                 }
             }
         },
+        "/feedback": {
+            "post": {
+                "description": "提交反馈、投诉",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "feedback"
+                ],
+                "summary": "提交反馈、投诉",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/model.ArgAddFeedback"
+                        }
+                    }
+                ],
+                "responses": {
+                    "18": {
+                        "description": "话题不存在"
+                    },
+                    "200": {
+                        "description": "成功"
+                    },
+                    "400": {
+                        "description": "验证请求失败"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
         "/file/oss_token": {
             "post": {
                 "description": "获取阿里云OSS上传TOKEN\n阿里云文档：https://help.aliyun.com/document_detail/31926.html",
@@ -441,6 +515,67 @@
                             "type": "array",
                             "items": {
                                 "$ref": "#/definitions/model.CountryCodeResp"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/list/feedback_types": {
+            "get": {
+                "description": "获取反馈类型,需要传入type参数，accuse_people,accuse_content,feedback",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "feedback"
+                ],
+                "summary": "获取反馈类型",
+                "parameters": [
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "accuse_people,accuse_content,feedback",
+                        "name": "type",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "反馈类型",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.FeedbackTypeResp"
                             }
                         }
                     },
@@ -2765,77 +2900,6 @@
                 }
             }
         },
-        "/topic/report": {
-            "post": {
-                "description": "举报话题",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "topic"
-                ],
-                "summary": "举报话题",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Bearer",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "enum": [
-                            1,
-                            2,
-                            3
-                        ],
-                        "type": "integer",
-                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
-                        "name": "Source",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "enum": [
-                            "zh-CN",
-                            "en-US"
-                        ],
-                        "type": "string",
-                        "description": "语言",
-                        "name": "Locale",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "请求",
-                        "name": "req",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "object",
-                            "$ref": "#/definitions/model.ArgReportTopic"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功"
-                    },
-                    "400": {
-                        "description": "验证请求失败"
-                    },
-                    "401": {
-                        "description": "登录验证失败"
-                    },
-                    "500": {
-                        "description": "服务器端错误"
-                    }
-                }
-            }
-        },
         "/topic/search/accounts": {
             "post": {
                 "description": "搜索账户",
@@ -3243,6 +3307,27 @@
                 }
             }
         },
+        "model.ArgAddFeedback": {
+            "type": "object",
+            "properties": {
+                "desc": {
+                    "description": "备注",
+                    "type": "string"
+                },
+                "target_id": {
+                    "description": "目标ID\n 会员、话题、文章、讨论、补充的ID\n 如果是反馈，传-1",
+                    "type": "integer"
+                },
+                "target_type": {
+                    "description": "目标类型\n 1 反馈\n 2 成员\n 3 话题\n 4 文章\n 5 讨论\n 6 补充",
+                    "type": "integer"
+                },
+                "type": {
+                    "description": "举报类型\n 通过 /list/feedback_types 获取",
+                    "type": "integer"
+                }
+            }
+        },
         "model.ArgAuthTopic": {
             "type": "object",
             "properties": {
@@ -3516,23 +3601,6 @@
                 },
                 "refresh_token": {
                     "type": "string"
-                }
-            }
-        },
-        "model.ArgReportTopic": {
-            "type": "object",
-            "properties": {
-                "desc": {
-                    "description": "补充信息",
-                    "type": "string"
-                },
-                "id": {
-                    "description": "话题ID",
-                    "type": "string"
-                },
-                "type": {
-                    "description": "举报类型",
-                    "type": "integer"
                 }
             }
         },
@@ -4288,6 +4356,20 @@
                 },
                 "type": {
                     "description": "类型: article,comment,account,topic",
+                    "type": "string"
+                }
+            }
+        },
+        "model.FeedbackTypeResp": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "type": {
                     "type": "string"
                 }
             }

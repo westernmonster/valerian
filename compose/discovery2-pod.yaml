@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: discovery2
+  name: discovery2
+spec:
+  containers:
+  - env:
+    - name: APP_ID
+      value: infra.discovery
+    - name: DEPLOY_ENV
+      value: dev
+    - name: REGION
+      value: hz
+    - name: ZONE
+      value: hz001
+    image: discovery
+    name: discovery2
+    ports:
+    - containerPort: 7172
+    resources: {}
+    volumeMounts:
+    - mountPath: /go/bin/config.toml
+      name: discovery2-claim0
+  hostname: discovery2
+  restartPolicy: OnFailure
+  volumes:
+  - name: discovery2-claim0
+    persistentVolumeClaim:
+      claimName: discovery2-claim0
+status: {}

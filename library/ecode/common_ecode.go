@@ -102,4 +102,5 @@ var (
 	DiscussCategoryNotExist        = add(69) // 讨论分类不存在
 	SearchAccountFailed            = add(70) // 搜索账户失败
 	InviteSelfNotAllowed           = add(71) // 不允许邀请你自己
+	InvalidFeedbackType            = add(72) // 错误的反馈类型
 )

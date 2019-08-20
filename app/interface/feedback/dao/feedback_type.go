@@ -51,7 +51,7 @@ func (p *Dao) GetFeedbackTypesByCond(c context.Context, node sqalx.Node, cond ma
 }
 
 // GetByID get a record by ID
-func (p *Dao) GetFeedbackTypeByID(c context.Context, node sqalx.Node, id int64) (item *model.FeedbackType, err error) {
+func (p *Dao) GetFeedbackTypeByID(c context.Context, node sqalx.Node, id int) (item *model.FeedbackType, err error) {
 	item = new(model.FeedbackType)
 	sqlSelect := "SELECT a.* FROM feedback_types a WHERE a.id=? AND a.deleted=0"
 
@@ -127,7 +127,7 @@ func (p *Dao) UpdateFeedbackType(c context.Context, node sqalx.Node, item *model
 }
 
 // Delete logic delete a exist record
-func (p *Dao) DelFeedbackType(c context.Context, node sqalx.Node, id int64) (err error) {
+func (p *Dao) DelFeedbackType(c context.Context, node sqalx.Node, id int) (err error) {
 	sqlDelete := "UPDATE feedback_types SET deleted=1 WHERE id=? "
 
 	if _, err = node.ExecContext(c, sqlDelete, id); err != nil {

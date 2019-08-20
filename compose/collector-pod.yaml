@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: collector
+  name: collector
+spec:
+  containers:
+  - args:
+    - /go/bin/collector-linux
+    - --aliyun-log.project=flywiki
+    - --aliyun-log.endpoint=cn-hangzhou.log.aliyuncs.com
+    - --aliyun-log.access-key-id=LTAILu9eAnhmQIVi
+    - --aliyun-log.access-key-secret=hUNGWl0FciuSxFM9KonCz9Gzt7gjeE
+    - --aliyun-log.span-logstore=flywiki_store
+    env:
+    - name: SPAN_STORAGE_TYPE
+      value: aliyun-log
+    image: registry.cn-hangzhou.aliyuncs.com/jaegertracing/jaeger-collector:0.1.9
+    name: collector
+    resources: {}
+  hostname: collector
+  restartPolicy: OnFailure
+status: {}
