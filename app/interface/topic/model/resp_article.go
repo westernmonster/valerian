@@ -9,39 +9,15 @@ type ArticleResp struct {
 	// 内容
 	Content string `json:"content"`
 
-	CreatedBy int64 `json:"created_by,string"`
-
-	Creator *BasicAccountResp `json:"creator"`
-
-	//  封面图
-	Avatar *string `json:"avatar,omitempty"`
-	// 简介
-	Introduction string `json:"introduction"` // Introduction 话题简介
-
-	// 是否私有
-	Private bool `json:"private"`
+	Creator *Creator `json:"creator"`
 
 	Files []*ArticleFileResp `json:"files"`
-
-	Relations []*ArticleRelationResp `json:"relations"`
 
 	// 属性
 	ArticleMeta *ArticleMeta `json:"meta,omitempty"`
 
-	PrimaryTopicMeta *TopicMeta `json:"primary_topic_meta,omitempty"`
-}
-
-type ArticleRelationResp struct {
-	// 话题ID
-	TopicID int64 `json:"topic_id,string" swaggertype:"string"`
-	// 话题名
-	TopicName string `json:"topic_name"`
-	// 话题在目的中的ID
-	TopicCatalogID int64 `json:"topic_catalog_id,string" swaggertype:"string"`
-	// 全路径名
-	CatalogFullPath string `json:"catalog_full_path"`
-	// 是否主话题
-	Primary bool `json:"primary"`
+	// 创建时间
+	CreatedAt int64 `json:"created_at"`
 }
 
 type ArticleFileResp struct {
@@ -60,5 +36,9 @@ type ArticleMeta struct {
 
 	Fav bool `json:"fav"`
 
-	FavCount int `json:"fav_count"`
+	// 补充数
+	ReviseCount int `json:"revise_count"`
+
+	// 评论数
+	CommentCount int `json:"comment_count"`
 }

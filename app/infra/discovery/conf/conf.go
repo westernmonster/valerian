@@ -2,13 +2,14 @@ package conf
 
 import (
 	"errors"
-	"flag"
 	"net"
 
 	"valerian/library/conf"
 	"valerian/library/log"
 	"valerian/library/net/http/mars"
 	xip "valerian/library/net/ip"
+
+	flag "github.com/spf13/pflag"
 
 	"github.com/BurntSushi/toml"
 )
@@ -22,6 +23,9 @@ var (
 	ConfCh    = make(chan struct{}, 1)
 	configKey = "discovery-service.toml"
 )
+
+var nodeFlags []string
+var zoneFlags map[string]string
 
 // Config config
 type Config struct {
@@ -42,6 +46,10 @@ func (c *Config) fix() (err error) {
 		host = xip.InternalIP()
 	}
 	c.Mars.Inner.Address = host + ":" + port
+
+	c.Nodes = nodeFlags
+	// c.Zones = zoneFlags
+
 	return
 }
 
@@ -53,6 +61,8 @@ type HTTPServers struct {
 func init() {
 	// flag.StringVar(&confPath, "conf", "discovery-example.toml", "config path")
 	flag.StringVar(&confPath, "conf", "", "config path")
+	flag.StringArrayVar(&nodeFlags, "join-node", []string{}, "join nodes")
+	flag.StringToStringVar(&zoneFlags, "join-zone", map[string]string{}, "join zone")
 }
 
 // Init init conf

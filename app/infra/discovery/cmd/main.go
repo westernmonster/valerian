@@ -1,7 +1,7 @@
 package main
 
 import (
-	"flag"
+	"fmt"
 	"math/rand"
 	"os"
 	"os/signal"
@@ -11,7 +11,10 @@ import (
 	"valerian/app/infra/discovery/conf"
 	"valerian/app/infra/discovery/http"
 	"valerian/app/infra/discovery/service"
+	"valerian/library/conf/env"
 	"valerian/library/log"
+
+	flag "github.com/spf13/pflag"
 )
 
 func main() {
@@ -20,6 +23,8 @@ func main() {
 		log.Errorf("conf.Init() error(%v)", err)
 		panic(err)
 	}
+
+	fmt.Println(env.AppID)
 
 	// init log
 	log.Init(conf.Conf.Log)

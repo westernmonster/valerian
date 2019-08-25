@@ -101,6 +101,284 @@
                 }
             }
         },
+        "/article/add": {
+            "post": {
+                "description": "新增文章",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "article"
+                ],
+                "summary": "新增文章",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/model.ArgAddArticle"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功,返回article_id"
+                    },
+                    "400": {
+                        "description": "验证请求失败"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/article/del": {
+            "post": {
+                "description": "删除文章",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "article"
+                ],
+                "summary": "删除文章",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "ID",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功"
+                    },
+                    "400": {
+                        "description": "验证请求失败"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/article/edit": {
+            "post": {
+                "description": "更新文章",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "article"
+                ],
+                "summary": "更新文章",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/model.ArgUpdateArticle"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功"
+                    },
+                    "400": {
+                        "description": "验证请求失败"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/article/fav": {
+            "post": {
+                "description": "收藏文章",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "article"
+                ],
+                "summary": "收藏文章",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "ID",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功后返回bool值"
+                    },
+                    "400": {
+                        "description": "验证请求失败"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
         "/article/files": {
             "post": {
                 "description": "批量更新文件",
@@ -159,6 +437,153 @@
                 "responses": {
                     "200": {
                         "description": "成功"
+                    },
+                    "400": {
+                        "description": "验证请求失败"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/article/get": {
+            "get": {
+                "description": "获取文章",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "article"
+                ],
+                "summary": "获取文章",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "ID",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "目前支持：files,relations,versions,histories,meta,primary_topic_meta,edited_by_others",
+                        "name": "include",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "文章",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/model.ArticleResp"
+                        }
+                    },
+                    "400": {
+                        "description": "验证请求失败"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/article/like": {
+            "post": {
+                "description": "点赞文章",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "article"
+                ],
+                "summary": "点赞文章",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "ID",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功后返回bool值"
                     },
                     "400": {
                         "description": "验证请求失败"
@@ -2494,7 +2919,7 @@
         },
         "/topic/list/discussions": {
             "get": {
-                "description": "获取话题讨论列表,discuss_category_id 不传则是全部，-1代表问答，其他值则为自定义分类",
+                "description": "获取话题补充列表",
                 "consumes": [
                     "application/json"
                 ],
@@ -2504,7 +2929,7 @@
                 "tags": [
                     "topic"
                 ],
-                "summary": "获取话题讨论列表",
+                "summary": "获取话题补充列表",
                 "parameters": [
                     {
                         "type": "string",
@@ -2542,12 +2967,6 @@
                         "name": "topic_id",
                         "in": "query",
                         "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "discuss_category_id",
-                        "name": "discuss_category_id",
-                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -2555,7 +2974,7 @@
                         "description": "讨论列表",
                         "schema": {
                             "type": "object",
-                            "$ref": "#/definitions/model.DiscussListResp"
+                            "$ref": "#/definitions/model.ReviseListResp"
                         }
                     },
                     "400": {
@@ -2736,6 +3155,84 @@
                     },
                     "400": {
                         "description": "请求验证失败"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/topic/list/revises": {
+            "get": {
+                "description": "获取话题讨论列表,discuss_category_id 不传则是全部，-1代表问答，其他值则为自定义分类",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "article"
+                ],
+                "summary": "获取话题讨论列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "topic_id",
+                        "name": "topic_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "discuss_category_id",
+                        "name": "discuss_category_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "讨论列表",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/model.DiscussListResp"
+                        }
+                    },
+                    "400": {
+                        "description": "验证请求失败"
                     },
                     "401": {
                         "description": "登录验证失败"
@@ -3307,6 +3804,72 @@
                 }
             }
         },
+        "model.AddArticleFile": {
+            "type": "object",
+            "properties": {
+                "file_name": {
+                    "type": "string"
+                },
+                "file_url": {
+                    "type": "string"
+                },
+                "seq": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.AddArticleRelation": {
+            "type": "object",
+            "properties": {
+                "parent_id": {
+                    "description": "类目分类ID 如果根目录则传0",
+                    "type": "string"
+                },
+                "primary": {
+                    "description": "是否主话题",
+                    "type": "boolean"
+                },
+                "topic_id": {
+                    "description": "所关联话题ID",
+                    "type": "string"
+                }
+            }
+        },
+        "model.ArgAddArticle": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "description": "内容",
+                    "type": "string"
+                },
+                "disable_comment": {
+                    "description": "禁止评论",
+                    "type": "boolean"
+                },
+                "disable_revise": {
+                    "description": "禁止补充",
+                    "type": "boolean"
+                },
+                "files": {
+                    "description": "附件",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.AddArticleFile"
+                    }
+                },
+                "relations": {
+                    "description": "关联话题",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.AddArticleRelation"
+                    }
+                },
+                "title": {
+                    "description": "标题\nrequired: true",
+                    "type": "string"
+                }
+            }
+        },
         "model.ArgAddFeedback": {
             "type": "object",
             "properties": {
@@ -3736,6 +4299,35 @@
                 }
             }
         },
+        "model.ArgUpdateArticle": {
+            "type": "object",
+            "properties": {
+                "change_desc": {
+                    "description": "更新说明",
+                    "type": "string"
+                },
+                "content": {
+                    "description": "内容",
+                    "type": "string"
+                },
+                "disable_comment": {
+                    "description": "禁止评论",
+                    "type": "boolean"
+                },
+                "disable_revise": {
+                    "description": "禁止补充",
+                    "type": "boolean"
+                },
+                "id": {
+                    "description": "文章ID",
+                    "type": "string"
+                },
+                "title": {
+                    "description": "标题",
+                    "type": "string"
+                }
+            }
+        },
         "model.ArgUpdateTopic": {
             "type": "object",
             "properties": {
@@ -3811,6 +4403,66 @@
                 },
                 "seq": {
                     "type": "integer"
+                }
+            }
+        },
+        "model.ArticleMeta": {
+            "type": "object",
+            "properties": {
+                "comment_count": {
+                    "description": "评论数",
+                    "type": "integer"
+                },
+                "fav": {
+                    "type": "boolean"
+                },
+                "like": {
+                    "type": "boolean"
+                },
+                "like_count": {
+                    "type": "integer"
+                },
+                "read": {
+                    "type": "boolean"
+                },
+                "revise_count": {
+                    "description": "补充数",
+                    "type": "integer"
+                }
+            }
+        },
+        "model.ArticleResp": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "description": "内容",
+                    "type": "string"
+                },
+                "created_at": {
+                    "description": "创建时间",
+                    "type": "integer"
+                },
+                "creator": {
+                    "type": "object",
+                    "$ref": "#/definitions/model.Creator"
+                },
+                "files": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.ArticleFileResp"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "meta": {
+                    "description": "属性",
+                    "type": "object",
+                    "$ref": "#/definitions/model.ArticleMeta"
+                },
+                "title": {
+                    "description": "标题",
+                    "type": "string"
                 }
             }
         },
@@ -4719,6 +5371,52 @@
                 "work_cert": {
                     "description": "是否工作认证",
                     "type": "boolean"
+                }
+            }
+        },
+        "model.ReviseItem": {
+            "type": "object",
+            "properties": {
+                "comment_count": {
+                    "description": "评论数",
+                    "type": "integer"
+                },
+                "creator": {
+                    "type": "object",
+                    "$ref": "#/definitions/model.Creator"
+                },
+                "excerpt": {
+                    "description": "摘录",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "img_urls": {
+                    "description": "图片",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "like_count": {
+                    "description": "赞数",
+                    "type": "integer"
+                }
+            }
+        },
+        "model.ReviseListResp": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.ReviseItem"
+                    }
+                },
+                "paging": {
+                    "type": "object",
+                    "$ref": "#/definitions/model.Paging"
                 }
             }
         },

@@ -3,8 +3,9 @@
 package env
 
 import (
-	"flag"
 	"os"
+
+	flag "github.com/spf13/pflag"
 )
 
 // deploy env.

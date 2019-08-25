@@ -5,13 +5,13 @@ RUN adduser -D -g '' appuser
 # WORKDIR $GOPATH/src/valerian/app/infra/discovery/cmd
 # RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -a -installsuffix cgo -o /go/bin/cmd .
 
-FROM scratch
+FROM alpine:3.10.2
 COPY --from=builder /usr/share/zoneinfo /usr/share/zoneinfo
+RUN  cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo "Asia/Shanghai" > /etc/timezone
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /etc/passwd /etc/passwd
-# COPY ./discovery-idc1-1.toml /go/bin/discovery-idc1-1.toml
 COPY ./cmd /go/bin/cmd
 USER appuser
 
 # Run the hello binary.
-ENTRYPOINT ["/go/bin/cmd", "-conf","/go/bin/config.toml"]
+CMD ["/go/bin/cmd", "--conf","/go/bin/config/config.toml"]

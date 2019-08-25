@@ -97,6 +97,54 @@ definitions:
           user, org
         type: string
     type: object
+  model.AddArticleFile:
+    properties:
+      file_name:
+        type: string
+      file_url:
+        type: string
+      seq:
+        type: integer
+    type: object
+  model.AddArticleRelation:
+    properties:
+      parent_id:
+        description: 类目分类ID 如果根目录则传0
+        type: string
+      primary:
+        description: 是否主话题
+        type: boolean
+      topic_id:
+        description: 所关联话题ID
+        type: string
+    type: object
+  model.ArgAddArticle:
+    properties:
+      content:
+        description: 内容
+        type: string
+      disable_comment:
+        description: 禁止评论
+        type: boolean
+      disable_revise:
+        description: 禁止补充
+        type: boolean
+      files:
+        description: 附件
+        items:
+          $ref: '#/definitions/model.AddArticleFile'
+        type: array
+      relations:
+        description: 关联话题
+        items:
+          $ref: '#/definitions/model.AddArticleRelation'
+        type: array
+      title:
+        description: |-
+          标题
+          required: true
+        type: string
+    type: object
   model.ArgAddFeedback:
     properties:
       desc:
@@ -446,6 +494,27 @@ definitions:
           owner 主理人
         type: string
     type: object
+  model.ArgUpdateArticle:
+    properties:
+      change_desc:
+        description: 更新说明
+        type: string
+      content:
+        description: 内容
+        type: string
+      disable_comment:
+        description: 禁止评论
+        type: boolean
+      disable_revise:
+        description: 禁止补充
+        type: boolean
+      id:
+        description: 文章ID
+        type: string
+      title:
+        description: 标题
+        type: string
+    type: object
   model.ArgUpdateTopic:
     properties:
       allow_chat:
@@ -520,6 +589,48 @@ definitions:
         type: string
       seq:
         type: integer
+    type: object
+  model.ArticleMeta:
+    properties:
+      comment_count:
+        description: 评论数
+        type: integer
+      fav:
+        type: boolean
+      like:
+        type: boolean
+      like_count:
+        type: integer
+      read:
+        type: boolean
+      revise_count:
+        description: 补充数
+        type: integer
+    type: object
+  model.ArticleResp:
+    properties:
+      content:
+        description: 内容
+        type: string
+      created_at:
+        description: 创建时间
+        type: integer
+      creator:
+        $ref: '#/definitions/model.Creator'
+        type: object
+      files:
+        items:
+          $ref: '#/definitions/model.ArticleFileResp'
+        type: array
+      id:
+        type: string
+      meta:
+        $ref: '#/definitions/model.ArticleMeta'
+        description: 属性
+        type: object
+      title:
+        description: 标题
+        type: string
     type: object
   model.AuthTopicResp:
     properties:
@@ -1196,6 +1307,38 @@ definitions:
         description: 是否工作认证
         type: boolean
     type: object
+  model.ReviseItem:
+    properties:
+      comment_count:
+        description: 评论数
+        type: integer
+      creator:
+        $ref: '#/definitions/model.Creator'
+        type: object
+      excerpt:
+        description: 摘录
+        type: string
+      id:
+        type: string
+      img_urls:
+        description: 图片
+        items:
+          type: string
+        type: array
+      like_count:
+        description: 赞数
+        type: integer
+    type: object
+  model.ReviseListResp:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/model.ReviseItem'
+        type: array
+      paging:
+        $ref: '#/definitions/model.Paging'
+        type: object
+    type: object
   model.TargetArticle:
     properties:
       avatar:
@@ -1661,6 +1804,198 @@ paths:
       summary: 获取关注用户列表
       tags:
       - account
+  /article/add:
+    post:
+      consumes:
+      - application/json
+      description: 新增文章
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/model.ArgAddArticle'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功,返回article_id
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 新增文章
+      tags:
+      - article
+  /article/del:
+    post:
+      consumes:
+      - application/json
+      description: 删除文章
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 删除文章
+      tags:
+      - article
+  /article/edit:
+    post:
+      consumes:
+      - application/json
+      description: 更新文章
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/model.ArgUpdateArticle'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 更新文章
+      tags:
+      - article
+  /article/fav:
+    post:
+      consumes:
+      - application/json
+      description: 收藏文章
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功后返回bool值
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 收藏文章
+      tags:
+      - article
   /article/files:
     post:
       consumes:
@@ -1708,6 +2043,108 @@ paths:
         "500":
           description: 服务器端错误
       summary: 批量更新文件
+      tags:
+      - article
+  /article/get:
+    get:
+      consumes:
+      - application/json
+      description: 获取文章
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: ID
+        in: query
+        name: id
+        required: true
+        type: string
+      - description: 目前支持：files,relations,versions,histories,meta,primary_topic_meta,edited_by_others
+        in: query
+        name: include
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 文章
+          schema:
+            $ref: '#/definitions/model.ArticleResp'
+            type: object
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 获取文章
+      tags:
+      - article
+  /article/like:
+    post:
+      consumes:
+      - application/json
+      description: 点赞文章
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功后返回bool值
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 点赞文章
       tags:
       - article
   /article/list/files:
@@ -3315,7 +3752,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: 获取话题讨论列表,discuss_category_id 不传则是全部，-1代表问答，其他值则为自定义分类
+      description: 获取话题补充列表
       parameters:
       - description: Bearer
         in: header
@@ -3344,17 +3781,13 @@ paths:
         name: topic_id
         required: true
         type: string
-      - description: discuss_category_id
-        in: query
-        name: discuss_category_id
-        type: string
       produces:
       - application/json
       responses:
         "200":
           description: 讨论列表
           schema:
-            $ref: '#/definitions/model.DiscussListResp'
+            $ref: '#/definitions/model.ReviseListResp'
             type: object
         "400":
           description: 验证请求失败
@@ -3362,7 +3795,7 @@ paths:
           description: 登录验证失败
         "500":
           description: 服务器端错误
-      summary: 获取话题讨论列表
+      summary: 获取话题补充列表
       tags:
       - topic
   /topic/list/member_fans:
@@ -3487,6 +3920,60 @@ paths:
       summary: 获取成员列表
       tags:
       - topic
+  /topic/list/revises:
+    get:
+      consumes:
+      - application/json
+      description: 获取话题讨论列表,discuss_category_id 不传则是全部，-1代表问答，其他值则为自定义分类
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: topic_id
+        in: query
+        name: topic_id
+        required: true
+        type: string
+      - description: discuss_category_id
+        in: query
+        name: discuss_category_id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 讨论列表
+          schema:
+            $ref: '#/definitions/model.DiscussListResp'
+            type: object
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 获取话题讨论列表
+      tags:
+      - article
   /topic/members:
     post:
       consumes:

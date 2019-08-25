@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: discovery-server
+  namespace: dev
+  labels:
+    app: discovery
+spec:
+  serviceName: discovery-server
+  podManagementPolicy: Parallel
+  replicas: 3
+  selector:
+    matchLabels:
+      app: discovery
+      component: server
+      hasDNS: "true"
+  template:
+    metadata:
+      labels:
+        app: discovery
+        component: server
+        hasDNS: "true"
+    spec:
+      terminationGracePeriodSeconds: 10
+      serviceAccountName: discovery-server
+      securityContext:
+        fsGroup: 1000
+      volumes:
+        - name: config
+          configMap:
+            name: discovery-server-config
+      containers:
+        - name: discovery
+          image: registry.cn-hangzhou.aliyuncs.com/flywk/discovery:0.1
+          env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: APP_ID
+              value: infra.discovery
+            - name: DEPLOY_ENV
+              value: dev
+            - name: REGION
+              value: hz
+            - name: ZONE
+              value: hz001
+          command:
+            - "/bin/sh"
+            - "-ec"
+            - |
+              DISCOVERY_FULLNAME="discovery"
+
+              exec /go/bin/cmd \
+              --conf=/go/bin/config/discovery.toml \
+              --join-node=discovery-server-0.discovery-server.dev.svc.cluster.local:7171 \
+              --join-node=discovery-server-1.discovery-server.dev.svc.cluster.local:7171 \
+              --join-node=discovery-server-2.discovery-server.dev.svc.cluster.local:7171
+
+          volumeMounts:
+            - name: config
+              mountPath: /go/bin/config
+          ports:
+            - containerPort: 7171
+              name: http
