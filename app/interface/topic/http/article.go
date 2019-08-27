@@ -1,6 +1,9 @@
 package http
 
 import (
+	"strconv"
+	"valerian/app/interface/topic/model"
+	"valerian/library/ecode"
 	"valerian/library/net/http/mars"
 )
 
@@ -19,6 +22,21 @@ import (
 // @Failure 500 "服务器端错误"
 // @Router /article/add [post]
 func addArticle(c *mars.Context) {
+	arg := new(model.ArgAddArticle)
+	if e := c.Bind(arg); e != nil {
+		return
+	}
+
+	if e := arg.Validate(); e != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+
+	if id, err := srv.AddArticle(c, arg); err != nil {
+		c.JSON(nil, err)
+	} else {
+		c.JSON(strconv.FormatInt(id, 10), err)
+	}
 }
 
 // @Summary 更新文章
@@ -36,6 +54,17 @@ func addArticle(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /article/edit [post]
 func editArticle(c *mars.Context) {
+	arg := new(model.ArgUpdateArticle)
+	if e := c.Bind(arg); e != nil {
+		return
+	}
+
+	if e := arg.Validate(); e != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+
+	c.JSON(nil, srv.UpdateArticle(c, arg))
 }
 
 // @Summary 删除文章
@@ -64,13 +93,24 @@ func delArticle(c *mars.Context) {
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param id query string true "ID"
-// @Param include query string true  "目前支持：files,relations,versions,histories,meta,primary_topic_meta,edited_by_others"
+// @Param include query string true  "目前支持：files,relations,histories,meta"
 // @Success 200 {object} model.ArticleResp "文章"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /article/get [get]
 func getArticle(c *mars.Context) {
+	include := c.Request.Form.Get("include")
+	idStr := c.Request.Form.Get("id")
+	if id, err := strconv.ParseInt(idStr, 10, 64); err != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	} else if id == 0 {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	} else {
+		c.JSON(srv.GetArticle(c, id, include))
+	}
 }
 
 // @Summary 收藏文章
@@ -88,6 +128,16 @@ func getArticle(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /article/fav [post]
 func favArticle(c *mars.Context) {
+	idStr := c.Request.Form.Get("id")
+	if id, err := strconv.ParseInt(idStr, 10, 64); err != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	} else if id == 0 {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	} else {
+		c.JSON(srv.FavArticle(c, id))
+	}
 }
 
 // @Summary 点赞文章
@@ -105,4 +155,14 @@ func favArticle(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /article/like [post]
 func likeArticle(c *mars.Context) {
+	idStr := c.Request.Form.Get("id")
+	if id, err := strconv.ParseInt(idStr, 10, 64); err != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	} else if id == 0 {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	} else {
+		c.JSON(srv.LikeArticle(c, id))
+	}
 }

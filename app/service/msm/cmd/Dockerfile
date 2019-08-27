@@ -15,3 +15,4 @@ USER appuser
 
 # Run the hello binary.
 CMD ["/go/bin/cmd", "--conf","/go/bin/config/config.toml"]
+

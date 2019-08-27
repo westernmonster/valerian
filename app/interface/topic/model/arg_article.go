@@ -50,24 +50,6 @@ func (p *AddArticleFile) Validate() error {
 	)
 }
 
-type AddArticleRelation struct {
-	// 类目分类ID 如果根目录则传0
-	ParentID int64 `json:"parent_id,string" swaggertype:"string"`
-
-	// 所关联话题ID
-	TopicID int64 `json:"topic_id,string" swaggertype:"string"`
-
-	// 是否主话题
-	Primary bool `json:"primary"`
-}
-
-func (p *AddArticleRelation) Validate() error {
-	return validation.ValidateStruct(
-		p,
-		validation.Field(&p.TopicID, validation.Required),
-	)
-}
-
 type ArgUpdateArticle struct {
 	// 文章ID
 	ID int64 `json:"id,string"  swaggertype:"string"`
@@ -79,10 +61,10 @@ type ArgUpdateArticle struct {
 	Content string `json:"content"`
 
 	// 禁止补充
-	DisableRevise bool `json:"disable_revise"`
+	DisableRevise *bool `json:"disable_revise"`
 
 	// 禁止评论
-	DisableComment bool `json:"disable_comment"`
+	DisableComment *bool `json:"disable_comment"`
 
 	// 更新说明
 	ChangeDesc string `json:"change_desc"`

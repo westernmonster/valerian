@@ -6,7 +6,7 @@ spec:
   containers:
     - name: test-container
       image: k8s.gcr.io/busybox
-      command: [ "/bin/sh", "-c", "ls /etc/config" ]
+      command: [ "/bin/sh", "-c", "cat /etc/config/config.toml" ]
       volumeMounts:
       - name: config-volume
         mountPath: /etc/config
@@ -15,5 +15,5 @@ spec:
       configMap:
         # Provide the name of the ConfigMap containing the files you want
         # to add to the container
-        name: discovery-server-config
+        name: config-server-config
   restartPolicy: Never

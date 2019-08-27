@@ -1,10 +1,11 @@
 package main
 
 import (
-	"flag"
 	"os"
 	"os/signal"
 	"syscall"
+
+	flag "github.com/spf13/pflag"
 
 	"valerian/app/service/msm/conf"
 	"valerian/app/service/msm/http"

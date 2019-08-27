@@ -2,10 +2,11 @@ package main
 
 import (
 	"context"
-	"flag"
 	"os"
 	"os/signal"
 	"syscall"
+
+	flag "github.com/spf13/pflag"
 
 	"valerian/app/infra/config/conf"
 	"valerian/app/infra/config/http"
@@ -36,7 +37,7 @@ func main() {
 		err    error
 		cancel context.CancelFunc
 	)
-	if env.IP == "" {
+	{
 		ip := xip.InternalIP()
 		hn, _ := os.Hostname()
 		dis := discovery.New(conf.Conf.Discovery)

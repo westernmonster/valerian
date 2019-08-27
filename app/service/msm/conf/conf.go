@@ -2,13 +2,14 @@ package conf
 
 import (
 	"errors"
-	"flag"
 	"valerian/library/conf"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
 	"valerian/library/net/http/mars"
 	"valerian/library/net/rpc"
 	"valerian/library/tracing"
+
+	flag "github.com/spf13/pflag"
 
 	"github.com/BurntSushi/toml"
 )

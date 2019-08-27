@@ -5,33 +5,27 @@ import (
 	"github.com/go-ozzo/ozzo-validation/is"
 )
 
-type ArgAddRevise struct {
-	// 文章 ID
-	ArticleID int64 `json:"article_id,string" swaggertype:"string"`
-
+type ArgAddDiscuss struct {
+	// 话题ID
+	TopicID int64 `json:"topic_id,string" swaggertype:"string"`
+	// 分类ID
+	CategoryID int64 `json:"category_id,string" swaggertype:"string"`
+	// 标题，可以不传
+	Title *string `json:"title,omitempty"`
 	// 内容
 	Content string `json:"content"`
 
 	// 附件
-	Files []*AddReviseFile `json:"files"`
+	Files []*AddDiscussFile `json:"files"`
 }
 
-func (p *ArgAddRevise) Validate() error {
-	return validation.ValidateStruct(
-		p,
-		validation.Field(&p.ArticleID, validation.Required),
-		validation.Field(&p.Content, validation.Required),
-		validation.Field(&p.Files),
-	)
-}
-
-type AddReviseFile struct {
+type AddDiscussFile struct {
 	FileName string `json:"file_name"`          // FileName 文件名
 	FileURL  string `json:"file_url,omitempty"` // FileURL 文件地址
 	Seq      int    `json:"seq"`                // Seq 文件顺序
 }
 
-func (p *AddReviseFile) Validate() error {
+func (p *AddDiscussFile) Validate() error {
 	return validation.ValidateStruct(
 		p,
 		validation.Field(&p.FileName, validation.Required, validation.RuneLength(0, 250)),
@@ -39,34 +33,34 @@ func (p *AddReviseFile) Validate() error {
 	)
 }
 
-type ArgUpdateRevise struct {
+type ArgUpdateDiscuss struct {
 	ID int64 `json:"id,string" swaggertype:"string"`
 
-	// 文章 ID
-	ArticleID int64 `json:"article_id,string" swaggertype:"string"`
+	// 话题ID
+	TopicID int64 `json:"topic_id,string" swaggertype:"string"`
 
 	// 内容
 	Content string `json:"content"`
 
 	// 附件
-	Files []*AddReviseFile `json:"files"`
+	Files []*AddDiscussFile `json:"files"`
 }
 
-func (p *ArgUpdateRevise) Validate() error {
+func (p *ArgUpdateDiscuss) Validate() error {
 	return validation.ValidateStruct(
 		p,
 		validation.Field(&p.ID, validation.Required),
-		validation.Field(&p.ArticleID, validation.Required),
+		validation.Field(&p.TopicID, validation.Required),
 		validation.Field(&p.Content, validation.Required),
 		validation.Field(&p.Files),
 	)
 }
 
-type ArgDelRevise struct {
+type ArgDelDiscuss struct {
 	ID int64 `json:"id,string" swaggertype:"string"`
 }
 
-func (p *ArgDelRevise) Validate() error {
+func (p *ArgDelDiscuss) Validate() error {
 	return validation.ValidateStruct(
 		p,
 		validation.Field(&p.ID, validation.Required),

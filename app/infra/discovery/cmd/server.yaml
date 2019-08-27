@@ -13,13 +13,13 @@ spec:
     matchLabels:
       app: discovery
       component: server
-      hasDNS: "true"
+      hasDNS: "false"
   template:
     metadata:
       labels:
         app: discovery
         component: server
-        hasDNS: "true"
+        hasDNS: "false"
     spec:
       terminationGracePeriodSeconds: 10
       serviceAccountName: discovery-server

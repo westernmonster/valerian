@@ -27,7 +27,7 @@ func (p *Service) getArticleFiles(c context.Context, node sqalx.Node, articleID 
 	}
 
 	var data []*model.ArticleFile
-	if data, err = p.d.GetArticleFiles(c, node, articleID); err != nil {
+	if data, err = p.d.GetArticleFilesByCond(c, node, map[string]interface{}{"article_id": articleID}); err != nil {
 		return
 	}
 
@@ -114,7 +114,7 @@ func (p *Service) SaveArticleFiles(c context.Context, arg *model.ArgSaveArticleF
 		return ecode.ArticleNotExist
 	}
 
-	dbItems, err := p.d.GetArticleFiles(c, tx, arg.ArticleID)
+	dbItems, err := p.d.GetArticleFilesByCond(c, tx, map[string]interface{}{"article_id": arg.ArticleID})
 	if err != nil {
 		return
 	}

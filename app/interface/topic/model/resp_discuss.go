@@ -53,4 +53,7 @@ type Creator struct {
 	UserName string `json:"user_name"`
 	// 头像
 	Avatar string `json:"avatar"`
+
+	// 自我介绍
+	Introduction *string `json:"introduction,omitempty"`
 }

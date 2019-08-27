@@ -1,0 +1,32 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+
+metadata:
+  name: web-discovery
+  namespace: dev
+  annotations:
+    nginx.ingress.kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/tls-acme: 'false'
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    kubernetes.io/ingress.class: "nginx"
+    kubernetes.io/tls-acme: 'false'
+
+spec:
+  backend:
+    serviceName: discovery-server
+    servicePort: 7171
+  rules:
+    - host: discovery.flywk.com
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: discovery-server
+              servicePort: 7171
+    - host: config.flywk.com
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: config-server
+              servicePort: 8000

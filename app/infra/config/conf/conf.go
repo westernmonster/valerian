@@ -1,7 +1,6 @@
 package conf
 
 import (
-	"flag"
 	"valerian/library/cache/redis"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
@@ -10,6 +9,8 @@ import (
 	"valerian/library/net/http/mars/middleware/antispam"
 	"valerian/library/net/rpc"
 	xtime "valerian/library/time"
+
+	flag "github.com/spf13/pflag"
 
 	"github.com/BurntSushi/toml"
 )

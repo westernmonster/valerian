@@ -6,7 +6,7 @@ metadata:
   labels:
     app: discovery
 spec:
-  clusterIP: None
+  type: ClusterIP
   # We want the servers to become available even if they're not ready
   # since this DNS is also used for join operations.
   publishNotReadyAddresses: true

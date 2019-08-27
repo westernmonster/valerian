@@ -103,4 +103,6 @@ var (
 	SearchAccountFailed            = add(70) // 搜索账户失败
 	InviteSelfNotAllowed           = add(71) // 不允许邀请你自己
 	InvalidFeedbackType            = add(72) // 错误的反馈类型
+	AuthTopicExist                 = add(73) // 授权话题已经存在
+	ArticleHistoryNotExist         = add(74) // 未找到该记录
 )

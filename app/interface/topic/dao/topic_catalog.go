@@ -20,7 +20,7 @@ func (p *Dao) GetTopicCatalogChildrenCount(c context.Context, node sqalx.Node, t
 // GetAll get all records
 func (p *Dao) GetTopicCatalogs(c context.Context, node sqalx.Node) (items []*model.TopicCatalog, err error) {
 	items = make([]*model.TopicCatalog, 0)
-	sqlSelect := "SELECT a.* FROM topic_catalogs a WHERE a.deleted=0 ORDER BY a.seq "
+	sqlSelect := "SELECT a.* FROM topic_catalogs a WHERE a.deleted=0 ORDER BY a.id DESC "
 
 	if err = node.SelectContext(c, &items, sqlSelect); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetTopicCatalogs err(%+v)", err))
@@ -67,8 +67,12 @@ func (p *Dao) GetTopicCatalogsByCond(c context.Context, node sqalx.Node, cond ma
 		clause += " AND a.is_primary =?"
 		condition = append(condition, val)
 	}
+	if val, ok := cond["permission"]; ok {
+		clause += " AND a.permission =?"
+		condition = append(condition, val)
+	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.* FROM topic_catalogs a WHERE a.deleted=0 %s ORDER BY a.seq", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.* FROM topic_catalogs a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
 
 	if err = node.SelectContext(c, &items, sqlSelect, condition...); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetTopicCatalogsByCond err(%+v), condition(%+v)", err, cond))
@@ -132,6 +136,10 @@ func (p *Dao) GetTopicCatalogByCond(c context.Context, node sqalx.Node, cond map
 		clause += " AND a.is_primary =?"
 		condition = append(condition, val)
 	}
+	if val, ok := cond["permission"]; ok {
+		clause += " AND a.permission =?"
+		condition = append(condition, val)
+	}
 
 	sqlSelect := fmt.Sprintf("SELECT a.* FROM topic_catalogs a WHERE a.deleted=0 %s", clause)
 
@@ -150,9 +158,9 @@ func (p *Dao) GetTopicCatalogByCond(c context.Context, node sqalx.Node, cond map
 
 // Insert insert a new record
 func (p *Dao) AddTopicCatalog(c context.Context, node sqalx.Node, item *model.TopicCatalog) (err error) {
-	sqlInsert := "INSERT INTO topic_catalogs( id,name,seq,type,parent_id,ref_id,topic_id,is_primary,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?,?,?,?,?)"
+	sqlInsert := "INSERT INTO topic_catalogs( id,name,seq,type,parent_id,ref_id,topic_id,is_primary,permission,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?)"
 
-	if _, err = node.ExecContext(c, sqlInsert, item.ID, item.Name, item.Seq, item.Type, item.ParentID, item.RefID, item.TopicID, item.IsPrimary, item.Deleted, item.CreatedAt, item.UpdatedAt); err != nil {
+	if _, err = node.ExecContext(c, sqlInsert, item.ID, item.Name, item.Seq, item.Type, item.ParentID, item.RefID, item.TopicID, item.IsPrimary, item.Permission, item.Deleted, item.CreatedAt, item.UpdatedAt); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.AddTopicCatalogs err(%+v), item(%+v)", err, item))
 		return
 	}
@@ -162,9 +170,9 @@ func (p *Dao) AddTopicCatalog(c context.Context, node sqalx.Node, item *model.To
 
 // Update update a exist record
 func (p *Dao) UpdateTopicCatalog(c context.Context, node sqalx.Node, item *model.TopicCatalog) (err error) {
-	sqlUpdate := "UPDATE topic_catalogs SET name=?,seq=?,type=?,parent_id=?,ref_id=?,topic_id=?,is_primary=?,updated_at=? WHERE id=?"
+	sqlUpdate := "UPDATE topic_catalogs SET name=?,seq=?,type=?,parent_id=?,ref_id=?,topic_id=?,is_primary=?,permission=?,updated_at=? WHERE id=?"
 
-	_, err = node.ExecContext(c, sqlUpdate, item.Name, item.Seq, item.Type, item.ParentID, item.RefID, item.TopicID, item.IsPrimary, item.UpdatedAt, item.ID)
+	_, err = node.ExecContext(c, sqlUpdate, item.Name, item.Seq, item.Type, item.ParentID, item.RefID, item.TopicID, item.IsPrimary, item.Permission, item.UpdatedAt, item.ID)
 	if err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.UpdateTopicCatalogs err(%+v), item(%+v)", err, item))
 		return
@@ -182,5 +190,19 @@ func (p *Dao) DelTopicCatalog(c context.Context, node sqalx.Node, id int64) (err
 		return
 	}
 
+	return
+}
+
+func (p *Dao) GetTopicCatalogMaxChildrenSeq(c context.Context, node sqalx.Node, topicID, parentID int64) (seq int, err error) {
+	sqlSelect := "SELECT a.seq FROM topic_catalogs a WHERE a.deleted=0 AND a.topic_id=? AND a.parent_id=? ORDER BY a.seq DESC LIMIT 1"
+	if err = node.GetContext(c, &seq, sqlSelect, topicID, parentID); err != nil {
+		if err == sql.ErrNoRows {
+			seq = 0
+			err = nil
+			return
+		}
+		log.For(c).Error(fmt.Sprintf("dao.GetTopicCatalogMaxChildrenSeq error(%+v), topic_id(%d) parent_id(%d)", err, topicID, parentID))
+		return
+	}
 	return
 }

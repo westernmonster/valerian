@@ -9,15 +9,25 @@ type ArticleResp struct {
 	// 内容
 	Content string `json:"content"`
 
+	//  禁止补充
+	DisableRevise bool `json:"disable_revise"`
+
+	//  禁止评论
+	DisableComment bool `json:"disable_comment"`
+
 	Creator *Creator `json:"creator"`
 
 	Files []*ArticleFileResp `json:"files"`
+
+	Relations []*ArticleRelationResp `json:"relations"`
 
 	// 属性
 	ArticleMeta *ArticleMeta `json:"meta,omitempty"`
 
 	// 创建时间
 	CreatedAt int64 `json:"created_at"`
+
+	CreatedBy int64 `json:"-"`
 }
 
 type ArticleFileResp struct {

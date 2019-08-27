@@ -34,14 +34,19 @@ func (p *ArgDelArticleRelation) Validate() error {
 
 type ArgAddArticleRelation struct {
 	ArticleID int64 `json:"article_id,string" swaggertype:"string"`
-
 	// 类目分类ID 如果根目录则传0
 	ParentID int64 `json:"parent_id,string" swaggertype:"string"`
 
 	// 所关联话题ID
 	TopicID int64 `json:"topic_id,string" swaggertype:"string"`
+
 	// 是否主话题
 	Primary bool `json:"primary"`
+
+	// 类型
+	// view  // 只允许查看
+	// edit // 允许所有成员编辑
+	Permission string `json:"permission"`
 }
 
 func (p *ArgAddArticleRelation) Validate() error {
@@ -50,5 +55,30 @@ func (p *ArgAddArticleRelation) Validate() error {
 		validation.Field(&p.ArticleID, validation.Required),
 		validation.Field(&p.ParentID),
 		validation.Field(&p.TopicID, validation.Required),
+		validation.Field(&p.Permission, validation.Required, validation.In(AuthPermissionEdit, AuthPermissionView)),
+	)
+}
+
+type AddArticleRelation struct {
+	// 类目分类ID 如果根目录则传0
+	ParentID int64 `json:"parent_id,string" swaggertype:"string"`
+
+	// 所关联话题ID
+	TopicID int64 `json:"topic_id,string" swaggertype:"string"`
+
+	// 是否主话题
+	Primary bool `json:"primary"`
+
+	// 类型
+	// view  // 只允许查看
+	// edit // 允许所有成员编辑
+	Permission string `json:"permission"`
+}
+
+func (p *AddArticleRelation) Validate() error {
+	return validation.ValidateStruct(
+		p,
+		validation.Field(&p.TopicID, validation.Required),
+		validation.Field(&p.Permission, validation.Required, validation.In(AuthPermissionEdit, AuthPermissionView)),
 	)
 }

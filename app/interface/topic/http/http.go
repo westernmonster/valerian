@@ -48,25 +48,21 @@ func route(e *mars.Engine) {
 		g.GET("/list/catalog_taxonomies", auth.User, topicCatalogTaxonomies)
 	}
 
-	// x := e.Group("/api/v1/article")
-	// {
-	// 	x.GET("/get", auth.User, getArticle)
-	// 	x.POST("/add", auth.User, addArticle)
-	// 	x.POST("/edit", auth.User, editArticle)
-	// 	x.POST("/del", auth.User, delArticle)
-	// 	x.POST("/fav", auth.User, favArticle)
-	// 	x.POST("/read", auth.User, readArticle)
-	// 	x.POST("/like", auth.User, likeArticle)
+	x := e.Group("/api/v1/article")
+	{
+		x.GET("/get", auth.User, getArticle)
+		x.POST("/add", auth.User, addArticle)
+		x.POST("/edit", auth.User, editArticle)
+		x.POST("/del", auth.User, delArticle)
+		x.POST("/fav", auth.User, favArticle)
+		x.POST("/like", auth.User, likeArticle)
 
-	// 	x.POST("/files", auth.User, editArticleFiles)
-	// 	x.POST("/relations/add", auth.User, addArticleRelation)
-	// 	x.POST("/relations/del", auth.User, delArticleRelation)
-	// 	x.POST("/relations/primary", auth.User, setArticleRelationPrimary)
-	// 	x.POST("/versions", auth.User, addArticleVersion)
-	// 	x.POST("/versions/save", auth.User, saveArticleVersions)
+		x.POST("/files", auth.User, editArticleFiles)
+		x.POST("/relations/add", auth.User, addArticleRelation)
+		x.POST("/relations/del", auth.User, delArticleRelation)
+		x.POST("/relations/primary", auth.User, setArticleRelationPrimary)
 
-	// 	x.GET("/list/files", auth.User, articleFiles)
-	// 	x.GET("/list/relations", auth.User, articleRelations)
-	// 	x.GET("/list/versions", auth.User, articleVersions)
-	// }
+		x.GET("/list/files", auth.User, articleFiles)
+		x.GET("/list/relations", auth.User, articleRelations)
+	}
 }

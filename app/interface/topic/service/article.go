@@ -1,455 +1,344 @@
 package service
 
-// func (p *Service) AddArticle(c context.Context, arg *model.ArgAddArticle) (id int64, err error) {
-// 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
-// 	if !ok {
-// 		err = ecode.AcquireAccountIDFailed
-// 		return
-// 	}
-// 	var tx sqalx.Node
-// 	if tx, err = p.d.DB().Beginx(c); err != nil {
-// 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
-// 		return
-// 	}
+import (
+	"context"
+	"fmt"
+	"time"
+	"valerian/app/interface/topic/model"
+	"valerian/library/database/sqalx"
+	"valerian/library/database/sqlx/types"
+	"valerian/library/ecode"
+	"valerian/library/gid"
+	"valerian/library/log"
+	"valerian/library/net/metadata"
+)
 
-// 	defer func() {
-// 		if err != nil {
-// 			if err1 := tx.Rollback(); err1 != nil {
-// 				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
-// 			}
-// 			return
-// 		}
-// 	}()
+func (p *Service) AddArticle(c context.Context, arg *model.ArgAddArticle) (id int64, err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+	var tx sqalx.Node
+	if tx, err = p.d.DB().Beginx(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		return
+	}
 
-// 	item := &model.Article{
-// 		ID:           gid.NewID(),
-// 		Title:        arg.Title,
-// 		Avatar:        arg.Avatar,
-// 		Introduction: arg.Introduction,
-// 		Private:      types.BitBool(arg.Private),
-// 		CreatedBy:    aid,
-// 		CreatedAt:    time.Now().Unix(),
-// 		UpdatedAt:    time.Now().Unix(),
-// 	}
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+			}
+			return
+		}
+	}()
 
-// 	if err = p.d.AddArticle(c, tx, item); err != nil {
-// 		return
-// 	}
+	item := &model.Article{
+		ID:             gid.NewID(),
+		Title:          arg.Title,
+		Content:        arg.Content,
+		DisableComment: types.BitBool(arg.DisableComment),
+		DisableRevise:  types.BitBool(arg.DisableRevise),
+		CreatedBy:      aid,
+		CreatedAt:      time.Now().Unix(),
+		UpdatedAt:      time.Now().Unix(),
+	}
 
-// 	if err = p.bulkCreateFiles(c, tx, item.ID, arg.Files); err != nil {
-// 		return
-// 	}
+	if err = p.d.AddArticle(c, tx, item); err != nil {
+		return
+	}
 
-// 	if err = p.bulkCreateArticleRelations(c, tx, item.ID, item.Title, arg.Relations); err != nil {
-// 		return
-// 	}
+	if err = p.bulkCreateFiles(c, tx, item.ID, arg.Files); err != nil {
+		return
+	}
 
-// 	if err = tx.Commit(); err != nil {
-// 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
-// 	}
+	if err = p.bulkCreateArticleRelations(c, tx, item.ID, item.Title, arg.Relations); err != nil {
+		return
+	}
 
-// 	id = item.ID
+	if err = tx.Commit(); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+	}
 
-// 	return
-// }
+	id = item.ID
 
-// func (p *Service) UpdateArticle(c context.Context, arg *model.ArgUpdateArticle) (err error) {
-// 	var tx sqalx.Node
-// 	if tx, err = p.d.DB().Beginx(c); err != nil {
-// 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
-// 		return
-// 	}
+	return
+}
 
-// 	defer func() {
-// 		if err != nil {
-// 			if err1 := tx.Rollback(); err1 != nil {
-// 				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
-// 			}
-// 			return
-// 		}
-// 	}()
+func (p *Service) UpdateArticle(c context.Context, arg *model.ArgUpdateArticle) (err error) {
+	var tx sqalx.Node
+	if tx, err = p.d.DB().Beginx(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		return
+	}
 
-// 	var primaryTopicID int64
-// 	if primaryTopicID, _, err = p.getPrimaryTopicInfo(c, tx, arg.ID); err != nil {
-// 		return
-// 	}
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+			}
+			return
+		}
+	}()
 
-// 	if err = p.checkEditPermission(c, tx, primaryTopicID); err != nil {
-// 		return
-// 	}
+	var item *model.Article
+	if item, err = p.d.GetArticleByID(c, tx, arg.ID); err != nil {
+		return
+	} else if item == nil {
+		err = ecode.ArticleNotExist
+		return
+	}
 
-// 	var item *model.Article
-// 	if item, err = p.d.GetArticleByID(c, tx, arg.ID); err != nil {
-// 		return
-// 	} else if item == nil {
-// 		err = ecode.ArticleNotExist
-// 		return
-// 	}
+	if arg.Title != nil {
+		item.Title = *arg.Title
+	}
 
-// 	if arg.Title != nil {
-// 		item.Title = *arg.Title
-// 	}
+	item.Content = arg.Content
 
-// 	if arg.Avatar != nil {
-// 		item.Avatar = arg.Avatar
-// 	}
+	if arg.DisableRevise != nil {
+		item.DisableRevise = types.BitBool(*arg.DisableRevise)
+	}
 
-// 	if arg.Introduction != nil {
-// 		item.Introduction = *arg.Introduction
-// 	}
+	if arg.DisableComment != nil {
+		item.DisableComment = types.BitBool(*arg.DisableComment)
+	}
 
-// 	item.Private = types.BitBool(*arg.Private)
+	if err = p.d.UpdateArticle(c, tx, item); err != nil {
+		return
+	}
 
-// 	if err = p.d.UpdateArticle(c, tx, item); err != nil {
-// 		return
-// 	}
+	if err = tx.Commit(); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+	}
 
-// 	if err = tx.Commit(); err != nil {
-// 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
-// 	}
+	p.addCache(func() {
+		p.d.DelArticleCache(context.TODO(), arg.ID)
+	})
 
-// 	p.addCache(func() {
-// 		p.d.DelArticleCache(context.TODO(), arg.ID)
-// 	})
-
-// 	return
-// }
-
-// func (p *Service) getPrimaryTopicInfo(c context.Context, node sqalx.Node, articleID int64) (topicID, topicVersionID int64, err error) {
-// 	var catalog *model.TopicCatalog
-// 	if catalog, err = p.d.GetTopicCatalogByCondition(c, node, map[string]interface{}{
-// 		"type":       model.TopicCatalogArticle,
-// 		"ref_id":     articleID,
-// 		"is_primary": 1,
-// 	}); err != nil {
-// 		return
-// 	} else if catalog == nil {
-// 		err = ecode.TopicCatalogNotExist
-// 		return
-// 	}
-
-// 	topicID = catalog.TopicID
-// 	topicVersionID = catalog.ID
-
-// 	return
-// }
+	return
+}
 
 // func (p *Service) DelArticle(c context.Context, id int64) (err error) {
 // 	return
 // }
 
-// func (p *Service) GetArticle(c context.Context, id int64, include string) (item *model.ArticleResp, err error) {
-// 	inc := includeParam(include)
-// 	if item, err = p.getArticle(c, p.d.DB(), id); err != nil {
-// 		return
-// 	}
+func (p *Service) GetArticle(c context.Context, id int64, include string) (item *model.ArticleResp, err error) {
+	inc := includeParam(include)
+	if item, err = p.getArticle(c, p.d.DB(), id); err != nil {
+		return
+	}
 
-// 	if item.Creator, err = p.getBasicAccountResp(c, p.d.DB(), item.CreatedBy); err != nil {
-// 		return
-// 	}
+	if item.Creator, err = p.getBasicAccountResp(c, p.d.DB(), item.CreatedBy); err != nil {
+		return
+	}
 
-// 	if inc["files"] {
-// 		if item.Files, err = p.getArticleFiles(c, p.d.DB(), id); err != nil {
-// 			return
-// 		}
-// 	}
+	if inc["files"] {
+		if item.Files, err = p.getArticleFiles(c, p.d.DB(), id); err != nil {
+			return
+		}
+	}
 
-// 	if inc["relations"] {
-// 		if item.Relations, err = p.getArticleRelations(c, p.d.DB(), id); err != nil {
-// 			return
-// 		}
-// 	}
+	if inc["relations"] {
+		if item.Relations, err = p.getArticleRelations(c, p.d.DB(), id); err != nil {
+			return
+		}
+	}
 
-// 	if inc["versions[*].histories"] {
-// 		// for _, v := range item.Versions {
-// 		// if v.Histories, err = p.getArticleHistoriesResp(c, p.d.DB(), v.ID); err != nil {
-// 		// 	return
-// 		// }
-// 		// }
-// 	}
+	if inc["meta"] {
+		if item.ArticleMeta, err = p.getArticleMeta(c, p.d.DB(), id); err != nil {
+			return
+		}
+	}
 
-// 	if inc["primary_topic_meta"] {
-// 		var primaryTopicID int64
-// 		if primaryTopicID, _, err = p.getPrimaryTopicInfo(c, p.d.DB(), id); err != nil {
-// 			return
-// 		}
+	return
+}
 
-// 		var t *model.TopicResp
-// 		if t, err = p.getTopic(c, p.d.DB(), primaryTopicID); err != nil {
-// 			return
-// 		}
-// 		var meta *model.TopicMeta
-// 		if meta, err = p.GetTopicMeta(c, t); err != nil {
-// 			return
-// 		}
+func (p *Service) getArticle(c context.Context, node sqalx.Node, articleID int64) (item *model.ArticleResp, err error) {
+	var addCache = true
+	if item, err = p.d.ArticleCache(c, articleID); err != nil {
+		addCache = false
+	} else if item != nil {
+		return
+	}
 
-// 		item.PrimaryTopicMeta = meta
-// 	}
+	var a *model.Article
+	if a, err = p.d.GetArticleByID(c, p.d.DB(), articleID); err != nil {
+		return
+	} else if a == nil {
+		err = ecode.ArticleNotExist
+		return
+	}
 
-// 	if inc["meta"] {
-// 		if item.ArticleMeta, err = p.getArticleMeta(c, p.d.DB(), id); err != nil {
-// 			return
-// 		}
-// 	}
+	item = &model.ArticleResp{
+		ID:        a.ID,
+		Title:     a.Title,
+		Content:   a.Content,
+		CreatedBy: a.CreatedBy,
+		Files:     make([]*model.ArticleFileResp, 0),
+		Relations: make([]*model.ArticleRelationResp, 0),
+	}
 
-// 	return
-// }
+	if addCache {
+		p.addCache(func() {
+			p.d.SetArticleCache(context.TODO(), item)
+		})
+	}
+	return
+}
 
-// func (p *Service) getArticle(c context.Context, node sqalx.Node, articleID int64) (item *model.ArticleResp, err error) {
-// 	var addCache = true
-// 	if item, err = p.d.ArticleCache(c, articleID); err != nil {
-// 		addCache = false
-// 	} else if item != nil {
-// 		return
-// 	}
+func (p *Service) checkEditPermission(c context.Context, node sqalx.Node, topicID int64) (err error) {
+	var t *model.TopicResp
+	if t, err = p.getTopic(c, node, topicID); err != nil {
+		return
+	}
 
-// 	var a *model.Article
-// 	if a, err = p.d.GetArticleByID(c, p.d.DB(), articleID); err != nil {
-// 		return
-// 	} else if a == nil {
-// 		err = ecode.ArticleNotExist
-// 		return
-// 	}
+	var meta *model.TopicMeta
+	if meta, err = p.GetTopicMeta(c, t); err != nil {
+		return
+	}
 
-// 	item = &model.ArticleResp{
-// 		ID:           a.ID,
-// 		Title:        a.Title,
-// 		Avatar:        a.Avatar,
-// 		Introduction: a.Introduction,
-// 		CreatedBy:    a.CreatedBy,
-// 		Private:      bool(a.Private),
-// 		Files:        make([]*model.ArticleFileResp, 0),
-// 		Relations:    make([]*model.ArticleRelationResp, 0),
-// 	}
+	if !meta.CanEdit {
+		err = ecode.NeedEditPermission
+		return
+	}
 
-// 	if addCache {
-// 		p.addCache(func() {
-// 			p.d.SetArticleCache(context.TODO(), item)
-// 		})
-// 	}
-// 	return
-// }
+	return
+}
 
-// func (p *Service) checkEditPermission(c context.Context, node sqalx.Node, topicID int64) (err error) {
-// 	var t *model.TopicResp
-// 	if t, err = p.getTopic(c, node, topicID); err != nil {
-// 		return
-// 	}
+func (p *Service) FavArticle(c context.Context, articleID int64) (isFav bool, err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+	var tx sqalx.Node
+	if tx, err = p.d.DB().Beginx(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		return
+	}
 
-// 	var meta *model.TopicMeta
-// 	if meta, err = p.GetTopicMeta(c, t); err != nil {
-// 		return
-// 	}
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+			}
+			return
+		}
+	}()
 
-// 	if !meta.CanEdit {
-// 		err = ecode.NeedEditPermission
-// 		return
-// 	}
+	var attr *model.AccountArticleAttr
+	if attr, err = p.d.GetAccountArticleAttr(c, tx, aid, articleID); err != nil {
+		return
+	} else if attr == nil {
+		attr := &model.AccountArticleAttr{
+			ID:        gid.NewID(),
+			AccountID: aid,
+			ArticleID: articleID,
+			Read:      false,
+			Like:      false,
+			Fav:       true,
+			CreatedAt: time.Now().Unix(),
+			UpdatedAt: time.Now().Unix(),
+		}
 
-// 	return
-// }
+		isFav = true
+		if err = p.d.AddAccountArticleAttr(c, tx, attr); err != nil {
+			return
+		}
 
-// func (p *Service) ReportArticle(c context.Context, arg *model.ArgReportArticle) (err error) {
-// 	return
-// }
+	} else {
+		attr.Fav = !attr.Fav
+		attr.UpdatedAt = time.Now().Unix()
+		isFav = bool(attr.Fav)
+		if err = p.d.UpdateAccountArticleAttr(c, tx, attr); err != nil {
+			return
+		}
+	}
 
-// func (p *Service) FavArticle(c context.Context, articleID int64) (isFav bool, err error) {
-// 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
-// 	if !ok {
-// 		err = ecode.AcquireAccountIDFailed
-// 		return
-// 	}
-// 	var tx sqalx.Node
-// 	if tx, err = p.d.DB().Beginx(c); err != nil {
-// 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
-// 		return
-// 	}
+	if err = tx.Commit(); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+	}
 
-// 	defer func() {
-// 		if err != nil {
-// 			if err1 := tx.Rollback(); err1 != nil {
-// 				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
-// 			}
-// 			return
-// 		}
-// 	}()
+	return
+}
 
-// 	var attr *model.AccountArticleAttr
-// 	if attr, err = p.d.GetAccountArticleAttr(c, tx, aid, articleID); err != nil {
-// 		return
-// 	} else if attr == nil {
-// 		attr := &model.AccountArticleAttr{
-// 			ID:        gid.NewID(),
-// 			AccountID: aid,
-// 			ArticleID: articleID,
-// 			Read:      false,
-// 			Like:      false,
-// 			Fav:       true,
-// 			CreatedAt: time.Now().Unix(),
-// 			UpdatedAt: time.Now().Unix(),
-// 		}
+func (p *Service) LikeArticle(c context.Context, articleID int64) (isLiked bool, err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+	var tx sqalx.Node
+	if tx, err = p.d.DB().Beginx(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		return
+	}
 
-// 		isFav = true
-// 		if err = p.d.AddAccountArticleAttr(c, tx, attr); err != nil {
-// 			return
-// 		}
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+			}
+			return
+		}
+	}()
 
-// 	} else {
-// 		attr.Fav = !attr.Fav
-// 		attr.UpdatedAt = time.Now().Unix()
-// 		isFav = bool(attr.Fav)
-// 		if err = p.d.UpdateAccountArticleAttr(c, tx, attr); err != nil {
-// 			return
-// 		}
-// 	}
+	var attr *model.AccountArticleAttr
+	if attr, err = p.d.GetAccountArticleAttr(c, tx, aid, articleID); err != nil {
+		return
+	} else if attr == nil {
+		attr := &model.AccountArticleAttr{
+			ID:        gid.NewID(),
+			AccountID: aid,
+			ArticleID: articleID,
+			Read:      false,
+			Like:      true,
+			Fav:       false,
+			CreatedAt: time.Now().Unix(),
+			UpdatedAt: time.Now().Unix(),
+		}
 
-// 	if err = tx.Commit(); err != nil {
-// 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
-// 	}
+		isLiked = true
+		if err = p.d.AddAccountArticleAttr(c, tx, attr); err != nil {
+			return
+		}
+	} else {
+		attr.Like = !attr.Like
+		attr.UpdatedAt = time.Now().Unix()
+		isLiked = bool(attr.Like)
+		if err = p.d.UpdateAccountArticleAttr(c, tx, attr); err != nil {
+			return
+		}
+	}
 
-// 	return
-// }
+	if err = tx.Commit(); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+	}
 
-// func (p *Service) LikeArticle(c context.Context, articleID int64) (isLiked bool, err error) {
-// 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
-// 	if !ok {
-// 		err = ecode.AcquireAccountIDFailed
-// 		return
-// 	}
-// 	var tx sqalx.Node
-// 	if tx, err = p.d.DB().Beginx(c); err != nil {
-// 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
-// 		return
-// 	}
+	return
+}
 
-// 	defer func() {
-// 		if err != nil {
-// 			if err1 := tx.Rollback(); err1 != nil {
-// 				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
-// 			}
-// 			return
-// 		}
-// 	}()
+func (p *Service) getArticleMeta(c context.Context, node sqalx.Node, articleID int64) (item *model.ArticleMeta, err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+	item = new(model.ArticleMeta)
 
-// 	var attr *model.AccountArticleAttr
-// 	if attr, err = p.d.GetAccountArticleAttr(c, tx, aid, articleID); err != nil {
-// 		return
-// 	} else if attr == nil {
-// 		attr := &model.AccountArticleAttr{
-// 			ID:        gid.NewID(),
-// 			AccountID: aid,
-// 			ArticleID: articleID,
-// 			Read:      false,
-// 			Like:      true,
-// 			Fav:       false,
-// 			CreatedAt: time.Now().Unix(),
-// 			UpdatedAt: time.Now().Unix(),
-// 		}
+	var attr *model.AccountArticleAttr
+	if attr, err = p.d.GetAccountArticleAttr(c, node, aid, articleID); err != nil {
+		return
+	} else if attr == nil {
+		item.Fav = false
+		item.Read = false
+		item.Like = false
+	} else {
+		item.Fav = bool(attr.Fav)
+		item.Read = bool(attr.Read)
+		item.Like = bool(attr.Like)
+	}
 
-// 		isLiked = true
-// 		if err = p.d.AddAccountArticleAttr(c, tx, attr); err != nil {
-// 			return
-// 		}
-// 	} else {
-// 		attr.Like = !attr.Like
-// 		attr.UpdatedAt = time.Now().Unix()
-// 		isLiked = bool(attr.Like)
-// 		if err = p.d.UpdateAccountArticleAttr(c, tx, attr); err != nil {
-// 			return
-// 		}
-// 	}
-
-// 	if err = tx.Commit(); err != nil {
-// 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
-// 	}
-
-// 	return
-// }
-
-// func (p *Service) ReadArticle(c context.Context, articleID int64) (read bool, err error) {
-// 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
-// 	if !ok {
-// 		err = ecode.AcquireAccountIDFailed
-// 		return
-// 	}
-// 	var tx sqalx.Node
-// 	if tx, err = p.d.DB().Beginx(c); err != nil {
-// 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
-// 		return
-// 	}
-
-// 	defer func() {
-// 		if err != nil {
-// 			if err1 := tx.Rollback(); err1 != nil {
-// 				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
-// 			}
-// 			return
-// 		}
-// 	}()
-
-// 	var attr *model.AccountArticleAttr
-// 	if attr, err = p.d.GetAccountArticleAttr(c, tx, aid, articleID); err != nil {
-// 		return
-// 	} else if attr == nil {
-// 		attr := &model.AccountArticleAttr{
-// 			ID:        gid.NewID(),
-// 			AccountID: aid,
-// 			ArticleID: articleID,
-// 			Read:      true,
-// 			Like:      false,
-// 			Fav:       false,
-// 			CreatedAt: time.Now().Unix(),
-// 			UpdatedAt: time.Now().Unix(),
-// 		}
-
-// 		read = true
-// 		if err = p.d.AddAccountArticleAttr(c, tx, attr); err != nil {
-// 			return
-// 		}
-// 	} else {
-// 		attr.Read = !attr.Read
-// 		attr.UpdatedAt = time.Now().Unix()
-// 		read = bool(attr.Read)
-// 		if err = p.d.UpdateAccountArticleAttr(c, tx, attr); err != nil {
-// 			return
-// 		}
-// 	}
-
-// 	if err = tx.Commit(); err != nil {
-// 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
-// 	}
-
-// 	return
-// }
-
-// func (p *Service) getArticleMeta(c context.Context, node sqalx.Node, articleID int64) (item *model.ArticleMeta, err error) {
-// 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
-// 	if !ok {
-// 		err = ecode.AcquireAccountIDFailed
-// 		return
-// 	}
-// 	item = new(model.ArticleMeta)
-
-// 	var attr *model.AccountArticleAttr
-// 	if attr, err = p.d.GetAccountArticleAttr(c, node, aid, articleID); err != nil {
-// 		return
-// 	} else if attr == nil {
-// 		item.Fav = false
-// 		item.Read = false
-// 		item.Like = false
-// 	} else {
-// 		item.Fav = bool(attr.Fav)
-// 		item.Read = bool(attr.Read)
-// 		item.Like = bool(attr.Like)
-// 	}
-
-// 	if item.FavCount, err = p.d.GetArticleFavCount(c, node, articleID); err != nil {
-// 		return
-// 	}
-
-// 	if item.LikeCount, err = p.d.GetArticleLikeCount(c, node, articleID); err != nil {
-// 		return
-// 	}
-
-// 	return
-// }
+	return
+}
