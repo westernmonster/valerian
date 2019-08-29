@@ -87,10 +87,6 @@ func (p *Service) TopicSearch(c context.Context, arg *model.TopicSearchParams) (
 			return
 		}
 
-		if acc.IsAuthed, err = p.isAuthTopic(c, p.d.DB(), *acc.ID, arg.TopicID); err != nil {
-			return
-		}
-
 		res.Data = append(res.Data, acc)
 	}
 	return

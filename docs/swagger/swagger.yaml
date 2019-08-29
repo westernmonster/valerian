@@ -56,8 +56,6 @@ definitions:
       bsp:
         $ref: '#/definitions/model.BasicSearchParams'
         type: object
-      topic_id:
-        type: string
     type: object
   model.AccountSearchResult:
     properties:
@@ -1012,6 +1010,33 @@ definitions:
         description: 标题
         type: string
     type: object
+  model.ArticleSearchParams:
+    properties:
+      bsp:
+        $ref: '#/definitions/model.BasicSearchParams'
+        type: object
+    type: object
+  model.ArticleSearchResult:
+    properties:
+      data:
+        description: 会员数据
+        items:
+          $ref: '#/definitions/model.ESArticle'
+        type: array
+      debug:
+        description: 调试
+        type: string
+      order:
+        description: 排序顺序
+        type: string
+      page:
+        $ref: '#/definitions/model.Page'
+        description: 分页
+        type: object
+      sort:
+        description: 排序的字段
+        type: string
+    type: object
   model.AuthTopicResp:
     properties:
       avatar:
@@ -1291,6 +1316,33 @@ definitions:
         $ref: '#/definitions/model.Paging'
         type: object
     type: object
+  model.DiscussSearchParams:
+    properties:
+      bsp:
+        $ref: '#/definitions/model.BasicSearchParams'
+        type: object
+    type: object
+  model.DiscussSearchResult:
+    properties:
+      data:
+        description: 会员数据
+        items:
+          $ref: '#/definitions/model.ESDiscuss'
+        type: array
+      debug:
+        description: 调试
+        type: string
+      order:
+        description: 排序顺序
+        type: string
+      page:
+        $ref: '#/definitions/model.Page'
+        description: 分页
+        type: object
+      sort:
+        description: 排序的字段
+        type: string
+    type: object
   model.DisucssItem:
     properties:
       action_text:
@@ -1394,6 +1446,61 @@ definitions:
       work_cert:
         description: 是否工作认证
         type: boolean
+    type: object
+  model.ESArticle:
+    properties:
+      Excerpt:
+        description: 摘选
+        type: string
+      comment_count:
+        description: 评论数
+        type: integer
+      content:
+        description: 内容
+        type: string
+      created_at:
+        description: 创建时间
+        type: integer
+      disable_comment:
+        description: 禁止评论
+        type: boolean
+      disable_revise:
+        description: 禁止补充
+        type: boolean
+      id:
+        type: string
+      like_count:
+        description: 喜欢数
+        type: integer
+      revise_count:
+        description: 补充个数
+        type: integer
+      title:
+        description: 标题
+        type: string
+    type: object
+  model.ESDiscuss:
+    properties:
+      Excerpt:
+        description: 摘选
+        type: string
+      comment_count:
+        description: 评论数
+        type: integer
+      content:
+        description: 内容
+        type: string
+      created_at:
+        description: 创建时间
+        type: integer
+      id:
+        type: string
+      like_count:
+        description: 喜欢数
+        type: integer
+      title:
+        description: 标题
+        type: string
     type: object
   model.ESTopic:
     properties:
@@ -1981,10 +2088,6 @@ definitions:
         type: string
       role:
         type: string
-      settings:
-        $ref: '#/definitions/model.SettingResp'
-        description: 设置
-        type: object
       source:
         description: 来源，1:Web, 2:iOS; 3:Android
         type: integer
@@ -2470,8 +2573,6 @@ definitions:
       bsp:
         $ref: '#/definitions/model.BasicSearchParams'
         type: object
-      topic_id:
-        type: string
     type: object
   model.TopicSearchResp:
     properties:
@@ -5472,6 +5573,214 @@ paths:
       summary: 获取新Access Token
       tags:
       - auth
+  /search/accounts:
+    post:
+      consumes:
+      - application/json
+      description: 搜索账户
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/model.AccountSearchParams'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 话题
+          schema:
+            $ref: '#/definitions/model.AccountSearchResult'
+            type: object
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 搜索账户
+      tags:
+      - search
+  /search/articles:
+    post:
+      consumes:
+      - application/json
+      description: 搜索文章
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/model.ArticleSearchParams'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 话题
+          schema:
+            $ref: '#/definitions/model.ArticleSearchResult'
+            type: object
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 搜索文章
+      tags:
+      - search
+  /search/discussions:
+    post:
+      consumes:
+      - application/json
+      description: 搜索讨论
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/model.DiscussSearchParams'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 话题
+          schema:
+            $ref: '#/definitions/model.DiscussSearchResult'
+            type: object
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 搜索讨论
+      tags:
+      - search
+  /search/topics:
+    post:
+      consumes:
+      - application/json
+      description: 搜索话题
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/model.TopicSearchParams'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 话题
+          schema:
+            $ref: '#/definitions/model.TopicSearchResult'
+            type: object
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 搜索话题
+      tags:
+      - search
   /topic/add:
     post:
       consumes:
@@ -6892,110 +7201,6 @@ paths:
         "500":
           description: 服务器端错误
       summary: 更改主理人
-      tags:
-      - topic
-  /topic/search/accounts:
-    post:
-      consumes:
-      - application/json
-      description: 搜索账户
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 请求
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/model.AccountSearchParams'
-          type: object
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 话题
-          schema:
-            $ref: '#/definitions/model.AccountSearchResult'
-            type: object
-        "400":
-          description: 验证请求失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 搜索账户
-      tags:
-      - topic
-  /topic/search/topics:
-    post:
-      consumes:
-      - application/json
-      description: 搜索话题
-      parameters:
-      - description: Bearer
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Source 来源，1:Web, 2:iOS; 3:Android
-        enum:
-        - 1
-        - 2
-        - 3
-        in: header
-        name: Source
-        required: true
-        type: integer
-      - description: 语言
-        enum:
-        - zh-CN
-        - en-US
-        in: header
-        name: Locale
-        required: true
-        type: string
-      - description: 请求
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/model.TopicSearchParams'
-          type: object
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 话题
-          schema:
-            $ref: '#/definitions/model.TopicSearchResult'
-            type: object
-        "400":
-          description: 验证请求失败
-        "401":
-          description: 登录验证失败
-        "500":
-          description: 服务器端错误
-      summary: 搜索话题
       tags:
       - topic
   /valcode/email:

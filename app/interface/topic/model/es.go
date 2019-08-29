@@ -56,31 +56,43 @@ func (p *BasicSearchParams) Validate() error {
 	)
 }
 
+type ArticleSearchParams struct {
+	Bsp *BasicSearchParams
+}
+
+func (p *ArticleSearchParams) Validate() error {
+	return validation.ValidateStruct(
+		p,
+		validation.Field(&p.Bsp),
+	)
+}
+
 type AccountSearchParams struct {
-	Bsp     *BasicSearchParams
-	TopicID *int64 `json:"topic_id,string,omitempty" swaggertype:"string"`
+	Bsp *BasicSearchParams
 }
 
 func (p *AccountSearchParams) Validate() error {
 	return validation.ValidateStruct(
 		p,
-		validation.Field(&p.TopicID, validation.Required),
 		validation.Field(&p.Bsp),
 	)
 }
 
 type TopicSearchParams struct {
-	Bsp     *BasicSearchParams
-	TopicID int64 `json:"topic_id,string,omitempty" swaggertype:"string"`
+	Bsp *BasicSearchParams
 	// Query string `json:"query"`
 }
 
 func (p *TopicSearchParams) Validate() error {
 	return validation.ValidateStruct(
 		p,
-		validation.Field(&p.TopicID, validation.Required),
 		validation.Field(&p.Bsp),
 	)
+}
+
+type DiscussSearchParams struct {
+	Bsp *BasicSearchParams
+	// Query string `json:"query"`
 }
 
 type ESAccount struct {
@@ -219,6 +231,87 @@ type TopicSearchResult struct {
 	Sort string `json:"sort"`
 	// 会员数据
 	Data []*ESTopic `json:"data"`
+	// 分页
+	Page *Page `json:"page"`
+	// 调试
+	Debug string `json:"debug"`
+}
+
+type ESArticle struct {
+	ID int64 `json:"id,string" swaggertype:"string"`
+
+	// 标题
+	Title *string `json:"title"`
+
+	// 摘选
+	Excerpt *string `json:"Excerpt"`
+
+	// 内容
+	Content *string `json:"content"`
+
+	//  禁止补充
+	DisableRevise *bool `json:"disable_revise"`
+
+	//  禁止评论
+	DisableComment *bool `json:"disable_comment"`
+
+	// 创建时间
+	CreatedAt *int64 `json:"created_at"`
+
+	CreatedBy int64 `json:"-"`
+
+	// 喜欢数
+	LikeCount *int `json:"like_count"`
+	// 补充个数
+	ReviseCount *int `json:"revise_count"`
+	// 评论数
+	CommentCount *int `json:"comment_count"`
+}
+
+type ArticleSearchResult struct {
+	// 排序顺序
+	Order string `json:"order"`
+	// 排序的字段
+	Sort string `json:"sort"`
+	// 会员数据
+	Data []*ESArticle `json:"data"`
+	// 分页
+	Page *Page `json:"page"`
+	// 调试
+	Debug string `json:"debug"`
+}
+
+type ESDiscuss struct {
+	ID int64 `json:"id,string" swaggertype:"string"`
+
+	// 标题
+	Title *string `json:"title"`
+
+	// 摘选
+	Excerpt *string `json:"Excerpt"`
+
+	// 内容
+	Content *string `json:"content"`
+
+	// 创建时间
+	CreatedAt *int64 `json:"created_at"`
+
+	CreatedBy int64 `json:"-"`
+
+	// 喜欢数
+	LikeCount *int `json:"like_count"`
+
+	// 评论数
+	CommentCount *int `json:"comment_count"`
+}
+
+type DiscussSearchResult struct {
+	// 排序顺序
+	Order string `json:"order"`
+	// 排序的字段
+	Sort string `json:"sort"`
+	// 会员数据
+	Data []*ESDiscuss `json:"data"`
 	// 分页
 	Page *Page `json:"page"`
 	// 调试
