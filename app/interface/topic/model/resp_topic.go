@@ -89,7 +89,7 @@ type TopicMeta struct {
 	CanEdit bool `json:"can_edit"`
 
 	// 是否收藏
-	IsFav bool `json:"is_fav"`
+	Fav bool `json:"fav"`
 
 	// 是否能查看
 	CanView bool `json:"can_view"`

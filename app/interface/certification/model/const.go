@@ -6,3 +6,9 @@ const (
 	IDCertificationSuccess     = 1
 	IDCertificationFailed      = 2
 )
+
+const (
+	WorkCertificationInProgress = 0
+	WorkCertificationSuccess    = 1
+	WorkCertificationFailed     = 2
+)

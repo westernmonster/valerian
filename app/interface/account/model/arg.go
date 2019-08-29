@@ -133,14 +133,3 @@ type ArgUpdateProfile struct {
 	// 如果无需更改该字段，在提交JSON请求中请不要包含该字段
 	Password *string `json:"password,omitempty"`
 }
-
-type ArgFollow struct {
-	AccountID int64 `json:"account_id,string" swaggertype:"string"`
-}
-
-func (p *ArgFollow) Validate() error {
-	return validation.ValidateStruct(
-		p,
-		validation.Field(&p.AccountID, validation.Required),
-	)
-}

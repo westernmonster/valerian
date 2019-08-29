@@ -82,3 +82,15 @@ func (p *AddArticleRelation) Validate() error {
 		validation.Field(&p.Permission, validation.Required, validation.In(AuthPermissionEdit, AuthPermissionView)),
 	)
 }
+
+type ArgUpdateArticleRelation struct {
+	ID int64 `json:"id,string" swaggertype:"string"`
+
+	// 是否主话题
+	Primary bool `json:"primary"`
+
+	// 类型
+	// view  // 只允许查看
+	// edit // 允许所有成员编辑
+	Permission string `json:"permission"`
+}

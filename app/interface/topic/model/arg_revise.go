@@ -9,6 +9,9 @@ type ArgAddRevise struct {
 	// 文章 ID
 	ArticleID int64 `json:"article_id,string" swaggertype:"string"`
 
+	// 标题 可选
+	Title *string `json:"title,omitempty"`
+
 	// 内容
 	Content string `json:"content"`
 
@@ -41,6 +44,9 @@ func (p *AddReviseFile) Validate() error {
 
 type ArgUpdateRevise struct {
 	ID int64 `json:"id,string" swaggertype:"string"`
+
+	// 标题 可选
+	Title *string `json:"title,omitempty"`
 
 	// 文章 ID
 	ArticleID int64 `json:"article_id,string" swaggertype:"string"`

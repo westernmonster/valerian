@@ -3,72 +3,49 @@ package conf
 import (
 	"errors"
 	"flag"
-
 	"valerian/library/cache/memcache"
 	"valerian/library/conf"
-	"valerian/library/database/sqalx"
 	"valerian/library/log"
 	"valerian/library/net/http/mars"
-	xtime "valerian/library/time"
+	"valerian/library/net/rpc/warden"
 	"valerian/library/tracing"
 
 	"github.com/BurntSushi/toml"
 )
 
+// Conf global variable.
 var (
-	confPath string
 	Conf     = &Config{}
 	client   *conf.Client
+	confPath string
 )
 
 type Config struct {
-	DC       *DC
-	Log      *log.Config
-	Tracer   *tracing.Config
-	DB       *DB
-	Memcache *Memcache
-	Mars     *mars.ServerConfig
+	Log        *log.Config
+	Mars       *mars.ServerConfig
+	HTTPClient *mars.ClientConfig
+	Tracer     *tracing.Config
+
+	// IdentifyConfig
+	Identify *IdentifyConfig
+
+	// grpc server
+	WardenServer *warden.ServerConfig
+
+	Memcache *memcache.Config
+	// MemcacheLoginLog
+	MemcacheLoginLog *memcache.Config
 }
 
-// DB db config.
-type DB struct {
-	Main *sqalx.Config
-	Auth *sqalx.Config
-}
-
-// Memcache memcache config.
-type Memcache struct {
-	Auth *MC
-	Main *MC
-}
-
-// MC .
-type MC struct {
-	*memcache.Config
-	Expire xtime.Duration
-}
-
-type Aliyun struct {
-	AccessKeyID     string
-	AccessKeySecret string
-}
-
-// DC data center.
-type DC struct {
-	Num  int
-	Desc string
-}
-
-func init() {
-	flag.StringVar(&confPath, "conf", "", "default config path")
-}
-
-// Init init conf
-func Init() error {
-	if confPath != "" {
-		return local()
-	}
-	return remote()
+// IdentifyConfig identify config
+type IdentifyConfig struct {
+	AuthHost string
+	// LoginLogConsumerSize goroutine size
+	LoginLogConsumerSize int
+	// LoginCacheExpires login check cache expires
+	LoginCacheExpires int32
+	// IntranetCIDR
+	IntranetCIDR []string
 }
 
 func local() (err error) {
@@ -85,10 +62,7 @@ func remote() (err error) {
 	}
 	go func() {
 		for range client.Event() {
-			log.Info("config reload")
-			if load() != nil {
-				log.Errorf("config reload error (%v)", err)
-			}
+			log.Info("config event")
 		}
 	}()
 	return
@@ -108,4 +82,16 @@ func load() (err error) {
 	}
 	*Conf = *tmpConf
 	return
+}
+
+func init() {
+	flag.StringVar(&confPath, "conf", "", "default config path")
+}
+
+// Init int config
+func Init() error {
+	if confPath != "" {
+		return local()
+	}
+	return remote()
 }

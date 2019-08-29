@@ -13,6 +13,10 @@ type ArticleRelationResp struct {
 	TopicAvatar *string `json:"topic_avatar,omitempty"`
 	// 权限
 	Permission string `json:"permission"`
+
+	// 话题编辑权限
+	TopicEditPermission string `json:"topic_edit_permission"`
+
 	// 路径
 	CatalogFullPath string `json:"catalog_full_path"`
 }
