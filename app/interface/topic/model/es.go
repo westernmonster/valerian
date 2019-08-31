@@ -24,7 +24,7 @@ type SearchResult struct {
 	Order  string            `json:"order"`
 	Sort   string            `json:"sort"`
 	Result []json.RawMessage `json:"data"`
-	Page   *Page             `json:"page"`
+	Page   *Paging           `json:"page"`
 	Debug  string            `json:"debug"`
 }
 
@@ -158,14 +158,10 @@ type ESAccount struct {
 }
 
 type AccountSearchResult struct {
-	// 排序顺序
-	Order string `json:"order"`
-	// 排序的字段
-	Sort string `json:"sort"`
 	// 会员数据
 	Data []*ESAccount `json:"data"`
 	// 分页
-	Page *Page `json:"page"`
+	Page *Paging `json:"paging"`
 	// 调试
 	Debug string `json:"debug"`
 }
@@ -220,19 +216,15 @@ type ESTopic struct {
 	// 成员数
 	MemberCount int `json:"member_count"`
 
-	// 是否已经授权
-	IsAuthed bool `json:"is_authed"`
+	// 成员数
+	ResourceCount int `json:"resource_count"`
 }
 
 type TopicSearchResult struct {
-	// 排序顺序
-	Order string `json:"order"`
-	// 排序的字段
-	Sort string `json:"sort"`
 	// 会员数据
 	Data []*ESTopic `json:"data"`
 	// 分页
-	Page *Page `json:"page"`
+	Page *Paging `json:"paging"`
 	// 调试
 	Debug string `json:"debug"`
 }
@@ -269,14 +261,10 @@ type ESArticle struct {
 }
 
 type ArticleSearchResult struct {
-	// 排序顺序
-	Order string `json:"order"`
-	// 排序的字段
-	Sort string `json:"sort"`
 	// 会员数据
 	Data []*ESArticle `json:"data"`
 	// 分页
-	Page *Page `json:"page"`
+	Page *Page `json:"paging"`
 	// 调试
 	Debug string `json:"debug"`
 }
@@ -306,14 +294,26 @@ type ESDiscuss struct {
 }
 
 type DiscussSearchResult struct {
-	// 排序顺序
-	Order string `json:"order"`
-	// 排序的字段
-	Sort string `json:"sort"`
 	// 会员数据
 	Data []*ESDiscuss `json:"data"`
 	// 分页
-	Page *Page `json:"page"`
+	Page *Paging `json:"paging"`
 	// 调试
 	Debug string `json:"debug"`
+}
+
+type AllSearchParams struct {
+	// 搜索关键词
+	KW string `json:"kw"`
+}
+
+type AllSearchResult struct {
+	Topics      []*ESTopic `json:"topics"`
+	TopicsCount int        `json:"topics_count"`
+
+	Articles      []*ESArticle `json:"articles"`
+	ArticlesCount int          `json:"articles_count"`
+
+	Accounts      []*ESAccount `json:"accounts"`
+	AccountsCount int          `json:"accounts_count"`
 }

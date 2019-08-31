@@ -8,6 +8,7 @@ import (
 	"valerian/library/conf"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
+	"valerian/library/naming/discovery"
 	"valerian/library/net/http/mars"
 	xtime "valerian/library/time"
 	"valerian/library/tracing"
@@ -22,12 +23,13 @@ var (
 )
 
 type Config struct {
-	DC       *DC
-	Log      *log.Config
-	Tracer   *tracing.Config
-	DB       *DB
-	Memcache *Memcache
-	Mars     *mars.ServerConfig
+	DC        *DC
+	Log       *log.Config
+	Tracer    *tracing.Config
+	DB        *DB
+	Memcache  *Memcache
+	Mars      *mars.ServerConfig
+	Discovery *discovery.Config
 }
 
 // DB db config.

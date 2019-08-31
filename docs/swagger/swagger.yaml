@@ -51,12 +51,6 @@ definitions:
         description: 认证流程页面入口URL。
         type: object
     type: object
-  model.AccountSearchParams:
-    properties:
-      bsp:
-        $ref: '#/definitions/model.BasicSearchParams'
-        type: object
-    type: object
   model.AccountSearchResult:
     properties:
       data:
@@ -67,16 +61,10 @@ definitions:
       debug:
         description: 调试
         type: string
-      order:
-        description: 排序顺序
-        type: string
-      page:
-        $ref: '#/definitions/model.Page'
+      paging:
+        $ref: '#/definitions/model.Paging'
         description: 分页
         type: object
-      sort:
-        description: 排序的字段
-        type: string
     type: object
   model.ActivitySettingResp:
     properties:
@@ -153,6 +141,33 @@ definitions:
       file_url:
         type: string
       seq:
+        type: integer
+    type: object
+  model.AllSearchParams:
+    properties:
+      kw:
+        description: 搜索关键词
+        type: string
+    type: object
+  model.AllSearchResult:
+    properties:
+      accounts:
+        items:
+          $ref: '#/definitions/model.ESAccount'
+        type: array
+      accounts_count:
+        type: integer
+      articles:
+        items:
+          $ref: '#/definitions/model.ESArticle'
+        type: array
+      articles_count:
+        type: integer
+      topics:
+        items:
+          $ref: '#/definitions/model.ESTopic'
+        type: array
+      topics_count:
         type: integer
     type: object
   model.ArgActivitySetting:
@@ -1010,12 +1025,6 @@ definitions:
         description: 标题
         type: string
     type: object
-  model.ArticleSearchParams:
-    properties:
-      bsp:
-        $ref: '#/definitions/model.BasicSearchParams'
-        type: object
-    type: object
   model.ArticleSearchResult:
     properties:
       data:
@@ -1026,16 +1035,10 @@ definitions:
       debug:
         description: 调试
         type: string
-      order:
-        description: 排序顺序
-        type: string
-      page:
+      paging:
         $ref: '#/definitions/model.Page'
         description: 分页
         type: object
-      sort:
-        description: 排序的字段
-        type: string
     type: object
   model.AuthTopicResp:
     properties:
@@ -1056,43 +1059,6 @@ definitions:
         type: string
       to_topic_id:
         type: string
-    type: object
-  model.BasicSearchParams:
-    properties:
-      debug:
-        description: 是否输出Debug信息
-        type: boolean
-      kw:
-        description: 搜索关键词
-        type: string
-      kw_fields:
-        description: 搜索关键词所用的字段
-        items:
-          type: string
-        type: array
-      order:
-        description: |-
-          排序的顺序
-          desc, asc
-        items:
-          type: string
-        type: array
-      pn:
-        description: 页码
-        type: integer
-      ps:
-        description: 每页大小
-        type: integer
-      sort:
-        description: 排序的字段
-        items:
-          type: string
-        type: array
-      source:
-        description: 输出的字段
-        items:
-          type: string
-        type: array
     type: object
   model.CatalogArticleItem:
     properties:
@@ -1316,12 +1282,6 @@ definitions:
         $ref: '#/definitions/model.Paging'
         type: object
     type: object
-  model.DiscussSearchParams:
-    properties:
-      bsp:
-        $ref: '#/definitions/model.BasicSearchParams'
-        type: object
-    type: object
   model.DiscussSearchResult:
     properties:
       data:
@@ -1332,16 +1292,10 @@ definitions:
       debug:
         description: 调试
         type: string
-      order:
-        description: 排序顺序
-        type: string
-      page:
-        $ref: '#/definitions/model.Page'
+      paging:
+        $ref: '#/definitions/model.Paging'
         description: 分页
         type: object
-      sort:
-        description: 排序的字段
-        type: string
     type: object
   model.DisucssItem:
     properties:
@@ -1535,9 +1489,6 @@ definitions:
       introduction:
         description: Introduction 话题简介
         type: string
-      is_authed:
-        description: 是否已经授权
-        type: boolean
       is_private:
         description: IsPrivate 是否私密
         type: boolean
@@ -1550,6 +1501,9 @@ definitions:
       name:
         description: Name 话题名
         type: string
+      resource_count:
+        description: 成员数
+        type: integer
       updated_at:
         description: UpdatedAt 更新时间
         type: string
@@ -2088,6 +2042,10 @@ definitions:
         type: string
       role:
         type: string
+      settings:
+        $ref: '#/definitions/model.SettingResp'
+        description: 设置
+        type: object
       source:
         description: 来源，1:Web, 2:iOS; 3:Android
         type: integer
@@ -2568,12 +2526,6 @@ definitions:
         description: ViewPermission 查看权限
         type: string
     type: object
-  model.TopicSearchParams:
-    properties:
-      bsp:
-        $ref: '#/definitions/model.BasicSearchParams'
-        type: object
-    type: object
   model.TopicSearchResp:
     properties:
       items:
@@ -2594,16 +2546,10 @@ definitions:
       debug:
         description: 调试
         type: string
-      order:
-        description: 排序顺序
-        type: string
-      page:
-        $ref: '#/definitions/model.Page'
+      paging:
+        $ref: '#/definitions/model.Paging'
         description: 分页
         type: object
-      sort:
-        description: 排序的字段
-        type: string
     type: object
   model.UpdateArticleFile:
     properties:
@@ -5574,7 +5520,7 @@ paths:
       tags:
       - auth
   /search/accounts:
-    post:
+    get:
       consumes:
       - application/json
       description: 搜索账户
@@ -5601,13 +5547,41 @@ paths:
         name: Locale
         required: true
         type: string
-      - description: 请求
-        in: body
-        name: req
+      - description: 关键词
+        in: query
+        name: kw
         required: true
-        schema:
-          $ref: '#/definitions/model.AccountSearchParams'
-          type: object
+        type: string
+      - description: 查询关键词的字段列表，逗号分隔
+        in: query
+        name: kw_fields
+        type: string
+      - description: sort中字段排序的顺序(desc,asc) 以逗号分隔
+        in: query
+        name: order
+        type: string
+      - description: 排序的字段，逗号分隔
+        in: query
+        name: sort
+        type: string
+      - description: 页码
+        in: query
+        name: pn
+        required: true
+        type: integer
+      - description: 每页大小
+        in: query
+        name: ps
+        required: true
+        type: integer
+      - description: debug
+        in: query
+        name: debug
+        type: boolean
+      - description: 所需要展示的字段，逗号分隔
+        in: query
+        name: source
+        type: boolean
       produces:
       - application/json
       responses:
@@ -5625,8 +5599,60 @@ paths:
       summary: 搜索账户
       tags:
       - search
-  /search/articles:
+  /search/all:
     post:
+      consumes:
+      - application/json
+      description: 综合搜索
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/model.AllSearchParams'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 结果
+          schema:
+            $ref: '#/definitions/model.AllSearchResult'
+            type: object
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 综合搜索
+      tags:
+      - search
+  /search/articles:
+    get:
       consumes:
       - application/json
       description: 搜索文章
@@ -5653,13 +5679,41 @@ paths:
         name: Locale
         required: true
         type: string
-      - description: 请求
-        in: body
-        name: req
+      - description: 关键词
+        in: query
+        name: kw
         required: true
-        schema:
-          $ref: '#/definitions/model.ArticleSearchParams'
-          type: object
+        type: string
+      - description: 查询关键词的字段列表，逗号分隔
+        in: query
+        name: kw_fields
+        type: string
+      - description: sort中字段排序的顺序(desc,asc) 以逗号分隔
+        in: query
+        name: order
+        type: string
+      - description: 排序的字段，逗号分隔
+        in: query
+        name: sort
+        type: string
+      - description: 页码
+        in: query
+        name: pn
+        required: true
+        type: integer
+      - description: 每页大小
+        in: query
+        name: ps
+        required: true
+        type: integer
+      - description: debug
+        in: query
+        name: debug
+        type: boolean
+      - description: 所需要展示的字段，逗号分隔
+        in: query
+        name: source
+        type: boolean
       produces:
       - application/json
       responses:
@@ -5678,7 +5732,7 @@ paths:
       tags:
       - search
   /search/discussions:
-    post:
+    get:
       consumes:
       - application/json
       description: 搜索讨论
@@ -5705,13 +5759,41 @@ paths:
         name: Locale
         required: true
         type: string
-      - description: 请求
-        in: body
-        name: req
+      - description: 关键词
+        in: query
+        name: kw
         required: true
-        schema:
-          $ref: '#/definitions/model.DiscussSearchParams'
-          type: object
+        type: string
+      - description: 查询关键词的字段列表，逗号分隔
+        in: query
+        name: kw_fields
+        type: string
+      - description: sort中字段排序的顺序(desc,asc) 以逗号分隔
+        in: query
+        name: order
+        type: string
+      - description: 排序的字段，逗号分隔
+        in: query
+        name: sort
+        type: string
+      - description: 页码
+        in: query
+        name: pn
+        required: true
+        type: integer
+      - description: 每页大小
+        in: query
+        name: ps
+        required: true
+        type: integer
+      - description: debug
+        in: query
+        name: debug
+        type: boolean
+      - description: 所需要展示的字段，逗号分隔
+        in: query
+        name: source
+        type: boolean
       produces:
       - application/json
       responses:
@@ -5757,13 +5839,41 @@ paths:
         name: Locale
         required: true
         type: string
-      - description: 请求
-        in: body
-        name: req
+      - description: 关键词
+        in: query
+        name: kw
         required: true
-        schema:
-          $ref: '#/definitions/model.TopicSearchParams'
-          type: object
+        type: string
+      - description: 查询关键词的字段列表，逗号分隔
+        in: query
+        name: kw_fields
+        type: string
+      - description: sort中字段排序的顺序(desc,asc) 以逗号分隔
+        in: query
+        name: order
+        type: string
+      - description: 排序的字段，逗号分隔
+        in: query
+        name: sort
+        type: string
+      - description: 页码
+        in: query
+        name: pn
+        required: true
+        type: integer
+      - description: 每页大小
+        in: query
+        name: ps
+        required: true
+        type: integer
+      - description: debug
+        in: query
+        name: debug
+        type: boolean
+      - description: 所需要展示的字段，逗号分隔
+        in: query
+        name: source
+        type: boolean
       produces:
       - application/json
       responses:

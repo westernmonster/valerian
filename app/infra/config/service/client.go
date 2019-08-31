@@ -175,6 +175,8 @@ func (s *Service) tagForce(c context.Context, appID int64, build string) (force 
 			return
 		}
 
+		tagID = dbBuild.TagID
+
 		s.setTagID(appID, dbBuild.TagID, build)
 	}
 
@@ -285,10 +287,9 @@ func (s *Service) pubEvent(key string, evt *model.Diff) (ok bool) {
 
 func (s *Service) curTag(c context.Context, appID int64, build string) (tag *curTag, err error) {
 	var (
-		ok       bool
-		tagID    int64
-		ids      []int64
-		tagForce int
+		ok    bool
+		tagID int64
+		ids   []int64
 	)
 	// get current version, return if has new config version
 	verKey := buildVerKey(appID, build)
@@ -304,6 +305,8 @@ func (s *Service) curTag(c context.Context, appID int64, build string) (tag *cur
 			return
 		}
 
+		tagID = dbBuild.TagID
+
 		if ids, err = s.getConfigIDs(c, s.d.DB(), tagID); err != nil {
 			return
 		}
@@ -316,7 +319,7 @@ func (s *Service) curTag(c context.Context, appID int64, build string) (tag *cur
 			return
 		}
 
-		tag = s.setTag(appID, build, &cacheTag{Tag: tagID, ConfIDs: ids, Force: tagForce})
+		tag = s.setTag(appID, build, &cacheTag{Tag: tagID, ConfIDs: ids, Force: dbTag.Force})
 	}
 	return
 }
@@ -394,6 +397,7 @@ func (s *Service) curForce(c context.Context, node sqalx.Node, rhost *model.Host
 			version = 0
 		}
 
+		fmt.Printf("app_id %+v, hostname: %+v\n", appID, rhost.Name)
 		s.fLock.Lock()
 		s.forces[pushForceKey] = version
 		s.fLock.Unlock()
@@ -604,6 +608,8 @@ func (s *Service) CheckVersion(c context.Context, rhost *model.Host, token strin
 	if err != nil {
 		return
 	}
+
+	fmt.Printf("tagForce %#v\n", tagForce)
 	rhost.Force = tagForce
 	s.d.SetHost(c, rhost, rhost.Service)
 	if rhost.ConfigVersion > 0 {
@@ -641,10 +647,13 @@ func (s *Service) CheckVersion(c context.Context, rhost *model.Host, token strin
 	if tag, err = s.curTag(c, appID, rhost.BuildVersion); err != nil {
 		return
 	}
+
+	fmt.Printf("curTag %#v\n", tag)
 	if tagID = tag.cur(); tagID == 0 {
 		err = ecode.NothingFound
 		return
 	}
+
 	if tagID != rhost.ConfigVersion {
 		ver := &model.Diff{Version: tagID}
 		if rhost.ConfigVersion == tag.old() {

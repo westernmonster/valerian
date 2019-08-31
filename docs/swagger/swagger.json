@@ -4203,7 +4203,7 @@
             }
         },
         "/search/accounts": {
-            "post": {
+            "get": {
                 "description": "搜索账户",
                 "consumes": [
                     "application/json"
@@ -4247,14 +4247,55 @@
                         "required": true
                     },
                     {
-                        "description": "请求",
-                        "name": "req",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "object",
-                            "$ref": "#/definitions/model.AccountSearchParams"
-                        }
+                        "type": "string",
+                        "description": "关键词",
+                        "name": "kw",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "查询关键词的字段列表，逗号分隔",
+                        "name": "kw_fields",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sort中字段排序的顺序(desc,asc) 以逗号分隔",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序的字段，逗号分隔",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "pn",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "ps",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "debug",
+                        "name": "debug",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "所需要展示的字段，逗号分隔",
+                        "name": "source",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -4277,8 +4318,83 @@
                 }
             }
         },
-        "/search/articles": {
+        "/search/all": {
             "post": {
+                "description": "综合搜索",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "search"
+                ],
+                "summary": "综合搜索",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/model.AllSearchParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "结果",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/model.AllSearchResult"
+                        }
+                    },
+                    "400": {
+                        "description": "验证请求失败"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
+        "/search/articles": {
+            "get": {
                 "description": "搜索文章",
                 "consumes": [
                     "application/json"
@@ -4322,14 +4438,55 @@
                         "required": true
                     },
                     {
-                        "description": "请求",
-                        "name": "req",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "object",
-                            "$ref": "#/definitions/model.ArticleSearchParams"
-                        }
+                        "type": "string",
+                        "description": "关键词",
+                        "name": "kw",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "查询关键词的字段列表，逗号分隔",
+                        "name": "kw_fields",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sort中字段排序的顺序(desc,asc) 以逗号分隔",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序的字段，逗号分隔",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "pn",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "ps",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "debug",
+                        "name": "debug",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "所需要展示的字段，逗号分隔",
+                        "name": "source",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -4353,7 +4510,7 @@
             }
         },
         "/search/discussions": {
-            "post": {
+            "get": {
                 "description": "搜索讨论",
                 "consumes": [
                     "application/json"
@@ -4397,14 +4554,55 @@
                         "required": true
                     },
                     {
-                        "description": "请求",
-                        "name": "req",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "object",
-                            "$ref": "#/definitions/model.DiscussSearchParams"
-                        }
+                        "type": "string",
+                        "description": "关键词",
+                        "name": "kw",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "查询关键词的字段列表，逗号分隔",
+                        "name": "kw_fields",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sort中字段排序的顺序(desc,asc) 以逗号分隔",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序的字段，逗号分隔",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "pn",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "ps",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "debug",
+                        "name": "debug",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "所需要展示的字段，逗号分隔",
+                        "name": "source",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -4472,14 +4670,55 @@
                         "required": true
                     },
                     {
-                        "description": "请求",
-                        "name": "req",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "object",
-                            "$ref": "#/definitions/model.TopicSearchParams"
-                        }
+                        "type": "string",
+                        "description": "关键词",
+                        "name": "kw",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "查询关键词的字段列表，逗号分隔",
+                        "name": "kw_fields",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sort中字段排序的顺序(desc,asc) 以逗号分隔",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序的字段，逗号分隔",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "pn",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "ps",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "debug",
+                        "name": "debug",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "所需要展示的字段，逗号分隔",
+                        "name": "source",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -6757,15 +6996,6 @@
                 }
             }
         },
-        "model.AccountSearchParams": {
-            "type": "object",
-            "properties": {
-                "bsp": {
-                    "type": "object",
-                    "$ref": "#/definitions/model.BasicSearchParams"
-                }
-            }
-        },
         "model.AccountSearchResult": {
             "type": "object",
             "properties": {
@@ -6780,18 +7010,10 @@
                     "description": "调试",
                     "type": "string"
                 },
-                "order": {
-                    "description": "排序顺序",
-                    "type": "string"
-                },
-                "page": {
+                "paging": {
                     "description": "分页",
                     "type": "object",
-                    "$ref": "#/definitions/model.Page"
-                },
-                "sort": {
-                    "description": "排序的字段",
-                    "type": "string"
+                    "$ref": "#/definitions/model.Paging"
                 }
             }
         },
@@ -6896,6 +7118,47 @@
                     "type": "string"
                 },
                 "seq": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.AllSearchParams": {
+            "type": "object",
+            "properties": {
+                "kw": {
+                    "description": "搜索关键词",
+                    "type": "string"
+                }
+            }
+        },
+        "model.AllSearchResult": {
+            "type": "object",
+            "properties": {
+                "accounts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.ESAccount"
+                    }
+                },
+                "accounts_count": {
+                    "type": "integer"
+                },
+                "articles": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.ESArticle"
+                    }
+                },
+                "articles_count": {
+                    "type": "integer"
+                },
+                "topics": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.ESTopic"
+                    }
+                },
+                "topics_count": {
                     "type": "integer"
                 }
             }
@@ -7985,15 +8248,6 @@
                 }
             }
         },
-        "model.ArticleSearchParams": {
-            "type": "object",
-            "properties": {
-                "bsp": {
-                    "type": "object",
-                    "$ref": "#/definitions/model.BasicSearchParams"
-                }
-            }
-        },
         "model.ArticleSearchResult": {
             "type": "object",
             "properties": {
@@ -8008,18 +8262,10 @@
                     "description": "调试",
                     "type": "string"
                 },
-                "order": {
-                    "description": "排序顺序",
-                    "type": "string"
-                },
-                "page": {
+                "paging": {
                     "description": "分页",
                     "type": "object",
                     "$ref": "#/definitions/model.Page"
-                },
-                "sort": {
-                    "description": "排序的字段",
-                    "type": "string"
                 }
             }
         },
@@ -8046,55 +8292,6 @@
                 },
                 "to_topic_id": {
                     "type": "string"
-                }
-            }
-        },
-        "model.BasicSearchParams": {
-            "type": "object",
-            "properties": {
-                "debug": {
-                    "description": "是否输出Debug信息",
-                    "type": "boolean"
-                },
-                "kw": {
-                    "description": "搜索关键词",
-                    "type": "string"
-                },
-                "kw_fields": {
-                    "description": "搜索关键词所用的字段",
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "order": {
-                    "description": "排序的顺序\ndesc, asc",
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "pn": {
-                    "description": "页码",
-                    "type": "integer"
-                },
-                "ps": {
-                    "description": "每页大小",
-                    "type": "integer"
-                },
-                "sort": {
-                    "description": "排序的字段",
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "source": {
-                    "description": "输出的字段",
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
                 }
             }
         },
@@ -8405,15 +8602,6 @@
                 }
             }
         },
-        "model.DiscussSearchParams": {
-            "type": "object",
-            "properties": {
-                "bsp": {
-                    "type": "object",
-                    "$ref": "#/definitions/model.BasicSearchParams"
-                }
-            }
-        },
         "model.DiscussSearchResult": {
             "type": "object",
             "properties": {
@@ -8428,18 +8616,10 @@
                     "description": "调试",
                     "type": "string"
                 },
-                "order": {
-                    "description": "排序顺序",
-                    "type": "string"
-                },
-                "page": {
+                "paging": {
                     "description": "分页",
                     "type": "object",
-                    "$ref": "#/definitions/model.Page"
-                },
-                "sort": {
-                    "description": "排序的字段",
-                    "type": "string"
+                    "$ref": "#/definitions/model.Paging"
                 }
             }
         },
@@ -8704,10 +8884,6 @@
                     "description": "Introduction 话题简介",
                     "type": "string"
                 },
-                "is_authed": {
-                    "description": "是否已经授权",
-                    "type": "boolean"
-                },
                 "is_private": {
                     "description": "IsPrivate 是否私密",
                     "type": "boolean"
@@ -8723,6 +8899,10 @@
                 "name": {
                     "description": "Name 话题名",
                     "type": "string"
+                },
+                "resource_count": {
+                    "description": "成员数",
+                    "type": "integer"
                 },
                 "updated_at": {
                     "description": "UpdatedAt 更新时间",
@@ -9451,6 +9631,11 @@
                 "role": {
                     "type": "string"
                 },
+                "settings": {
+                    "description": "设置",
+                    "type": "object",
+                    "$ref": "#/definitions/model.SettingResp"
+                },
                 "source": {
                     "description": "来源，1:Web, 2:iOS; 3:Android",
                     "type": "integer"
@@ -10055,15 +10240,6 @@
                 }
             }
         },
-        "model.TopicSearchParams": {
-            "type": "object",
-            "properties": {
-                "bsp": {
-                    "type": "object",
-                    "$ref": "#/definitions/model.BasicSearchParams"
-                }
-            }
-        },
         "model.TopicSearchResp": {
             "type": "object",
             "properties": {
@@ -10093,18 +10269,10 @@
                     "description": "调试",
                     "type": "string"
                 },
-                "order": {
-                    "description": "排序顺序",
-                    "type": "string"
-                },
-                "page": {
+                "paging": {
                     "description": "分页",
                     "type": "object",
-                    "$ref": "#/definitions/model.Page"
-                },
-                "sort": {
-                    "description": "排序的字段",
-                    "type": "string"
+                    "$ref": "#/definitions/model.Paging"
                 }
             }
         },

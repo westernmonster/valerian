@@ -14,7 +14,14 @@ import (
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.TopicSearchParams true "请求"
+// @Param kw query string true "关键词"
+// @Param kw_fields query string false "查询关键词的字段列表，逗号分隔"
+// @Param order query string false "sort中字段排序的顺序(desc,asc) 以逗号分隔"
+// @Param sort query string false "排序的字段，逗号分隔"
+// @Param pn query integer true "页码"
+// @Param ps query integer true "每页大小"
+// @Param debug query bool false "debug"
+// @Param source query bool false "所需要展示的字段，逗号分隔"
 // @Success 200 {object} model.TopicSearchResult "话题"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
@@ -42,12 +49,19 @@ func searchTopics(c *mars.Context) {
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.AccountSearchParams true "请求"
+// @Param kw query string true "关键词"
+// @Param kw_fields query string false "查询关键词的字段列表，逗号分隔"
+// @Param order query string false "sort中字段排序的顺序(desc,asc) 以逗号分隔"
+// @Param sort query string false "排序的字段，逗号分隔"
+// @Param pn query integer true "页码"
+// @Param ps query integer true "每页大小"
+// @Param debug query bool false "debug"
+// @Param source query bool false "所需要展示的字段，逗号分隔"
 // @Success 200 {object} model.AccountSearchResult "话题"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /search/accounts [post]
+// @Router /search/accounts [get]
 func searchAccounts(c *mars.Context) {
 	arg := new(model.AccountSearchParams)
 	if e := c.Bind(arg); e != nil {
@@ -70,12 +84,19 @@ func searchAccounts(c *mars.Context) {
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArticleSearchParams true "请求"
+// @Param kw query string true "关键词"
+// @Param kw_fields query string false "查询关键词的字段列表，逗号分隔"
+// @Param order query string false "sort中字段排序的顺序(desc,asc) 以逗号分隔"
+// @Param sort query string false "排序的字段，逗号分隔"
+// @Param pn query integer true "页码"
+// @Param ps query integer true "每页大小"
+// @Param debug query bool false "debug"
+// @Param source query bool false "所需要展示的字段，逗号分隔"
 // @Success 200 {object} model.ArticleSearchResult "话题"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /search/articles [post]
+// @Router /search/articles [get]
 func searchArticles(c *mars.Context) {
 }
 
@@ -87,11 +108,35 @@ func searchArticles(c *mars.Context) {
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.DiscussSearchParams true "请求"
+// @Param kw query string true "关键词"
+// @Param kw_fields query string false "查询关键词的字段列表，逗号分隔"
+// @Param order query string false "sort中字段排序的顺序(desc,asc) 以逗号分隔"
+// @Param sort query string false "排序的字段，逗号分隔"
+// @Param pn query integer true "页码"
+// @Param ps query integer true "每页大小"
+// @Param debug query bool false "debug"
+// @Param source query bool false "所需要展示的字段，逗号分隔"
 // @Success 200 {object} model.DiscussSearchResult "话题"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /search/discussions [post]
+// @Router /search/discussions [get]
 func searchDiscusstions(c *mars.Context) {
+}
+
+// @Summary 综合搜索
+// @Description 综合搜索
+// @Tags search
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param req body model.AllSearchParams true "请求"
+// @Success 200 {object} model.AllSearchResult "结果"
+// @Failure 400 "验证请求失败"
+// @Failure 401 "登录验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /search/all [post]
+func searchArticles(c *mars.Context) {
 }

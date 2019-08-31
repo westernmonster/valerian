@@ -23,7 +23,7 @@ import (
 
 const (
 	// code
-	_codeOk          = 0
+	_codeOk          = 200
 	_codeNotModified = -304
 	// api
 	_apiGet   = "http://%s/v1/config/get2?%s"

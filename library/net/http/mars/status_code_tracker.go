@@ -1,7 +1,9 @@
 package mars
 
 import (
+	"bufio"
 	"io"
+	"net"
 	"net/http"
 )
 
@@ -15,6 +17,24 @@ func (w *statusCodeTracker) WriteHeader(status int) {
 	w.status = status
 	w.wroteheader = true
 	w.ResponseWriter.WriteHeader(status)
+}
+
+func (w *statusCodeTracker) Status() int {
+	return w.status
+}
+
+// Hijack hijacks the connection
+func (s *statusCodeTracker) Hijack() (net.Conn, *bufio.ReadWriter, error) {
+	return s.ResponseWriter.(http.Hijacker).Hijack()
+}
+func (s *statusCodeTracker) Flush() {
+	if flusher, ok := s.ResponseWriter.(http.Flusher); ok {
+		flusher.Flush()
+	}
+}
+
+func (s *statusCodeTracker) CloseNotify() <-chan bool {
+	return s.ResponseWriter.(http.CloseNotifier).CloseNotify()
 }
 
 func (w *statusCodeTracker) Write(b []byte) (int, error) {

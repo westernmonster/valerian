@@ -16,12 +16,36 @@ func (d *Dao) Codes(c context.Context) (codes map[int]string, lcode *model.Code,
 }
 
 // Diff get change codes.
-func (d *Dao) Diff(c context.Context, ver int64) (vers *list.List, err error) {
+func (d *Dao) Diff(c context.Context, node sqalx.Node, ver int64) (vers *list.List, err error) {
+	items := make([]*model.Code, 0)
+	sqlSelect := "SELECT a.* FROM codes a WHERE a.deleted=0 AND a.created_at > ? ORDER BY a.created_at LIMIT 100 "
+
+	if err = node.SelectContext(c, &items, sqlSelect, ver); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.DiffCodes err(%+v)", err))
+		return
+	}
+
+	vers = list.New()
+	for _, v := range items {
+		vers.PushBack(v)
+	}
 	return
 }
 
 // CodesLang get all codes.
-func (d *Dao) CodesLang(c context.Context) (codes map[int]map[string]string, lcode *model.CodeLangs, err error) {
+func (d *Dao) CodesLang(c context.Context, node sqalx.Node) (codes map[int]map[string]string, lcode *model.CodeLangs, err error) {
+	items := make([]*model.Code, 0)
+	sqlSelect := "SELECT a.* FROM codes a WHERE a.deleted=0 ORDER BY a.id DESC "
+
+	if err = node.SelectContext(c, &items, sqlSelect); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetCodes err(%+v)", err))
+		return
+	}
+
+	codes = make(map[int]map[string]string)
+	for _, v := range items {
+		// codes[v.Code]
+	}
 	return
 }
 

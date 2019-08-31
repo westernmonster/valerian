@@ -29,7 +29,7 @@ const (
 type version1 struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
-	Data    *ver   `json:"data"`
+	Result  *ver   `json:"result"`
 }
 
 type ver struct {
@@ -223,11 +223,12 @@ func (c *Client) checkVersion2(reqVer *ver) (ver *ver, err error) {
 	}
 	switch v.Code {
 	case _codeOk:
-		if v.Data == nil {
+		fmt.Printf("%#v\n", v)
+		if v.Result == nil {
 			err = fmt.Errorf("checkVersion() response error result: %v", v)
 			return
 		}
-		ver = v.Data
+		ver = v.Result
 	case _codeNotModified:
 		ver = reqVer
 	default:
