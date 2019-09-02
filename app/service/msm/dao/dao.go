@@ -1,8 +1,11 @@
 package dao
 
 import (
+	"context"
+	"fmt"
 	"valerian/app/service/msm/conf"
 	"valerian/library/database/sqalx"
+	"valerian/library/log"
 	"valerian/library/net/http/mars"
 )
 
@@ -42,4 +45,24 @@ func (d *Dao) Close() {
 	if d.apmDB != nil {
 		d.apmDB.Close()
 	}
+}
+
+func (d *Dao) DB() sqalx.Node {
+	return d.db
+}
+
+// Ping check db and mc health.
+func (d *Dao) Ping(c context.Context) (err error) {
+	if err = d.db.Ping(c); err != nil {
+		log.Info(fmt.Sprintf("dao.db.Ping() error(%v)", err))
+	}
+
+	if err = d.authDB.Ping(c); err != nil {
+		log.Info(fmt.Sprintf("dao.authDB.Ping() error(%v)", err))
+	}
+
+	if err = d.apmDB.Ping(c); err != nil {
+		log.Info(fmt.Sprintf("dao.apmDB.Ping() error(%v)", err))
+	}
+	return
 }

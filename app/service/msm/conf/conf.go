@@ -5,6 +5,7 @@ import (
 	"valerian/library/conf"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
+	"valerian/library/naming/discovery"
 	"valerian/library/net/http/mars"
 	"valerian/library/net/rpc"
 	"valerian/library/tracing"
@@ -30,6 +31,7 @@ type Config struct {
 	DB         *DB
 	Tree       *ServiceTree
 	ConfSvr    *rpc.ClientConfig
+	Discovery  *discovery.Config
 }
 
 // DB db config.

@@ -8,7 +8,7 @@ import (
 func codes(c *mars.Context) {
 	var (
 		err   error
-		code  *model.Codes
+		code  *model.ErrCodes
 		param = new(struct {
 			Ver int64 `form:"ver"`
 		})
@@ -17,24 +17,6 @@ func codes(c *mars.Context) {
 		return
 	}
 	if code, err = svr.Codes(c, param.Ver); err != nil {
-		c.JSON(nil, err)
-		return
-	}
-	c.JSON(code, nil)
-}
-
-func codesLangs(c *mars.Context) {
-	var (
-		err   error
-		code  *model.CodesLangs
-		param = new(struct {
-			Ver int64 `form:"ver"`
-		})
-	)
-	if err = c.Bind(param); err != nil {
-		return
-	}
-	if code, err = svr.CodesLangs(c, param.Ver); err != nil {
 		c.JSON(nil, err)
 		return
 	}

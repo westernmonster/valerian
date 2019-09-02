@@ -78,7 +78,7 @@ func main() {
 func middleware() grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
 		//记录调用方法
-		log.Info("method:%s", info.FullMethod)
+		log.Infof("method:%s", info.FullMethod)
 		//call chain
 		resp, err = handler(ctx, req)
 		return
@@ -94,7 +94,7 @@ func signalHandler(s *warden.Server) {
 		si := <-ch
 		switch si {
 		case syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT:
-			log.Info("get a signal %s, stop the consume process", si.String())
+			log.Infof("get a signal %s, stop the consume process", si.String())
 			ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
 			defer cancel()
 			//gracefully shutdown with timeout

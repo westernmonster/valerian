@@ -21,8 +21,10 @@ import (
 	"valerian/library/net/rpc/warden/resolver"
 	"valerian/library/net/rpc/warden/status"
 	xtime "valerian/library/time"
+	"valerian/library/tracing"
 
 	"github.com/opentracing/opentracing-go"
+	"github.com/opentracing/opentracing-go/ext"
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -72,23 +74,30 @@ func (c *Client) handle() grpc.UnaryClientInterceptor {
 		var (
 			ok     bool
 			cmd    nmd.MD
-			t      opentracing.Span
 			gmd    metadata.MD
 			conf   *ClientConfig
 			cancel context.CancelFunc
-			// addr   string
-			p peer.Peer
+			addr   string
+			p      peer.Peer
 		)
 		var ec ecode.Codes = ecode.OK
-		// apm tracing
-		// if t, ok = trace.FromContext(ctx); ok {
-		// 	t = t.Fork(_family, method)
-		// 	defer t.Finish(&err)
-		// }
+		var parentCtx opentracing.SpanContext
+		var span opentracing.Span
+		if span = opentracing.SpanFromContext(ctx); span != nil {
+			parentCtx = span.Context()
+		}
+
+		traceOpts := []opentracing.StartSpanOption{
+			opentracing.ChildOf(parentCtx),
+			ext.SpanKindRPCClient,
+			opentracing.Tag{Key: string(ext.Component), Value: "gRPC"},
+		}
+
+		span = tracing.StartSpan(method, traceOpts...)
 
 		// setup metadata
 		gmd = metadata.MD{}
-		// trace.Inject(t, trace.GRPCFormat, gmd)
+		tracing.Inject(span.Context(), opentracing.HTTPHeaders, gmd)
 		c.mutex.RLock()
 		if conf, ok = c.conf.Method[method]; !ok {
 			conf = c.conf
@@ -104,6 +113,8 @@ func (c *Client) handle() grpc.UnaryClientInterceptor {
 		defer cancel()
 		// meta color
 		if cmd, ok = nmd.FromContext(ctx); ok {
+			fmt.Println("cmd")
+			fmt.Println(cmd)
 			var color, ip, port string
 			if color, ok = cmd[nmd.Color].(string); ok {
 				gmd[nmd.Color] = []string{color}
@@ -133,10 +144,10 @@ func (c *Client) handle() grpc.UnaryClientInterceptor {
 			err = errors.WithMessage(ec, gst.Message())
 		}
 		if p.Addr != nil {
-			// addr = p.Addr.String()
+			addr = p.Addr.String()
 		}
-		if t != nil {
-			// t.SetTag(trace.String(trace.TagAddress, addr), trace.String(trace.TagComment, ""))
+		if span != nil {
+			span.SetTag("address", addr)
 		}
 		return
 	}

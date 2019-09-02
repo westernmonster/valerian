@@ -49,3 +49,14 @@
 [tree]
     host = "http://easyst.fkywk.com"
     platformID = "flywk"
+
+[mars]
+    address = "0.0.0.0:7003"
+	maxListen = 10
+    timeout="2s"
+[discovery]
+   nodes = ["discovery1:7171","discovery2:7171"]
+   key = "6a29f8ed87407c11"
+   secret = "d3c5a85f5b895a03735b5d20a273bc57"
+   env = "dev"
+   zone = "hz001"

@@ -31,9 +31,6 @@ func oldRouter(e *mars.Engine) {
 	group := e.Group("/x/v1/msm")
 	{
 		group.GET("/codes/2", codes)
-		group.POST("/conf/push", push)
-		group.POST("/conf/setToken", setToken)
-		group.GET("/codes/langs", codesLangs)
 	}
 }
 
@@ -41,13 +38,12 @@ func innerRouter(e *mars.Engine) {
 	group := e.Group("/x/internal/msm/v1")
 	{
 		group.GET("/codes/2", codes)
-		group.GET("/auth/scope", credential, scope)
 	}
 }
 
 // ping check server ok.
 func ping(c *mars.Context) {
-	if svr.Ping() != nil {
+	if svr.Ping(c) != nil {
 		log.Error("service ping error")
 		c.AbortWithStatus(http.StatusServiceUnavailable)
 	}

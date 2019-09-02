@@ -60,7 +60,7 @@ func newNode(c *conf.Config, addr string) (n *Node) {
 func (n *Node) Register(c context.Context, i *model.Instance) (err error) {
 	err = n.call(c, model.Register, i, n.registerURL, nil)
 	if err != nil {
-		log.Warnf("node be called(%s) register instance(%v) error(%v)", n.registerURL, i, err)
+		log.For(c).Warn(fmt.Sprintf("node be called(%s) register instance(%v) error(%v)", n.registerURL, i, err))
 	}
 	return
 }
@@ -69,7 +69,7 @@ func (n *Node) Register(c context.Context, i *model.Instance) (err error) {
 func (n *Node) Cancel(c context.Context, i *model.Instance) (err error) {
 	err = n.call(c, model.Cancel, i, n.cancelURL, nil)
 	if ec := ecode.Cause(err); ec.Code() == ecode.NothingFound.Code() {
-		log.Warnf("node be called(%s) instance(%v) already canceled", n.cancelURL, i)
+		log.For(c).Warn(fmt.Sprintf("node be called(%s) instance(%v) already canceled", n.cancelURL, i))
 	}
 	return
 }
@@ -81,13 +81,13 @@ func (n *Node) Renew(c context.Context, i *model.Instance) (err error) {
 	err = n.call(c, model.Renew, i, n.renewURL, &res)
 	ec := ecode.Cause(err)
 	if ec.Code() == ecode.ServerErr.Code() {
-		log.Warnf("node be called(%s) instance(%v) error(%v)", n.renewURL, i, err)
+		log.For(c).Warn(fmt.Sprintf("node be called(%s) instance(%v) error(%v)", n.renewURL, i, err))
 		n.status = model.NodeStatusLost
 		return
 	}
 	n.status = model.NodeStatusUP
 	if ec.Code() == ecode.NothingFound.Code() {
-		log.Warnf("node be called(%s) instance(%v) error(%v)", n.renewURL, i, err)
+		log.For(c).Warn(fmt.Sprintf("node be called(%s) instance(%v) error(%v)", n.renewURL, i, err))
 		err = n.call(c, model.Register, i, n.registerURL, nil)
 		return
 	}
@@ -137,11 +137,11 @@ func (n *Node) call(c context.Context, action model.Action, i *model.Instance, u
 		Data json.RawMessage `json:"data"`
 	}
 	if err = n.client.Post(c, uri, "", params, &res); err != nil {
-		log.Errorf("node be called(%s) instance(%v) error(%v)", uri, i, err)
+		log.For(c).Error(fmt.Sprintf("node be called(%s) instance(%v) error(%v)", uri, i, err))
 		return
 	}
 	if !ecode.Int(res.Code).Equal(ecode.OK) {
-		log.Errorf("node be called(%s) instance(%v) responce code(%v)", uri, i, res.Code)
+		log.For(c).Error(fmt.Sprintf("node be called(%s) instance(%v) responce code(%v)", uri, i, res.Code))
 		if err = ecode.Int(res.Code); err == ecode.Conflict {
 			json.Unmarshal([]byte(res.Data), data)
 		}
@@ -169,12 +169,12 @@ func (n *Node) setCall(c context.Context, arg *model.ArgSet, uri string) (err er
 		Code int `json:"code"`
 	}
 	if err = n.client.Post(c, uri, "", params, &res); err != nil {
-		log.Errorf("node be setCalled(%s) appid(%s) env (%s) error(%v)", uri, arg.Appid, arg.Env, err)
+		log.For(c).Error(fmt.Sprintf("node be setCalled(%s) appid(%s) env (%s) error(%v)", uri, arg.Appid, arg.Env, err))
 		return
 	}
 
 	if !ecode.Int(res.Code).Equal(ecode.OK) {
-		log.Errorf("node be setCalled(%s) appid(%s) env (%s) responce code(%v)", uri, arg.Appid, arg.Env, res.Code)
+		log.For(c).Error(fmt.Sprintf("node be setCalled(%s) appid(%s) env (%s) responce code(%v)", uri, arg.Appid, arg.Env, res.Code))
 	}
 	return
 }

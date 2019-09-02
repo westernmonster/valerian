@@ -25,6 +25,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/keepalive"
 	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/peer"
 	"google.golang.org/grpc/reflection"
 )
 
@@ -85,9 +86,9 @@ type Server struct {
 func (s *Server) handle() grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, args *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
 		var (
-			cancel func()
-			caller string
-			// addr       string
+			cancel     func()
+			caller     string
+			addr       string
 			color      string
 			remote     string
 			remotePort string
@@ -112,9 +113,9 @@ func (s *Server) handle() grpc.UnaryServerInterceptor {
 		defer cancel()
 
 		// get grpc metadata(trace & remote_ip & color)
-		var t opentracing.SpanContext
+		var parentCtx opentracing.SpanContext
 		if gmd, ok := metadata.FromIncomingContext(ctx); ok {
-			t, _ = tracing.Extract(opentracing.HTTPHeaders, gmd)
+			parentCtx, _ = tracing.Extract(opentracing.HTTPHeaders, gmd)
 			if strs, ok := gmd[nmd.Color]; ok {
 				color = strs[0]
 			}
@@ -127,18 +128,17 @@ func (s *Server) handle() grpc.UnaryServerInterceptor {
 			if remotePorts, ok := gmd[nmd.RemotePort]; ok {
 				remotePort = remotePorts[0]
 			}
-		}
-		if t == nil {
-			// t = trace.New(args.FullMethod)
-		} else {
-			// t.SetTitle(args.FullMethod)
+			fmt.Println("gmd")
+			fmt.Println(gmd)
 		}
 
-		// if pr, ok := peer.FromContext(ctx); ok {
-		// addr = pr.Addr.String()
-		// t.SetTag(trace.String(trace.TagAddress, addr))
-		// }
-		// defer t.Finish()
+		t := tracing.StartSpan(args.FullMethod, opentracing.ChildOf(parentCtx))
+
+		if pr, ok := peer.FromContext(ctx); ok {
+			addr = pr.Addr.String()
+			t.SetTag("address", addr)
+		}
+		defer t.Finish()
 
 		// use common meta data context instead of grpc context
 		ctx = nmd.NewContext(ctx, nmd.MD{
@@ -150,6 +150,7 @@ func (s *Server) handle() grpc.UnaryServerInterceptor {
 		})
 
 		resp, err = handler(ctx, req)
+
 		// monitor & logging
 		if caller == "" {
 			caller = _noUser

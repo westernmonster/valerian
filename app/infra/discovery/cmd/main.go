@@ -13,6 +13,7 @@ import (
 	"valerian/app/infra/discovery/service"
 	"valerian/library/conf/env"
 	"valerian/library/log"
+	"valerian/library/tracing"
 
 	flag "github.com/spf13/pflag"
 )
@@ -30,6 +31,8 @@ func main() {
 	log.Init(conf.Conf.Log)
 	defer log.Close()
 	log.Info("discovery start")
+
+	tracing.Init(nil)
 	// service init
 	rand.Seed(time.Now().UnixNano())
 	svc, cancel := service.New(conf.Conf)

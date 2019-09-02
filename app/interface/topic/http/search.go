@@ -26,7 +26,7 @@ import (
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /search/topics [post]
+// @Router /search/topics [get]
 func searchTopics(c *mars.Context) {
 	arg := new(model.TopicSearchParams)
 	if e := c.Bind(arg); e != nil {
@@ -132,11 +132,11 @@ func searchDiscusstions(c *mars.Context) {
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.AllSearchParams true "请求"
+// @Param kw query string true "关键词"
 // @Success 200 {object} model.AllSearchResult "结果"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /search/all [post]
+// @Router /search/all [get]
 func searchArticles(c *mars.Context) {
 }

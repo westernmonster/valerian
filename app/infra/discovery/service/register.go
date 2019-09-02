@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 
 	"valerian/app/infra/discovery/model"
 	"valerian/library/ecode"
@@ -31,7 +32,7 @@ func (s *Service) Renew(c context.Context, arg *model.ArgRenew) (i *model.Instan
 	i, ok := s.registry.Renew(arg)
 	if !ok {
 		err = ecode.NothingFound
-		log.Errorf("renew appid(%s) hostname(%s) zone(%s) env(%s) error", arg.Appid, arg.Hostname, arg.Zone, arg.Env)
+		log.For(c).Error(fmt.Sprintf("renew appid(%s) hostname(%s) zone(%s) env(%s) error", arg.Appid, arg.Hostname, arg.Zone, arg.Env))
 		return
 	}
 	if !arg.Replication {
@@ -52,7 +53,7 @@ func (s *Service) Cancel(c context.Context, arg *model.ArgCancel) (err error) {
 	i, ok := s.registry.Cancel(arg)
 	if !ok {
 		err = ecode.NothingFound
-		log.Errorf("cancel appid(%s) hostname(%s) error", arg.Appid, arg.Hostname)
+		log.For(c).Error(fmt.Sprintf("cancel appid(%s) hostname(%s) error", arg.Appid, arg.Hostname))
 		return
 	}
 	if !arg.Replication {
@@ -72,7 +73,7 @@ func (s *Service) Fetchs(c context.Context, arg *model.ArgFetchs) (is map[string
 	for _, appid := range arg.Appid {
 		i, err := s.registry.Fetch(arg.Zone, arg.Env, appid, 0, arg.Status)
 		if err != nil {
-			log.Errorf("Fetchs fetch appid(%s) err", err)
+			log.For(c).Error(fmt.Sprintf("Fetchs fetch appid(%s) err", err))
 			continue
 		}
 		is[appid] = i

@@ -94,6 +94,8 @@ func Init(c *Config) opentracing.Tracer {
 		}
 	}
 
+	fmt.Println(_traceDSN)
+
 	cfg := config.Configuration{
 		Sampler: &config.SamplerConfig{
 			Type:  "const",

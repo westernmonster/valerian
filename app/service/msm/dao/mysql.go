@@ -11,7 +11,27 @@ import (
 )
 
 // Codes get all codes.
-func (d *Dao) Codes(c context.Context) (codes map[int]string, lcode *model.Code, err error) {
+func (d *Dao) Codes(c context.Context, node sqalx.Node) (codes map[int]string, lcode *model.ErrCode, err error) {
+	items := make([]*model.Code, 0)
+	sqlSelect := "SELECT a.* FROM codes a WHERE a.deleted=0 ORDER BY a.id "
+
+	if err = node.SelectContext(c, &items, sqlSelect); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetCodes err(%+v)", err))
+		return
+	}
+
+	var tmp int64
+	lcode = &model.ErrCode{}
+	codes = make(map[int]string)
+	for _, v := range items {
+		codes[v.Code] = v.Message
+		if v.CreatedAt > tmp {
+			lcode.Code = v.Code
+			lcode.Ver = v.CreatedAt
+			lcode.Msg = v.Message
+			tmp = v.CreatedAt
+		}
+	}
 	return
 }
 
@@ -27,24 +47,7 @@ func (d *Dao) Diff(c context.Context, node sqalx.Node, ver int64) (vers *list.Li
 
 	vers = list.New()
 	for _, v := range items {
-		vers.PushBack(v)
-	}
-	return
-}
-
-// CodesLang get all codes.
-func (d *Dao) CodesLang(c context.Context, node sqalx.Node) (codes map[int]map[string]string, lcode *model.CodeLangs, err error) {
-	items := make([]*model.Code, 0)
-	sqlSelect := "SELECT a.* FROM codes a WHERE a.deleted=0 ORDER BY a.id DESC "
-
-	if err = node.SelectContext(c, &items, sqlSelect); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.GetCodes err(%+v)", err))
-		return
-	}
-
-	codes = make(map[int]map[string]string)
-	for _, v := range items {
-		// codes[v.Code]
+		vers.PushBack(&model.ErrCode{Ver: v.CreatedAt, Code: v.Code, Msg: v.Message})
 	}
 	return
 }
@@ -73,10 +76,6 @@ func (p *Dao) GetCodesByCond(c context.Context, node sqalx.Node, cond map[string
 	}
 	if val, ok := cond["code"]; ok {
 		clause += " AND a.code =?"
-		condition = append(condition, val)
-	}
-	if val, ok := cond["locale"]; ok {
-		clause += " AND a.locale =?"
 		condition = append(condition, val)
 	}
 	if val, ok := cond["message"]; ok {
@@ -124,10 +123,6 @@ func (p *Dao) GetCodeByCond(c context.Context, node sqalx.Node, cond map[string]
 		clause += " AND a.code =?"
 		condition = append(condition, val)
 	}
-	if val, ok := cond["locale"]; ok {
-		clause += " AND a.locale =?"
-		condition = append(condition, val)
-	}
 	if val, ok := cond["message"]; ok {
 		clause += " AND a.message =?"
 		condition = append(condition, val)
@@ -150,9 +145,9 @@ func (p *Dao) GetCodeByCond(c context.Context, node sqalx.Node, cond map[string]
 
 // Insert insert a new record
 func (p *Dao) AddCode(c context.Context, node sqalx.Node, item *model.Code) (err error) {
-	sqlInsert := "INSERT INTO codes( id,code,locale,message,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?)"
+	sqlInsert := "INSERT INTO codes( id,code,message,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?)"
 
-	if _, err = node.ExecContext(c, sqlInsert, item.ID, item.Code, item.Locale, item.Message, item.Deleted, item.CreatedAt, item.UpdatedAt); err != nil {
+	if _, err = node.ExecContext(c, sqlInsert, item.ID, item.Code, item.Message, item.Deleted, item.CreatedAt, item.UpdatedAt); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.AddCodes err(%+v), item(%+v)", err, item))
 		return
 	}
@@ -162,9 +157,9 @@ func (p *Dao) AddCode(c context.Context, node sqalx.Node, item *model.Code) (err
 
 // Update update a exist record
 func (p *Dao) UpdateCode(c context.Context, node sqalx.Node, item *model.Code) (err error) {
-	sqlUpdate := "UPDATE codes SET code=?,locale=?,message=?,updated_at=? WHERE id=?"
+	sqlUpdate := "UPDATE codes SET code=?,message=?,updated_at=? WHERE id=?"
 
-	_, err = node.ExecContext(c, sqlUpdate, item.Code, item.Locale, item.Message, item.UpdatedAt, item.ID)
+	_, err = node.ExecContext(c, sqlUpdate, item.Code, item.Message, item.UpdatedAt, item.ID)
 	if err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.UpdateCodes err(%+v), item(%+v)", err, item))
 		return

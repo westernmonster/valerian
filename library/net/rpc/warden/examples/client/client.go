@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"valerian/library/ecode"
+	"valerian/library/net/metadata"
 	"valerian/library/net/rpc/warden"
 	pb "valerian/library/net/rpc/warden/proto/testproto"
 
@@ -27,7 +28,10 @@ func main() {
 }
 
 func normalCall(cli pb.GreeterClient) {
-	reply, err := cli.SayHello(context.Background(), &pb.HelloRequest{Name: "tom", Age: 23})
+	ctx := metadata.NewContext(context.Background(), metadata.MD{
+		metadata.Color: "red",
+	})
+	reply, err := cli.SayHello(ctx, &pb.HelloRequest{Name: "tom", Age: 23})
 	if err != nil {
 		panic(err)
 	}

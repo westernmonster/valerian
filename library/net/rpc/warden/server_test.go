@@ -19,7 +19,7 @@ import (
 	nmd "valerian/library/net/metadata"
 	"valerian/library/net/netutil/breaker"
 	pb "valerian/library/net/rpc/warden/proto/testproto"
-	xtrace "valerian/library/net/trace"
+	xtrace "valerian/library/net/tracing"
 	xtime "valerian/library/time"
 
 	"github.com/golang/protobuf/ptypes"

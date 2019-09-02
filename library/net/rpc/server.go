@@ -25,7 +25,10 @@ import (
 	"valerian/library/net/metadata"
 	"valerian/library/net/rpc/context"
 	"valerian/library/net/rpc/interceptor"
+	"valerian/library/tracing"
 
+	"github.com/opentracing/opentracing-go"
+	"github.com/opentracing/opentracing-go/ext"
 	pkgerr "github.com/pkg/errors"
 )
 
@@ -133,6 +136,7 @@ type Request struct {
 	Timeout       time.Duration // timeout
 	ServiceMethod string        // format: "Service.Method"
 	Seq           uint64        // sequence number chosen by client
+	Trace         TraceInfo
 
 	ctx context.Context
 }
@@ -364,7 +368,7 @@ func (s *service) call(c context.Context, server *Server, mtype *methodType, arg
 		cv           reflect.Value
 		returnValues []reflect.Value
 	)
-	// t, _ := tracing.FromContext(c)
+	t := opentracing.SpanFromContext(c)
 	defer func() {
 		if err1 := recover(); err1 != nil {
 			err = err1.(error)
@@ -377,9 +381,9 @@ func (s *service) call(c context.Context, server *Server, mtype *methodType, arg
 			if server.Interceptor != nil {
 				server.Interceptor.Stat(c, argv.Interface(), err)
 			}
-			// if t != nil {
-			// 	t.Finish(&err)
-			// }
+			if t != nil {
+				t.Finish()
+			}
 		}
 	}()
 	// rate limit
@@ -404,9 +408,9 @@ func (s *service) call(c context.Context, server *Server, mtype *methodType, arg
 	if server.Interceptor != nil {
 		server.Interceptor.Stat(c, argv.Interface(), err)
 	}
-	// if t != nil {
-	// 	t.Finish(&err)
-	// }
+	if t != nil {
+		t.Finish()
+	}
 }
 
 type serverCodec struct {
@@ -547,28 +551,28 @@ func (server *Server) readRequest(codec *serverCodec) (service *service, mtype *
 }
 
 func (server *Server) readRequestHeader(codec *serverCodec) (service *service, mtype *methodType, err error) {
-	// var t trace.Trace
 	req := &codec.req
 	if err = codec.readRequestHeader(); err != nil {
 		return
 	}
-	// if t, _ = trace.Extract(nil, &req.Trace); t == nil {
-	// 	t = trace.New(req.ServiceMethod)
-	// }
-	// t.SetTitle(req.ServiceMethod)
-	// t.SetTag(trace.String(trace.TagAddress, codec.addr.String()))
+	var span opentracing.Span
+	if wireCtx, _ := tracing.Extract(nil, &req.Trace); wireCtx != nil {
+		span = tracing.StartSpan(req.ServiceMethod, ext.RPCServerOption(wireCtx))
+		span.SetTag("address", codec.addr.String())
+	}
+
 	md := metadata.MD{
-		// metadata.Trace:    t,
+		metadata.Trace:    span,
 		metadata.Color:    req.Color,
 		metadata.RemoteIP: req.RemoteIP,
-		// metadata.Caller:   req.Trace.Caller,
+		metadata.Caller:   req.Trace.Caller,
 	}
 	// FIXME(maojian) Timeout?
 	c1 := metadata.NewContext(ctx.Background(), md)
 
 	caller := codec.auth.User
 	if caller == "" {
-		// caller = req.Trace.Caller
+		caller = req.Trace.Caller
 	}
 
 	// NOTE ctx not nil then keepreading
