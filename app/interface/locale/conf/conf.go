@@ -7,6 +7,7 @@ import (
 	"valerian/library/cache/memcache"
 	"valerian/library/conf"
 	"valerian/library/database/sqalx"
+	ecode "valerian/library/ecode/tip"
 	"valerian/library/log"
 	"valerian/library/naming/discovery"
 	"valerian/library/net/http/mars"
@@ -25,6 +26,7 @@ var (
 type Config struct {
 	Log       *log.Config
 	Tracer    *tracing.Config
+	Ecode     *ecode.Config
 	DB        *DB
 	Memcache  *Memcache
 	Mars      *mars.ServerConfig

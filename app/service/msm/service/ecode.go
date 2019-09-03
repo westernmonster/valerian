@@ -81,7 +81,7 @@ func (s *Service) all() (err error) {
 		ncodes *model.ErrCodes
 		code   map[int]string
 	)
-	if code, lcode, err = s.d.Codes(context.Background(), s.d.DB()); err != nil {
+	if code, lcode, err = s.d.Codes(context.Background(), s.d.ApmDB()); err != nil {
 		return
 	}
 	if ncodes, err = s.newCodes(code, lcode.Ver); err != nil {
@@ -110,7 +110,7 @@ func (s *Service) diff() (err error) {
 		ocodes = s.codes.Load().(*model.ErrCodes)
 		code   = copy(ocodes.Code)
 	)
-	if vers, err = s.d.Diff(context.Background(), s.d.DB(), ocodes.Ver); err != nil {
+	if vers, err = s.d.Diff(context.Background(), s.d.ApmDB(), ocodes.Ver); err != nil {
 		return
 	} else if vers.Len() == 0 {
 		return

@@ -20,13 +20,13 @@ import (
 const (
 	_codeOk          = 0
 	_codeNotModified = -304
-	_checkURL        = "http://%s/x/v1/msm/codes/2"
+	_checkURL        = "http://%s//x/internal/msm/codes"
 )
 
 var (
 	defualtEcodes = &ecodes{}
 	defaultConfig = &Config{
-		Domain: "api.flywk.com",
+		Domain: "uat.flywk.com",
 		All:    xtime.Duration(time.Hour),
 		Diff:   xtime.Duration(time.Minute * 5),
 		ClientConfig: &xhttp.ClientConfig{

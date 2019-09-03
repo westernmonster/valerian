@@ -1,24 +1,29 @@
 package http
 
 import (
+	"strconv"
 	"valerian/app/service/msm/model"
+	"valerian/library/ecode"
 	"valerian/library/net/http/mars"
 )
 
 func codes(c *mars.Context) {
 	var (
-		err   error
-		code  *model.ErrCodes
-		param = new(struct {
-			Ver int64 `form:"ver"`
-		})
+		err  error
+		code *model.ErrCodes
+		ver  int64
 	)
-	if err = c.Bind(param); err != nil {
+
+	verStr := c.Request.Form.Get("ver")
+	if ver, err = strconv.ParseInt(verStr, 10, 64); err != nil {
+		c.JSON(nil, ecode.RequestErr)
 		return
 	}
-	if code, err = svr.Codes(c, param.Ver); err != nil {
+
+	if code, err = svr.Codes(c, ver); err != nil {
 		c.JSON(nil, err)
 		return
 	}
+
 	c.JSON(code, nil)
 }

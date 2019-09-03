@@ -29,7 +29,12 @@ func Init(c *conf.Config, s *service.Service) {
 func route(e *mars.Engine) {
 	e.Ping(ping)
 	e.Register(register)
-	e.GET("/", locales)
+	e.GET("/api/v1/list/locales", locales)
+	e.GET("/api/v1/list/locales/test", test)
+}
+
+func test(c *mars.Context) {
+	c.JSON(nil, ecode.InvalidBirthMonth)
 }
 
 // ping check server ok.

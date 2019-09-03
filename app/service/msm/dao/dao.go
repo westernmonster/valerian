@@ -6,12 +6,10 @@ import (
 	"valerian/app/service/msm/conf"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
-	"valerian/library/net/http/mars"
 )
 
 // Dao dao.
 type Dao struct {
-	client     *mars.Client
 	db         sqalx.Node
 	authDB     sqalx.Node
 	apmDB      sqalx.Node
@@ -25,7 +23,6 @@ func New(c *conf.Config) *Dao {
 		db:         sqalx.NewMySQL(c.DB.Main),
 		authDB:     sqalx.NewMySQL(c.DB.Auth),
 		apmDB:      sqalx.NewMySQL(c.DB.Apm),
-		client:     mars.NewClient(c.HTTPClient),
 		treeHost:   c.Tree.Host,
 		platformID: c.Tree.PlatformID,
 	}
@@ -49,6 +46,10 @@ func (d *Dao) Close() {
 
 func (d *Dao) DB() sqalx.Node {
 	return d.db
+}
+
+func (d *Dao) ApmDB() sqalx.Node {
+	return d.apmDB
 }
 
 // Ping check db and mc health.

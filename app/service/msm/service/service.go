@@ -31,6 +31,7 @@ type Service struct {
 		Ping(c context.Context) (err error)
 		Close()
 		DB() sqalx.Node
+		ApmDB() sqalx.Node
 	}
 
 	// ecode
