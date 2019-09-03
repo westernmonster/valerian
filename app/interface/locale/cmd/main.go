@@ -40,11 +40,11 @@ func main() {
 	signal.Notify(c, syscall.SIGHUP, syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT)
 	for {
 		s := <-c
-		log.Infof("app-tag get a signal %s", s.String())
+		log.Infof("app-locale get a signal %s", s.String())
 		switch s {
 		case syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT:
 			svc.Close()
-			log.Info("app-tag exit")
+			log.Info("app-locale exit")
 			return
 		case syscall.SIGHUP:
 		// TODO reload

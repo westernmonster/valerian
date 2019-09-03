@@ -5,9 +5,12 @@ import (
 	"flag"
 	"valerian/library/cache/memcache"
 	"valerian/library/conf"
+	"valerian/library/database/sqalx"
 	"valerian/library/log"
+	"valerian/library/naming/discovery"
 	"valerian/library/net/http/mars"
 	"valerian/library/net/rpc/warden"
+	xtime "valerian/library/time"
 	"valerian/library/tracing"
 
 	"github.com/BurntSushi/toml"
@@ -21,31 +24,28 @@ var (
 )
 
 type Config struct {
-	Log        *log.Config
-	Mars       *mars.ServerConfig
-	HTTPClient *mars.ClientConfig
-	Tracer     *tracing.Config
-
-	// IdentifyConfig
-	Identify *IdentifyConfig
+	Log    *log.Config
+	Mars   *mars.ServerConfig
+	Tracer *tracing.Config
+	DB     *DB
+	AuthMC *MC
 
 	// grpc server
 	WardenServer *warden.ServerConfig
 
-	Memcache *memcache.Config
-	// MemcacheLoginLog
-	MemcacheLoginLog *memcache.Config
+	Discovery *discovery.Config
 }
 
-// IdentifyConfig identify config
-type IdentifyConfig struct {
-	AuthHost string
-	// LoginLogConsumerSize goroutine size
-	LoginLogConsumerSize int
-	// LoginCacheExpires login check cache expires
-	LoginCacheExpires int32
-	// IntranetCIDR
-	IntranetCIDR []string
+// MC .
+type MC struct {
+	*memcache.Config
+	Expire xtime.Duration
+}
+
+// DB db config.
+type DB struct {
+	Main *sqalx.Config
+	Auth *sqalx.Config
 }
 
 func local() (err error) {

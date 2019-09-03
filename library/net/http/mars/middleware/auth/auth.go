@@ -2,45 +2,79 @@ package auth
 
 import (
 	"strings"
-	"valerian/app/conf"
-	"valerian/app/interface/passport-auth/service"
+	idtv1 "valerian/app/service/identify/api/grpc"
+	"valerian/app/service/msm/service"
 	"valerian/library/ecode"
 	"valerian/library/net/http/mars"
 	"valerian/library/net/metadata"
+	"valerian/library/net/rpc/warden"
+
+	"github.com/pkg/errors"
 )
 
+// Config is the identify config model.
+type Config struct {
+	Identify *warden.ClientConfig
+	// csrf switch.
+	DisableCSRF bool
+}
+
+// Auth is the authorization middleware
+type Auth struct {
+	idtv1.IdentifyClient
+
+	conf *Config
+}
+
+var _defaultConf = &Config{
+	Identify:    nil,
+	DisableCSRF: false,
+}
+
 type authFunc func(*mars.Context) (int64, error)
+
+// New is used to create an authorization middleware
+func New(conf *Config) *Auth {
+	if conf == nil {
+		conf = _defaultConf
+	}
+	identify, err := idtv1.NewClient(conf.Identify)
+	if err != nil {
+		panic(errors.WithMessage(err, "Failed to dial identify service"))
+	}
+	auth := &Auth{
+		IdentifyClient: identify,
+		conf:           conf,
+	}
+	return auth
+}
 
 var (
 	srv *service.Service
 )
 
-func Init(c *conf.Config) {
-	srv = service.New(c)
-}
-
-func User(c *mars.Context) {
+func (a *Auth) User(c *mars.Context) {
 	req := c.Request
 	cookie, _ := req.Cookie("token")
 	if cookie != nil {
-		UserWeb(c)
+		a.UserWeb(c)
 	} else {
-		UserMobile(c)
+		a.UserMobile(c)
 	}
 }
 
 // UserWeb is used to mark path as web access required.
-func UserWeb(ctx *mars.Context) {
-	midAuth(ctx, AuthCookie)
+func (a *Auth) UserWeb(ctx *mars.Context) {
+	a.midAuth(ctx, a.AuthCookie)
 }
 
 // UserMobile is used to mark path as mobile access required.
-func UserMobile(ctx *mars.Context) {
-	midAuth(ctx, AuthToken)
+func (a *Auth) UserMobile(ctx *mars.Context) {
+	a.midAuth(ctx, a.AuthToken)
 }
 
 // AuthToken is used to authorize request by token
-func AuthToken(ctx *mars.Context) (accountID int64, err error) {
+func (a *Auth) AuthToken(ctx *mars.Context) (accountID int64, err error) {
 	req := ctx.Request
 
 	tokenStr := ""
@@ -52,9 +86,9 @@ func AuthToken(ctx *mars.Context) (accountID int64, err error) {
 		return 0, ecode.NoLogin
 	}
 
-	reply, err := srv.Auth(ctx, tokenStr)
+	reply, err := a.GetTokenInfo(ctx, &idtv1.TokenReq{Token: tokenStr})
 	if err != nil {
-		return 0, ecode.NoLogin
+		return 0, err
 	}
 
 	if !reply.Login {
@@ -65,15 +99,15 @@ func AuthToken(ctx *mars.Context) (accountID int64, err error) {
 }
 
 // AuthCookie is used to authorize request by cookie
-func AuthCookie(ctx *mars.Context) (int64, error) {
+func (a *Auth) AuthCookie(ctx *mars.Context) (int64, error) {
 	cookie, err := ctx.Request.Cookie("token")
 	if err != nil {
 		return 0, ecode.NoLogin
 	}
 
-	reply, err := srv.Auth(ctx, cookie.Value)
+	reply, err := a.GetTokenInfo(ctx, &idtv1.TokenReq{Token: cookie.Value})
 	if err != nil {
-		return 0, ecode.NoLogin
+		return 0, err
 	}
 
 	if !reply.Login {
@@ -83,7 +117,7 @@ func AuthCookie(ctx *mars.Context) (int64, error) {
 	return reply.Aid, nil
 }
 
-func midAuth(ctx *mars.Context, auth authFunc) {
+func (a *Auth) midAuth(ctx *mars.Context, auth authFunc) {
 	accountID, err := auth(ctx)
 	if err != nil {
 		ctx.JSON(nil, ecode.Unauthorized)

@@ -1,0 +1,27 @@
+syntax = "proto3";
+package passport.service.identity;
+option go_package = "api";
+option (gogoproto.goproto_stringer_all) = false;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+message AuthReply {
+    // if cookie or token in life time, login is true
+    // else login is false and mid csrf expires is empty
+    bool login = 1 [(gogoproto.jsontag) = "login"];
+    // user identify id
+    int64 aid = 2 [(gogoproto.jsontag) = "aid"];
+    // expiration date
+    // unix timestamp
+    int64 expires = 4 [(gogoproto.jsontag) = "expires"];
+}
+
+message TokenReq {
+    // user access token
+    string token = 1 [(gogoproto.jsontag) = "token"];
+}
+
+
+service Identify {
+    rpc  GetTokenInfo(TokenReq) returns (AuthReply);
+}

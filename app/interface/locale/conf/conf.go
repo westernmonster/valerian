@@ -23,7 +23,6 @@ var (
 )
 
 type Config struct {
-	DC        *DC
 	Log       *log.Config
 	Tracer    *tracing.Config
 	DB        *DB
@@ -48,11 +47,6 @@ type Memcache struct {
 type MC struct {
 	*memcache.Config
 	Expire xtime.Duration
-}
-
-type Aliyun struct {
-	AccessKeyID     string
-	AccessKeySecret string
 }
 
 // DC data center.

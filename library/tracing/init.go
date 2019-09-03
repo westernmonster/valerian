@@ -99,7 +99,8 @@ func Init(c *Config) opentracing.Tracer {
 	cfg := config.Configuration{
 		Sampler: &config.SamplerConfig{
 			Type:  "const",
-			Param: isUATEnv(),
+			Param: 1,
+			// Param: isUATEnv(),
 		},
 		Reporter: &config.ReporterConfig{
 			LogSpans:            true,

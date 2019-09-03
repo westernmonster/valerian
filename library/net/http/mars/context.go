@@ -185,6 +185,10 @@ func (c *Context) JSON(data interface{}, err error) {
 		code = http.StatusInternalServerError
 	}
 
+	if bcode.Code() == 503 {
+		code = http.StatusServiceUnavailable
+	}
+
 	if bcode.Code() == 400 {
 		code = http.StatusBadRequest
 	}
