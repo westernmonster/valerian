@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"valerian/app/conf"
+	"valerian/app/interface/valcode/conf"
 	"valerian/app/interface/valcode/dao"
 	"valerian/library/email"
 	"valerian/library/log"

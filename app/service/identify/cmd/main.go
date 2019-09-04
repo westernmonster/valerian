@@ -7,11 +7,13 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+
 	"valerian/app/service/identify/conf"
 	"valerian/app/service/identify/server/grpc"
 	"valerian/app/service/identify/server/http"
 	"valerian/app/service/identify/service"
 	"valerian/library/conf/env"
+	ecode "valerian/library/ecode/tip"
 	"valerian/library/log"
 	"valerian/library/naming"
 	"valerian/library/naming/discovery"
@@ -24,6 +26,9 @@ func main() {
 		log.Errorf("conf.Init() error(%v)", err)
 		panic(err)
 	}
+
+	// init ecode
+	ecode.Init(nil)
 	// init log
 	log.Init(conf.Conf.Log)
 	defer log.Close()
