@@ -78,6 +78,7 @@ func Trace(tr opentracing.Tracer, options ...MWOption) HandlerFunc {
 		ext.HTTPMethod.Set(sp, c.Request.Method)
 		ext.HTTPUrl.Set(sp, opts.urlTagFunc(c.Request.URL))
 		ext.SpanKind.Set(sp, "server")
+		sp.SetTag("http.path", c.Request.URL.Path)
 		sp.SetTag("caller", metadata.String(c.Context, metadata.Caller))
 		opts.spanObserver(sp, c.Request)
 

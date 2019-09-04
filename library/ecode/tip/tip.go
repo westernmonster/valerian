@@ -18,9 +18,9 @@ import (
 )
 
 const (
-	_codeOk          = 0
-	_codeNotModified = -304
-	_checkURL        = "http://%s//x/internal/msm/codes"
+	_codeOk          = 200
+	_codeNotModified = 304
+	_checkURL        = "https://%s/x/internal/msm/codes"
 )
 
 var (
@@ -61,7 +61,7 @@ type ecodes struct {
 type res struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
-	Data    *data  `json:"data"`
+	Result  *data  `json:"result"`
 }
 
 type data struct {
@@ -135,7 +135,7 @@ func (e *ecodes) update(ver int64) (lver int64, err error) {
 	}
 	switch res.Code {
 	case _codeOk:
-		if res.Data == nil {
+		if res.Result == nil {
 			err = fmt.Errorf("code get() response error result: %v", res)
 			return
 		}
@@ -145,11 +145,11 @@ func (e *ecodes) update(ver int64) (lver int64, err error) {
 		err = cmcd.Int(res.Code)
 		return
 	}
-	if bytes, err = json.Marshal(res.Data.Code); err != nil {
+	if bytes, err = json.Marshal(res.Result.Code); err != nil {
 		return
 	}
 	mb := md5.Sum(bytes)
-	if res.Data.MD5 != hex.EncodeToString(mb[:]) {
+	if res.Result.MD5 != hex.EncodeToString(mb[:]) {
 		err = fmt.Errorf("get codes fail,error md5")
 		return
 	}
@@ -158,12 +158,12 @@ func (e *ecodes) update(ver int64) (lver int64, err error) {
 		return
 	}
 	nCodes := copy(oCodes)
-	for k, v := range res.Data.Code {
+	for k, v := range res.Result.Code {
 		nCodes[k] = v
 	}
 	cmcd.Register(nCodes)
 	e.codes.Store(nCodes)
-	return res.Data.Ver, nil
+	return res.Result.Ver, nil
 }
 
 func copy(src map[int]string) (dst map[int]string) {
