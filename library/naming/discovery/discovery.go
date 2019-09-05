@@ -581,6 +581,7 @@ func (d *Discovery) serverproc() {
 		}
 		apps, err := d.polls(ctx, d.pickNode())
 		if err != nil {
+			log.Errorf("discovery: polls return error %+v", err)
 			d.switchNode()
 			if ctx.Err() == context.Canceled {
 				ctx = nil
@@ -600,7 +601,7 @@ func (d *Discovery) nodes() (nodes []string) {
 		Code int `json:"code"`
 		Data []struct {
 			Addr string `json:"addr"`
-		} `json:"data"`
+		} `json:"result"`
 	})
 	uri := fmt.Sprintf(_nodesURL, d.pickNode())
 	if err := d.httpClient.Get(d.ctx, uri, "", nil, res); err != nil {
@@ -649,7 +650,7 @@ func (d *Discovery) polls(ctx context.Context, host string) (apps map[string]app
 	uri := fmt.Sprintf(_pollURL, host)
 	res := new(struct {
 		Code int                `json:"code"`
-		Data map[string]appData `json:"data"`
+		Data map[string]appData `json:"result"`
 	})
 	params := url.Values{}
 	params.Set("env", conf.Env)

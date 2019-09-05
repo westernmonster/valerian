@@ -281,6 +281,8 @@ func (c *Client) Dial(ctx context.Context, target string, opt ...grpc.DialOption
 		}
 		target = u.String()
 	}
+	fmt.Println(target)
+	fmt.Printf("%#v\n", c.opt)
 	if conn, err = grpc.DialContext(ctx, target, c.opt...); err != nil {
 		fmt.Fprintf(os.Stderr, "warden client: dial %s error %v!", target, err)
 	}

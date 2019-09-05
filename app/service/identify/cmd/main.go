@@ -18,6 +18,7 @@ import (
 	"valerian/library/naming"
 	"valerian/library/naming/discovery"
 	xip "valerian/library/net/ip"
+	"valerian/library/tracing"
 )
 
 func main() {
@@ -32,6 +33,9 @@ func main() {
 	// init log
 	log.Init(conf.Conf.Log)
 	defer log.Close()
+
+	tracing.Init(nil)
+
 	// service init
 	srv := service.New(conf.Conf)
 	http.Init(conf.Conf, srv)
@@ -53,7 +57,7 @@ func main() {
 			Hostname: hn,
 			Addrs: []string{
 				"http://" + ip + ":" + env.HTTPPort,
-				"gorpc://" + ip + ":" + env.GORPCPort,
+				"grpc://" + ip + ":" + env.GORPCPort,
 			},
 		}
 

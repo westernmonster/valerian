@@ -2,7 +2,8 @@ package service
 
 import (
 	"context"
-	"valerian/app/conf"
+
+	"valerian/app/interface/account/conf"
 	"valerian/app/interface/account/dao"
 	"valerian/app/interface/account/model"
 	"valerian/library/database/sqalx"

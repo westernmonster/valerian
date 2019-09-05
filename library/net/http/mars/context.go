@@ -197,10 +197,6 @@ func (c *Context) JSON(data interface{}, err error) {
 		code = http.StatusUnauthorized
 	}
 
-	if bcode.Code() == 304 {
-		code = http.StatusNotModified
-	}
-
 	writeStatusCode(c.Writer, bcode.Code())
 	success := false
 	if code != http.StatusOK {
