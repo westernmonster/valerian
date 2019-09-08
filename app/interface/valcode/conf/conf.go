@@ -93,7 +93,7 @@ func load() (err error) {
 }
 
 func init() {
-	flag.StringVar(&confPath, "config", "", "default config path")
+	flag.StringVar(&confPath, "conf", "", "default config path")
 }
 
 // Init int config

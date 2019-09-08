@@ -60,7 +60,7 @@ type HTTPServers struct {
 
 func init() {
 	// flag.StringVar(&confPath, "conf", "discovery-example.toml", "config path")
-	flag.StringVar(&confPath, "config", "", "config path")
+	flag.StringVar(&confPath, "conf", "", "config path")
 	flag.StringArrayVar(&nodeFlags, "join-node", []string{}, "join nodes")
 	flag.StringToStringVar(&zoneFlags, "join-zone", map[string]string{}, "join zone")
 }

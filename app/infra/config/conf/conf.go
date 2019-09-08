@@ -44,7 +44,7 @@ type Config struct {
 }
 
 func init() {
-	flag.StringVar(&confPath, "config", "./config-service-example.toml", "config path")
+	flag.StringVar(&confPath, "conf", "./config-service-example.toml", "config path")
 }
 
 // Init init.

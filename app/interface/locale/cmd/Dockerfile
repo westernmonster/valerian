@@ -14,5 +14,5 @@ COPY ./cmd /go/bin/cmd
 USER appuser
 
 # Run the hello binary.
-CMD ["/go/bin/cmd", "--config","/go/bin/config/config.toml"]
+CMD ["/go/bin/cmd", "--conf","/go/bin/config/config.toml"]
 

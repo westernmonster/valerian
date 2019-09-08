@@ -61,7 +61,7 @@ type DC struct {
 }
 
 func init() {
-	flag.StringVar(&confPath, "config", "", "default config path")
+	flag.StringVar(&confPath, "conf", "", "default config path")
 }
 
 // Init init conf

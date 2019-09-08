@@ -1,10 +1,11 @@
 package http
 
 import (
-	"valerian/app/conf"
+	"valerian/app/interface/editor/conf"
 	"valerian/app/interface/editor/model"
 	"valerian/app/interface/editor/service"
 	"valerian/library/ecode"
+	"valerian/library/log"
 	"valerian/library/net/http/mars"
 )
 
@@ -13,10 +14,16 @@ var (
 )
 
 // Init init
-func Init(c *conf.Config, engine *mars.Engine) {
-	srv = service.New(c)
+func Init(c *conf.Config, s *service.Service) {
+	srv = s
 
+	engine := mars.DefaultServer(c.Mars)
 	route(engine)
+
+	if err := engine.Start(); err != nil {
+		log.Errorf("engine.Start() error(%v)", err)
+		panic(err)
+	}
 }
 
 func route(e *mars.Engine) {
