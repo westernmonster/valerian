@@ -21,6 +21,7 @@ import (
 	"valerian/library/net/rpc/warden/status"
 
 	"github.com/opentracing/opentracing-go"
+	"github.com/opentracing/opentracing-go/ext"
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/keepalive"
@@ -85,6 +86,8 @@ type Server struct {
 // handle return a new unary server interceptor for OpenTracing\Logging\LinkTimeout.
 func (s *Server) handle() grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, args *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
+		fmt.Println("incoming request")
+		fmt.Printf("req: %#v\n", req)
 		var (
 			cancel     func()
 			caller     string
@@ -115,7 +118,10 @@ func (s *Server) handle() grpc.UnaryServerInterceptor {
 		// get grpc metadata(trace & remote_ip & color)
 		var parentCtx opentracing.SpanContext
 		if gmd, ok := metadata.FromIncomingContext(ctx); ok {
-			parentCtx, _ = tracing.Extract(opentracing.HTTPHeaders, gmd)
+			if parentCtx, err = tracing.Extract(opentracing.TextMap, metadataReaderWriter{gmd}); err != nil {
+				log.Errorf("failed to extract: %v", err)
+				return
+			}
 			if strs, ok := gmd[nmd.Color]; ok {
 				color = strs[0]
 			}
@@ -132,13 +138,15 @@ func (s *Server) handle() grpc.UnaryServerInterceptor {
 			fmt.Println(gmd)
 		}
 
-		t := tracing.StartSpan(args.FullMethod, opentracing.ChildOf(parentCtx))
+		t := tracing.StartSpan(args.FullMethod, ext.RPCServerOption(parentCtx), opentracing.Tag{Key: string(ext.Component), Value: "gRPC"})
+		defer t.Finish()
 
 		if pr, ok := peer.FromContext(ctx); ok {
 			addr = pr.Addr.String()
 			t.SetTag("address", addr)
 		}
-		defer t.Finish()
+
+		ctx = opentracing.ContextWithSpan(ctx, t)
 
 		// use common meta data context instead of grpc context
 		ctx = nmd.NewContext(ctx, nmd.MD{

@@ -1,10 +1,11 @@
 package main
 
 import (
-	"flag"
 	"os"
 	"os/signal"
 	"syscall"
+
+	flag "github.com/spf13/pflag"
 
 	"valerian/app/interface/passport-login/conf"
 	"valerian/app/interface/passport-login/http"

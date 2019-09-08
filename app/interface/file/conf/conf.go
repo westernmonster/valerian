@@ -2,13 +2,16 @@ package conf
 
 import (
 	"errors"
-	"flag"
+
+	flag "github.com/spf13/pflag"
 
 	"valerian/library/cache/memcache"
 	"valerian/library/conf"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
+	"valerian/library/naming/discovery"
 	"valerian/library/net/http/mars"
+	"valerian/library/net/http/mars/middleware/auth"
 	xtime "valerian/library/time"
 	"valerian/library/tracing"
 
@@ -22,20 +25,21 @@ var (
 )
 
 type Config struct {
-	DC         *DC
-	Log        *log.Config
-	HTTPServer *mars.ServerConfig
-	Tracer     *tracing.Config
-	DB         *DB
-	Memcache   *Memcache
-	Aliyun     *Aliyun
-	// es cluster
-	Es map[string]*EsInfo
+	DC     *DC
+	Log    *log.Config
+	Mars   *mars.ServerConfig
+	Tracer *tracing.Config
+	DB     *DB
+	// Auth
+	Auth      *auth.Config
+	Aliyun    *Aliyun
+	Memcache  *Memcache
+	Discovery *discovery.Config
 }
 
-// EsInfo .
-type EsInfo struct {
-	Addr []string
+type Aliyun struct {
+	AccessKeyID     string
+	AccessKeySecret string
 }
 
 // DB db config.
@@ -56,11 +60,6 @@ type MC struct {
 	Expire xtime.Duration
 }
 
-type Aliyun struct {
-	AccessKeyID     string
-	AccessKeySecret string
-}
-
 // DC data center.
 type DC struct {
 	Num  int
@@ -68,7 +67,7 @@ type DC struct {
 }
 
 func init() {
-	flag.StringVar(&confPath, "conf", "", "default config path")
+	flag.StringVar(&confPath, "config", "", "default config path")
 }
 
 // Init init conf

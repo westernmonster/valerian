@@ -88,7 +88,7 @@ definitions:
         type: string
       id:
         description: ID
-        type: integer
+        type: string
       name:
         description: 用户名
         type: string
@@ -1922,6 +1922,100 @@ definitions:
       items:
         items:
           $ref: '#/definitions/model.MemberTopic'
+        type: array
+      paging:
+        $ref: '#/definitions/model.Paging'
+        type: object
+    type: object
+  model.MessageContent:
+    properties:
+      actors:
+        description: 发起行为的人
+        items:
+          $ref: '#/definitions/model.Actor'
+        type: array
+      extend:
+        $ref: '#/definitions/model.MessageContentExtend'
+        description: |-
+          扩展
+          比如用text字段承载：用户评论的文字缩略 用户回复你的内容缩略
+        type: object
+      target:
+        $ref: '#/definitions/model.MessageContentTarget'
+        description: |-
+          对象
+          目前给出了对象的类型 ID 文字 和链接 四个字段
+          后面统一了跳转link格式后只关注 link 和 text 就好
+        type: object
+    type: object
+  model.MessageContentExtend:
+    properties:
+      text:
+        type: string
+    type: object
+  model.MessageContentTarget:
+    properties:
+      id:
+        description: 对象的ID
+        type: string
+      link:
+        description: 对象的超链接
+        type: string
+      text:
+        description: 对象的标题内容
+        type: string
+      type:
+        description: 对象的类型
+        type: string
+    type: object
+  model.MessageItem:
+    properties:
+      content:
+        $ref: '#/definitions/model.MessageContent'
+        type: object
+      created_at:
+        type: integer
+      id:
+        type: string
+      is_read:
+        description: 是否已读
+        type: boolean
+      merge_count:
+        description: |-
+          合并的条数
+          未读的通知会根据类型进行合并
+          比如说 A B C 三个用户分别关注了你，
+          那么就会合并成一条消息通知
+        type: integer
+      target:
+        description: |-
+          对象
+          这是一个interface，包含比较全的对面具体信息，例如文章、话题等
+          业务处理判断主要根据这个对象来
+        type: object
+      type:
+        description: |-
+          消息的类型
+          comment 评论
+          reply 回复了你
+          invite 邀请加入
+          apply 申请加入
+          like 赞
+          followed  关注了你
+          joined 加入了
+        type: string
+      verb:
+        description: |-
+          动作
+          文字，表示actors发起的动作
+          例如 张三 关注了你，关注了你就是web
+        type: string
+    type: object
+  model.NotificationResp:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/model.MessageItem'
         type: array
       paging:
         $ref: '#/definitions/model.Paging'
@@ -4232,6 +4326,63 @@ paths:
       summary: 获取评论列表
       tags:
       - comment
+  /dm/list:
+    get:
+      consumes:
+      - application/json
+      description: 获取消息列表
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 消息类型
+        in: query
+        name: type
+        type: string
+      - description: 每页大小
+        in: query
+        name: limit
+        type: integer
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 话题
+          schema:
+            $ref: '#/definitions/model.NotificationResp'
+            type: object
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 获取消息列表
+      tags:
+      - dm
   /editor/link_info:
     post:
       consumes:

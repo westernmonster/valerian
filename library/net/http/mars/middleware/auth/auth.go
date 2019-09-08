@@ -3,7 +3,6 @@ package auth
 import (
 	"strings"
 	idtv1 "valerian/app/service/identify/api/grpc"
-	"valerian/app/service/msm/service"
 	"valerian/library/ecode"
 	"valerian/library/net/http/mars"
 	"valerian/library/net/metadata"
@@ -48,10 +47,6 @@ func New(conf *Config) *Auth {
 	}
 	return auth
 }
-
-var (
-	srv *service.Service
-)
 
 func (a *Auth) User(c *mars.Context) {
 	req := c.Request

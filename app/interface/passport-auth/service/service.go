@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"valerian/app/conf"
+	"valerian/app/interface/passport-auth/conf"
 	"valerian/app/interface/passport-auth/dao"
 	"valerian/app/interface/passport-auth/model"
 	"valerian/library/database/sqalx"

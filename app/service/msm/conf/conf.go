@@ -48,7 +48,7 @@ type ServiceTree struct {
 }
 
 func init() {
-	flag.StringVar(&confPath, "conf", "", "config file")
+	flag.StringVar(&confPath, "config", "", "config file")
 }
 
 // Init init.

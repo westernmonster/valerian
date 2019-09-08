@@ -2,7 +2,8 @@ package conf
 
 import (
 	"errors"
-	"flag"
+
+	flag "github.com/spf13/pflag"
 
 	"valerian/library/cache/memcache"
 	"valerian/library/conf"
@@ -58,7 +59,7 @@ type DC struct {
 }
 
 func init() {
-	flag.StringVar(&confPath, "conf", "", "default config path")
+	flag.StringVar(&confPath, "config", "", "default config path")
 }
 
 // Init init conf

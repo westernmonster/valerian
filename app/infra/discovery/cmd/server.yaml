@@ -56,7 +56,7 @@ spec:
               DISCOVERY_FULLNAME="discovery"
 
               exec /go/bin/cmd \
-              --conf=/go/bin/config/discovery.toml \
+              --config=/go/bin/config/discovery.toml \
               --join-node=discovery-server-0.discovery-server.dev.svc.cluster.local:7171 \
               --join-node=discovery-server-1.discovery-server.dev.svc.cluster.local:7171 \
               --join-node=discovery-server-2.discovery-server.dev.svc.cluster.local:7171

@@ -31,7 +31,7 @@ type FeedSource struct {
 
 type Actor struct {
 	// ID
-	ID int64 `json:"id"`
+	ID int64 `json:"id,string" swaggertype:"string"`
 	// 类型
 	// user, org
 	Type string `json:"type"`

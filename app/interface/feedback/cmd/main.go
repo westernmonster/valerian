@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"os"
 	"os/signal"
 	"syscall"
@@ -10,6 +9,8 @@ import (
 	ecode "valerian/library/ecode/tip"
 	"valerian/library/log"
 	"valerian/library/tracing"
+
+	flag "github.com/spf13/pflag"
 )
 
 func main() {

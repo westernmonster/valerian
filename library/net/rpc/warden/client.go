@@ -94,10 +94,10 @@ func (c *Client) handle() grpc.UnaryClientInterceptor {
 		}
 
 		span = tracing.StartSpan(method, traceOpts...)
+		defer span.Finish()
 
 		// setup metadata
 		gmd = metadata.MD{}
-		tracing.Inject(span.Context(), opentracing.HTTPHeaders, gmd)
 		c.mutex.RLock()
 		if conf, ok = c.conf.Method[method]; !ok {
 			conf = c.conf
@@ -113,8 +113,6 @@ func (c *Client) handle() grpc.UnaryClientInterceptor {
 		defer cancel()
 		// meta color
 		if cmd, ok = nmd.FromContext(ctx); ok {
-			fmt.Println("cmd")
-			fmt.Println(cmd)
 			var color, ip, port string
 			if color, ok = cmd[nmd.Color].(string); ok {
 				gmd[nmd.Color] = []string{color}
@@ -135,6 +133,12 @@ func (c *Client) handle() grpc.UnaryClientInterceptor {
 		if oldmd, ok := metadata.FromOutgoingContext(ctx); ok {
 			gmd = metadata.Join(gmd, oldmd)
 		}
+
+		mdWriter := metadataReaderWriter{gmd}
+		if err = tracing.Inject(span.Context(), opentracing.TextMap, mdWriter); err != nil {
+			return
+		}
+
 		ctx = metadata.NewOutgoingContext(ctx, gmd)
 
 		opts = append(opts, grpc.Peer(&p))
@@ -281,8 +285,6 @@ func (c *Client) Dial(ctx context.Context, target string, opt ...grpc.DialOption
 		}
 		target = u.String()
 	}
-	fmt.Println(target)
-	fmt.Printf("%#v\n", c.opt)
 	if conn, err = grpc.DialContext(ctx, target, c.opt...); err != nil {
 		fmt.Fprintf(os.Stderr, "warden client: dial %s error %v!", target, err)
 	}

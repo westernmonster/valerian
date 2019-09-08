@@ -7,9 +7,9 @@ import (
 
 	flag "github.com/spf13/pflag"
 
-	"valerian/app/interface/account/conf"
-	"valerian/app/interface/account/http"
-	"valerian/app/interface/account/service"
+	"valerian/app/interface/location/conf"
+	"valerian/app/interface/location/http"
+	"valerian/app/interface/location/service"
 	ecode "valerian/library/ecode/tip"
 	"valerian/library/log"
 	"valerian/library/tracing"

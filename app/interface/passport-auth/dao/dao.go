@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"valerian/app/conf"
+	"valerian/app/interface/passport-auth/conf"
 	"valerian/library/cache/memcache"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"

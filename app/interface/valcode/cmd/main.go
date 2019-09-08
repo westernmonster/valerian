@@ -1,10 +1,11 @@
 package main
 
 import (
-	"flag"
 	"os"
 	"os/signal"
 	"syscall"
+
+	flag "github.com/spf13/pflag"
 
 	"valerian/app/interface/valcode/conf"
 	"valerian/app/interface/valcode/http"

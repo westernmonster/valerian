@@ -3,7 +3,8 @@ package service
 import (
 	"context"
 	"fmt"
-	"valerian/app/conf"
+
+	"valerian/app/interface/certification/conf"
 	"valerian/app/interface/certification/dao"
 	"valerian/app/interface/certification/model"
 	"valerian/library/cloudauth"

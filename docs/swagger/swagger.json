@@ -2329,6 +2329,89 @@
                 }
             }
         },
+        "/dm/list": {
+            "get": {
+                "description": "获取消息列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dm"
+                ],
+                "summary": "获取消息列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "消息类型",
+                        "name": "type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "话题",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/model.NotificationResp"
+                        }
+                    },
+                    "400": {
+                        "description": "验证请求失败"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        },
         "/editor/link_info": {
             "post": {
                 "description": "获取链接信息",
@@ -7044,7 +7127,7 @@
                 },
                 "id": {
                     "description": "ID",
-                    "type": "integer"
+                    "type": "string"
                 },
                 "name": {
                     "description": "用户名",
@@ -9466,6 +9549,107 @@
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/model.MemberTopic"
+                    }
+                },
+                "paging": {
+                    "type": "object",
+                    "$ref": "#/definitions/model.Paging"
+                }
+            }
+        },
+        "model.MessageContent": {
+            "type": "object",
+            "properties": {
+                "actors": {
+                    "description": "发起行为的人",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Actor"
+                    }
+                },
+                "extend": {
+                    "description": "扩展\n比如用text字段承载：用户评论的文字缩略 用户回复你的内容缩略",
+                    "type": "object",
+                    "$ref": "#/definitions/model.MessageContentExtend"
+                },
+                "target": {
+                    "description": "对象\n目前给出了对象的类型 ID 文字 和链接 四个字段\n后面统一了跳转link格式后只关注 link 和 text 就好",
+                    "type": "object",
+                    "$ref": "#/definitions/model.MessageContentTarget"
+                }
+            }
+        },
+        "model.MessageContentExtend": {
+            "type": "object",
+            "properties": {
+                "text": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.MessageContentTarget": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "对象的ID",
+                    "type": "string"
+                },
+                "link": {
+                    "description": "对象的超链接",
+                    "type": "string"
+                },
+                "text": {
+                    "description": "对象的标题内容",
+                    "type": "string"
+                },
+                "type": {
+                    "description": "对象的类型",
+                    "type": "string"
+                }
+            }
+        },
+        "model.MessageItem": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "object",
+                    "$ref": "#/definitions/model.MessageContent"
+                },
+                "created_at": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_read": {
+                    "description": "是否已读",
+                    "type": "boolean"
+                },
+                "merge_count": {
+                    "description": "合并的条数\n未读的通知会根据类型进行合并\n比如说 A B C 三个用户分别关注了你，\n那么就会合并成一条消息通知",
+                    "type": "integer"
+                },
+                "target": {
+                    "description": "对象\n这是一个interface，包含比较全的对面具体信息，例如文章、话题等\n业务处理判断主要根据这个对象来",
+                    "type": "object"
+                },
+                "type": {
+                    "description": "消息的类型\ncomment 评论\nreply 回复了你\ninvite 邀请加入\napply 申请加入\nlike 赞\nfollowed  关注了你\njoined 加入了",
+                    "type": "string"
+                },
+                "verb": {
+                    "description": "动作\n文字，表示actors发起的动作\n例如 张三 关注了你，关注了你就是web",
+                    "type": "string"
+                }
+            }
+        },
+        "model.NotificationResp": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.MessageItem"
                     }
                 },
                 "paging": {

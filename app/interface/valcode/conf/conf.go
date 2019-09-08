@@ -2,7 +2,8 @@ package conf
 
 import (
 	"errors"
-	"flag"
+
+	flag "github.com/spf13/pflag"
 
 	"valerian/library/cache/memcache"
 	"valerian/library/conf"
@@ -92,7 +93,7 @@ func load() (err error) {
 }
 
 func init() {
-	flag.StringVar(&confPath, "conf", "", "default config path")
+	flag.StringVar(&confPath, "config", "", "default config path")
 }
 
 // Init int config
