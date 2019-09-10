@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"valerian/app/conf"
+	"valerian/app/interface/feedback/conf"
 	"valerian/app/interface/feedback/dao"
 	"valerian/app/interface/feedback/model"
 

@@ -4,8 +4,7 @@ import (
 	"context"
 	"fmt"
 	"time"
-
-	"valerian/app/interface/feedback/conf"
+	"valerian/app/service/account/conf"
 	"valerian/library/cache/memcache"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
@@ -13,19 +12,22 @@ import (
 
 // Dao dao struct
 type Dao struct {
-	authDB   sqalx.Node
-	db       sqalx.Node
-	mc       *memcache.Pool
-	mcExpire int32
-	c        *conf.Config
+	mc           *memcache.Pool
+	mcExpire     int32
+	authMC       *memcache.Pool
+	authMCExpire int32
+	db           sqalx.Node
+	c            *conf.Config
 }
 
 func New(c *conf.Config) (dao *Dao) {
 	dao = &Dao{
-		c:        c,
-		db:       sqalx.NewMySQL(c.DB.Main),
-		mc:       memcache.NewPool(c.Memcache.Main.Config),
-		mcExpire: int32(time.Duration(c.Memcache.Main.Expire) / time.Second),
+		c:            c,
+		db:           sqalx.NewMySQL(c.DB.Main),
+		authMC:       memcache.NewPool(c.Memcache.Auth.Config),
+		authMCExpire: int32(time.Duration(c.Memcache.Auth.Expire) / time.Second),
+		mc:           memcache.NewPool(c.Memcache.Main.Config),
+		mcExpire:     int32(time.Duration(c.Memcache.Main.Expire) / time.Second),
 	}
 	return
 }
@@ -53,4 +55,5 @@ func (d *Dao) Close() {
 	if d.db != nil {
 		d.db.Close()
 	}
+
 }

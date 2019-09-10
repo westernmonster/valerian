@@ -1,71 +1,100 @@
 package http
 
 import (
-	"valerian/app/conf"
-	"valerian/app/interface/auth"
+	"valerian/app/interface/topic/conf"
 	"valerian/app/interface/topic/service"
+	"valerian/library/ecode"
+	"valerian/library/log"
 	"valerian/library/net/http/mars"
+	"valerian/library/net/http/mars/middleware/auth"
 )
 
 var (
-	srv *service.Service
+	srv     *service.Service
+	authSvc *auth.Auth
 )
 
 // Init init
-func Init(c *conf.Config, engine *mars.Engine) {
-	srv = service.New(c)
+func Init(c *conf.Config, s *service.Service) {
+	srv = s
+	authSvc = auth.New(conf.Conf.Auth)
 
+	engine := mars.DefaultServer(c.Mars)
 	route(engine)
+
+	if err := engine.Start(); err != nil {
+		log.Errorf("engine.Start() error(%v)", err)
+		panic(err)
+	}
 }
 
 func route(e *mars.Engine) {
+	e.Ping(ping)
+	e.Register(register)
 	g := e.Group("/api/v1/topic")
 	{
-		g.GET("/get", auth.User, getTopic)
+		g.GET("/get", authSvc.User, getTopic)
 
-		g.POST("/add", auth.User, createTopic)
-		g.POST("/edit", auth.User, editTopic)
-		g.POST("/del", auth.User, deleteTopic)
-		g.POST("/owner", auth.User, changeOwner)
-		g.POST("/follow", auth.User, followTopic)
-		g.POST("/leave", auth.User, leave)
-		g.POST("/invite", auth.User, inviteFans)
+		g.POST("/add", authSvc.User, createTopic)
+		g.POST("/edit", authSvc.User, editTopic)
+		g.POST("/del", authSvc.User, deleteTopic)
+		g.POST("/owner", authSvc.User, changeOwner)
+		g.POST("/follow", authSvc.User, followTopic)
+		g.POST("/leave", authSvc.User, leave)
+		g.POST("/invite", authSvc.User, inviteFans)
 
-		g.POST("/discuss_categories", auth.User, editDiscussCategories)
-		g.POST("/members", auth.User, editTopicMembers)
-		g.POST("/auth_topics", auth.User, editAuthTopics)
-		g.POST("/catalogs", auth.User, editTopicCatalogs)
+		g.POST("/discuss_categories", authSvc.User, editDiscussCategories)
+		g.POST("/members", authSvc.User, editTopicMembers)
+		g.POST("/auth_topics", authSvc.User, editAuthTopics)
+		g.POST("/catalogs", authSvc.User, editTopicCatalogs)
 
-		g.GET("/list/activities", auth.User, getActivites)
-		g.GET("/list/discuss_categories", auth.User, discussCategories)
-		g.GET("/list/catalogs", auth.User, topicCatalogs)
-		g.GET("/list/members", auth.User, topicMembers)
-		g.GET("/list/member_fans", auth.User, memberFansList)
-		g.GET("/list/auth_topics", auth.User, authTopics)
-		g.GET("/list/catalog_taxonomies", auth.User, topicCatalogTaxonomies)
+		g.GET("/list/activities", authSvc.User, getActivites)
+		g.GET("/list/discuss_categories", authSvc.User, discussCategories)
+		g.GET("/list/catalogs", authSvc.User, topicCatalogs)
+		g.GET("/list/members", authSvc.User, topicMembers)
+		g.GET("/list/member_fans", authSvc.User, memberFansList)
+		g.GET("/list/auth_topics", authSvc.User, authTopics)
+		g.GET("/list/catalog_taxonomies", authSvc.User, topicCatalogTaxonomies)
 	}
 
 	s := e.Group("/api/v1/search")
 	{
-		s.POST("/accounts", auth.User, searchAccounts)
-		s.POST("/topics", auth.User, searchTopics)
+		s.POST("/accounts", authSvc.User, searchAccounts)
+		s.POST("/topics", authSvc.User, searchTopics)
 	}
 
 	x := e.Group("/api/v1/article")
 	{
-		x.GET("/get", auth.User, getArticle)
-		x.POST("/add", auth.User, addArticle)
-		x.POST("/edit", auth.User, editArticle)
-		x.POST("/del", auth.User, delArticle)
-		x.POST("/fav", auth.User, favArticle)
-		x.POST("/like", auth.User, likeArticle)
+		x.GET("/get", authSvc.User, getArticle)
+		x.POST("/add", authSvc.User, addArticle)
+		x.POST("/edit", authSvc.User, editArticle)
+		x.POST("/del", authSvc.User, delArticle)
+		x.POST("/fav", authSvc.User, favArticle)
+		x.POST("/like", authSvc.User, likeArticle)
 
-		x.POST("/files", auth.User, editArticleFiles)
-		x.POST("/relations/add", auth.User, addArticleRelation)
-		x.POST("/relations/del", auth.User, delArticleRelation)
-		x.POST("/relations/primary", auth.User, setArticleRelationPrimary)
+		x.POST("/files", authSvc.User, editArticleFiles)
+		x.POST("/relations/add", authSvc.User, addArticleRelation)
+		x.POST("/relations/del", authSvc.User, delArticleRelation)
+		x.POST("/relations/primary", authSvc.User, setArticleRelationPrimary)
 
-		x.GET("/list/files", auth.User, articleFiles)
-		x.GET("/list/relations", auth.User, articleRelations)
+		x.GET("/list/files", authSvc.User, articleFiles)
+		x.GET("/list/relations", authSvc.User, articleRelations)
 	}
+}
+
+// ping check server ok.
+func ping(c *mars.Context) {
+	var err error
+	if err = srv.Ping(c); err != nil {
+		log.Errorf("service ping error(%v)", err)
+		c.JSON(nil, ecode.ServiceUnavailable)
+		return
+	}
+
+	c.JSON(nil, nil)
+}
+
+// register support discovery.
+func register(c *mars.Context) {
+	c.JSON(map[string]struct{}{}, nil)
 }

@@ -77,10 +77,10 @@ func (d *Dao) searchResult(c context.Context, esClusterName, indexName string, q
 		Sort:   strings.Join(bsp.Sort, ","),
 		Result: data,
 		Debug:  res.Debug,
-		Page: &model.Page{
-			Pn:    bsp.Pn,
-			Ps:    bsp.Ps,
-			Total: searchResult.Hits.TotalHits,
+		Page:   &model.Paging{
+			// Pn:    bsp.Pn,
+			// Ps:    bsp.Ps,
+			// Total: searchResult.Hits.TotalHits,
 		},
 	}
 	return

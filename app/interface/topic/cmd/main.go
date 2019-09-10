@@ -7,9 +7,9 @@ import (
 
 	flag "github.com/spf13/pflag"
 
-	"valerian/app/interface/feedback/conf"
-	"valerian/app/interface/feedback/http"
-	"valerian/app/interface/feedback/service"
+	"valerian/app/interface/topic/conf"
+	"valerian/app/interface/topic/http"
+	"valerian/app/interface/topic/service"
 	ecode "valerian/library/ecode/tip"
 	"valerian/library/log"
 	"valerian/library/tracing"
@@ -29,7 +29,7 @@ func main() {
 	// init log
 	log.Init(conf.Conf.Log)
 	defer log.Close()
-	log.Info("app-feedback start")
+	log.Info("app-topic start")
 	// init trace
 	tracing.Init(nil)
 	// service init
@@ -41,11 +41,11 @@ func main() {
 	signal.Notify(c, syscall.SIGHUP, syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT)
 	for {
 		s := <-c
-		log.Infof("app-feedback get a signal %s", s.String())
+		log.Infof("app-topic get a signal %s", s.String())
 		switch s {
 		case syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT:
 			svc.Close()
-			log.Info("app-feedback exit")
+			log.Info("app-topic exit")
 			return
 		case syscall.SIGHUP:
 		// TODO reload

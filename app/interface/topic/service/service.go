@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"valerian/app/conf"
+	"valerian/app/interface/topic/conf"
 	"valerian/app/interface/topic/dao"
 	"valerian/library/log"
 )

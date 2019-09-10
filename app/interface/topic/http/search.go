@@ -138,5 +138,5 @@ func searchDiscusstions(c *mars.Context) {
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /search/all [get]
-func searchArticles(c *mars.Context) {
+func searchAll(c *mars.Context) {
 }

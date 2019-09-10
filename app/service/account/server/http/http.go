@@ -1,23 +1,20 @@
 package http
 
 import (
-	"valerian/app/interface/feedback/conf"
-	"valerian/app/interface/feedback/service"
+	"valerian/app/service/account/conf"
+	"valerian/app/service/account/service"
 	"valerian/library/ecode"
 	"valerian/library/log"
 	"valerian/library/net/http/mars"
-	"valerian/library/net/http/mars/middleware/auth"
 )
 
 var (
-	srv     *service.Service
-	authSvc *auth.Auth
+	srv *service.Service
 )
 
 // Init init
 func Init(c *conf.Config, s *service.Service) {
 	srv = s
-	authSvc = auth.New(conf.Conf.Auth)
 
 	engine := mars.DefaultServer(c.Mars)
 	route(engine)
@@ -31,10 +28,9 @@ func Init(c *conf.Config, s *service.Service) {
 func route(e *mars.Engine) {
 	e.Ping(ping)
 	e.Register(register)
-	g := e.Group("/api/v1")
+	g := e.Group("/x/internal/account")
 	{
-		g.GET("/list/feedback_types", feedbackTypes)
-		g.POST("/feedbacks", authSvc.User, addFeedback)
+		g.GET("/base", base)
 	}
 }
 

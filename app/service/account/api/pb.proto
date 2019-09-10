@@ -1,0 +1,76 @@
+syntax = "proto3";
+package service.account;
+option go_package = "api";
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+message BaseInfoReply {
+    int64 ID = 1 [(gogoproto.jsontag) = "id"] ;
+
+    string UserName  = 2 [(gogoproto.jsontag) = "user_name"] ;
+
+    oneof Gender {
+        int32  GenderValue = 3 [(gogoproto.jsontag) = "gender"] ;
+    }
+
+    string Avatar  = 6 [(gogoproto.jsontag) = "avatar"] ;
+
+    bool IDCert  = 7 [(gogoproto.jsontag) = "id_cert"] ;
+
+    bool WorkCert  = 8 [(gogoproto.jsontag) = "work_cert"] ;
+
+    bool IsOrg  = 9 [(gogoproto.jsontag) = "is_org"] ;
+
+    bool IsVIP  = 10 [(gogoproto.jsontag) = "is_vip"] ;
+}
+
+message BaseInfosReply {
+  // member基本信息集合
+  map<int64, BaseInfoReply> base_infos = 1;
+}
+
+message ProfileReply {
+    int64 ID = 1 [(gogoproto.jsontag) = "id"] ;
+
+    string UserName  = 2 [(gogoproto.jsontag) = "user_name"] ;
+
+    oneof Gender {
+        int32  GenderValue = 3 [(gogoproto.jsontag) = "gender"] ;
+    }
+
+    oneof Location {
+        int64  LocationValue = 4 [(gogoproto.jsontag) = "location"] ;
+    }
+
+    oneof LocationString {
+        string  LocationStringValue = 5 [(gogoproto.jsontag) = "location_string"] ;
+    }
+
+    string Avatar  = 6 [(gogoproto.jsontag) = "avatar"] ;
+
+    bool IDCert  = 7 [(gogoproto.jsontag) = "id_cert"] ;
+
+    bool WorkCert  = 8 [(gogoproto.jsontag) = "work_cert"] ;
+
+    bool IsOrg  = 9 [(gogoproto.jsontag) = "is_org"] ;
+
+    bool IsVIP  = 10 [(gogoproto.jsontag) = "is_vip"] ;
+}
+
+message AidReq {
+  int64 aid = 1 [(gogoproto.jsontag) = "aid"] ;
+  string remoteIP = 2 [ (gogoproto.jsontag) = "remoteIP" ];
+}
+
+message AidsReq {
+  // aid 列表
+  repeated int64 aids = 1 [ (gogoproto.jsontag) = "aids" ];
+  string remoteIP = 2 [ (gogoproto.jsontag) = "remoteIP" ];
+}
+
+
+service Account {
+  rpc BasicInfo(AidReq) returns (BaseInfoReply);
+
+  rpc BaseInfos(AidsReq) returns (BaseInfosReply);
+}

@@ -27,6 +27,8 @@ func Init(c *conf.Config, s *service.Service) {
 }
 
 func route(e *mars.Engine) {
+	e.Ping(ping)
+	e.Register(register)
 	g := e.Group("/api/v1")
 	{
 		g.POST("/editor/link_info", linkInfo)
@@ -59,4 +61,21 @@ func linkInfo(c *mars.Context) {
 	}
 
 	c.JSON(srv.LinkInfo(c, arg))
+}
+
+// ping check server ok.
+func ping(c *mars.Context) {
+	var err error
+	if err = srv.Ping(c); err != nil {
+		log.Errorf("service ping error(%v)", err)
+		c.JSON(nil, ecode.ServiceUnavailable)
+		return
+	}
+
+	c.JSON(nil, nil)
+}
+
+// register support discovery.
+func register(c *mars.Context) {
+	c.JSON(map[string]struct{}{}, nil)
 }

@@ -73,8 +73,6 @@ func (p *Service) TopicSearch(c context.Context, arg *model.TopicSearchParams) (
 	}
 
 	res = &model.TopicSearchResult{
-		Order: data.Order,
-		Sort:  data.Sort,
 		Page:  data.Page,
 		Debug: data.Debug,
 		Data:  make([]*model.ESTopic, 0),

@@ -55,8 +55,6 @@ func (p *Service) AccountSearch(c context.Context, arg *model.AccountSearchParam
 	}
 
 	res = &model.AccountSearchResult{
-		Order: data.Order,
-		Sort:  data.Sort,
 		Page:  data.Page,
 		Debug: data.Debug,
 		Data:  make([]*model.ESAccount, 0),
