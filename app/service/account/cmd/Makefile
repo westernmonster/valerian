@@ -34,6 +34,7 @@ DOCKER_FILE_PATH=Dockerfile
 build: pre-build docker-build post-build
 
 pre-build:
+	CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -a -installsuffix cgo -o cmd
 
 
 post-build:
@@ -72,7 +73,6 @@ push: pre-push do-push post-push
 
 do-push:
 	docker push $(IMAGE):$(VERSION)
-	docker push $(IMAGE):latest
 
 snapshot: build push
 
@@ -108,8 +108,5 @@ tag: check-status
 	@ if [ -n "$(shell git remote -v)" ] ; then git push --tags ; else echo 'no remote to push tags to' ; fi
 
 check-status:
-	@. $(RELEASE_SUPPORT) ; ! hasChanges || (echo "ERROR: there are still outstanding changes" >&2 && exit 1) ;
 
 check-release: .release
-	@. $(RELEASE_SUPPORT) ; tagExists $(TAG) || (echo "ERROR: version not yet tagged in git. make [minor,major,patch]-release." >&2 && exit 1) ;
-	@. $(RELEASE_SUPPORT) ; ! differsFromRelease $(TAG) || (echo "ERROR: current directory differs from tagged $(TAG). make [minor,major,patch]-release." ; exit 1)
