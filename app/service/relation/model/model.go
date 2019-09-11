@@ -11,6 +11,14 @@ type AccountFollower struct {
 	UpdatedAt  int64         `db:"updated_at" json:"updated_at"`          // UpdatedAt 更新时间
 }
 
+type AccountRelation struct {
+	AccountID int64  `db:"account_id" json:"account_id,string"` // AccountID 用户ID
+	FollowID  int64  `db:"follow_id" json:"follow_id,string"`   // FollowID 被关注者ID
+	Attribute uint32 `db:"Attribute" json:"attribute"`          // Attribute 关系
+	CreatedAt int64  `db:"created_at" json:"created_at"`        // CreatedAt 创建时间
+	UpdatedAt int64  `db:"updated_at" json:"updated_at"`        // UpdatedAt 更新时间
+}
+
 type AccountRelationStat struct {
 	AccountID int64 `db:"account_id" json:"account_id,string"` // AccountID 用户ID
 	Following int   `db:"following" json:"following"`          // Following 关注数

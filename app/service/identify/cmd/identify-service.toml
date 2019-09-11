@@ -43,5 +43,5 @@
 	idleTimeout = "10s"
 
 [mars]
-    address = "0.0.0.0:7371"
+    address = "0.0.0.0:8000"
     timeout = "1s"
