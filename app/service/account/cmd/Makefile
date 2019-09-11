@@ -15,7 +15,7 @@
 #
 REGISTRY_HOST=registry.cn-hangzhou.aliyuncs.com
 USERNAME=valerian
-NAME=$(shell basename $(CURDIR))
+NAME=service.account
 
 RELEASE_SUPPORT := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))/.make-release-support
 IMAGE=$(REGISTRY_HOST)/$(USERNAME)/$(NAME)
