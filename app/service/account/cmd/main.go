@@ -2,11 +2,12 @@ package main
 
 import (
 	"context"
-	"flag"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	flag "github.com/spf13/pflag"
 
 	"valerian/app/service/account/conf"
 	server "valerian/app/service/account/server/grpc"

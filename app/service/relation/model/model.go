@@ -12,10 +12,10 @@ type AccountFollower struct {
 }
 
 type AccountRelationStat struct {
-	AccountID int64 `db:"account_id" json:"account_id,string"`
-	Following int   `db:"following" json:"following"`
-	Fans      int   `db:"fans" json:"fans"`
-	Black     int   `db:"black" json:"black"`
-	CreatedAt int64 `db:"created_at" json:"created_at"`
-	UpdatedAt int64 `db:"updated_at" json:"updated_at"`
+	AccountID int64 `db:"account_id" json:"account_id,string"` // AccountID 用户ID
+	Following int   `db:"following" json:"following"`          // Following 关注数
+	Fans      int   `db:"fans" json:"fans"`                    // Fans 粉丝数
+	Black     int   `db:"black" json:"black"`                  // Black 黑名单数
+	CreatedAt int64 `db:"created_at" json:"created_at"`        // CreatedAt 创建时间
+	UpdatedAt int64 `db:"updated_at" json:"updated_at"`        // UpdatedAt 更新时间
 }

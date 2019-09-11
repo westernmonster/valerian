@@ -1,0 +1,1 @@
+REGION=hz ZONE=hz001 DEPLOY_ENV=local APP_ID=service.account TREE_ID=11 HTTP_PERF=tcp://0.0.0.0:2334 ./cmd --conf=account-service.toml
