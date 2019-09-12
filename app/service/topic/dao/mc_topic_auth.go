@@ -3,17 +3,18 @@ package dao
 import (
 	"context"
 	"fmt"
+
 	"valerian/app/service/topic/model"
 	"valerian/library/cache/memcache"
 	"valerian/library/log"
 )
 
-func topicKey(topicID int64) string {
-	return fmt.Sprintf("t_%d", topicID)
+func authTopicsKey(topicID int64) string {
+	return fmt.Sprintf("auth_topics_%d", topicID)
 }
 
-func (p *Dao) SetTopicCache(c context.Context, m *model.Topic) (err error) {
-	key := topicKey(m.ID)
+func (p *Dao) SetAuthTopicsCache(c context.Context, topicID int64, m []*model.AuthTopic) (err error) {
+	key := authTopicsKey(topicID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 
@@ -24,8 +25,8 @@ func (p *Dao) SetTopicCache(c context.Context, m *model.Topic) (err error) {
 	return
 }
 
-func (p *Dao) TopicCache(c context.Context, topicID int64) (m *model.Topic, err error) {
-	key := topicKey(topicID)
+func (p *Dao) AuthTopicsCache(c context.Context, topicID int64) (m []*model.AuthTopic, err error) {
+	key := authTopicsKey(topicID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	var item *memcache.Item
@@ -38,15 +39,14 @@ func (p *Dao) TopicCache(c context.Context, topicID int64) (m *model.Topic, err 
 		return
 	}
 
-	m = new(model.Topic)
-	if err = conn.Scan(item, m); err != nil {
+	if err = conn.Scan(item, &m); err != nil {
 		log.For(c).Error(fmt.Sprintf("conn.Scan(%v) error(%v)", string(item.Value), err))
 	}
 	return
 }
 
-func (p *Dao) DelTopicCache(c context.Context, topicID int64) (err error) {
-	key := topicKey(topicID)
+func (p *Dao) DelAuthTopicsCache(c context.Context, topicID int64) (err error) {
+	key := authTopicsKey(topicID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	if err = conn.Delete(key); err != nil {

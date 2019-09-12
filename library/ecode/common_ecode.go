@@ -106,4 +106,6 @@ var (
 	AuthTopicExist                 = add(73) // 授权话题已经存在
 	ArticleHistoryNotExist         = add(74) // 未找到该记录
 	MemberOverLimit                = New(75) // 批量请求超过限制
+
+	TopicMemberStatNotExist = New(10001) // 话题成员统计信息出错
 )

@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"strings"
 
 	"valerian/app/service/topic/conf"
 	"valerian/app/service/topic/dao"
@@ -50,4 +51,14 @@ func (s *Service) cacheproc() {
 		f := <-s.missch
 		f()
 	}
+}
+
+func includeParam(include string) (dic map[string]bool) {
+	arr := strings.Split(include, ",")
+	dic = make(map[string]bool)
+	for _, v := range arr {
+		dic[v] = true
+	}
+
+	return
 }

@@ -27,6 +27,13 @@ type TopicMember struct {
 	UpdatedAt int64         `db:"updated_at" json:"updated_at"`        // UpdatedAt 更新时间
 }
 
+type TopicMemberStat struct {
+	TopicID     int64 `db:"topic_id" json:"topic_id,string"`  // TopicID 分类ID
+	MemberCount int   `db:"member_count" json:"member_count"` // MemberCount 成员数
+	CreatedAt   int64 `db:"created_at" json:"created_at"`     // CreatedAt 创建时间
+	UpdatedAt   int64 `db:"updated_at" json:"updated_at"`     // UpdatedAt 更新时间
+}
+
 type Topic struct {
 	ID              int64         `db:"id" json:"id,string"`                        // ID ID
 	Name            string        `db:"name" json:"name"`                           // Name 话题名

@@ -77,6 +77,27 @@ type IDao interface {
 	UpdateTopicInviteRequest(c context.Context, node sqalx.Node, item *model.TopicInviteRequest) (err error)
 	DelTopicInviteRequest(c context.Context, node sqalx.Node, id int64) (err error)
 
+	AddTopicMemberStat(c context.Context, node sqalx.Node, item *model.TopicMemberStat) (err error)
+	GetTopicMemberStatForUpdate(c context.Context, node sqalx.Node, topicID int64) (item *model.TopicMemberStat, err error)
+	UpdateTopicMemberStat(c context.Context, node sqalx.Node, item *model.TopicMemberStat) (err error)
+	GetTopicMemberStat(c context.Context, node sqalx.Node, topicID int64) (item *model.TopicMemberStat, err error)
+
+	SetTopicCache(c context.Context, m *model.Topic) (err error)
+	TopicCache(c context.Context, topicID int64) (m *model.Topic, err error)
+	DelTopicCache(c context.Context, topicID int64) (err error)
+
+	SetTopicCatalogCache(c context.Context, topicID int64, m []*model.TopicLevel1Catalog) (err error)
+	TopicCatalogCache(c context.Context, topicID int64) (m []*model.TopicLevel1Catalog, err error)
+	DelTopicCatalogCache(c context.Context, topicID int64) (err error)
+
+	SetAuthTopicsCache(c context.Context, topicID int64, m []*model.AuthTopic) (err error)
+	AuthTopicsCache(c context.Context, topicID int64) (m []*model.AuthTopic, err error)
+	DelAuthTopicsCache(c context.Context, topicID int64) (err error)
+
+	SetAccountTopicSettingCache(c context.Context, m *model.AccountTopicSetting) (err error)
+	AccountTopicSettingCache(c context.Context, aid, topicID int64) (m *model.AccountTopicSetting, err error)
+	DelAccountTopicSettingCache(c context.Context, aid, topicID int64) (err error)
+
 	SetTopicMembersCache(c context.Context, topicID int64, count, page, pageSize int, data []*model.TopicMember) (err error)
 	TopicMembersCache(c context.Context, topicID int64, page, pageSize int) (count int, data []*model.TopicMember, err error)
 	DelTopicMembersCache(c context.Context, topicID int64) (err error)

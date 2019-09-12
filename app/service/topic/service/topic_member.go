@@ -34,8 +34,23 @@ func (p *Service) Leave(c context.Context, topicID int64) (err error) {
 		return
 	}
 
+	var tx sqalx.Node
+	if tx, err = p.d.DB().Beginx(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		return
+	}
+
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+			}
+			return
+		}
+	}()
+
 	var member *model.TopicMember
-	if member, err = p.d.GetTopicMemberByCond(c, p.d.DB(), map[string]interface{}{"account_id": aid, "topic_id": topicID}); err != nil {
+	if member, err = p.d.GetTopicMemberByCond(c, tx, map[string]interface{}{"account_id": aid, "topic_id": topicID}); err != nil {
 		return
 	} else if member == nil {
 		err = ecode.NotTopicMember
@@ -47,15 +62,30 @@ func (p *Service) Leave(c context.Context, topicID int64) (err error) {
 		return
 	}
 
-	if err = p.d.DelTopicMember(c, p.d.DB(), member.ID); err != nil {
+	if err = p.d.DelTopicMember(c, tx, member.ID); err != nil {
 		return
 	}
 
-	// Update Topic Member Stat
+	// 更新成员统计信息
+	var stat *model.TopicMemberStat
+	if stat, err = p.d.GetTopicMemberStatForUpdate(c, tx, topicID); err != nil {
+		return
+	} else if stat == nil {
+		err = ecode.TopicMemberStatNotExist
+		return
+	}
+	stat.MemberCount = stat.MemberCount - 1
+	if err = p.d.UpdateTopicMemberStat(c, tx, stat); err != nil {
+		return
+	}
+
+	if err = tx.Commit(); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		return
+	}
 
 	p.addCache(func() {
-		// p.d.DelTopicCache(context.TODO(), topicID)
-		// p.d.DelTopicMembersCache(context.TODO(), topicID)
+		p.d.DelTopicMembersCache(context.TODO(), topicID)
 	})
 
 	return
@@ -243,6 +273,14 @@ func (p *Service) BulkSaveMembers(c context.Context, req *model.ArgBatchSavedTop
 			return
 		}
 
+		var stat *model.TopicMemberStat
+		if stat, err = p.d.GetTopicMemberStatForUpdate(c, tx, req.TopicID); err != nil {
+			return
+		} else if stat == nil {
+			err = ecode.TopicMemberStatNotExist
+			return
+		}
+
 		switch v.Opt {
 		case "C":
 			if member != nil {
@@ -275,6 +313,8 @@ func (p *Service) BulkSaveMembers(c context.Context, req *model.ArgBatchSavedTop
 				return
 			}
 
+			stat.MemberCount = stat.MemberCount + 1
+
 			break
 		case "U":
 			if member == nil {
@@ -292,7 +332,13 @@ func (p *Service) BulkSaveMembers(c context.Context, req *model.ArgBatchSavedTop
 			if err = p.d.DelTopicMember(c, tx, member.ID); err != nil {
 				return
 			}
+
+			stat.MemberCount = stat.MemberCount - 1
 			break
+		}
+
+		if err = p.d.UpdateTopicMemberStat(c, tx, stat); err != nil {
+			return
 		}
 
 		dic[v.AccountID] = true
@@ -304,7 +350,7 @@ func (p *Service) BulkSaveMembers(c context.Context, req *model.ArgBatchSavedTop
 	}
 
 	p.addCache(func() {
-		// p.d.DelTopicCache(context.TODO(), req.TopicID)
+		p.d.DelTopicCache(context.TODO(), req.TopicID)
 		p.d.DelTopicMembersCache(context.TODO(), req.TopicID)
 	})
 
@@ -313,42 +359,74 @@ func (p *Service) BulkSaveMembers(c context.Context, req *model.ArgBatchSavedTop
 
 // addMember 添加成员
 func (p *Service) addMember(c context.Context, node sqalx.Node, topicID, aid int64, role string) (err error) {
-	var member *model.TopicMember
-	if member, err = p.d.GetTopicMemberByCond(c, node, map[string]interface{}{"account_id": aid, "topic_id": topicID}); err != nil {
-		return
-	} else if member != nil {
-		return
-	}
-
-	item := &model.TopicMember{
-		ID:        gid.NewID(),
-		AccountID: aid,
-		Role:      role,
-		TopicID:   topicID,
-		CreatedAt: time.Now().Unix(),
-		UpdatedAt: time.Now().Unix(),
-	}
-	if err = p.d.AddTopicMember(c, node, item); err != nil {
+	var tx sqalx.Node
+	if tx, err = p.d.DB().Beginx(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
 		return
 	}
 
-	setting := &model.AccountTopicSetting{
-		ID:               gid.NewID(),
-		AccountID:        aid,
-		TopicID:          topicID,
-		Important:        types.BitBool(false),
-		Fav:              types.BitBool(false),
-		MuteNotification: types.BitBool(false),
-		CreatedAt:        time.Now().Unix(),
-		UpdatedAt:        time.Now().Unix(),
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+			}
+			return
+		}
+	}()
+	{
+		var member *model.TopicMember
+		if member, err = p.d.GetTopicMemberByCond(c, node, map[string]interface{}{"account_id": aid, "topic_id": topicID}); err != nil {
+			return
+		} else if member != nil {
+			return
+		}
+
+		item := &model.TopicMember{
+			ID:        gid.NewID(),
+			AccountID: aid,
+			Role:      role,
+			TopicID:   topicID,
+			CreatedAt: time.Now().Unix(),
+			UpdatedAt: time.Now().Unix(),
+		}
+		if err = p.d.AddTopicMember(c, node, item); err != nil {
+			return
+		}
+
+		setting := &model.AccountTopicSetting{
+			ID:               gid.NewID(),
+			AccountID:        aid,
+			TopicID:          topicID,
+			Important:        types.BitBool(false),
+			Fav:              types.BitBool(false),
+			MuteNotification: types.BitBool(false),
+			CreatedAt:        time.Now().Unix(),
+			UpdatedAt:        time.Now().Unix(),
+		}
+
+		if err = p.d.AddAccountTopicSetting(c, node, setting); err != nil {
+			return
+		}
+
+		var stat *model.TopicMemberStat
+		if stat, err = p.d.GetTopicMemberStatForUpdate(c, tx, topicID); err != nil {
+			return
+		} else if stat == nil {
+			err = ecode.TopicMemberStatNotExist
+			return
+		}
+		stat.MemberCount = stat.MemberCount + 1
+		if err = p.d.UpdateTopicMemberStat(c, tx, stat); err != nil {
+			return
+		}
 	}
 
-	if err = p.d.AddAccountTopicSetting(c, node, setting); err != nil {
+	if err = tx.Commit(); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 		return
 	}
 
 	p.addCache(func() {
-		// p.d.DelTopicCache(context.TODO(), topicID)
 		p.d.DelTopicMembersCache(context.TODO(), topicID)
 	})
 	return
@@ -418,7 +496,6 @@ func (p *Service) ChangeOwner(c context.Context, arg *model.ArgChangeOwner) (err
 	}
 
 	p.addCache(func() {
-		// p.d.DelTopicCache(context.TODO(), arg.TopicID)
 		p.d.DelTopicMembersCache(context.TODO(), arg.TopicID)
 	})
 
