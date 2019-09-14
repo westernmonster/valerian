@@ -1,0 +1,19 @@
+presubmits:
+  platform/valerian:
+  - name: valerian-make-update
+    always_run: true
+    run_pr_pushed: true
+    namespace: default
+    spec:
+      containers:
+      - image: go_lint
+        name: valerian-make-update
+        imagePullPolicy: IfNotPresent
+        args:
+        - --id=$(BUILD_ID)
+        - --job=$(JOB_NAME)
+        - --root=/root/go/src
+        - --repo=code.aliyun.com/$(REPO_OWNER)/$(REPO_NAME)=$(PULL_REFS)
+        - --command
+        - ./build/update-bazel.sh
+
