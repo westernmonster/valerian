@@ -30,10 +30,7 @@ filegroup(
 
 filegroup(
     name = "all-srcs",
-    srcs = [
-        ":package-srcs",
-        "//prow/client/clientset/versioned/typed/prowjobs/v1/fake:all-srcs",
-    ],
+    srcs = [":package-srcs"],
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )

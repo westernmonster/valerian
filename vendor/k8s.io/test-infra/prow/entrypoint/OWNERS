@@ -3,5 +3,6 @@
 approvers:
 - stevekuznetsov
 labels:
- - area/prow/entrypoint
- - area/prow/pod-utilities
+- area/prow/entrypoint
+- area/prow/pod-utilities
+- infra

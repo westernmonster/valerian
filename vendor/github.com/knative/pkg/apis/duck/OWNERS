@@ -1,4 +1,4 @@
-# The OWNERS file is used by prow to automatically merge approved PRs.
+# See the OWNERS docs at https://go.k8s.io/owners
 
 approvers:
 - mattmoor

@@ -22,10 +22,7 @@ filegroup(
 
 filegroup(
     name = "all-srcs",
-    srcs = [
-        ":package-srcs",
-        "//prow/git/localgit:all-srcs",
-    ],
+    srcs = [":package-srcs"],
     tags = ["automanaged"],
 )
 

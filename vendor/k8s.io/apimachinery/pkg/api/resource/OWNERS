@@ -1,18 +1,18 @@
 # See the OWNERS docs at https://go.k8s.io/owners
 
 reviewers:
-- thockin
-- lavalamp
-- smarterclayton
-- wojtek-t
+- david-mcmahon
 - derekwaynecarr
+- eparis
+- goltermann
+- janetkuo
+- jbeda
+- lavalamp
+- mbohlool
 - mikedanese
 - saad-ali
-- janetkuo
+- smarterclayton
 - tallclair
-- eparis
-- jbeda
+- thockin
+- wojtek-t
 - xiang90
-- mbohlool
-- david-mcmahon
-- goltermann

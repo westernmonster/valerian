@@ -7,4 +7,3 @@ labels:
 - tool/mkprow
 options:
   no_parent_owners: true
-

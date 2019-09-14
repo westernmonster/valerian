@@ -3,5 +3,6 @@
 approvers:
 - stevekuznetsov
 labels:
- - area/prow/initupload
- - area/prow/pod-utilities
+- area/prow/initupload
+- area/prow/pod-utilities
+- infra
