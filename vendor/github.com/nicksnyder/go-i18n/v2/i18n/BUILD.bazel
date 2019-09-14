@@ -1,0 +1,35 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "bundle.go",
+        "doc.go",
+        "localizer.go",
+        "message.go",
+        "message_template.go",
+        "parse.go",
+    ],
+    importmap = "valerian/vendor/github.com/nicksnyder/go-i18n/v2/i18n",
+    importpath = "github.com/nicksnyder/go-i18n/v2/i18n",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//vendor/github.com/nicksnyder/go-i18n/v2/internal:go_default_library",
+        "//vendor/github.com/nicksnyder/go-i18n/v2/internal/plural:go_default_library",
+        "//vendor/golang.org/x/text/language:go_default_library",
+    ],
+)
+
+filegroup(
+    name = "package-srcs",
+    srcs = glob(["**"]),
+    tags = ["automanaged"],
+    visibility = ["//visibility:private"],
+)
+
+filegroup(
+    name = "all-srcs",
+    srcs = [":package-srcs"],
+    tags = ["automanaged"],
+    visibility = ["//visibility:public"],
+)

@@ -1,0 +1,35 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "file.go",
+        "file_info.go",
+        "interfaces.go",
+        "map.go",
+        "memory_box.go",
+        "skip_walker.go",
+        "version.go",
+    ],
+    importmap = "valerian/vendor/github.com/gobuffalo/packd",
+    importpath = "github.com/gobuffalo/packd",
+    visibility = ["//visibility:public"],
+    deps = ["//vendor/github.com/gobuffalo/packd/internal/takeon/github.com/markbates/errx:go_default_library"],
+)
+
+filegroup(
+    name = "package-srcs",
+    srcs = glob(["**"]),
+    tags = ["automanaged"],
+    visibility = ["//visibility:private"],
+)
+
+filegroup(
+    name = "all-srcs",
+    srcs = [
+        ":package-srcs",
+        "//vendor/github.com/gobuffalo/packd/internal/takeon/github.com/markbates/errx:all-srcs",
+    ],
+    tags = ["automanaged"],
+    visibility = ["//visibility:public"],
+)

@@ -1,2 +1,2 @@
-build/root/Makefile
+include build/root/Makefile
 

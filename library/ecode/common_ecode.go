@@ -4,10 +4,10 @@ package ecode
 var (
 	OK = add(200) // 正确
 
-	// AppKeyInvalid           = add(-1)  // 应用程序不存在或已被封禁
-	// AccessKeyErr            = add(-2)  // Access Key错误
-	SignCheckErr = add(-3) // API校验密匙错误
-	// MethodNoPermission      = add(-4)  // 调用方对该Method没有权限
+	AppKeyInvalid           = add(1)   // 应用程序不存在或已被封禁
+	AccessKeyErr            = add(2)   // Access Key错误
+	SignCheckErr            = add(3)   // API校验密匙错误
+	MethodNoPermission      = add(4)   // 调用方对该Method没有权限
 	NoLogin                 = add(101) // 账号未登录
 	UserDisabled            = add(102) // 账号被封停
 	CaptchaErr              = add(105) // 验证码错误

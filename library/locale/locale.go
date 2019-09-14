@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	bundle = &i18n.Bundle{DefaultLanguage: language.SimplifiedChinese}
+	bundle = i18n.NewBundle(language.SimplifiedChinese)
 )
 
 func LoadTranslateFile() {

@@ -1,3 +1,4 @@
+# gazelle:ignore
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
@@ -20,7 +21,17 @@ http_archive(
 )
 
 # load go rules
-load("@io_bazel_rules_go//go:deps.bzl", "go_rules_dependencies", "go_register_toolchains")
+load("@io_bazel_rules_go//go:deps.bzl", "go_download_sdk", "go_rules_dependencies", "go_register_toolchains")
+
+go_download_sdk(
+    name = "go_sdk",
+    urls = ["https://dl.google.com/go/{}"],
+    sdks = {
+        "linux_amd64": ("go1.13.linux-amd64.tar.gz", "68a2297eb099d1a76097905a2ce334e3155004ec08cdea85f24527be3c48e856"),
+        "darwin_amd64": ("go1.13.darwin-amd64.tar.gz", "234ebbba1fbed8474340f79059cfb3af2a0f8b531c4ff0785346e0710e4003dd"),
+        "windows_amd64": ("go1.13.windows-amd64.zip", "7d162b83157d3171961f8e05a55b7da8476244df3fac28a5da1c9e215acfea89"),
+    },
+)
 
 go_rules_dependencies()
 
@@ -307,7 +318,6 @@ go_repository(
 go_repository(
     name = "com_github_gogo_protobuf",
     importpath = "github.com/gogo/protobuf",
-    build_file_proto_mode = "disable_global",
     sum = "h1:G8O7TerXerS4F6sx9OV7/nRfJdnXgHZu/S/7F2SN+UE=",
     version = "v1.3.0",
 )
@@ -336,11 +346,10 @@ go_repository(
 go_repository(
     name = "com_github_golang_protobuf",
     importpath = "github.com/golang/protobuf",
-    sum = "h1:6nsPYzhq5kReh6QImI3k5qWzO4PEbvbIW2cwSfR/6xs=",
-    version = "v1.3.2",
-    build_file_proto_mode = "disable_global",
     patch_args = ["-p1"],
     patches = ["@io_bazel_rules_go//third_party:com_github_golang_protobuf-extras.patch"],
+    sum = "h1:6nsPYzhq5kReh6QImI3k5qWzO4PEbvbIW2cwSfR/6xs=",
+    version = "v1.3.2",
 )
 
 go_repository(
@@ -976,7 +985,6 @@ go_repository(
 go_repository(
     name = "org_golang_google_grpc",
     importpath = "google.golang.org/grpc",
-    #build_file_proto_mode = "disable_global",
     sum = "h1:q4XQuHFC6I28BKZpo6IYyb3mNO+l7lSOxRuYTCiDfXk=",
     version = "v1.23.1",
 )
@@ -1063,4 +1071,10 @@ go_repository(
     importpath = "go.uber.org/zap",
     sum = "h1:ORx85nbTijNz8ljznvCMR1ZBIPKFn3jQrag10X2AsuM=",
     version = "v1.10.0",
+)
+
+go_repository(
+    name = "com_github_valyala_quicktemplate",
+    importpath = "github.com/valyala/quicktemplate",
+    commit = "17b3d2dced7078f5463a69f6237f090d32b4ea57",
 )

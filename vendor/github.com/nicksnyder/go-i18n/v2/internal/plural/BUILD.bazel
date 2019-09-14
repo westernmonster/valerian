@@ -1,0 +1,31 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "doc.go",
+        "form.go",
+        "operands.go",
+        "rule.go",
+        "rule_gen.go",
+        "rules.go",
+    ],
+    importmap = "valerian/vendor/github.com/nicksnyder/go-i18n/v2/internal/plural",
+    importpath = "github.com/nicksnyder/go-i18n/v2/internal/plural",
+    visibility = ["//vendor/github.com/nicksnyder/go-i18n/v2:__subpackages__"],
+    deps = ["//vendor/golang.org/x/text/language:go_default_library"],
+)
+
+filegroup(
+    name = "package-srcs",
+    srcs = glob(["**"]),
+    tags = ["automanaged"],
+    visibility = ["//visibility:private"],
+)
+
+filegroup(
+    name = "all-srcs",
+    srcs = [":package-srcs"],
+    tags = ["automanaged"],
+    visibility = ["//visibility:public"],
+)
