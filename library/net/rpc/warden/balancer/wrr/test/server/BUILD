@@ -19,3 +19,20 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = ["server.go"],
+    importpath = "valerian/library/net/rpc/warden/balancer/wrr/test/server",
+    deps = [
+        "//library/ecode:go_default_library",
+        "//library/log:go_default_library",
+        "//library/net/rpc/warden:go_default_library",
+        "//library/net/rpc/warden/proto/testproto:go_default_library",
+    ],
+)
+
+go_binary(
+    name = "server",
+    embed = [":go_default_library"],
+)

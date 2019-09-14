@@ -18,3 +18,14 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = ["helper.go"],
+    importpath = "valerian/library/net/rpc/warden/resolver/livezk",
+    deps = [
+        "//library/naming:go_default_library",
+        "//library/naming/livezk:go_default_library",
+        "//library/net/ip:go_default_library",
+    ],
+)

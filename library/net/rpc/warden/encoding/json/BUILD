@@ -18,3 +18,14 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = ["json.go"],
+    importpath = "valerian/library/net/rpc/warden/encoding/json",
+    deps = [
+        "//vendor/github.com/gogo/protobuf/jsonpb:go_default_library",
+        "//vendor/github.com/gogo/protobuf/proto:go_default_library",
+        "//vendor/google.golang.org/grpc/encoding:go_default_library",
+    ],
+)

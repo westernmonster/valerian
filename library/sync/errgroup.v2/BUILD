@@ -19,3 +19,21 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "doc.go",
+        "errgroup.go",
+    ],
+    importpath = "valerian/library/sync/errgroup.v2",
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = [
+        "errgroup_test.go",
+        "example_test.go",
+    ],
+    embed = [":go_default_library"],
+)

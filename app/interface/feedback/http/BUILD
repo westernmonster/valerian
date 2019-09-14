@@ -18,3 +18,21 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "feedback.go",
+        "http.go",
+    ],
+    importpath = "valerian/app/interface/feedback/http",
+    deps = [
+        "//app/interface/feedback/conf:go_default_library",
+        "//app/interface/feedback/model:go_default_library",
+        "//app/interface/feedback/service:go_default_library",
+        "//library/ecode:go_default_library",
+        "//library/log:go_default_library",
+        "//library/net/http/mars:go_default_library",
+        "//library/net/http/mars/middleware/auth:go_default_library",
+    ],
+)

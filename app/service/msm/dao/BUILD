@@ -18,3 +18,19 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "dao.go",
+        "mysql.go",
+        "tree.go",
+    ],
+    importpath = "valerian/app/service/msm/dao",
+    deps = [
+        "//app/service/msm/conf:go_default_library",
+        "//app/service/msm/model:go_default_library",
+        "//library/database/sqalx:go_default_library",
+        "//library/log:go_default_library",
+    ],
+)

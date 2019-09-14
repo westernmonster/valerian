@@ -18,3 +18,10 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = ["id.go"],
+    importpath = "valerian/library/gid",
+    deps = ["//vendor/github.com/bwmarrin/snowflake:go_default_library"],
+)

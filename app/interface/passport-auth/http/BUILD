@@ -18,3 +18,20 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "auth.go",
+        "http.go",
+    ],
+    importpath = "valerian/app/interface/passport-auth/http",
+    deps = [
+        "//app/interface/passport-auth/conf:go_default_library",
+        "//app/interface/passport-auth/model:go_default_library",
+        "//app/interface/passport-auth/service:go_default_library",
+        "//library/ecode:go_default_library",
+        "//library/log:go_default_library",
+        "//library/net/http/mars:go_default_library",
+    ],
+)

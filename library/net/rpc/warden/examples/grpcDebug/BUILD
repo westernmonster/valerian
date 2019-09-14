@@ -19,3 +19,20 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = ["client.go"],
+    importpath = "valerian/library/net/rpc/warden/examples/grpcDebug",
+    deps = [
+        "//vendor/github.com/gogo/protobuf/jsonpb:go_default_library",
+        "//vendor/google.golang.org/grpc/credentials:go_default_library",
+        "//vendor/google.golang.org/grpc/encoding:go_default_library",
+        "@org_golang_google_grpc//:go_default_library",
+    ],
+)
+
+go_binary(
+    name = "grpcDebug",
+    embed = [":go_default_library"],
+)

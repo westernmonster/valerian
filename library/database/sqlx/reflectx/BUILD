@@ -19,3 +19,15 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = ["reflect.go"],
+    importpath = "valerian/library/database/sqlx/reflectx",
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = ["reflect_test.go"],
+    embed = [":go_default_library"],
+)

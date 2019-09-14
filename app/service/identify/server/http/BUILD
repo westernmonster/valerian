@@ -18,3 +18,17 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = ["http.go"],
+    importpath = "valerian/app/service/identify/server/http",
+    deps = [
+        "//app/service/identify/api/grpc:go_default_library",
+        "//app/service/identify/conf:go_default_library",
+        "//app/service/identify/service:go_default_library",
+        "//library/ecode:go_default_library",
+        "//library/log:go_default_library",
+        "//library/net/http/mars:go_default_library",
+    ],
+)

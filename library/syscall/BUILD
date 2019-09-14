@@ -19,3 +19,21 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "syscall.go",
+        "syscall_windows.go",
+    ],
+    importpath = "valerian/library/syscall",
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = [
+        "syscall_test.go",
+        "syscall_windows_test.go",
+    ],
+    embed = [":go_default_library"],
+)

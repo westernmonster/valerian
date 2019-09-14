@@ -18,3 +18,23 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "account.go",
+        "area.go",
+        "auth_mc.go",
+        "dao.go",
+        "mc.go",
+        "token.go",
+    ],
+    importpath = "valerian/app/interface/passport-login/dao",
+    deps = [
+        "//app/interface/passport-login/conf:go_default_library",
+        "//app/interface/passport-login/model:go_default_library",
+        "//library/cache/memcache:go_default_library",
+        "//library/database/sqalx:go_default_library",
+        "//library/log:go_default_library",
+    ],
+)

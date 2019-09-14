@@ -23,3 +23,19 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = ["cache.go"],
+    importpath = "valerian/library/cache",
+    deps = [
+        "//library/log:go_default_library",
+        "//library/stat/prom:go_default_library",
+    ],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = ["cache_test.go"],
+    embed = [":go_default_library"],
+)

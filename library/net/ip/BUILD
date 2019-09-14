@@ -19,3 +19,18 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "ip.go",
+        "zone.go",
+    ],
+    importpath = "valerian/library/net/ip",
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = ["ip_test.go"],
+    embed = [":go_default_library"],
+)

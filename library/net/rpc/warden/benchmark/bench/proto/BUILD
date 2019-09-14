@@ -23,3 +23,23 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+proto_library(
+    name = "grpc_proto",
+    srcs = ["hello.proto"],
+    deps = ["//github.com/gogo/protobuf/gogoproto:gogoproto_proto"],
+)
+
+go_proto_library(
+    name = "grpc_go_proto",
+    compilers = ["@io_bazel_rules_go//proto:go_grpc"],
+    importpath = "valerian/library/net/rpc/warden/benchmark/bench/proto",
+    proto = ":grpc_proto",
+    deps = ["//github.com/gogo/protobuf/gogoproto:go_default_library"],
+)
+
+go_library(
+    name = "go_default_library",
+    embed = [":grpc_go_proto"],
+    importpath = "valerian/library/net/rpc/warden/benchmark/bench/proto",
+)

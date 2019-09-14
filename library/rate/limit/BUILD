@@ -26,3 +26,22 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = ["limit.go"],
+    importpath = "valerian/library/rate/limit",
+    deps = [
+        "//library/container/queue/aqm:go_default_library",
+        "//library/log:go_default_library",
+        "//library/rate:go_default_library",
+        "//library/rate/vegas:go_default_library",
+    ],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = ["limit_test.go"],
+    embed = [":go_default_library"],
+    deps = ["//library/rate:go_default_library"],
+)

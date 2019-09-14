@@ -18,3 +18,17 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "arg.go",
+        "const.go",
+        "model.go",
+    ],
+    importpath = "valerian/app/service/relation/model",
+    deps = [
+        "//library/database/sqlx/types:go_default_library",
+        "//vendor/github.com/go-ozzo/ozzo-validation:go_default_library",
+    ],
+)

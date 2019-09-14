@@ -19,3 +19,31 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "breaker.go",
+        "sre_breaker.go",
+    ],
+    importpath = "valerian/library/net/netutil/breaker",
+    deps = [
+        "//library/ecode:go_default_library",
+        "//library/stat/summary:go_default_library",
+        "//library/time:go_default_library",
+    ],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = [
+        "breaker_test.go",
+        "example_test.go",
+        "sre_breaker_test.go",
+    ],
+    embed = [":go_default_library"],
+    deps = [
+        "//library/time:go_default_library",
+        "//vendor/github.com/stretchr/testify/assert:go_default_library",
+    ],
+)

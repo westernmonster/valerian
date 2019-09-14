@@ -19,3 +19,34 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = ["status.go"],
+    importpath = "valerian/library/net/rpc/warden/status",
+    deps = [
+        "//library/ecode:go_default_library",
+        "//library/ecode/pb:go_default_library",
+        "//vendor/github.com/pkg/errors:go_default_library",
+        "//vendor/google.golang.org/grpc/codes:go_default_library",
+        "//vendor/google.golang.org/grpc/status:go_default_library",
+        "@com_github_golang_protobuf//proto:go_default_library",
+        "@com_github_golang_protobuf//ptypes:go_default_library_gen",
+    ],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = ["status_test.go"],
+    embed = [":go_default_library"],
+    deps = [
+        "//library/ecode:go_default_library",
+        "//library/ecode/pb:go_default_library",
+        "//vendor/github.com/pkg/errors:go_default_library",
+        "//vendor/github.com/stretchr/testify/assert:go_default_library",
+        "//vendor/google.golang.org/grpc/codes:go_default_library",
+        "//vendor/google.golang.org/grpc/status:go_default_library",
+        "@com_github_golang_protobuf//ptypes:go_default_library_gen",
+        "@io_bazel_rules_go//proto/wkt:timestamp_go_proto",
+    ],
+)

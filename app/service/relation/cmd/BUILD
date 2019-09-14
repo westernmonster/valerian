@@ -19,3 +19,14 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = ["main.go"],
+    importpath = "valerian/app/service/relation/cmd",
+)
+
+go_binary(
+    name = "cmd",
+    embed = [":go_default_library"],
+)

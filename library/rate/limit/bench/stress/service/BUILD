@@ -18,3 +18,10 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = ["service.go"],
+    importpath = "valerian/library/rate/limit/bench/stress/service",
+    deps = ["//library/rate/limit/bench/stress/conf:go_default_library"],
+)

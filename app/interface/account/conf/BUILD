@@ -18,3 +18,22 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = ["conf.go"],
+    importpath = "valerian/app/interface/account/conf",
+    deps = [
+        "//library/cache/memcache:go_default_library",
+        "//library/conf:go_default_library",
+        "//library/database/sqalx:go_default_library",
+        "//library/log:go_default_library",
+        "//library/naming/discovery:go_default_library",
+        "//library/net/http/mars:go_default_library",
+        "//library/net/http/mars/middleware/auth:go_default_library",
+        "//library/time:go_default_library",
+        "//library/tracing:go_default_library",
+        "//vendor/github.com/BurntSushi/toml:go_default_library",
+        "//vendor/github.com/spf13/pflag:go_default_library",
+    ],
+)

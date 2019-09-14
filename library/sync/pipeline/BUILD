@@ -22,3 +22,23 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = ["pipeline.go"],
+    importpath = "valerian/library/sync/pipeline",
+    deps = [
+        "//library/net/metadata:go_default_library",
+        "//library/time:go_default_library",
+    ],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = ["pipeline_test.go"],
+    embed = [":go_default_library"],
+    deps = [
+        "//library/net/metadata:go_default_library",
+        "//library/time:go_default_library",
+    ],
+)

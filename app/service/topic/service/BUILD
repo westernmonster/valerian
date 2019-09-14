@@ -18,3 +18,30 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "discuss_category.go",
+        "interface.go",
+        "service.go",
+        "topic.go",
+        "topic_auth.go",
+        "topic_catalog.go",
+        "topic_member.go",
+        "topic_meta.go",
+    ],
+    importpath = "valerian/app/service/topic/service",
+    deps = [
+        "//app/service/account/api:go_default_library",
+        "//app/service/topic/conf:go_default_library",
+        "//app/service/topic/dao:go_default_library",
+        "//app/service/topic/model:go_default_library",
+        "//library/database/sqalx:go_default_library",
+        "//library/database/sqlx/types:go_default_library",
+        "//library/ecode:go_default_library",
+        "//library/gid:go_default_library",
+        "//library/log:go_default_library",
+        "//library/net/metadata:go_default_library",
+    ],
+)

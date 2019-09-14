@@ -19,3 +19,15 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = ["main.go"],
+    importpath = "valerian/app/tool/warden",
+    deps = ["//vendor/k8s.io/repo-infra/kazel:go_default_library"],
+)
+
+go_binary(
+    name = "warden",
+    embed = [":go_default_library"],
+)

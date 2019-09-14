@@ -18,3 +18,13 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = ["docs.go"],
+    importpath = "valerian/app/interface/topic/model/docs",
+    deps = [
+        "//vendor/github.com/alecthomas/template:go_default_library",
+        "//vendor/github.com/swaggo/swag:go_default_library",
+    ],
+)

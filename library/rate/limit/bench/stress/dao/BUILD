@@ -18,3 +18,15 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = ["dao.go"],
+    importpath = "valerian/library/rate/limit/bench/stress/dao",
+    deps = [
+        "//library/cache/memcache:go_default_library",
+        "//library/cache/redis:go_default_library",
+        "//library/database/sqalx:go_default_library",
+        "//library/rate/limit/bench/stress/conf:go_default_library",
+    ],
+)

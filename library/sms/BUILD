@@ -18,3 +18,17 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = ["sms.go"],
+    importpath = "valerian/library/sms",
+    deps = [
+        "//library/log:go_default_library",
+        "//library/tracing:go_default_library",
+        "//vendor/github.com/aliyun/alibaba-cloud-sdk-go/sdk:go_default_library",
+        "//vendor/github.com/aliyun/alibaba-cloud-sdk-go/sdk/requests:go_default_library",
+        "//vendor/github.com/opentracing/opentracing-go:go_default_library",
+        "//vendor/github.com/opentracing/opentracing-go/ext:go_default_library",
+    ],
+)

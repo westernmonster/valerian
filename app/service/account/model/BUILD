@@ -18,3 +18,13 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "model.go",
+        "resp_account.go",
+    ],
+    importpath = "valerian/app/service/account/model",
+    deps = ["//library/database/sqlx/types:go_default_library"],
+)

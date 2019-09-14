@@ -21,3 +21,16 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "reg_valcode.qtpl.go",
+        "reset_valcode.qtpl.go",
+    ],
+    importpath = "valerian/library/email/tmpl",
+    deps = [
+        "//library/email/tmpl/layouts:go_default_library",
+        "//vendor/github.com/valyala/quicktemplate:go_default_library",
+    ],
+)

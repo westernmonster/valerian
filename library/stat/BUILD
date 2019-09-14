@@ -25,3 +25,10 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = ["stat.go"],
+    importpath = "valerian/library/stat",
+    deps = ["//library/stat/prom:go_default_library"],
+)

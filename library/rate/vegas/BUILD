@@ -19,3 +19,20 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "sample.go",
+        "vegas.go",
+    ],
+    importpath = "valerian/library/rate/vegas",
+    deps = ["//library/rate:go_default_library"],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = ["vegas_test.go"],
+    embed = [":go_default_library"],
+    deps = ["//library/rate:go_default_library"],
+)

@@ -21,3 +21,20 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = ["email.go"],
+    importpath = "valerian/library/email",
+    deps = [
+        "//library/email/tmpl:go_default_library",
+        "//library/email/tmpl/layouts:go_default_library",
+        "//library/tracing:go_default_library",
+        "//vendor/github.com/aliyun/alibaba-cloud-sdk-go/sdk:go_default_library",
+        "//vendor/github.com/aliyun/alibaba-cloud-sdk-go/sdk/requests:go_default_library",
+        "//vendor/github.com/opentracing/opentracing-go:go_default_library",
+        "//vendor/github.com/opentracing/opentracing-go/ext:go_default_library",
+        "//vendor/github.com/sirupsen/logrus:go_default_library",
+        "//vendor/github.com/ztrue/tracerr:go_default_library",
+    ],
+)

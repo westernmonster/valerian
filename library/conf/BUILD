@@ -25,3 +25,26 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "client.go",
+        "client_v2.go",
+    ],
+    importpath = "valerian/library/conf",
+    deps = [
+        "//library/conf/env:go_default_library",
+        "//library/ecode:go_default_library",
+        "//library/log:go_default_library",
+    ],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = [
+        "client_test.go",
+        "client_v2_test.go",
+    ],
+    embed = [":go_default_library"],
+)

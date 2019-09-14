@@ -18,3 +18,9 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = ["resp.go"],
+    importpath = "valerian/app/interface/dm/model",
+)

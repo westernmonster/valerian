@@ -18,3 +18,23 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "account.go",
+        "arg.go",
+        "const.go",
+        "identity.go",
+        "login.go",
+        "model.go",
+    ],
+    importpath = "valerian/app/interface/passport-login/model",
+    deps = [
+        "//library/database/sqlx/types:go_default_library",
+        "//library/ecode:go_default_library",
+        "//vendor/github.com/asaskevich/govalidator:go_default_library",
+        "//vendor/github.com/go-ozzo/ozzo-validation:go_default_library",
+        "//vendor/github.com/go-ozzo/ozzo-validation/is:go_default_library",
+    ],
+)

@@ -18,3 +18,10 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = ["metadata.go"],
+    importpath = "valerian/library/queue/databus/metadata",
+    deps = ["//library/net/metadata:go_default_library"],
+)

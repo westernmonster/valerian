@@ -19,3 +19,15 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = ["time.go"],
+    importpath = "valerian/library/time",
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = ["time_test.go"],
+    embed = [":go_default_library"],
+)

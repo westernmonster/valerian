@@ -23,3 +23,21 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "resolver.go",
+        "util.go",
+    ],
+    importpath = "valerian/library/net/rpc/warden/resolver",
+    deps = [
+        "//library/conf/env:go_default_library",
+        "//library/log:go_default_library",
+        "//library/naming:go_default_library",
+        "//library/net/rpc/warden/metadata:go_default_library",
+        "//vendor/github.com/dgryski/go-farm:go_default_library",
+        "//vendor/github.com/pkg/errors:go_default_library",
+        "//vendor/google.golang.org/grpc/resolver:go_default_library",
+    ],
+)

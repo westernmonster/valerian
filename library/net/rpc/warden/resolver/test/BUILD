@@ -19,3 +19,31 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = ["mockdiscovery.go"],
+    importpath = "valerian/library/net/rpc/warden/resolver/test",
+    deps = [
+        "//library/conf/env:go_default_library",
+        "//library/naming:go_default_library",
+    ],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = ["resovler_test.go"],
+    embed = [":go_default_library"],
+    deps = [
+        "//library/conf/env:go_default_library",
+        "//library/naming:go_default_library",
+        "//library/net/netutil/breaker:go_default_library",
+        "//library/net/rpc/warden:go_default_library",
+        "//library/net/rpc/warden/balancer/wrr:go_default_library",
+        "//library/net/rpc/warden/proto/testproto:go_default_library",
+        "//library/net/rpc/warden/resolver:go_default_library",
+        "//library/time:go_default_library",
+        "//vendor/github.com/stretchr/testify/assert:go_default_library",
+        "@org_golang_google_grpc//:go_default_library",
+    ],
+)

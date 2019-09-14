@@ -18,3 +18,19 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "locale.go",
+        "service.go",
+    ],
+    importpath = "valerian/app/interface/locale/service",
+    deps = [
+        "//app/interface/locale/conf:go_default_library",
+        "//app/interface/locale/dao:go_default_library",
+        "//app/interface/locale/model:go_default_library",
+        "//library/database/sqalx:go_default_library",
+        "//library/log:go_default_library",
+    ],
+)

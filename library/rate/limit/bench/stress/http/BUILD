@@ -18,3 +18,18 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = ["http.go"],
+    importpath = "valerian/library/rate/limit/bench/stress/http",
+    deps = [
+        "//library/log:go_default_library",
+        "//library/net/http/mars:go_default_library",
+        "//library/rate:go_default_library",
+        "//library/rate/limit:go_default_library",
+        "//library/rate/limit/bench/stress/conf:go_default_library",
+        "//library/rate/limit/bench/stress/service:go_default_library",
+        "//library/rate/vegas:go_default_library",
+    ],
+)

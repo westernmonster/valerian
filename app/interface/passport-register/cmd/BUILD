@@ -19,3 +19,23 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = ["main.go"],
+    importpath = "valerian/app/interface/passport-register/cmd",
+    deps = [
+        "//app/interface/passport-register/conf:go_default_library",
+        "//app/interface/passport-register/http:go_default_library",
+        "//app/interface/passport-register/service:go_default_library",
+        "//library/ecode/tip:go_default_library",
+        "//library/log:go_default_library",
+        "//library/tracing:go_default_library",
+        "//vendor/github.com/spf13/pflag:go_default_library",
+    ],
+)
+
+go_binary(
+    name = "cmd",
+    embed = [":go_default_library"],
+)

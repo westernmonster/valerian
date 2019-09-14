@@ -18,3 +18,10 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = ["statsd.go"],
+    importpath = "valerian/library/stat/statsd",
+    deps = ["//library/log:go_default_library"],
+)

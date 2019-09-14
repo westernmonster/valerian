@@ -18,3 +18,21 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "dao.go",
+        "feedback.go",
+        "feedback_type.go",
+        "mc.go",
+    ],
+    importpath = "valerian/app/interface/feedback/dao",
+    deps = [
+        "//app/interface/feedback/conf:go_default_library",
+        "//app/interface/feedback/model:go_default_library",
+        "//library/cache/memcache:go_default_library",
+        "//library/database/sqalx:go_default_library",
+        "//library/log:go_default_library",
+    ],
+)

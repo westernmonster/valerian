@@ -19,3 +19,21 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = ["server.go"],
+    importpath = "valerian/library/net/rpc/warden/benchmark/bench/server",
+    deps = [
+        "//library/net/rpc/warden:go_default_library",
+        "//library/net/rpc/warden/benchmark/bench/proto:go_default_library",
+        "//library/time:go_default_library",
+        "//vendor/github.com/prometheus/client_golang/prometheus/promhttp:go_default_library",
+        "@org_golang_google_grpc//:go_default_library",
+    ],
+)
+
+go_binary(
+    name = "server",
+    embed = [":go_default_library"],
+)

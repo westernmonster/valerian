@@ -18,3 +18,17 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "instance.go",
+        "node.go",
+        "param.go",
+    ],
+    importpath = "valerian/app/infra/discovery/model",
+    deps = [
+        "//library/ecode:go_default_library",
+        "//library/log:go_default_library",
+    ],
+)

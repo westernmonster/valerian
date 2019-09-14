@@ -19,3 +19,16 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = ["summary.go"],
+    importpath = "valerian/library/stat/summary",
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = ["summary_test.go"],
+    embed = [":go_default_library"],
+    deps = ["//vendor/github.com/stretchr/testify/assert:go_default_library"],
+)

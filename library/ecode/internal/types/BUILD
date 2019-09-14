@@ -23,3 +23,21 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+proto_library(
+    name = "types_proto",
+    srcs = ["status.proto"],
+    deps = ["@com_google_protobuf//:any_proto"],
+)
+
+go_proto_library(
+    name = "types_go_proto",
+    importpath = "valerian/library/ecode/internal/types",
+    proto = ":types_proto",
+)
+
+go_library(
+    name = "go_default_library",
+    embed = [":types_go_proto"],
+    importpath = "valerian/library/ecode/internal/types",
+)

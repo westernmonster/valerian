@@ -19,3 +19,44 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "guard.go",
+        "node.go",
+        "nodes.go",
+        "registry.go",
+    ],
+    importpath = "valerian/app/infra/discovery/dao",
+    deps = [
+        "//app/infra/discovery/conf:go_default_library",
+        "//app/infra/discovery/model:go_default_library",
+        "//library/ecode:go_default_library",
+        "//library/log:go_default_library",
+        "//library/net/http/mars:go_default_library",
+        "//library/sync/errgroup:go_default_library",
+        "//library/xstr:go_default_library",
+    ],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = [
+        "guard_test.go",
+        "node_test.go",
+        "nodes_test.go",
+        "registry_test.go",
+    ],
+    embed = [":go_default_library"],
+    deps = [
+        "//app/infra/discovery/conf:go_default_library",
+        "//app/infra/discovery/model:go_default_library",
+        "//library/ecode:go_default_library",
+        "//library/net/http/mars:go_default_library",
+        "//library/net/netutil/breaker:go_default_library",
+        "//library/time:go_default_library",
+        "//vendor/github.com/smartystreets/goconvey/convey:go_default_library",
+        "//vendor/gopkg.in/h2non/gock.v1:go_default_library",
+    ],
+)

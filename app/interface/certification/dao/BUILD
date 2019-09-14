@@ -18,3 +18,20 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "dao.go",
+        "id_cert.go",
+        "mc.go",
+    ],
+    importpath = "valerian/app/interface/certification/dao",
+    deps = [
+        "//app/interface/certification/conf:go_default_library",
+        "//app/interface/certification/model:go_default_library",
+        "//library/cache/memcache:go_default_library",
+        "//library/database/sqalx:go_default_library",
+        "//library/log:go_default_library",
+    ],
+)

@@ -18,3 +18,15 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = ["tip.go"],
+    importpath = "valerian/library/ecode/tip",
+    deps = [
+        "//library/ecode:go_default_library",
+        "//library/log:go_default_library",
+        "//library/net/http/mars:go_default_library",
+        "//library/time:go_default_library",
+    ],
+)

@@ -1,10 +1,7 @@
 load(
     "@io_bazel_rules_go//go:def.bzl",
     "go_library",
-)
-load(
-    "@io_bazel_rules_go//proto:def.bzl",
-    "go_proto_library",
+    "go_test",
 )
 
 filegroup(
@@ -22,4 +19,49 @@ filegroup(
     ],
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
+)
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "client.go",
+        "conn.go",
+        "errors.go",
+        "memcache.go",
+        "mock.go",
+        "pool.go",
+        "trace.go",
+        "util.go",
+    ],
+    importpath = "valerian/library/cache/memcache",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//library/container/pool:go_default_library",
+        "//library/stat:go_default_library",
+        "//library/time:go_default_library",
+        "//library/tracing:go_default_library",
+        "//vendor/github.com/gogo/protobuf/proto:go_default_library",
+        "//vendor/github.com/opentracing/opentracing-go:go_default_library",
+        "//vendor/github.com/opentracing/opentracing-go/ext:go_default_library",
+        "//vendor/github.com/pkg/errors:go_default_library",
+    ],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = [
+        "client_test.go",
+        "conn_test.go",
+        "memcache_test.go",
+        "pool_test.go",
+        "util_test.go",
+    ],
+    embed = [":go_default_library"],
+    deps = [
+        "//library/cache/memcache/test:go_default_library",
+        "//library/container/pool:go_default_library",
+        "//library/time:go_default_library",
+        "//vendor/github.com/gogo/protobuf/proto:go_default_library",
+        "//vendor/github.com/stretchr/testify/assert:go_default_library",
+    ],
 )

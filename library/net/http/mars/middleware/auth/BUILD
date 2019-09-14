@@ -18,3 +18,17 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = ["auth.go"],
+    importpath = "valerian/library/net/http/mars/middleware/auth",
+    deps = [
+        "//app/service/identify/api/grpc:go_default_library",
+        "//library/ecode:go_default_library",
+        "//library/net/http/mars:go_default_library",
+        "//library/net/metadata:go_default_library",
+        "//library/net/rpc/warden:go_default_library",
+        "//vendor/github.com/pkg/errors:go_default_library",
+    ],
+)

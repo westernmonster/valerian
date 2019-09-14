@@ -19,3 +19,19 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = ["feature_gate.go"],
+    importpath = "valerian/library/exp/feature",
+    deps = ["//vendor/github.com/pkg/errors:go_default_library"],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = [
+        "example_test.go",
+        "feature_gate_test.go",
+    ],
+    embed = [":go_default_library"],
+)

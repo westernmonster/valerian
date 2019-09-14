@@ -18,3 +18,9 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = ["xstr.go"],
+    importpath = "valerian/library/xstr",
+)

@@ -19,3 +19,20 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "dsn.go",
+        "query.go",
+    ],
+    importpath = "valerian/library/conf/dsn",
+    deps = ["//vendor/gopkg.in/go-playground/validator.v9:go_default_library"],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = ["dsn_test.go"],
+    embed = [":go_default_library"],
+    deps = ["//library/time:go_default_library"],
+)

@@ -18,3 +18,19 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "county_code.go",
+        "http.go",
+    ],
+    importpath = "valerian/app/interface/location/http",
+    deps = [
+        "//app/interface/location/conf:go_default_library",
+        "//app/interface/location/service:go_default_library",
+        "//library/ecode:go_default_library",
+        "//library/log:go_default_library",
+        "//library/net/http/mars:go_default_library",
+    ],
+)

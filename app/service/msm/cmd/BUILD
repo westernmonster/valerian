@@ -19,3 +19,26 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = ["main.go"],
+    importpath = "valerian/app/service/msm/cmd",
+    deps = [
+        "//app/service/msm/conf:go_default_library",
+        "//app/service/msm/http:go_default_library",
+        "//app/service/msm/service:go_default_library",
+        "//library/conf/env:go_default_library",
+        "//library/log:go_default_library",
+        "//library/naming:go_default_library",
+        "//library/naming/discovery:go_default_library",
+        "//library/net/ip:go_default_library",
+        "//library/tracing:go_default_library",
+        "//vendor/github.com/spf13/pflag:go_default_library",
+    ],
+)
+
+go_binary(
+    name = "cmd",
+    embed = [":go_default_library"],
+)

@@ -18,3 +18,17 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "agent.go",
+        "conf.go",
+    ],
+    importpath = "valerian/library/queue/databus/report",
+    deps = [
+        "//library/conf/env:go_default_library",
+        "//library/queue/databus:go_default_library",
+        "//library/time:go_default_library",
+    ],
+)

@@ -19,3 +19,20 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = ["main.go"],
+    importpath = "valerian/library/rate/limit/bench/stress/cmd",
+    deps = [
+        "//library/log:go_default_library",
+        "//library/rate/limit/bench/stress/conf:go_default_library",
+        "//library/rate/limit/bench/stress/http:go_default_library",
+        "//library/tracing:go_default_library",
+    ],
+)
+
+go_binary(
+    name = "cmd",
+    embed = [":go_default_library"],
+)

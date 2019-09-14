@@ -19,3 +19,30 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = ["antispam.go"],
+    importpath = "valerian/library/net/http/mars/middleware/antispam",
+    deps = [
+        "//library/cache/redis:go_default_library",
+        "//library/ecode:go_default_library",
+        "//library/log:go_default_library",
+        "//library/net/http/mars:go_default_library",
+    ],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = [
+        "antispam_test.go",
+        "example_test.go",
+    ],
+    embed = [":go_default_library"],
+    deps = [
+        "//library/cache/redis:go_default_library",
+        "//library/net/http/mars:go_default_library",
+        "//library/time:go_default_library",
+        "//vendor/github.com/stretchr/testify/assert:go_default_library",
+    ],
+)

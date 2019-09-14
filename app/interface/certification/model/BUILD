@@ -18,3 +18,16 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "arg_work_cert.go",
+        "const.go",
+        "model.go",
+        "resp_id_cert.go",
+        "resp_work_cert.go",
+    ],
+    importpath = "valerian/app/interface/certification/model",
+    deps = ["//library/database/sqlx/types:go_default_library"],
+)

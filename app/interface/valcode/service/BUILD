@@ -18,3 +18,22 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "service.go",
+        "valcode.go",
+    ],
+    importpath = "valerian/app/interface/valcode/service",
+    deps = [
+        "//app/interface/valcode/conf:go_default_library",
+        "//app/interface/valcode/dao:go_default_library",
+        "//app/interface/valcode/model:go_default_library",
+        "//library/ecode:go_default_library",
+        "//library/email:go_default_library",
+        "//library/log:go_default_library",
+        "//library/sms:go_default_library",
+        "//vendor/github.com/aliyun/alibaba-cloud-sdk-go/sdk:go_default_library",
+    ],
+)

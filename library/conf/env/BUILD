@@ -18,3 +18,10 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = ["env.go"],
+    importpath = "valerian/library/conf/env",
+    deps = ["//vendor/github.com/spf13/pflag:go_default_library"],
+)

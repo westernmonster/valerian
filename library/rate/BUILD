@@ -22,3 +22,9 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = ["rate.go"],
+    importpath = "valerian/library/rate",
+)

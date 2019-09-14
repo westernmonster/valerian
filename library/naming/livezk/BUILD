@@ -18,3 +18,15 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = ["livezk.go"],
+    importpath = "valerian/library/naming/livezk",
+    deps = [
+        "//library/log:go_default_library",
+        "//library/naming:go_default_library",
+        "//library/time:go_default_library",
+        "//vendor/github.com/samuel/go-zookeeper/zk:go_default_library",
+    ],
+)

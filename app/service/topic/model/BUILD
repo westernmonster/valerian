@@ -18,3 +18,28 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "arg_discucss_category.go",
+        "arg_topic.go",
+        "arg_topic_auth.go",
+        "arg_topic_catalog.go",
+        "arg_topic_member.go",
+        "const.go",
+        "model.go",
+        "resp_discuss_category.go",
+        "resp_topic.go",
+        "resp_topic_auth.go",
+        "resp_topic_catalog.go",
+        "resp_topic_member.go",
+    ],
+    importpath = "valerian/app/service/topic/model",
+    deps = [
+        "//library/database/sqlx/types:go_default_library",
+        "//library/ecode:go_default_library",
+        "//vendor/github.com/go-ozzo/ozzo-validation:go_default_library",
+        "//vendor/github.com/go-ozzo/ozzo-validation/is:go_default_library",
+    ],
+)

@@ -19,3 +19,28 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "doc.go",
+        "group.go",
+    ],
+    importpath = "valerian/library/queue/databus/databusutil",
+    deps = [
+        "//library/queue/databus:go_default_library",
+        "//library/time:go_default_library",
+    ],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = ["group_test.go"],
+    embed = [":go_default_library"],
+    deps = [
+        "//library/log:go_default_library",
+        "//library/queue/databus:go_default_library",
+        "//library/time:go_default_library",
+        "//vendor/golang.org/x/sync/errgroup:go_default_library",
+    ],
+)

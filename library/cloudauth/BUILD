@@ -18,3 +18,17 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = ["client.go"],
+    importpath = "valerian/library/cloudauth",
+    deps = [
+        "//library/log:go_default_library",
+        "//vendor/github.com/aliyun/alibaba-cloud-sdk-go/sdk:go_default_library",
+        "//vendor/github.com/aliyun/alibaba-cloud-sdk-go/sdk/requests:go_default_library",
+        "//vendor/github.com/pkg/errors:go_default_library",
+        "//vendor/go.uber.org/zap:go_default_library",
+        "//vendor/go.uber.org/zap/zapcore:go_default_library",
+    ],
+)

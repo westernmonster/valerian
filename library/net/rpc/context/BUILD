@@ -18,3 +18,9 @@ filegroup(
     tags = ["automanaged"],
     visibility = ["//visibility:public"],
 )
+
+go_library(
+    name = "go_default_library",
+    srcs = ["context.go"],
+    importpath = "valerian/library/net/rpc/context",
+)
