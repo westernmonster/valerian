@@ -5,3 +5,12 @@
 /docs/docs.go
 **/cmd/cmd
 /.idea
+
+
+bazel-bin
+bazel-genfiles
+bazel-go-common
+bazel-out
+bazel-testlogs
+bazel-test
+_output

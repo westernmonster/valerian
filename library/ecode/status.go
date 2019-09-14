@@ -3,16 +3,15 @@ package ecode
 import (
 	"fmt"
 	"strconv"
+	etypes "valerian/library/ecode/internal/types"
 
 	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes"
-
-	"valerian/library/ecode/internal/types"
 )
 
 // Error new status with code and message
 func Error(code Code, message string) *Status {
-	return &Status{s: &types.Status{Code: int32(code.Code()), Message: message}}
+	return &Status{s: &etypes.Status{Code: int32(code.Code()), Message: message}}
 }
 
 // Errorf new status with code and message
@@ -25,7 +24,7 @@ var _ Codes = &Status{}
 // Status statusError is an alias of a status proto
 // implement ecode.Codes
 type Status struct {
-	s *types.Status
+	s *etypes.Status
 }
 
 // Error implement error
@@ -82,18 +81,18 @@ func (s *Status) Equal(err error) bool {
 }
 
 // Proto return origin protobuf message
-func (s *Status) Proto() *types.Status {
+func (s *Status) Proto() *etypes.Status {
 	return s.s
 }
 
 // FromCode create status from ecode
 func FromCode(code Code) *Status {
-	return &Status{s: &types.Status{Code: int32(code)}}
+	return &Status{s: &etypes.Status{Code: int32(code)}}
 }
 
 // FromProto new status from grpc detail
 func FromProto(pbMsg proto.Message) Codes {
-	if msg, ok := pbMsg.(*types.Status); ok {
+	if msg, ok := pbMsg.(*etypes.Status); ok {
 		if msg.Message == "" {
 			// NOTE: if message is empty convert to pure Code, will get message from config center.
 			return Code(msg.Code)
