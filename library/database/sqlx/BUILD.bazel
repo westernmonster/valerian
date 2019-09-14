@@ -22,7 +22,6 @@ go_library(
     ],
 )
 
-
 filegroup(
     name = "package-srcs",
     srcs = glob(["**"]),
