@@ -20,7 +20,6 @@ type IDao interface {
 	DelTopicCatalog(c context.Context, node sqalx.Node, id int64) (err error)
 	GetTopicCatalogMaxChildrenSeq(c context.Context, node sqalx.Node, topicID, parentID int64) (seq int, err error)
 
-	// GetAuthTopicsResp(c context.Context, node sqalx.Node, topicID int64) (items []*model.AuthTopicResp, err error)
 	GetAuthTopicsByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.AuthTopic, err error)
 	GetAuthTopics(c context.Context, node sqalx.Node) (items []*model.AuthTopic, err error)
 	GetAuthTopicByID(c context.Context, node sqalx.Node, id int64) (item *model.AuthTopic, err error)

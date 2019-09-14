@@ -19,8 +19,8 @@ import (
 	nmd "valerian/library/net/metadata"
 	"valerian/library/net/netutil/breaker"
 	pb "valerian/library/net/rpc/warden/proto/testproto"
-	xtrace "valerian/library/net/tracing"
 	xtime "valerian/library/time"
+	xtrace "valerian/library/tracing"
 
 	"github.com/golang/protobuf/ptypes"
 	"github.com/pkg/errors"

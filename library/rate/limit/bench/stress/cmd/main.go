@@ -7,15 +7,15 @@ import (
 	"os/signal"
 	"syscall"
 	"valerian/library/log"
-	"valerian/library/net/trace"
 	"valerian/library/rate/limit/bench/stress/conf"
 	"valerian/library/rate/limit/bench/stress/http"
+	"valerian/library/tracing"
 )
 
 func main() {
 	flag.Parse()
 	if err := conf.Init(); err != nil {
-		log.Error("conf.Init() error(%v)", err)
+		log.Errorf("conf.Init() error(%v)", err)
 		panic(err)
 	}
 	// init log
@@ -23,8 +23,8 @@ func main() {
 	defer log.Close()
 	log.Info("stress start")
 	// init trace
-	trace.Init(conf.Conf.Tracer)
-	defer trace.Close()
+	tracing.Init(conf.Conf.Tracer)
+	// defer trace.Close()
 	// ecode init
 	//	ecode.Init(conf.Conf.Ecode)
 	// service init
@@ -38,7 +38,7 @@ func main() {
 			s := <-c
 			fmt.Println("go sig!!!!!!!!")
 
-			log.Info("stress get a signal %s", s.String())
+			log.Infof("stress get a signal %s", s.String())
 			switch s {
 			case syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT:
 				log.Info("stress exit")

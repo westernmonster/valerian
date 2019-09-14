@@ -109,6 +109,8 @@ func (operation *Operation) ParseComment(comment string, astFile *ast.File) erro
 		if err := operation.ParseSecurityComment(lineRemainder); err != nil {
 			return err
 		}
+	case "@deprecated":
+		operation.Deprecate()
 	}
 	return nil
 }
@@ -116,7 +118,7 @@ func (operation *Operation) ParseComment(comment string, astFile *ast.File) erro
 var paramPattern = regexp.MustCompile(`(\S+)[\s]+([\w]+)[\s]+([\S.]+)[\s]+([\w]+)[\s]+"([^"]+)"`)
 
 // ParseParamComment parses params return []string of param properties
-// E.g. @Param	queryText		form	      string	  true		        "The email for login"
+// E.g. @Param	queryText		formData	      string	  true		        "The email for login"
 //              [param name]    [paramType] [data type]  [is mandatory?]   [Comment]
 // E.g. @Param   some_id     path    int     true        "Some ID"
 func (operation *Operation) ParseParamComment(commentLine string, astFile *ast.File) error {
@@ -231,7 +233,12 @@ func (operation *Operation) parseAndExtractionParamAttribute(commentLine, schema
 			}
 			for _, e := range enums {
 				e = strings.TrimSpace(e)
-				param.Enum = append(param.Enum, defineType(schemaType, e))
+
+				value, err := defineType(schemaType, e)
+				if err != nil {
+					return err
+				}
+				param.Enum = append(param.Enum, value)
 			}
 		case "maxinum":
 			attr, err := findAttr(re, commentLine)
@@ -264,7 +271,11 @@ func (operation *Operation) parseAndExtractionParamAttribute(commentLine, schema
 			if err != nil {
 				break
 			}
-			param.Default = defineType(schemaType, attr)
+			value, err := defineType(schemaType, attr)
+			if err != nil {
+				return nil
+			}
+			param.Default = value
 		case "maxlength":
 			attr, err := findAttr(re, commentLine)
 			if err != nil {
@@ -321,31 +332,31 @@ func findAttrList(re *regexp.Regexp, commentLine string) ([]string, error) {
 }
 
 // defineType enum value define the type (object and array unsupported)
-func defineType(schemaType string, value string) interface{} {
+func defineType(schemaType string, value string) (interface{}, error) {
 	schemaType = TransToValidSchemeType(schemaType)
 	switch schemaType {
 	case "string":
-		return value
+		return value, nil
 	case "number":
 		v, err := strconv.ParseFloat(value, 64)
 		if err != nil {
-			panic(fmt.Errorf("enum value %s can't convert to %s err: %s", value, schemaType, err))
+			return nil, fmt.Errorf("enum value %s can't convert to %s err: %s", value, schemaType, err)
 		}
-		return v
+		return v, nil
 	case "integer":
 		v, err := strconv.Atoi(value)
 		if err != nil {
-			panic(fmt.Errorf("enum value %s can't convert to %s err: %s", value, schemaType, err))
+			return nil, fmt.Errorf("enum value %s can't convert to %s err: %s", value, schemaType, err)
 		}
-		return v
+		return v, nil
 	case "boolean":
 		v, err := strconv.ParseBool(value)
 		if err != nil {
-			panic(fmt.Errorf("enum value %s can't convert to %s err: %s", value, schemaType, err))
+			return nil, fmt.Errorf("enum value %s can't convert to %s err: %s", value, schemaType, err)
 		}
-		return v
+		return v, nil
 	default:
-		panic(fmt.Errorf("%s is unsupported type in enum value", schemaType))
+		return nil, fmt.Errorf("%s is unsupported type in enum value", schemaType)
 	}
 }
 
