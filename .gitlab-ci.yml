@@ -4,7 +4,7 @@ stages:
 build:
   stage: build
   image: golang:1.12.6
-  tag:
+  tags:
     - valerian
   before_script:
     # Create a symbolic link under $GOPATH, this is needed for local build
