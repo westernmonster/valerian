@@ -1,0 +1,23 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "bind.go",
+        "doc.go",
+        "sqlx.go",
+        "sqlx_context.go",
+    ],
+    importpath = "valerian/library/database/sqlx",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//library/database/sqlx/reflectx:go_default_library",
+        "//library/net/netutil/breaker:go_default_library",
+        "//library/stat:go_default_library",
+        "//library/time:go_default_library",
+        "//library/tracing:go_default_library",
+        "//vendor/github.com/jmoiron/sqlx/reflectx:go_default_library",
+        "//vendor/github.com/opentracing/opentracing-go:go_default_library",
+        "//vendor/github.com/pkg/errors:go_default_library",
+    ],
+)

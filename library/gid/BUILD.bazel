@@ -1,0 +1,9 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = ["id.go"],
+    importpath = "valerian/library/gid",
+    visibility = ["//visibility:public"],
+    deps = ["//vendor/github.com/bwmarrin/snowflake:go_default_library"],
+)

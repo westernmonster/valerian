@@ -9,7 +9,13 @@ gazelle(
 
 filegroup(
     name = "package-srcs",
-    srcs = glob(["**"], exclude=["bazel-*/**", ".git/**"]),
+    srcs = glob(
+        ["**"],
+        exclude = [
+            "bazel-*/**",
+            ".git/**",
+        ],
+    ),
     tags = ["automanaged"],
     visibility = ["//visibility:private"],
 )

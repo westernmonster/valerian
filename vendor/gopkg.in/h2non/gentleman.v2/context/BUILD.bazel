@@ -1,0 +1,13 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "context.go",
+        "handler.go",
+    ],
+    importmap = "valerian/vendor/gopkg.in/h2non/gentleman.v2/context",
+    importpath = "gopkg.in/h2non/gentleman.v2/context",
+    visibility = ["//visibility:public"],
+    deps = ["//vendor/gopkg.in/h2non/gentleman.v2/utils:go_default_library"],
+)

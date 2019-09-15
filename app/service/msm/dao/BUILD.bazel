@@ -1,0 +1,18 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "dao.go",
+        "mysql.go",
+        "tree.go",
+    ],
+    importpath = "valerian/app/service/msm/dao",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//app/service/msm/conf:go_default_library",
+        "//app/service/msm/model:go_default_library",
+        "//library/database/sqalx:go_default_library",
+        "//library/log:go_default_library",
+    ],
+)

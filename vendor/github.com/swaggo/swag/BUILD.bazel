@@ -1,0 +1,25 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "debug.go",
+        "doc.go",
+        "operation.go",
+        "parser.go",
+        "property.go",
+        "schema.go",
+        "swagger.go",
+        "version.go",
+    ],
+    importmap = "valerian/vendor/github.com/swaggo/swag",
+    importpath = "github.com/swaggo/swag",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//vendor/github.com/KyleBanks/depth:go_default_library",
+        "//vendor/github.com/go-openapi/jsonreference:go_default_library",
+        "//vendor/github.com/go-openapi/spec:go_default_library",
+        "//vendor/github.com/pkg/errors:go_default_library",
+        "//vendor/golang.org/x/tools/go/loader:go_default_library",
+    ],
+)

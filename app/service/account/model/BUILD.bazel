@@ -1,0 +1,12 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "model.go",
+        "resp_account.go",
+    ],
+    importpath = "valerian/app/service/account/model",
+    visibility = ["//visibility:public"],
+    deps = ["//library/database/sqlx/types:go_default_library"],
+)

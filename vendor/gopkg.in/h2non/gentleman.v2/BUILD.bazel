@@ -1,0 +1,29 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "client.go",
+        "dispatcher.go",
+        "request.go",
+        "response.go",
+        "version.go",
+    ],
+    importmap = "valerian/vendor/gopkg.in/h2non/gentleman.v2",
+    importpath = "gopkg.in/h2non/gentleman.v2",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//vendor/gopkg.in/h2non/gentleman.v2/context:go_default_library",
+        "//vendor/gopkg.in/h2non/gentleman.v2/middleware:go_default_library",
+        "//vendor/gopkg.in/h2non/gentleman.v2/mux:go_default_library",
+        "//vendor/gopkg.in/h2non/gentleman.v2/plugin:go_default_library",
+        "//vendor/gopkg.in/h2non/gentleman.v2/plugins/body:go_default_library",
+        "//vendor/gopkg.in/h2non/gentleman.v2/plugins/bodytype:go_default_library",
+        "//vendor/gopkg.in/h2non/gentleman.v2/plugins/cookies:go_default_library",
+        "//vendor/gopkg.in/h2non/gentleman.v2/plugins/headers:go_default_library",
+        "//vendor/gopkg.in/h2non/gentleman.v2/plugins/multipart:go_default_library",
+        "//vendor/gopkg.in/h2non/gentleman.v2/plugins/query:go_default_library",
+        "//vendor/gopkg.in/h2non/gentleman.v2/plugins/url:go_default_library",
+        "//vendor/gopkg.in/h2non/gentleman.v2/utils:go_default_library",
+    ],
+)

@@ -1,0 +1,22 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "data.go",
+        "json.go",
+        "pb.pb.go",
+        "protobuf.go",
+        "redirect.go",
+        "render.go",
+        "string.go",
+        "xml.go",
+    ],
+    importpath = "valerian/library/net/http/mars/render",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//vendor/github.com/gogo/protobuf/proto:go_default_library",
+        "//vendor/github.com/gogo/protobuf/types:go_default_library",
+        "//vendor/github.com/pkg/errors:go_default_library",
+    ],
+)

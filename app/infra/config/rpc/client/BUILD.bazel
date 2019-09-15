@@ -1,0 +1,12 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = ["config.go"],
+    importpath = "valerian/app/infra/config/rpc/client",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//app/infra/config/model:go_default_library",
+        "//library/net/rpc:go_default_library",
+    ],
+)

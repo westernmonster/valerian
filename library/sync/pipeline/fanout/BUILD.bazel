@@ -1,0 +1,25 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "go_default_library",
+    srcs = ["fanout.go"],
+    importpath = "valerian/library/sync/pipeline/fanout",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//library/log:go_default_library",
+        "//library/net/metadata:go_default_library",
+        "//library/stat/prom:go_default_library",
+        "//library/tracing:go_default_library",
+        "//vendor/github.com/opentracing/opentracing-go:go_default_library",
+        "//vendor/github.com/opentracing/opentracing-go/ext:go_default_library",
+    ],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = [
+        "example_test.go",
+        "fanout_test.go",
+    ],
+    embed = [":go_default_library"],
+)
