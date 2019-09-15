@@ -6,3 +6,21 @@ go_library(
     importpath = "valerian/library/naming",
     visibility = ["//visibility:public"],
 )
+
+filegroup(
+    name = "package-srcs",
+    srcs = glob(["**"]),
+    tags = ["automanaged"],
+    visibility = ["//visibility:private"],
+)
+
+filegroup(
+    name = "all-srcs",
+    srcs = [
+        ":package-srcs",
+        "//library/naming/discovery:all-srcs",
+        "//library/naming/livezk:all-srcs",
+    ],
+    tags = ["automanaged"],
+    visibility = ["//visibility:public"],
+)

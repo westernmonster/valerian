@@ -20,3 +20,21 @@ go_library(
         "//vendor/github.com/aliyun/alibaba-cloud-sdk-go/sdk/utils:go_default_library",
     ],
 )
+
+filegroup(
+    name = "package-srcs",
+    srcs = glob(["**"]),
+    tags = ["automanaged"],
+    visibility = ["//visibility:private"],
+)
+
+filegroup(
+    name = "all-srcs",
+    srcs = [
+        ":package-srcs",
+        "//vendor/github.com/aliyun/alibaba-cloud-sdk-go/sdk/auth/credentials:all-srcs",
+        "//vendor/github.com/aliyun/alibaba-cloud-sdk-go/sdk/auth/signers:all-srcs",
+    ],
+    tags = ["automanaged"],
+    visibility = ["//visibility:public"],
+)

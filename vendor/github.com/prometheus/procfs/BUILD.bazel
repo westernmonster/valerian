@@ -38,3 +38,21 @@ go_library(
         "//vendor/github.com/prometheus/procfs/internal/util:go_default_library",
     ],
 )
+
+filegroup(
+    name = "package-srcs",
+    srcs = glob(["**"]),
+    tags = ["automanaged"],
+    visibility = ["//visibility:private"],
+)
+
+filegroup(
+    name = "all-srcs",
+    srcs = [
+        ":package-srcs",
+        "//vendor/github.com/prometheus/procfs/internal/fs:all-srcs",
+        "//vendor/github.com/prometheus/procfs/internal/util:all-srcs",
+    ],
+    tags = ["automanaged"],
+    visibility = ["//visibility:public"],
+)

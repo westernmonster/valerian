@@ -51,3 +51,22 @@ go_test(
         "//vendor/github.com/smartystreets/goconvey/convey:go_default_library",
     ],
 )
+
+filegroup(
+    name = "package-srcs",
+    srcs = glob(["**"]),
+    tags = ["automanaged"],
+    visibility = ["//visibility:private"],
+)
+
+filegroup(
+    name = "all-srcs",
+    srcs = [
+        ":package-srcs",
+        "//library/net/rpc/context:all-srcs",
+        "//library/net/rpc/interceptor:all-srcs",
+        "//library/net/rpc/warden:all-srcs",
+    ],
+    tags = ["automanaged"],
+    visibility = ["//visibility:public"],
+)

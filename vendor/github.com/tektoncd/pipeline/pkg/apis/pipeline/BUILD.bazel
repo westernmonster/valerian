@@ -7,3 +7,20 @@ go_library(
     importpath = "github.com/tektoncd/pipeline/pkg/apis/pipeline",
     visibility = ["//visibility:public"],
 )
+
+filegroup(
+    name = "package-srcs",
+    srcs = glob(["**"]),
+    tags = ["automanaged"],
+    visibility = ["//visibility:private"],
+)
+
+filegroup(
+    name = "all-srcs",
+    srcs = [
+        ":package-srcs",
+        "//vendor/github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1:all-srcs",
+    ],
+    tags = ["automanaged"],
+    visibility = ["//visibility:public"],
+)
