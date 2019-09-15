@@ -3,7 +3,6 @@ valerian:
     - build
   tags:
     - valerian
-
   build:
     stage: build
     image: golang:1.12.6
