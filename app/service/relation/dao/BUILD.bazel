@@ -3,18 +3,21 @@ load("@io_bazel_rules_go//go:def.bzl", "go_library")
 go_library(
     name = "go_default_library",
     srcs = [
-        "interface.go",
+        "dao.go",
+        "mc.go",
         "relation.go",
-        "service.go",
+        "stat.go",
     ],
-    importpath = "valerian/app/service/relation/service",
+    importpath = "valerian/app/service/relation/dao",
     visibility = ["//visibility:public"],
     deps = [
         "//app/service/relation/conf:go_default_library",
-        "//app/service/relation/dao:go_default_library",
         "//app/service/relation/model:go_default_library",
+        "//library/cache/memcache:go_default_library",
         "//library/database/sqalx:go_default_library",
         "//library/log:go_default_library",
+        "//library/stat/prom:go_default_library",
+        "//library/xstr:go_default_library",
     ],
 )
 

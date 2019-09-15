@@ -6,6 +6,7 @@ go_library(
         "arg.go",
         "const.go",
         "model.go",
+        "resp_relation.go",
     ],
     importpath = "valerian/app/service/relation/model",
     visibility = ["//visibility:public"],

@@ -1,11 +1,37 @@
 # gazelle:ignore
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+load("@bazel_tools//tools/build_defs/repo:utils.bzl", "maybe")
+load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
+
+maybe(
+    http_archive,
+    name = "bazel_skylib",
+    url = "https://ci.flywk.com/skylib/bazel-skylib.0.8.0.tar.gz",
+    sha256 = "2ef429f5d7ce7111263289644d233707dba35e39696377ebab8b0bc701f7818e",
+)
+
+
+maybe(
+        git_repository,
+        name = "org_golang_x_tools",
+        remote = "https://git.flywk.com/golang/tools.git",
+        # "latest", as of 2019-07-08
+        commit = "c8855242db9c1762032abe33c2dff50de3ec9d05",
+        shallow_since = "1562618051 +0000",
+        patches = [
+                "@io_bazel_rules_go//third_party:org_golang_x_tools-gazelle.patch",
+                "@io_bazel_rules_go//third_party:org_golang_x_tools-extras.patch",
+                ],
+        patch_args = ["-p1"],
+        # gazelle args: -go_prefix golang.org/x/tools
+        )
+
+load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
 
 http_archive(
     name = "io_bazel_rules_go",
     urls = [
-        "https://storage.googleapis.com/bazel-mirror/github.com/bazelbuild/rules_go/releases/download/0.19.4/rules_go-0.19.4.tar.gz",
-        "https://github.com/bazelbuild/rules_go/releases/download/0.19.4/rules_go-0.19.4.tar.gz",
+        "https://ci.flywk.com/rules_go/rules_go-0.19.4.tar.gz",
     ],
     sha256 = "ae8c36ff6e565f674c7a3692d6a9ea1096e4c1ade497272c2108a810fb39acd2",
 )
@@ -14,8 +40,7 @@ http_archive(
 http_archive(
     name = "bazel_gazelle",
     urls = [
-        "https://storage.googleapis.com/bazel-mirror/github.com/bazelbuild/bazel-gazelle/releases/download/0.18.2/bazel-gazelle-0.18.2.tar.gz",
-        "https://github.com/bazelbuild/bazel-gazelle/releases/download/0.18.2/bazel-gazelle-0.18.2.tar.gz",
+        "https://ci.flywk.com/gazelle/bazel-gazelle-0.18.2.tar.gz",
     ],
     sha256 = "7fc87f4170011201b1690326e8c16c5d802836e3a0d617d8f75c3af2b23180c4",
 )
@@ -25,7 +50,7 @@ load("@io_bazel_rules_go//go:deps.bzl", "go_download_sdk", "go_rules_dependencie
 
 go_download_sdk(
     name = "go_sdk",
-    urls = ["https://dl.google.com/go/{}"],
+    urls = ["https://ci.flywk.com/go/{}"],
     sdks = {
         "linux_amd64": ("go1.13.linux-amd64.tar.gz", "68a2297eb099d1a76097905a2ce334e3155004ec08cdea85f24527be3c48e856"),
         "darwin_amd64": ("go1.13.darwin-amd64.tar.gz", "234ebbba1fbed8474340f79059cfb3af2a0f8b531c4ff0785346e0710e4003dd"),
@@ -1078,3 +1103,4 @@ go_repository(
     importpath = "github.com/valyala/quicktemplate",
     commit = "17b3d2dced7078f5463a69f6237f090d32b4ea57",
 )
+

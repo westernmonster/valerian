@@ -7,6 +7,7 @@ go_library(
         "arg_topic.go",
         "arg_topic_auth.go",
         "arg_topic_catalog.go",
+        "arg_topic_follow.go",
         "arg_topic_member.go",
         "const.go",
         "model.go",
