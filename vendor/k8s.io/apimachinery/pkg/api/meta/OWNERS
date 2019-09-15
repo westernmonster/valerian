@@ -1,27 +1,27 @@
 # See the OWNERS docs at https://go.k8s.io/owners
 
 reviewers:
-- brendandburns
-- caesarxuchao
-- david-mcmahon
+- thockin
+- smarterclayton
+- wojtek-t
 - deads2k
+- brendandburns
 - derekwaynecarr
-- dims
-- eparis
-- fabioy
-- feihujiang
-- ghodss
+- caesarxuchao
+- mikedanese
+- liggitt
+- nikhiljindal
 - gmarek
 - janetkuo
-- jianhuiz
-- krousey
-- liggitt
-- markturansky
-- mfojtik
-- mikedanese
 - ncdc
-- nikhiljindal
+- eparis
+- dims
+- krousey
+- markturansky
+- fabioy
 - resouer
-- smarterclayton
-- thockin
-- wojtek-t
+- david-mcmahon
+- mfojtik
+- jianhuiz
+- feihujiang
+- ghodss

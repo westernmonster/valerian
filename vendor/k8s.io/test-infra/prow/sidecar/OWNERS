@@ -3,6 +3,5 @@
 approvers:
 - stevekuznetsov
 labels:
-- area/prow/pod-utilities
-- area/prow/sidecar
-- infra
+ - area/prow/sidecar
+ - area/prow/pod-utilities

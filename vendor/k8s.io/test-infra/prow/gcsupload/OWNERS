@@ -3,6 +3,5 @@
 approvers:
 - stevekuznetsov
 labels:
-- area/prow/gcsupload
-- area/prow/pod-utilities
-- infra
+ - area/prow/gcsupload
+ - area/prow/pod-utilities

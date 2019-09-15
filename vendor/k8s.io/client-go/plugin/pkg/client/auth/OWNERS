@@ -2,7 +2,8 @@
 
 approvers:
 - sig-auth-authenticators-approvers
-labels:
-- sig/auth
 reviewers:
 - sig-auth-authenticators-reviewers
+labels:
+- sig/auth
+
