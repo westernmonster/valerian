@@ -5,7 +5,7 @@ build:
   stage: build
   image: golang:1.12.6
   tags:
-    - k8s-runner
+    - valerian
   before_script:
     # Create a symbolic link under $GOPATH, this is needed for local build
     # i.e. /go/src/gitlab.com/ykyuen/gitlab-ci-go-build
