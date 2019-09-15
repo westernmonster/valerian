@@ -9,7 +9,7 @@
 
 bazel-bin
 bazel-genfiles
-bazel-go-common
+bazel-valerian
 bazel-out
 bazel-testlogs
 bazel-test
