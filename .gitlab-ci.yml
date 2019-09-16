@@ -1,4 +1,4 @@
-image: golang:alpine3.10
+image: registry-vpc.cn-hangzhou.aliyuncs.com/flywk/gobuild:latest
 stages:
   - build
   - test
@@ -20,7 +20,7 @@ service-msm-build:
     - cd $CI_PROJECT_NAME/app/service/msm/cmd
   script:
     # Compile and name the binary as `hello`
-    - GO111MODULE=on go build -mod vendor
+    - GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o cmd
 
 service-msm-test:
   stage: test
@@ -47,7 +47,7 @@ interface-locale-build:
     - cd $CI_PROJECT_NAME/app/interface/locale/cmd
   script:
     # Compile and name the binary as `hello`
-    - GO111MODULE=on go build -mod vendor
+    - GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o cmd
 
 interface-locale-test:
   stage: test
@@ -74,7 +74,7 @@ interface-location-build:
     - cd $CI_PROJECT_NAME/app/interface/location/cmd
   script:
     # Compile and name the binary as `hello`
-    - GO111MODULE=on go build -mod vendor
+    - GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o cmd
 
 interface-location-test:
   stage: test
