@@ -3,34 +3,31 @@ stages:
   - test
   - deploy
 
-service-account:
-  stage: build
-  tags:
-    - valerian
-  before_script:
-    # Create a symbolic link under $GOPATH, this is needed for local build
-    # i.e. /go/src/gitlab.com/ykyuen/gitlab-ci-go-build
-    - cd $GOPATH/src
-    - mkdir -p gitlab.com/$CI_PROJECT_NAMESPACE
-    - cd gitlab.com/$CI_PROJECT_NAMESPACE
-    - ln -s $CI_PROJECT_DIR
-    - cd $CI_PROJECT_NAME/app/service/account/cmd
-  script:
-    # Compile and name the binary as `hello`
-    - GO111MODULE=on go build -mod vendor
+variables:
+  DOCKER_DRIVER: overlay2
+  GIT_STRATEGY: fetch
 
-service-msm:
+
+service-msm-build:
   stage: build
   tags:
     - valerian
   before_script:
-    # Create a symbolic link under $GOPATH, this is needed for local build
-    # i.e. /go/src/gitlab.com/ykyuen/gitlab-ci-go-build
     - cd $GOPATH/src
-    - mkdir -p gitlab.com/$CI_PROJECT_NAMESPACE
-    - cd gitlab.com/$CI_PROJECT_NAMESPACE
     - ln -s $CI_PROJECT_DIR
     - cd $CI_PROJECT_NAME/app/service/msm/cmd
   script:
     # Compile and name the binary as `hello`
     - GO111MODULE=on go build -mod vendor
+
+service-msm-test:
+  stage: test
+  tags:
+    - valerian
+  before_script:
+    - cd $GOPATH/src
+    - ln -s $CI_PROJECT_DIR
+    - cd $CI_PROJECT_NAME
+  script:
+    # Compile and name the binary as `hello`
+    - go test ./...
