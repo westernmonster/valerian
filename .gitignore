@@ -1,7 +1,7 @@
 /api
 /valerian
 /app/cmd/cmd
-/docs
+/docs/*
 /docs/docs.go
 **/cmd/cmd
 /.idea

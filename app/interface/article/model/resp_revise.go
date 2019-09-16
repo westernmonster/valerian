@@ -42,6 +42,12 @@ type ReviseDetailResp struct {
 	// 内容
 	Content string `json:"content"`
 
+	// 是否收藏
+	Fav bool `json:"fav"`
+
+	// 是否点赞
+	Like bool `json:"like"`
+
 	// 赞数
 	LikeCount int `json:"like_count"`
 
