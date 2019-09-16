@@ -16,4 +16,4 @@ build:
   script:
     # Compile and name the binary as `hello`
     - make ci-build
-    - echo "done"
+    - echo "done1"
