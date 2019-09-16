@@ -50,6 +50,9 @@ type Profile struct {
 	// 更新时间
 	UpdatedAt int64 `json:"updated_at"`
 
+	// 状态
+	Stat *MemberInfoStat `json:"stat"`
+
 	// 设置
 	Settings *SettingResp `json:"settings"`
 }
