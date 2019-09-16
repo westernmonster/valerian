@@ -29,6 +29,8 @@ all: check bazel-update
 
 build: init check bazel-build
 
+ci-build: bazel-build
+
 simple-build:
 	bazel build --watchfs -- //tools/... -//vendor/...
 ifeq ($(WHAT),)
