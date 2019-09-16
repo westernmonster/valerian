@@ -1,5 +1,6 @@
 package model
 
+// 补充
 type ReviseItem struct {
 	ID int64 `json:"id,string" swaggertype:"string"`
 
