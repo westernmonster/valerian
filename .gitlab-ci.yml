@@ -33,7 +33,7 @@ service-msm-test:
   script:
     # Compile and name the binary as `hello`
     - go env -w GOPROXY=https://goproxy.cn,direct
-    - go test ./...
+    - GO111MODULE=on go test -mod vendor ./...
   dependencies:
     - service-msm-build
 
@@ -60,7 +60,7 @@ interface-locale-test:
   script:
     # Compile and name the binary as `hello`
     - go env -w GOPROXY=https://goproxy.cn,direct
-    - go test ./...
+    - GO111MODULE=on go test -mod vendor ./...
   dependencies:
     - interface-locale-build
 
@@ -87,6 +87,6 @@ interface-location-test:
   script:
     # Compile and name the binary as `hello`
     - go env -w GOPROXY=https://goproxy.cn,direct
-    - go test ./...
+    - GO111MODULE=on go test -mod vendor ./...
   dependencies:
     - interface-location-build
