@@ -1,5 +1,6 @@
 FROM registry.cn-hangzhou.aliyuncs.com/valerian/base:latest
-COPY $EXE /go/bin/cmd
+ARG EXE
+COPY ${EXE} /go/bin/cmd
 USER appuser
 
 # Run the hello binary.
