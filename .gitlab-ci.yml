@@ -31,6 +31,8 @@ service-msm-test:
   script:
     # Compile and name the binary as `hello`
     - go test ./...
+  dependencies:
+    - service-msm-build
 
 interface-locale-build:
   stage: build
@@ -55,6 +57,8 @@ interface-locale-test:
   script:
     # Compile and name the binary as `hello`
     - go test ./...
+  dependencies:
+    - interface-locale-build
 
 interface-location-build:
   stage: build
@@ -79,3 +83,5 @@ interface-location-test:
   script:
     # Compile and name the binary as `hello`
     - go test ./...
+  dependencies:
+    - interface-location-build
