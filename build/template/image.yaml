@@ -1,6 +1,0 @@
-image:
-  - name: bazel_build
-    image: l.gcr.io/google/bazel:latest
-  - name: go_lint
-    image: cytopia/golint:latest
-
