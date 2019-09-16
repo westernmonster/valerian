@@ -29,7 +29,7 @@ all: check bazel-update
 
 build: init check bazel-build
 
-ci-build: bazel-build
+ci-build: check bazel-build
 
 simple-build:
 	bazel build --watchfs -- //tools/... -//vendor/...
