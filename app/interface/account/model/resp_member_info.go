@@ -32,25 +32,26 @@ type MemberInfo struct {
 	// 是否VIP
 	IsVIP bool `json:"is_vip"`
 
-	Role string `json:"role"`
+	// 状态
+	Stat *MemberInfoStat `json:"stat"`
 }
 
-type MemberInfoMeta struct {
+type MemberInfoStat struct {
 	// 是否关注
 	IsFollow bool `json:"is_follow"`
 
 	// 粉丝数
-	FansCount int `json:"fans_count"`
+	Fans int `json:"fans"`
 
 	// 关注数
-	FollowCount int `json:"follow_count"`
+	Following int `json:"following"`
 
 	// 话题数
-	TopicCount int `json:"topic_count"`
+	Topics int `json:"topics"`
 
 	// 文章数
-	ArticleCount int `json:"article_count"`
+	Articles int `json:"articles"`
 
 	// 讨论数
-	DiscussCount int `json:"discuss_count"`
+	Discussions int `json:"discussions"`
 }
