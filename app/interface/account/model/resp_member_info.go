@@ -43,7 +43,7 @@ type MemberInfoStat struct {
 	// 粉丝数
 	Fans int `json:"fans"`
 
-	// 关注数
+	// 关注数1
 	Following int `json:"following"`
 
 	// 话题数
