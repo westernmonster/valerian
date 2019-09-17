@@ -24,7 +24,7 @@ import (
 const (
 	// code
 	_codeOk          = 200
-	_codeNotModified = -304
+	_codeNotModified = 304
 	// api
 	_apiGet   = "http://%s/v1/config/get2?%s"
 	_apiCheck = "http://%s/v1/config/check?%s"
@@ -50,7 +50,7 @@ type version struct {
 type result struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
-	Data    *data  `json:"data"`
+	Data    *data  `json:"result"`
 }
 
 type data struct {
@@ -295,6 +295,7 @@ func (c *Client) checkVersion(reqVer int64) (ver int64, err error) {
 		err = fmt.Errorf("checkVersion() c.makeUrl() error url empty")
 		return
 	}
+
 	// http
 	if req, err = http.NewRequest("GET", url, nil); err != nil {
 		return
@@ -431,6 +432,8 @@ func (c *Client) makeURL(api string, ver int64) (query string) {
 	params.Set("customize", c.customize)
 	// api
 	query = fmt.Sprintf(api, conf.Addr, params.Encode())
+
+	fmt.Println(query)
 	return
 }
 

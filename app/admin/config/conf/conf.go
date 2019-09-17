@@ -10,41 +10,33 @@ import (
 	"valerian/library/net/rpc"
 	"valerian/library/tracing"
 
-	flag "github.com/spf13/pflag"
-
 	"github.com/BurntSushi/toml"
+	flag "github.com/spf13/pflag"
 )
 
 var (
 	confPath string
 	// Conf conf
-	Conf      = &Config{}
-	configKey = "config.toml"
-	client    *conf.Client
+	Conf   = &Config{}
+	client *conf.Client
 )
 
 type Config struct {
-	Log        *log.Config
-	Mars       *mars.ServerConfig
-	HTTPClient *mars.ClientConfig
-	Tracer     *tracing.Config
+	Log    *log.Config
+	Tracer *tracing.Config
+
 	DB         *DB
-	Tree       *ServiceTree
+	HTTPClient *mars.ClientConfig
 	ConfSvr    *rpc.ClientConfig
-	Discovery  *discovery.Config
+	Mars       *mars.ServerConfig
+
+	Discovery *discovery.Config
 }
 
 // DB db config.
 type DB struct {
-	Main *sqalx.Config
-	Auth *sqalx.Config
-	Apm  *sqalx.Config
-}
-
-// ServiceTree ServiceTree.
-type ServiceTree struct {
-	Host       string
-	PlatformID string
+	Apm    *sqalx.Config
+	Config *sqalx.Config
 }
 
 func init() {
@@ -88,7 +80,7 @@ func load() (err error) {
 		ok      bool
 		tmpConf *Config
 	)
-	if s, ok = client.Value(configKey); !ok {
+	if s, ok = client.Toml2(); !ok {
 		return errors.New("load config center error")
 	}
 	if _, err = toml.Decode(s, &tmpConf); err != nil {

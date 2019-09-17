@@ -5,7 +5,6 @@ import (
 	ctx "context"
 	"encoding/gob"
 	"errors"
-	"flag"
 	"fmt"
 	"io"
 	"log"
@@ -27,6 +26,8 @@ import (
 	"valerian/library/net/rpc/interceptor"
 	"valerian/library/tracing"
 
+	flag "github.com/spf13/pflag"
+
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
 	pkgerr "github.com/pkg/errors"
@@ -37,10 +38,10 @@ var (
 )
 
 func init() {
-	addFlag(flag.CommandLine)
+	addFlag()
 }
 
-func addFlag(fs *flag.FlagSet) {
+func addFlag() {
 	v := os.Getenv("GORPC")
 	if v == "" {
 		if env.GORPCPort != "" {
@@ -49,7 +50,7 @@ func addFlag(fs *flag.FlagSet) {
 			v = "tcp://0.0.0.0:8099"
 		}
 	}
-	fs.StringVar(&_gorpcDSN, "gorpc", v, "listen go rpc dsn, or use GORPC env variable.")
+	flag.StringVar(&_gorpcDSN, "gorpc", v, "listen go rpc dsn, or use GORPC env variable.")
 }
 
 func parseDSN(rawdsn string) *ServerConfig {
@@ -101,6 +102,7 @@ func rpcListen(c *ServerConfig, s *Server) {
 			xlog.Errorf("listener.Close() error(%v)", err)
 		}
 	}()
+
 	xlog.Infof("start rpc listen addr: %s", c.Addr)
 	s.Accept(l)
 }

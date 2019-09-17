@@ -29,7 +29,7 @@ stdout = true
 
 [db]
     addr = "mysql:3306"
-    dsn = "flywk:flywk@tcp(mysql:3306)/config_dev?timeout=1s&readTimeout=1s&writeTimeout=1s&parseTime=true&loc=Local&charset=utf8mb4"
+    dsn = "flywk:flywk@tcp(121.199.254.133:3306)/config_uat?parseTime=true&charset=utf8mb4 "
     active = 5
     idle = 2
     queryTimeout = "1s"
@@ -52,13 +52,14 @@ stdout = true
     writeTimeout = "1s"
     idleTimeout = "10s"
 
+
 [mars]
-    address = "0.0.0.0:7003"
+    address = "0.0.0.0:8001"
 	maxListen = 10
     timeout="2s"
 
 [discovery]
-   nodes = ["discovery1:7171","discovery2:7171"]
+   nodes = ["192.168.0.136:7171"]
    key = "6a29f8ed87407c11"
    secret = "d3c5a85f5b895a03735b5d20a273bc57"
    env = "dev"

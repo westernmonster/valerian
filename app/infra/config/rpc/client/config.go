@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	_appid     = "config.service"
+	_appid     = "infra.config"
 	_push      = "RPC.Push"
 	_force     = "RPC.Force"
 	_hosts     = "RPC.Hosts"

@@ -201,6 +201,8 @@ func (c *Client) checkVersion2(reqVer *ver) (ver *ver, err error) {
 		err = fmt.Errorf("checkVersion() c.makeUrl() error url empty")
 		return
 	}
+
+	fmt.Println(url)
 	// http
 	if req, err = http.NewRequest("GET", url, nil); err != nil {
 		return
@@ -271,6 +273,7 @@ func (c *Client) getConfig2(ver *ver) (data *data, err error) {
 	}
 	switch res.Code {
 	case _codeOk:
+		fmt.Println(resp)
 		// has new config
 		if res.Data == nil {
 			err = fmt.Errorf("getConfig() response error result: %v", res)
