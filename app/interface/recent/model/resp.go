@@ -36,15 +36,24 @@ type ItemArticle struct {
 	CommentCount int `json:"comment_count"`
 }
 
+type RecentItem struct {
+	// 类型
+	// topic, article
+	Type string `json:"type"`
+
+	// 话题
+	Topic *ItemTopic `json:"topic,omitempty"`
+
+	// 文章
+	Article *ItemArticle `json:"article,omitempty"`
+}
+
 type RecentListResp struct {
-	Topics   []*ItemTopic   `json:"topics"`
-	Articles []*ItemArticle `json:"articles"`
-	Paging   *Paging        `json:"paging"`
+	Items  []*RecentItem `json:"articles"`
+	Paging *Paging       `json:"paging"`
 }
 
 type Paging struct {
-	// 统计数量
-	Total *int `json:"total,omitempty"`
 	// 是否结束
 	IsEnd bool `json:"is_end"`
 	// 下一页
