@@ -68,12 +68,24 @@ type FeedItem struct {
 
 type FeedSource struct {
 	// 动作发起者
-	Actors []*Actor `json:"actors,omitempty"`
-	// 创建时间
-	CreatedAt int64 `json:"created_at"`
-	// 更新时间
-	UpdatedAt  int64  `json:"updated_at"`
+	Actor *Actor `json:"actor,omitempty"`
+	// 时间
+	ActionTime int64 `json:"action_time"`
+	// 文字内容
+	// 例如：编辑了文章，收藏了文章，关注了用户
 	ActionText string `json:"action_text"`
+	// 类型
+	// MEMBER_CREATE_TOPIC  创建话题
+	// MEMBER_CREATE_DISCUSS 发布讨论
+	// MEMBER_CREATE_ARTICLE 发布文章
+	// MEMBER_CREATE_REVISE  发布补充
+	// MEMBER_FOLLOW_TOPIC  关注话题
+	// MEMBER_FOLLOW_MEMBER 关注用户
+	// MEMBER_LIKE_ARTICLE  点赞文章
+	// MEMBER_LIKE_REVISE 点赞补充
+	// MEMBER_LIKE_DISCUSS 点赞讨论
+	// MEMBER_FAV_ARTICLE  收藏文章
+	// MEMBER_FAV_TOPIC 收藏话题
 	ActionType string `json:"action_type"`
 }
 
@@ -81,6 +93,7 @@ type Actor struct {
 	// ID
 	ID int64 `json:"id"`
 	// 类型
+	// user, org
 	Type string `json:"type"`
 	// 头像
 	Avatar string `json:"avatar"`
@@ -98,7 +111,7 @@ type FeedTarget struct {
 	// 补充
 	Revise *TargetRevise `json:"revise,omitempty"`
 	// 讨论
-	Discuss *TargetDiscuss `json:"discuss,omitempty"`
+	Discussion *TargetDiscuss `json:"discussion,omitempty"`
 	// 用户
 	Member *MemberInfo `json:"member,omitempty"`
 	// 话题

@@ -2,6 +2,26 @@ package http
 
 import "valerian/library/net/http/mars"
 
+// @Summary 最近发布
+// @Description 最近发布
+// @Tags account
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param id query string true "ID"
+// @Param type query string true "类型：article,revise,discussion"
+// @Param limit query integer false "每页大小"
+// @Param offset query integer false "offset"
+// @Success 200 {object} model.RecentPublishResp "个人资料"
+// @Failure 400 "验证请求失败"
+// @Failure 401 "登录验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /account/member/recent [get]
+func recent(c *mars.Context) {
+}
+
 // @Summary 获取用户资料
 // @Description 获取用户资料
 // @Tags account

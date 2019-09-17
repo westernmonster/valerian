@@ -55,7 +55,7 @@ type FeedTarget struct {
 	// 补充
 	Revise *TargetRevise `json:"revise,omitempty"`
 	// 讨论
-	Discuss *TargetDiscuss `json:"discuss,omitempty"`
+	Discussion *TargetDiscuss `json:"discussion,omitempty"`
 	// 用户
 	Member *MemberInfo `json:"member,omitempty"`
 	// 话题

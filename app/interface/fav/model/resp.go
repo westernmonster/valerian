@@ -59,7 +59,7 @@ type TargetTopic struct {
 
 type FavItem struct {
 	// 类型
-	// topic, article, revise, discuss
+	// topic, article, revise, discussion
 	Type string `json:"type"`
 
 	// 话题

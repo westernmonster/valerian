@@ -2,8 +2,8 @@ package http
 
 import "valerian/library/net/http/mars"
 
-// @Summary 获取推荐内容
-// @Description 获取推荐内容
+// @Summary 首页动态
+// @Description 首页动态
 // @Tags home
 // @Accept json
 // @Produce json
@@ -16,6 +16,6 @@ import "valerian/library/net/http/mars"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /list/recommend [get]
+// @Router /list/activities [get]
 func getActivites(c *mars.Context) {
 }

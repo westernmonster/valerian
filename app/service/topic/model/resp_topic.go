@@ -40,7 +40,7 @@ type TopicResp struct {
 	// 话题首页
 	// feed 动态
 	// catalog 目录
-	// discuss 讨论
+	// discussion 讨论
 	TopicHome string `json:"topic_home"`
 
 	// 是否私密
