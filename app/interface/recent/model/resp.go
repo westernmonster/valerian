@@ -36,14 +36,10 @@ type ItemArticle struct {
 	CommentCount int `json:"comment_count"`
 }
 
-type RecentTopicListResp struct {
-	Items  []*ItemTopic `json:"items"`
-	Paging *Paging      `json:"paging"`
-}
-
-type RecentArticleListResp struct {
-	Items  []*ItemArticle `json:"items"`
-	Paging *Paging        `json:"paging"`
+type RecentListResp struct {
+	Topics   []*ItemTopic   `json:"topics"`
+	Articles []*ItemArticle `json:"articles"`
+	Paging   *Paging        `json:"paging"`
 }
 
 type Paging struct {

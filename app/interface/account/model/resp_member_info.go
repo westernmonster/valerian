@@ -40,18 +40,18 @@ type MemberInfoStat struct {
 	// 是否关注
 	IsFollow bool `json:"is_follow"`
 
-	// 粉丝数
-	Fans int `json:"fans"`
+	// 关注数
+	FollowCount int `json:"follow_count" db:"-"`
 
-	// 关注数1
-	Following int `json:"following"`
+	// 粉丝数
+	FansCount int `json:"fans_count"  db:"-"`
 
 	// 话题数
-	Topics int `json:"topics"`
+	TopicCount int `json:"topic_count"`
 
 	// 文章数
-	Articles int `json:"articles"`
+	ArticleCount int `json:"article_count"`
 
 	// 讨论数
-	Discussions int `json:"discussions"`
+	DiscussionCount int `json:"discussion_count"`
 }
