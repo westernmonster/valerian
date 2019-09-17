@@ -45,10 +45,3 @@ platform = "2F3b8fDVGlMnj8aCDlMaW"
 [ConfSvr]
 timeout = "1s"
 
-[discovery]
-    nodes = ["192.168.0.136:7171"]
-    key = "6a29f8ed87407c11"
-    secret = "d3c5a85f5b895a03735b5d20a273bc57"
-    env = "local"
-    zone = "hz001"
-

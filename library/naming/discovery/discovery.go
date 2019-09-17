@@ -150,7 +150,7 @@ func Build(id string) naming.Resolver {
 func New(c *Config) (d *Discovery) {
 	if c == nil {
 		c = &Config{
-			Nodes:  []string{"discovery.flywk.com"},
+			Nodes:  []string{"discovery.pronote.loc"},
 			Key:    "discovery",
 			Secret: "discovery",
 		}
