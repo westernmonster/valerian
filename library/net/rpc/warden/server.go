@@ -86,8 +86,6 @@ type Server struct {
 // handle return a new unary server interceptor for OpenTracing\Logging\LinkTimeout.
 func (s *Server) handle() grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, args *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
-		fmt.Println("incoming request")
-		fmt.Printf("req: %#v\n", req)
 		var (
 			cancel     func()
 			caller     string
@@ -134,8 +132,6 @@ func (s *Server) handle() grpc.UnaryServerInterceptor {
 			if remotePorts, ok := gmd[nmd.RemotePort]; ok {
 				remotePort = remotePorts[0]
 			}
-			fmt.Println("gmd")
-			fmt.Println(gmd)
 		}
 
 		t := tracing.StartSpan(args.FullMethod, ext.RPCServerOption(parentCtx), opentracing.Tag{Key: string(ext.Component), Value: "gRPC"})

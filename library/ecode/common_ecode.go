@@ -107,4 +107,9 @@ var (
 	ArticleHistoryNotExist         = add(11074) // 未找到该记录
 	MemberOverLimit                = New(11075) // 批量请求超过限制
 	TopicMemberStatNotExist        = New(10078) // 话题成员统计信息出错
+
+	TagNotExist      = add(20000) // Tag 不存在
+	ConfigIdsIsEmpty = add(20001) // ConfigIds 不存在
+	ConfigsNotExist  = add(20002) // Configs 不存在
+
 )

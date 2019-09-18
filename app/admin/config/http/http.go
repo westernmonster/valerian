@@ -39,6 +39,21 @@ func innerRouter(e *mars.Engine) {
 		{
 			config.POST("/add", createConfig)
 		}
+
+		commonConfig := b.Group("/common_config")
+		{
+			commonConfig.POST("/add", createCommonConfig)
+		}
+
+		build := b.Group("/build")
+		{
+			build.POST("/add", createBuild)
+		}
+
+		tag := b.Group("/tag")
+		{
+			tag.POST("/add", createTag)
+		}
 	}
 }
 

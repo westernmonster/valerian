@@ -82,13 +82,13 @@ func (s *Service) getConfigIDs(c context.Context, node sqalx.Node, version int64
 		return
 	}
 	if item == nil {
-		err = ecode.NothingFound
+		err = ecode.TagNotExist
 		return
 	}
 
 	ids, _ = xstr.SplitInts(item.ConfigIds)
 	if len(ids) == 0 {
-		err = ecode.NothingFound
+		err = ecode.ConfigIdsIsEmpty
 	}
 
 	return
@@ -112,7 +112,7 @@ func (s *Service) getConfigsByIDs(c context.Context, node sqalx.Node, ids []int6
 	}
 
 	if len(confs) == 0 {
-		err = ecode.NothingFound
+		err = ecode.ConfigsNotExist
 	}
 
 	return
@@ -159,7 +159,6 @@ func (s *Service) tagForce(c context.Context, appID int64, build string) (force 
 		ok    bool
 		tagID int64
 	)
-	fmt.Printf("Build: %#v\n", build)
 	key := tagIDkey(appID, build)
 	s.tagIDLock.RLock()
 	tagID, ok = s.tagID[key]
@@ -254,13 +253,10 @@ func (s *Service) values(c context.Context, tagID int64) (values []*model.Value,
 	var (
 		ids []int64
 	)
-	fmt.Printf("tagID: %#v\n", tagID)
 	if ids, err = s.getConfigIDs(c, s.d.DB(), tagID); err != nil {
 		return
 	}
-	fmt.Printf("ids: %#v\n", ids)
 	values, err = s.getConfigsByIDs(c, s.d.DB(), ids)
-	fmt.Printf("values: %#v\n", values)
 	return
 }
 
@@ -391,7 +387,6 @@ func (s *Service) curForce(c context.Context, node sqalx.Node, rhost *model.Host
 	version, ok = s.forces[pushForceKey]
 	s.fLock.RUnlock()
 	if !ok {
-		fmt.Println(appID, rhost.Name)
 		var dbForce *model.Force
 		if dbForce, err = s.d.GetForceByCond(c, node, map[string]interface{}{
 			"app_id":   appID,
@@ -499,7 +494,6 @@ func (s *Service) Config(c context.Context, svrName, token string, ver int64, id
 		return
 	}
 	cacheName := cacheKey(svrName, ver)
-	fmt.Printf("cacheName: %#v\n", cacheName)
 	if conf, err = s.d.File(c, cacheName); err == nil {
 		if len(ids) == 0 {
 			return
@@ -508,16 +502,13 @@ func (s *Service) Config(c context.Context, svrName, token string, ver int64, id
 			return
 		}
 	} else {
-		fmt.Println("begin values")
 		if all, err = s.values(c, ver); err != nil {
 			return
 		}
-		fmt.Println("gen Config")
 		if conf, err = genConfig(ver, all); err != nil {
 			return
 		}
 
-		fmt.Printf("conf: %#v\n", conf)
 		cacheName := cacheKey(svrName, ver)
 		if err = s.d.SetFile(c, cacheName, conf); err != nil {
 			return
@@ -547,7 +538,6 @@ func (s *Service) Config(c context.Context, svrName, token string, ver int64, id
 		return
 	}
 
-	fmt.Printf("conf: %#v\n", conf)
 	return
 }
 
@@ -610,7 +600,6 @@ func (s *Service) CheckVersion(c context.Context, rhost *model.Host, token strin
 	if appID, err = s.appAuth(c, rhost.Service, token); err != nil {
 		return
 	}
-	fmt.Println("auth success")
 	// set heartbeat
 	rhost.HeartbeatTime = xtime.Time(time.Now().Unix())
 	s.d.SetHost(c, rhost, rhost.Service)
@@ -622,19 +611,14 @@ func (s *Service) CheckVersion(c context.Context, rhost *model.Host, token strin
 		return
 	}
 
-	fmt.Println("tag Force success")
-	fmt.Printf("rhost: %#v\n", rhost)
-
 	rhost.Force = tagForce
 	s.d.SetHost(c, rhost, rhost.Service)
 	if rhost.ConfigVersion > 0 {
-		fmt.Println("curForce")
 		// force has a higher priority than appoint
 		if ForceVersion, err = s.curForce(c, s.d.DB(), rhost, appID); err != nil {
 			return
 		}
 
-		fmt.Println("curForce success")
 		if ForceVersion > 0 {
 			rhost.ForceVersion = ForceVersion
 			s.d.SetHost(c, rhost, rhost.Service)
@@ -647,7 +631,6 @@ func (s *Service) CheckVersion(c context.Context, rhost *model.Host, token strin
 			return
 		}
 
-		fmt.Println("lastForce success")
 		if rhost.ConfigVersion <= lastForce {
 			if rhost.ConfigVersion != lastForce {
 				evt <- &model.Diff{Version: lastForce}
@@ -671,8 +654,6 @@ func (s *Service) CheckVersion(c context.Context, rhost *model.Host, token strin
 		err = ecode.NothingFound
 		return
 	}
-
-	fmt.Println("curTag success")
 
 	if tagID != rhost.ConfigVersion {
 		ver := &model.Diff{Version: tagID}
@@ -927,6 +908,7 @@ func (s *Service) ConfigCheck(c context.Context, svrName, token string, ver int6
 		err = ecode.RequestErr
 		return
 	}
+
 	cacheName := cacheKey(svrName, ver)
 	if conf, err = s.d.File(c, cacheName); err == nil {
 		if len(ids) == 0 {

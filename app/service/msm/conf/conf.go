@@ -18,9 +18,8 @@ import (
 var (
 	confPath string
 	// Conf conf
-	Conf      = &Config{}
-	configKey = "config.toml"
-	client    *conf.Client
+	Conf   = &Config{}
+	client *conf.Client
 )
 
 type Config struct {
@@ -88,7 +87,7 @@ func load() (err error) {
 		ok      bool
 		tmpConf *Config
 	)
-	if s, ok = client.Value(configKey); !ok {
+	if s, ok = client.Toml2(); !ok {
 		return errors.New("load config center error")
 	}
 	if _, err = toml.Decode(s, &tmpConf); err != nil {

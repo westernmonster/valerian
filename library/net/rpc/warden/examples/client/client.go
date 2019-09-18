@@ -35,7 +35,6 @@ func normalCall(cli pb.GreeterClient) {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("get reply:", *reply)
 }
 
 func errDetailCall(cli pb.GreeterClient) {

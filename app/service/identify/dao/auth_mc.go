@@ -50,7 +50,6 @@ func (p *Dao) SetAccessTokenCache(c context.Context, m *model.AccessToken) (err 
 	key := akKey(m.Token)
 	conn := p.authMC.Get(c)
 	defer conn.Close()
-	fmt.Println(key)
 
 	if m.ExpiresAt < 0 {
 		log.For(c).Error(fmt.Sprintf("auth expire error(expires:%d)", m.ExpiresAt))

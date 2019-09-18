@@ -36,6 +36,30 @@ type Service struct {
 		UpdateConfig(c context.Context, node sqalx.Node, item *model.Config) (err error)
 		DelConfig(c context.Context, node sqalx.Node, id int64) (err error)
 
+		GetBuildsByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.Build, err error)
+		GetBuilds(c context.Context, node sqalx.Node) (items []*model.Build, err error)
+		GetBuildByID(c context.Context, node sqalx.Node, id int64) (item *model.Build, err error)
+		GetBuildByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (item *model.Build, err error)
+		AddBuild(c context.Context, node sqalx.Node, item *model.Build) (err error)
+		UpdateBuild(c context.Context, node sqalx.Node, item *model.Build) (err error)
+		DelBuild(c context.Context, node sqalx.Node, id int64) (err error)
+
+		GetTagsByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.Tag, err error)
+		GetTags(c context.Context, node sqalx.Node) (items []*model.Tag, err error)
+		GetTagByID(c context.Context, node sqalx.Node, id int64) (item *model.Tag, err error)
+		GetTagByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (item *model.Tag, err error)
+		AddTag(c context.Context, node sqalx.Node, item *model.Tag) (err error)
+		UpdateTag(c context.Context, node sqalx.Node, item *model.Tag) (err error)
+		DelTag(c context.Context, node sqalx.Node, id int64) (err error)
+
+		GetCommonConfigsByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.CommonConfig, err error)
+		GetCommonConfigs(c context.Context, node sqalx.Node) (items []*model.CommonConfig, err error)
+		GetCommonConfigByID(c context.Context, node sqalx.Node, id int64) (item *model.CommonConfig, err error)
+		GetCommonConfigByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (item *model.CommonConfig, err error)
+		AddCommonConfig(c context.Context, node sqalx.Node, item *model.CommonConfig) (err error)
+		UpdateCommonConfig(c context.Context, node sqalx.Node, item *model.CommonConfig) (err error)
+		DelCommonConfig(c context.Context, node sqalx.Node, id int64) (err error)
+
 		Ping(c context.Context) (err error)
 		Close()
 		ApmDB() sqalx.Node

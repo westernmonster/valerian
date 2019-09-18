@@ -433,7 +433,6 @@ func (c *Client) makeURL(api string, ver int64) (query string) {
 	// api
 	query = fmt.Sprintf(api, conf.Addr, params.Encode())
 
-	fmt.Println(query)
 	return
 }
 

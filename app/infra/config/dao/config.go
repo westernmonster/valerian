@@ -40,7 +40,6 @@ func (p *Dao) GetConfigsByIDs(c context.Context, node sqalx.Node, ids []int64) (
 
 	sqlSelect := "SELECT a.* FROM configs a WHERE a.deleted=0 AND a.state=? AND a.id IN(?)"
 
-	fmt.Println(strIDs)
 	if err = node.SelectContext(c, &items, sqlSelect, model.ConfigEnd, strings.Join(strIDs, ",")); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetConfigsByIDs err(%+v), ids(%+v)", err, strIDs))
 		return

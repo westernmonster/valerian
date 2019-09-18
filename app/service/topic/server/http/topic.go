@@ -1,7 +1,6 @@
 package http
 
 import (
-	"fmt"
 	"strconv"
 
 	"valerian/app/service/topic/model"
@@ -35,7 +34,6 @@ func editTopic(c *mars.Context) {
 	}
 
 	if e := arg.Validate(); e != nil {
-		fmt.Println(e)
 		c.JSON(nil, ecode.RequestErr)
 		return
 	}

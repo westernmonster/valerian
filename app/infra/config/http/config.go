@@ -97,8 +97,6 @@ func config(c *mars.Context) {
 		}
 	}
 	data, err := confSvc.Config(c, svr, token, version, ids)
-	fmt.Println(data)
-	fmt.Println(111111)
 	if err != nil {
 		c.JSON(nil, err)
 		return
