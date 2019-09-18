@@ -71,26 +71,26 @@ func (s *Antispam) Reload(c *Config) {
 
 // Rate antispam by user + path.
 func (s *Antispam) Rate(c *mars.Context, second, count int) (err error) {
-	mid, ok := c.Get("mid")
+	aid, ok := c.Get("aid")
 	if !ok {
 		return
 	}
 	curSecond := int(time.Now().Unix())
 	burst := curSecond - curSecond%second
-	key := rateKey(mid.(int64), c.Request.URL.Path, burst)
+	key := rateKey(aid.(int64), c.Request.URL.Path, burst)
 	return s.antispam(c, key, second, count)
 }
 
 // Total antispam by user + path.
 func (s *Antispam) Total(c *mars.Context, hour, count int) (err error) {
 	second := hour * 3600
-	mid, ok := c.Get("mid")
+	aid, ok := c.Get("aid")
 	if !ok {
 		return
 	}
 	curHour := int(time.Now().Unix() / 3600)
 	burst := curHour - curHour%hour
-	key := totalKey(mid.(int64), c.Request.URL.Path, burst)
+	key := totalKey(aid.(int64), c.Request.URL.Path, burst)
 	return s.antispam(c, key, second, count)
 }
 
@@ -113,12 +113,12 @@ func (s *Antispam) antispam(c *mars.Context, key string, interval, count int) er
 	return nil
 }
 
-func rateKey(mid int64, path string, burst int) string {
-	return fmt.Sprintf(_prefixRate, mid, path, burst)
+func rateKey(aid int64, path string, burst int) string {
+	return fmt.Sprintf(_prefixRate, aid, path, burst)
 }
 
-func totalKey(mid int64, path string, burst int) string {
-	return fmt.Sprintf(_prefixTotal, mid, path, burst)
+func totalKey(aid int64, path string, burst int) string {
+	return fmt.Sprintf(_prefixTotal, aid, path, burst)
 }
 
 func (s *Antispam) ServeHTTP(ctx *mars.Context) {

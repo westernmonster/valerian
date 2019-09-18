@@ -76,5 +76,5 @@ docker-build-admin-config:
 docker-push-admin-config:
 	docker push registry.cn-hangzhou.aliyuncs.com/valerian/admin-config:${DOCKER_TAG}
 docker-deploy-admin-config:
-	helm install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/admin-config:${DOCKER_TAG} --set global.name=admin-config --set env.region=hz --set env.zone=hz001 --set env.deployEnv=uat --set env.appId=admin.config --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin/config.toml --set env.confEnv=uat --set env.confToken=b2dc5b32da4a11e9908b00163e147fe0  --set env.treeId=1 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc --name admin-config-uat ./build/k8s
+	helm install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/admin-config:${DOCKER_TAG} --set global.name=admin-config --set env.region=hz --set env.zone=hz001 --set env.deployEnv=uat --set env.appId=admin.config --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=b2dc5b32da4a11e9908b00163e147fe0  --set env.treeId=1 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc --name admin-config-uat ./build/k8s
 
