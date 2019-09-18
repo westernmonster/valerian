@@ -40,6 +40,31 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
+            - name: REGION
+              value: {{ .Values.env.region }}
+            - name: ZONE
+              value: {{ .Values.env.zone }}
+            - name: DEPLOY_ENV
+              value: {{ .Values.env.deployEnv }}
+            - name: APP_ID
+              value: {{ .Values.env.appId | quote}}
+            - name: TRACE
+              value: {{ .Values.env.trace }}
+            - name: CONF_PATH
+              value: {{ .Values.env.confPath }}
+            - name: CONF_ENV
+              value: {{ .Values.env.confEnv }}
+            - name: CONF_TOKEN
+              value: {{ .Values.env.confToken }}
+            - name: CONF_APPID
+              value: {{ .Values.env.appId | quote }}
+            - name: TREE_ID
+              value: {{ .Values.env.treeId | quote }}
+            - name: CONF_VERSION
+              value: {{ .Values.env.confVersion | quote }}
+            - name: CONF_HOST
+              value: {{ .Values.env.confHost }}
+
             {{- include "app.exEnv" .Values.server | nindent 12 }}
           ports:
             - containerPort: 8000

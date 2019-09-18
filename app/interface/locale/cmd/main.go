@@ -29,7 +29,7 @@ func main() {
 	// init log
 	log.Init(conf.Conf.Log)
 	defer log.Close()
-	log.Info("app-tag start")
+	log.Info("app-locale start")
 	// init trace
 	tracing.Init(nil)
 	// service init

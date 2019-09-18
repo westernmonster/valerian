@@ -7,16 +7,17 @@ server:
   replicas: 3
   bootstrapExpect: 3
   exEnv:
-    REGION: hz
-    ZONE: hz001
-    DEPLOY_ENV: uat
-    APP_ID: app.app
-    TREE_ID: 11
-    TRACE: jaeger-uat-agent:6831
-    CONF_PATH: /go/bin/conf
-    CONF_ENV: uat
-    CONF_TOKEN: 740ac786d93c11e988f22c4d549dd5ee
-    TREE_ID: 1
-    CONF_APPID: app.app
-    CONF_VERSION: 1
-    CONF_HOST: config.pronote.loc
+    CI: 1
+
+env:
+  region: hz
+  zone: hz001
+  deployEnv: uat
+  appId: app.app
+  trace: jaeger-uat-agent:6831
+  confPath: /go/bin/conf
+  confEnv: uat
+  confToken: 740ac786d93c11e988f22c4d549dd5ee
+  treeId: 1
+  confVersion: 1
+  confHost: config.pronote.loc
