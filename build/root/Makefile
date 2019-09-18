@@ -63,6 +63,5 @@ docker-build-app-locale:
 docker-push-app-locale:
 	docker push registry.cn-hangzhou.aliyuncs.com/valerian/app-locale:${DOCKER_TAG}
 docker-deploy-app-locale:
-	helm install --namespace uat --set global.iamge= --set registry.cn-hangzhou.aliyuncs.com/valerian/app-locale:${DOCKER_TAG} --set global.name=locale env.region=hz --set env.zone=hz001 --set deployEnv=uat --set appId=app.locale --set trace=jaeger-uat-agent:6831 --set confPath=/go/bin/conf --set confEnv=uat --set confToken=740ac786d93c11e988f22c4d549dd5ee  --set treeId=1 --set confVersion=1 --set confHost=config.pronote.loc --name locale ./build/k8s
-	docker push registry.cn-hangzhou.aliyuncs.com/valerian/app-locale:${DOCKER_TAG}
+	helm install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/app-locale:${DOCKER_TAG} --set global.name=locale --set env.region=hz --set env.zone=hz001 --set env.deployEnv=uat --set env.appId=app.locale --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin/conf --set env.confEnv=uat --set env.confToken=740ac786d93c11e988f22c4d549dd5ee  --set env.treeId=1 --set env.confVersion=1 --set env.confHost=config.pronote.loc --name locale ./build/k8s
 
