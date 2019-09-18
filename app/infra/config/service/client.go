@@ -16,6 +16,8 @@ import (
 	"valerian/library/log"
 	xtime "valerian/library/time"
 	"valerian/library/xstr"
+
+	"go.uber.org/zap"
 )
 
 const (
@@ -83,6 +85,7 @@ func (s *Service) getConfigIDs(c context.Context, node sqalx.Node, version int64
 	}
 	if item == nil {
 		err = ecode.TagNotExist
+		log.For(c).Error("getConfigIDs: tag not exist", zap.Int64("tagID", version))
 		return
 	}
 
@@ -171,6 +174,7 @@ func (s *Service) tagForce(c context.Context, appID int64, build string) (force 
 		}); err != nil {
 			return
 		} else if dbBuild == nil {
+			log.For(c).Error("build not exist", zap.Int64("app_id", appID), zap.String("build name", build))
 			err = ecode.BuildNotExist
 			return
 		}
@@ -189,6 +193,7 @@ func (s *Service) tagForce(c context.Context, appID int64, build string) (force 
 		if dbTag, err = s.d.GetTagByID(c, s.d.DB(), tagID); err != nil {
 			return
 		} else if dbTag == nil {
+			log.For(c).Error("tag not exist", zap.Int64("tag_id", tagID))
 			err = ecode.TagNotExist
 			return
 		}
@@ -316,6 +321,7 @@ func (s *Service) curTag(c context.Context, appID int64, build string) (tag *cur
 			return
 		} else if dbTag == nil {
 			err = ecode.TagNotExist
+			log.For(c).Error("curTag: tag not exist", zap.Int64("tag_id", tagID), zap.Int64("app_id", appID), zap.String("build name", build))
 			return
 		}
 
