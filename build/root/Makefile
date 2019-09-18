@@ -65,17 +65,17 @@ docker-deploy-interface-location:
 	helm install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/interface-location:${DOCKER_TAG} --set global.name=interface-location --set env.region=hz --set env.zone=hz001 --set env.deployEnv=uat --set env.appId=interface.location --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin/conf --set env.confEnv=uat --set env.confToken=914e02fdda6011e997420a58ac140026  --set env.treeId=1412 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc --name interface-location-uat ./build/k8s
 
 
-app-locale: build-app-locale docker-build-app-locale docker-push-app-locale docker-deploy-app-locale
+interface-locale: build-interface-locale docker-build-interface-locale docker-push-interface-locale docker-deploy-interface-locale
 
-build-app-locale:
+build-interface-locale:
 	go env -w GOPROXY=https://goproxy.cn,direct
 	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/interface/locale/cmd/cmd"   app/interface/locale/cmd/main.go
-docker-build-app-locale:
-	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/app-locale:${DOCKER_TAG} ./app/interface/locale/cmd/
-docker-push-app-locale:
-	docker push registry.cn-hangzhou.aliyuncs.com/valerian/app-locale:${DOCKER_TAG}
-docker-deploy-app-locale:
-	helm install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/app-locale:${DOCKER_TAG} --set global.name=locale --set env.region=hz --set env.zone=hz001 --set env.deployEnv=uat --set env.appId=app.locale --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin/conf --set env.confEnv=uat --set env.confToken=740ac786d93c11e988f22c4d549dd5ee  --set env.treeId=1 --set env.confVersion=1 --set env.confHost=config.pronote.loc --name locale ./build/k8s
+docker-build-interface-locale:
+	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/interface-locale:${DOCKER_TAG} ./app/interface/locale/cmd/
+docker-push-interface-locale:
+	docker push registry.cn-hangzhou.aliyuncs.com/valerian/interface-locale:${DOCKER_TAG}
+docker-deploy-interface-locale:
+	helm install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/interface-locale:${DOCKER_TAG} --set global.name=interface-locale --set env.region=hz --set env.zone=hz001 --set env.deployEnv=uat --set env.appId=interface.locale --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin/conf --set env.confEnv=uat --set env.confToken=740ac786d93c11e988f22c4d549dd5ee  --set env.treeId=1 --set env.confVersion=1 --set env.confHost=config.pronote.loc --name interface-locale-uat ./build/k8s
 
 
 admin-config: build-admin-config docker-build-admin-config docker-push-admin-config docker-deploy-admin-config
