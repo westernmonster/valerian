@@ -17,5 +17,5 @@ func createTag(c *mars.Context) {
 		return
 	}
 
-	c.JSON(nil, svr.CreateTag(c, arg))
+	c.JSON(svr.CreateTag(c, arg))
 }

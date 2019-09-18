@@ -17,5 +17,5 @@ func createBuild(c *mars.Context) {
 		return
 	}
 
-	c.JSON(nil, svr.CreateBuild(c, arg))
+	c.JSON(svr.CreateBuild(c, arg))
 }

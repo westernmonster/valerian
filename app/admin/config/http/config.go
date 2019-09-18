@@ -17,5 +17,5 @@ func createConfig(c *mars.Context) {
 		return
 	}
 
-	c.JSON(nil, svr.CreateConf(c, arg))
+	c.JSON(svr.CreateConf(c, arg))
 }

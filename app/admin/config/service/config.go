@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -23,16 +24,16 @@ func lintConfig(filename, content string) error {
 	return nil
 }
 
-func (p *Service) CreateConf(c context.Context, arg *model.ArgCreateConfig) (err error) {
+func (p *Service) CreateConf(c context.Context, arg *model.ArgCreateConfig) (configID string, err error) {
 	// lint config
 	if !arg.SkipLint {
-		if err := lintConfig(arg.Name, arg.Comment); err != nil {
-			return err
+		if err = lintConfig(arg.Name, arg.Comment); err != nil {
+			return
 		}
 	}
 	app, err := p.appByTree(c, p.d.ConfigDB(), arg.TreeID, arg.Env, arg.Zone)
 	if err != nil {
-		return err
+		return
 	}
 
 	item := &model.Config{
@@ -48,14 +49,16 @@ func (p *Service) CreateConf(c context.Context, arg *model.ArgCreateConfig) (err
 		UpdatedAt: time.Now().Unix(),
 	}
 
-	if _, err := p.isConfiguring(c, p.d.ConfigDB(), arg.Name, app.ID); err == nil {
-		return ecode.TargetBlocked
+	if _, err = p.isConfiguring(c, p.d.ConfigDB(), arg.Name, app.ID); err == nil {
+		err = ecode.TargetBlocked
+		return
 	}
 
 	if err = p.d.AddConfig(c, p.d.ConfigDB(), item); err != nil {
 		return
 	}
 
+	configID = strconv.FormatInt(item.ID, 10)
 	return
 }
 
