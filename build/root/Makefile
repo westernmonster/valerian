@@ -53,4 +53,13 @@ local-deploy-service-msm:
 
 
 
+app-locale: build-app-locale docker-build-app-locale docker-push-app-locale
+
+build-app-locale:
+	go env -w GOPROXY=https://goproxy.cn,direct
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/interface/locale/cmd/cmd"   app/interface/locale/cmd/main.go
+docker-build-app-locale:
+	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/app-locale:${DOCKER_TAG} ./app/interface/locale/cmd/
+docker-push-app-locale:
+	docker push registry.cn-hangzhou.aliyuncs.com/valerian/app-locale:${DOCKER_TAG}
 

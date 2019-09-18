@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.global.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Values.global.name }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+spec:
+  serviceName: {{ .Values.global.name }}
+  replicas: {{ .Values.server.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.global.name }}
+      release: {{ .Release.Name }}
+      component: server
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.global.name }}
+        release: {{ .Release.Name }}
+        component: server
+    spec:
+      terminationGracePeriodSeconds: 10
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+        - name: registry-secret
+      securityContext:
+        fsGroup: 1000
+      containers:
+        - name: {{ .Values.global.name }}
+          image: "{{ default .Values.global.image .Values.server.image }}"
+          env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            {{- include "app.exEnv" .Values.server | nindent 12 }}
+          ports:
+            - containerPort: 8000
+              name: http
+          livenessProbe:
+            httpGet:
+              path: /monitor/ping
+              port: 8000
+            initialDelaySeconds: 3
+            periodSeconds: 3
+

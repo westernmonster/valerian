@@ -17,10 +17,9 @@ service-msm-build:
   before_script:
     - cd $GOPATH/src
     - ln -s $CI_PROJECT_DIR
-    - cd $CI_PROJECT_NAME/app/service/msm/cmd
   script:
     # Compile and name the binary as `hello`
-    - GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o cmd
+    - make build-service-msm
 
 service-msm-test:
   stage: test
@@ -37,56 +36,3 @@ service-msm-test:
   dependencies:
     - service-msm-build
 
-interface-locale-build:
-  stage: build
-  tags:
-    - valerian
-  before_script:
-    - cd $GOPATH/src
-    - ln -s $CI_PROJECT_DIR
-    - cd $CI_PROJECT_NAME/app/interface/locale/cmd
-  script:
-    # Compile and name the binary as `hello`
-    - GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o cmd
-
-interface-locale-test:
-  stage: test
-  tags:
-    - valerian
-  before_script:
-    - cd $GOPATH/src
-    - ln -s $CI_PROJECT_DIR
-    - cd $CI_PROJECT_NAME/app/interface/locale
-  script:
-    # Compile and name the binary as `hello`
-    - go env -w GOPROXY=https://goproxy.cn,direct
-    - GO111MODULE=on CGO_ENABLED=0 GOOS=linux go test -mod vendor ./...
-  dependencies:
-    - interface-locale-build
-
-interface-location-build:
-  stage: build
-  tags:
-    - valerian
-  before_script:
-    - cd $GOPATH/src
-    - ln -s $CI_PROJECT_DIR
-    - cd $CI_PROJECT_NAME/app/interface/location/cmd
-  script:
-    # Compile and name the binary as `hello`
-    - GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o cmd
-
-interface-location-test:
-  stage: test
-  tags:
-    - valerian
-  before_script:
-    - cd $GOPATH/src
-    - ln -s $CI_PROJECT_DIR
-    - cd $CI_PROJECT_NAME/app/interface/location
-  script:
-    # Compile and name the binary as `hello`
-    - go env -w GOPROXY=https://goproxy.cn,direct
-    - GO111MODULE=on CGO_ENABLED=0 GOOS=linux go test -mod vendor ./...
-  dependencies:
-    - interface-location-build
