@@ -37,3 +37,14 @@ service-msm-test:
   dependencies:
     - service-msm-build
 
+service-msm-build:
+  stage: build
+  tags:
+    - valerian
+  before_script:
+    - cd $GOPATH/src
+    - ln -s $CI_PROJECT_DIR
+    - cd $CI_PROJECT_DIR
+  script:
+    # Compile and name the binary as `hello`
+    - make build-app-locale
