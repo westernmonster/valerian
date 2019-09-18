@@ -64,7 +64,7 @@ func innerRouter(e *mars.Engine) {
 func ping(c *mars.Context) {
 	fmt.Println("ping")
 	if err := svr.Ping(c); err != nil {
-		log.Errorf("service ping error(%v)", err)
+		log.For(c).Error(fmt.Sprintf("service ping error(%v)", err))
 		c.JSON(nil, ecode.ServiceUnavailable)
 		return
 	}
