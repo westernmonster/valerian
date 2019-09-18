@@ -171,7 +171,7 @@ func (s *Service) tagForce(c context.Context, appID int64, build string) (force 
 		}); err != nil {
 			return
 		} else if dbBuild == nil {
-			err = ecode.NothingFound
+			err = ecode.BuildNotExist
 			return
 		}
 
@@ -189,7 +189,7 @@ func (s *Service) tagForce(c context.Context, appID int64, build string) (force 
 		if dbTag, err = s.d.GetTagByID(c, s.d.DB(), tagID); err != nil {
 			return
 		} else if dbTag == nil {
-			err = ecode.NothingFound
+			err = ecode.TagNotExist
 			return
 		}
 		s.tfLock.Lock()
@@ -220,7 +220,7 @@ func (s *Service) lastForce(c context.Context, appID, version int64, build strin
 		}); err != nil {
 			return
 		} else if dbBuild == nil {
-			err = ecode.NothingFound
+			err = ecode.BuildNotExist
 			return
 		}
 
@@ -301,7 +301,7 @@ func (s *Service) curTag(c context.Context, appID int64, build string) (tag *cur
 		if dbBuild, err = s.d.GetBuildByCond(c, s.d.DB(), map[string]interface{}{"app_id": appID, "name": build}); err != nil {
 			return
 		} else if dbBuild == nil {
-			err = ecode.NothingFound
+			err = ecode.BuildNotExist
 			return
 		}
 
@@ -315,7 +315,7 @@ func (s *Service) curTag(c context.Context, appID int64, build string) (tag *cur
 		if dbTag, err = s.d.GetTagByID(c, s.d.DB(), tagID); err != nil {
 			return
 		} else if dbTag == nil {
-			err = ecode.NothingFound
+			err = ecode.TagNotExist
 			return
 		}
 
@@ -367,7 +367,7 @@ func (s *Service) app(c context.Context, svr string) (app *model.App, err error)
 			log.For(c).Error(fmt.Sprintf("Token(%v) error(%v)", svr, err))
 			return
 		} else if app == nil {
-			err = ecode.NothingFound
+			err = ecode.AppNotExist
 			return
 		}
 		s.aLock.Lock()

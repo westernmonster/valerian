@@ -111,5 +111,7 @@ var (
 	TagNotExist      = add(20000) // Tag 不存在
 	ConfigIdsIsEmpty = add(20001) // ConfigIds 不存在
 	ConfigsNotExist  = add(20002) // Configs 不存在
+	AppNotExist      = add(20003) // App不存在
+	BuildNotExist    = add(20004) // Build不存在
 
 )
