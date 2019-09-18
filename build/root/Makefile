@@ -53,7 +53,7 @@ local-deploy-service-msm:
 
 
 
-app-locale: build-app-locale docker-build-app-locale docker-push-app-locale
+app-locale: build-app-locale docker-build-app-locale docker-push-app-locale docker-deploy-app-locale
 
 build-app-locale:
 	go env -w GOPROXY=https://goproxy.cn,direct
@@ -61,5 +61,8 @@ build-app-locale:
 docker-build-app-locale:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/app-locale:${DOCKER_TAG} ./app/interface/locale/cmd/
 docker-push-app-locale:
+	docker push registry.cn-hangzhou.aliyuncs.com/valerian/app-locale:${DOCKER_TAG}
+docker-deploy-app-locale:
+	helm install --namespace uat --set global.iamge= --set registry.cn-hangzhou.aliyuncs.com/valerian/app-locale:${DOCKER_TAG} --set global.name=locale env.region=hz --set env.zone=hz001 --set deployEnv=uat --set appId=app.locale --set trace=jaeger-uat-agent:6831 --set confPath=/go/bin/conf --set confEnv=uat --set confToken=740ac786d93c11e988f22c4d549dd5ee  --set treeId=1 --set confVersion=1 --set confHost=config.pronote.loc --name locale ./build/k8s
 	docker push registry.cn-hangzhou.aliyuncs.com/valerian/app-locale:${DOCKER_TAG}
 
