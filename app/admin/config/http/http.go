@@ -1,6 +1,7 @@
 package http
 
 import (
+	"fmt"
 	"valerian/app/admin/config/conf"
 	"valerian/app/admin/config/service"
 	"valerian/library/ecode"
@@ -23,6 +24,8 @@ func Init(c *conf.Config, s *service.Service) {
 		log.Errorf("engine.Start error(%v)", err)
 		panic(err)
 	}
+
+	fmt.Println("http-success")
 }
 
 func innerRouter(e *mars.Engine) {
@@ -59,6 +62,7 @@ func innerRouter(e *mars.Engine) {
 
 // ping check server ok.
 func ping(c *mars.Context) {
+	fmt.Println("ping")
 	if err := svr.Ping(c); err != nil {
 		log.Errorf("service ping error(%v)", err)
 		c.JSON(nil, ecode.ServiceUnavailable)
