@@ -100,7 +100,7 @@ func load() (err error) {
 		ok      bool
 		tmpConf *Config
 	)
-	if s, ok = client.Value(configKey); !ok {
+	if s, ok = client.Toml2(); !ok {
 		return errors.New("load config center error")
 	}
 	if _, err = toml.Decode(s, &tmpConf); err != nil {
