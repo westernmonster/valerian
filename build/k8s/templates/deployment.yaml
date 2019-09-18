@@ -69,4 +69,10 @@ spec:
           ports:
             - containerPort: 8000
               name: http
+          livenessProbe:
+            httpGet:
+              path: /monitor/ping
+              port: 8000
+            initialDelaySeconds: 3
+            periodSeconds: 3
 
