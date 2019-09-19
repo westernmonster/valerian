@@ -75,7 +75,7 @@ docker-build-interface-locale:
 docker-push-interface-locale:
 	docker push registry.cn-hangzhou.aliyuncs.com/valerian/interface-locale:${DOCKER_TAG}
 docker-deploy-interface-locale:
-	helm install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/interface-locale:${DOCKER_TAG} --set global.name=interface-locale --set env.region=hz --set env.zone=hz001 --set env.deployEnv=uat --set env.appId=interface.locale --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=8c534b50da6011e9884c0a58ac14008b  --set env.treeId=1411 --set env.confVersion=1 --set env.confHost=config.pronote.loc --name interface-locale-uat ./build/k8s
+	helm install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/interface-locale:${DOCKER_TAG} --set global.name=interface-locale --set env.region=hz --set env.zone=hz001 --set env.deployEnv=uat --set env.appId=interface.locale --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=8c534b50da6011e9884c0a58ac14008b  --set env.treeId=1411 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc --name interface-locale-uat ./build/k8s
 
 
 admin-config: build-admin-config docker-build-admin-config docker-push-admin-config docker-deploy-admin-config
@@ -91,3 +91,15 @@ docker-deploy-admin-config:
 	helm install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/admin-config:${DOCKER_TAG} --set global.name=admin-config --set env.region=hz --set env.zone=hz001 --set env.deployEnv=uat --set env.appId=admin.config --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=25216dcada6011e997420a58ac140026  --set env.treeId=1101 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc --name admin-config-uat ./build/k8s
 
 
+
+service-msm: build-service-msm docker-build-service-msm docker-push-service-msm docker-deploy-service-msm
+
+build-service-msm:
+	go env -w GOPROXY=https://goproxy.cn,direct
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/service/msm/cmd/cmd"   app/service/msm/cmd/main.go
+docker-build-service-msm:
+	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/service-msm:${DOCKER_TAG} ./app/service/msm/cmd/
+docker-push-service-msm:
+	docker push registry.cn-hangzhou.aliyuncs.com/valerian/service-msm:${DOCKER_TAG}
+docker-deploy-service-msm:
+	helm install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/service-msm:${DOCKER_TAG} --set global.name=service-msm --set env.region=hz --set env.zone=hz001 --set env.deployEnv=uat --set env.appId=service.msm --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=3f7c84ebda6011e984660a58ac14011a  --set env.treeId=1303 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc --name service-msm-uat ./build/k8s
