@@ -39,17 +39,6 @@ init:
 	echo "hello"
 
 
-service-msm: build-service-msm docker-build-service-msm
-
-build-service-msm:
-	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/service/msm/cmd/cmd"   app/service/msm/cmd/main.go
-docker-build-service-msm:
-	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/service-msm:${DOCKER_TAG} ./app/service/msm/cmd/
-docker-push-service-msm:
-	docker push registry.cn-hangzhou.aliyuncs.com/valerian/service-msm:${DOCKER_TAG}
-local-deploy-service-msm:
-	echo "hello"
 
 
 interface-location: build-interface-location docker-build-interface-location docker-push-interface-location docker-deploy-interface-location
