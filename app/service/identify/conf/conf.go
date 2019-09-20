@@ -96,5 +96,6 @@ func load() (err error) {
 		return errors.New("could not decode config")
 	}
 	*Conf = *tmpConf
+
 	return
 }
