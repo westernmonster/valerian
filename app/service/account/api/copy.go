@@ -17,5 +17,9 @@ func FromBaseInfo(model *model.BaseInfo) *BaseInfoReply {
 		reply.Gender = &BaseInfoReply_GenderValue{int32(*model.Gender)}
 	}
 
+	if model.Introduction != nil {
+		reply.Introduction = &BaseInfoReply_IntroductionValue{*model.Introduction}
+	}
+
 	return reply
 }

@@ -2,7 +2,7 @@ syntax = "proto3";
 package service.account;
 option go_package = "api";
 
-import "vendor/github.com/gogo/protobuf/gogoproto/gogo.proto";
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
 message BaseInfoReply {
     int64 ID = 1 [(gogoproto.jsontag) = "id"] ;
@@ -13,15 +13,19 @@ message BaseInfoReply {
         int32  GenderValue = 3 [(gogoproto.jsontag) = "gender"] ;
     }
 
-    string Avatar  = 6 [(gogoproto.jsontag) = "avatar"] ;
+    oneof Introduction {
+        string  IntroductionValue = 4 [(gogoproto.jsontag) = "introduction"] ;
+    }
 
-    bool IDCert  = 7 [(gogoproto.jsontag) = "id_cert"] ;
+    string Avatar  = 5 [(gogoproto.jsontag) = "avatar"] ;
 
-    bool WorkCert  = 8 [(gogoproto.jsontag) = "work_cert"] ;
+    bool IDCert  = 6 [(gogoproto.jsontag) = "id_cert"] ;
 
-    bool IsOrg  = 9 [(gogoproto.jsontag) = "is_org"] ;
+    bool WorkCert  = 7 [(gogoproto.jsontag) = "work_cert"] ;
 
-    bool IsVIP  = 10 [(gogoproto.jsontag) = "is_vip"] ;
+    bool IsOrg  = 8 [(gogoproto.jsontag) = "is_org"] ;
+
+    bool IsVIP  = 9 [(gogoproto.jsontag) = "is_vip"] ;
 }
 
 message BaseInfosReply {
@@ -38,23 +42,27 @@ message ProfileReply {
         int32  GenderValue = 3 [(gogoproto.jsontag) = "gender"] ;
     }
 
+    oneof Introduction {
+        string  IntroductionValue = 4 [(gogoproto.jsontag) = "introduction"] ;
+    }
+
     oneof Location {
-        int64  LocationValue = 4 [(gogoproto.jsontag) = "location"] ;
+        int64  LocationValue = 5 [(gogoproto.jsontag) = "location"] ;
     }
 
     oneof LocationString {
-        string  LocationStringValue = 5 [(gogoproto.jsontag) = "location_string"] ;
+        string  LocationStringValue = 6 [(gogoproto.jsontag) = "location_string"] ;
     }
 
-    string Avatar  = 6 [(gogoproto.jsontag) = "avatar"] ;
+    string Avatar  = 7 [(gogoproto.jsontag) = "avatar"] ;
 
-    bool IDCert  = 7 [(gogoproto.jsontag) = "id_cert"] ;
+    bool IDCert  = 8 [(gogoproto.jsontag) = "id_cert"] ;
 
-    bool WorkCert  = 8 [(gogoproto.jsontag) = "work_cert"] ;
+    bool WorkCert  = 9 [(gogoproto.jsontag) = "work_cert"] ;
 
-    bool IsOrg  = 9 [(gogoproto.jsontag) = "is_org"] ;
+    bool IsOrg  = 10 [(gogoproto.jsontag) = "is_org"] ;
 
-    bool IsVIP  = 10 [(gogoproto.jsontag) = "is_vip"] ;
+    bool IsVIP  = 11 [(gogoproto.jsontag) = "is_vip"] ;
 }
 
 message AidReq {

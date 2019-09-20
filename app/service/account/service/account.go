@@ -11,14 +11,15 @@ import (
 
 func baseInfoFromAccount(account *model.Account) (info *model.BaseInfo) {
 	info = &model.BaseInfo{
-		ID:       account.ID,
-		UserName: account.UserName,
-		Gender:   account.Gender,
-		Avatar:   account.Avatar,
-		IDCert:   bool(account.IDCert),
-		WorkCert: bool(account.WorkCert),
-		IsOrg:    bool(account.IsOrg),
-		IsVIP:    bool(account.IsVIP),
+		ID:           account.ID,
+		UserName:     account.UserName,
+		Gender:       account.Gender,
+		Avatar:       account.Avatar,
+		Introduction: account.Introduction,
+		IDCert:       bool(account.IDCert),
+		WorkCert:     bool(account.WorkCert),
+		IsOrg:        bool(account.IsOrg),
+		IsVIP:        bool(account.IsVIP),
 	}
 	return
 }

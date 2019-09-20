@@ -1,0 +1,51 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: uat-url
+  namespace: uat
+spec:
+  tls:
+    - hosts:
+      - uat.flywk.com
+      secretName: locale-secret0
+
+  rules:
+  - host: uat.flywk.com
+    http:
+      paths:
+      - path: /api/v1/account
+        backend:
+          serviceName: interface-account-uat
+          servicePort: 8000
+      - path: /api/v1/list/locales
+        backend:
+          serviceName: interface-locale-uat
+          servicePort: 8000
+      - path: /api/v1/oauth/login
+        backend:
+          serviceName: interface-passport-login-uat
+          servicePort: 8000
+      - path: /api/v1/oauth/renew
+        backend:
+          serviceName: interface-passport-auth-uat
+          servicePort: 8000
+      - path: /api/v1/oauth/password
+        backend:
+          serviceName: interface-account-uat
+          servicePort: 8000
+      - path: /api/v1/oauth/registration
+        backend:
+          serviceName: interface-passport-register-uat
+          servicePort: 8000
+      - path: /api/v1/oauth/logout
+        backend:
+          serviceName: interface-passport-auth-uat
+          servicePort: 8000
+      - path: /api/v1/me
+        backend:
+          serviceName: interface-account-uat
+          servicePort: 8000
+      - path: /api/v1/valcode
+        backend:
+          serviceName: interface-valcode-uat
+          servicePort: 8000
