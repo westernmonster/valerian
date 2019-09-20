@@ -21,3 +21,4 @@ env:
   treeId: 1
   confVersion: 1
   confHost: config.pronote.loc
+  siteUrl: https://uat.flywk.com

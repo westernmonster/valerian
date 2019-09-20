@@ -64,6 +64,8 @@ spec:
               value: {{ .Values.env.confVersion | quote }}
             - name: CONF_HOST
               value: {{ .Values.env.confHost }}
+            - name: SITE_URL
+              value: {{ .Values.env.siteUrl }}
 
             {{- include "app.exEnv" .Values.server | nindent 12 }}
           ports:
