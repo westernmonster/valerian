@@ -15,7 +15,7 @@ type AccountRelation struct {
 	ID          int64         `db:"id" json:"id,string"`                     // ID ID
 	AccountID   int64         `db:"account_id" json:"account_id,string"`     // AccountID 用户ID
 	FollowingID int64         `db:"following_id" json:"following_id,string"` // FollowingID 被关注者ID
-	Attribute   uint32        `db:"Attribute" json:"attribute"`              // Attribute 关系
+	Attribute   uint32        `db:"attribute" json:"attribute"`              // Attribute 关系
 	Deleted     types.BitBool `db:"deleted" json:"deleted"`                  // Deleted 是否删除
 	CreatedAt   int64         `db:"created_at" json:"created_at"`            // CreatedAt 创建时间
 	UpdatedAt   int64         `db:"updated_at" json:"updated_at"`            // UpdatedAt 更新时间

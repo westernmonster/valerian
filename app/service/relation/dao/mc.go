@@ -3,14 +3,9 @@ package dao
 import (
 	"context"
 	"fmt"
-	"strconv"
 	"valerian/library/cache/memcache"
 	"valerian/library/log"
 )
-
-func fansKey(mid int64) string {
-	return "fans_" + strconv.FormatInt(mid, 10)
-}
 
 // pingMC ping memcache.
 func (p *Dao) pingMC(c context.Context) (err error) {
