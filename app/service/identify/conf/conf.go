@@ -48,6 +48,18 @@ type DB struct {
 	Auth *sqalx.Config
 }
 
+func init() {
+	flag.StringVar(&confPath, "conf", "", "config file")
+}
+
+// Init init.
+func Init() (err error) {
+	if confPath != "" {
+		return local()
+	}
+	return remote()
+}
+
 func local() (err error) {
 	_, err = toml.DecodeFile(confPath, &Conf)
 	return
@@ -62,7 +74,10 @@ func remote() (err error) {
 	}
 	go func() {
 		for range client.Event() {
-			log.Info("config event")
+			log.Info("config reload")
+			if err := load(); err != nil {
+				log.Errorf("config reload error (%v)", err)
+			}
 		}
 	}()
 	return
@@ -82,16 +97,4 @@ func load() (err error) {
 	}
 	*Conf = *tmpConf
 	return
-}
-
-func init() {
-	flag.StringVar(&confPath, "conf", "", "default config path")
-}
-
-// Init int config
-func Init() error {
-	if confPath != "" {
-		return local()
-	}
-	return remote()
 }
