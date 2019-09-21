@@ -9,7 +9,7 @@ import (
 func (p *Service) Following(c context.Context, aid int64, limit, offset int) (resp []*model.FollowingResp, err error) {
 	var (
 		addCache = true
-		items    []*model.AccountRelation
+		items    []*model.AccountFollowing
 	)
 
 	resp = make([]*model.FollowingResp, 0)

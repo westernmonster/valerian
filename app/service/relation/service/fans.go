@@ -9,7 +9,7 @@ import (
 func (p *Service) Fans(c context.Context, aid int64, limit, offset int) (resp []*model.FansResp, err error) {
 	var (
 		addCache = true
-		items    []*model.AccountRelation
+		items    []*model.AccountFans
 	)
 
 	resp = make([]*model.FansResp, 0)

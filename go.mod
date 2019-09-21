@@ -18,7 +18,6 @@ require (
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/codahale/hdrhistogram v0.0.0-20161010025455-3a0bb77429bd // indirect
 	github.com/dgryski/go-farm v0.0.0-20190423205320-6a90982ecee2
-	github.com/ghodss/yaml v1.0.0
 	github.com/go-ozzo/ozzo-validation v3.6.0+incompatible
 	github.com/go-playground/locales v0.12.1 // indirect
 	github.com/go-playground/universal-translator v0.16.0 // indirect
@@ -30,12 +29,13 @@ require (
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/kylelemons/godebug v1.1.0 // indirect
 	github.com/leodido/go-urn v1.1.0 // indirect
-	github.com/lib/pq v1.2.0
-	github.com/mattn/go-sqlite3 v1.11.0
-	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826
+	github.com/lib/pq v1.2.0 // indirect
+	github.com/mattn/go-sqlite3 v1.11.0 // indirect
+	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
 	github.com/montanaflynn/stats v0.5.0
 	github.com/naoina/go-stringutil v0.1.0 // indirect
 	github.com/naoina/toml v0.1.1
+	github.com/nats-io/nats.go v1.8.1
 	github.com/nicksnyder/go-i18n/v2 v2.0.2
 	github.com/opentracing-contrib/go-stdlib v0.0.0-20190519235532-cf7a6c988dc9
 	github.com/opentracing/opentracing-go v1.1.0
@@ -65,6 +65,5 @@ require (
 	gopkg.in/h2non/gentleman.v2 v2.0.3
 	gopkg.in/h2non/gock.v1 v1.0.15
 	gopkg.in/yaml.v2 v2.2.2
-	k8s.io/apimachinery v0.0.0-20190816221834-a9f1d8a9c101
-	k8s.io/test-infra v0.0.0-20190914015041-e1cbc3ccd91c
+	k8s.io/test-infra v0.0.0-20190914015041-e1cbc3ccd91c // indirect
 )

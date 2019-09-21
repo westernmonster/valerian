@@ -11,7 +11,7 @@ import (
 )
 
 type FollowingPagedData struct {
-	Data []*model.AccountRelation `json:"data"`
+	Data []*model.AccountFollowing `json:"data"`
 }
 
 func followingsKey(aid int64, page, pageSize int, version string) string {
@@ -54,7 +54,7 @@ func (p *Dao) followingVersionCache(c context.Context, aid int64) (version strin
 	return
 }
 
-func (p *Dao) SetFollowingsCache(c context.Context, aid int64, page, pageSize int, data []*model.AccountRelation) (err error) {
+func (p *Dao) SetFollowingsCache(c context.Context, aid int64, page, pageSize int, data []*model.AccountFollowing) (err error) {
 	var version string
 	if version, err = p.followingVersionCache(c, aid); err != nil {
 		return
@@ -80,7 +80,7 @@ func (p *Dao) SetFollowingsCache(c context.Context, aid int64, page, pageSize in
 	return
 }
 
-func (p *Dao) FollowingsCache(c context.Context, aid int64, page, pageSize int) (data []*model.AccountRelation, err error) {
+func (p *Dao) FollowingsCache(c context.Context, aid int64, page, pageSize int) (data []*model.AccountFollowing, err error) {
 	var version string
 	if version, err = p.followingVersionCache(c, aid); err != nil {
 		return

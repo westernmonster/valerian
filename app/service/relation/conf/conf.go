@@ -34,6 +34,13 @@ type Config struct {
 	Auth      *auth.Config
 	Memcache  *Memcache
 	Discovery *discovery.Config
+	Nats      *NatsConfig
+}
+
+type NatsConfig struct {
+	Nodes         []string
+	MaxReconnects int
+	ReconnectWait xtime.Duration
 }
 
 // DB db config.

@@ -10,6 +10,8 @@ import (
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
 	"valerian/library/stat/prom"
+
+	nats "github.com/nats-io/nats.go"
 )
 
 // Dao dao struct
@@ -27,6 +29,8 @@ func New(c *conf.Config) (dao *Dao) {
 		mc:       memcache.NewPool(c.Memcache.Main.Config),
 		mcExpire: int32(time.Duration(c.Memcache.Main.Expire) / time.Second),
 	}
+
+	nc, err := nats.Connect(c.Nats.Nodes)
 	return
 }
 

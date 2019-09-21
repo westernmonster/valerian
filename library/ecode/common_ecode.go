@@ -114,4 +114,11 @@ var (
 	AppNotExist      = add(20003) // App不存在
 	BuildNotExist    = add(20004) // Build不存在
 
+	// Relation
+	RelFollowSelfBanned     = New(20005) // 不能关注自己
+	RelFollowBlacked        = New(20006) // 被用户拉黑，无法关注
+	RelFollowAlreadyBlack   = New(20007) // 已经拉黑用户，无法关注
+	RelFollowAttrAlreadySet = New(20008) // 已经设置该属性了
+	RelFollowAttrNotSet     = New(20009) // 未设置该属性，不能取消
+
 )

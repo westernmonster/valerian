@@ -11,7 +11,7 @@ import (
 )
 
 type FansPagedData struct {
-	Data []*model.AccountRelation `json:"data"`
+	Data []*model.AccountFans `json:"data"`
 }
 
 func fansKey(aid int64, page, pageSize int, version string) string {
@@ -54,7 +54,7 @@ func (p *Dao) fansVersionCache(c context.Context, aid int64) (version string, er
 	return
 }
 
-func (p *Dao) SetFansCache(c context.Context, aid int64, page, pageSize int, data []*model.AccountRelation) (err error) {
+func (p *Dao) SetFansCache(c context.Context, aid int64, page, pageSize int, data []*model.AccountFans) (err error) {
 	var version string
 	if version, err = p.fansVersionCache(c, aid); err != nil {
 		return
@@ -80,7 +80,7 @@ func (p *Dao) SetFansCache(c context.Context, aid int64, page, pageSize int, dat
 	return
 }
 
-func (p *Dao) FansCache(c context.Context, aid int64, page, pageSize int) (data []*model.AccountRelation, err error) {
+func (p *Dao) FansCache(c context.Context, aid int64, page, pageSize int) (data []*model.AccountFans, err error) {
 	var version string
 	if version, err = p.fansVersionCache(c, aid); err != nil {
 		return
