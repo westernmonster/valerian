@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"time"
+
 	"valerian/app/service/relation/model"
 	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
@@ -11,12 +12,20 @@ import (
 	"valerian/library/log"
 )
 
-func (p *Service) onAddFollowing(c context.Context, aid, fid int64) {
+func (p *Service) onFollow(c context.Context, aid, fid int64) {
 	// 关注通知
+	if err := p.d.NotifyFollow(c, aid, fid); err != nil {
+		log.For(c).Error(fmt.Sprintf("Failed to set recent follow notify aid(%d) fid(%d): %+v", aid, fid, err))
+		return
+	}
 }
 
-func (p *Service) onDelFollowing(c context.Context, aid, fid int64) {
+func (p *Service) onUnfollow(c context.Context, aid, fid int64) {
 	// 取关通知
+	if err := p.d.NotifyUnfollow(c, aid, fid); err != nil {
+		log.For(c).Error(fmt.Sprintf("Failed to set recent follow notify aid(%d) fid(%d): %+v", aid, fid, err))
+		return
+	}
 }
 
 func (p *Service) initStat(c context.Context, node sqalx.Node, aid int64, fid int64) (err error) {
@@ -153,7 +162,7 @@ func (p *Service) Unfollow(c context.Context, aid int64, fid int64) (err error) 
 	}
 
 	p.addCache(func() {
-		p.onDelFollowing(context.Background(), aid, fid)
+		p.onFollow(context.Background(), aid, fid)
 	})
 
 	return
@@ -328,7 +337,7 @@ func (p *Service) Follow(c context.Context, aid int64, fid int64) (err error) {
 	}
 
 	p.addCache(func() {
-		p.onAddFollowing(context.Background(), aid, fid)
+		p.onUnfollow(context.Background(), aid, fid)
 	})
 
 	return

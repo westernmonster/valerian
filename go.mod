@@ -29,13 +29,15 @@ require (
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/kylelemons/godebug v1.1.0 // indirect
 	github.com/leodido/go-urn v1.1.0 // indirect
-	github.com/lib/pq v1.2.0 // indirect
 	github.com/mattn/go-sqlite3 v1.11.0 // indirect
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
 	github.com/montanaflynn/stats v0.5.0
 	github.com/naoina/go-stringutil v0.1.0 // indirect
 	github.com/naoina/toml v0.1.1
+	github.com/nats-io/nats-server/v2 v2.1.0 // indirect
+	github.com/nats-io/nats-streaming-server v0.16.2 // indirect
 	github.com/nats-io/nats.go v1.8.1
+	github.com/nats-io/stan.go v0.5.0
 	github.com/nicksnyder/go-i18n/v2 v2.0.2
 	github.com/opentracing-contrib/go-stdlib v0.0.0-20190519235532-cf7a6c988dc9
 	github.com/opentracing/opentracing-go v1.1.0

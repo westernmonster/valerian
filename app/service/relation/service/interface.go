@@ -42,6 +42,9 @@ type IDao interface {
 	FansCache(c context.Context, aid int64, page, pageSize int) (data []*model.AccountFans, err error)
 	DelFansCache(c context.Context, aid int64) (err error)
 
+	NotifyFollow(c context.Context, aid, fid int64) (err error)
+	NotifyUnfollow(c context.Context, aid, fid int64) (err error)
+
 	Ping(c context.Context) (err error)
 	Close()
 	DB() sqalx.Node

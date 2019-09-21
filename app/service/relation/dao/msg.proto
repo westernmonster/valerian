@@ -1,0 +1,16 @@
+syntax = "proto3";
+package dao;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+message NotifyUnfollow {
+    int64 AccountID = 1 [(gogoproto.jsontag) = "account_id"] ;
+    int64 TargetAccountID = 2 [(gogoproto.jsontag) = "target_account_id"] ;
+}
+
+
+message NotifyFollow {
+    int64 AccountID = 1 [(gogoproto.jsontag) = "account_id"] ;
+    int64 TargetAccountID = 2 [(gogoproto.jsontag) = "target_account_id"] ;
+}
+
