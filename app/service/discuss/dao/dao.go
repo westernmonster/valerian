@@ -36,6 +36,7 @@ func New(c *conf.Config) (dao *Dao) {
 	}
 
 	servers := strings.Join(c.Nats.Nodes, ",")
+	fmt.Printf("nats-servers: %+v\n", servers)
 	if sc, err := stan.Connect(servers,
 		env.Hostname,
 		stan.Pings(10, 5),
