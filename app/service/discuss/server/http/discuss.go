@@ -17,7 +17,6 @@ func getDiscusstionsByTopic(c *mars.Context) {
 	)
 
 	params := c.Request.Form
-
 	if offset, err = strconv.Atoi(params.Get("offset")); err != nil {
 		offset = 0
 	} else if offset < 0 {
@@ -60,7 +59,7 @@ func getDiscusstionsByAccount(c *mars.Context) {
 		limit = 10
 	}
 
-	if id, err = strconv.ParseInt(params.Get("account_id"), 10, 64); err != nil {
+	if id, err = strconv.ParseInt(params.Get("aid"), 10, 64); err != nil {
 		c.JSON(nil, ecode.RequestErr)
 		return
 	}
@@ -69,6 +68,14 @@ func getDiscusstionsByAccount(c *mars.Context) {
 }
 
 func addDiscussion(c *mars.Context) {
+	var aid int64
+	var err error
+	params := c.Request.Form
+	if aid, err = strconv.ParseInt(params.Get("aid"), 10, 64); err != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+
 	arg := new(model.ArgAddDiscuss)
 	if e := c.Bind(arg); e != nil {
 		return
@@ -79,11 +86,19 @@ func addDiscussion(c *mars.Context) {
 		return
 	}
 
-	id, err := srv.AddDiscussion(c, arg)
+	id, err := srv.AddDiscussion(c, aid, arg)
 	c.JSON(strconv.FormatInt(id, 10), err)
 }
 
 func updateDiscussion(c *mars.Context) {
+	var aid int64
+	var err error
+	params := c.Request.Form
+	if aid, err = strconv.ParseInt(params.Get("aid"), 10, 64); err != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+
 	arg := new(model.ArgUpdateDiscuss)
 	if e := c.Bind(arg); e != nil {
 		return
@@ -94,10 +109,18 @@ func updateDiscussion(c *mars.Context) {
 		return
 	}
 
-	c.JSON(nil, srv.UpdateDiscussion(c, arg))
+	c.JSON(nil, srv.UpdateDiscussion(c, aid, arg))
 }
 
 func delDiscussion(c *mars.Context) {
+	var aid int64
+	var err error
+	params := c.Request.Form
+	if aid, err = strconv.ParseInt(params.Get("aid"), 10, 64); err != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+
 	arg := new(model.ArgDelDiscuss)
 	if e := c.Bind(arg); e != nil {
 		return
@@ -108,5 +131,5 @@ func delDiscussion(c *mars.Context) {
 		return
 	}
 
-	c.JSON(nil, srv.DelDiscussion(c, arg))
+	c.JSON(nil, srv.DelDiscussion(c, aid, arg))
 }

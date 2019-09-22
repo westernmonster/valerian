@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"strings"
 	"time"
+
 	"valerian/app/service/discuss/model"
 	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
 	"valerian/library/gid"
 	"valerian/library/log"
-	"valerian/library/net/metadata"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -74,12 +74,7 @@ func (p *Service) GetTopicDiscussionsPaged(c context.Context, topicID int64, lim
 	return
 }
 
-func (p *Service) AddDiscussion(c context.Context, arg *model.ArgAddDiscuss) (id int64, err error) {
-	aid, ok := metadata.Value(c, metadata.Aid).(int64)
-	if !ok {
-		err = ecode.AcquireAccountIDFailed
-		return
-	}
+func (p *Service) AddDiscussion(c context.Context, aid int64, arg *model.ArgAddDiscuss) (id int64, err error) {
 	// TODO: 权限检测
 	// 有什么权限的可以添加
 
@@ -167,13 +162,7 @@ func (p *Service) checkCategory(c context.Context, node sqalx.Node, categoryID i
 	return
 }
 
-func (p *Service) UpdateDiscussion(c context.Context, arg *model.ArgUpdateDiscuss) (err error) {
-	aid, ok := metadata.Value(c, metadata.Aid).(int64)
-	if !ok {
-		err = ecode.AcquireAccountIDFailed
-		return
-	}
-
+func (p *Service) UpdateDiscussion(c context.Context, aid int64, arg *model.ArgUpdateDiscuss) (err error) {
 	// TODO: 编辑权限检测
 	// 有什么权限的可以对其进行编辑
 
@@ -234,13 +223,7 @@ func (p *Service) UpdateDiscussion(c context.Context, arg *model.ArgUpdateDiscus
 	return
 }
 
-func (p *Service) DelDiscussion(c context.Context, arg *model.ArgDelDiscuss) (err error) {
-	aid, ok := metadata.Value(c, metadata.Aid).(int64)
-	if !ok {
-		err = ecode.AcquireAccountIDFailed
-		return
-	}
-
+func (p *Service) DelDiscussion(c context.Context, aid int64, arg *model.ArgDelDiscuss) (err error) {
 	var item *model.Discussion
 	if item, err = p.d.GetDiscussionByID(c, p.d.DB(), arg.ID); err != nil {
 		return
