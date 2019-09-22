@@ -211,3 +211,15 @@ push-service-identify:
 	docker push registry.cn-hangzhou.aliyuncs.com/valerian/service-identify:${DOCKER_TAG}
 deploy-service-identify:
 	helm install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/service-identify:${DOCKER_TAG} --set global.name=service-identify --set env.region=hz --set env.zone=hz001 env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=service.identify --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=3af51098da6011e997420a58ac140026  --set env.treeId=1302 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc --name service-identify-uat ./build/k8s
+
+service-discuss: build-service-discuss docker-service-discuss push-service-discuss deploy-service-discuss
+
+build-service-discuss:
+	go env -w GOPROXY=https://goproxy.cn,direct
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/service/discuss/cmd/cmd"   app/service/discuss/cmd/main.go
+docker-service-discuss:
+	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/service-discuss:${DOCKER_TAG} ./app/service/discuss/cmd/
+push-service-discuss:
+	docker push registry.cn-hangzhou.aliyuncs.com/valerian/service-discuss:${DOCKER_TAG}
+deploy-service-discuss:
+	helm install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/service-discuss:${DOCKER_TAG} --set global.name=service-discuss --set env.region=hz --set env.zone=hz001 env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=service.discuss --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=d388501cdd7511e986590a58ac140094  --set env.treeId=1306 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc --name service-discuss-uat ./build/k8s

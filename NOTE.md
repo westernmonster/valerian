@@ -20,6 +20,7 @@
     - msm 1303
     - relation 1304
     - topic 1305
+    - discuss 1306
   * interface 4
     - account  1401
     - article 1402
