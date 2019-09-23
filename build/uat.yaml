@@ -15,37 +15,53 @@ spec:
       paths:
       - path: /api/v1/account
         backend:
-          serviceName: interface-account-uat
+          serviceName: interface-account
           servicePort: 8000
       - path: /api/v1/list/locales
         backend:
-          serviceName: interface-locale-uat
+          serviceName: interface-locale
           servicePort: 8000
       - path: /api/v1/oauth/login
         backend:
-          serviceName: interface-passport-login-uat
+          serviceName: 	interface-passport-login
           servicePort: 8000
       - path: /api/v1/oauth/renew
         backend:
-          serviceName: interface-passport-auth-uat
+          serviceName: interface-passport-auth
           servicePort: 8000
       - path: /api/v1/oauth/password
         backend:
-          serviceName: interface-account-uat
+          serviceName: interface-account
           servicePort: 8000
       - path: /api/v1/oauth/registration
         backend:
-          serviceName: interface-passport-register-uat
+          serviceName: interface-passport-register
           servicePort: 8000
       - path: /api/v1/oauth/logout
         backend:
-          serviceName: interface-passport-auth-uat
+          serviceName: interface-passport-auth
           servicePort: 8000
       - path: /api/v1/me
         backend:
-          serviceName: interface-account-uat
+          serviceName: interface-account
           servicePort: 8000
       - path: /api/v1/valcode
         backend:
-          serviceName: interface-valcode-uat
+          serviceName: interface-valcode
+          servicePort: 8000
+      - path: /api/v1/topic
+        backend:
+          serviceName: interface-topic
+          servicePort: 8000
+      - path: /api/v1/article
+        backend:
+          serviceName: interface-article
+          servicePort: 8000
+      - path: /api/v1/discuss
+        backend:
+          serviceName: interface-discuss
+          servicePort: 8000
+      - path: /api/v1/feed
+        backend:
+          serviceName: interface-feed
           servicePort: 8000

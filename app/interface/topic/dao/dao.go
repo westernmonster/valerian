@@ -15,6 +15,7 @@ import (
 	"valerian/library/stat/prom"
 
 	"github.com/nats-io/stan.go"
+	"github.com/pkg/errors"
 )
 
 // Dao dao struct
@@ -50,6 +51,13 @@ func New(c *conf.Config) (dao *Dao) {
 	} else {
 		dao.sc = sc
 	}
+
+	if accountRPC, err := account.NewClient(dao.accountRPC); err != nil {
+		panic(errors.WithMessage(err, "Failed to dial account service"))
+	}
+
+	dao.accountRPC = accountRPC
+
 	return
 }
 

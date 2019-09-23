@@ -13,6 +13,7 @@ import (
 	"valerian/library/naming/discovery"
 	"valerian/library/net/http/mars"
 	"valerian/library/net/http/mars/middleware/auth"
+	"valerian/library/net/rpc/warden"
 	xtime "valerian/library/time"
 	"valerian/library/tracing"
 
@@ -31,6 +32,8 @@ type Config struct {
 	Tracer *tracing.Config
 	DB     *DB
 	Ecode  *ecode.Config
+
+	AccountRPC *warden.ClientConfig
 	// Auth
 	Auth      *auth.Config
 	Memcache  *Memcache
