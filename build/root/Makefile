@@ -237,7 +237,7 @@ docker-service-account:
 push-service-account:
 	docker push registry.cn-hangzhou.aliyuncs.com/valerian/service-account:${DOCKER_TAG}
 deploy-service-account:
-	helm install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/service-account:${DOCKER_TAG} --set global.name=service-account --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=service.account --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=3af51098da6011e997420a58ac140026  --set env.treeId=1302 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc --name service-account-uat ./build/k8s
+	helm install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/service-account:${DOCKER_TAG} --set global.name=service-account --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=service.account --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=379d0e0ada6011e9884c0a58ac14008b  --set env.treeId=1301 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc --name service-account-uat ./build/k8s
 
 
 service-discuss: build-service-discuss docker-service-discuss push-service-discuss deploy-service-discuss
