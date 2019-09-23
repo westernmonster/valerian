@@ -25,7 +25,6 @@ var (
 )
 
 type Config struct {
-	DC     *DC
 	Log    *log.Config
 	Mars   *mars.ServerConfig
 	Tracer *tracing.Config
@@ -34,17 +33,22 @@ type Config struct {
 	Auth      *auth.Config
 	Memcache  *Memcache
 	Discovery *discovery.Config
+	Nats      *NatsConfig
+}
+
+type NatsConfig struct {
+	Nodes         []string
+	MaxReconnects int
+	ReconnectWait xtime.Duration
 }
 
 // DB db config.
 type DB struct {
 	Main *sqalx.Config
-	Auth *sqalx.Config
 }
 
 // Memcache memcache config.
 type Memcache struct {
-	Auth *MC
 	Main *MC
 }
 
@@ -52,12 +56,6 @@ type Memcache struct {
 type MC struct {
 	*memcache.Config
 	Expire xtime.Duration
-}
-
-// DC data center.
-type DC struct {
-	Num  int
-	Desc string
 }
 
 func init() {

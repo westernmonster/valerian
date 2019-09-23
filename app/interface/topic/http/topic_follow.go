@@ -16,12 +16,6 @@ import (
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param req body model.ArgTopicFollow true "请求"
 // @Success 200  "返回关注状态"
-// @Failure 18 "话题不存在"
-// @Failure 626 "用户不存在"
-// @Failure 37 "需要身份认证"
-// @Failure 38 "需要工作认证"
-// @Failure 39 "必须管理员添加"
-// @Failure 40 "需要购买"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /topic/follow [post]

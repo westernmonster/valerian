@@ -18,10 +18,6 @@ import (
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param req body model.ArgCreateTopic true "请求"
 // @Success 200 "成功,返回topic_id"
-// @Failure 20 "获取用户ID失败"
-// @Failure 30 "话题类型不存在"
-// @Failure 31 "话题版本已经存在"
-// @Failure 19 "主理人只允许一个"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
@@ -55,12 +51,6 @@ func createTopic(c *mars.Context) {
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param req body model.ArgUpdateTopic true "请求"
 // @Success 200 "成功"
-// @Failure 18 "话题不存在"
-// @Failure 20 "获取用户ID失败"
-// @Failure 30 "话题类型不存在"
-// @Failure 31 "话题版本已经存在"
-// @Failure 34 "你不是话题成员"
-// @Failure 35 "你不是话题管理员"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
@@ -146,9 +136,6 @@ func getTopic(c *mars.Context) {
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param req body model.ArgChangeOwner true "请求"
 // @Success 200 "成功"
-// @Failure 20 "获取用户ID失败"
-// @Failure 34 "不是话题成员"
-// @Failure 46 "不是话题主理人"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"

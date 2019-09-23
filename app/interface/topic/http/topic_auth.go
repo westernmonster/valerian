@@ -47,7 +47,6 @@ func authTopics(c *mars.Context) {
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param req body model.ArgSaveAuthTopics true "请求"
 // @Success 200 "成功"
-// @Failure 18 "话题不存在"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
@@ -64,5 +63,4 @@ func editAuthTopics(c *mars.Context) {
 	}
 
 	c.JSON(nil, srv.SaveAuthTopics(c, arg))
-
 }

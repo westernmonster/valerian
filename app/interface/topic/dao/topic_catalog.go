@@ -20,7 +20,7 @@ func (p *Dao) GetTopicCatalogChildrenCount(c context.Context, node sqalx.Node, t
 // GetAll get all records
 func (p *Dao) GetTopicCatalogs(c context.Context, node sqalx.Node) (items []*model.TopicCatalog, err error) {
 	items = make([]*model.TopicCatalog, 0)
-	sqlSelect := "SELECT a.* FROM topic_catalogs a WHERE a.deleted=0 ORDER BY a.id DESC "
+	sqlSelect := "SELECT a.* FROM topic_catalogs a WHERE a.deleted=0 ORDER BY a.seq "
 
 	if err = node.SelectContext(c, &items, sqlSelect); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetTopicCatalogs err(%+v)", err))
@@ -72,7 +72,7 @@ func (p *Dao) GetTopicCatalogsByCond(c context.Context, node sqalx.Node, cond ma
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.* FROM topic_catalogs a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.* FROM topic_catalogs a WHERE a.deleted=0 %s ORDER BY a.seq", clause)
 
 	if err = node.SelectContext(c, &items, sqlSelect, condition...); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetTopicCatalogsByCond err(%+v), condition(%+v)", err, cond))
@@ -194,7 +194,7 @@ func (p *Dao) DelTopicCatalog(c context.Context, node sqalx.Node, id int64) (err
 }
 
 func (p *Dao) GetTopicCatalogMaxChildrenSeq(c context.Context, node sqalx.Node, topicID, parentID int64) (seq int, err error) {
-	sqlSelect := "SELECT a.seq FROM topic_catalogs a WHERE a.deleted=0 AND a.topic_id=? AND a.parent_id=? ORDER BY a.seq DESC LIMIT 1"
+	sqlSelect := "SELECT a.seq FROM topic_catalogs a WHERE a.deleted=0 AND a.topic_id=? AND a.parent_id=? ORDER BY a.seq  LIMIT 1"
 	if err = node.GetContext(c, &seq, sqlSelect, topicID, parentID); err != nil {
 		if err == sql.ErrNoRows {
 			seq = 0

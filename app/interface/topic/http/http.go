@@ -49,9 +49,7 @@ func route(e *mars.Engine) {
 
 		g.GET("/list/catalogs", authSvc.User, topicCatalogs)
 		g.GET("/list/members", authSvc.User, topicMembers)
-		g.GET("/list/member_fans", authSvc.User, memberFansList)
 		g.GET("/list/auth_topics", authSvc.User, authTopics)
-		g.GET("/list/catalog_taxonomies", authSvc.User, topicCatalogTaxonomies)
 	}
 
 }
