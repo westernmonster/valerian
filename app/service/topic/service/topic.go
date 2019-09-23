@@ -240,6 +240,10 @@ func (p *Service) updateTopic(c context.Context, node sqalx.Node, aid int64, arg
 	return
 }
 
+func (p *Service) GetBaseTopic(c context.Context, topicID int64) (item *model.Topic, err error) {
+	return p.getTopic(c, p.d.DB(), topicID)
+}
+
 func (p *Service) getTopic(c context.Context, node sqalx.Node, topicID int64) (item *model.Topic, err error) {
 	var addCache = true
 	if item, err = p.d.TopicCache(c, topicID); err != nil {
