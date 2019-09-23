@@ -225,6 +225,21 @@ push-service-identify:
 deploy-service-identify:
 	helm install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/service-identify:${DOCKER_TAG} --set global.name=service-identify --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=service.identify --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=3af51098da6011e997420a58ac140026  --set env.treeId=1302 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc --name service-identify-uat ./build/k8s
 
+
+
+service-account: build-service-account docker-service-account push-service-account deploy-service-account
+
+build-service-account:
+	go env -w GOPROXY=https://goproxy.cn,direct
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/service/account/cmd/cmd"   app/service/account/cmd/main.go
+docker-service-account:
+	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/service-account:${DOCKER_TAG} ./app/service/account/cmd/
+push-service-account:
+	docker push registry.cn-hangzhou.aliyuncs.com/valerian/service-account:${DOCKER_TAG}
+deploy-service-account:
+	helm install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/service-account:${DOCKER_TAG} --set global.name=service-account --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=service.account --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=3af51098da6011e997420a58ac140026  --set env.treeId=1302 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc --name service-account-uat ./build/k8s
+
+
 service-discuss: build-service-discuss docker-service-discuss push-service-discuss deploy-service-discuss
 
 build-service-discuss:
