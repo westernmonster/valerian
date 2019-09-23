@@ -35,25 +35,6 @@ func route(e *mars.Engine) {
 	{
 		g.GET("/get", authSvc.User, getTopic)
 
-		g.POST("/add", authSvc.User, createTopic)
-		g.POST("/edit", authSvc.User, editTopic)
-		g.POST("/del", authSvc.User, deleteTopic)
-		g.POST("/owner", authSvc.User, changeOwner)
-		g.POST("/follow", authSvc.User, followTopic)
-		g.POST("/leave", authSvc.User, leave)
-		g.POST("/invite", authSvc.User, inviteFans)
-
-		g.POST("/discuss_categories", authSvc.User, editDiscussCategories)
-		g.POST("/members", authSvc.User, editTopicMembers)
-		g.POST("/auth_topics", authSvc.User, editAuthTopics)
-		g.POST("/catalogs", authSvc.User, editTopicCatalogs)
-
-		g.GET("/list/discuss_categories", authSvc.User, discussCategories)
-		g.GET("/list/catalogs", authSvc.User, topicCatalogs)
-		g.GET("/list/members", authSvc.User, topicMembers)
-		g.GET("/list/member_fans", authSvc.User, memberFansList)
-		g.GET("/list/auth_topics", authSvc.User, authTopics)
-		g.GET("/list/catalog_taxonomies", authSvc.User, topicCatalogTaxonomies)
 	}
 
 }

@@ -40,7 +40,7 @@ type server struct {
 }
 
 func (s *server) GetTopicInfo(ctx context.Context, req *api.TopicReq) (*api.TopicInfo, error) {
-	resp, err := s.svr.GetBaseTopic(ctx, req.ID)
+	resp, err := s.svr.GetTopic(ctx, req.ID)
 	if err != nil {
 		return nil, err
 	}
