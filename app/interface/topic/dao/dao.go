@@ -52,11 +52,11 @@ func New(c *conf.Config) (dao *Dao) {
 		dao.sc = sc
 	}
 
-	if accountRPC, err := account.NewClient(dao.accountRPC); err != nil {
+	if accountRPC, err := account.NewClient(c.AccountRPC); err != nil {
 		panic(errors.WithMessage(err, "Failed to dial account service"))
+	} else {
+		dao.accountRPC = accountRPC
 	}
-
-	dao.accountRPC = accountRPC
 
 	return
 }
