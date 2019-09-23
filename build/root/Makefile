@@ -174,6 +174,19 @@ deploy-interface-account:
 	helm install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/interface-account:${DOCKER_TAG} --set global.name=interface-account --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=interface.account --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=57b94857da6011e984660a58ac14011a  --set env.treeId=1401 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc --name interface-account-uat ./build/k8s
 
 
+interface-topic: build-interface-topic docker-interface-topic push-interface-topic deploy-interface-topic
+
+build-interface-topic:
+	go env -w GOPROXY=https://goproxy.cn,direct
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/interface/topic/cmd/cmd"   app/interface/topic/cmd/main.go
+docker-interface-topic:
+	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/interface-topic:${DOCKER_TAG} ./app/interface/topic/cmd/
+push-interface-topic:
+	docker push registry.cn-hangzhou.aliyuncs.com/valerian/interface-topic:${DOCKER_TAG}
+deploy-interface-topic:
+	helm install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/interface-topic:${DOCKER_TAG} --set global.name=interface-topic --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=interface.topic --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=ba6ea185da6011e997420a58ac140026  --set env.treeId=1417 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc --name interface-topic-uat ./build/k8s
+
+
 admin-config: build-admin-config docker-admin-config push-admin-config deploy-admin-config
 
 build-admin-config:
