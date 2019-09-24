@@ -1,23 +1,17 @@
 package main
 
 import (
-	"context"
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	flag "github.com/spf13/pflag"
 
 	"valerian/app/interface/discuss/conf"
-	"valerian/app/interface/discuss/server/http"
+	"valerian/app/interface/discuss/http"
 	"valerian/app/interface/discuss/service"
-	"valerian/library/conf/env"
 	ecode "valerian/library/ecode/tip"
 	"valerian/library/log"
-	"valerian/library/naming"
-	"valerian/library/naming/discovery"
-	xip "valerian/library/net/ip"
 	"valerian/library/tracing"
 )
 
@@ -42,30 +36,6 @@ func main() {
 
 	// ws := server.New(conf.Conf.WardenServer, srv)
 
-	var (
-		err    error
-		cancel context.CancelFunc
-	)
-	{
-		ip := xip.InternalIP()
-		hn, _ := os.Hostname()
-		dis := discovery.New(conf.Conf.Discovery)
-		ins := &naming.Instance{
-			Zone:     env.Zone,
-			Env:      env.DeployEnv,
-			AppID:    env.AppID,
-			Hostname: hn,
-			Addrs: []string{
-				"http://" + ip + ":" + env.HTTPPort,
-				// "grpc://" + ip + ":" + env.GORPCPort,
-			},
-		}
-
-		if cancel, err = dis.Register(context.Background(), ins); err != nil {
-			panic(err)
-		}
-	}
-
 	// init signal
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, syscall.SIGHUP, syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT)
@@ -74,12 +44,6 @@ func main() {
 		log.Infof("discuss-service get a signal %s", s.String())
 		switch s {
 		case syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT:
-			if cancel != nil {
-				cancel()
-			}
-
-			// ws.Shutdown(context.Background())
-			time.Sleep(time.Second * 2)
 			srv.Close()
 			log.Info("discuss-service exit")
 			return
