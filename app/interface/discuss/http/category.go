@@ -1,6 +1,7 @@
 package http
 
 import (
+	"fmt"
 	"strconv"
 
 	"valerian/app/interface/discuss/model"
@@ -59,6 +60,7 @@ func editDiscussCategories(c *mars.Context) {
 		return
 	}
 
+	fmt.Println(arg)
 	if e := arg.Validate(); e != nil {
 		c.JSON(nil, ecode.RequestErr)
 		return

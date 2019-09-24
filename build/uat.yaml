@@ -57,7 +57,7 @@ spec:
         backend:
           serviceName: interface-article
           servicePort: 8000
-      - path: /api/v1/discuss
+      - path: /api/v1/discussion
         backend:
           serviceName: interface-discuss
           servicePort: 8000
