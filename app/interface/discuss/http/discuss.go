@@ -155,9 +155,6 @@ func addDiscussion(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /discussion/edit [post]
 func updateDiscussion(c *mars.Context) {
-	var aid int64
-	var err error
-	params := c.Request.Form
 	arg := new(model.ArgUpdateDiscuss)
 	if e := c.Bind(arg); e != nil {
 		return
