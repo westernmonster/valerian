@@ -34,17 +34,16 @@ func (p *Service) getTopic(c context.Context, node sqalx.Node, topicID int64) (i
 	return
 }
 
-func (p *Service) CheckTopicManager(c context.Context, topicID, aid int64) (err error) {
+func (p *Service) GetTopicManagerRole(c context.Context, topicID, aid int64) (isMember bool, role string, err error) {
 	var member *model.TopicMember
 	if member, err = p.d.GetTopicMemberByCond(c, p.d.DB(), map[string]interface{}{"account_id": aid, "topic_id": topicID}); err != nil {
 		return
 	} else if member == nil {
-		err = ecode.NotTopicMember
-		return
-	} else if member.Role == model.MemberRoleUser {
-		err = ecode.NotTopicAdmin
-		return
+		isMember = false
+	} else {
+		isMember = true
+		role = member.Role
 	}
 
-	return nil
+	return
 }

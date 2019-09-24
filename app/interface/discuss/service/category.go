@@ -20,6 +20,39 @@ func (p *Service) checkTopic(c context.Context, topicID int64) (err error) {
 	return
 }
 
+func (p *Service) checkTopicManager(c context.Context, topicID, aid int64) (err error) {
+	info, err := p.d.GetTopicMemberRole(c, topicID, aid)
+	if err != nil {
+		return
+	}
+
+	if info.IsMember == false {
+		err = ecode.NotTopicMember
+		return
+	}
+
+	if info.Role == model.MemberRoleUser {
+		err = ecode.NotTopicAdmin
+		return
+	}
+
+	return
+}
+
+func (p *Service) checkTopicMember(c context.Context, topicID, aid int64) (err error) {
+	info, err := p.d.GetTopicMemberRole(c, topicID, aid)
+	if err != nil {
+		return
+	}
+
+	if info.IsMember == false {
+		err = ecode.NotTopicMember
+		return
+	}
+
+	return
+}
+
 func (p *Service) getDiscussCategories(c context.Context, node sqalx.Node, topicID int64) (items []*model.DiscussCategoryResp, err error) {
 	var dbItems []*model.DiscussCategory
 	if dbItems, err = p.d.GetDiscussCategoriesByCond(c, p.d.DB(), map[string]interface{}{"topic_id": topicID}); err != nil {
@@ -70,7 +103,7 @@ func (p *Service) SaveDiscussCategories(c context.Context, arg *model.ArgSaveDis
 	}
 
 	// check admin role
-	if err = p.d.CheckTopicManager(c, arg.TopicID, aid); err != nil {
+	if err = p.checkTopicManager(c, arg.TopicID, aid); err != nil {
 		return
 	}
 

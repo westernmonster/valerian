@@ -2,7 +2,6 @@ package model
 
 import (
 	validation "github.com/go-ozzo/ozzo-validation"
-	"github.com/go-ozzo/ozzo-validation/is"
 )
 
 type ArgAddDiscuss struct {
@@ -16,7 +15,7 @@ type ArgAddDiscuss struct {
 	Content string `json:"content"`
 
 	// 附件
-	Files []*AddDiscussFile `json:"files"`
+	Files []*AddDiscussionFile `json:"files"`
 }
 
 func (p *ArgAddDiscuss) Validate() error {
@@ -26,20 +25,6 @@ func (p *ArgAddDiscuss) Validate() error {
 		validation.Field(&p.Content, validation.Required),
 		validation.Field(&p.CategoryID, validation.Required),
 		validation.Field(&p.TopicID, validation.Required),
-	)
-}
-
-type AddDiscussFile struct {
-	FileName string `json:"file_name"`          // FileName 文件名
-	FileURL  string `json:"file_url,omitempty"` // FileURL 文件地址
-	Seq      int    `json:"seq"`                // Seq 文件顺序
-}
-
-func (p *AddDiscussFile) Validate() error {
-	return validation.ValidateStruct(
-		p,
-		validation.Field(&p.FileName, validation.Required, validation.RuneLength(0, 250)),
-		validation.Field(&p.FileURL, validation.Required, is.URL),
 	)
 }
 
@@ -53,7 +38,7 @@ type ArgUpdateDiscuss struct {
 	Content string `json:"content"`
 
 	// 附件
-	Files []*AddDiscussFile `json:"files"`
+	Files []*AddDiscussionFile `json:"files"`
 }
 
 func (p *ArgUpdateDiscuss) Validate() error {
@@ -62,16 +47,5 @@ func (p *ArgUpdateDiscuss) Validate() error {
 		validation.Field(&p.ID, validation.Required),
 		validation.Field(&p.Content, validation.Required),
 		validation.Field(&p.Files),
-	)
-}
-
-type ArgDelDiscuss struct {
-	ID int64 `json:"id,string" swaggertype:"string"`
-}
-
-func (p *ArgDelDiscuss) Validate() error {
-	return validation.ValidateStruct(
-		p,
-		validation.Field(&p.ID, validation.Required),
 	)
 }

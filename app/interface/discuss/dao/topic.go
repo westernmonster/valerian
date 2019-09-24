@@ -9,7 +9,6 @@ func (p *Dao) GetTopic(c context.Context, id int64) (info *topic.TopicInfo, err 
 	return p.topicRPC.GetTopicInfo(c, &topic.TopicReq{ID: id})
 }
 
-func (p *Dao) CheckTopicManager(c context.Context, topicID, accountID int64) (err error) {
-	_, err = p.topicRPC.CheckTopicManager(c, &topic.CheckTopicManagerReq{TopicID: topicID, AccountID: accountID})
-	return
+func (p *Dao) GetTopicMemberRole(c context.Context, topicID, accountID int64) (resp *topic.MemberRoleReply, err error) {
+	return p.topicRPC.GetTopicMemberRole(c, &topic.TopicMemberRoleReq{TopicID: topicID, AccountID: accountID})
 }

@@ -8,6 +8,11 @@ import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 message EmptyStruct {
 }
 
+message MemberRoleReply {
+    bool  IsMember = 1 [(gogoproto.jsontag) = "is_member"];
+    string  Role = 2 [(gogoproto.jsontag) = "role"];
+}
+
 message TopicInfo {
     int64 ID = 1 [(gogoproto.jsontag) = "id"];
 
@@ -54,15 +59,17 @@ message TopicReq {
     int64 ID = 1 [(gogoproto.jsontag) = "id"];
 }
 
-message CheckTopicManagerReq {
+message TopicMemberRoleReq {
     int64 TopicID = 1 [(gogoproto.jsontag) = "topic_id"];
     int64 AccountID = 2 [(gogoproto.jsontag) = "aid"];
 }
 
 
+
+
 service Topic {
     rpc  GetTopicInfo(TopicReq) returns (TopicInfo);
 
-    rpc  CheckTopicManager(CheckTopicManagerReq) returns (EmptyStruct);
+    rpc  GetTopicMemberRole(TopicMemberRoleReq) returns (MemberRoleReply);
 }
 

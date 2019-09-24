@@ -48,11 +48,15 @@ func (s *server) GetTopicInfo(ctx context.Context, req *api.TopicReq) (*api.Topi
 	return api.FromTopic(resp), nil
 }
 
-func (s *server) CheckTopicManager(ctx context.Context, req *api.CheckTopicManagerReq) (*api.EmptyStruct, error) {
-	err := s.svr.CheckTopicManager(ctx, req.TopicID, req.AccountID)
+func (s *server) GetTopicMemberRole(ctx context.Context, req *api.TopicMemberRoleReq) (resp *api.MemberRoleReply, err error) {
+	resp = &api.MemberRoleReply{}
+	isMember, role, err := s.svr.GetTopicManagerRole(ctx, req.TopicID, req.AccountID)
 	if err != nil {
-		return &api.EmptyStruct{}, err
+		return nil, err
 	}
 
-	return &api.EmptyStruct{}, nil
+	resp.IsMember = isMember
+	resp.Role = role
+
+	return resp, nil
 }

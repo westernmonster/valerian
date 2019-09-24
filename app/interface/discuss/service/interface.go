@@ -28,6 +28,15 @@ type IDao interface {
 	UpdateDiscussCategory(c context.Context, node sqalx.Node, item *model.DiscussCategory) (err error)
 	DelDiscussCategory(c context.Context, node sqalx.Node, id int64) (err error)
 
+	GetDiscussionFilesByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.DiscussionFile, err error)
+	GetDiscussionFiles(c context.Context, node sqalx.Node) (items []*model.DiscussionFile, err error)
+	GetDiscussionFileByID(c context.Context, node sqalx.Node, id int64) (item *model.DiscussionFile, err error)
+	GetDiscussionFileByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (item *model.DiscussionFile, err error)
+	AddDiscussionFile(c context.Context, node sqalx.Node, item *model.DiscussionFile) (err error)
+	UpdateDiscussionFile(c context.Context, node sqalx.Node, item *model.DiscussionFile) (err error)
+	DelDiscussionFile(c context.Context, node sqalx.Node, id int64) (err error)
+	DelDiscussionFiles(c context.Context, node sqalx.Node, discussionID int64) (err error)
+
 	GetAccountStatByID(c context.Context, node sqalx.Node, aid int64) (item *model.AccountResStat, err error)
 	AddAccountStat(c context.Context, node sqalx.Node, item *model.AccountResStat) (err error)
 	UpdateAccountStat(c context.Context, node sqalx.Node, item *model.AccountResStat) (err error)
@@ -40,11 +49,20 @@ type IDao interface {
 
 	GetTopic(c context.Context, id int64) (info *topic.TopicInfo, err error)
 	GetAccountBaseInfo(c context.Context, aid int64) (info *account.BaseInfoReply, err error)
-	CheckTopicManager(c context.Context, topicID, accountID int64) (err error)
+	GetTopicMemberRole(c context.Context, topicID, accountID int64) (resp *topic.MemberRoleReply, err error)
 
 	NotifyDiscussionAdded(c context.Context, id int64) (err error)
 	NotifyDiscussionUpdated(c context.Context, id int64) (err error)
 	NotifyDiscussionDeleted(c context.Context, id int64) (err error)
+
+	SetDiscussionFilesCache(c context.Context, discussionID int64, m []*model.DiscussionFileResp) (err error)
+	DiscussionFilesCache(c context.Context, discussionID int64) (m []*model.DiscussionFileResp, err error)
+	DelDiscussionFilesCache(c context.Context, discussionID int64) (err error)
+
+	GetDiscussionStatByID(c context.Context, node sqalx.Node, discussionID int64) (item *model.DiscussionStat, err error)
+	AddDiscussionStat(c context.Context, node sqalx.Node, item *model.DiscussionStat) (err error)
+	UpdateDiscussionStat(c context.Context, node sqalx.Node, item *model.DiscussionStat) (err error)
+	IncrDiscussionStat(c context.Context, node sqalx.Node, item *model.DiscussionStat) (err error)
 
 	Ping(c context.Context) (err error)
 	Close()

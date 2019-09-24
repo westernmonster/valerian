@@ -33,6 +33,7 @@ func route(e *mars.Engine) {
 		g.GET("/list/by_topic", getDiscusstionsByTopic)
 		g.GET("/list/by_account", getDiscusstionsByAccount)
 
+		g.POST("/get", getDiscussion)
 		g.POST("/add", addDiscussion)
 		g.POST("/edit", updateDiscussion)
 		g.POST("/del", delDiscussion)

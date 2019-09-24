@@ -84,6 +84,10 @@ type DiscussDetailResp struct {
 	LikeCount int `json:"like_count"`
 	// 评论数
 	CommentCount int `json:"comment_count"`
+
+	// 是否可以编辑
+	// 讨论所属用户以及管理员可以编辑
+	CanEdit bool `json:"can_edit"`
 }
 
 type DiscussFileResp struct {

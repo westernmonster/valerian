@@ -126,14 +126,6 @@ func getDiscusstionsByAccount(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /discussion/add [post]
 func addDiscussion(c *mars.Context) {
-	var aid int64
-	var err error
-	params := c.Request.Form
-	if aid, err = strconv.ParseInt(params.Get("aid"), 10, 64); err != nil {
-		c.JSON(nil, ecode.RequestErr)
-		return
-	}
-
 	arg := new(model.ArgAddDiscuss)
 	if e := c.Bind(arg); e != nil {
 		return
@@ -144,7 +136,7 @@ func addDiscussion(c *mars.Context) {
 		return
 	}
 
-	id, err := srv.AddDiscussion(c, aid, arg)
+	id, err := srv.AddDiscussion(c, arg)
 	c.JSON(strconv.FormatInt(id, 10), err)
 }
 
@@ -192,32 +184,23 @@ func updateDiscussion(c *mars.Context) {
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArgDelDiscuss true "请求"
+// @Param id query string true "ID"
 // @Success 200 "成功,返回discussion_id"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /discussion/del [post]
 func delDiscussion(c *mars.Context) {
-	var aid int64
+	var id int64
 	var err error
 	params := c.Request.Form
-	if aid, err = strconv.ParseInt(params.Get("aid"), 10, 64); err != nil {
+
+	if id, err = strconv.ParseInt(params.Get("id"), 10, 64); err != nil {
 		c.JSON(nil, ecode.RequestErr)
 		return
 	}
 
-	arg := new(model.ArgDelDiscuss)
-	if e := c.Bind(arg); e != nil {
-		return
-	}
-
-	if e := arg.Validate(); e != nil {
-		c.JSON(nil, ecode.RequestErr)
-		return
-	}
-
-	c.JSON(nil, srv.DelDiscussion(c, aid, arg))
+	c.JSON(nil, srv.DelDiscussion(c, id))
 }
 
 // @Summary 获取话题讨论详情
@@ -234,7 +217,17 @@ func delDiscussion(c *mars.Context) {
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /discussion/get [get]
-func getDiscusstion(c *mars.Context) {
+func getDiscussion(c *mars.Context) {
+	var id int64
+	var err error
+	params := c.Request.Form
+
+	if id, err = strconv.ParseInt(params.Get("id"), 10, 64); err != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+
+	c.JSON(srv.GetDiscussion(c, id))
 }
 
 // @Summary 收藏讨论
@@ -251,5 +244,5 @@ func getDiscusstion(c *mars.Context) {
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /discussion/fav [post]
-func favDiscuss(c *mars.Context) {
+func favDiscussion(c *mars.Context) {
 }
