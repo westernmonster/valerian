@@ -6,15 +6,18 @@ import (
 	"valerian/library/ecode"
 	"valerian/library/log"
 	"valerian/library/net/http/mars"
+	"valerian/library/net/http/mars/middleware/auth"
 )
 
 var (
-	srv *service.Service
+	srv     *service.Service
+	authSvc *auth.Auth
 )
 
 // Init init
 func Init(c *conf.Config, s *service.Service) {
 	srv = s
+	authSvc = auth.New(conf.Conf.Auth)
 
 	engine := mars.DefaultServer(c.Mars)
 	route(engine)
@@ -30,17 +33,17 @@ func route(e *mars.Engine) {
 	e.Register(register)
 	g := e.Group("/api/v1/discussion")
 	{
-		g.GET("/list/by_topic", getDiscusstionsByTopic)
-		g.GET("/list/by_account", getDiscusstionsByAccount)
-		g.GET("/list/categories", discussCategories)
-		g.GET("/list/files", discussionFiles)
+		g.GET("/list/by_topic", authSvc.User, getDiscusstionsByTopic)
+		g.GET("/list/by_account", authSvc.User, getDiscusstionsByAccount)
+		g.GET("/list/categories", authSvc.User, discussCategories)
+		g.GET("/list/files", authSvc.User, discussionFiles)
 
-		g.POST("/get", getDiscussion)
-		g.POST("/add", addDiscussion)
-		g.POST("/edit", updateDiscussion)
-		g.POST("/del", delDiscussion)
-		g.POST("/categories", editDiscussCategories)
-		g.POST("/files", editDiscussionFiles)
+		g.POST("/get", authSvc.User, getDiscussion)
+		g.POST("/add", authSvc.User, addDiscussion)
+		g.POST("/edit", authSvc.User, updateDiscussion)
+		g.POST("/del", authSvc.User, delDiscussion)
+		g.POST("/categories", authSvc.User, editDiscussCategories)
+		g.POST("/files", authSvc.User, editDiscussionFiles)
 	}
 }
 
