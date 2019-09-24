@@ -18,6 +18,8 @@ type IDao interface {
 	UpdateTopic(c context.Context, node sqalx.Node, item *model.Topic) (err error)
 	DelTopic(c context.Context, node sqalx.Node, id int64) (err error)
 
+	GetTopicMemberByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (item *model.TopicMember, err error)
+
 	SetTopicCache(c context.Context, m *model.Topic) (err error)
 	TopicCache(c context.Context, topicID int64) (m *model.Topic, err error)
 	DelTopicCache(c context.Context, topicID int64) (err error)

@@ -47,3 +47,12 @@ func (s *server) GetTopicInfo(ctx context.Context, req *api.TopicReq) (*api.Topi
 
 	return api.FromTopic(resp), nil
 }
+
+func (s *server) CheckTopicManager(ctx context.Context, req *api.CheckTopicManagerReq) (*api.EmptyStruct, error) {
+	err := s.svr.CheckTopicManager(ctx, req.TopicID, req.AccountID)
+	if err != nil {
+		return &api.EmptyStruct{}, err
+	}
+
+	return &api.EmptyStruct{}, nil
+}

@@ -1,64 +1,119 @@
 package http
 
 import (
+	"strconv"
+	"strings"
+
+	"valerian/app/interface/discuss/model"
+	"valerian/library/ecode"
 	"valerian/library/net/http/mars"
 )
 
-// @Summary 收藏讨论
-// @Description 收藏讨论
-// @Tags topic
-// @Accept json
-// @Produce json
-// @Param Authorization header string true "Bearer"
-// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
-// @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param id query string true "ID"
-// @Success 200 "成功后返回bool值"
-// @Failure 400 "验证请求失败"
-// @Failure 401 "登录验证失败"
-// @Failure 500 "服务器端错误"
-// @Router /topic/discussion/fav [post]
-func fav(c *mars.Context) {
-}
-
-// @Summary 点赞讨论
-// @Description 点赞讨论
-// @Tags topic
-// @Accept json
-// @Produce json
-// @Param Authorization header string true "Bearer"
-// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
-// @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param id query string true "ID"
-// @Success 200 "成功后返回bool值"
-// @Failure 400 "验证请求失败"
-// @Failure 401 "登录验证失败"
-// @Failure 500 "服务器端错误"
-// @Router /topic/discussion/like [post]
-func like(c *mars.Context) {
-}
-
-// @Summary 获取话题讨论列表
-// @Description 获取话题讨论列表,discuss_category_id 不传则是全部，-1代表问答，其他值则为自定义分类
-// @Tags topic
+// @Summary 获取话题讨论列表(按话题)
+// @Description 获取话题讨论列表,category_id 不传则是全部，-1代表问答，其他值则为自定义分类
+// @Tags discussion
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param topic_id query string true "topic_id"
-// @Param discuss_category_id query string false "discuss_category_id"
+// @Param category_id query string false "category_id"
+// @Param limit query integer false "每页大小"
+// @Param offset query integer false "offset"
 // @Success 200 {object} model.DiscussListResp "讨论列表"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /topic/list/discussions [get]
-func getDiscusstions(c *mars.Context) {
+// @Router /discussion/list/by_topic [get]
+func getDiscusstionsByTopic(c *mars.Context) {
+	var (
+		id         int64
+		categoryID int64
+		err        error
+		offset     int
+		limit      int
+	)
+
+	params := c.Request.Form
+	if offset, err = strconv.Atoi(params.Get("offset")); err != nil {
+		offset = 0
+	} else if offset < 0 {
+		offset = 0
+	}
+
+	if limit, err = strconv.Atoi(params.Get("limit")); err != nil {
+		limit = 10
+	} else if limit < 0 {
+		limit = 10
+	}
+
+	if id, err = strconv.ParseInt(params.Get("topic_id"), 10, 64); err != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+
+	strCategoryID := strings.TrimSpace(params.Get("category_id"))
+	if strCategoryID == "" {
+		strCategoryID = "0"
+	}
+	if categoryID, err = strconv.ParseInt(strCategoryID, 10, 64); err != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+
+	c.JSON(srv.GetTopicDiscussionsPaged(c, id, categoryID, limit, offset))
+}
+
+// @Summary 获取话题讨论列表（按用户)
+// @Description 获取话题讨论列表,category_id 不传则是全部，-1代表问答，其他值则为自定义分类
+// @Tags discussion
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param account_id query string true "account_id"
+// @Param limit query integer false "每页大小"
+// @Param offset query integer false "offset"
+// @Success 200 {object} model.DiscussListResp "讨论列表"
+// @Failure 400 "验证请求失败"
+// @Failure 401 "登录验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /discussion/list/by_account [get]
+func getDiscusstionsByAccount(c *mars.Context) {
+	var (
+		id     int64
+		err    error
+		offset int
+		limit  int
+	)
+
+	params := c.Request.Form
+
+	if offset, err = strconv.Atoi(params.Get("offset")); err != nil {
+		offset = 0
+	} else if offset < 0 {
+		offset = 0
+	}
+
+	if limit, err = strconv.Atoi(params.Get("limit")); err != nil {
+		limit = 10
+	} else if limit < 0 {
+		limit = 10
+	}
+
+	if id, err = strconv.ParseInt(params.Get("account_id"), 10, 64); err != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+
+	c.JSON(srv.GetUserDiscussionsPaged(c, id, limit, offset))
 }
 
 // @Summary 新增话题讨论
 // @Description 新增话题讨论
-// @Tags topic
+// @Tags discussion
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer"
@@ -69,31 +124,33 @@ func getDiscusstions(c *mars.Context) {
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /topic/discussion/add [post]
-func addDiscuss(c *mars.Context) {
-}
+// @Router /discussion/add [post]
+func addDiscussion(c *mars.Context) {
+	var aid int64
+	var err error
+	params := c.Request.Form
+	if aid, err = strconv.ParseInt(params.Get("aid"), 10, 64); err != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
 
-// @Summary 删除话题讨论
-// @Description 删除话题讨论
-// @Tags topic
-// @Accept json
-// @Produce json
-// @Param Authorization header string true "Bearer"
-// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
-// @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArgDelDiscuss true "请求"
-// @Success 200 "成功,返回discussion_id"
-// @Failure 400 "验证请求失败"
-// @Failure 401 "登录验证失败"
-// @Failure 500 "服务器端错误"
-// @Router /topic/discussion/del [post]
-func delDiscuss(c *mars.Context) {
+	arg := new(model.ArgAddDiscuss)
+	if e := c.Bind(arg); e != nil {
+		return
+	}
 
+	if e := arg.Validate(); e != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+
+	id, err := srv.AddDiscussion(c, aid, arg)
+	c.JSON(strconv.FormatInt(id, 10), err)
 }
 
 // @Summary 更新话题讨论
 // @Description 更新话题讨论
-// @Tags topic
+// @Tags discussion
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer"
@@ -104,14 +161,68 @@ func delDiscuss(c *mars.Context) {
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /topic/discussion/edit [post]
-func updateDiscuss(c *mars.Context) {
+// @Router /discussion/discussion/edit [post]
+func updateDiscussion(c *mars.Context) {
+	var aid int64
+	var err error
+	params := c.Request.Form
+	if aid, err = strconv.ParseInt(params.Get("aid"), 10, 64); err != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
 
+	arg := new(model.ArgUpdateDiscuss)
+	if e := c.Bind(arg); e != nil {
+		return
+	}
+
+	if e := arg.Validate(); e != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+
+	c.JSON(nil, srv.UpdateDiscussion(c, aid, arg))
+}
+
+// @Summary 删除话题讨论
+// @Description 删除话题讨论
+// @Tags discussion
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param req body model.ArgDelDiscuss true "请求"
+// @Success 200 "成功,返回discussion_id"
+// @Failure 400 "验证请求失败"
+// @Failure 401 "登录验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /discussion/del [post]
+func delDiscussion(c *mars.Context) {
+	var aid int64
+	var err error
+	params := c.Request.Form
+	if aid, err = strconv.ParseInt(params.Get("aid"), 10, 64); err != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+
+	arg := new(model.ArgDelDiscuss)
+	if e := c.Bind(arg); e != nil {
+		return
+	}
+
+	if e := arg.Validate(); e != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+
+	c.JSON(nil, srv.DelDiscussion(c, aid, arg))
 }
 
 // @Summary 获取话题讨论详情
 // @Description 获取话题讨论详情
-// @Tags topic
+// @Tags discussion
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer"
@@ -122,13 +233,13 @@ func updateDiscuss(c *mars.Context) {
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /topic/discussion/get [get]
+// @Router /discussion/get [get]
 func getDiscusstion(c *mars.Context) {
 }
 
 // @Summary 收藏讨论
 // @Description 收藏讨论
-// @Tags topic
+// @Tags discussion
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer"
@@ -139,6 +250,6 @@ func getDiscusstion(c *mars.Context) {
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /topic/discussion/fav [post]
+// @Router /discussion/fav [post]
 func favDiscuss(c *mars.Context) {
 }

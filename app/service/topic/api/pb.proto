@@ -4,6 +4,10 @@ option go_package = "api";
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
+// EmptyStruct 空的message，对应真实service只返回error，没有具体返回值
+message EmptyStruct {
+}
+
 message TopicInfo {
     int64 ID = 1 [(gogoproto.jsontag) = "id"];
 
@@ -47,11 +51,18 @@ message TopicInfo {
 }
 
 message TopicReq {
-    int64 ID = 2 [(gogoproto.jsontag) = "id"];
+    int64 ID = 1 [(gogoproto.jsontag) = "id"];
+}
+
+message CheckTopicManagerReq {
+    int64 TopicID = 1 [(gogoproto.jsontag) = "topic_id"];
+    int64 AccountID = 2 [(gogoproto.jsontag) = "aid"];
 }
 
 
 service Topic {
     rpc  GetTopicInfo(TopicReq) returns (TopicInfo);
+
+    rpc  CheckTopicManager(CheckTopicManagerReq) returns (EmptyStruct);
 }
 

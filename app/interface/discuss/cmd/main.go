@@ -9,9 +9,9 @@ import (
 
 	flag "github.com/spf13/pflag"
 
-	"valerian/app/service/discuss/conf"
-	"valerian/app/service/discuss/server/http"
-	"valerian/app/service/discuss/service"
+	"valerian/app/interface/discuss/conf"
+	"valerian/app/interface/discuss/server/http"
+	"valerian/app/interface/discuss/service"
 	"valerian/library/conf/env"
 	ecode "valerian/library/ecode/tip"
 	"valerian/library/log"

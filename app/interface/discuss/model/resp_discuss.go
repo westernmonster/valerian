@@ -1,5 +1,26 @@
 package model
 
+type Creator struct {
+	// 用户ID
+	ID int64 `json:"id,string" swaggertype:"string"`
+	// 用户名
+	UserName string `json:"user_name"`
+	// 头像
+	Avatar string `json:"avatar"`
+
+	// 自我介绍
+	Introduction *string `json:"introduction,omitempty"`
+}
+
+type Paging struct {
+	// 是否结束
+	IsEnd bool `json:"is_end"`
+	// 下一页
+	Next string `json:"next"`
+	// 上一页
+	Prev string `json:"prev"`
+}
+
 type DisucssItem struct {
 	// 讨论ID
 	ID int64 `json:"id,string" swaggertype:"string"`
@@ -41,29 +62,6 @@ type DiscussListResp struct {
 	Paging *Paging        `json:"paging"`
 }
 
-type Paging struct {
-	// 统计数量
-	Total *int `json:"total,omitempty"`
-	// 是否结束
-	IsEnd bool `json:"is_end"`
-	// 下一页
-	Next string `json:"next"`
-	// 上一页
-	Prev string `json:"prev"`
-}
-
-type Creator struct {
-	// 用户ID
-	ID int64 `json:"id,string" swaggertype:"string"`
-	// 用户名
-	UserName string `json:"user_name"`
-	// 头像
-	Avatar string `json:"avatar"`
-
-	// 自我介绍
-	Introduction *string `json:"introduction,omitempty"`
-}
-
 type DiscussDetailResp struct {
 	// 讨论ID
 	ID int64 `json:"id,string" swaggertype:"string"`
@@ -84,13 +82,6 @@ type DiscussDetailResp struct {
 
 	// 喜欢数
 	LikeCount int `json:"like_count"`
-
-	// 是否收藏
-	Fav bool `json:"fav"`
-
-	// 是否点赞
-	Like bool `json:"like"`
-
 	// 评论数
 	CommentCount int `json:"comment_count"`
 }

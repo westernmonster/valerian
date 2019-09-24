@@ -2,7 +2,7 @@ package dao
 
 import (
 	"context"
-	"valerian/app/service/discuss/model"
+	"valerian/app/interface/discuss/model"
 )
 
 const (

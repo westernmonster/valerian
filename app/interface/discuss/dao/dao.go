@@ -7,7 +7,8 @@ import (
 	"time"
 
 	account "valerian/app/service/account/api"
-	"valerian/app/service/discuss/conf"
+	"valerian/app/interface/discuss/conf"
+	topic "valerian/app/service/topic/api"
 	"valerian/library/cache/memcache"
 	"valerian/library/conf/env"
 	"valerian/library/database/sqalx"
@@ -15,6 +16,7 @@ import (
 	"valerian/library/stat/prom"
 
 	"github.com/nats-io/stan.go"
+	"github.com/pkg/errors"
 )
 
 // Dao dao struct
@@ -25,6 +27,7 @@ type Dao struct {
 	c          *conf.Config
 	sc         stan.Conn
 	accountRPC account.AccountClient
+	topicRPC   topic.TopicClient
 }
 
 func New(c *conf.Config) (dao *Dao) {
@@ -49,6 +52,18 @@ func New(c *conf.Config) (dao *Dao) {
 		panic(err)
 	} else {
 		dao.sc = sc
+	}
+
+	if accountRPC, err := account.NewClient(c.AccountRPC); err != nil {
+		panic(errors.WithMessage(err, "Failed to dial account service"))
+	} else {
+		dao.accountRPC = accountRPC
+	}
+
+	if topicRPC, err := topic.NewClient(c.TopicRPC); err != nil {
+		panic(errors.WithMessage(err, "Failed to dial topic service"))
+	} else {
+		dao.topicRPC = topicRPC
 	}
 	return
 }

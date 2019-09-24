@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"valerian/app/service/discuss/model"
+	"valerian/app/interface/discuss/model"
 	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
 	"valerian/library/gid"
@@ -65,9 +65,9 @@ func (p *Service) GetUserDiscussionsPaged(c context.Context, aid int64, limit, o
 	return
 }
 
-func (p *Service) GetTopicDiscussionsPaged(c context.Context, topicID int64, limit, offset int) (items []*model.Discussion, err error) {
+func (p *Service) GetTopicDiscussionsPaged(c context.Context, topicID, categoryID int64, limit, offset int) (items []*model.Discussion, err error) {
 	items = make([]*model.Discussion, 0)
-	if items, err = p.d.GetTopicDiscussionsPaged(c, p.d.DB(), topicID, limit, offset); err != nil {
+	if items, err = p.d.GetTopicDiscussionsPaged(c, p.d.DB(), topicID, categoryID, limit, offset); err != nil {
 		return
 	}
 
@@ -83,6 +83,11 @@ func (p *Service) AddDiscussion(c context.Context, aid int64, arg *model.ArgAddD
 	}
 
 	if err = p.initStat(c, aid, arg.TopicID); err != nil {
+		return
+	}
+
+	// 检测话题
+	if _, err = p.d.GetTopic(c, arg.TopicID); err != nil {
 		return
 	}
 

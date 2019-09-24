@@ -5,8 +5,8 @@ import (
 	"net/url"
 	"strings"
 
-	"valerian/app/service/discuss/conf"
-	"valerian/app/service/discuss/dao"
+	"valerian/app/interface/discuss/conf"
+	"valerian/app/interface/discuss/dao"
 	"valerian/library/conf/env"
 	"valerian/library/log"
 )

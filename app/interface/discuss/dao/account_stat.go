@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"time"
-	"valerian/app/service/discuss/model"
+	"valerian/app/interface/discuss/model"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
 )
