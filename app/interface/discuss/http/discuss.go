@@ -153,16 +153,11 @@ func addDiscussion(c *mars.Context) {
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /discussion/discussion/edit [post]
+// @Router /discussion/edit [post]
 func updateDiscussion(c *mars.Context) {
 	var aid int64
 	var err error
 	params := c.Request.Form
-	if aid, err = strconv.ParseInt(params.Get("aid"), 10, 64); err != nil {
-		c.JSON(nil, ecode.RequestErr)
-		return
-	}
-
 	arg := new(model.ArgUpdateDiscuss)
 	if e := c.Bind(arg); e != nil {
 		return
@@ -173,7 +168,7 @@ func updateDiscussion(c *mars.Context) {
 		return
 	}
 
-	c.JSON(nil, srv.UpdateDiscussion(c, aid, arg))
+	c.JSON(nil, srv.UpdateDiscussion(c, arg))
 }
 
 // @Summary 删除话题讨论

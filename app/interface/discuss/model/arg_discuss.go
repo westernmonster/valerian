@@ -23,7 +23,6 @@ func (p *ArgAddDiscuss) Validate() error {
 		p,
 		validation.Field(&p.Title, validation.RuneLength(0, 120)),
 		validation.Field(&p.Content, validation.Required),
-		validation.Field(&p.CategoryID, validation.Required),
 		validation.Field(&p.TopicID, validation.Required),
 	)
 }

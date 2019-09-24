@@ -201,7 +201,13 @@ func (p *Service) checkCategory(c context.Context, node sqalx.Node, categoryID i
 	return
 }
 
-func (p *Service) UpdateDiscussion(c context.Context, aid int64, arg *model.ArgUpdateDiscuss) (err error) {
+func (p *Service) UpdateDiscussion(c context.Context, arg *model.ArgUpdateDiscuss) (err error) {
+
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
 
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
