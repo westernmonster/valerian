@@ -275,3 +275,15 @@ push-service-topic:
 	docker push registry.cn-hangzhou.aliyuncs.com/valerian/service-topic:${DOCKER_TAG}
 deploy-service-topic:
 	helm install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/service-topic:${DOCKER_TAG} --set global.name=service-topic --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=service.topic --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=49c6fcc6da6011e997420a58ac140026  --set env.treeId=1305 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc --name service-topic-uat ./build/k8s
+
+service-feed: build-service-feed docker-service-feed push-service-feed deploy-service-feed
+
+build-service-feed:
+	go env -w GOPROXY=https://goproxy.cn,direct
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/service/feed/cmd/cmd"   app/service/feed/cmd/main.go
+docker-service-feed:
+	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/service-feed:${DOCKER_TAG} ./app/service/feed/cmd/
+push-service-feed:
+	docker push registry.cn-hangzhou.aliyuncs.com/valerian/service-feed:${DOCKER_TAG}
+deploy-service-feed:
+	helm install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/service-feed:${DOCKER_TAG} --set global.name=service-feed --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=service.feed --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=42385238dfe711e986590a58ac140094  --set env.treeId=1307 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc --name service-feed-uat ./build/k8s
