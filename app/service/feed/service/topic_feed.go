@@ -1,6 +1,7 @@
 package service
 
 import (
+	"valerian/app/service/feed/model"
 	"valerian/library/log"
 
 	"github.com/nats-io/stan.go"
@@ -36,6 +37,13 @@ func (p *Service) feedConsumer() (consumer *FeedConsumer) {
 }
 
 func (p *Service) onDiscussionAdded(m *stan.Msg) {
+	var err error
+	item := new(model.NotifyDiscussionAdded)
+	if err = item.Unmarshal(m.Data); err != nil {
+		log.Errorf("onDiscussionAdded Unmarshal failed %#v", err)
+		return
+	}
+
 	// feed := &model.TopicFeed{
 	// 	ID: gid.NewID(),
 	// }

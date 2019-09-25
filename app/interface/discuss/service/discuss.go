@@ -415,7 +415,7 @@ func (p *Service) GetDiscussion(c context.Context, discussionID int64) (resp *mo
 }
 
 func (p *Service) getDiscussion(c context.Context, node sqalx.Node, discussionID int64) (item *model.Discussion, err error) {
-	if item, err = p.d.GetDiscussionByID(c, p.d.DB(), discussionID); err != nil {
+	if item, err = p.d.GetDiscussionByID(c, node, discussionID); err != nil {
 		return
 	} else if item == nil {
 		err = ecode.DiscussionNotExist

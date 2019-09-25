@@ -22,9 +22,11 @@ require (
 	github.com/go-playground/locales v0.12.1 // indirect
 	github.com/go-playground/universal-translator v0.16.0 // indirect
 	github.com/go-sql-driver/mysql v1.4.1
+	github.com/gobuffalo/logger v1.0.0
 	github.com/gobuffalo/packr v1.30.1
 	github.com/gogo/protobuf v1.3.0
 	github.com/golang/protobuf v1.3.2
+	github.com/google/martian v2.1.0+incompatible
 	github.com/jinzhu/copier v0.0.0-20190625015134-976e0346caa8
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/kylelemons/godebug v1.1.0 // indirect

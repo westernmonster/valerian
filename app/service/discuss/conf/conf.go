@@ -30,15 +30,13 @@ type Config struct {
 	Mars   *mars.ServerConfig
 	Tracer *tracing.Config
 	DB     *DB
+
+	WardenServer *warden.ServerConfig
 	// Auth
 	Auth      *auth.Config
 	Memcache  *Memcache
 	Discovery *discovery.Config
 	Nats      *NatsConfig
-
-	DiscussRPC *warden.ClientConfig
-	TopicRPC   *warden.ClientConfig
-	AccountRPC *warden.ClientConfig
 }
 
 type NatsConfig struct {

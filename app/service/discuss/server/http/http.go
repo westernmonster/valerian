@@ -1,8 +1,8 @@
 package http
 
 import (
-	"valerian/app/service/topic/conf"
-	"valerian/app/service/topic/service"
+	"valerian/app/service/discuss/conf"
+	"valerian/app/service/discuss/service"
 	"valerian/library/ecode"
 	"valerian/library/log"
 	"valerian/library/net/http/mars"
@@ -28,9 +28,9 @@ func Init(c *conf.Config, s *service.Service) {
 func route(e *mars.Engine) {
 	e.Ping(ping)
 	e.Register(register)
-	g := e.Group("/x/internal/topic")
+	g := e.Group("/x/internal/discussion")
 	{
-		g.GET("/get", getTopic)
+		g.GET("/get", getDiscussion)
 
 	}
 
