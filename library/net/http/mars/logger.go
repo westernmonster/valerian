@@ -75,8 +75,6 @@ func Logger() HandlerFunc {
 			}
 		}
 
-		if path != "/monitor/ping" {
-			log.For(c).Info("http", fields...)
-		}
+		log.For(c).Info("http", fields...)
 	}
 }

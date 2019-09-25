@@ -42,6 +42,8 @@ type Actor struct {
 	Avatar string `json:"avatar"`
 	// 用户名
 	Name string `json:"name"`
+
+	Introduction *string `json:"introduction"`
 }
 
 type FeedTarget struct {
@@ -57,6 +59,8 @@ type FeedTarget struct {
 	Member *TargetMember `json:"member,omitempty"`
 	// 话题
 	Topic *TargetTopic `json:"topic,omitempty"`
+	// 讨论
+	Discussion *TargetDiscussion `json:"discussion,omitempty"`
 }
 
 type TargetArticle struct {
@@ -72,6 +76,21 @@ type TargetArticle struct {
 	LikeCount int `json:"like_count"`
 	// 补充个数
 	ReviseCount int `json:"revise_count"`
+	// 评论数
+	CommentCount int `json:"comment_count"`
+}
+
+type TargetDiscussion struct {
+	// ID
+	ID int64 `json:"id" swaggertype:"string"`
+	// 标题
+	Title *string `json:"title"`
+	// 内容
+	Excerpt string `json:"excerpt"`
+
+	Images []string `json:"images"`
+	// 喜欢数
+	LikeCount int `json:"like_count"`
 	// 评论数
 	CommentCount int `json:"comment_count"`
 }

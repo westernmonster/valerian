@@ -45,5 +45,10 @@ func (s *server) GetDiscussionInfo(ctx context.Context, req *api.IDReq) (*api.Di
 		return nil, err
 	}
 
-	return api.FromDiscussion(resp), nil
+	stat, err := s.svr.GetDiscussionStat(ctx, req.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return api.FromDiscussion(resp, stat), nil
 }

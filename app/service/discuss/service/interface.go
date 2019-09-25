@@ -14,6 +14,7 @@ type IDao interface {
 	AddDiscussion(c context.Context, node sqalx.Node, item *model.Discussion) (err error)
 	UpdateDiscussion(c context.Context, node sqalx.Node, item *model.Discussion) (err error)
 	DelDiscussion(c context.Context, node sqalx.Node, id int64) (err error)
+	GetDiscussionStatByID(c context.Context, node sqalx.Node, discussionID int64) (item *model.DiscussionStat, err error)
 
 	Ping(c context.Context) (err error)
 	Close()

@@ -8,6 +8,11 @@ import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 message EmptyStruct {
 }
 
+message DiscussionStat {
+    int32 LikeCount = 1 [(gogoproto.jsontag) = "like_count"];
+    int32 CommentCount = 2 [(gogoproto.jsontag) = "comment_count"];
+}
+
 
 message DiscussionInfo {
     int64 ID = 1 [(gogoproto.jsontag) = "id"];
@@ -23,13 +28,14 @@ message DiscussionInfo {
 
     string  ContentText = 7 [(gogoproto.jsontag) = "content_text"];
 
+
     // unix timestamp
     int64 CreatedAt = 8 [(gogoproto.jsontag) = "created_at"];
 
     // unix timestamp
     int64 UpdatedAt = 9 [(gogoproto.jsontag) = "updated_at"];
 
-
+    DiscussionStat  Stat = 10 [(gogoproto.jsontag) = "stat"];
 }
 
 message IDReq {

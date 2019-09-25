@@ -53,3 +53,11 @@ func SplitInts(s string) ([]int64, error) {
 	}
 	return res, nil
 }
+
+func Excerpt(s string) string {
+	if len(s) > 100 {
+		return s[:100]
+	}
+
+	return s
+}

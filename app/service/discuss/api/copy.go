@@ -2,7 +2,7 @@ package api
 
 import "valerian/app/service/discuss/model"
 
-func FromDiscussion(v *model.Discussion) *DiscussionInfo {
+func FromDiscussion(v *model.Discussion, x *model.DiscussionStat) *DiscussionInfo {
 	reply := &DiscussionInfo{
 		ID:          v.ID,
 		TopicID:     v.TopicID,
@@ -12,6 +12,11 @@ func FromDiscussion(v *model.Discussion) *DiscussionInfo {
 		ContentText: v.ContentText,
 		CreatedAt:   v.CreatedAt,
 		UpdatedAt:   v.UpdatedAt,
+	}
+
+	reply.Stat = &DiscussionStat{
+		LikeCount:    int32(x.LikeCount),
+		CommentCount: int32(x.CommentCount),
 	}
 
 	if v.Title != nil {
