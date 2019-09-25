@@ -53,7 +53,7 @@ type IDao interface {
 
 	NotifyDiscussionAdded(c context.Context, id int64) (err error)
 	NotifyDiscussionUpdated(c context.Context, id int64) (err error)
-	NotifyDiscussionDeleted(c context.Context, id int64) (err error)
+	NotifyDiscussionDeleted(c context.Context, id int64, topicID int64) (err error)
 
 	SetDiscussionFilesCache(c context.Context, discussionID int64, m []*model.DiscussionFileResp) (err error)
 	DiscussionFilesCache(c context.Context, discussionID int64) (m []*model.DiscussionFileResp, err error)

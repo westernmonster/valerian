@@ -15,10 +15,11 @@ import (
 
 // Service struct of service
 type Service struct {
-	c      *conf.Config
-	d      IDao
-	sc     stan.Conn
-	missch chan func()
+	c            *conf.Config
+	d            IDao
+	sc           stan.Conn
+	missch       chan func()
+	feedConsumer *FeedConsumer
 }
 
 // New create new service
@@ -45,6 +46,7 @@ func New(c *conf.Config) (s *Service) {
 		s.sc = sc
 	}
 
+	s.initFeedConsumer()
 	go s.cacheproc()
 	return
 }
@@ -57,6 +59,7 @@ func (s *Service) Ping(c context.Context) (err error) {
 // Close dao.
 func (s *Service) Close() {
 	s.d.Close()
+	s.feedConsumer.Unsubscribe()
 	s.sc.Close()
 }
 

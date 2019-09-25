@@ -31,9 +31,9 @@ func (p *Service) onUpdateDiscussion(c context.Context, id int64) {
 	}
 }
 
-func (p *Service) onDelDiscussion(c context.Context, id int64) {
-	if err := p.d.NotifyDiscussionDeleted(c, id); err != nil {
-		log.For(c).Error(fmt.Sprintf("NotifyDiscussionDeleted(%d) : %+v", id, err))
+func (p *Service) onDelDiscussion(c context.Context, id int64, topicID int64) {
+	if err := p.d.NotifyDiscussionDeleted(c, id, topicID); err != nil {
+		log.For(c).Error(fmt.Sprintf("NotifyDiscussionDeleted, id(%d) topic_id(%d): %+v", id, topicID, err))
 		return
 	}
 }
@@ -328,7 +328,7 @@ func (p *Service) DelDiscussion(c context.Context, id int64) (err error) {
 	}
 
 	p.addCache(func() {
-		p.onDelDiscussion(context.Background(), id)
+		p.onDelDiscussion(context.Background(), id, item.TopicID)
 		p.d.DelDiscussionFilesCache(context.TODO(), id)
 	})
 

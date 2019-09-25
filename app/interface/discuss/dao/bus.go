@@ -39,8 +39,8 @@ func (p *Dao) NotifyDiscussionUpdated(c context.Context, id int64) (err error) {
 	return
 }
 
-func (p *Dao) NotifyDiscussionDeleted(c context.Context, id int64) (err error) {
-	msg := &model.NotifyDiscussionDeleted{ID: id}
+func (p *Dao) NotifyDiscussionDeleted(c context.Context, id, topicID int64) (err error) {
+	msg := &model.NotifyDiscussionDeleted{ID: id, TopicID: topicID}
 	var data []byte
 	if data, err = msg.Marshal(); err != nil {
 		return

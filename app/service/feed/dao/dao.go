@@ -3,7 +3,6 @@ package dao
 import (
 	"context"
 	"fmt"
-	"strings"
 	"time"
 
 	account "valerian/app/service/account/api"
@@ -11,12 +10,10 @@ import (
 	"valerian/app/service/feed/conf"
 	topic "valerian/app/service/topic/api"
 	"valerian/library/cache/memcache"
-	"valerian/library/conf/env"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
 	"valerian/library/stat/prom"
 
-	"github.com/nats-io/stan.go"
 	"github.com/pkg/errors"
 )
 
@@ -26,7 +23,6 @@ type Dao struct {
 	mc         *memcache.Pool
 	mcExpire   int32
 	c          *conf.Config
-	sc         stan.Conn
 	accountRPC account.AccountClient
 	topicRPC   topic.TopicClient
 	discussRPC discuss.DiscussionClient
@@ -38,22 +34,6 @@ func New(c *conf.Config) (dao *Dao) {
 		db:       sqalx.NewMySQL(c.DB.Main),
 		mc:       memcache.NewPool(c.Memcache.Main.Config),
 		mcExpire: int32(time.Duration(c.Memcache.Main.Expire) / time.Second),
-	}
-
-	servers := strings.Join(c.Nats.Nodes, ",")
-	if sc, err := stan.Connect("valerian",
-		env.Hostname,
-		stan.Pings(10, 5),
-		stan.NatsURL(servers),
-		stan.SetConnectionLostHandler(func(_ stan.Conn, reason error) {
-			log.Errorf("Nats Connection lost, reason: %v", reason)
-			panic(reason)
-		}),
-	); err != nil {
-		log.Errorf("connect to servers failed %#v\n", err)
-		panic(err)
-	} else {
-		dao.sc = sc
 	}
 
 	if accountRPC, err := account.NewClient(c.AccountRPC); err != nil {

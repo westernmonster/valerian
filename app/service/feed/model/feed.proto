@@ -15,5 +15,6 @@ message NotifyDiscussionUpdated {
 
 message NotifyDiscussionDeleted {
     int64 ID = 1 [(gogoproto.jsontag) = "id"] ;
+    int64 TopicID = 2 [(gogoproto.jsontag) = "topic_id"] ;
 }
 
