@@ -13,8 +13,8 @@ import (
 )
 
 const (
-	BusNotifyDiscussionAdded   = "feed.discussion.added"
-	BusNotifyDiscussionDeleted = "feed.discussion.deleted"
+	BusNotifyDiscussionAdded   = "notify.discussion.added"
+	BusNotifyDiscussionDeleted = "notify.discussion.deleted"
 )
 
 type FeedConsumer struct {

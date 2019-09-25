@@ -40,7 +40,7 @@ type ver struct {
 type confIng struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
-	Data    *Value `json:"data"`
+	Data    *Value `json:"result"`
 }
 
 type res struct {

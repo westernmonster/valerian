@@ -264,7 +264,7 @@ func (s *sven) check(ver int64) (v *version, err error) {
 	params.Set("appoint", svenAppoint)
 	var res struct {
 		Code int      `json:"code"`
-		Data *version `json:"data"`
+		Data *version `json:"result"`
 	}
 	uri := fmt.Sprintf(_apiCheck, svenHost, params.Encode())
 	if _debug {
@@ -309,7 +309,7 @@ func (s *sven) config(ver *version) (cts []*content, err error) {
 	params.Set("ids", string(ids))
 	var res struct {
 		Code int     `json:"code"`
-		Data *config `json:"data"`
+		Data *config `json:"result"`
 	}
 	uri := fmt.Sprintf(_apiGet, svenHost, params.Encode())
 	if _debug {

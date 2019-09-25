@@ -44,7 +44,7 @@ type version struct {
 	Message string `json:"message"`
 	Data    *struct {
 		Version int64 `json:"version"`
-	} `json:"data"`
+	} `json:"result"`
 }
 
 type result struct {
