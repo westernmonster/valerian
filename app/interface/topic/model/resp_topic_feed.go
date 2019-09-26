@@ -48,7 +48,7 @@ type Actor struct {
 
 type FeedTarget struct {
 	// ID
-	ID int64 `json:"id" swaggertype:"string"`
+	ID int64 `json:"id,string" swaggertype:"string"`
 	// 类型: article,comment,account,topic
 	Type string `json:"type"`
 	// 文章
@@ -65,7 +65,7 @@ type FeedTarget struct {
 
 type TargetArticle struct {
 	// ID
-	ID int64 `json:"id" swaggertype:"string"`
+	ID int64 `json:"id,string" swaggertype:"string"`
 	// 文章标题
 	Title string `json:"title"`
 	// 封面
@@ -82,7 +82,7 @@ type TargetArticle struct {
 
 type TargetDiscussion struct {
 	// ID
-	ID int64 `json:"id" swaggertype:"string"`
+	ID int64 `json:"id,string" swaggertype:"string"`
 	// 标题
 	Title *string `json:"title"`
 	// 内容
@@ -97,7 +97,7 @@ type TargetDiscussion struct {
 
 type TargetComment struct {
 	// ID
-	ID int64 `json:"id" swaggertype:"string"`
+	ID int64 `json:"id,string" swaggertype:"string"`
 	// 文章标题
 	Title string `json:"title"`
 	// 评论内容
@@ -108,7 +108,7 @@ type TargetComment struct {
 
 type TargetTopic struct {
 	// ID
-	ID int64 `json:"id" swaggertype:"string"`
+	ID int64 `json:"id,string" swaggertype:"string"`
 	// 话题名
 	Name string `json:"name"`
 
@@ -127,7 +127,7 @@ type TargetTopic struct {
 
 type TargetMember struct {
 	// ID
-	ID int64 `json:"id" swaggertype:"string"`
+	ID int64 `json:"id,string" swaggertype:"string"`
 	// 关注数
 	FollowCount int `json:"follow_count"`
 	// 粉丝数
