@@ -69,7 +69,7 @@ func (p *Dao) GetDiscussionsByCond(c context.Context, node sqalx.Node, cond map[
 // GetByID get a record by ID
 func (p *Dao) GetDiscussionByID(c context.Context, node sqalx.Node, id int64) (item *model.Discussion, err error) {
 	item = new(model.Discussion)
-	sqlSelect := "SELECT a.* FROM discussions a WHERE a.id=? AND a.deleted=0"
+	sqlSelect := "SELECT a.* FROM discussions a WHERE a.id=?"
 
 	if err = node.GetContext(c, item, sqlSelect, id); err != nil {
 		if err == sql.ErrNoRows {

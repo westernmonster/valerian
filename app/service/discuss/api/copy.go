@@ -12,6 +12,7 @@ func FromDiscussion(v *model.Discussion, x *model.DiscussionStat) *DiscussionInf
 		ContentText: v.ContentText,
 		CreatedAt:   v.CreatedAt,
 		UpdatedAt:   v.UpdatedAt,
+		Deleted:     bool(v.Deleted),
 	}
 
 	reply.Stat = &DiscussionStat{

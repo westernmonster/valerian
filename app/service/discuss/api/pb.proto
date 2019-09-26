@@ -36,6 +36,8 @@ message DiscussionInfo {
     int64 UpdatedAt = 9 [(gogoproto.jsontag) = "updated_at"];
 
     DiscussionStat  Stat = 10 [(gogoproto.jsontag) = "stat"];
+
+    bool Deleted = 11 [(gogoproto.jsontag) = "deleted"];
 }
 
 message IDReq {
