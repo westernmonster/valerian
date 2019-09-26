@@ -2,6 +2,8 @@ package service
 
 import (
 	"context"
+	"net/url"
+	"strconv"
 	"valerian/app/interface/topic/model"
 	account "valerian/app/service/account/api"
 	discuss "valerian/app/service/discuss/api"
@@ -70,6 +72,28 @@ func (p *Service) GetTopicFeedPaged(c context.Context, topicID int64, limit, off
 		}
 
 		resp.Items[i] = item
+	}
+
+	param := url.Values{}
+	param.Set("topic_id", strconv.FormatInt(topicID, 10))
+	param.Set("limit", strconv.Itoa(limit))
+	param.Set("offset", strconv.Itoa(offset-limit))
+
+	if resp.Paging.Prev, err = genURL("/api/v1/topic/list/activities", param); err != nil {
+		return
+	}
+	param.Set("offset", strconv.Itoa(offset+limit))
+	if resp.Paging.Next, err = genURL("/api/v1/topic/list/activities", param); err != nil {
+		return
+	}
+
+	if len(resp.Items) < limit {
+		resp.Paging.IsEnd = true
+		resp.Paging.Next = ""
+	}
+
+	if offset == 0 {
+		resp.Paging.Prev = ""
 	}
 
 	return
