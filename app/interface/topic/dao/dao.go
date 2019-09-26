@@ -67,6 +67,12 @@ func New(c *conf.Config) (dao *Dao) {
 		dao.discussRPC = discussRPC
 	}
 
+	if feedRPC, err := feed.NewClient(c.FeedRPC); err != nil {
+		panic(errors.WithMessage(err, "Failed to dial topic service"))
+	} else {
+		dao.feedRPC = feedRPC
+	}
+
 	return
 }
 
