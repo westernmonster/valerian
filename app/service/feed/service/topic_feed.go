@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	discuss "valerian/app/service/discuss/api"
@@ -95,6 +96,7 @@ func (p *Service) onDiscussionDeleted(m *stan.Msg) {
 		return
 	}
 
+	fmt.Printf("delete topic_id(%d), target_type(%s), id(%d)\n", info.TopicID, model.TargetTypeDiscussion, info.ID)
 	if err = p.d.DelTopicFeedByCond(context.Background(), p.d.DB(), info.TopicID, model.TargetTypeDiscussion, info.ID); err != nil {
 		return
 	}
