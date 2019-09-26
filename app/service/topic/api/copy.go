@@ -30,3 +30,17 @@ func FromTopic(v *model.Topic) *TopicInfo {
 
 	return reply
 }
+
+func FromTopicMeta(v *model.TopicMeta) *TopicMetaInfo {
+	reply := &TopicMetaInfo{
+		CanFollow:    v.CanFollow,
+		CanEdit:      v.CanEdit,
+		Fav:          v.Fav,
+		CanView:      v.CanView,
+		FollowStatus: int32(v.FollowStatus),
+		IsMember:     v.IsMember,
+		MemberRole:   v.MemberRole,
+	}
+
+	return reply
+}

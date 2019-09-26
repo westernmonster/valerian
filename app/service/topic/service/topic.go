@@ -2,9 +2,11 @@ package service
 
 import (
 	"context"
+	"time"
 	"valerian/app/service/topic/model"
 	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
+	"valerian/library/gid"
 )
 
 func (p *Service) GetTopic(c context.Context, topicID int64) (item *model.Topic, err error) {
@@ -43,6 +45,38 @@ func (p *Service) GetTopicManagerRole(c context.Context, topicID, aid int64) (is
 	} else {
 		isMember = true
 		role = member.Role
+	}
+
+	return
+}
+
+func (p *Service) getAccountTopicSetting(c context.Context, node sqalx.Node, aid, topicID int64) (item *model.AccountTopicSetting, err error) {
+	var addCache = true
+	if item, err = p.d.AccountTopicSettingCache(c, aid, topicID); err != nil {
+		addCache = false
+	} else if item != nil {
+		return
+	}
+
+	if item, err = p.d.GetAccountTopicSettingByCond(c, node, map[string]interface{}{"account_id": aid, "topic_id": topicID}); err != nil {
+		return
+	} else if item == nil {
+		item = &model.AccountTopicSetting{
+			ID:               gid.NewID(),
+			AccountID:        aid,
+			TopicID:          topicID,
+			Important:        false,
+			MuteNotification: false,
+			Fav:              false,
+			CreatedAt:        time.Now().Unix(),
+			UpdatedAt:        time.Now().Unix(),
+		}
+	}
+
+	if addCache {
+		p.addCache(func() {
+			p.d.SetAccountTopicSettingCache(context.TODO(), item)
+		})
 	}
 
 	return

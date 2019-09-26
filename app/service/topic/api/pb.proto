@@ -51,12 +51,31 @@ message TopicInfo {
 
     // unix timestamp
     int64 UpdatedAt = 16 [(gogoproto.jsontag) = "updated_at"];
+}
 
+message TopicMetaInfo {
+    bool CanFollow = 1 [(gogoproto.jsontag) = "can_follow"];
 
+    bool CanEdit = 2 [(gogoproto.jsontag) = "can_edit"];
+
+    bool Fav = 3 [(gogoproto.jsontag) = "fav"];
+
+    bool CanView = 4 [(gogoproto.jsontag) = "can_view"];
+
+    int32 FollowStatus = 5 [(gogoproto.jsontag) = "follow_status"];
+
+    bool IsMember = 6 [(gogoproto.jsontag) = "is_member"];
+
+    string MemberRole = 7 [(gogoproto.jsontag) = "member_role"];
 }
 
 message TopicReq {
     int64 ID = 1 [(gogoproto.jsontag) = "id"];
+}
+
+message TopicMetaReq {
+    int64 TopicID = 1 [(gogoproto.jsontag) = "topic_id"];
+    int64 AccountID = 2 [(gogoproto.jsontag) = "aid"];
 }
 
 message TopicMemberRoleReq {
@@ -71,5 +90,7 @@ service Topic {
     rpc  GetTopicInfo(TopicReq) returns (TopicInfo);
 
     rpc  GetTopicMemberRole(TopicMemberRoleReq) returns (MemberRoleReply);
+
+    rpc  GetTopicMeta(TopicMetaReq) returns (TopicMetaInfo);
 }
 

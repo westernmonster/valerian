@@ -97,6 +97,7 @@ type TopicMeta struct {
 	// 关注状态
 	FollowStatus int `json:"follow_status"`
 
+	// 是否成员
 	IsMember bool `json:"is_member"`
 
 	// 成员角色
