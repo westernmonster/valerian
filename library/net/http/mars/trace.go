@@ -91,7 +91,9 @@ func Trace(tr opentracing.Tracer, options ...MWOption) HandlerFunc {
 
 		sct := c.Writer.(*statusCodeTracker)
 
-		c.Context = opentracing.ContextWithSpan(c.Context, sp)
+		if c.Request.URL.Path != "/monitor/ping" {
+			c.Context = opentracing.ContextWithSpan(c.Context, sp)
+		}
 
 		c.Next()
 
