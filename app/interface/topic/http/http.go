@@ -47,6 +47,7 @@ func route(e *mars.Engine) {
 		g.POST("/auth_topics", authSvc.User, editAuthTopics)
 		g.POST("/catalogs", authSvc.User, editTopicCatalogs)
 
+		g.GET("/list/activities", authSvc.User, getActivites)
 		g.GET("/list/catalogs", authSvc.User, topicCatalogs)
 		g.GET("/list/members", authSvc.User, topicMembers)
 		g.GET("/list/auth_topics", authSvc.User, authTopics)
