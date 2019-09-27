@@ -34,6 +34,7 @@ type Config struct {
 	Ecode  *ecode.Config
 
 	AccountRPC *warden.ClientConfig
+	TopicRPC   *warden.ClientConfig
 	// Auth
 	Auth      *auth.Config
 	Memcache  *Memcache
