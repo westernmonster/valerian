@@ -52,3 +52,21 @@ func (s *server) GetDiscussionInfo(ctx context.Context, req *api.IDReq) (*api.Di
 
 	return api.FromDiscussion(resp, stat), nil
 }
+
+func (s *server) GetDiscussionCategories(ctx context.Context, req *api.CategoriesReq) (*api.CategoriesResp, error) {
+	data, err := s.svr.GetDiscussCategories(ctx, req.TopicID)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &api.CategoriesResp{
+		Items: make([]*api.CategoryInfo, len(data)),
+	}
+
+	for i, v := range data {
+		item := api.FromCategory(v)
+		resp.Items[i] = item
+	}
+
+	return resp, nil
+}

@@ -307,6 +307,12 @@ func (p *Service) getTopicResp(c context.Context, node sqalx.Node, topicID int64
 }
 
 func (p *Service) GetTopic(c context.Context, topicID int64, include string) (item *model.TopicResp, err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+
 	if item, err = p.getTopicResp(c, p.d.DB(), topicID); err != nil {
 		return
 	}
@@ -336,7 +342,7 @@ func (p *Service) GetTopic(c context.Context, topicID int64, include string) (it
 	}
 
 	if inc["meta"] {
-		if item.TopicMeta, err = p.GetTopicMeta(c, item); err != nil {
+		if item.TopicMeta, err = p.GetTopicMeta(c, aid, topicID); err != nil {
 			return
 		}
 	}

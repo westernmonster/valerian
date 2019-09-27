@@ -13,6 +13,20 @@ message DiscussionStat {
     int32 CommentCount = 2 [(gogoproto.jsontag) = "comment_count"];
 }
 
+message CategoriesResp {
+    repeated CategoryInfo items = 1 [(gogoproto.jsontag) = 'items'];
+}
+
+message CategoryInfo {
+    int64 ID = 1 [(gogoproto.jsontag) = "id"];
+
+    int64 TopicID = 2 [(gogoproto.jsontag) = "topic_id"];
+
+    string  Name = 3 [(gogoproto.jsontag) = "name"] ;
+
+    int32  Seq = 4 [(gogoproto.jsontag) = "seq"] ;
+}
+
 
 message DiscussionInfo {
     int64 ID = 1 [(gogoproto.jsontag) = "id"];
@@ -44,12 +58,18 @@ message IDReq {
     int64 ID = 1 [(gogoproto.jsontag) = "id"];
 }
 
+message CategoriesReq {
+    int64 TopicID = 1 [(gogoproto.jsontag) = "topic_id"];
+}
+
+
 
 
 
 
 service Discussion {
     rpc  GetDiscussionInfo(IDReq) returns (DiscussionInfo);
+    rpc  GetDiscussionCategories(CategoriesReq) returns (CategoriesResp);
 }
 
 

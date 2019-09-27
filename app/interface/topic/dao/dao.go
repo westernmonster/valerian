@@ -10,6 +10,7 @@ import (
 	account "valerian/app/service/account/api"
 	discuss "valerian/app/service/discuss/api"
 	feed "valerian/app/service/feed/api"
+	stopic "valerian/app/service/topic/api"
 	"valerian/library/cache/memcache"
 	"valerian/library/conf/env"
 	"valerian/library/database/sqalx"
@@ -29,6 +30,7 @@ type Dao struct {
 	accountRPC account.AccountClient
 	feedRPC    feed.FeedClient
 	discussRPC discuss.DiscussionClient
+	topicRPC   stopic.TopicClient
 	sc         stan.Conn
 }
 
@@ -62,15 +64,21 @@ func New(c *conf.Config) (dao *Dao) {
 		dao.accountRPC = accountRPC
 	}
 	if discussRPC, err := discuss.NewClient(c.DiscussRPC); err != nil {
-		panic(errors.WithMessage(err, "Failed to dial topic service"))
+		panic(errors.WithMessage(err, "Failed to dial discuss service"))
 	} else {
 		dao.discussRPC = discussRPC
 	}
 
 	if feedRPC, err := feed.NewClient(c.FeedRPC); err != nil {
-		panic(errors.WithMessage(err, "Failed to dial topic service"))
+		panic(errors.WithMessage(err, "Failed to dial feed service"))
 	} else {
 		dao.feedRPC = feedRPC
+	}
+
+	if topicRPC, err := stopic.NewClient(c.TopicRPC); err != nil {
+		panic(errors.WithMessage(err, "Failed to dial topic service"))
+	} else {
+		dao.topicRPC = topicRPC
 	}
 
 	return

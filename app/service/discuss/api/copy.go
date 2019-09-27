@@ -26,3 +26,14 @@ func FromDiscussion(v *model.Discussion, x *model.DiscussionStat) *DiscussionInf
 
 	return reply
 }
+
+func FromCategory(v *model.DiscussCategory) *CategoryInfo {
+	reply := &CategoryInfo{
+		ID:      v.ID,
+		TopicID: v.TopicID,
+		Name:    v.Name,
+		Seq:     int32(v.Seq),
+	}
+
+	return reply
+}

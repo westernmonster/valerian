@@ -36,6 +36,7 @@ type Config struct {
 	AccountRPC *warden.ClientConfig
 	DiscussRPC *warden.ClientConfig
 	FeedRPC    *warden.ClientConfig
+	TopicRPC   *warden.ClientConfig
 	// Auth
 	Auth      *auth.Config
 	Memcache  *Memcache
