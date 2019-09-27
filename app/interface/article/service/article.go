@@ -55,9 +55,9 @@ func (p *Service) AddArticle(c context.Context, arg *model.ArgAddArticle) (id in
 		return
 	}
 
-	// if err = p.bulkCreateArticleRelations(c, tx, item.ID, item.Title, arg.Relations); err != nil {
-	// 	return
-	// }
+	if err = p.bulkCreateArticleRelations(c, tx, item.ID, item.Title, arg.Relations); err != nil {
+		return
+	}
 
 	if err = tx.Commit(); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
