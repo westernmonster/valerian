@@ -4,6 +4,7 @@ import (
 	"context"
 	"valerian/app/interface/topic/model"
 	account "valerian/app/service/account/api"
+	"valerian/app/service/discuss/api"
 	discuss "valerian/app/service/discuss/api"
 	feed "valerian/app/service/feed/api"
 	stopic "valerian/app/service/topic/api"
@@ -88,6 +89,7 @@ type IDao interface {
 	GetTopicMeta(c context.Context, aid, topicID int64) (info *stopic.TopicMetaInfo, err error)
 	GetTopicFeedPaged(c context.Context, topicID int64, limit, offset int) (info *feed.TopicFeedResp, err error)
 	GetDiscussion(c context.Context, id int64) (info *discuss.DiscussionInfo, err error)
+	GetDiscussionCategories(c context.Context, topicID int64) (resp *api.CategoriesResp, err error)
 
 	SetTopicCache(c context.Context, m *model.Topic) (err error)
 	TopicCache(c context.Context, topicID int64) (m *model.Topic, err error)

@@ -1,19 +1,19 @@
 package model
 
 type AuthTopicResp struct {
-	ToTopicID int64 `db:"to_topic_id" json:"to_topic_id,string"  swaggertype:"string"` // ToTopicID To Topic ID
+	ToTopicID int64 `json:"to_topic_id,string"  swaggertype:"string"` // ToTopicID To Topic ID
 
-	EditPermission string `db:"edit_permission" json:"edit_permission"` // 话题编辑权限
+	EditPermission string `json:"edit_permission"` // 话题编辑权限
 
-	Permission string `db:"permission" json:"permission"` // Permission 权限
+	Permission string `json:"permission"` // Permission 权限
 
 	// 成员数
-	MembersCount int `db:"-" json:"members_count"`
+	MembersCount int `json:"members_count"`
 
 	// 封面图
 	// 必须为URL
-	Avatar *string `db:"avatar" json:"avatar"`
+	Avatar *string `json:"avatar"`
 
 	// 名称
-	Name string `db:"name" json:"name"`
+	Name string `json:"name"`
 }

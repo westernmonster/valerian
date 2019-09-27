@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 	"valerian/app/interface/topic/model"
+	discuss "valerian/app/service/discuss/api"
 	"valerian/library/database/sqalx"
 	"valerian/library/database/sqlx/types"
 	"valerian/library/ecode"
@@ -330,15 +331,27 @@ func (p *Service) GetTopic(c context.Context, topicID int64, include string) (it
 	}
 
 	if inc["discuss_categories"] {
-		// if item.DiscussCategories, err = p.getDiscussCategories(c, p.d.DB(), topicID); err != nil {
-		// 	return
-		// }
+		var resp *discuss.CategoriesResp
+		if resp, err = p.d.GetDiscussionCategories(c, topicID); err != nil {
+			return
+		}
+
+		item.DiscussCategories = make([]*model.DiscussCategoryResp, len(resp.Items))
+
+		for i, v := range resp.Items {
+			item.DiscussCategories[i] = &model.DiscussCategoryResp{
+				ID:      v.ID,
+				TopicID: v.TopicID,
+				Name:    v.Name,
+				Seq:     int(v.Seq),
+			}
+		}
 	}
 
 	if inc["auth_topics"] {
-		// if item.AuthTopics, err = p.getAuthTopics(c, p.d.DB(), topicID); err != nil {
-		// 	return
-		// }
+		if item.AuthTopics, err = p.getAuthTopicsResp(c, p.d.DB(), topicID); err != nil {
+			return
+		}
 	}
 
 	if inc["meta"] {

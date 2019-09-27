@@ -138,10 +138,10 @@ func (p *Service) SaveAuthTopics(c context.Context, arg *model.ArgSaveAuthTopics
 }
 
 func (p *Service) GetAuthTopics(c context.Context, topicID int64) (items []*model.AuthTopicResp, err error) {
-	return p.getAuthTopicResps(c, p.d.DB(), topicID)
+	return p.getAuthTopicsResp(c, p.d.DB(), topicID)
 }
 
-func (p *Service) getAuthTopicResps(c context.Context, node sqalx.Node, topicID int64) (items []*model.AuthTopicResp, err error) {
+func (p *Service) getAuthTopicsResp(c context.Context, node sqalx.Node, topicID int64) (items []*model.AuthTopicResp, err error) {
 	var data []*model.AuthTopic
 	if data, err = p.getAuthTopics(c, node, topicID); err != nil {
 		return
