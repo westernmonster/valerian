@@ -151,9 +151,9 @@ func (p *Service) GetArticle(c context.Context, id int64, include string) (item 
 	}
 
 	if inc["relations"] {
-		// if item.Relations, err = p.getArticleRelations(c, p.d.DB(), id); err != nil {
-		// 	return
-		// }
+		if item.Relations, err = p.getArticleRelations(c, p.d.DB(), id); err != nil {
+			return
+		}
 	}
 
 	if inc["meta"] {
@@ -195,25 +195,6 @@ func (p *Service) getArticle(c context.Context, node sqalx.Node, articleID int64
 			p.d.SetArticleCache(context.TODO(), item)
 		})
 	}
-	return
-}
-
-func (p *Service) checkEditPermission(c context.Context, node sqalx.Node, topicID int64) (err error) {
-	// var t *model.TopicResp
-	// if t, err = p.getTopic(c, node, topicID); err != nil {
-	// 	return
-	// }
-
-	// var meta *model.TopicMeta
-	// if meta, err = p.GetTopicMeta(c, t); err != nil {
-	// 	return
-	// }
-
-	// if !meta.CanEdit {
-	// 	err = ecode.NeedEditPermission
-	// 	return
-	// }
-
 	return
 }
 

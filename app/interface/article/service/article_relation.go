@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"valerian/app/interface/article/model"
+	topic "valerian/app/service/topic/api"
 	"valerian/library/database/sqalx"
 	"valerian/library/database/sqlx/types"
 	"valerian/library/ecode"
@@ -35,13 +36,14 @@ func (p *Service) getArticleRelations(c context.Context, node sqalx.Node, articl
 			Permission: *v.Permission,
 		}
 
-		var t *model.TopicResp
-		if t, err = p.getTopic(c, node, v.TopicID); err != nil {
+		var t *topic.TopicInfo
+		if t, err = p.d.GetTopic(c, v.TopicID); err != nil {
 			return
 		}
 
-		item.TopicName = t.Name
-		item.TopicAvatar = t.Avatar
+		item.Name = t.Name
+		avatar := t.GetAvatarValue()
+		item.Avatar = &avatar
 
 		if item.CatalogFullPath, err = p.getCatalogFullPath(c, node, v); err != nil {
 			return

@@ -4,6 +4,7 @@ import (
 	"context"
 	"valerian/app/interface/article/model"
 	account "valerian/app/service/account/api"
+	topic "valerian/app/service/topic/api"
 
 	"valerian/library/database/sqalx"
 )
@@ -48,6 +49,12 @@ type IDao interface {
 	UpdateTopicCatalog(c context.Context, node sqalx.Node, item *model.TopicCatalog) (err error)
 	DelTopicCatalog(c context.Context, node sqalx.Node, id int64) (err error)
 	GetTopicCatalogMaxChildrenSeq(c context.Context, node sqalx.Node, topicID, parentID int64) (seq int, err error)
+
+	GetTopic(c context.Context, id int64) (info *topic.TopicInfo, err error)
+
+	SetTopicCatalogCache(c context.Context, topicID int64, m []*model.TopicLevel1Catalog) (err error)
+	TopicCatalogCache(c context.Context, topicID int64) (m []*model.TopicLevel1Catalog, err error)
+	DelTopicCatalogCache(c context.Context, topicID int64) (err error)
 
 	SetArticleCache(c context.Context, m *model.ArticleResp) (err error)
 	ArticleCache(c context.Context, articleID int64) (m *model.ArticleResp, err error)
