@@ -19,9 +19,6 @@ type CatalogArticleItem struct {
 	// 评论数
 	CommentCount int `json:"comment_count"`
 
-	// 头像
-	Avatar string `json:"avatar,omitempty"`
-
 	// 发布日期
 	CreatedAt int64 `json:"created_at"`
 }

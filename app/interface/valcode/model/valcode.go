@@ -47,7 +47,7 @@ func (p *ArgMobileValcode) Validate() error {
 		),
 		validation.Field(&p.CodeType,
 			validation.Required.Error(`请输入验证码类型`),
-			validation.In(ValcodeLogin, ValcodeRegister, ValcodeForgetPassword).Error("验证码类型不在允许范围内")),
+			validation.In(ValcodeLogin, ValcodeRegister, ValcodeForgetPassword, ValcodeDirect).Error("验证码类型不在允许范围内")),
 	)
 }
 
