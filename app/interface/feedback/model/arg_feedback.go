@@ -30,6 +30,6 @@ func (p *ArgAddFeedback) Validate() (err error) {
 		p,
 		validation.Field(&p.Type, validation.Required),
 		validation.Field(&p.TargetID, validation.Required),
-		validation.Field(&p.TargetType, validation.In(TargetTypeFeedback, TargetTypeMember, TargetTypeTopic, TargetTypeArticle, TargetTypeDiscuss, TargetTypeRevise)),
+		validation.Field(&p.TargetType, validation.In(TargetTypeFeedback, TargetTypeMember, TargetTypeTopic, TargetTypeArticle, TargetTypeDiscuss, TargetTypeRevise, TargetTypeComment)),
 	)
 }
