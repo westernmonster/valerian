@@ -7,6 +7,7 @@ const (
 	TargetTypeArticle  = 4
 	TargetTypeDiscuss  = 5
 	TargetTypeRevise   = 6
+	TargetTypeComment  = 7
 )
 
 const (

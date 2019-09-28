@@ -5,6 +5,7 @@ import (
 
 	account "valerian/app/service/account/api"
 	"valerian/app/service/topic/model"
+	"valerian/library/ecode"
 )
 
 func (p *Service) GetTopicMeta(c context.Context, aid, topicID int64) (meta *model.TopicMeta, err error) {
@@ -88,6 +89,30 @@ func (p *Service) GetGuestTopicMeta(c context.Context, t *model.Topic) (meta *mo
 	meta.IsMember = false
 	meta.MemberRole = ""
 	meta.CanFollow = false
+
+	return
+}
+
+func (p *Service) GetTopicPermission(c context.Context, aid, topicID int64) (isMember bool, role string, editPermission string, err error) {
+	var t *model.Topic
+	if t, err = p.getTopic(c, p.d.DB(), topicID); err != nil {
+		return
+	}
+
+	editPermission = t.EditPermission
+
+	if aid == 0 {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+
+	var member *model.TopicMember
+	if member, err = p.d.GetTopicMemberByCond(c, p.d.DB(), map[string]interface{}{"account_id": aid, "topic_id": topicID}); err != nil {
+		return
+	} else if member != nil {
+		isMember = true
+		role = member.Role
+	}
 
 	return
 }

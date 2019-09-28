@@ -69,6 +69,15 @@ message TopicMetaInfo {
     string MemberRole = 7 [(gogoproto.jsontag) = "member_role"];
 }
 
+message TopicPermissionInfo {
+
+    string EditPermission = 1 [(gogoproto.jsontag) = "edit_permission"];
+
+    bool IsMember = 2 [(gogoproto.jsontag) = "is_member"];
+
+    string MemberRole = 3 [(gogoproto.jsontag) = "member_role"];
+}
+
 message TopicReq {
     int64 ID = 1 [(gogoproto.jsontag) = "id"];
 }
@@ -84,10 +93,17 @@ message TopicMemberRoleReq {
 }
 
 
+message TopicPermissionReq {
+    int64 TopicID = 1 [(gogoproto.jsontag) = "topic_id"];
+    int64 AccountID = 2 [(gogoproto.jsontag) = "aid"];
+}
+
 
 
 service Topic {
     rpc  GetTopicInfo(TopicReq) returns (TopicInfo);
+
+    rpc  GetTopicPermission(TopicPermissionReq) returns (TopicPermissionInfo);
 
     rpc  GetTopicMemberRole(TopicMemberRoleReq) returns (MemberRoleReply);
 

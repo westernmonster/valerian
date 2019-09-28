@@ -23,7 +23,7 @@ func New(cfg *warden.ServerConfig, s *service.Service) *warden.Server {
 				zap.String("path", info.FullMethod),
 				zap.String("caller", metadata.String(ctx, metadata.Caller)),
 				zap.String("args", fmt.Sprintf("%v", req)),
-				zap.String("args", fmt.Sprintf("%+v", err)))
+				zap.String("error", fmt.Sprintf("%+v", err)))
 		}
 		return
 	})
@@ -68,4 +68,17 @@ func (s *server) GetTopicMeta(ctx context.Context, req *api.TopicMetaReq) (resp 
 	}
 
 	return api.FromTopicMeta(meta), nil
+}
+
+func (s *server) GetTopicPermission(ctx context.Context, req *api.TopicPermissionReq) (resp *api.TopicPermissionInfo, err error) {
+	isMember, role, editPermission, err := s.svr.GetTopicPermission(ctx, req.AccountID, req.TopicID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.TopicPermissionInfo{
+		IsMember:       isMember,
+		MemberRole:     role,
+		EditPermission: editPermission,
+	}, nil
 }

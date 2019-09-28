@@ -16,6 +16,7 @@ type ArgAddFeedback struct {
 	//  4 文章
 	//  5 讨论
 	//  6 补充
+	//  7 评论
 	TargetType int `json:"target_type"`
 	//  举报类型
 	//  通过 /list/feedback_types 获取
