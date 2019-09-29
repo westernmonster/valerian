@@ -23,3 +23,14 @@ func FromBaseInfo(model *model.BaseInfo) *BaseInfoReply {
 
 	return reply
 }
+
+func FromStat(model *model.AccountResStat) *AccountStatInfo {
+	reply := &AccountStatInfo{
+		AccountID:       model.AccountID,
+		TopicCount:      int32(model.TopicCount),
+		ArticleCount:    int32(model.ArticleCount),
+		DiscussionCount: int32(model.DiscussionCount),
+	}
+
+	return reply
+}

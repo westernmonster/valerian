@@ -3,6 +3,7 @@ package http
 import (
 	"strconv"
 
+	"valerian/app/interface/account/model"
 	"valerian/library/ecode"
 	"valerian/library/net/http/mars"
 )
@@ -105,4 +106,60 @@ func followed(c *mars.Context) {
 	query = params.Get("query")
 
 	c.JSON(srv.FollowPaged(c, id, query, limit, offset))
+}
+
+// @Summary 关注用户
+// @Description 关注用户
+// @Tags account
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param req body model.ArgFollow true "请求"
+// @Success 200 "成功revise_id"
+// @Failure 400 "验证请求失败"
+// @Failure 401 "登录验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /account/follow [post]
+func follow(c *mars.Context) {
+	arg := new(model.ArgFollow)
+	if e := c.Bind(arg); e != nil {
+		return
+	}
+
+	if e := arg.Validate(); e != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+
+	c.JSON(nil, srv.Follow(c, arg))
+}
+
+// @Summary 取关用户
+// @Description 取关用户
+// @Tags account
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param req body model.ArgUnfollow true "请求"
+// @Success 200 "成功revise_id"
+// @Failure 400 "验证请求失败"
+// @Failure 401 "登录验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /account/unfollow [post]
+func unfollow(c *mars.Context) {
+	arg := new(model.ArgUnfollow)
+	if e := c.Bind(arg); e != nil {
+		return
+	}
+
+	if e := arg.Validate(); e != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+
+	c.JSON(nil, srv.Unfollow(c, arg))
 }

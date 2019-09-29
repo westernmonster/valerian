@@ -23,7 +23,7 @@ func New(cfg *warden.ServerConfig, s *service.Service) *warden.Server {
 				zap.String("path", info.FullMethod),
 				zap.String("caller", metadata.String(ctx, metadata.Caller)),
 				zap.String("args", fmt.Sprintf("%v", req)),
-				zap.String("args", fmt.Sprintf("%+v", err)))
+				zap.String("error", fmt.Sprintf("%+v", err)))
 		}
 		return
 	})
@@ -64,4 +64,13 @@ func (s *server) BaseInfos(ctx context.Context, req *api.AidsReq) (*api.BaseInfo
 	}
 
 	return baseInfosReply, nil
+}
+
+func (s *server) AccountStat(ctx context.Context, req *api.AidReq) (*api.AccountStatInfo, error) {
+	resp, err := s.svr.GetAccountStat(ctx, req.Aid)
+	if err != nil {
+		return nil, err
+	}
+
+	return api.FromStat(resp), nil
 }

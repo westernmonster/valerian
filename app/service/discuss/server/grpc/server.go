@@ -23,7 +23,7 @@ func New(cfg *warden.ServerConfig, s *service.Service) *warden.Server {
 				zap.String("path", info.FullMethod),
 				zap.String("caller", metadata.String(ctx, metadata.Caller)),
 				zap.String("args", fmt.Sprintf("%v", req)),
-				zap.String("args", fmt.Sprintf("%+v", err)))
+				zap.String("error", fmt.Sprintf("%+v", err)))
 		}
 		return
 	})

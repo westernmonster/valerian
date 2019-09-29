@@ -9,7 +9,7 @@ message EmptyStruct {
 }
 
 message TopicFeedResp {
-    repeated TopicFeedInfo items = 5 [(gogoproto.jsontag) = 'items'];
+    repeated TopicFeedInfo items = 1 [(gogoproto.jsontag) = 'items'];
 }
 
 message TopicFeedInfo {

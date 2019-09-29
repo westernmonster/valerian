@@ -41,10 +41,10 @@ type MemberInfoStat struct {
 	IsFollow bool `json:"is_follow"`
 
 	// 关注数
-	FollowCount int `json:"follow_count" db:"-"`
+	FollowingCount int `json:"following_count"`
 
 	// 粉丝数
-	FansCount int `json:"fans_count"  db:"-"`
+	FansCount int `json:"fans_count"`
 
 	// 话题数
 	TopicCount int `json:"topic_count"`

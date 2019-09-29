@@ -6,7 +6,7 @@ import (
 )
 
 // Fans 分页获取关注列表
-func (p *Service) Fans(c context.Context, aid int64, limit, offset int) (resp []*model.FansResp, err error) {
+func (p *Service) FansPaged(c context.Context, aid int64, limit, offset int) (resp []*model.FansResp, err error) {
 	var (
 		addCache = true
 		items    []*model.AccountFans

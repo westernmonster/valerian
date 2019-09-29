@@ -1,0 +1,73 @@
+syntax = "proto3";
+package service.relation;
+option go_package = "api";
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+// EmptyStruct 空的message，对应真实service只返回error，没有具体返回值
+message EmptyStruct {
+}
+
+
+message FollowingResp {
+    repeated RelationInfo items = 1 [(gogoproto.jsontag) = 'items'];
+}
+
+message FansResp {
+    repeated RelationInfo items = 1 [(gogoproto.jsontag) = 'items'];
+}
+
+message RelationInfo {
+    int64 AccountID = 1 [(gogoproto.jsontag) = "account_id"];
+
+    uint32 Attribute = 2 [(gogoproto.jsontag) = "attribute"];
+
+    // unix timestamp
+    int64 CreatedAt = 10 [(gogoproto.jsontag) = "created_at"];
+
+    // unix timestamp
+    int64 UpdatedAt = 11 [(gogoproto.jsontag) = "updated_at"];
+}
+
+
+message RelationReq {
+    int64 AccountID = 1 [(gogoproto.jsontag) = "account_id"];
+    int32 Limit = 2 [(gogoproto.jsontag) = "limit"];
+    int32 Offset = 3 [(gogoproto.jsontag) = "offset"];
+}
+
+message FollowReq {
+    int64 AccountID = 1 [(gogoproto.jsontag) = "account_id"];
+    int64 TargetAccountID = 2 [(gogoproto.jsontag) = "target_account_id"];
+}
+
+message AidReq {
+    int64 AccountID = 1 [(gogoproto.jsontag) = "account_id"];
+}
+
+message StatInfo {
+    int64 AccountID = 1 [(gogoproto.jsontag) = "account_id"];
+
+    int32 Following = 2 [(gogoproto.jsontag) = "following"];
+
+    int32 Fans = 3 [(gogoproto.jsontag) = "fans"];
+
+    int32 Black = 4 [(gogoproto.jsontag) = "black"];
+}
+
+
+service Relation {
+    rpc  GetFollowingPaged(RelationReq) returns (FollowingResp);
+
+    rpc  GetFansPaged(RelationReq) returns (FansResp);
+
+    rpc  Follow(FollowReq) returns (EmptyStruct);
+
+    rpc  Unfollow(FollowReq) returns (EmptyStruct);
+
+    rpc  Stat(AidReq) returns (StatInfo);
+}
+
+
+
+

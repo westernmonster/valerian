@@ -65,6 +65,16 @@ message ProfileReply {
     bool IsVIP  = 11 [(gogoproto.jsontag) = "is_vip"] ;
 }
 
+message AccountStatInfo {
+    int64 AccountID  = 1 [(gogoproto.jsontag) = "account_id"] ;
+
+    int32 TopicCount  = 2 [(gogoproto.jsontag) = "topic_count"] ;
+
+    int32 ArticleCount  = 3 [(gogoproto.jsontag) = "article_count"] ;
+
+    int32 DiscussionCount  = 4 [(gogoproto.jsontag) = "discussion_count"] ;
+}
+
 message AidReq {
   int64 aid = 1 [(gogoproto.jsontag) = "aid"] ;
   string remoteIP = 2 [ (gogoproto.jsontag) = "remoteIP" ];
@@ -79,6 +89,8 @@ message AidsReq {
 
 service Account {
   rpc BasicInfo(AidReq) returns (BaseInfoReply);
+
+  rpc AccountStat(AidReq) returns (AccountStatInfo);
 
   rpc BaseInfos(AidsReq) returns (BaseInfosReply);
 }

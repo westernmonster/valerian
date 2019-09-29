@@ -1,6 +1,9 @@
 package http
 
-import "valerian/library/net/http/mars"
+import (
+	"valerian/app/interface/account/model"
+	"valerian/library/net/http/mars"
+)
 
 // @Summary 更新动态设置
 // @Description 更新动态设置
@@ -17,6 +20,12 @@ import "valerian/library/net/http/mars"
 // @Failure 500 "服务器端错误"
 // @Router /me/activity_setting/edit [post]
 func updateActivitySetting(c *mars.Context) {
+	arg := new(model.ArgActivitySetting)
+	if e := c.Bind(arg); e != nil {
+		return
+	}
+
+	c.JSON(nil, srv.UpdateActivitySetting(c, arg))
 }
 
 // @Summary 更新通知设置
@@ -34,6 +43,12 @@ func updateActivitySetting(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /me/notify_setting/edit [post]
 func updateNotifySetting(c *mars.Context) {
+	arg := new(model.ArgNotifySetting)
+	if e := c.Bind(arg); e != nil {
+		return
+	}
+
+	c.JSON(nil, srv.UpdateNotifySetting(c, arg))
 }
 
 // @Summary 更新系统语言
@@ -51,6 +66,12 @@ func updateNotifySetting(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /me/language_setting/edit [post]
 func updateLanguage(c *mars.Context) {
+	arg := new(model.ArgLanguageSetting)
+	if e := c.Bind(arg); e != nil {
+		return
+	}
+
+	c.JSON(nil, srv.UpdateLanguageSetting(c, arg))
 }
 
 // @Summary 获取设置
@@ -68,4 +89,5 @@ func updateLanguage(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /me/setting/get [get]
 func getSetting(c *mars.Context) {
+	c.JSON(srv.GetAccountSetting(c))
 }

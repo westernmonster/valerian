@@ -6,9 +6,13 @@ import (
 	"time"
 
 	"valerian/app/interface/account/conf"
+	account "valerian/app/service/account/api"
+	relation "valerian/app/service/relation/api"
 	"valerian/library/cache/memcache"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
+
+	"github.com/pkg/errors"
 )
 
 // Dao dao struct
@@ -19,6 +23,8 @@ type Dao struct {
 	authMCExpire int32
 	db           sqalx.Node
 	c            *conf.Config
+	accountRPC   account.AccountClient
+	relationRPC  relation.RelationClient
 }
 
 func New(c *conf.Config) (dao *Dao) {
@@ -30,6 +36,19 @@ func New(c *conf.Config) (dao *Dao) {
 		mc:           memcache.NewPool(c.Memcache.Main.Config),
 		mcExpire:     int32(time.Duration(c.Memcache.Main.Expire) / time.Second),
 	}
+
+	if accountRPC, err := account.NewClient(c.AccountRPC); err != nil {
+		panic(errors.WithMessage(err, "Failed to dial account service"))
+	} else {
+		dao.accountRPC = accountRPC
+	}
+
+	if relationRPC, err := relation.NewClient(c.RelationRPC); err != nil {
+		panic(errors.WithMessage(err, "Failed to dial relation service"))
+	} else {
+		dao.relationRPC = relationRPC
+	}
+
 	return
 }
 

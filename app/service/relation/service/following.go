@@ -6,7 +6,7 @@ import (
 )
 
 // Following 分页获取关注列表
-func (p *Service) Following(c context.Context, aid int64, limit, offset int) (resp []*model.FollowingResp, err error) {
+func (p *Service) FollowingPaged(c context.Context, aid int64, limit, offset int) (resp []*model.FollowingResp, err error) {
 	var (
 		addCache = true
 		items    []*model.AccountFollowing

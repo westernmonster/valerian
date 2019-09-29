@@ -6,6 +6,8 @@ import (
 	"valerian/app/interface/account/conf"
 	"valerian/app/interface/account/dao"
 	"valerian/app/interface/account/model"
+	account "valerian/app/service/account/api"
+	relation "valerian/app/service/relation/api"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
 )
@@ -21,18 +23,17 @@ type Service struct {
 		SetPassword(c context.Context, node sqalx.Node, password, salt string, aid int64) (err error)
 		UpdateAccount(c context.Context, node sqalx.Node, item *model.Account) (err error)
 
-		GetAccountFollowersByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.AccountFollower, err error)
-		GetAccountFollowers(c context.Context, node sqalx.Node) (items []*model.AccountFollower, err error)
-		GetAccountFollowerByID(c context.Context, node sqalx.Node, id int64) (item *model.AccountFollower, err error)
-		GetAccountFollowerByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (item *model.AccountFollower, err error)
-		AddAccountFollower(c context.Context, node sqalx.Node, item *model.AccountFollower) (err error)
-		UpdateAccountFollower(c context.Context, node sqalx.Node, item *model.AccountFollower) (err error)
-		DelAccountFollower(c context.Context, node sqalx.Node, id int64) (err error)
+		GetAccountSettingByID(c context.Context, node sqalx.Node, id int64) (item *model.AccountSetting, err error)
+		AddAccountSetting(c context.Context, node sqalx.Node, item *model.AccountSetting) (err error)
+		UpdateAccountSetting(c context.Context, node sqalx.Node, item *model.AccountSetting) (err error)
 
-		GetFansCount(c context.Context, node sqalx.Node, aid int64) (count int, err error)
-		GetFansPaged(c context.Context, node sqalx.Node, aid int64, query string, limit, offset int) (items []*model.MemberItem, err error)
-		GetFollowCount(c context.Context, node sqalx.Node, aid int64) (count int, err error)
-		GetFollowPaged(c context.Context, node sqalx.Node, aid int64, query string, limit, offset int) (items []*model.MemberItem, err error)
+		GetFollowings(c context.Context, accountID int64, limit, offset int) (resp *relation.FollowingResp, err error)
+		GetFans(c context.Context, accountID int64, limit, offset int) (resp *relation.FansResp, err error)
+		Follow(c context.Context, accountID, targetAccountID int64) (err error)
+		Unfollow(c context.Context, accountID, targetAccountID int64) (err error)
+		Stat(c context.Context, accountID int64) (resp *relation.StatInfo, err error)
+
+		GetAccountStat(c context.Context, aid int64) (stat *account.AccountStatInfo, err error)
 
 		ProfileCache(c context.Context, id int64) (m *model.Profile, err error)
 		SetProfileCache(c context.Context, m *model.Profile) (err error)

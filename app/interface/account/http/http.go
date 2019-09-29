@@ -36,12 +36,18 @@ func route(e *mars.Engine) {
 		g.PUT("/password", authSvc.User, changePassword)
 		g.GET("/", authSvc.User, getProfile)
 		g.PUT("/edit", authSvc.User, updateProfile)
+		g.POST("/activity_setting/edit", authSvc.User, updateActivitySetting)
+		g.POST("/notify_setting/edit", authSvc.User, updateNotifySetting)
+		g.POST("/language_setting/edit", authSvc.User, updateLanguage)
+		g.GET("/setting/get", authSvc.User, getSetting)
 	}
 
 	x := e.Group("/api/v1/account")
 	{
+		g.POST("/follow", authSvc.User, follow)
+		g.POST("/unfollow", authSvc.User, unfollow)
 		x.GET("/list/fans", authSvc.User, fans)
-		x.GET("/list/follow", authSvc.User, followed)
+		x.GET("/list/following", authSvc.User, followed)
 	}
 
 	y := e.Group("/api/v1/oauth")

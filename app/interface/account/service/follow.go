@@ -4,54 +4,79 @@ import (
 	"context"
 	"net/url"
 	"strconv"
-	"time"
+
 	"valerian/app/interface/account/model"
+	relation "valerian/app/service/relation/api"
 	"valerian/library/conf/env"
 	"valerian/library/ecode"
-	"valerian/library/gid"
 	"valerian/library/net/metadata"
 )
 
-func (p *Service) Follow(c context.Context, arg *model.ArgFollow) (isFollow bool, err error) {
+func (p *Service) Follow(c context.Context, arg *model.ArgFollow) (err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed
 		return
 	}
 
-	var item *model.AccountFollower
-	if item, err = p.d.GetAccountFollowerByCond(c, p.d.DB(), map[string]interface{}{"account_id": arg.AccountID, "follower_id": aid}); err != nil {
+	if err = p.d.Follow(c, aid, arg.AccountID); err != nil {
 		return
-	} else if item == nil {
-		isFollow = true
-		af := &model.AccountFollower{
-			ID:         gid.NewID(),
-			AccountID:  arg.AccountID,
-			FollowerID: aid,
-			CreatedAt:  time.Now().Unix(),
-			UpdatedAt:  time.Now().Unix(),
-		}
-		if err = p.d.AddAccountFollower(c, p.d.DB(), af); err != nil {
-			return
-		}
-	} else {
-		isFollow = false
-		if err = p.d.DelAccountFollower(c, p.d.DB(), item.ID); err != nil {
-			return
-		}
+	}
+
+	return
+}
+
+func (p *Service) Unfollow(c context.Context, arg *model.ArgUnfollow) (err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+
+	if err = p.d.Unfollow(c, aid, arg.AccountID); err != nil {
+		return
 	}
 
 	return
 }
 
 func (p *Service) FansPaged(c context.Context, aid int64, query string, limit, offset int) (resp *model.MemberResp, err error) {
+	var data *relation.FansResp
+	if data, err = p.d.GetFans(c, aid, limit, offset); err != nil {
+		return
+	}
+
 	resp = &model.MemberResp{
-		Items:  make([]*model.MemberItem, 0),
+		Items:  make([]*model.MemberItem, len(resp.Items)),
 		Paging: &model.Paging{},
 	}
 
-	if resp.Items, err = p.d.GetFansPaged(c, p.d.DB(), aid, query, limit, offset); err != nil {
-		return
+	for i, v := range data.Items {
+		var acc *model.Account
+		if acc, err = p.getAccountByID(c, v.AccountID); err != nil {
+			return
+		}
+		member := &model.MemberItem{
+			ID:           v.AccountID,
+			Introduction: acc.Introduction,
+			Avatar:       acc.Avatar,
+			UserName:     acc.UserName,
+			Gender:       acc.Gender,
+			IDCert:       acc.IDCert,
+			WorkCert:     acc.WorkCert,
+			IsOrg:        acc.IsOrg,
+			IsVIP:        acc.IsVIP,
+		}
+
+		var stat *relation.StatInfo
+		if stat, err = p.d.Stat(c, v.AccountID); err != nil {
+			return
+		}
+
+		member.FansCount = int(stat.Fans)
+		member.FollowingCount = int(stat.Following)
+
+		resp.Items[i] = member
 	}
 
 	param := url.Values{}
@@ -91,13 +116,34 @@ func genURL(path string, param url.Values) (uri string, err error) {
 }
 
 func (p *Service) FollowPaged(c context.Context, aid int64, query string, limit, offset int) (resp *model.MemberResp, err error) {
+	var data *relation.FollowingResp
+	if data, err = p.d.GetFollowings(c, aid, limit, offset); err != nil {
+		return
+	}
+
 	resp = &model.MemberResp{
-		Items:  make([]*model.MemberItem, 0),
+		Items:  make([]*model.MemberItem, len(resp.Items)),
 		Paging: &model.Paging{},
 	}
 
-	if resp.Items, err = p.d.GetFollowPaged(c, p.d.DB(), aid, query, limit, offset); err != nil {
-		return
+	for i, v := range data.Items {
+		var acc *model.Account
+		if acc, err = p.getAccountByID(c, v.AccountID); err != nil {
+			return
+		}
+		member := &model.MemberItem{
+			ID:           v.AccountID,
+			Introduction: acc.Introduction,
+			Avatar:       acc.Avatar,
+			UserName:     acc.UserName,
+			Gender:       acc.Gender,
+			IDCert:       acc.IDCert,
+			WorkCert:     acc.WorkCert,
+			IsOrg:        acc.IsOrg,
+			IsVIP:        acc.IsVIP,
+		}
+
+		resp.Items[i] = member
 	}
 
 	param := url.Values{}

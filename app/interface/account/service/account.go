@@ -3,7 +3,10 @@ package service
 import (
 	"context"
 	"time"
+
 	"valerian/app/interface/account/model"
+	account "valerian/app/service/account/api"
+	relation "valerian/app/service/relation/api"
 	"valerian/library/ecode"
 
 	"github.com/asaskevich/govalidator"
@@ -237,28 +240,47 @@ func (p *Service) ChangePassword(c context.Context, aid int64, arg *model.ArgCha
 }
 
 func (p *Service) GetProfile(c context.Context, aid int64) (profile *model.Profile, err error) {
-	cached := true
-	if profile, err = p.d.ProfileCache(c, aid); err != nil {
-		cached = false
-	} else if profile != nil {
+	if profile, err = p.getProfile(c, aid); err != nil {
 		return
 	}
 
-	profile, err = p.getProfile(c, aid)
-	if err != nil || !cached {
+	var stat *relation.StatInfo
+	if stat, err = p.d.Stat(c, aid); err != nil {
 		return
 	}
 
-	if profile != nil {
-		p.addCache(func() {
-			p.d.SetProfileCache(context.TODO(), profile)
-		})
+	profile.Stat = &model.MemberInfoStat{
+		FansCount:      int(stat.Fans),
+		FollowingCount: int(stat.Following),
 	}
+
+	var accountStat *account.AccountStatInfo
+	if accountStat, err = p.d.GetAccountStat(c, aid); err != nil {
+		return
+	}
+
+	profile.Stat.TopicCount = int(accountStat.TopicCount)
+	profile.Stat.ArticleCount = int(accountStat.ArticleCount)
+	profile.Stat.DiscussionCount = int(accountStat.DiscussionCount)
+
+	var setting *model.SettingResp
+	if setting, err = p.getAccountSetting(c, p.d.DB(), aid); err != nil {
+		return
+	}
+
+	profile.Settings = setting
 
 	return
 }
 
 func (p *Service) getProfile(c context.Context, accountID int64) (profile *model.Profile, err error) {
+	addCache := true
+	if profile, err = p.d.ProfileCache(c, accountID); err != nil {
+		addCache = false
+	} else if profile != nil {
+		return
+	}
+
 	var item *model.Account
 	if item, err = p.getAccountByID(c, accountID); err != nil {
 		return
@@ -295,6 +317,12 @@ func (p *Service) getProfile(c context.Context, accountID int64) (profile *model
 		} else {
 			profile.LocationString = &v
 		}
+	}
+
+	if addCache {
+		p.addCache(func() {
+			p.d.SetProfileCache(context.TODO(), profile)
+		})
 	}
 
 	return

@@ -14,6 +14,7 @@ type PublishItem struct {
 	// 讨论
 	Discussion *TargetDiscuss `json:"discussion,omitempty"`
 }
+
 type RecentPublishResp struct {
 	Items  []*PublishItem `json:"items"`
 	Paging *Paging        `json:"paging"`
