@@ -1,6 +1,9 @@
 package model
 
 type WorkCertResp struct {
+	// 实名认证姓名
+	IDName string `json:"id_name"`
+
 	// 工作证
 	WorkPic string `json:"work_pic"`
 	// 其他证明

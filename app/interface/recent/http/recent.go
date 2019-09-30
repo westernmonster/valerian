@@ -10,7 +10,7 @@ import "valerian/library/net/http/mars"
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param type query string true "类型：topic,article"
+// @Param type query string true "类型：all,topic,article"
 // @Param limit query integer false "每页大小"
 // @Param offset query integer false "offset"
 // @Success 200 {object} model.RecentListResp "讨论列表"

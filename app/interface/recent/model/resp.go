@@ -49,7 +49,7 @@ type RecentItem struct {
 }
 
 type RecentListResp struct {
-	Items  []*RecentItem `json:"articles"`
+	Items  []*RecentItem `json:"items"`
 	Paging *Paging       `json:"paging"`
 }
 

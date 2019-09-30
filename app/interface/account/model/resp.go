@@ -35,8 +35,18 @@ type Profile struct {
 	// 是否身份认证
 	IDCert bool `json:"id_cert"`
 
+	// 状态：-1 未认证, 0 认证中,  1 认证成功, 2 认证失败
+	IDCertStatus int `json:"id_cert_status"`
+
 	// 是否工作认证
 	WorkCert bool `json:"work_cert"`
+
+	// 工作认证状态
+	// -1 未认证
+	// 0 审核中
+	// 1 通过审核
+	// 2 审核失败
+	WorkCertStatus int `json:"work_cert_status"`
 
 	// 是否机构用户
 	IsOrg bool `json:"is_org"`

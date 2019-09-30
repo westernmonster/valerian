@@ -58,9 +58,10 @@ type TargetTopic struct {
 }
 
 type FavItem struct {
+	ID int64 `json:"id" swaggertype:"string"`
 	// 类型
 	// topic, article, revise, discussion
-	Type string `json:"type"`
+	TargetType string `json:"target_type"`
 
 	// 话题
 	Topic *TargetTopic `json:"topic,omitempty"`
@@ -76,7 +77,7 @@ type FavItem struct {
 }
 
 type FavListResp struct {
-	Items  []*FavItem `json:"articles"`
+	Items  []*FavItem `json:"items"`
 	Paging *Paging    `json:"paging"`
 }
 
