@@ -38,6 +38,8 @@ type Config struct {
 	Auth      *auth.Config
 	Memcache  *Memcache
 	Discovery *discovery.Config
+
+	FavRPC *warden.ClientConfig
 }
 
 type NatsConfig struct {

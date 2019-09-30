@@ -61,14 +61,12 @@ func (p *Service) GetTopicMeta(c context.Context, aid, topicID int64) (meta *mod
 		break
 	}
 
-	var setting *model.AccountTopicSetting
-	if setting, err = p.getAccountTopicSetting(c, p.d.DB(), aid, t.ID); err != nil {
+	var isFav bool
+	if isFav, err = p.d.IsFav(c, aid, t.ID, "topic"); err != nil {
 		return
-	} else if setting == nil {
-		meta.Fav = false
-	} else {
-		meta.Fav = bool(setting.Fav)
 	}
+
+	meta.Fav = isFav
 
 	if meta.CanView, meta.CanEdit, err = p.CheckEditPermission(c, aid, member, t); err != nil {
 		return
