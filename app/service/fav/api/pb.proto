@@ -1,0 +1,31 @@
+syntax = "proto3";
+package service.discuss;
+option go_package = "api";
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+// EmptyStruct 空的message，对应真实service只返回error，没有具体返回值
+message EmptyStruct {
+}
+
+message FavInfo {
+    bool IsFav = 1 [(gogoproto.jsontag) = "is_fav"];
+}
+
+
+message FavReq {
+    int64 AccountID = 1 [(gogoproto.jsontag) = "account_id"];
+    int64 TargetID = 2 [(gogoproto.jsontag) = "target_id"];
+    string TargetType = 3 [(gogoproto.jsontag) = "target_type"];
+}
+
+
+service Fav {
+    rpc  IsFav(FavReq) returns (FavInfo);
+    rpc  Fav(FavReq) returns (EmptyStruct);
+    rpc  Unfav(FavReq) returns (EmptyStruct);
+}
+
+
+
+
