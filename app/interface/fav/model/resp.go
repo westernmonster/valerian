@@ -51,7 +51,7 @@ type TargetTopic struct {
 	// 必须为URL
 	Avatar *string `json:"avatar"`
 	// 成员数
-	MembersCount int `json:"members_count"`
+	MemberCount int `json:"member_count"`
 
 	// 简介
 	Introduction string `json:"introduction"`

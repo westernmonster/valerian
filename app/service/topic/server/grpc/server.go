@@ -45,7 +45,12 @@ func (s *server) GetTopicInfo(ctx context.Context, req *api.TopicReq) (*api.Topi
 		return nil, err
 	}
 
-	return api.FromTopic(resp), nil
+	stat, err := s.svr.GetTopicMemberStat(ctx, req.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return api.FromTopic(resp, stat), nil
 }
 
 func (s *server) GetTopicMemberRole(ctx context.Context, req *api.TopicMemberRoleReq) (resp *api.MemberRoleReply, err error) {

@@ -13,6 +13,17 @@ func (p *Service) GetTopic(c context.Context, topicID int64) (item *model.Topic,
 	return p.getTopic(c, p.d.DB(), topicID)
 }
 
+func (p *Service) GetTopicMemberStat(c context.Context, topicID int64) (stat *model.TopicMemberStat, err error) {
+	if stat, err = p.d.GetTopicMemberStat(c, p.d.DB(), topicID); err != nil {
+		return
+	} else if stat == nil {
+		stat = &model.TopicMemberStat{
+			TopicID: topicID,
+		}
+	}
+	return
+}
+
 func (p *Service) getTopic(c context.Context, node sqalx.Node, topicID int64) (item *model.Topic, err error) {
 	var addCache = true
 	if item, err = p.d.TopicCache(c, topicID); err != nil {

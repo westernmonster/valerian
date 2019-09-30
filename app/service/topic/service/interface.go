@@ -34,6 +34,8 @@ type IDao interface {
 	UpdateAccountTopicSetting(c context.Context, node sqalx.Node, item *model.AccountTopicSetting) (err error)
 	DelAccountTopicSetting(c context.Context, node sqalx.Node, id int64) (err error)
 
+	GetTopicMemberStat(c context.Context, node sqalx.Node, topicID int64) (item *model.TopicMemberStat, err error)
+
 	GetTopicMemberByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (item *model.TopicMember, err error)
 
 	SetAccountTopicSettingCache(c context.Context, m *model.AccountTopicSetting) (err error)
