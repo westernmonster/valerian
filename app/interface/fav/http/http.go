@@ -34,6 +34,8 @@ func route(e *mars.Engine) {
 	g := e.Group("/api/v1/fav")
 	{
 		g.GET("/list/all", authSvc.User, favList)
+		g.POST("/fav", authSvc.User, fav)
+		g.POST("/unfav", authSvc.User, unfav)
 	}
 }
 

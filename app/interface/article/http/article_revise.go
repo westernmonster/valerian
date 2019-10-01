@@ -2,40 +2,6 @@ package http
 
 import "valerian/library/net/http/mars"
 
-// @Summary 收藏补充
-// @Description 收藏补充
-// @Tags article
-// @Accept json
-// @Produce json
-// @Param Authorization header string true "Bearer"
-// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
-// @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param id query string true "ID"
-// @Success 200 "成功后返回bool值"
-// @Failure 400 "验证请求失败"
-// @Failure 401 "登录验证失败"
-// @Failure 500 "服务器端错误"
-// @Router /topic/revise/fav [post]
-func favRevise(c *mars.Context) {
-}
-
-// @Summary 点赞讨论
-// @Description 点赞讨论
-// @Tags article
-// @Accept json
-// @Produce json
-// @Param Authorization header string true "Bearer"
-// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
-// @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param id query string true "ID"
-// @Success 200 "成功后返回bool值"
-// @Failure 400 "验证请求失败"
-// @Failure 401 "登录验证失败"
-// @Failure 500 "服务器端错误"
-// @Router /article/revise/like [post]
-func likeRevise(c *mars.Context) {
-}
-
 // @Summary 获取文章补充列表
 // @Description 获取文章补充列表
 // @Tags article

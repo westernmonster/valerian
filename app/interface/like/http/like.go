@@ -75,7 +75,7 @@ func cancelLike(c *mars.Context) {
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /like/like [post]
+// @Router /like/dislike [post]
 func dislike(c *mars.Context) {
 	arg := new(model.ArgDislike)
 	if e := c.Bind(arg); e != nil {
@@ -103,7 +103,7 @@ func dislike(c *mars.Context) {
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /like/cancel_like [post]
+// @Router /like/cancel_dislike [post]
 func cancelDislike(c *mars.Context) {
 	arg := new(model.ArgCancelDislike)
 	if e := c.Bind(arg); e != nil {

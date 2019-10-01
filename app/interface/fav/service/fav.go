@@ -10,6 +10,7 @@ import (
 	"valerian/library/ecode"
 	"valerian/library/gid"
 	"valerian/library/net/metadata"
+	"valerian/library/xstr"
 )
 
 func (p *Service) Fav(c context.Context, arg *model.ArgAddFav) (err error) {
@@ -118,7 +119,11 @@ func (p *Service) GetFavsPaged(c context.Context, targetType string, limit, offs
 				return
 			}
 			item.Discussion = &model.TargetDiscuss{
-				ID: d.ID,
+				ID:           d.ID,
+				Excerpt:      xstr.Excerpt(d.ContentText),
+				CommentCount: int(d.Stat.CommentCount),
+				LikeCount:    int(d.Stat.LikeCount),
+				ImageUrls:    d.ImageUrls,
 			}
 			break
 		case model.TargetTypeRevise:
