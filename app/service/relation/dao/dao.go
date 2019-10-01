@@ -34,9 +34,10 @@ func New(c *conf.Config) (dao *Dao) {
 	}
 
 	servers := strings.Join(c.Nats.Nodes, ",")
-	if sc, err := stan.Connect(servers,
+	if sc, err := stan.Connect("valerian",
 		env.Hostname,
 		stan.Pings(10, 5),
+		stan.NatsURL(servers),
 		stan.SetConnectionLostHandler(func(_ stan.Conn, reason error) {
 			log.Errorf("Nats Connection lost, reason: %v", reason)
 			panic(reason)
