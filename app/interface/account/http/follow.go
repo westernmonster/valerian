@@ -74,7 +74,7 @@ func fans(c *mars.Context) {
 // @Failure 400 "请求验证失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /account/list/followed [get]
+// @Router /account/list/followings [get]
 func followed(c *mars.Context) {
 	var (
 		id     int64

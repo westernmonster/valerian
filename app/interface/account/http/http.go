@@ -55,7 +55,7 @@ func route(e *mars.Engine) {
 		x.GET("/list/discussions", authSvc.User, memberDiscuss)
 		x.GET("/list/articles", authSvc.User, memberArticles)
 		x.GET("/list/fans", authSvc.User, fans)
-		x.GET("/list/following", authSvc.User, followed)
+		x.GET("/list/followings", authSvc.User, followed)
 	}
 
 	y := e.Group("/api/v1/oauth")
