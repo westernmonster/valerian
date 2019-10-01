@@ -34,7 +34,7 @@ func route(e *mars.Engine) {
 	g := e.Group("/api/v1/me")
 	{
 		g.PUT("/password", authSvc.User, changePassword)
-		g.GET("/", authSvc.User, getProfile)
+		g.GET("/profile", authSvc.User, getProfile)
 		g.PUT("/edit", authSvc.User, updateProfile)
 		g.POST("/activity_setting/edit", authSvc.User, updateActivitySetting)
 		g.POST("/notify_setting/edit", authSvc.User, updateNotifySetting)

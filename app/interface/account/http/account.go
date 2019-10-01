@@ -49,7 +49,7 @@ func changePassword(c *mars.Context) {
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /me [get]
+// @Router /me/profile [get]
 func getProfile(c *mars.Context) {
 	aid, _ := c.Get("aid")
 	c.JSON(srv.GetProfile(c, aid.(int64)))

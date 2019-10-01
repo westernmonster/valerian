@@ -17,6 +17,10 @@ spec:
         backend:
           serviceName: interface-account
           servicePort: 8000
+      - path: /api/v1/me
+        backend:
+          serviceName: interface-account
+          servicePort: 8000
       - path: /api/v1/list/locales
         backend:
           serviceName: interface-locale
