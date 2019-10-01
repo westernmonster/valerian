@@ -13,7 +13,7 @@ import (
 func (p *Dao) GetFansPaged(c context.Context, node sqalx.Node, aid int64, limit, offset int) (items []*model.AccountFans, err error) {
 	items = make([]*model.AccountFans, 0)
 
-	sql := "SELECT a.* FROM account_fans a WHERE a.deleted=0 AND a.aid=? ORDER BY a.id DESC limit ?,?"
+	sql := "SELECT a.* FROM account_fans a WHERE a.deleted=0 AND a.account_id=? ORDER BY a.id DESC limit ?,?"
 
 	if err = node.SelectContext(c, &items, sql, aid, offset, limit); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetFansPaged error(%+v), following id(%d) limit(%d) offset(%d)", err, aid, limit, offset))
