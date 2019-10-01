@@ -162,11 +162,11 @@ func (p *Service) getAuthTopicsResp(c context.Context, node sqalx.Node, topicID 
 		}
 
 		item := &model.AuthTopicResp{
-			ToTopicID:    v.ToTopicID,
-			Permission:   v.Permission,
-			Avatar:       t.Avatar,
-			Name:         t.Name,
-			MembersCount: stat.MemberCount,
+			ToTopicID:   v.ToTopicID,
+			Permission:  v.Permission,
+			Avatar:      t.Avatar,
+			Name:        t.Name,
+			MemberCount: stat.MemberCount,
 		}
 
 		items[i] = item

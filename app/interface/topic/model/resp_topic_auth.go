@@ -8,7 +8,7 @@ type AuthTopicResp struct {
 	Permission string `json:"permission"` // Permission 权限
 
 	// 成员数
-	MembersCount int `json:"members_count"`
+	MemberCount int `json:"member_count"`
 
 	// 封面图
 	// 必须为URL

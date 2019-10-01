@@ -7,7 +7,7 @@ type TopicResp struct {
 	Members []*TopicMemberResp `json:"members,omitempty"`
 
 	// 成员数
-	MembersCount int `json:"members_count,omitempty"`
+	MemberCount int `json:"member_count,omitempty"`
 
 	// 目录
 	Catalogs []*TopicLevel1Catalog `json:"catalogs,omitempty"`

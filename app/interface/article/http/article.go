@@ -118,7 +118,7 @@ func likeArticle(c *mars.Context) {
 // @Param query query string true "查询条件"
 // @Param limit query integer false "每页大小"
 // @Param offset query integer false "offset"
-// @Success 200 {object} model.ArticleResp "文章"
+// @Success 200 {object} model.ArticleListResp "文章"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"

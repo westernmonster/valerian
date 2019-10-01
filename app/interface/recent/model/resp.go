@@ -13,10 +13,10 @@ type ItemTopic struct {
 	Avatar *string `json:"avatar,omitempty"`
 
 	// 资源数量
-	ResourcesCount int `json:"resources_count"`
+	ResourceCount int `json:"resource_count"`
 
 	// 成员数
-	MembersCount int `json:"members_count"`
+	MemberCount int `json:"member_count"`
 }
 
 type ItemArticle struct {

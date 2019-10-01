@@ -37,9 +37,6 @@ type TopicSearchItem struct {
 
 	// 是否已经授权
 	IsAuthed bool `json:"is_authed"`
-
-	// 成员数
-	MembersCount int `json:"members_count"`
 }
 
 type TopicSearchResp struct {

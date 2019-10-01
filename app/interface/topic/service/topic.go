@@ -319,7 +319,7 @@ func (p *Service) GetTopic(c context.Context, topicID int64, include string) (it
 	}
 	inc := includeParam(include)
 	if inc["members"] {
-		if item.MembersCount, item.Members, err = p.getTopicMembers(c, p.d.DB(), topicID, 10); err != nil {
+		if item.MemberCount, item.Members, err = p.getTopicMembers(c, p.d.DB(), topicID, 10); err != nil {
 			return
 		}
 	}

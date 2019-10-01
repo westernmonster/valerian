@@ -7,7 +7,7 @@ type TopicResp struct {
 	Members []*TopicMemberResp `json:"members,omitempty"`
 
 	// 成员数
-	MembersCount int `json:"members_count,omitempty"`
+	MemberCount int `json:"member_count,omitempty"`
 
 	// 目录
 	Catalogs []*TopicLevel1Catalog `json:"catalogs,omitempty"`
@@ -101,4 +101,28 @@ type TopicMeta struct {
 
 	// 成员角色
 	MemberRole string `json:"member_role"`
+}
+
+type TopicItem struct {
+	// ID
+	ID int64 `json:"id,string" swaggertype:"string"`
+	// 话题名
+	Name string `json:"name"`
+
+	// 简介
+	Introduction string `json:"introduction"`
+
+	// 封面
+	Avatar *string `json:"avatar,omitempty"`
+
+	// 资源数量
+	ResourceCount int `json:"resource_count"`
+
+	// 成员数
+	MemberCount int `json:"member_count"`
+}
+
+type TopicListResp struct {
+	Items  []*TopicItem `json:"items"`
+	Paging *Paging      `json:"paging"`
 }
