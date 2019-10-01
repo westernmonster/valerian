@@ -46,6 +46,7 @@ func route(e *mars.Engine) {
 	{
 		g.POST("/follow", authSvc.User, follow)
 		g.POST("/unfollow", authSvc.User, unfollow)
+		x.GET("/member/info", authSvc.User, memberInfo)
 		x.GET("/list/fans", authSvc.User, fans)
 		x.GET("/list/following", authSvc.User, followed)
 	}
