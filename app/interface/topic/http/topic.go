@@ -6,6 +6,7 @@ import (
 	"valerian/app/interface/topic/model"
 	"valerian/library/ecode"
 	"valerian/library/net/http/mars"
+	"valerian/library/net/metadata"
 )
 
 // @Summary 新增话题
@@ -198,4 +199,36 @@ func favTopic(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /topic/list/has_edit_permission [get]
 func topicsWithEditPermission(c *mars.Context) {
+}
+
+// @Summary 获取话题Meta信息
+// @Description 获取话题Meta信息
+// @Tags topic
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param id query string true "ID"
+// @Success 200 {object} model.TopicMeta "Meta"
+// @Failure 400 "请求验证失败"
+// @Failure 401 "登录验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /topic/meta [get]
+func topicMeta(c *mars.Context) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		c.JSON(nil, ecode.AcquireAccountIDFailed)
+		return
+	}
+	idStr := c.Request.Form.Get("id")
+	if id, err := strconv.ParseInt(idStr, 10, 64); err != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	} else if id == 0 {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	} else {
+		c.JSON(srv.GetTopicMeta(c, aid, id))
+	}
 }
