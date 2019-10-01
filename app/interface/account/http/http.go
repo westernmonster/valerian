@@ -44,9 +44,16 @@ func route(e *mars.Engine) {
 
 	x := e.Group("/api/v1/account")
 	{
-		g.POST("/follow", authSvc.User, follow)
-		g.POST("/unfollow", authSvc.User, unfollow)
-		x.GET("/member/info", authSvc.User, memberInfo)
+		x.POST("/follow", authSvc.User, follow)
+		x.POST("/unfollow", authSvc.User, unfollow)
+
+		x.GET("/info", authSvc.User, memberInfo)
+
+		x.GET("/list/recent", authSvc.User, memberInfo)
+		x.GET("/list/activities", authSvc.User, memberActivites)
+		x.GET("/list/topics", authSvc.User, memberTopics)
+		x.GET("/list/discussions", authSvc.User, memberDiscuss)
+		x.GET("/list/articles", authSvc.User, memberArticles)
 		x.GET("/list/fans", authSvc.User, fans)
 		x.GET("/list/following", authSvc.User, followed)
 	}

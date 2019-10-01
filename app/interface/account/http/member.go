@@ -22,7 +22,7 @@ import (
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /account/member/recent [get]
+// @Router /account/list/recent [get]
 func recent(c *mars.Context) {
 }
 
@@ -40,7 +40,7 @@ func recent(c *mars.Context) {
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /account/member/info [get]
+// @Router /account/info [get]
 func memberInfo(c *mars.Context) {
 	var id int64
 	var err error
@@ -68,7 +68,7 @@ func memberInfo(c *mars.Context) {
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /account/member/activities [get]
+// @Router /account/list/activities [get]
 func memberActivites(c *mars.Context) {
 }
 
@@ -87,7 +87,7 @@ func memberActivites(c *mars.Context) {
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /account/member/topics [get]
+// @Router /account/list/topics [get]
 func memberTopics(c *mars.Context) {
 }
 
@@ -106,7 +106,7 @@ func memberTopics(c *mars.Context) {
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /account/member/discussions [get]
+// @Router /account/list/discussions [get]
 func memberDiscuss(c *mars.Context) {
 }
 
@@ -125,7 +125,7 @@ func memberDiscuss(c *mars.Context) {
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /account/member/articles [get]
+// @Router /account/list/articles [get]
 func memberArticles(c *mars.Context) {
 }
 
@@ -142,6 +142,6 @@ func memberArticles(c *mars.Context) {
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /account/member/block [post]
+// @Router /account/block [post]
 func block(c *mars.Context) {
 }
