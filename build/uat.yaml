@@ -69,7 +69,15 @@ spec:
         backend:
           serviceName: interface-feed
           servicePort: 8000
-      - path: /api/v1/feed
+      - path: /api/v1/file
         backend:
           serviceName: interface-file
+          servicePort: 8000
+      - path: /api/v1/fav
+        backend:
+          serviceName: interface-fav
+          servicePort: 8000
+      - path: /api/v1/like
+        backend:
+          serviceName: interface-like
           servicePort: 8000
