@@ -1,6 +1,10 @@
 package http
 
-import "valerian/library/net/http/mars"
+import (
+	"strconv"
+	"valerian/library/ecode"
+	"valerian/library/net/http/mars"
+)
 
 // @Summary 最近发布
 // @Description 最近发布
@@ -38,6 +42,15 @@ func recent(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /account/member/info [get]
 func memberInfo(c *mars.Context) {
+	var id int64
+	var err error
+	params := c.Request.Form
+
+	if id, err = strconv.ParseInt(params.Get("id"), 10, 64); err != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+	c.JSON(srv.GetMemberInfo(c, id))
 }
 
 // @Summary 获取用户动态
