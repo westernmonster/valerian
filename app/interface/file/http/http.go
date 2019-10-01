@@ -31,9 +31,9 @@ func Init(c *conf.Config, s *service.Service) {
 func route(e *mars.Engine) {
 	e.Ping(ping)
 	e.Register(register)
-	g := e.Group("/api/v1")
+	g := e.Group("/api/v1/file")
 	{
-		g.POST("/file/oss_token", authSvc.User, ossToken)
+		g.POST("/oss_token", authSvc.User, ossToken)
 	}
 }
 

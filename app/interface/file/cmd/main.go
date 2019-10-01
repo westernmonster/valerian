@@ -29,7 +29,7 @@ func main() {
 	// init log
 	log.Init(conf.Conf.Log)
 	defer log.Close()
-	log.Info("app-account start")
+	log.Info("app-file start")
 	// init trace
 	tracing.Init(nil)
 	// service init
@@ -41,11 +41,11 @@ func main() {
 	signal.Notify(c, syscall.SIGHUP, syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT)
 	for {
 		s := <-c
-		log.Infof("app-account get a signal %s", s.String())
+		log.Infof("app-file get a signal %s", s.String())
 		switch s {
 		case syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT:
 			svc.Close()
-			log.Info("app-account exit")
+			log.Info("app-file exit")
 			return
 		case syscall.SIGHUP:
 		// TODO reload
