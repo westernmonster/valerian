@@ -15,6 +15,9 @@ type ReviseItem struct {
 	// 赞数
 	LikeCount int `json:"like_count"`
 
+	// 反对数
+	DislikeCount int `json:"dislike_count"`
+
 	// 评论数
 	CommentCount int `json:"comment_count"`
 }
@@ -51,6 +54,9 @@ type ReviseDetailResp struct {
 
 	// 赞数
 	LikeCount int `json:"like_count"`
+
+	// 反对数
+	DislikeCount int `json:"dislike_count"`
 
 	// 评论数
 	CommentCount int `json:"comment_count"`

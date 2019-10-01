@@ -87,3 +87,24 @@ func (s *server) GetTopicPermission(ctx context.Context, req *api.TopicPermissio
 		EditPermission: editPermission,
 	}, nil
 }
+
+func (s *server) GetUserTopicsPaged(ctx context.Context, req *api.UserTopicsReq) (resp *api.UserTopicsResp, err error) {
+	items, err := s.svr.GetUserTopicsPaged(ctx, req.AccountID, int(req.Limit), int(req.Offset))
+	if err != nil {
+		return nil, err
+	}
+	resp = &api.UserTopicsResp{
+		Items: make([]*api.TopicInfo, len(items)),
+	}
+
+	for i, v := range items {
+		stat, err := s.svr.GetTopicMemberStat(ctx, v.ID)
+		if err != nil {
+			return nil, err
+		}
+
+		resp.Items[i] = api.FromTopic(v, stat)
+	}
+
+	return
+}

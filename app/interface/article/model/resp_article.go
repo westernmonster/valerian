@@ -42,6 +42,9 @@ type ArticleMeta struct {
 
 	LikeCount int `json:"like_count"`
 
+	// 反对数
+	DislikeCount int `json:"dislike_count"`
+
 	Read bool `json:"read"`
 
 	Fav bool `json:"fav"`

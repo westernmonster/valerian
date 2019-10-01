@@ -10,6 +10,7 @@ import (
 type IDao interface {
 	GetAccountBaseInfo(c context.Context, aid int64) (info *account.BaseInfoReply, err error)
 
+	GetUserTopicsPaged(c context.Context, node sqalx.Node, aid int64, limit, offset int) (items []*model.Topic, err error)
 	GetTopicsByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.Topic, err error)
 	GetTopics(c context.Context, node sqalx.Node) (items []*model.Topic, err error)
 	GetTopicByID(c context.Context, node sqalx.Node, id int64) (item *model.Topic, err error)

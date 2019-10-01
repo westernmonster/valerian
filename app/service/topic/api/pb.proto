@@ -101,6 +101,16 @@ message TopicPermissionReq {
     int64 AccountID = 2 [(gogoproto.jsontag) = "aid"];
 }
 
+message UserTopicsReq {
+    int64 AccountID = 1 [(gogoproto.jsontag) = "aid"];
+    int32 Limit = 2 [(gogoproto.jsontag) = "limit"];
+    int32 Offset = 3 [(gogoproto.jsontag) = "offset"];
+}
+
+
+message UserTopicsResp {
+    repeated TopicInfo Items = 1 [(gogoproto.jsontag) = 'items'];
+}
 
 
 service Topic {
@@ -111,5 +121,7 @@ service Topic {
     rpc  GetTopicMemberRole(TopicMemberRoleReq) returns (MemberRoleReply);
 
     rpc  GetTopicMeta(TopicMetaReq) returns (TopicMetaInfo);
+
+    rpc  GetUserTopicsPaged(UserTopicsReq) returns (UserTopicsResp);
 }
 

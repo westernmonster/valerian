@@ -9,6 +9,10 @@ import (
 	"valerian/library/gid"
 )
 
+func (p *Service) GetUserTopicsPaged(c context.Context, aid int64, limit, offset int) (items []*model.Topic, err error) {
+	return p.d.GetUserTopicsPaged(c, p.d.DB(), aid, limit, offset)
+}
+
 func (p *Service) GetTopic(c context.Context, topicID int64) (item *model.Topic, err error) {
 	return p.getTopic(c, p.d.DB(), topicID)
 }
