@@ -24,6 +24,14 @@ type IDao interface {
 	UpdateDiscussCategory(c context.Context, node sqalx.Node, item *model.DiscussCategory) (err error)
 	DelDiscussCategory(c context.Context, node sqalx.Node, id int64) (err error)
 
+	GetImageUrlsByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.ImageURL, err error)
+	GetImageUrls(c context.Context, node sqalx.Node) (items []*model.ImageURL, err error)
+	GetImageURLByID(c context.Context, node sqalx.Node, id int64) (item *model.ImageURL, err error)
+	GetImageURLByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (item *model.ImageURL, err error)
+	AddImageURL(c context.Context, node sqalx.Node, item *model.ImageURL) (err error)
+	UpdateImageURL(c context.Context, node sqalx.Node, item *model.ImageURL) (err error)
+	DelImageURL(c context.Context, node sqalx.Node, id int64) (err error)
+
 	Ping(c context.Context) (err error)
 	Close()
 	DB() sqalx.Node

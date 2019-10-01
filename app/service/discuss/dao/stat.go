@@ -29,9 +29,9 @@ func (p *Dao) GetDiscussionStatByID(c context.Context, node sqalx.Node, discussi
 
 // Insert insert a new record
 func (p *Dao) AddDiscussionStat(c context.Context, node sqalx.Node, item *model.DiscussionStat) (err error) {
-	sqlInsert := "INSERT IGNORE INTO discussion_stats( discussion_id,like_count,comment_count,created_at,updated_at) VALUES ( ?,?,?,?,?)"
+	sqlInsert := "INSERT IGNORE INTO discussion_stats( discussion_id,like_count,dislike_count,comment_count,created_at,updated_at) VALUES ( ?,?,?,?,?,?)"
 
-	if _, err = node.ExecContext(c, sqlInsert, item.DiscussionID, item.LikeCount, item.CommentCount, item.CreatedAt, item.UpdatedAt); err != nil {
+	if _, err = node.ExecContext(c, sqlInsert, item.DiscussionID, item.LikeCount, item.DislikeCount, item.CommentCount, item.CreatedAt, item.UpdatedAt); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.AddDiscussionStats err(%+v), item(%+v)", err, item))
 		return
 	}
@@ -41,9 +41,9 @@ func (p *Dao) AddDiscussionStat(c context.Context, node sqalx.Node, item *model.
 
 // Update update a exist record
 func (p *Dao) UpdateDiscussionStat(c context.Context, node sqalx.Node, item *model.DiscussionStat) (err error) {
-	sqlUpdate := "UPDATE discussion_stats SET discussion_id=?,like_count=?,comment_count=?,updated_at=? WHERE discussion_id=?"
+	sqlUpdate := "UPDATE discussion_stats SET like_count=?,dislike_count=?,comment_count=?,updated_at=?  WHERE discussion_id=?"
 
-	_, err = node.ExecContext(c, sqlUpdate, item.DiscussionID, item.LikeCount, item.CommentCount, item.UpdatedAt, item.DiscussionID)
+	_, err = node.ExecContext(c, sqlUpdate, item.LikeCount, item.DislikeCount, item.CommentCount, item.UpdatedAt, item.DiscussionID)
 	if err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.UpdateDiscussionStats err(%+v), item(%+v)", err, item))
 		return
@@ -53,9 +53,9 @@ func (p *Dao) UpdateDiscussionStat(c context.Context, node sqalx.Node, item *mod
 }
 
 func (p *Dao) IncrDiscussionStat(c context.Context, node sqalx.Node, item *model.DiscussionStat) (err error) {
-	sqlUpdate := "UPDATE discussion_stats SET like_count=like_count+?,comment_count=discussion_count+?,updated_at=? WHERE discussion_id=?"
+	sqlUpdate := "UPDATE discussion_stats SET like_count=like_count+?,dislike_count=dislike_count+?,comment_count=discussion_count+?,updated_at=? WHERE discussion_id=?"
 
-	_, err = node.ExecContext(c, sqlUpdate, item.LikeCount, item.CommentCount, time.Now().Unix(), item.DiscussionID)
+	_, err = node.ExecContext(c, sqlUpdate, item.LikeCount, item.DislikeCount, item.CommentCount, time.Now().Unix(), item.DiscussionID)
 	if err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.IncrDiscussionStats err(%+v), item(%+v)", err, item))
 		return

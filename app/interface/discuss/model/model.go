@@ -56,6 +56,7 @@ type DiscussionFile struct {
 type DiscussionStat struct {
 	DiscussionID int64 `db:"discussion_id" json:"discussion_id,string"` // DiscussionID 讨论ID
 	LikeCount    int   `db:"like_count" json:"like_count"`              // LikeCount 喜欢数
+	DislikeCount int   `db:"dislike_count" json:"dislike_count"`        // DislikeCount 反对数
 	CommentCount int   `db:"comment_count" json:"comment_count"`        // CommentCount 评论数
 	CreatedAt    int64 `db:"created_at" json:"created_at"`              // CreatedAt 创建时间
 	UpdatedAt    int64 `db:"updated_at" json:"updated_at"`              // UpdatedAt 更新时间

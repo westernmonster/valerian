@@ -40,7 +40,7 @@ type server struct {
 }
 
 func (s *server) GetDiscussionInfo(ctx context.Context, req *api.IDReq) (*api.DiscussionInfo, error) {
-	resp, err := s.svr.GetDiscussion(ctx, req.ID)
+	resp, imgs, err := s.svr.GetDiscussion(ctx, req.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,7 @@ func (s *server) GetDiscussionInfo(ctx context.Context, req *api.IDReq) (*api.Di
 		return nil, err
 	}
 
-	return api.FromDiscussion(resp, stat), nil
+	return api.FromDiscussion(resp, stat, imgs), nil
 }
 
 func (s *server) GetDiscussionCategories(ctx context.Context, req *api.CategoriesReq) (*api.CategoriesResp, error) {

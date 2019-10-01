@@ -16,6 +16,7 @@ func getDiscussion(c *mars.Context) {
 		c.JSON(nil, ecode.RequestErr)
 		return
 	} else {
-		c.JSON(srv.GetDiscussion(c, id))
+		resp, _, err := srv.GetDiscussion(c, id)
+		c.JSON(resp, err)
 	}
 }

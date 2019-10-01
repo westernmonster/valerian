@@ -2,7 +2,7 @@ package api
 
 import "valerian/app/service/discuss/model"
 
-func FromDiscussion(v *model.Discussion, x *model.DiscussionStat) *DiscussionInfo {
+func FromDiscussion(v *model.Discussion, x *model.DiscussionStat, imgs []string) *DiscussionInfo {
 	reply := &DiscussionInfo{
 		ID:          v.ID,
 		TopicID:     v.TopicID,
@@ -13,6 +13,7 @@ func FromDiscussion(v *model.Discussion, x *model.DiscussionStat) *DiscussionInf
 		CreatedAt:   v.CreatedAt,
 		UpdatedAt:   v.UpdatedAt,
 		Deleted:     bool(v.Deleted),
+		ImageUrls:   imgs,
 	}
 
 	reply.Stat = &DiscussionStat{

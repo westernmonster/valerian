@@ -396,6 +396,7 @@ func (p *Service) GetDiscussion(c context.Context, discussionID int64) (resp *mo
 	}
 
 	resp.LikeCount = stat.LikeCount
+	resp.DislikeCount = stat.DislikeCount
 	resp.CommentCount = stat.CommentCount
 
 	if aid == data.CreatedBy {

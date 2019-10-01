@@ -34,8 +34,13 @@ type DisucssItem struct {
 	Excerpt string `json:"excerpt"`
 	// 喜欢数
 	LikeCount int `json:"like_count"`
+
+	// 反对数
+	DislikeCount int `json:"dislike_count"`
+
 	// 评论数
 	CommentCount int `json:"comment_count"`
+
 	// 发布日期
 	CreatedAt int64 `json:"created_at"`
 
@@ -82,6 +87,10 @@ type DiscussDetailResp struct {
 
 	// 喜欢数
 	LikeCount int `json:"like_count"`
+
+	// 反对数
+	DislikeCount int `json:"dislike_count"`
+
 	// 评论数
 	CommentCount int `json:"comment_count"`
 

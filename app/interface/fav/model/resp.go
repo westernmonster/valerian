@@ -24,6 +24,7 @@ type TargetRevise struct {
 	Title *string `json:"title,omitempty"`
 	// 评论内容
 	Excerpt string `json:"excerpt"`
+
 	// 评论数
 	CommentCount int `json:"comment_count"`
 }
@@ -37,6 +38,9 @@ type TargetDiscuss struct {
 	Excerpt string `json:"excerpt"`
 	// 评论数
 	CommentCount int `json:"comment_count"`
+
+	// 喜欢数
+	LikeCount int `json:"like_count"`
 
 	// 图片
 	ImageUrls []string `json:"img_urls"`
