@@ -16,7 +16,7 @@ func (p *Service) GetArticleHistoriesResp(c context.Context, articleID int64) (i
 	} else if items != nil {
 		for _, v := range items {
 			var account *account.BaseInfoReply
-			if account, err = p.d.GetAccountBaseInfo(c, v.UpdatedBy); err != nil {
+			if account, err = p.d.GetAccountBaseInfo(c, 1); err != nil {
 				return
 			}
 			v.Updator = &model.Creator{
@@ -45,7 +45,7 @@ func (p *Service) GetArticleHistoriesResp(c context.Context, articleID int64) (i
 			// Content:     &v.Content,
 			// ContentText: &v.ContentText,
 			// Diff:      &v.Diff,
-			UpdatedBy: v.UpdatedBy,
+			// UpdatedBy: v.UpdatedBy,
 			UpdatedAt: v.UpdatedAt,
 			CreatedAt: v.CreatedAt,
 		}
@@ -72,16 +72,16 @@ func (p *Service) GetArticleHistoryResp(c context.Context, articleHistoryID int6
 	}
 
 	item = &model.ArticleHistoryResp{
-		ID:          v.ID,
-		ArticleID:   v.ArticleID,
-		Seq:         v.Seq,
-		ChangeDesc:  v.ChangeDesc,
-		Content:     &v.Content,
-		ContentText: &v.ContentText,
-		Diff:        &v.Diff,
-		UpdatedBy:   v.UpdatedBy,
-		UpdatedAt:   v.UpdatedAt,
-		CreatedAt:   v.CreatedAt,
+		ID:         v.ID,
+		ArticleID:  v.ArticleID,
+		Seq:        v.Seq,
+		ChangeDesc: v.ChangeDesc,
+		// Content:     &v.Content,
+		// ContentText: &v.ContentText,
+		Diff: &v.Diff,
+		// UpdatedBy: v.UpdatedBy,
+		UpdatedAt: v.UpdatedAt,
+		CreatedAt: v.CreatedAt,
 	}
 
 	return

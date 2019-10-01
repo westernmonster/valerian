@@ -68,12 +68,14 @@ type TargetArticle struct {
 	ID int64 `json:"id,string" swaggertype:"string"`
 	// 文章标题
 	Title string `json:"title"`
-	// 封面
-	Avatar *string `json:"avatar,omitempty"`
 	// 内容
 	Excerpt string `json:"excerpt"`
+	// 图片
+	ImageUrls []string `json:"img_urls"`
 	// 喜欢数
 	LikeCount int `json:"like_count"`
+	// 反对数
+	DislikeCount int `json:"dislike_count"`
 	// 补充个数
 	ReviseCount int `json:"revise_count"`
 	// 评论数

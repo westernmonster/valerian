@@ -106,3 +106,22 @@ func favArticle(c *mars.Context) {
 // @Router /article/like [post]
 func likeArticle(c *mars.Context) {
 }
+
+// @Summary 有编辑权限的文章列表
+// @Description 有编辑权限的文章列表
+// @Tags article
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param query query string true "查询条件"
+// @Param limit query integer false "每页大小"
+// @Param offset query integer false "offset"
+// @Success 200 {object} model.ArticleResp "文章"
+// @Failure 400 "验证请求失败"
+// @Failure 401 "登录验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /article/list/has_edit_permission [get]
+func getHasEditPermissionArticles(c *mars.Context) {
+}

@@ -28,6 +28,8 @@ type ArticleResp struct {
 	CreatedAt int64 `json:"created_at"`
 
 	CreatedBy int64 `json:"-"`
+
+	History *ArticleHistoryResp `json:"history"`
 }
 
 type ArticleFileResp struct {
@@ -66,4 +68,28 @@ type Creator struct {
 
 	// 自我介绍
 	Introduction *string `json:"introduction,omitempty"`
+}
+
+type ArticleItem struct {
+	// ID
+	ID int64 `json:"id,string" swaggertype:"string"`
+	// 文章标题
+	Title string `json:"title"`
+	// 内容
+	Excerpt string `json:"excerpt"`
+	// 图片
+	ImageUrls []string `json:"img_urls"`
+	// 喜欢数
+	LikeCount int `json:"like_count"`
+	// 反对数
+	DislikeCount int `json:"dislike_count"`
+	// 补充个数
+	ReviseCount int `json:"revise_count"`
+	// 评论数
+	CommentCount int `json:"comment_count"`
+}
+
+type ArticleListResp struct {
+	Items  []*ArticleItem `json:"items"`
+	Paging *Paging        `json:"paging"`
 }
