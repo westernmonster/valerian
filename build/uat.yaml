@@ -69,3 +69,7 @@ spec:
         backend:
           serviceName: interface-feed
           servicePort: 8000
+      - path: /api/v1/feed
+        backend:
+          serviceName: interface-file
+          servicePort: 8000

@@ -109,7 +109,7 @@ type ArgUpdateProfile struct {
 
 	// 用户性别， 1 为男，2 为女
 	// 如果无需更改该字段，在提交JSON请求中请不要包含该字段
-	Gender *int `json:"gener,omitempty"`
+	Gender *int `json:"gender,omitempty"`
 
 	// 地区
 	// 如果无需更改该字段，在提交JSON请求中请不要包含该字段
