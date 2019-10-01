@@ -210,6 +210,30 @@ push-interface-article:
 deploy-interface-article:
 	helm install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/interface-article:${DOCKER_TAG} --set global.name=interface-article --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=interface.article --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=610cae78da6011e9884c0a58ac14008b  --set env.treeId=1402 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc --name interface-article-uat ./build/k8s
 
+interface-like: build-interface-like docker-interface-like push-interface-like deploy-interface-like
+
+build-interface-like:
+	go env -w GOPROXY=https://goproxy.cn,direct
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/interface/like/cmd/cmd"   app/interface/like/cmd/main.go
+docker-interface-like:
+	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/interface-like:${DOCKER_TAG} ./app/interface/like/cmd/
+push-interface-like:
+	docker push registry.cn-hangzhou.aliyuncs.com/valerian/interface-like:${DOCKER_TAG}
+deploy-interface-like:
+	helm install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/interface-like:${DOCKER_TAG} --set global.name=interface-like --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=interface.like --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=503a91b9e3fa11e986590a58ac140094  --set env.treeId=1419 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc --name interface-like-uat ./build/k8s
+
+interface-fav: build-interface-fav docker-interface-fav push-interface-fav deploy-interface-fav
+
+build-interface-fav:
+	go env -w GOPROXY=https://goproxy.cn,direct
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/interface/fav/cmd/cmd"   app/interface/fav/cmd/main.go
+docker-interface-fav:
+	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/interface-fav:${DOCKER_TAG} ./app/interface/fav/cmd/
+push-interface-fav:
+	docker push registry.cn-hangzhou.aliyuncs.com/valerian/interface-fav:${DOCKER_TAG}
+deploy-interface-fav:
+	helm install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/interface-fav:${DOCKER_TAG} --set global.name=interface-fav --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=interface.fav --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=76faaa4ada6011e984660a58ac14011a  --set env.treeId=1407 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc --name interface-fav-uat ./build/k8s
+
 
 admin-config: build-admin-config docker-admin-config push-admin-config deploy-admin-config
 
@@ -299,3 +323,28 @@ push-service-feed:
 	docker push registry.cn-hangzhou.aliyuncs.com/valerian/service-feed:${DOCKER_TAG}
 deploy-service-feed:
 	helm install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/service-feed:${DOCKER_TAG} --set global.name=service-feed --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=service.feed --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=42385238dfe711e986590a58ac140094  --set env.treeId=1307 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc --name service-feed-uat ./build/k8s
+
+service-fav: build-service-fav docker-service-fav push-service-fav deploy-service-fav
+
+build-service-fav:
+	go env -w GOPROXY=https://goproxy.cn,direct
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/service/fav/cmd/cmd"   app/service/fav/cmd/main.go
+docker-service-fav:
+	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/service-fav:${DOCKER_TAG} ./app/service/fav/cmd/
+push-service-fav:
+	docker push registry.cn-hangzhou.aliyuncs.com/valerian/service-fav:${DOCKER_TAG}
+deploy-service-fav:
+	helm install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/service-fav:${DOCKER_TAG} --set global.name=service-fav --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=service.fav --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=b86b18ade3f911e9b6a00a58ac14002b  --set env.treeId=1308 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc --name service-fav-uat ./build/k8s
+
+
+service-like: build-service-like docker-service-like push-service-like deploy-service-like
+
+build-service-like:
+	go env -w GOPROXY=https://goproxy.cn,direct
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/service/like/cmd/cmd"   app/service/like/cmd/main.go
+docker-service-like:
+	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/service-like:${DOCKER_TAG} ./app/service/like/cmd/
+push-service-like:
+	docker push registry.cn-hangzhou.aliyuncs.com/valerian/service-like:${DOCKER_TAG}
+deploy-service-like:
+	helm install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/service-like:${DOCKER_TAG} --set global.name=service-like --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=service.like --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=abdbe3cfe3f911e986590a58ac140094  --set env.treeId=1309 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc --name service-like-uat ./build/k8s

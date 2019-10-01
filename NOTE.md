@@ -22,6 +22,8 @@
     - topic 1305
     - discuss 1306
     - feed 1307
+    - fav 1308
+    - like 1309
   * interface 4
     - account  1401
     - article 1402
@@ -41,3 +43,4 @@
     - recent 1416
     - topic 1417
     - valcode 1418
+    - like 1419
