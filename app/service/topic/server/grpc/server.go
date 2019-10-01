@@ -67,7 +67,7 @@ func (s *server) GetTopicMemberRole(ctx context.Context, req *api.TopicMemberRol
 }
 
 func (s *server) GetTopicMeta(ctx context.Context, req *api.TopicMetaReq) (resp *api.TopicMetaInfo, err error) {
-	meta, err := s.svr.GetTopicMeta(ctx, req.TopicID, req.AccountID)
+	meta, err := s.svr.GetTopicMeta(ctx, req.AccountID, req.TopicID)
 	if err != nil {
 		return nil, err
 	}
