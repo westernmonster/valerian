@@ -1,6 +1,9 @@
 package http
 
 import (
+	"strconv"
+	"valerian/app/interface/article/model"
+	"valerian/library/ecode"
 	"valerian/library/net/http/mars"
 )
 
@@ -19,6 +22,18 @@ import (
 // @Failure 500 "服务器端错误"
 // @Router /article/relations/add [post]
 func addArticleRelation(c *mars.Context) {
+
+	arg := new(model.ArgAddArticleRelation)
+	if e := c.Bind(arg); e != nil {
+		return
+	}
+
+	if e := arg.Validate(); e != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+
+	c.JSON(nil, srv.AddArticleRelation(c, arg))
 }
 
 // @Summary 更改关联话题
@@ -53,6 +68,18 @@ func editArticleRelation(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /article/relations/del [post]
 func delArticleRelation(c *mars.Context) {
+
+	arg := new(model.ArgDelArticleRelation)
+	if e := c.Bind(arg); e != nil {
+		return
+	}
+
+	if e := arg.Validate(); e != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+
+	c.JSON(nil, srv.DelArticleRelation(c, arg))
 }
 
 // @Summary 设置主话题
@@ -87,4 +114,16 @@ func setArticleRelationPrimary(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /article/list/relations [get]
 func articleRelations(c *mars.Context) {
+	var (
+		articleID int64
+		err       error
+	)
+
+	params := c.Request.Form
+	if articleID, err = strconv.ParseInt(params.Get("article_id"), 10, 64); err != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+
+	c.JSON(srv.GetArticleRelations(c, articleID))
 }

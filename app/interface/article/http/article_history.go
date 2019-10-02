@@ -1,6 +1,8 @@
 package http
 
 import (
+	"strconv"
+	"valerian/library/ecode"
 	"valerian/library/net/http/mars"
 )
 
@@ -21,6 +23,18 @@ import (
 // @Failure 500 "服务器端错误"
 // @Router /article/list/histories [get]
 func articleHistories(c *mars.Context) {
+	var (
+		articleID int64
+		err       error
+	)
+
+	params := c.Request.Form
+	if articleID, err = strconv.ParseInt(params.Get("article_id"), 10, 64); err != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+
+	c.JSON(srv.GetArticleHistoriesResp(c, articleID))
 }
 
 // @Summary 获取历史记录
@@ -38,4 +52,16 @@ func articleHistories(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /article/history [get]
 func articleHistory(c *mars.Context) {
+	var (
+		id  int64
+		err error
+	)
+
+	params := c.Request.Form
+	if id, err = strconv.ParseInt(params.Get("article_history_id"), 10, 64); err != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+
+	c.JSON(srv.GetArticleHistoryResp(c, id))
 }

@@ -37,8 +37,6 @@ func route(e *mars.Engine) {
 		g.POST("/add", authSvc.User, addArticle)
 		g.POST("/edit", authSvc.User, editArticle)
 		g.POST("/del", authSvc.User, delArticle)
-		g.POST("/fav", authSvc.User, favArticle)
-		g.POST("/like", authSvc.User, likeArticle)
 
 		g.POST("/files", authSvc.User, editArticleFiles)
 		g.POST("/relations/add", authSvc.User, addArticleRelation)
