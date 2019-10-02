@@ -95,7 +95,7 @@ func (p *Service) checkArticleRelations(items []*model.AddArticleRelation) (err 
 	primary := false
 	dic := make(map[int64]bool)
 	for _, v := range items {
-		if primary == true {
+		if primary == true && v.Primary {
 			return ecode.OnlyAllowOnePrimaryTopic
 		}
 		if v.Primary {
@@ -228,9 +228,9 @@ func (p *Service) UpdateArticleRelation(c context.Context, arg *model.ArgUpdateA
 	if arg.Primary {
 		var cata *model.TopicCatalog
 		if cata, err = p.d.GetTopicCatalogByCond(c, tx, map[string]interface{}{
-			"topic_id": catalog.TopicID,
-			"type":     model.TopicCatalogArticle,
-			"primary":  1,
+			"ref_id":  catalog.RefID,
+			"type":    model.TopicCatalogArticle,
+			"primary": 1,
 		}); err != nil {
 			return
 		} else if cata != nil {
