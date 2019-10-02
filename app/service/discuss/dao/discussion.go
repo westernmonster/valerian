@@ -10,6 +10,17 @@ import (
 	"valerian/library/log"
 )
 
+func (p *Dao) GetUserDiscussionsPaged(c context.Context, node sqalx.Node, aid int64, limit, offset int) (items []*model.Discussion, err error) {
+	items = make([]*model.Discussion, 0)
+	sqlSelect := "SELECT a.* FROM discussions a WHERE a.deleted=0 AND a.created_by=? ORDER BY a.id DESC limit ?,?"
+
+	if err = node.SelectContext(c, &items, sqlSelect, aid, offset, limit); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetUserDiscussionsPaged err(%+v) aid(%d) limit(%d) offset(%d)", err, aid, limit, offset))
+		return
+	}
+	return
+}
+
 // GetAll get all records
 func (p *Dao) GetDiscussions(c context.Context, node sqalx.Node) (items []*model.Discussion, err error) {
 	items = make([]*model.Discussion, 0)

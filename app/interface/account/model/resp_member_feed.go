@@ -69,10 +69,16 @@ type TargetArticle struct {
 	Avatar *string `json:"avatar,omitempty"`
 	// 内容
 	Excerpt string `json:"excerpt"`
-	// 喜欢数
-	LikeCount int `json:"like_count"`
+
 	// 补充个数
 	ReviseCount int `json:"revise_count"`
+
+	// 喜欢数
+	LikeCount int `json:"like_count"`
+
+	// 反对数
+	DislikeCount int `json:"dislike_count"`
+
 	// 评论数
 	CommentCount int `json:"comment_count"`
 }
@@ -84,6 +90,13 @@ type TargetRevise struct {
 	Title *string `json:"title,omitempty"`
 	// 评论内容
 	Excerpt string `json:"excerpt"`
+
+	// 喜欢数
+	LikeCount int `json:"like_count"`
+
+	// 反对数
+	DislikeCount int `json:"dislike_count"`
+
 	// 评论数
 	CommentCount int `json:"comment_count"`
 }
@@ -95,6 +108,13 @@ type TargetDiscuss struct {
 	Title *string `json:"title,omitempty"`
 	// 评论内容
 	Excerpt string `json:"excerpt"`
+
+	// 喜欢数
+	LikeCount int `json:"like_count"`
+
+	// 反对数
+	DislikeCount int `json:"dislike_count"`
+
 	// 评论数
 	CommentCount int `json:"comment_count"`
 

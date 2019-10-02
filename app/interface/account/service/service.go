@@ -7,6 +7,7 @@ import (
 	"valerian/app/interface/account/dao"
 	"valerian/app/interface/account/model"
 	account "valerian/app/service/account/api"
+	discuss "valerian/app/service/discuss/api"
 	feed "valerian/app/service/feed/api"
 	relation "valerian/app/service/relation/api"
 	"valerian/library/database/sqalx"
@@ -37,6 +38,7 @@ type Service struct {
 		GetAccountStat(c context.Context, aid int64) (stat *account.AccountStatInfo, err error)
 
 		GetAccountFeedPaged(c context.Context, accountID int64, limit, offset int) (info *feed.AccountFeedResp, err error)
+		GetUserDiscussionsPaged(c context.Context, aid int64, limit, offset int) (resp *discuss.UserDiscussionsResp, err error)
 
 		ProfileCache(c context.Context, id int64) (m *model.Profile, err error)
 		SetProfileCache(c context.Context, m *model.Profile) (err error)

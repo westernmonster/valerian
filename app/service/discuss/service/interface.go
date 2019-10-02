@@ -7,6 +7,8 @@ import (
 )
 
 type IDao interface {
+	GetUserDiscussionsPaged(c context.Context, node sqalx.Node, aid int64, limit, offset int) (items []*model.Discussion, err error)
+
 	GetDiscussionsByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.Discussion, err error)
 	GetDiscussions(c context.Context, node sqalx.Node) (items []*model.Discussion, err error)
 	GetDiscussionByID(c context.Context, node sqalx.Node, id int64) (item *model.Discussion, err error)

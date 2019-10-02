@@ -57,6 +57,17 @@ message DiscussionInfo {
 
 }
 
+
+message UserDiscussionsReq {
+    int64 AccountID = 1 [(gogoproto.jsontag) = "aid"];
+    int32 Limit = 2 [(gogoproto.jsontag) = "limit"];
+    int32 Offset = 3 [(gogoproto.jsontag) = "offset"];
+}
+
+message UserDiscussionsResp {
+    repeated DiscussionInfo Items = 1 [(gogoproto.jsontag) = 'items'];
+}
+
 message IDReq {
     int64 ID = 1 [(gogoproto.jsontag) = "id"];
 }
@@ -67,8 +78,9 @@ message CategoriesReq {
 
 
 service Discussion {
-    rpc  GetDiscussionInfo(IDReq) returns (DiscussionInfo);
-    rpc  GetDiscussionCategories(CategoriesReq) returns (CategoriesResp);
+    rpc GetDiscussionInfo(IDReq) returns (DiscussionInfo);
+    rpc GetDiscussionCategories(CategoriesReq) returns (CategoriesResp);
+    rpc GetUserDiscussionsPaged(UserDiscussionsReq) returns (UserDiscussionsResp);
 }
 
 

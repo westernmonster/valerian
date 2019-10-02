@@ -70,3 +70,16 @@ func (s *server) GetDiscussionCategories(ctx context.Context, req *api.Categorie
 
 	return resp, nil
 }
+
+func (s *server) GetUserDiscussionsPaged(ctx context.Context, req *api.UserDiscussionsReq) (*api.UserDiscussionsResp, error) {
+	items, err := s.svr.GetUserDiscussionsPaged(ctx, req.AccountID, int(req.Limit), int(req.Offset))
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &api.UserDiscussionsResp{
+		Items: items,
+	}
+
+	return resp, nil
+}
