@@ -2,6 +2,8 @@ package service
 
 import (
 	"context"
+	"net/url"
+	"strconv"
 	"time"
 
 	"valerian/app/interface/fav/model"
@@ -130,6 +132,28 @@ func (p *Service) GetFavsPaged(c context.Context, targetType string, limit, offs
 			break
 		}
 		resp.Items[i] = item
+	}
+
+	param := url.Values{}
+	param.Set("target_type", targetType)
+	param.Set("limit", strconv.Itoa(limit))
+	param.Set("offset", strconv.Itoa(offset-limit))
+
+	if resp.Paging.Prev, err = genURL("/api/v1/fav/list/all", param); err != nil {
+		return
+	}
+	param.Set("offset", strconv.Itoa(offset+limit))
+	if resp.Paging.Next, err = genURL("/api/v1/fav/list/all", param); err != nil {
+		return
+	}
+
+	if len(resp.Items) < limit {
+		resp.Paging.IsEnd = true
+		resp.Paging.Next = ""
+	}
+
+	if offset == 0 {
+		resp.Paging.Prev = ""
 	}
 
 	return
