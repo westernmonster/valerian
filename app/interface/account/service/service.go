@@ -10,6 +10,7 @@ import (
 	discuss "valerian/app/service/discuss/api"
 	feed "valerian/app/service/feed/api"
 	relation "valerian/app/service/relation/api"
+	topic "valerian/app/service/topic/api"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
 )
@@ -39,6 +40,7 @@ type Service struct {
 
 		GetAccountFeedPaged(c context.Context, accountID int64, limit, offset int) (info *feed.AccountFeedResp, err error)
 		GetUserDiscussionsPaged(c context.Context, aid int64, limit, offset int) (resp *discuss.UserDiscussionsResp, err error)
+		GetUserTopicsPaged(c context.Context, aid int64, limit, offset int) (resp *topic.UserTopicsResp, err error)
 
 		ProfileCache(c context.Context, id int64) (m *model.Profile, err error)
 		SetProfileCache(c context.Context, m *model.Profile) (err error)

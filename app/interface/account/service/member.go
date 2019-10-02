@@ -10,6 +10,7 @@ import (
 	discuss "valerian/app/service/discuss/api"
 	feed "valerian/app/service/feed/api"
 	relation "valerian/app/service/relation/api"
+	topic "valerian/app/service/topic/api"
 	"valerian/library/ecode"
 	"valerian/library/net/metadata"
 	"valerian/library/xstr"
@@ -171,6 +172,55 @@ func (p *Service) GetMemberDiscussionsPaged(c context.Context, aid int64, limit,
 	}
 	param.Set("offset", strconv.Itoa(offset+limit))
 	if resp.Paging.Next, err = genURL("/api/v1/account/list/discussions", param); err != nil {
+		return
+	}
+
+	if len(resp.Items) < limit {
+		resp.Paging.IsEnd = true
+		resp.Paging.Next = ""
+	}
+
+	if offset == 0 {
+		resp.Paging.Prev = ""
+	}
+
+	return
+}
+
+func (p *Service) GetMemberTopicsPaged(c context.Context, aid int64, limit, offset int) (resp *model.MemberTopicResp, err error) {
+	var data *topic.UserTopicsResp
+	if data, err = p.d.GetUserTopicsPaged(c, aid, limit, offset); err != nil {
+		return
+	}
+
+	resp = &model.MemberTopicResp{
+		Items:  make([]*model.MemberTopic, len(data.Items)),
+		Paging: &model.Paging{},
+	}
+
+	for i, v := range data.Items {
+		item := &model.MemberTopic{
+			ID:           v.ID,
+			Name:         v.Name,
+			MemberCount:  int(v.MemberCount),
+			Introduction: v.Introduction,
+		}
+
+		avatar := v.GetAvatarValue()
+		item.Avatar = &avatar
+		resp.Items[i] = item
+	}
+
+	param := url.Values{}
+	param.Set("account_id", strconv.FormatInt(aid, 10))
+	param.Set("limit", strconv.Itoa(limit))
+	param.Set("offset", strconv.Itoa(offset-limit))
+
+	if resp.Paging.Prev, err = genURL("/api/v1/account/list/topics", param); err != nil {
+		return
+	}
+	param.Set("offset", strconv.Itoa(offset+limit))
+	if resp.Paging.Next, err = genURL("/api/v1/account/list/topics", param); err != nil {
 		return
 	}
 
