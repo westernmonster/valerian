@@ -69,7 +69,7 @@ func (p *Service) FansPaged(c context.Context, aid int64, query string, limit, o
 		}
 
 		var stat *relation.StatInfo
-		if stat, err = p.d.Stat(c, v.AccountID); err != nil {
+		if stat, err = p.d.Stat(c, v.AccountID, v.AccountID); err != nil {
 			return
 		}
 

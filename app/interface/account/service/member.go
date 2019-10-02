@@ -6,11 +6,19 @@ import (
 	"valerian/app/interface/account/model"
 	account "valerian/app/service/account/api"
 	relation "valerian/app/service/relation/api"
+	"valerian/library/ecode"
+	"valerian/library/net/metadata"
 )
 
-func (p *Service) GetMemberInfo(c context.Context, aid int64) (resp *model.MemberInfo, err error) {
+func (p *Service) GetMemberInfo(c context.Context, targetID int64) (resp *model.MemberInfo, err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+
 	var f *model.Profile
-	if f, err = p.getProfile(c, aid); err != nil {
+	if f, err = p.getProfile(c, targetID); err != nil {
 		return
 	}
 
@@ -29,7 +37,7 @@ func (p *Service) GetMemberInfo(c context.Context, aid int64) (resp *model.Membe
 	}
 
 	var stat *relation.StatInfo
-	if stat, err = p.d.Stat(c, aid); err != nil {
+	if stat, err = p.d.Stat(c, aid, targetID); err != nil {
 		return
 	}
 	resp.Stat = &model.MemberInfoStat{
@@ -39,7 +47,7 @@ func (p *Service) GetMemberInfo(c context.Context, aid int64) (resp *model.Membe
 	}
 
 	var accountStat *account.AccountStatInfo
-	if accountStat, err = p.d.GetAccountStat(c, aid); err != nil {
+	if accountStat, err = p.d.GetAccountStat(c, targetID); err != nil {
 		return
 	}
 

@@ -31,7 +31,7 @@ type Service struct {
 		GetFans(c context.Context, accountID int64, limit, offset int) (resp *relation.FansResp, err error)
 		Follow(c context.Context, accountID, targetAccountID int64) (err error)
 		Unfollow(c context.Context, accountID, targetAccountID int64) (err error)
-		Stat(c context.Context, accountID int64) (resp *relation.StatInfo, err error)
+		Stat(c context.Context, aid, targetID int64) (resp *relation.StatInfo, err error)
 
 		GetAccountStat(c context.Context, aid int64) (stat *account.AccountStatInfo, err error)
 

@@ -245,7 +245,7 @@ func (p *Service) GetProfile(c context.Context, aid int64) (profile *model.Profi
 	}
 
 	var stat *relation.StatInfo
-	if stat, err = p.d.Stat(c, aid); err != nil {
+	if stat, err = p.d.Stat(c, aid, aid); err != nil {
 		return
 	}
 
