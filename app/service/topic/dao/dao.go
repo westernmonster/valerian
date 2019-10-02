@@ -54,8 +54,14 @@ func New(c *conf.Config) (dao *Dao) {
 		dao.sc = sc
 	}
 
-	if favRPC, err := fav.NewClient(c.FavRPC); err != nil {
+	if accountRPC, err := account.NewClient(c.FavRPC); err != nil {
 		panic(errors.WithMessage(err, "Failed to dial account service"))
+	} else {
+		dao.accountRPC = accountRPC
+	}
+
+	if favRPC, err := fav.NewClient(c.FavRPC); err != nil {
+		panic(errors.WithMessage(err, "Failed to dial fav service"))
 	} else {
 		dao.favRPC = favRPC
 	}
