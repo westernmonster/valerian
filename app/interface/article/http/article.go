@@ -54,7 +54,6 @@ func addArticle(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /article/edit [post]
 func editArticle(c *mars.Context) {
-
 	arg := new(model.ArgUpdateArticle)
 	if e := c.Bind(arg); e != nil {
 		return

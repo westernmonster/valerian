@@ -94,3 +94,11 @@ type ArgUpdateArticleRelation struct {
 	// edit // 允许所有成员编辑
 	Permission string `json:"permission"`
 }
+
+func (p *ArgUpdateArticleRelation) Validate() error {
+	return validation.ValidateStruct(
+		p,
+		validation.Field(&p.ID, validation.Required),
+		validation.Field(&p.Permission, validation.Required, validation.In(AuthPermissionEdit, AuthPermissionView)),
+	)
+}

@@ -201,6 +201,66 @@ func (p *Service) addArticleRelation(c context.Context, node sqalx.Node, article
 	return
 }
 
+func (p *Service) UpdateArticleRelation(c context.Context, arg *model.ArgUpdateArticleRelation) (err error) {
+	var tx sqalx.Node
+	if tx, err = p.d.DB().Beginx(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		return
+	}
+
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+			}
+			return
+		}
+	}()
+
+	var catalog *model.TopicCatalog
+	if catalog, err = p.d.GetTopicCatalogByID(c, tx, arg.ID); err != nil {
+		return
+	} else if catalog == nil {
+		err = ecode.TopicCatalogNotExist
+		return
+	}
+
+	if arg.Primary {
+		var cata *model.TopicCatalog
+		if cata, err = p.d.GetTopicCatalogByCond(c, tx, map[string]interface{}{
+			"topic_id": catalog.TopicID,
+			"type":     model.TopicCatalogArticle,
+			"primary":  1,
+		}); err != nil {
+			return
+		} else if cata != nil {
+			if cata.ID != arg.ID {
+				err = ecode.OnlyAllowOnePrimaryTopic
+				return
+			}
+		}
+
+	}
+
+	catalog.Permission = &arg.Permission
+	catalog.IsPrimary = types.BitBool(arg.Primary)
+
+	if err = p.d.UpdateTopicCatalog(c, tx, catalog); err != nil {
+		return
+	}
+
+	if err = tx.Commit(); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		return
+	}
+
+	p.addCache(func() {
+		p.d.DelTopicCatalogCache(context.TODO(), catalog.TopicID)
+	})
+
+	return
+}
+
 func (p *Service) SetPrimary(c context.Context, arg *model.ArgSetPrimaryArticleRelation) (err error) {
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
@@ -269,6 +329,7 @@ func (p *Service) SetPrimary(c context.Context, arg *model.ArgSetPrimaryArticleR
 
 	return
 }
+
 func (p *Service) AddArticleRelation(c context.Context, arg *model.ArgAddArticleRelation) (err error) {
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
