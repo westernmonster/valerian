@@ -11,8 +11,6 @@ type FeedItem struct {
 }
 
 type FeedSource struct {
-	// 动作发起者
-	Actor *Actor `json:"actor,omitempty"`
 	// 时间
 	ActionTime int64 `json:"action_time"`
 	// 文字内容
