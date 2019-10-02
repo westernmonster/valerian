@@ -75,8 +75,8 @@ func (s *server) Unfollow(ctx context.Context, req *api.FollowReq) (*api.EmptySt
 	return &api.EmptyStruct{}, nil
 }
 
-func (s *server) Stat(ctx context.Context, req *api.AidReq) (*api.StatInfo, error) {
-	resp, isFollowing, err := s.svr.Stat(ctx, req.AccountID)
+func (s *server) Stat(ctx context.Context, req *api.FollowReq) (*api.StatInfo, error) {
+	resp, isFollowing, err := s.svr.Stat(ctx, req.AccountID, req.TargetAccountID)
 	if err != nil {
 		return nil, err
 	}

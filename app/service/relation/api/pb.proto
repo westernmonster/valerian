@@ -67,7 +67,7 @@ service Relation {
 
     rpc  Unfollow(FollowReq) returns (EmptyStruct);
 
-    rpc  Stat(AidReq) returns (StatInfo);
+    rpc  Stat(FollowReq) returns (StatInfo);
 }
 
 
