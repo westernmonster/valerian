@@ -35,6 +35,7 @@ func (p *Service) GetMemberInfo(c context.Context, aid int64) (resp *model.Membe
 	resp.Stat = &model.MemberInfoStat{
 		FansCount:      int(stat.Fans),
 		FollowingCount: int(stat.Following),
+		IsFollow:       stat.IsFollowing,
 	}
 
 	var accountStat *account.AccountStatInfo
