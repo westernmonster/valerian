@@ -19,7 +19,7 @@ func (p *ArgOSSToken) Validate() error {
 		p,
 		validation.Field(&p.FileType,
 			validation.Required.Error(`请输入文件类型`),
-			validation.In("file", "image", "other", "certificatin").Error("文件类型不在允许范围内"),
+			validation.In("file", "image", "other", "certification").Error("文件类型不在允许范围内"),
 		),
 		validation.Field(&p.FileName,
 			validation.Required.Error(`请输入文件名`)),
