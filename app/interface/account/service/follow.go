@@ -47,7 +47,7 @@ func (p *Service) FansPaged(c context.Context, aid int64, query string, limit, o
 	}
 
 	resp = &model.MemberResp{
-		Items:  make([]*model.MemberItem, len(resp.Items)),
+		Items:  make([]*model.MemberItem, len(data.Items)),
 		Paging: &model.Paging{},
 	}
 
@@ -122,7 +122,7 @@ func (p *Service) FollowPaged(c context.Context, aid int64, query string, limit,
 	}
 
 	resp = &model.MemberResp{
-		Items:  make([]*model.MemberItem, len(resp.Items)),
+		Items:  make([]*model.MemberItem, len(data.Items)),
 		Paging: &model.Paging{},
 	}
 
