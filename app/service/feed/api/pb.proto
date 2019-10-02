@@ -12,6 +12,10 @@ message TopicFeedResp {
     repeated TopicFeedInfo items = 1 [(gogoproto.jsontag) = 'items'];
 }
 
+message AccountFeedResp {
+    repeated AccountFeedInfo items = 1 [(gogoproto.jsontag) = 'items'];
+}
+
 message TopicFeedInfo {
     int64 ID = 1 [(gogoproto.jsontag) = "id"];
 
@@ -40,16 +44,49 @@ message TopicFeedInfo {
 
 }
 
+message AccountFeedInfo {
+    int64 ID = 1 [(gogoproto.jsontag) = "id"];
+
+    int64 AccountID = 2 [(gogoproto.jsontag) = "account_id"];
+
+    string ActionType = 3 [(gogoproto.jsontag) = "action_type"];
+
+    int64 ActionTime = 4 [(gogoproto.jsontag) = "action_time"];
+
+    string ActionText = 5 [(gogoproto.jsontag) = "action_text"];
+
+    int64 TargetID = 8 [(gogoproto.jsontag) = "target_id"];
+
+    string TargetType = 9 [(gogoproto.jsontag) = "target_type"];
+
+    // unix timestamp
+    int64 CreatedAt = 10 [(gogoproto.jsontag) = "created_at"];
+
+    // unix timestamp
+    int64 UpdatedAt = 11 [(gogoproto.jsontag) = "updated_at"];
+
+
+}
+
 message TopicFeedReq {
     int64 TopicID = 1 [(gogoproto.jsontag) = "topic_id"];
     int32 Limit = 2 [(gogoproto.jsontag) = "limit"];
     int32 Offset = 3 [(gogoproto.jsontag) = "offset"];
 }
 
+message AccountFeedReq {
+    int64 AccountID = 1 [(gogoproto.jsontag) = "account_id"];
+    int32 Limit = 2 [(gogoproto.jsontag) = "limit"];
+    int32 Offset = 3 [(gogoproto.jsontag) = "offset"];
+}
+
+
 
 
 service Feed {
     rpc  GetTopicFeedPaged(TopicFeedReq) returns (TopicFeedResp);
+    rpc  GetAccountFeedPaged(AccountFeedReq) returns (AccountFeedResp);
 }
+
 
 

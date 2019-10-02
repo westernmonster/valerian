@@ -47,3 +47,12 @@ func (s *server) GetTopicFeedPaged(ctx context.Context, req *api.TopicFeedReq) (
 
 	return api.FromTopicFeed(resp), nil
 }
+
+func (s *server) GetAccountFeedPaged(ctx context.Context, req *api.AccountFeedReq) (*api.AccountFeedResp, error) {
+	resp, err := s.svr.GetAccountFeedPaged(ctx, req.AccountID, int(req.Limit), int(req.Offset))
+	if err != nil {
+		return nil, err
+	}
+
+	return api.FromAccountFeed(resp), nil
+}

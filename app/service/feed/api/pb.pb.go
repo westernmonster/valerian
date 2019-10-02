@@ -68,7 +68,7 @@ func (m *EmptyStruct) XXX_DiscardUnknown() {
 var xxx_messageInfo_EmptyStruct proto.InternalMessageInfo
 
 type TopicFeedResp struct {
-	Items                []*TopicFeedInfo `protobuf:"bytes,5,rep,name=items,proto3" json:"items"`
+	Items                []*TopicFeedInfo `protobuf:"bytes,1,rep,name=items,proto3" json:"items"`
 	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
 	XXX_unrecognized     []byte           `json:"-"`
 	XXX_sizecache        int32            `json:"-"`
@@ -114,6 +114,53 @@ func (m *TopicFeedResp) GetItems() []*TopicFeedInfo {
 	return nil
 }
 
+type AccountFeedResp struct {
+	Items                []*AccountFeedInfo `protobuf:"bytes,1,rep,name=items,proto3" json:"items"`
+	XXX_NoUnkeyedLiteral struct{}           `json:"-"`
+	XXX_unrecognized     []byte             `json:"-"`
+	XXX_sizecache        int32              `json:"-"`
+}
+
+func (m *AccountFeedResp) Reset()         { *m = AccountFeedResp{} }
+func (m *AccountFeedResp) String() string { return proto.CompactTextString(m) }
+func (*AccountFeedResp) ProtoMessage()    {}
+func (*AccountFeedResp) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f80abaa17e25ccc8, []int{2}
+}
+func (m *AccountFeedResp) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *AccountFeedResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_AccountFeedResp.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *AccountFeedResp) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AccountFeedResp.Merge(m, src)
+}
+func (m *AccountFeedResp) XXX_Size() int {
+	return m.Size()
+}
+func (m *AccountFeedResp) XXX_DiscardUnknown() {
+	xxx_messageInfo_AccountFeedResp.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_AccountFeedResp proto.InternalMessageInfo
+
+func (m *AccountFeedResp) GetItems() []*AccountFeedInfo {
+	if m != nil {
+		return m.Items
+	}
+	return nil
+}
+
 type TopicFeedInfo struct {
 	ID         int64  `protobuf:"varint,1,opt,name=ID,proto3" json:"id"`
 	TopicID    int64  `protobuf:"varint,2,opt,name=TopicID,proto3" json:"topic_id"`
@@ -137,7 +184,7 @@ func (m *TopicFeedInfo) Reset()         { *m = TopicFeedInfo{} }
 func (m *TopicFeedInfo) String() string { return proto.CompactTextString(m) }
 func (*TopicFeedInfo) ProtoMessage()    {}
 func (*TopicFeedInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f80abaa17e25ccc8, []int{2}
+	return fileDescriptor_f80abaa17e25ccc8, []int{3}
 }
 func (m *TopicFeedInfo) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -243,6 +290,119 @@ func (m *TopicFeedInfo) GetUpdatedAt() int64 {
 	return 0
 }
 
+type AccountFeedInfo struct {
+	ID         int64  `protobuf:"varint,1,opt,name=ID,proto3" json:"id"`
+	AccountID  int64  `protobuf:"varint,2,opt,name=AccountID,proto3" json:"account_id"`
+	ActionType string `protobuf:"bytes,3,opt,name=ActionType,proto3" json:"action_type"`
+	ActionTime int64  `protobuf:"varint,4,opt,name=ActionTime,proto3" json:"action_time"`
+	ActionText string `protobuf:"bytes,5,opt,name=ActionText,proto3" json:"action_text"`
+	TargetID   int64  `protobuf:"varint,8,opt,name=TargetID,proto3" json:"target_id"`
+	TargetType string `protobuf:"bytes,9,opt,name=TargetType,proto3" json:"target_type"`
+	// unix timestamp
+	CreatedAt int64 `protobuf:"varint,10,opt,name=CreatedAt,proto3" json:"created_at"`
+	// unix timestamp
+	UpdatedAt            int64    `protobuf:"varint,11,opt,name=UpdatedAt,proto3" json:"updated_at"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *AccountFeedInfo) Reset()         { *m = AccountFeedInfo{} }
+func (m *AccountFeedInfo) String() string { return proto.CompactTextString(m) }
+func (*AccountFeedInfo) ProtoMessage()    {}
+func (*AccountFeedInfo) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f80abaa17e25ccc8, []int{4}
+}
+func (m *AccountFeedInfo) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *AccountFeedInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_AccountFeedInfo.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *AccountFeedInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AccountFeedInfo.Merge(m, src)
+}
+func (m *AccountFeedInfo) XXX_Size() int {
+	return m.Size()
+}
+func (m *AccountFeedInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_AccountFeedInfo.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_AccountFeedInfo proto.InternalMessageInfo
+
+func (m *AccountFeedInfo) GetID() int64 {
+	if m != nil {
+		return m.ID
+	}
+	return 0
+}
+
+func (m *AccountFeedInfo) GetAccountID() int64 {
+	if m != nil {
+		return m.AccountID
+	}
+	return 0
+}
+
+func (m *AccountFeedInfo) GetActionType() string {
+	if m != nil {
+		return m.ActionType
+	}
+	return ""
+}
+
+func (m *AccountFeedInfo) GetActionTime() int64 {
+	if m != nil {
+		return m.ActionTime
+	}
+	return 0
+}
+
+func (m *AccountFeedInfo) GetActionText() string {
+	if m != nil {
+		return m.ActionText
+	}
+	return ""
+}
+
+func (m *AccountFeedInfo) GetTargetID() int64 {
+	if m != nil {
+		return m.TargetID
+	}
+	return 0
+}
+
+func (m *AccountFeedInfo) GetTargetType() string {
+	if m != nil {
+		return m.TargetType
+	}
+	return ""
+}
+
+func (m *AccountFeedInfo) GetCreatedAt() int64 {
+	if m != nil {
+		return m.CreatedAt
+	}
+	return 0
+}
+
+func (m *AccountFeedInfo) GetUpdatedAt() int64 {
+	if m != nil {
+		return m.UpdatedAt
+	}
+	return 0
+}
+
 type TopicFeedReq struct {
 	TopicID              int64    `protobuf:"varint,1,opt,name=TopicID,proto3" json:"topic_id"`
 	Limit                int32    `protobuf:"varint,2,opt,name=Limit,proto3" json:"limit"`
@@ -256,7 +416,7 @@ func (m *TopicFeedReq) Reset()         { *m = TopicFeedReq{} }
 func (m *TopicFeedReq) String() string { return proto.CompactTextString(m) }
 func (*TopicFeedReq) ProtoMessage()    {}
 func (*TopicFeedReq) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f80abaa17e25ccc8, []int{3}
+	return fileDescriptor_f80abaa17e25ccc8, []int{5}
 }
 func (m *TopicFeedReq) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -306,48 +466,120 @@ func (m *TopicFeedReq) GetOffset() int32 {
 	return 0
 }
 
+type AccountFeedReq struct {
+	AccountID            int64    `protobuf:"varint,1,opt,name=AccountID,proto3" json:"account_id"`
+	Limit                int32    `protobuf:"varint,2,opt,name=Limit,proto3" json:"limit"`
+	Offset               int32    `protobuf:"varint,3,opt,name=Offset,proto3" json:"offset"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *AccountFeedReq) Reset()         { *m = AccountFeedReq{} }
+func (m *AccountFeedReq) String() string { return proto.CompactTextString(m) }
+func (*AccountFeedReq) ProtoMessage()    {}
+func (*AccountFeedReq) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f80abaa17e25ccc8, []int{6}
+}
+func (m *AccountFeedReq) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *AccountFeedReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_AccountFeedReq.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *AccountFeedReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AccountFeedReq.Merge(m, src)
+}
+func (m *AccountFeedReq) XXX_Size() int {
+	return m.Size()
+}
+func (m *AccountFeedReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_AccountFeedReq.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_AccountFeedReq proto.InternalMessageInfo
+
+func (m *AccountFeedReq) GetAccountID() int64 {
+	if m != nil {
+		return m.AccountID
+	}
+	return 0
+}
+
+func (m *AccountFeedReq) GetLimit() int32 {
+	if m != nil {
+		return m.Limit
+	}
+	return 0
+}
+
+func (m *AccountFeedReq) GetOffset() int32 {
+	if m != nil {
+		return m.Offset
+	}
+	return 0
+}
+
 func init() {
 	proto.RegisterType((*EmptyStruct)(nil), "service.topic.EmptyStruct")
 	proto.RegisterType((*TopicFeedResp)(nil), "service.topic.TopicFeedResp")
+	proto.RegisterType((*AccountFeedResp)(nil), "service.topic.AccountFeedResp")
 	proto.RegisterType((*TopicFeedInfo)(nil), "service.topic.TopicFeedInfo")
+	proto.RegisterType((*AccountFeedInfo)(nil), "service.topic.AccountFeedInfo")
 	proto.RegisterType((*TopicFeedReq)(nil), "service.topic.TopicFeedReq")
+	proto.RegisterType((*AccountFeedReq)(nil), "service.topic.AccountFeedReq")
 }
 
 func init() { proto.RegisterFile("pb.proto", fileDescriptor_f80abaa17e25ccc8) }
 
 var fileDescriptor_f80abaa17e25ccc8 = []byte{
-	// 487 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x93, 0x41, 0x8b, 0xd3, 0x40,
-	0x14, 0xc7, 0x49, 0xbb, 0xe9, 0xb6, 0xd3, 0xad, 0xb2, 0x73, 0x90, 0xb0, 0x2e, 0x4d, 0xc9, 0x41,
-	0x2a, 0x68, 0x0a, 0xeb, 0xd9, 0x43, 0x63, 0x54, 0x02, 0xb2, 0xca, 0x58, 0x3d, 0x78, 0x29, 0x69,
-	0x32, 0x8d, 0x03, 0x66, 0x67, 0x36, 0x79, 0x95, 0x2d, 0x7e, 0x41, 0x8f, 0x7e, 0x82, 0x20, 0x3d,
-	0xe6, 0xe4, 0x47, 0x90, 0x79, 0x53, 0x9b, 0x2c, 0xb2, 0x7b, 0xea, 0xcc, 0xff, 0xfd, 0xde, 0xff,
-	0xfd, 0xe9, 0x9b, 0x90, 0xbe, 0x5a, 0xf9, 0xaa, 0x90, 0x20, 0xe9, 0xa8, 0xe4, 0xc5, 0x77, 0x91,
-	0x70, 0x1f, 0xa4, 0x12, 0xc9, 0xd9, 0xf3, 0x4c, 0xc0, 0xd7, 0xcd, 0xca, 0x4f, 0x64, 0x3e, 0xcb,
-	0x64, 0x26, 0x67, 0x48, 0xad, 0x36, 0x6b, 0xbc, 0xe1, 0x05, 0x4f, 0xa6, 0xdb, 0x1b, 0x91, 0xe1,
-	0xeb, 0x5c, 0xc1, 0xf6, 0x23, 0x14, 0x9b, 0x04, 0xbc, 0x4b, 0x32, 0x5a, 0x68, 0x9b, 0x37, 0x9c,
-	0xa7, 0x8c, 0x97, 0x8a, 0xbe, 0x24, 0xb6, 0x00, 0x9e, 0x97, 0x8e, 0x3d, 0xe9, 0x4e, 0x87, 0x17,
-	0xe7, 0xfe, 0xad, 0x69, 0xfe, 0x01, 0x8e, 0xae, 0xd6, 0x32, 0x18, 0xd4, 0x95, 0x6b, 0x70, 0x66,
-	0x7e, 0xbc, 0x3f, 0xdd, 0x96, 0xa1, 0x66, 0xe8, 0x23, 0xd2, 0x89, 0x42, 0xc7, 0x9a, 0x58, 0xd3,
-	0x6e, 0xd0, 0xab, 0x2b, 0xb7, 0x23, 0x52, 0xd6, 0x89, 0x42, 0xfa, 0x84, 0x1c, 0x23, 0x18, 0x85,
-	0x4e, 0x07, 0x8b, 0x27, 0x75, 0xe5, 0xf6, 0x71, 0xca, 0x52, 0xa4, 0xec, 0x5f, 0x91, 0xce, 0x08,
-	0x99, 0x27, 0x20, 0xe4, 0xd5, 0x62, 0xab, 0xb8, 0xd3, 0x9d, 0x58, 0xd3, 0x41, 0xf0, 0xb0, 0xae,
-	0xdc, 0x61, 0x8c, 0xea, 0x12, 0xb6, 0x8a, 0xb3, 0x16, 0xd2, 0x6a, 0x10, 0x39, 0x77, 0x8e, 0xd0,
-	0xfb, 0x56, 0x83, 0xc8, 0x9b, 0x06, 0x91, 0xb7, 0x1b, 0xf8, 0x0d, 0x38, 0xf6, 0xff, 0x13, 0xf8,
-	0x0d, 0xb0, 0x16, 0xa2, 0xa3, 0xcf, 0x13, 0x90, 0x45, 0x14, 0x3a, 0xbd, 0x26, 0x7a, 0xac, 0x25,
-	0x8c, 0xbe, 0x2f, 0xd2, 0x67, 0x64, 0x80, 0x47, 0x4c, 0x7e, 0x8c, 0xbe, 0x0f, 0xea, 0xca, 0x25,
-	0x86, 0xc4, 0xe0, 0x0d, 0x40, 0x9f, 0x92, 0xfe, 0x22, 0x2e, 0x32, 0x0e, 0x51, 0xe8, 0xf4, 0xd1,
-	0x76, 0x54, 0x57, 0xee, 0x00, 0x50, 0xd3, 0xbe, 0x87, 0xb2, 0x4e, 0x6c, 0xce, 0xe8, 0x3c, 0x68,
-	0x12, 0xef, 0x61, 0xf3, 0x9f, 0x34, 0x88, 0x4e, 0xf2, 0xaa, 0xe0, 0x31, 0xf0, 0x74, 0x0e, 0x0e,
-	0x41, 0x73, 0x4c, 0x92, 0x18, 0x71, 0x19, 0x03, 0x6b, 0x00, 0x4d, 0x7f, 0x52, 0xe9, 0x9e, 0x1e,
-	0x36, 0xf4, 0xc6, 0x88, 0x48, 0x1f, 0x00, 0xef, 0x07, 0x39, 0x69, 0x3d, 0xa1, 0xeb, 0xf6, 0x62,
-	0xad, 0xfb, 0x16, 0xeb, 0x12, 0xfb, 0x9d, 0xc8, 0x05, 0xe0, 0xfa, 0x6d, 0xf3, 0x96, 0xbe, 0x69,
-	0x81, 0x19, 0x9d, 0x7a, 0xa4, 0xf7, 0x7e, 0xbd, 0x2e, 0x39, 0xe0, 0xd6, 0xed, 0x80, 0xd4, 0x95,
-	0xdb, 0x93, 0xa8, 0xb0, 0x7d, 0xe5, 0xe2, 0x33, 0x39, 0xd2, 0x73, 0xe9, 0x25, 0x39, 0x7d, 0xcb,
-	0xe1, 0x90, 0xe3, 0x43, 0x9c, 0xf1, 0x94, 0x3e, 0xbe, 0xeb, 0xf1, 0x32, 0x7e, 0x7d, 0x76, 0x7e,
-	0x77, 0xb1, 0x54, 0xc1, 0xe9, 0xcf, 0xdd, 0xd8, 0xfa, 0xb5, 0x1b, 0x5b, 0xbf, 0x77, 0x63, 0xeb,
-	0x4b, 0x37, 0x56, 0x62, 0xd5, 0xc3, 0x0f, 0xe8, 0xc5, 0xdf, 0x00, 0x00, 0x00, 0xff, 0xff, 0x60,
-	0x30, 0xbf, 0x17, 0x8a, 0x03, 0x00, 0x00,
+	// 582 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x95, 0xcf, 0x8f, 0xd2, 0x40,
+	0x14, 0xc7, 0x53, 0xba, 0xb0, 0x30, 0x2c, 0xbb, 0xd9, 0x9a, 0x98, 0x66, 0x5d, 0x29, 0xe9, 0xc1,
+	0x60, 0xa2, 0x90, 0xac, 0x67, 0x63, 0x40, 0x74, 0xd3, 0xc4, 0xac, 0xa6, 0xe2, 0xc5, 0x0b, 0x29,
+	0xed, 0x80, 0x93, 0x58, 0x66, 0x68, 0x1f, 0x66, 0x89, 0x47, 0xff, 0x13, 0xcf, 0xfe, 0x21, 0x1e,
+	0xfd, 0x0b, 0x1a, 0xc3, 0xb1, 0x27, 0xff, 0x04, 0x33, 0x6f, 0xb0, 0x3f, 0x34, 0xe0, 0xc5, 0x83,
+	0x7b, 0x62, 0xfa, 0xde, 0xe7, 0x7d, 0xe7, 0x3b, 0xf3, 0x66, 0x06, 0x52, 0x17, 0xd3, 0x9e, 0x88,
+	0x38, 0x70, 0xa3, 0x15, 0xd3, 0xe8, 0x03, 0xf3, 0x69, 0x0f, 0xb8, 0x60, 0xfe, 0xd9, 0xc3, 0x39,
+	0x83, 0x77, 0xab, 0x69, 0xcf, 0xe7, 0x61, 0x7f, 0xce, 0xe7, 0xbc, 0x8f, 0xd4, 0x74, 0x35, 0xc3,
+	0x2f, 0xfc, 0xc0, 0x91, 0xaa, 0xb6, 0x5b, 0xa4, 0xf9, 0x2c, 0x14, 0xb0, 0x7e, 0x0d, 0xd1, 0xca,
+	0x07, 0xfb, 0x8a, 0xb4, 0xc6, 0x52, 0xe6, 0x39, 0xa5, 0x81, 0x4b, 0x63, 0x61, 0x3c, 0x26, 0x55,
+	0x06, 0x34, 0x8c, 0x4d, 0xad, 0xa3, 0x77, 0x9b, 0x17, 0xe7, 0xbd, 0xd2, 0x6c, 0xbd, 0x0c, 0x76,
+	0x16, 0x33, 0x3e, 0x6c, 0xa4, 0x89, 0xa5, 0x70, 0x57, 0xfd, 0xd8, 0x2e, 0x39, 0x19, 0xf8, 0x3e,
+	0x5f, 0x2d, 0x20, 0x53, 0x7c, 0x52, 0x56, 0x6c, 0xff, 0xa6, 0x58, 0xc0, 0x77, 0x68, 0xfe, 0xd0,
+	0x0b, 0x26, 0x25, 0x63, 0xdc, 0x26, 0x15, 0x67, 0x64, 0x6a, 0x1d, 0xad, 0xab, 0x0f, 0x6b, 0x69,
+	0x62, 0x55, 0x58, 0xe0, 0x56, 0x9c, 0x91, 0x71, 0x8f, 0x1c, 0x22, 0xe8, 0x8c, 0xcc, 0x0a, 0x26,
+	0x8f, 0xd2, 0xc4, 0xaa, 0xe3, 0x3c, 0x13, 0x16, 0xb8, 0xbf, 0x92, 0x46, 0x9f, 0x90, 0x81, 0x0f,
+	0x8c, 0x2f, 0xc6, 0x6b, 0x41, 0x4d, 0xbd, 0xa3, 0x75, 0x1b, 0xc3, 0x93, 0x34, 0xb1, 0x9a, 0x1e,
+	0x46, 0x27, 0xb0, 0x16, 0xd4, 0x2d, 0x20, 0x85, 0x02, 0x16, 0x52, 0xf3, 0x00, 0xb5, 0x4b, 0x05,
+	0x2c, 0xcc, 0x0b, 0x58, 0x58, 0x2c, 0xa0, 0xd7, 0x60, 0x56, 0xff, 0x9c, 0x81, 0x5e, 0x83, 0x5b,
+	0x40, 0xa4, 0xf5, 0x81, 0x0f, 0x3c, 0x72, 0x46, 0x66, 0x2d, 0xb7, 0xee, 0xc9, 0x10, 0x5a, 0xdf,
+	0x26, 0x8d, 0x07, 0xa4, 0x81, 0x43, 0x74, 0x7e, 0x88, 0xba, 0xc7, 0x69, 0x62, 0x11, 0x45, 0xa2,
+	0xf1, 0x1c, 0x30, 0xee, 0x93, 0xfa, 0xd8, 0x8b, 0xe6, 0x14, 0x9c, 0x91, 0x59, 0x47, 0xd9, 0x56,
+	0x9a, 0x58, 0x0d, 0xc0, 0x98, 0xd4, 0xcd, 0xd2, 0xd2, 0xb1, 0x1a, 0xa3, 0x72, 0x23, 0x77, 0xbc,
+	0x85, 0xd5, 0x9e, 0xe4, 0x88, 0x74, 0xf2, 0x34, 0xa2, 0x1e, 0xd0, 0x60, 0x00, 0x26, 0x41, 0x71,
+	0x74, 0xe2, 0xab, 0xe0, 0xc4, 0x03, 0x37, 0x07, 0x24, 0xfd, 0x46, 0x04, 0x5b, 0xba, 0x99, 0xd3,
+	0x2b, 0x15, 0x44, 0x3a, 0x03, 0xec, 0xcf, 0x7a, 0xe9, 0x1c, 0xed, 0x6d, 0x3a, 0xee, 0x08, 0xa2,
+	0x59, 0xdb, 0xb7, 0x3b, 0x82, 0x41, 0xb9, 0xca, 0x1c, 0xf8, 0x1f, 0x5b, 0x7f, 0x53, 0x9b, 0xf4,
+	0x91, 0x1c, 0x15, 0xde, 0x8e, 0x65, 0xf1, 0xf6, 0x69, 0xfb, 0x6e, 0x9f, 0x45, 0xaa, 0x2f, 0x58,
+	0xc8, 0x00, 0x9b, 0x55, 0x55, 0x17, 0xfe, 0xbd, 0x0c, 0xb8, 0x2a, 0x6e, 0xd8, 0xa4, 0xf6, 0x72,
+	0x36, 0x8b, 0x29, 0x60, 0x7f, 0xaa, 0x43, 0x92, 0x26, 0x56, 0x8d, 0x63, 0xc4, 0xdd, 0x66, 0xec,
+	0x4f, 0x1a, 0x39, 0x2e, 0xbd, 0x34, 0xcb, 0xf2, 0x41, 0xd0, 0xfe, 0x76, 0x10, 0xfe, 0x85, 0x8b,
+	0x8b, 0x2f, 0x1a, 0x39, 0x90, 0xd3, 0x1b, 0x57, 0xe4, 0xf4, 0x92, 0x42, 0xb6, 0x1d, 0xaf, 0xbc,
+	0x39, 0x0d, 0x8c, 0x3b, 0xbb, 0x1e, 0x4f, 0x97, 0x2e, 0xcf, 0xce, 0x77, 0x27, 0x63, 0x61, 0x8c,
+	0xc9, 0xad, 0x4b, 0x0a, 0x85, 0x05, 0x2a, 0xc5, 0xbb, 0xbb, 0x1f, 0x4f, 0xa9, 0xd9, 0xde, 0x97,
+	0x8e, 0xc5, 0xf0, 0xf4, 0xeb, 0xa6, 0xad, 0x7d, 0xdb, 0xb4, 0xb5, 0xef, 0x9b, 0xb6, 0xf6, 0x56,
+	0xf7, 0x04, 0x9b, 0xd6, 0xf0, 0x6f, 0xe1, 0xd1, 0xcf, 0x00, 0x00, 0x00, 0xff, 0xff, 0x0e, 0xd6,
+	0x01, 0xd9, 0x60, 0x06, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -363,6 +595,7 @@ const _ = grpc.SupportPackageIsVersion4
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type FeedClient interface {
 	GetTopicFeedPaged(ctx context.Context, in *TopicFeedReq, opts ...grpc.CallOption) (*TopicFeedResp, error)
+	GetAccountFeedPaged(ctx context.Context, in *AccountFeedReq, opts ...grpc.CallOption) (*AccountFeedResp, error)
 }
 
 type feedClient struct {
@@ -382,9 +615,19 @@ func (c *feedClient) GetTopicFeedPaged(ctx context.Context, in *TopicFeedReq, op
 	return out, nil
 }
 
+func (c *feedClient) GetAccountFeedPaged(ctx context.Context, in *AccountFeedReq, opts ...grpc.CallOption) (*AccountFeedResp, error) {
+	out := new(AccountFeedResp)
+	err := c.cc.Invoke(ctx, "/service.topic.Feed/GetAccountFeedPaged", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // FeedServer is the server API for Feed service.
 type FeedServer interface {
 	GetTopicFeedPaged(context.Context, *TopicFeedReq) (*TopicFeedResp, error)
+	GetAccountFeedPaged(context.Context, *AccountFeedReq) (*AccountFeedResp, error)
 }
 
 // UnimplementedFeedServer can be embedded to have forward compatible implementations.
@@ -393,6 +636,9 @@ type UnimplementedFeedServer struct {
 
 func (*UnimplementedFeedServer) GetTopicFeedPaged(ctx context.Context, req *TopicFeedReq) (*TopicFeedResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTopicFeedPaged not implemented")
+}
+func (*UnimplementedFeedServer) GetAccountFeedPaged(ctx context.Context, req *AccountFeedReq) (*AccountFeedResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAccountFeedPaged not implemented")
 }
 
 func RegisterFeedServer(s *grpc.Server, srv FeedServer) {
@@ -417,6 +663,24 @@ func _Feed_GetTopicFeedPaged_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Feed_GetAccountFeedPaged_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AccountFeedReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FeedServer).GetAccountFeedPaged(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/service.topic.Feed/GetAccountFeedPaged",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FeedServer).GetAccountFeedPaged(ctx, req.(*AccountFeedReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Feed_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "service.topic.Feed",
 	HandlerType: (*FeedServer)(nil),
@@ -424,6 +688,10 @@ var _Feed_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetTopicFeedPaged",
 			Handler:    _Feed_GetTopicFeedPaged_Handler,
+		},
+		{
+			MethodName: "GetAccountFeedPaged",
+			Handler:    _Feed_GetAccountFeedPaged_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -492,7 +760,48 @@ func (m *TopicFeedResp) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 				i = encodeVarintPb(dAtA, i, uint64(size))
 			}
 			i--
-			dAtA[i] = 0x2a
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *AccountFeedResp) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *AccountFeedResp) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *AccountFeedResp) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.Items) > 0 {
+		for iNdEx := len(m.Items) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Items[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintPb(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
 		}
 	}
 	return len(dAtA) - i, nil
@@ -588,6 +897,84 @@ func (m *TopicFeedInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *AccountFeedInfo) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *AccountFeedInfo) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *AccountFeedInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.UpdatedAt != 0 {
+		i = encodeVarintPb(dAtA, i, uint64(m.UpdatedAt))
+		i--
+		dAtA[i] = 0x58
+	}
+	if m.CreatedAt != 0 {
+		i = encodeVarintPb(dAtA, i, uint64(m.CreatedAt))
+		i--
+		dAtA[i] = 0x50
+	}
+	if len(m.TargetType) > 0 {
+		i -= len(m.TargetType)
+		copy(dAtA[i:], m.TargetType)
+		i = encodeVarintPb(dAtA, i, uint64(len(m.TargetType)))
+		i--
+		dAtA[i] = 0x4a
+	}
+	if m.TargetID != 0 {
+		i = encodeVarintPb(dAtA, i, uint64(m.TargetID))
+		i--
+		dAtA[i] = 0x40
+	}
+	if len(m.ActionText) > 0 {
+		i -= len(m.ActionText)
+		copy(dAtA[i:], m.ActionText)
+		i = encodeVarintPb(dAtA, i, uint64(len(m.ActionText)))
+		i--
+		dAtA[i] = 0x2a
+	}
+	if m.ActionTime != 0 {
+		i = encodeVarintPb(dAtA, i, uint64(m.ActionTime))
+		i--
+		dAtA[i] = 0x20
+	}
+	if len(m.ActionType) > 0 {
+		i -= len(m.ActionType)
+		copy(dAtA[i:], m.ActionType)
+		i = encodeVarintPb(dAtA, i, uint64(len(m.ActionType)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.AccountID != 0 {
+		i = encodeVarintPb(dAtA, i, uint64(m.AccountID))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.ID != 0 {
+		i = encodeVarintPb(dAtA, i, uint64(m.ID))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
 func (m *TopicFeedReq) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -630,6 +1017,48 @@ func (m *TopicFeedReq) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *AccountFeedReq) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *AccountFeedReq) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *AccountFeedReq) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Offset != 0 {
+		i = encodeVarintPb(dAtA, i, uint64(m.Offset))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.Limit != 0 {
+		i = encodeVarintPb(dAtA, i, uint64(m.Limit))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.AccountID != 0 {
+		i = encodeVarintPb(dAtA, i, uint64(m.AccountID))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintPb(dAtA []byte, offset int, v uint64) int {
 	offset -= sovPb(v)
 	base := offset
@@ -654,6 +1083,24 @@ func (m *EmptyStruct) Size() (n int) {
 }
 
 func (m *TopicFeedResp) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Items) > 0 {
+		for _, e := range m.Items {
+			l = e.Size()
+			n += 1 + l + sovPb(uint64(l))
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *AccountFeedResp) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -720,6 +1167,48 @@ func (m *TopicFeedInfo) Size() (n int) {
 	return n
 }
 
+func (m *AccountFeedInfo) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.ID != 0 {
+		n += 1 + sovPb(uint64(m.ID))
+	}
+	if m.AccountID != 0 {
+		n += 1 + sovPb(uint64(m.AccountID))
+	}
+	l = len(m.ActionType)
+	if l > 0 {
+		n += 1 + l + sovPb(uint64(l))
+	}
+	if m.ActionTime != 0 {
+		n += 1 + sovPb(uint64(m.ActionTime))
+	}
+	l = len(m.ActionText)
+	if l > 0 {
+		n += 1 + l + sovPb(uint64(l))
+	}
+	if m.TargetID != 0 {
+		n += 1 + sovPb(uint64(m.TargetID))
+	}
+	l = len(m.TargetType)
+	if l > 0 {
+		n += 1 + l + sovPb(uint64(l))
+	}
+	if m.CreatedAt != 0 {
+		n += 1 + sovPb(uint64(m.CreatedAt))
+	}
+	if m.UpdatedAt != 0 {
+		n += 1 + sovPb(uint64(m.UpdatedAt))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
 func (m *TopicFeedReq) Size() (n int) {
 	if m == nil {
 		return 0
@@ -728,6 +1217,27 @@ func (m *TopicFeedReq) Size() (n int) {
 	_ = l
 	if m.TopicID != 0 {
 		n += 1 + sovPb(uint64(m.TopicID))
+	}
+	if m.Limit != 0 {
+		n += 1 + sovPb(uint64(m.Limit))
+	}
+	if m.Offset != 0 {
+		n += 1 + sovPb(uint64(m.Offset))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *AccountFeedReq) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.AccountID != 0 {
+		n += 1 + sovPb(uint64(m.AccountID))
 	}
 	if m.Limit != 0 {
 		n += 1 + sovPb(uint64(m.Limit))
@@ -830,7 +1340,7 @@ func (m *TopicFeedResp) Unmarshal(dAtA []byte) error {
 			return fmt.Errorf("proto: TopicFeedResp: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
-		case 5:
+		case 1:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Items", wireType)
 			}
@@ -860,6 +1370,94 @@ func (m *TopicFeedResp) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.Items = append(m.Items, &TopicFeedInfo{})
+			if err := m.Items[len(m.Items)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipPb(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *AccountFeedResp) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowPb
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: AccountFeedResp: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: AccountFeedResp: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Items", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthPb
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthPb
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Items = append(m.Items, &AccountFeedInfo{})
 			if err := m.Items[len(m.Items)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
@@ -1204,6 +1802,270 @@ func (m *TopicFeedInfo) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+func (m *AccountFeedInfo) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowPb
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: AccountFeedInfo: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: AccountFeedInfo: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ID", wireType)
+			}
+			m.ID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ID |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AccountID", wireType)
+			}
+			m.AccountID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.AccountID |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ActionType", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPb
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPb
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ActionType = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ActionTime", wireType)
+			}
+			m.ActionTime = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ActionTime |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ActionText", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPb
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPb
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ActionText = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 8:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TargetID", wireType)
+			}
+			m.TargetID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.TargetID |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 9:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TargetType", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPb
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPb
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.TargetType = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 10:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CreatedAt", wireType)
+			}
+			m.CreatedAt = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.CreatedAt |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 11:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field UpdatedAt", wireType)
+			}
+			m.UpdatedAt = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.UpdatedAt |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipPb(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
 func (m *TopicFeedReq) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -1248,6 +2110,117 @@ func (m *TopicFeedReq) Unmarshal(dAtA []byte) error {
 				b := dAtA[iNdEx]
 				iNdEx++
 				m.TopicID |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Limit", wireType)
+			}
+			m.Limit = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Limit |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Offset", wireType)
+			}
+			m.Offset = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Offset |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipPb(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *AccountFeedReq) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowPb
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: AccountFeedReq: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: AccountFeedReq: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AccountID", wireType)
+			}
+			m.AccountID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.AccountID |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
