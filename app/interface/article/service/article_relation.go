@@ -162,9 +162,9 @@ func (p *Service) addArticleRelation(c context.Context, node sqalx.Node, article
 	if item.Primary {
 		var catalog *model.TopicCatalog
 		if catalog, err = p.d.GetTopicCatalogByCond(c, node, map[string]interface{}{
-			"topic_id": item.TopicID,
-			"type":     model.TopicCatalogArticle,
-			"primary":  1,
+			"ref_id":  articleID,
+			"type":    model.TopicCatalogArticle,
+			"primary": 1,
 		}); err != nil {
 			return
 		}
