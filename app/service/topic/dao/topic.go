@@ -12,7 +12,7 @@ import (
 
 func (p *Dao) GetUserTopicsPaged(c context.Context, node sqalx.Node, aid int64, limit, offset int) (items []*model.Topic, err error) {
 	items = make([]*model.Topic, 0)
-	sqlSelect := "SELECT a.* FROM topics a WHERE a.deleted=0 AND a.account_id=? ORDER BY a.id DESC limit ?,?"
+	sqlSelect := "SELECT a.* FROM topics a WHERE a.deleted=0 AND a.created_by=? ORDER BY a.id DESC limit ?,?"
 
 	if err = node.SelectContext(c, &items, sqlSelect, aid, offset, limit); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetUserTopics err(%+v)", err))
