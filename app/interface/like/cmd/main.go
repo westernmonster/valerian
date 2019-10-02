@@ -7,9 +7,9 @@ import (
 
 	flag "github.com/spf13/pflag"
 
-	"valerian/app/interface/fav/conf"
-	"valerian/app/interface/fav/http"
-	"valerian/app/interface/fav/service"
+	"valerian/app/interface/like/conf"
+	"valerian/app/interface/like/http"
+	"valerian/app/interface/like/service"
 	ecode "valerian/library/ecode/tip"
 	"valerian/library/log"
 	"valerian/library/tracing"
@@ -41,11 +41,11 @@ func main() {
 	signal.Notify(c, syscall.SIGHUP, syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT)
 	for {
 		s := <-c
-		log.Infof("fav-interface get a signal %s", s.String())
+		log.Infof("like-interface get a signal %s", s.String())
 		switch s {
 		case syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT:
 			srv.Close()
-			log.Info("fav-interface exit")
+			log.Info("like-interface exit")
 			return
 		case syscall.SIGHUP:
 		// TODO reload
