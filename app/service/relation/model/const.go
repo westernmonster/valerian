@@ -44,3 +44,7 @@ func SetAttr(attribute uint32, mask uint32) uint32 {
 func UnsetAttr(attribute uint32, mask uint32) uint32 {
 	return attribute & ^mask // ^ 按位取反
 }
+
+func (f *AccountFollowing) Following() bool {
+	return AttrFollowing == Attr(f.Attribute) || Attr(f.Attribute) == AttrFriend
+}

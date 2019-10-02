@@ -53,6 +53,8 @@ message StatInfo {
     int32 Fans = 3 [(gogoproto.jsontag) = "fans"];
 
     int32 Black = 4 [(gogoproto.jsontag) = "black"];
+
+    bool IsFollowing = 5 [(gogoproto.jsontag) = "is_following"];
 }
 
 
