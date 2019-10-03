@@ -14,14 +14,14 @@ type CatalogArticleItem struct {
 	Excerpt string `json:"excerpt"`
 	// 喜欢数
 	LikeCount int `json:"like_count"`
+	// 反对数
+	DislikeCount int `json:"dislike_count"`
 	// 补充个数
 	ReviseCount int `json:"revise_count"`
 	// 评论数
 	CommentCount int `json:"comment_count"`
 
-	// 头像
-	Avatar string `json:"avatar,omitempty"`
-
+	Images []string `json:"images"`
 	// 发布日期
 	CreatedAt int64 `json:"created_at"`
 }
