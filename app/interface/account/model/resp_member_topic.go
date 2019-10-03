@@ -2,7 +2,7 @@ package model
 
 type MemberTopic struct {
 	// ID
-	ID int64 `json:"id" swaggertype:"string"`
+	ID int64 `json:"id,string" swaggertype:"string"`
 	// 话题名
 	Name string `json:"name"`
 	// 头像

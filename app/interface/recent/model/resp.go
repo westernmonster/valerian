@@ -2,7 +2,7 @@ package model
 
 type ItemTopic struct {
 	// ID
-	ID int64 `json:"id" swaggertype:"string"`
+	ID int64 `json:"id,string" swaggertype:"string"`
 	// 话题名
 	Name string `json:"name"`
 
@@ -24,7 +24,7 @@ type ItemTopic struct {
 
 type ItemArticle struct {
 	// ID
-	ID int64 `json:"id" swaggertype:"string"`
+	ID int64 `json:"id,string" swaggertype:"string"`
 	// 文章标题
 	Title string `json:"title"`
 	// 封面

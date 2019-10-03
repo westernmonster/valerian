@@ -2,7 +2,7 @@ package model
 
 type MemberDiscuss struct {
 	// ID
-	ID int64 `json:"id" swaggertype:"string"`
+	ID int64 `json:"id,string" swaggertype:"string"`
 
 	// 标题
 	Title *string `json:"title,omitempty"`

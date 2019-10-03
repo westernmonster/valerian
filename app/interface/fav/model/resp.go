@@ -2,7 +2,7 @@ package model
 
 type TargetArticle struct {
 	// ID
-	ID int64 `json:"id" swaggertype:"string"`
+	ID int64 `json:"id,string" swaggertype:"string"`
 	// 文章标题
 	Title string `json:"title"`
 	// 内容
@@ -26,7 +26,7 @@ type TargetArticle struct {
 
 type TargetRevise struct {
 	// ID
-	ID int64 `json:"id" swaggertype:"string"`
+	ID int64 `json:"id,string" swaggertype:"string"`
 	// 文章标题
 	Title *string `json:"title,omitempty"`
 	// 评论内容
@@ -47,7 +47,7 @@ type TargetRevise struct {
 
 type TargetDiscuss struct {
 	// ID
-	ID int64 `json:"id" swaggertype:"string"`
+	ID int64 `json:"id,string" swaggertype:"string"`
 	// 标题
 	Title *string `json:"title,omitempty"`
 	// 评论内容
@@ -68,7 +68,7 @@ type TargetDiscuss struct {
 
 type TargetTopic struct {
 	// ID
-	ID int64 `json:"id" swaggertype:"string"`
+	ID int64 `json:"id,string" swaggertype:"string"`
 	// 话题名
 	Name string `json:"name"`
 	// 头像
@@ -89,7 +89,7 @@ type TargetTopic struct {
 }
 
 type FavItem struct {
-	ID int64 `json:"id" swaggertype:"string"`
+	ID int64 `json:"id,string" swaggertype:"string"`
 	// 类型
 	// topic, article, revise, discussion
 	TargetType string `json:"target_type"`

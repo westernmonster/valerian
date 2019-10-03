@@ -2,7 +2,7 @@ package model
 
 type MemberArticle struct {
 	// ID
-	ID int64 `json:"id" swaggertype:"string"`
+	ID int64 `json:"id,string" swaggertype:"string"`
 	// 文章标题
 	Title string `json:"title"`
 	// 封面
