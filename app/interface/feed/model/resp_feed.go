@@ -116,6 +116,19 @@ type FeedTarget struct {
 	Member *MemberInfo `json:"member,omitempty"`
 	// 话题
 	Topic *TargetTopic `json:"topic,omitempty"`
+	// 评论
+	Comment *TargetComment `json:"comment,omitempty"`
+}
+
+type TargetComment struct {
+	// ID
+	ID int64 `json:"id,string" swaggertype:"string"`
+
+	// 内容
+	Excerpt string `json:"excerpt"`
+
+	// 发布日期
+	CreatedAt int64 `json:"created_at"`
 }
 
 type TargetArticle struct {

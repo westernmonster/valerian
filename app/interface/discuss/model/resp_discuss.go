@@ -44,10 +44,6 @@ type DisucssItem struct {
 	// 发布日期
 	CreatedAt int64 `json:"created_at"`
 
-	ActionText string `json:"action_text"`
-
-	ActionType string `json:"action_type"`
-
 	// 发布人
 	Creator *Creator `json:"creator"`
 
