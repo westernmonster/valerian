@@ -26,6 +26,7 @@ func (p *ArgAddRevise) Validate() error {
 }
 
 type AddReviseFile struct {
+	ID       *int64 `json:"id,string,omitempty" swaggertype:"string"`
 	FileName string `json:"file_name"`          // FileName 文件名
 	FileURL  string `json:"file_url,omitempty"` // FileURL 文件地址
 	Seq      int    `json:"seq"`                // Seq 文件顺序
@@ -42,9 +43,6 @@ func (p *AddReviseFile) Validate() error {
 type ArgUpdateRevise struct {
 	ID int64 `json:"id,string" swaggertype:"string"`
 
-	// 文章 ID
-	ArticleID int64 `json:"article_id,string" swaggertype:"string"`
-
 	// 内容
 	Content string `json:"content"`
 
@@ -56,7 +54,6 @@ func (p *ArgUpdateRevise) Validate() error {
 	return validation.ValidateStruct(
 		p,
 		validation.Field(&p.ID, validation.Required),
-		validation.Field(&p.ArticleID, validation.Required),
 		validation.Field(&p.Content, validation.Required),
 		validation.Field(&p.Files),
 	)
