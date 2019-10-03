@@ -65,7 +65,7 @@ func articleHistories(c *mars.Context) {
 // @Failure 400 "请求验证失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /article/history [get]
+// @Router /article/history/get [get]
 func articleHistory(c *mars.Context) {
 	var (
 		id  int64
