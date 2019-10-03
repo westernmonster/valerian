@@ -13,21 +13,21 @@ import (
 	"github.com/jinzhu/copier"
 )
 
-func (p *Service) GetReviseFiles(c context.Context, articleID int64) (items []*model.ReviseFileResp, err error) {
-	return p.getReviseFiles(c, p.d.DB(), articleID)
+func (p *Service) GetReviseFiles(c context.Context, reviseID int64) (items []*model.ReviseFileResp, err error) {
+	return p.getReviseFiles(c, p.d.DB(), reviseID)
 }
 
-func (p *Service) getReviseFiles(c context.Context, node sqalx.Node, articleID int64) (items []*model.ReviseFileResp, err error) {
+func (p *Service) getReviseFiles(c context.Context, node sqalx.Node, reviseID int64) (items []*model.ReviseFileResp, err error) {
 	var addCache = true
 
-	if items, err = p.d.ReviseFileCache(c, articleID); err != nil {
+	if items, err = p.d.ReviseFileCache(c, reviseID); err != nil {
 		addCache = false
 	} else if items != nil {
 		return
 	}
 
 	var data []*model.ReviseFile
-	if data, err = p.d.GetReviseFilesByCond(c, node, map[string]interface{}{"article_id": articleID}); err != nil {
+	if data, err = p.d.GetReviseFilesByCond(c, node, map[string]interface{}{"revise_id": reviseID}); err != nil {
 		return
 	}
 
@@ -38,14 +38,14 @@ func (p *Service) getReviseFiles(c context.Context, node sqalx.Node, articleID i
 
 	if addCache {
 		p.addCache(func() {
-			p.d.SetReviseFileCache(context.TODO(), articleID, items)
+			p.d.SetReviseFileCache(context.TODO(), reviseID, items)
 		})
 	}
 
 	return
 }
 
-func (p *Service) bulkCreateReviseFiles(c context.Context, node sqalx.Node, articleID int64, files []*model.AddReviseFile) (err error) {
+func (p *Service) bulkCreateReviseFiles(c context.Context, node sqalx.Node, reviseID int64, files []*model.AddReviseFile) (err error) {
 	var tx sqalx.Node
 	if tx, err = node.Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
@@ -67,7 +67,7 @@ func (p *Service) bulkCreateReviseFiles(c context.Context, node sqalx.Node, arti
 			FileName:  v.FileName,
 			FileURL:   v.FileURL,
 			Seq:       v.Seq,
-			ReviseID:  articleID,
+			ReviseID:  reviseID,
 			CreatedAt: time.Now().Unix(),
 			UpdatedAt: time.Now().Unix(),
 		}
@@ -83,7 +83,7 @@ func (p *Service) bulkCreateReviseFiles(c context.Context, node sqalx.Node, arti
 	}
 
 	p.addCache(func() {
-		p.d.DelReviseFileCache(context.TODO(), articleID)
+		p.d.DelReviseFileCache(context.TODO(), reviseID)
 	})
 
 	return
