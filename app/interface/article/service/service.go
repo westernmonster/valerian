@@ -2,10 +2,12 @@ package service
 
 import (
 	"context"
+	"net/url"
 	"strings"
 
 	"valerian/app/interface/article/conf"
 	"valerian/app/interface/article/dao"
+	"valerian/library/conf/env"
 	"valerian/library/log"
 )
 
@@ -61,4 +63,14 @@ func includeParam(include string) (dic map[string]bool) {
 	}
 
 	return
+}
+
+func genURL(path string, param url.Values) (uri string, err error) {
+	u, err := url.Parse(env.SiteURL + path)
+	if err != nil {
+		return
+	}
+	u.RawQuery = param.Encode()
+
+	return u.String(), nil
 }

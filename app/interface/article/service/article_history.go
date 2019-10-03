@@ -2,6 +2,8 @@ package service
 
 import (
 	"context"
+	"net/url"
+	"strconv"
 	"valerian/app/interface/article/model"
 	account "valerian/app/service/account/api"
 	"valerian/library/ecode"
@@ -41,6 +43,28 @@ func (p *Service) GetArticleHistoriesResp(c context.Context, articleID int64, of
 		item.Updator.Introduction = &intro
 
 		resp.Items[i] = item
+	}
+
+	param := url.Values{}
+	param.Set("article_id", strconv.FormatInt(articleID, 10))
+	param.Set("limit", strconv.Itoa(limit))
+	param.Set("offset", strconv.Itoa(offset-limit))
+
+	if resp.Paging.Prev, err = genURL("/api/v1/article/list/histories", param); err != nil {
+		return
+	}
+	param.Set("offset", strconv.Itoa(offset+limit))
+	if resp.Paging.Next, err = genURL("/api/v1/article/list/histories", param); err != nil {
+		return
+	}
+
+	if len(resp.Items) < limit {
+		resp.Paging.IsEnd = true
+		resp.Paging.Next = ""
+	}
+
+	if offset == 0 {
+		resp.Paging.Prev = ""
 	}
 
 	return
