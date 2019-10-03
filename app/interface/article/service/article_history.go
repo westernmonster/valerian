@@ -42,12 +42,8 @@ func (p *Service) GetArticleHistoriesResp(c context.Context, articleID int64) (i
 			ArticleID:  v.ArticleID,
 			Seq:        v.Seq,
 			ChangeDesc: v.ChangeDesc,
-			// Content:     &v.Content,
-			// ContentText: &v.ContentText,
-			// Diff:      &v.Diff,
-			// UpdatedBy: v.UpdatedBy,
-			UpdatedAt: v.UpdatedAt,
-			CreatedAt: v.CreatedAt,
+			UpdatedAt:  v.UpdatedAt,
+			CreatedAt:  v.CreatedAt,
 		}
 
 		items = append(items, item)
@@ -76,13 +72,23 @@ func (p *Service) GetArticleHistoryResp(c context.Context, articleHistoryID int6
 		ArticleID:  v.ArticleID,
 		Seq:        v.Seq,
 		ChangeDesc: v.ChangeDesc,
-		// Content:     &v.Content,
-		// ContentText: &v.ContentText,
-		Diff: &v.Diff,
+		Diff:       &v.Diff,
 		// UpdatedBy: v.UpdatedBy,
 		UpdatedAt: v.UpdatedAt,
 		CreatedAt: v.CreatedAt,
 	}
+
+	var account *account.BaseInfoReply
+	if account, err = p.d.GetAccountBaseInfo(c, 1); err != nil {
+		return
+	}
+	item.Updator = &model.Creator{
+		ID:       account.ID,
+		UserName: account.UserName,
+		Avatar:   account.Avatar,
+	}
+	intro := account.GetIntroductionValue()
+	item.Updator.Introduction = &intro
 
 	return
 }

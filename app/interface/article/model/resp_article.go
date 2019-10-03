@@ -28,8 +28,6 @@ type ArticleResp struct {
 	CreatedAt int64 `json:"created_at"`
 
 	CreatedBy int64 `json:"-"`
-
-	History *ArticleHistoryResp `json:"history"`
 }
 
 type ArticleFileResp struct {
