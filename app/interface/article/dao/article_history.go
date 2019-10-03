@@ -11,7 +11,7 @@ import (
 
 func (p *Dao) GetArticleHistoriesPaged(c context.Context, node sqalx.Node, articleID int64, limit, offset int) (items []*model.ArticleHistory, err error) {
 	items = make([]*model.ArticleHistory, 0)
-	sqlSelect := "SELECT a.* FROM article_histories a WHERE a.deleted=0 AND a.article_idy=? ORDER BY a.id DESC limit ?,?"
+	sqlSelect := "SELECT a.* FROM article_histories a WHERE a.deleted=0 AND a.article_id=? ORDER BY a.id DESC limit ?,?"
 
 	if err = node.SelectContext(c, &items, sqlSelect, articleID, offset, limit); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetArticleHistoriesPaged err(%+v) article_id(%d) limit(%d) offset(%d)", err, articleID, limit, offset))
