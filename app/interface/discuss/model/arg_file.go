@@ -46,3 +46,14 @@ func (p *AddDiscussionFile) Validate() error {
 		validation.Field(&p.FileURL, validation.Required, is.URL),
 	)
 }
+
+type ArgDelete struct {
+	ID int64 `json:"id,string,omitempty" swaggertype:"string"`
+}
+
+func (p *ArgDelete) Validate() error {
+	return validation.ValidateStruct(
+		p,
+		validation.Field(&p.ID, validation.Required),
+	)
+}

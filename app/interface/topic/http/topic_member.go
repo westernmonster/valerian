@@ -93,7 +93,7 @@ func editTopicMembers(c *mars.Context) {
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param topic_id query string true "话题ID"
+// @Param req body model.ArgLeave true "请求"
 // @Success 200 "成功"
 // @Failure 68 "主理人不可退出，只可转让后再退出"
 // @Failure 34 "不是话题成员"
@@ -102,13 +102,15 @@ func editTopicMembers(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /topic/leave [post]
 func leave(c *mars.Context) {
-	params := c.Request.Form
-	id, err := strconv.ParseInt(params.Get("topic_id"), 10, 64)
-	if err != nil {
+	arg := new(model.ArgLeave)
+	if e := c.Bind(arg); e != nil {
+		return
+	}
+
+	if e := arg.Validate(); e != nil {
 		c.JSON(nil, ecode.RequestErr)
 		return
 	}
 
-	c.JSON(nil, srv.Leave(c, id))
-
+	c.JSON(nil, srv.Leave(c, arg.TopicID))
 }

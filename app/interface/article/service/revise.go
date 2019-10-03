@@ -112,9 +112,15 @@ func (p *Service) UpdateRevise(c context.Context, arg *model.ArgUpdateRevise) (e
 	return
 }
 
-// func (p *Service) DelRevise(c context.Context, id int64) (err error) {
-// 	return
-// }
+func (p *Service) DelRevise(c context.Context, id int64) (err error) {
+
+	p.addCache(func() {
+		p.d.DelReviseCache(context.TODO(), id)
+	})
+
+	return
+}
+
 func (p *Service) GetRevise(c context.Context, reviseID int64) (resp *model.ReviseDetailResp, err error) {
 	var data *model.Revise
 	if data, err = p.getRevise(c, p.d.DB(), reviseID); err != nil {

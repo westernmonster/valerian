@@ -176,23 +176,24 @@ func updateDiscussion(c *mars.Context) {
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param id query string true "ID"
+// @Param req body model.ArgDelete true "请求"
 // @Success 200 "成功,返回discussion_id"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /discussion/del [post]
 func delDiscussion(c *mars.Context) {
-	var id int64
-	var err error
-	params := c.Request.Form
+	arg := new(model.ArgDelete)
+	if e := c.Bind(arg); e != nil {
+		return
+	}
 
-	if id, err = strconv.ParseInt(params.Get("id"), 10, 64); err != nil {
+	if e := arg.Validate(); e != nil {
 		c.JSON(nil, ecode.RequestErr)
 		return
 	}
 
-	c.JSON(nil, srv.DelDiscussion(c, id))
+	c.JSON(nil, srv.DelDiscussion(c, arg.ID))
 }
 
 // @Summary 获取话题讨论详情

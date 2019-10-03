@@ -130,3 +130,25 @@ type ArgReportTopic struct {
 	// 补充信息
 	Desc *string `json:"desc"`
 }
+
+type ArgDelete struct {
+	ID int64 `json:"id,string,omitempty" swaggertype:"string"`
+}
+
+func (p *ArgDelete) Validate() error {
+	return validation.ValidateStruct(
+		p,
+		validation.Field(&p.ID, validation.Required),
+	)
+}
+
+type ArgLeave struct {
+	TopicID int64 `json:"topic_id,string,omitempty" swaggertype:"string"`
+}
+
+func (p *ArgLeave) Validate() error {
+	return validation.ValidateStruct(
+		p,
+		validation.Field(&p.TopicID, validation.Required),
+	)
+}
