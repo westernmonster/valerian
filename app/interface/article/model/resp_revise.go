@@ -43,6 +43,9 @@ type ReviseDetailResp struct {
 
 	Files []*ReviseFileResp `json:"files"`
 
+	// 文章标题
+	Title string `json:"title"`
+
 	// 内容
 	Content string `json:"content"`
 
