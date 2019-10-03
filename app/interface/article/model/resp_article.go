@@ -27,7 +27,7 @@ type ArticleResp struct {
 	// 创建时间
 	CreatedAt int64 `json:"created_at"`
 
-	CreatedBy int64 `json:"-"`
+	CreatedBy int64 `json:"created_by"`
 }
 
 type ArticleFileResp struct {
