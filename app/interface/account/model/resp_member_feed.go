@@ -119,7 +119,7 @@ type TargetDiscuss struct {
 	CommentCount int `json:"comment_count"`
 
 	// 图片
-	ImageUrls []string `json:"img_urls"`
+	ImageUrls []string `json:"images"`
 }
 
 type TargetTopic struct {

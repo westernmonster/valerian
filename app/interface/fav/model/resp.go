@@ -32,7 +32,7 @@ type TargetRevise struct {
 	LikeCount int `json:"like_count"`
 
 	// 图片
-	ImageUrls []string `json:"image_urls"`
+	ImageUrls []string `json:"images"`
 }
 
 type TargetDiscuss struct {
@@ -49,7 +49,7 @@ type TargetDiscuss struct {
 	LikeCount int `json:"like_count"`
 
 	// 图片
-	ImageUrls []string `json:"image_urls"`
+	ImageUrls []string `json:"images"`
 }
 
 type TargetTopic struct {

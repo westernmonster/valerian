@@ -78,7 +78,7 @@ type ArticleItem struct {
 	// 内容
 	Excerpt string `json:"excerpt"`
 	// 图片
-	ImageUrls []string `json:"img_urls"`
+	ImageUrls []string `json:"images"`
 	// 喜欢数
 	LikeCount int `json:"like_count"`
 	// 反对数

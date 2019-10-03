@@ -144,6 +144,9 @@ type TargetRevise struct {
 	Excerpt string `json:"excerpt"`
 	// 评论数
 	CommentCount int `json:"comment_count"`
+
+	// 图片
+	ImageUrls []string `json:"images"`
 }
 
 type TargetDiscuss struct {
@@ -157,7 +160,7 @@ type TargetDiscuss struct {
 	CommentCount int `json:"comment_count"`
 
 	// 图片
-	ImageUrls []string `json:"img_urls"`
+	ImageUrls []string `json:"images"`
 }
 
 type TargetTopic struct {

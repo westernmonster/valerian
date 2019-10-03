@@ -52,7 +52,7 @@ type DisucssItem struct {
 	Creator *Creator `json:"creator"`
 
 	// 图片
-	ImageUrls []string `json:"img_urls"`
+	ImageUrls []string `json:"images"`
 }
 
 type DiscussItemCategory struct {

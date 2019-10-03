@@ -10,7 +10,7 @@ type ReviseItem struct {
 	Excerpt string `json:"excerpt"`
 
 	// 图片
-	ImageUrls []string `json:"img_urls"`
+	ImageUrls []string `json:"images"`
 
 	// 赞数
 	LikeCount int `json:"like_count"`
