@@ -53,7 +53,7 @@ func route(e *mars.Engine) {
 		g.GET("/list/files", authSvc.User, articleFiles)
 		g.GET("/list/histories", authSvc.User, articleHistories)
 		g.GET("/list/relations", authSvc.User, articleRelations)
-		g.GET("/list/files", authSvc.User, getRevises)
+		g.GET("/list/revises", authSvc.User, getRevises)
 	}
 
 }
