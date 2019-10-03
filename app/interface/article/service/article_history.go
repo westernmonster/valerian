@@ -29,7 +29,7 @@ func (p *Service) GetArticleHistoriesResp(c context.Context, articleID int64, of
 		}
 
 		var account *account.BaseInfoReply
-		if account, err = p.d.GetAccountBaseInfo(c, 1); err != nil {
+		if account, err = p.d.GetAccountBaseInfo(c, v.UpdatedBy); err != nil {
 			return
 		}
 		item.Updator = &model.Creator{
@@ -66,7 +66,7 @@ func (p *Service) GetArticleHistoryResp(c context.Context, articleHistoryID int6
 	}
 
 	var account *account.BaseInfoReply
-	if account, err = p.d.GetAccountBaseInfo(c, 1); err != nil {
+	if account, err = p.d.GetAccountBaseInfo(c, v.UpdatedBy); err != nil {
 		return
 	}
 	item.Updator = &model.Creator{
