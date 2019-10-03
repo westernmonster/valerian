@@ -52,6 +52,9 @@ type ReviseDetailResp struct {
 	// 是否点赞
 	Like bool `json:"like"`
 
+	// 是否反对
+	Dislike bool `json:"dislike"`
+
 	// 赞数
 	LikeCount int `json:"like_count"`
 

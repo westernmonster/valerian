@@ -49,6 +49,7 @@ require (
 	github.com/prometheus/client_golang v1.1.0
 	github.com/samuel/go-zookeeper v0.0.0-20190810000440-0ceca61e4d75
 	github.com/satori/go.uuid v1.2.0
+	github.com/sergi/go-diff v1.0.0
 	github.com/sirupsen/logrus v1.4.2
 	github.com/smartystreets/goconvey v0.0.0-20190731233626-505e41936337
 	github.com/spf13/pflag v1.0.3

@@ -25,6 +25,7 @@ type IDao interface {
 	UpdateArticleFile(c context.Context, node sqalx.Node, item *model.ArticleFile) (err error)
 	DelArticleFile(c context.Context, node sqalx.Node, id int64) (err error)
 
+	GetArticleHistoriesMaxSeq(c context.Context, node sqalx.Node, articleID int64) (seq int, err error)
 	GetArticleHistoriesByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.ArticleHistory, err error)
 	GetArticleHistories(c context.Context, node sqalx.Node) (items []*model.ArticleHistory, err error)
 	GetArticleHistoryByID(c context.Context, node sqalx.Node, id int64) (item *model.ArticleHistory, err error)
@@ -49,6 +50,22 @@ type IDao interface {
 	UpdateTopicCatalog(c context.Context, node sqalx.Node, item *model.TopicCatalog) (err error)
 	DelTopicCatalog(c context.Context, node sqalx.Node, id int64) (err error)
 	GetTopicCatalogMaxChildrenSeq(c context.Context, node sqalx.Node, topicID, parentID int64) (seq int, err error)
+
+	GetRevisesByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.Revise, err error)
+	GetRevises(c context.Context, node sqalx.Node) (items []*model.Revise, err error)
+	GetReviseByID(c context.Context, node sqalx.Node, id int64) (item *model.Revise, err error)
+	GetReviseByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (item *model.Revise, err error)
+	AddRevise(c context.Context, node sqalx.Node, item *model.Revise) (err error)
+	UpdateRevise(c context.Context, node sqalx.Node, item *model.Revise) (err error)
+	DelRevise(c context.Context, node sqalx.Node, id int64) (err error)
+
+	GetReviseFilesByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.ReviseFile, err error)
+	GetReviseFiles(c context.Context, node sqalx.Node) (items []*model.ReviseFile, err error)
+	GetReviseFileByID(c context.Context, node sqalx.Node, id int64) (item *model.ReviseFile, err error)
+	GetReviseFileByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (item *model.ReviseFile, err error)
+	AddReviseFile(c context.Context, node sqalx.Node, item *model.ReviseFile) (err error)
+	UpdateReviseFile(c context.Context, node sqalx.Node, item *model.ReviseFile) (err error)
+	DelReviseFile(c context.Context, node sqalx.Node, id int64) (err error)
 
 	GetTopic(c context.Context, id int64) (info *topic.TopicInfo, err error)
 

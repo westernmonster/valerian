@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	"valerian/app/interface/article/model"
@@ -13,6 +14,10 @@ import (
 	"valerian/library/gid"
 	"valerian/library/log"
 	"valerian/library/net/metadata"
+
+	"github.com/sergi/go-diff/diffmatchpatch"
+
+	"github.com/PuerkitoBio/goquery"
 )
 
 func (p *Service) AddArticle(c context.Context, arg *model.ArgAddArticle) (id int64, err error) {
@@ -47,7 +52,35 @@ func (p *Service) AddArticle(c context.Context, arg *model.ArgAddArticle) (id in
 		UpdatedAt:      time.Now().Unix(),
 	}
 
+	var doc *goquery.Document
+	doc, err = goquery.NewDocumentFromReader(strings.NewReader(item.Content))
+	if err != nil {
+		err = ecode.ParseHTMLFailed
+		return
+	}
+	item.ContentText = doc.Text()
+
+	h := &model.ArticleHistory{
+		ID:          gid.NewID(),
+		ArticleID:   item.ID,
+		Seq:         1,
+		Content:     item.Content,
+		ContentText: item.ContentText,
+		UpdatedBy:   aid,
+		ChangeDesc:  "创建文章",
+		CreatedAt:   time.Now().Unix(),
+		UpdatedAt:   time.Now().Unix(),
+	}
+
+	dmp := diffmatchpatch.New()
+	diffs := dmp.DiffMain("", item.ContentText, false)
+	h.Diff = dmp.DiffPrettyText(diffs)
+
 	if err = p.d.AddArticle(c, tx, item); err != nil {
+		return
+	}
+
+	if err = p.d.AddArticleHistory(c, tx, h); err != nil {
 		return
 	}
 
@@ -69,6 +102,11 @@ func (p *Service) AddArticle(c context.Context, arg *model.ArgAddArticle) (id in
 }
 
 func (p *Service) UpdateArticle(c context.Context, arg *model.ArgUpdateArticle) (err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
@@ -92,6 +130,22 @@ func (p *Service) UpdateArticle(c context.Context, arg *model.ArgUpdateArticle) 
 		return
 	}
 
+	var seq int
+	if seq, err = p.d.GetArticleHistoriesMaxSeq(c, tx, arg.ID); err != nil {
+		return
+	}
+	h := &model.ArticleHistory{
+		ID:          gid.NewID(),
+		ArticleID:   item.ID,
+		Seq:         seq + 1,
+		Content:     item.Content,
+		ContentText: item.ContentText,
+		UpdatedBy:   aid,
+		ChangeDesc:  arg.ChangeDesc,
+		CreatedAt:   time.Now().Unix(),
+		UpdatedAt:   time.Now().Unix(),
+	}
+
 	if arg.Title != nil {
 		item.Title = *arg.Title
 	}
@@ -106,7 +160,15 @@ func (p *Service) UpdateArticle(c context.Context, arg *model.ArgUpdateArticle) 
 		item.DisableComment = types.BitBool(*arg.DisableComment)
 	}
 
+	dmp := diffmatchpatch.New()
+	diffs := dmp.DiffMain(h.ContentText, item.ContentText, false)
+	h.Diff = dmp.DiffPrettyText(diffs)
+
 	if err = p.d.UpdateArticle(c, tx, item); err != nil {
+		return
+	}
+
+	if err = p.d.AddArticleHistory(c, tx, h); err != nil {
 		return
 	}
 

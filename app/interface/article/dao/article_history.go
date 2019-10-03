@@ -9,6 +9,20 @@ import (
 	"valerian/library/log"
 )
 
+func (p *Dao) GetArticleHistoriesMaxSeq(c context.Context, node sqalx.Node, articleID int64) (seq int, err error) {
+	sqlSelect := "SELECT a.seq FROM article_histories a WHERE a.deleted=0 AND a.article_id=? ORDER BY a.ID desc LIMIT 1"
+	if err = node.GetContext(c, &seq, sqlSelect, articleID); err != nil {
+		if err == sql.ErrNoRows {
+			seq = 0
+			err = nil
+			return
+		}
+		log.For(c).Error(fmt.Sprintf("dao.GetArticleHistoriesMaxSeq error(%+v), article_id(%d)", err, articleID))
+		return
+	}
+	return
+}
+
 // GetAll get all records
 func (p *Dao) GetArticleHistories(c context.Context, node sqalx.Node) (items []*model.ArticleHistory, err error) {
 	items = make([]*model.ArticleHistory, 0)

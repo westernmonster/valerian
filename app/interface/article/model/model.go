@@ -18,6 +18,7 @@ type Article struct {
 	ID             int64         `db:"id" json:"id,string"`                    // ID ID
 	Title          string        `db:"title" json:"title"`                     // Title 标题
 	Content        string        `db:"content" json:"content"`                 // Content 内容
+	ContentText    string        `db:"content_text" json:"content_text"`       // ContentText
 	DisableRevise  types.BitBool `db:"disable_revise" json:"disable_revise"`   // DisableRevise 禁止补充
 	DisableComment types.BitBool `db:"disable_comment" json:"disable_comment"` // DisableComment 禁止评论
 	CreatedBy      int64         `db:"created_by" json:"created_by,string"`    // CreatedBy 创建人
@@ -64,4 +65,37 @@ type TopicCatalog struct {
 	Deleted    types.BitBool `db:"deleted" json:"deleted"`                 // Deleted 是否删除
 	CreatedAt  int64         `db:"created_at" json:"created_at"`           // CreatedAt 创建时间
 	UpdatedAt  int64         `db:"updated_at" json:"updated_at"`           // UpdatedAt 更新时间
+}
+
+type ImageURL struct {
+	ID         int64         `db:"id" json:"id,string"`               // ID ID
+	TargetID   int64         `db:"target_id" json:"target_id,string"` // TargetID 目标ID
+	TargetType string        `db:"target_type" json:"target_type"`    // TargetType 目标类型
+	URL        string        `db:"url" json:"url"`                    // URL 图片路径
+	Deleted    types.BitBool `db:"deleted" json:"deleted"`            // Deleted 是否删除
+	CreatedAt  int64         `db:"created_at" json:"created_at"`      // CreatedAt 创建时间
+	UpdatedAt  int64         `db:"updated_at" json:"updated_at"`      // UpdatedAt 更新时间
+}
+
+type Revise struct {
+	ID          int64         `db:"id" json:"id,string"`                 // ID ID
+	ArticleID   int64         `db:"article_id" json:"article_id,string"` // ArticleID 文章ID
+	Title       string        `db:"title" json:"title"`                  // Title 标题
+	Content     string        `db:"content" json:"content"`              // Content 内容
+	ContentText string        `db:"content_text" json:"content_text"`    // ContentText 内容纯文本
+	CreatedBy   int64         `db:"created_by" json:"created_by,string"` // CreatedBy 创建人
+	Deleted     types.BitBool `db:"deleted" json:"deleted"`              // Deleted 是否删除
+	CreatedAt   int64         `db:"created_at" json:"created_at"`        // CreatedAt 创建时间
+	UpdatedAt   int64         `db:"updated_at" json:"updated_at"`        // UpdatedAt 更新时间
+}
+
+type ReviseFile struct {
+	ID        int64         `db:"id" json:"id,string"`                // ID ID
+	FileName  string        `db:"file_name" json:"file_name"`         // FileName 文件名
+	FileURL   *string       `db:"file_url" json:"file_url,omitempty"` // FileURL 文件地址
+	Seq       int           `db:"seq" json:"seq"`                     // Seq 文件顺序
+	ReviseID  int64         `db:"revise_id" json:"revise_id,string"`  // ReviseID 文章ID
+	Deleted   types.BitBool `db:"deleted" json:"deleted"`             // Deleted 是否删除
+	CreatedAt int64         `db:"created_at" json:"created_at"`       // CreatedAt 创建时间
+	UpdatedAt int64         `db:"updated_at" json:"updated_at"`       // UpdatedAt 更新时间
 }
