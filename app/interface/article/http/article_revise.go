@@ -68,7 +68,6 @@ func delRevise(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /article/revise/edit [post]
 func updateRevise(c *mars.Context) {
-
 }
 
 // @Summary 获取文章补充详情

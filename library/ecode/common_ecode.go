@@ -110,6 +110,8 @@ var (
 	DiscussionNotExist             = New(10079) // 未找到该讨论记录
 	ModifyDiscussionNotAllowed     = New(10080) // 不能编辑该讨论
 	DiscussionFileNotExist         = New(10081) // 未找到该文件
+	ReviseNotExist                 = New(10082) // 补充不存在
+	ReviseFileNotExist             = New(10083) // 补充文件不存在
 
 	TagNotExist      = add(20000) // Tag 不存在
 	ConfigIdsIsEmpty = add(20001) // ConfigIds 不存在

@@ -82,6 +82,14 @@ type IDao interface {
 	ArticleFileCache(c context.Context, articleID int64) (m []*model.ArticleFileResp, err error)
 	DelArticleFileCache(c context.Context, articleID int64) (err error)
 
+	SetReviseCache(c context.Context, m *model.Revise) (err error)
+	ReviseCache(c context.Context, reviseID int64) (m *model.Revise, err error)
+	DelReviseCache(c context.Context, reviseID int64) (err error)
+
+	SetReviseFileCache(c context.Context, articleID int64, m []*model.ReviseFileResp) (err error)
+	ReviseFileCache(c context.Context, articleID int64) (m []*model.ReviseFileResp, err error)
+	DelReviseFileCache(c context.Context, articleID int64) (err error)
+
 	SetArticleHistoryCache(c context.Context, articleVersionID int64, m []*model.ArticleHistoryResp) (err error)
 	ArticleHistoryCache(c context.Context, articleVersionID int64) (m []*model.ArticleHistoryResp, err error)
 	DelArticleHistoryCache(c context.Context, articleVersionID int64) (err error)

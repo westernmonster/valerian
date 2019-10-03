@@ -92,7 +92,7 @@ type Revise struct {
 type ReviseFile struct {
 	ID        int64         `db:"id" json:"id,string"`                // ID ID
 	FileName  string        `db:"file_name" json:"file_name"`         // FileName 文件名
-	FileURL   *string       `db:"file_url" json:"file_url,omitempty"` // FileURL 文件地址
+	FileURL   string        `db:"file_url" json:"file_url,omitempty"` // FileURL 文件地址
 	Seq       int           `db:"seq" json:"seq"`                     // Seq 文件顺序
 	ReviseID  int64         `db:"revise_id" json:"revise_id,string"`  // ReviseID 文章ID
 	Deleted   types.BitBool `db:"deleted" json:"deleted"`             // Deleted 是否删除

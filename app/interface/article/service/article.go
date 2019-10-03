@@ -261,25 +261,7 @@ func (p *Service) getArticle(c context.Context, node sqalx.Node, articleID int64
 }
 
 func (p *Service) getArticleMeta(c context.Context, node sqalx.Node, articleID int64) (item *model.ArticleMeta, err error) {
-	aid, ok := metadata.Value(c, metadata.Aid).(int64)
-	if !ok {
-		err = ecode.AcquireAccountIDFailed
-		return
-	}
 	item = new(model.ArticleMeta)
-
-	var attr *model.AccountArticleAttr
-	if attr, err = p.d.GetAccountArticleAttr(c, node, aid, articleID); err != nil {
-		return
-	} else if attr == nil {
-		item.Fav = false
-		item.Read = false
-		item.Like = false
-	} else {
-		item.Fav = bool(attr.Fav)
-		item.Read = bool(attr.Read)
-		item.Like = bool(attr.Like)
-	}
 
 	return
 }
