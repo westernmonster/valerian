@@ -7,37 +7,19 @@ import (
 	"valerian/library/ecode"
 )
 
-func (p *Service) GetArticleHistoriesResp(c context.Context, articleID int64) (items []*model.ArticleHistoryResp, err error) {
-	var node = p.d.DB()
-	var addCache = true
-
-	if items, err = p.d.ArticleHistoryCache(c, articleID); err != nil {
-		addCache = false
-	} else if items != nil {
-		for _, v := range items {
-			var account *account.BaseInfoReply
-			if account, err = p.d.GetAccountBaseInfo(c, 1); err != nil {
-				return
-			}
-			v.Updator = &model.Creator{
-				ID:       account.ID,
-				UserName: account.UserName,
-				Avatar:   account.Avatar,
-			}
-			intro := account.GetIntroductionValue()
-			v.Updator.Introduction = &intro
-		}
-		return
-	}
-
+func (p *Service) GetArticleHistoriesResp(c context.Context, articleID int64, offset, limit int) (resp *model.ArticleHistoryListResp, err error) {
 	var data []*model.ArticleHistory
-	if data, err = p.d.GetArticleHistoriesByCond(c, node, map[string]interface{}{"article_id": articleID}); err != nil {
+	if data, err = p.d.GetArticleHistoriesPaged(c, p.d.DB(), articleID, offset, limit); err != nil {
 		return
 	}
 
-	items = make([]*model.ArticleHistoryResp, 0)
-	for _, v := range data {
-		item := &model.ArticleHistoryResp{
+	resp = &model.ArticleHistoryListResp{
+		Items:  make([]*model.ArticleHistoryItem, len(data)),
+		Paging: &model.Paging{},
+	}
+
+	for i, v := range data {
+		item := &model.ArticleHistoryItem{
 			ID:         v.ID,
 			ArticleID:  v.ArticleID,
 			Seq:        v.Seq,
@@ -46,13 +28,19 @@ func (p *Service) GetArticleHistoriesResp(c context.Context, articleID int64) (i
 			CreatedAt:  v.CreatedAt,
 		}
 
-		items = append(items, item)
-	}
+		var account *account.BaseInfoReply
+		if account, err = p.d.GetAccountBaseInfo(c, 1); err != nil {
+			return
+		}
+		item.Updator = &model.Creator{
+			ID:       account.ID,
+			UserName: account.UserName,
+			Avatar:   account.Avatar,
+		}
+		intro := account.GetIntroductionValue()
+		item.Updator.Introduction = &intro
 
-	if addCache {
-		p.addCache(func() {
-			p.d.SetArticleHistoryCache(context.TODO(), articleID, items)
-		})
+		resp.Items[i] = item
 	}
 
 	return
@@ -73,9 +61,8 @@ func (p *Service) GetArticleHistoryResp(c context.Context, articleHistoryID int6
 		Seq:        v.Seq,
 		ChangeDesc: v.ChangeDesc,
 		Diff:       &v.Diff,
-		// UpdatedBy: v.UpdatedBy,
-		UpdatedAt: v.UpdatedAt,
-		CreatedAt: v.CreatedAt,
+		UpdatedAt:  v.UpdatedAt,
+		CreatedAt:  v.CreatedAt,
 	}
 
 	var account *account.BaseInfoReply

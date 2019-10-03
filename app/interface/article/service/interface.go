@@ -25,6 +25,7 @@ type IDao interface {
 	UpdateArticleFile(c context.Context, node sqalx.Node, item *model.ArticleFile) (err error)
 	DelArticleFile(c context.Context, node sqalx.Node, id int64) (err error)
 
+	GetArticleHistoriesPaged(c context.Context, node sqalx.Node, articleID int64, limit, offset int) (items []*model.ArticleHistory, err error)
 	GetArticleHistoriesMaxSeq(c context.Context, node sqalx.Node, articleID int64) (seq int, err error)
 	GetArticleHistoriesByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.ArticleHistory, err error)
 	GetArticleHistories(c context.Context, node sqalx.Node) (items []*model.ArticleHistory, err error)
