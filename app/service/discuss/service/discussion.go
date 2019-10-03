@@ -69,6 +69,10 @@ func (p *Service) GetDiscussion(c context.Context, discussionID int64) (item *mo
 func (p *Service) GetDiscussionStat(c context.Context, discussionID int64) (item *model.DiscussionStat, err error) {
 	if item, err = p.d.GetDiscussionStatByID(c, p.d.DB(), discussionID); err != nil {
 		return
+	} else {
+		item = &model.DiscussionStat{
+			DiscussionID: discussionID,
+		}
 	}
 	return
 }
