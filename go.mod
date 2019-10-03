@@ -10,7 +10,6 @@ replace (
 )
 
 require (
-	github.com/Azure/azure-sdk-for-go v21.1.0+incompatible
 	github.com/BurntSushi/toml v0.3.1
 	github.com/PuerkitoBio/goquery v1.5.0
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
@@ -23,11 +22,9 @@ require (
 	github.com/go-playground/locales v0.12.1 // indirect
 	github.com/go-playground/universal-translator v0.16.0 // indirect
 	github.com/go-sql-driver/mysql v1.4.1
-	github.com/gobuffalo/logger v1.0.0
 	github.com/gobuffalo/packr v1.30.1
 	github.com/gogo/protobuf v1.3.0
 	github.com/golang/protobuf v1.3.2
-	github.com/google/martian v2.1.0+incompatible
 	github.com/jinzhu/copier v0.0.0-20190625015134-976e0346caa8
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/kylelemons/godebug v1.1.0 // indirect
@@ -39,10 +36,9 @@ require (
 	github.com/naoina/toml v0.1.1
 	github.com/nats-io/nats-server/v2 v2.1.0 // indirect
 	github.com/nats-io/nats-streaming-server v0.16.2 // indirect
-	github.com/nats-io/nats.go v1.8.1
 	github.com/nats-io/stan.go v0.5.0
 	github.com/nicksnyder/go-i18n/v2 v2.0.2
-	github.com/olivere/elastic v6.2.23+incompatible
+	github.com/olivere/elastic v6.2.23+incompatible // indirect
 	github.com/opentracing-contrib/go-stdlib v0.0.0-20190519235532-cf7a6c988dc9
 	github.com/opentracing/opentracing-go v1.1.0
 	github.com/pkg/errors v0.8.1
