@@ -33,7 +33,7 @@ type ArticleResp struct {
 type ArticleFileResp struct {
 	ID       int64  `json:"id,string" swaggertype:"string"`
 	FileName string `json:"file_name"` // FileName 文件名
-	FileURL  string `json:"file_url`   // FileURL 文件地址
+	FileURL  string `json:"file_url"`  // FileURL 文件地址
 	Seq      int    `json:"seq"`       // Seq 文件顺序
 }
 
@@ -48,6 +48,8 @@ type ArticleMeta struct {
 	Read bool `json:"read"`
 
 	Fav bool `json:"fav"`
+
+	Dislike bool `json:"dislike"`
 
 	// 补充数
 	ReviseCount int `json:"revise_count"`

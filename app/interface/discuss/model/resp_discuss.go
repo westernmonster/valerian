@@ -85,6 +85,12 @@ type DiscussDetailResp struct {
 
 	Files []*DiscussFileResp `json:"files"`
 
+	Fav bool `json:"fav"`
+
+	Like bool `json:"like"`
+
+	Dislike bool `json:"dislike"`
+
 	// 喜欢数
 	LikeCount int `json:"like_count"`
 

@@ -38,7 +38,8 @@ func route(e *mars.Engine) {
 		g.GET("/list/categories", authSvc.User, discussCategories)
 		g.GET("/list/files", authSvc.User, discussionFiles)
 
-		g.POST("/get", authSvc.User, getDiscussion)
+		g.GET("/get", authSvc.User, getDiscussion)
+
 		g.POST("/add", authSvc.User, addDiscussion)
 		g.POST("/edit", authSvc.User, updateDiscussion)
 		g.POST("/del", authSvc.User, delDiscussion)
