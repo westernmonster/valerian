@@ -3,6 +3,8 @@ package service
 import (
 	"context"
 	"fmt"
+	"net/url"
+	"strconv"
 	"strings"
 	"time"
 	"valerian/app/interface/article/model"
@@ -12,9 +14,68 @@ import (
 	"valerian/library/gid"
 	"valerian/library/log"
 	"valerian/library/net/metadata"
+	"valerian/library/xstr"
 
 	"github.com/PuerkitoBio/goquery"
 )
+
+func (p *Service) GetArticleRevisesPaged(c context.Context, articleID int64, offset, limit int) (resp *model.ReviseListResp, err error) {
+	var data []*model.Revise
+	if data, err = p.d.GetArticleRevisesPaged(c, p.d.DB(), articleID, offset, limit); err != nil {
+		return
+	}
+
+	resp = &model.ReviseListResp{
+		Paging: &model.Paging{},
+		Items:  make([]*model.ReviseItem, len(data)),
+	}
+
+	for i, v := range data {
+		item := &model.ReviseItem{
+			ID:        v.ID,
+			Excerpt:   xstr.Excerpt(v.ContentText),
+			ImageUrls: make([]string, 0),
+		}
+
+		var account *account.BaseInfoReply
+		if account, err = p.d.GetAccountBaseInfo(c, v.CreatedBy); err != nil {
+			return
+		}
+		item.Creator = &model.Creator{
+			ID:       account.ID,
+			UserName: account.UserName,
+			Avatar:   account.Avatar,
+		}
+		intro := account.GetIntroductionValue()
+		item.Creator.Introduction = &intro
+
+		resp.Items[i] = item
+	}
+
+	param := url.Values{}
+	param.Set("article_id", strconv.FormatInt(articleID, 10))
+	param.Set("limit", strconv.Itoa(limit))
+	param.Set("offset", strconv.Itoa(offset-limit))
+
+	if resp.Paging.Prev, err = genURL("/api/v1/article/list/revises", param); err != nil {
+		return
+	}
+	param.Set("offset", strconv.Itoa(offset+limit))
+	if resp.Paging.Next, err = genURL("/api/v1/article/list/revises", param); err != nil {
+		return
+	}
+
+	if len(resp.Items) < limit {
+		resp.Paging.IsEnd = true
+		resp.Paging.Next = ""
+	}
+
+	if offset == 0 {
+		resp.Paging.Prev = ""
+	}
+
+	return
+}
 
 func (p *Service) AddRevise(c context.Context, arg *model.ArgAddRevise) (id int64, err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)

@@ -32,3 +32,14 @@ func (p *ArgSaveReviseFiles) Validate() error {
 		validation.Field(&p.Items),
 	)
 }
+
+type ArgDelete struct {
+	ID int64 `json:"id,string,omitempty" swaggertype:"string"`
+}
+
+func (p *ArgDelete) Validate() error {
+	return validation.ValidateStruct(
+		p,
+		validation.Field(&p.ID, validation.Required),
+	)
+}
