@@ -221,10 +221,9 @@ func (p *Service) getRevise(c context.Context, node sqalx.Node, reviseID int64) 
 		return
 	}
 
-	var a *model.Revise
-	if a, err = p.d.GetReviseByID(c, p.d.DB(), reviseID); err != nil {
+	if item, err = p.d.GetReviseByID(c, p.d.DB(), reviseID); err != nil {
 		return
-	} else if a == nil {
+	} else if item == nil {
 		err = ecode.ReviseNotExist
 		return
 	}
