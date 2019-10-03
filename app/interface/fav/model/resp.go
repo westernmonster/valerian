@@ -5,14 +5,21 @@ type TargetArticle struct {
 	ID int64 `json:"id" swaggertype:"string"`
 	// 文章标题
 	Title string `json:"title"`
-	// 封面
-	Avatar *string `json:"avatar,omitempty"`
 	// 内容
 	Excerpt string `json:"excerpt"`
-	// 喜欢数
-	LikeCount int `json:"like_count"`
+
+	// 图片
+	ImageUrls []string `json:"images"`
+
 	// 补充个数
 	ReviseCount int `json:"revise_count"`
+
+	// 喜欢数
+	LikeCount int `json:"like_count"`
+
+	// 反对数
+	DislikeCount int `json:"dislike_count"`
+
 	// 评论数
 	CommentCount int `json:"comment_count"`
 }
@@ -20,16 +27,19 @@ type TargetArticle struct {
 type TargetRevise struct {
 	// ID
 	ID int64 `json:"id" swaggertype:"string"`
-	// 标题
+	// 文章标题
 	Title *string `json:"title,omitempty"`
 	// 评论内容
 	Excerpt string `json:"excerpt"`
 
-	// 评论数
-	CommentCount int `json:"comment_count"`
-
 	// 喜欢数
 	LikeCount int `json:"like_count"`
+
+	// 反对数
+	DislikeCount int `json:"dislike_count"`
+
+	// 评论数
+	CommentCount int `json:"comment_count"`
 
 	// 图片
 	ImageUrls []string `json:"images"`
@@ -42,11 +52,15 @@ type TargetDiscuss struct {
 	Title *string `json:"title,omitempty"`
 	// 评论内容
 	Excerpt string `json:"excerpt"`
-	// 评论数
-	CommentCount int `json:"comment_count"`
 
 	// 喜欢数
 	LikeCount int `json:"like_count"`
+
+	// 反对数
+	DislikeCount int `json:"dislike_count"`
+
+	// 评论数
+	CommentCount int `json:"comment_count"`
 
 	// 图片
 	ImageUrls []string `json:"images"`
@@ -60,8 +74,15 @@ type TargetTopic struct {
 	// 头像
 	// 必须为URL
 	Avatar *string `json:"avatar"`
+
 	// 成员数
 	MemberCount int `json:"member_count"`
+
+	// 成员数
+	ArticleCount int `json:"article_count"`
+
+	// 讨论数
+	DiscussionCount int `json:"discussion_count"`
 
 	// 简介
 	Introduction string `json:"introduction"`

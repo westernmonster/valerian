@@ -91,8 +91,13 @@ type TargetDiscussion struct {
 	Excerpt string `json:"excerpt"`
 
 	Images []string `json:"images"`
+
 	// 喜欢数
 	LikeCount int `json:"like_count"`
+
+	// 反对数
+	DislikeCount int `json:"dislike_count"`
+
 	// 评论数
 	CommentCount int `json:"comment_count"`
 }
@@ -120,11 +125,14 @@ type TargetTopic struct {
 	// 封面
 	Avatar *string `json:"avatar,omitempty"`
 
-	// 资源数量
-	ResourceCount int `json:"resource_count"`
-
 	// 成员数
 	MemberCount int `json:"member_count"`
+
+	// 成员数
+	ArticleCount int `json:"article_count"`
+
+	// 讨论数
+	DiscussionCount int `json:"discussion_count"`
 }
 
 type TargetMember struct {

@@ -49,7 +49,7 @@ func route(e *mars.Engine) {
 
 		x.GET("/info", authSvc.User, memberInfo)
 
-		x.GET("/list/recent", authSvc.User, memberInfo)
+		x.GET("/list/recent", authSvc.User, recent)
 		x.GET("/list/activities", authSvc.User, memberActivites)
 		x.GET("/list/topics", authSvc.User, memberTopics)
 		x.GET("/list/discussions", authSvc.User, memberDiscuss)

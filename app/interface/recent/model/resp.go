@@ -12,11 +12,14 @@ type ItemTopic struct {
 	// 封面
 	Avatar *string `json:"avatar,omitempty"`
 
-	// 资源数量
-	ResourceCount int `json:"resource_count"`
-
 	// 成员数
 	MemberCount int `json:"member_count"`
+
+	// 文章数
+	ArticleCount int `json:"article_count"`
+
+	// 讨论数
+	DiscussionCount int `json:"discussion_count"`
 }
 
 type ItemArticle struct {
@@ -34,6 +37,15 @@ type ItemArticle struct {
 	ReviseCount int `json:"revise_count"`
 	// 评论数
 	CommentCount int `json:"comment_count"`
+
+	// 图片
+	ImageUrls []string `json:"images"`
+
+	// 发布日期
+	CreatedAt int64 `json:"created_at"`
+
+	// 更新日期
+	UpdatedAt int64 `json:"updated_at"`
 }
 
 type RecentItem struct {

@@ -115,11 +115,14 @@ type TopicItem struct {
 	// 封面
 	Avatar *string `json:"avatar,omitempty"`
 
-	// 资源数量
-	ResourceCount int `json:"resource_count"`
-
 	// 成员数
 	MemberCount int `json:"member_count"`
+
+	// 文章数
+	ArticleCount int `json:"article_count"`
+
+	// 讨论数
+	DiscussionCount int `json:"discussion_count"`
 }
 
 type TopicListResp struct {
