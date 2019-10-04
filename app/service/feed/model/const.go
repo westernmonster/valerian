@@ -19,3 +19,31 @@ const (
 const (
 	TargetTypeDiscussion = "discussion"
 )
+
+const (
+	BusDiscussionAdded   = "discussion.added"
+	BusDiscussionDeleted = "discussion.deleted"
+
+	BusArticleAdded   = "article.added"
+	BusArticleDeleted = "article.deleted"
+
+	BusReviseAdded   = "revise.added"
+	BusReviseDeleted = "revise.deleted"
+
+	BusTopicAdded   = "topic.added"
+	BusTopicDeleted = "topic.deleted"
+
+	BusMemberFollowed = "member.followed"
+
+	BusDiscussionLiked     = "discussion.liked"
+	BusDiscussionCommented = "discussion.commented"
+
+	BusArticleLiked     = "article.liked"
+	BusArticleCommented = "article.commented"
+
+	BusReviseLiked     = "revise.liked"
+	BusReviseCommented = "revise.commented"
+
+	BusCommentLiked   = "comment.liked"
+	BusCommentReplied = "comment.replied"
+)

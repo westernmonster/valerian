@@ -2,7 +2,7 @@ package api
 
 import "valerian/app/service/topic/model"
 
-func FromTopic(v *model.Topic, stat *model.TopicMemberStat) *TopicInfo {
+func FromTopic(v *model.Topic, stat *model.TopicStat) *TopicInfo {
 	reply := &TopicInfo{
 		ID:              v.ID,
 		Name:            v.Name,
@@ -18,7 +18,12 @@ func FromTopic(v *model.Topic, stat *model.TopicMemberStat) *TopicInfo {
 		CreatedBy:       v.CreatedBy,
 		CreatedAt:       v.CreatedAt,
 		UpdatedAt:       v.UpdatedAt,
+	}
+
+	reply.Stat = &TopicStat{
 		MemberCount:     int32(stat.MemberCount),
+		DiscussionCount: int32(stat.DiscussionCount),
+		ArticleCount:    int32(stat.ArticleCount),
 	}
 
 	if v.Avatar != nil {

@@ -52,16 +52,19 @@ func (p *Service) GetArticleRevisesPaged(c context.Context, articleID int64, off
 		resp.Items[i] = item
 	}
 
-	param := url.Values{}
-	param.Set("article_id", strconv.FormatInt(articleID, 10))
-	param.Set("limit", strconv.Itoa(limit))
-	param.Set("offset", strconv.Itoa(offset-limit))
-
-	if resp.Paging.Prev, err = genURL("/api/v1/article/list/revises", param); err != nil {
+	if resp.Paging.Prev, err = genURL("/api/v1/article/list/revises", url.Values{
+		"article_id": []string{strconv.FormatInt(articleID, 10)},
+		"limit":      []string{strconv.Itoa(limit)},
+		"offset":     []string{strconv.Itoa(offset - limit)},
+	}); err != nil {
 		return
 	}
-	param.Set("offset", strconv.Itoa(offset+limit))
-	if resp.Paging.Next, err = genURL("/api/v1/article/list/revises", param); err != nil {
+
+	if resp.Paging.Next, err = genURL("/api/v1/article/list/revises", url.Values{
+		"article_id": []string{strconv.FormatInt(articleID, 10)},
+		"limit":      []string{strconv.Itoa(limit)},
+		"offset":     []string{strconv.Itoa(offset + limit)},
+	}); err != nil {
 		return
 	}
 

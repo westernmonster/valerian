@@ -3,6 +3,8 @@ package service
 import (
 	"context"
 	"fmt"
+	"net/url"
+	"strconv"
 	"time"
 
 	"valerian/app/interface/topic/model"
@@ -104,4 +106,81 @@ func (p *Service) Follow(c context.Context, arg *model.ArgTopicFollow) (status i
 
 	return model.FollowStatusApproving, nil
 
+}
+
+func (p *Service) FollowedTopics(c context.Context, query string, limit, offset int) (resp *model.JoinedTopicsResp, err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+	var data []*model.Topic
+	if data, err = p.d.GetFollowedTopicsPaged(c, p.d.DB(), aid, query, limit, offset); err != nil {
+		return
+	}
+
+	resp = &model.JoinedTopicsResp{
+		Items:  make([]*model.JoinedTopicItem, len(data)),
+		Paging: &model.Paging{},
+	}
+
+	for i, v := range data {
+		item := &model.JoinedTopicItem{
+			ID:             v.ID,
+			Name:           v.Name,
+			Introduction:   v.Introduction,
+			EditPermission: v.EditPermission,
+			Avatar:         v.Avatar,
+		}
+
+		var stat *model.TopicStat
+		if stat, err = p.GetTopicStat(c, v.ID); err != nil {
+			return
+		}
+
+		item.MemberCount = stat.MemberCount
+		item.ArticleCount = stat.ArticleCount
+		item.DiscussionCount = stat.DiscussionCount
+
+		resp.Items[i] = item
+
+	}
+
+	if resp.Paging.Prev, err = genURL("/api/v1/topic/list/followed", url.Values{
+		"query":  []string{query},
+		"limit":  []string{strconv.Itoa(limit)},
+		"offset": []string{strconv.Itoa(offset - limit)},
+	}); err != nil {
+		return
+	}
+
+	if resp.Paging.Next, err = genURL("/api/v1/topic/list/followed", url.Values{
+		"query":  []string{query},
+		"limit":  []string{strconv.Itoa(limit)},
+		"offset": []string{strconv.Itoa(offset + limit)},
+	}); err != nil {
+		return
+	}
+
+	if len(resp.Items) < limit {
+		resp.Paging.IsEnd = true
+		resp.Paging.Next = ""
+	}
+
+	if offset == 0 {
+		resp.Paging.Prev = ""
+	}
+
+	return
+}
+
+func (p *Service) GetTopicStat(c context.Context, topicID int64) (stat *model.TopicStat, err error) {
+	if stat, err = p.d.GetTopicStatByID(c, p.d.DB(), topicID); err != nil {
+		return
+	} else if stat == nil {
+		stat = &model.TopicStat{
+			TopicID: topicID,
+		}
+	}
+	return
 }

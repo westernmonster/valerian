@@ -17,11 +17,11 @@ func (p *Service) GetTopic(c context.Context, topicID int64) (item *model.Topic,
 	return p.getTopic(c, p.d.DB(), topicID)
 }
 
-func (p *Service) GetTopicMemberStat(c context.Context, topicID int64) (stat *model.TopicMemberStat, err error) {
-	if stat, err = p.d.GetTopicMemberStat(c, p.d.DB(), topicID); err != nil {
+func (p *Service) GetTopicStat(c context.Context, topicID int64) (stat *model.TopicStat, err error) {
+	if stat, err = p.d.GetTopicStatByID(c, p.d.DB(), topicID); err != nil {
 		return
 	} else if stat == nil {
-		stat = &model.TopicMemberStat{
+		stat = &model.TopicStat{
 			TopicID: topicID,
 		}
 	}

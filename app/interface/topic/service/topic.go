@@ -87,7 +87,7 @@ func (p *Service) CreateTopic(c context.Context, arg *model.ArgCreateTopic) (top
 		return
 	}
 
-	if err = p.d.AddTopicMemberStat(c, tx, &model.TopicMemberStat{
+	if err = p.d.AddTopicStat(c, tx, &model.TopicStat{
 		TopicID:     item.ID,
 		MemberCount: 1,
 		CreatedAt:   time.Now().Unix(),

@@ -219,6 +219,27 @@ func topicsWithEditPermission(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /topic/list/followed [get]
 func joinedTopics(c *mars.Context) {
+	var (
+		err    error
+		offset int
+		limit  int
+	)
+
+	params := c.Request.Form
+
+	if offset, err = strconv.Atoi(params.Get("offset")); err != nil {
+		offset = 0
+	} else if offset < 0 {
+		offset = 0
+	}
+
+	if limit, err = strconv.Atoi(params.Get("limit")); err != nil {
+		limit = 10
+	} else if limit < 0 {
+		limit = 10
+	}
+
+	c.JSON(srv.FollowedTopics(c, params.Get("query"), limit, offset))
 }
 
 // @Summary 获取话题Meta信息

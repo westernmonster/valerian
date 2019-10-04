@@ -70,7 +70,7 @@ type JoinedTopicItem struct {
 	DiscussionCount int `json:"discussion_count"`
 
 	// EditPermission 编辑权限
-	EditPermission *string `json:"edit_permission,omitempty"`
+	EditPermission string `json:"edit_permission,omitempty"`
 }
 
 type JoinedTopicsResp struct {

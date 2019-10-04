@@ -15,6 +15,17 @@ const (
 	_getTopicMembersPagedSQL = "SELECT a.* FROM topic_members a WHERE a.deleted=0 AND a.topic_id=? ORDER BY a.role,a.id DESC limit ?,?"
 )
 
+func (p *Dao) GetFollowedTopicsPaged(c context.Context, node sqalx.Node, aid int64, query string, limit, offset int) (items []*model.Topic, err error) {
+	items = make([]*model.Topic, 0)
+	sqlSelect := "SELECT b.* FROM topic_members a LEFT JOIN topics b ON a.topic_id=b.id WHERE a.deleted=0 AND a.account_id=? ORDER BY b.id DESC LIMIT ?,?"
+
+	if err = node.SelectContext(c, &items, sqlSelect, aid, offset, limit); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetFollowedTopicsPaged err(%+v) aid(%d) limit(%d) offset(%d)", err, aid, limit, offset))
+		return
+	}
+	return
+}
+
 // GetTopicMembersCount
 func (p *Dao) GetTopicMembersCount(c context.Context, node sqalx.Node, topicID int64) (count int, err error) {
 	if err = node.GetContext(c, &count, _getTopicMembersCountSQL, topicID); err != nil {

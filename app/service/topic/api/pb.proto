@@ -52,8 +52,14 @@ message TopicInfo {
     // unix timestamp
     int64 UpdatedAt = 16 [(gogoproto.jsontag) = "updated_at"];
 
-    int32 MemberCount = 17 [(gogoproto.jsontag) = "member_count"];
+    TopicStat Stat = 17 [(gogoproto.jsontag) = "stat"];
 
+}
+
+message TopicStat {
+    int32 MemberCount = 1 [(gogoproto.jsontag) = "member_count"];
+    int32 ArticleCount = 2 [(gogoproto.jsontag) = "article_count"];
+    int32 DiscussionCount = 3 [(gogoproto.jsontag) = "discussion_count"];
 }
 
 message TopicMetaInfo {

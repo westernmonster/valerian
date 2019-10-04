@@ -13,11 +13,6 @@ import (
 	"github.com/nats-io/stan.go"
 )
 
-const (
-	BusNotifyDiscussionAdded   = "notify.discussion.added"
-	BusNotifyDiscussionDeleted = "notify.discussion.deleted"
-)
-
 type FeedConsumer struct {
 	Subscriptions []stan.Subscription
 }
@@ -34,13 +29,13 @@ func (p *Service) initFeedConsumer() (consumer *FeedConsumer) {
 	consumer = &FeedConsumer{
 		Subscriptions: make([]stan.Subscription, 0),
 	}
-	if sub, e := p.sc.Subscribe(BusNotifyDiscussionAdded, p.onDiscussionAdded, stan.DeliverAllAvailable(), stan.SetManualAckMode()); e != nil {
+	if sub, e := p.sc.Subscribe(model.BusDiscussionAdded, p.onDiscussionAdded, stan.DeliverAllAvailable(), stan.SetManualAckMode()); e != nil {
 		panic(e)
 	} else {
 		consumer.Subscriptions = append(consumer.Subscriptions, sub)
 	}
 
-	if sub, e := p.sc.Subscribe(BusNotifyDiscussionDeleted, p.onDiscussionDeleted, stan.DeliverAllAvailable(), stan.SetManualAckMode()); e != nil {
+	if sub, e := p.sc.Subscribe(model.BusDiscussionDeleted, p.onDiscussionDeleted, stan.DeliverAllAvailable(), stan.SetManualAckMode()); e != nil {
 		panic(e)
 	} else {
 		consumer.Subscriptions = append(consumer.Subscriptions, sub)

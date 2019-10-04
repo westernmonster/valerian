@@ -67,15 +67,7 @@ func (p *Service) Leave(c context.Context, topicID int64) (err error) {
 	}
 
 	// 更新成员统计信息
-	var stat *model.TopicMemberStat
-	if stat, err = p.d.GetTopicMemberStatForUpdate(c, tx, topicID); err != nil {
-		return
-	} else if stat == nil {
-		err = ecode.TopicMemberStatNotExist
-		return
-	}
-	stat.MemberCount = stat.MemberCount - 1
-	if err = p.d.UpdateTopicMemberStat(c, tx, stat); err != nil {
+	if err = p.d.IncrTopicStat(c, tx, &model.TopicStat{TopicID: topicID, MemberCount: -1}); err != nil {
 		return
 	}
 
@@ -273,14 +265,6 @@ func (p *Service) BulkSaveMembers(c context.Context, req *model.ArgBatchSavedTop
 			return
 		}
 
-		var stat *model.TopicMemberStat
-		if stat, err = p.d.GetTopicMemberStatForUpdate(c, tx, req.TopicID); err != nil {
-			return
-		} else if stat == nil {
-			err = ecode.TopicMemberStatNotExist
-			return
-		}
-
 		switch v.Opt {
 		case "C":
 			if member != nil {
@@ -313,7 +297,9 @@ func (p *Service) BulkSaveMembers(c context.Context, req *model.ArgBatchSavedTop
 				return
 			}
 
-			stat.MemberCount = stat.MemberCount + 1
+			if err = p.d.IncrTopicStat(c, tx, &model.TopicStat{TopicID: req.TopicID, MemberCount: 1}); err != nil {
+				return
+			}
 
 			break
 		case "U":
@@ -333,12 +319,10 @@ func (p *Service) BulkSaveMembers(c context.Context, req *model.ArgBatchSavedTop
 				return
 			}
 
-			stat.MemberCount = stat.MemberCount - 1
+			if err = p.d.IncrTopicStat(c, tx, &model.TopicStat{TopicID: req.TopicID, MemberCount: -1}); err != nil {
+				return
+			}
 			break
-		}
-
-		if err = p.d.UpdateTopicMemberStat(c, tx, stat); err != nil {
-			return
 		}
 
 		dic[v.AccountID] = true
@@ -408,15 +392,7 @@ func (p *Service) addMember(c context.Context, node sqalx.Node, topicID, aid int
 			return
 		}
 
-		var stat *model.TopicMemberStat
-		if stat, err = p.d.GetTopicMemberStatForUpdate(c, tx, topicID); err != nil {
-			return
-		} else if stat == nil {
-			err = ecode.TopicMemberStatNotExist
-			return
-		}
-		stat.MemberCount = stat.MemberCount + 1
-		if err = p.d.UpdateTopicMemberStat(c, tx, stat); err != nil {
+		if err = p.d.IncrTopicStat(c, tx, &model.TopicStat{TopicID: topicID, MemberCount: -1}); err != nil {
 			return
 		}
 	}

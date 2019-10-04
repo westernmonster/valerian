@@ -41,6 +41,7 @@ type IDao interface {
 	UpdateTopic(c context.Context, node sqalx.Node, item *model.Topic) (err error)
 	DelTopic(c context.Context, node sqalx.Node, id int64) (err error)
 
+	GetFollowedTopicsPaged(c context.Context, node sqalx.Node, aid int64, query string, limit, offset int) (items []*model.Topic, err error)
 	GetTopicMembersCount(c context.Context, node sqalx.Node, topicID int64) (count int, err error)
 	GetTopicMembersPaged(c context.Context, node sqalx.Node, topicID int64, page, pageSize int) (count int, items []*model.TopicMember, err error)
 	GetTopicMembersByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.TopicMember, err error)
@@ -81,10 +82,11 @@ type IDao interface {
 	UpdateTopicInviteRequest(c context.Context, node sqalx.Node, item *model.TopicInviteRequest) (err error)
 	DelTopicInviteRequest(c context.Context, node sqalx.Node, id int64) (err error)
 
-	AddTopicMemberStat(c context.Context, node sqalx.Node, item *model.TopicMemberStat) (err error)
-	GetTopicMemberStatForUpdate(c context.Context, node sqalx.Node, topicID int64) (item *model.TopicMemberStat, err error)
-	UpdateTopicMemberStat(c context.Context, node sqalx.Node, item *model.TopicMemberStat) (err error)
-	GetTopicMemberStat(c context.Context, node sqalx.Node, topicID int64) (item *model.TopicMemberStat, err error)
+	GetTopicStatForUpdate(c context.Context, node sqalx.Node, topicID int64) (item *model.TopicStat, err error)
+	AddTopicStat(c context.Context, node sqalx.Node, item *model.TopicStat) (err error)
+	UpdateTopicStat(c context.Context, node sqalx.Node, item *model.TopicStat) (err error)
+	IncrTopicStat(c context.Context, node sqalx.Node, item *model.TopicStat) (err error)
+	GetTopicStatByID(c context.Context, node sqalx.Node, topicID int64) (item *model.TopicStat, err error)
 
 	GetTopicMeta(c context.Context, aid, topicID int64) (info *stopic.TopicMetaInfo, err error)
 	GetTopicFeedPaged(c context.Context, topicID int64, limit, offset int) (info *feed.TopicFeedResp, err error)

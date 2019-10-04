@@ -45,7 +45,7 @@ func (s *server) GetTopicInfo(ctx context.Context, req *api.TopicReq) (*api.Topi
 		return nil, err
 	}
 
-	stat, err := s.svr.GetTopicMemberStat(ctx, req.ID)
+	stat, err := s.svr.GetTopicStat(ctx, req.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -98,7 +98,7 @@ func (s *server) GetUserTopicsPaged(ctx context.Context, req *api.UserTopicsReq)
 	}
 
 	for i, v := range items {
-		stat, err := s.svr.GetTopicMemberStat(ctx, v.ID)
+		stat, err := s.svr.GetTopicStat(ctx, v.ID)
 		if err != nil {
 			return nil, err
 		}
