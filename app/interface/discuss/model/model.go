@@ -34,8 +34,9 @@ type AccountResStat struct {
 	UpdatedAt       int64 `db:"updated_at" json:"updated_at"`             // UpdatedAt 更新时间
 }
 
-type TopicResStat struct {
+type TopicStat struct {
 	TopicID         int64 `db:"topic_id" json:"topic_id,string"`          // TopicID 话题ID
+	MemberCount     int   `db:"member_count" json:"member_count"`         // MemberCount 成员数
 	ArticleCount    int   `db:"article_count" json:"article_count"`       // ArticleCount 文章数
 	DiscussionCount int   `db:"discussion_count" json:"discussion_count"` // DiscussionCount 讨论数
 	CreatedAt       int64 `db:"created_at" json:"created_at"`             // CreatedAt 创建时间

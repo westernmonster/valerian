@@ -92,6 +92,10 @@ func (p *Service) AddArticle(c context.Context, arg *model.ArgAddArticle) (id in
 		return
 	}
 
+	if err = p.d.AddAccountStat(c, tx, &model.AccountResStat{AccountID: item.CreatedBy, ArticleCount: 1}); err != nil {
+		return
+	}
+
 	if err = tx.Commit(); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 	}

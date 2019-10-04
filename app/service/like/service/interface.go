@@ -24,6 +24,21 @@ type IDao interface {
 	UpdateLike(c context.Context, node sqalx.Node, item *model.Like) (err error)
 	DelLike(c context.Context, node sqalx.Node, id int64) (err error)
 
+	GetDiscussionStatByID(c context.Context, node sqalx.Node, discussionID int64) (item *model.DiscussionStat, err error)
+	AddDiscussionStat(c context.Context, node sqalx.Node, item *model.DiscussionStat) (err error)
+	UpdateDiscussionStat(c context.Context, node sqalx.Node, item *model.DiscussionStat) (err error)
+	IncrDiscussionStat(c context.Context, node sqalx.Node, item *model.DiscussionStat) (err error)
+
+	GetArticleStatByID(c context.Context, node sqalx.Node, discussionID int64) (item *model.ArticleStat, err error)
+	AddArticleStat(c context.Context, node sqalx.Node, item *model.ArticleStat) (err error)
+	UpdateArticleStat(c context.Context, node sqalx.Node, item *model.ArticleStat) (err error)
+	IncrArticleStat(c context.Context, node sqalx.Node, item *model.ArticleStat) (err error)
+
+	GetReviseStatByID(c context.Context, node sqalx.Node, discussionID int64) (item *model.ReviseStat, err error)
+	AddReviseStat(c context.Context, node sqalx.Node, item *model.ReviseStat) (err error)
+	UpdateReviseStat(c context.Context, node sqalx.Node, item *model.ReviseStat) (err error)
+	IncrReviseStat(c context.Context, node sqalx.Node, item *model.ReviseStat) (err error)
+
 	Ping(c context.Context) (err error)
 	Close()
 	DB() sqalx.Node

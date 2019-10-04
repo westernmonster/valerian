@@ -47,14 +47,6 @@ func (p *Service) initStat(c context.Context, aid, topicID int64) (err error) {
 		return
 	}
 
-	if err = p.d.AddTopicStat(c, p.d.DB(), &model.TopicResStat{
-		TopicID:   aid,
-		CreatedAt: time.Now().Unix(),
-		UpdatedAt: time.Now().Unix(),
-	}); err != nil {
-		return
-	}
-
 	return
 }
 
@@ -160,7 +152,7 @@ func (p *Service) AddDiscussion(c context.Context, arg *model.ArgAddDiscuss) (id
 	if err = p.d.IncrAccountStat(c, tx, &model.AccountResStat{AccountID: aid, DiscussionCount: 1}); err != nil {
 		return
 	}
-	if err = p.d.IncrTopicStat(c, tx, &model.TopicResStat{TopicID: aid, DiscussionCount: 1}); err != nil {
+	if err = p.d.IncrTopicStat(c, tx, &model.TopicStat{TopicID: arg.TopicID, DiscussionCount: 1}); err != nil {
 		return
 	}
 
@@ -318,7 +310,7 @@ func (p *Service) DelDiscussion(c context.Context, id int64) (err error) {
 	if err = p.d.IncrAccountStat(c, tx, &model.AccountResStat{AccountID: aid, DiscussionCount: -1}); err != nil {
 		return
 	}
-	if err = p.d.IncrTopicStat(c, tx, &model.TopicResStat{TopicID: aid, DiscussionCount: -1}); err != nil {
+	if err = p.d.IncrTopicStat(c, tx, &model.TopicStat{TopicID: item.TopicID, DiscussionCount: -1}); err != nil {
 		return
 	}
 

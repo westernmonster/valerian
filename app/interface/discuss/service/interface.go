@@ -42,10 +42,11 @@ type IDao interface {
 	UpdateAccountStat(c context.Context, node sqalx.Node, item *model.AccountResStat) (err error)
 	IncrAccountStat(c context.Context, node sqalx.Node, item *model.AccountResStat) (err error)
 
-	GetTopicStatByID(c context.Context, node sqalx.Node, topicID int64) (item *model.TopicResStat, err error)
-	AddTopicStat(c context.Context, node sqalx.Node, item *model.TopicResStat) (err error)
-	UpdateTopicStat(c context.Context, node sqalx.Node, item *model.TopicResStat) (err error)
-	IncrTopicStat(c context.Context, node sqalx.Node, item *model.TopicResStat) (err error)
+	GetTopicStatForUpdate(c context.Context, node sqalx.Node, topicID int64) (item *model.TopicStat, err error)
+	AddTopicStat(c context.Context, node sqalx.Node, item *model.TopicStat) (err error)
+	UpdateTopicStat(c context.Context, node sqalx.Node, item *model.TopicStat) (err error)
+	IncrTopicStat(c context.Context, node sqalx.Node, item *model.TopicStat) (err error)
+	GetTopicStatByID(c context.Context, node sqalx.Node, topicID int64) (item *model.TopicStat, err error)
 
 	GetTopic(c context.Context, id int64) (info *topic.TopicInfo, err error)
 	GetAccountBaseInfo(c context.Context, aid int64) (info *account.BaseInfoReply, err error)
