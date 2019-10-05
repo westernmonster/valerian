@@ -1,0 +1,54 @@
+syntax = "proto3";
+package model;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+message NotifyDiscussionAdded {
+    int64 ID = 1 [(gogoproto.jsontag) = "id"] ;
+}
+
+
+message NotifyDiscussionUpdated {
+    int64 ID = 1 [(gogoproto.jsontag) = "id"] ;
+}
+
+
+message NotifyDiscussionDeleted {
+    int64 ID = 1 [(gogoproto.jsontag) = "id"] ;
+    int64 TopicID = 2 [(gogoproto.jsontag) = "topic_id"] ;
+}
+
+
+message MsgTopicAdded {
+    int64 ID = 1 [(gogoproto.jsontag) = "id"] ;
+}
+
+message MsgTopicDeleted {
+    int64 ID = 1 [(gogoproto.jsontag) = "id"] ;
+}
+
+message MsgTopicFollowed {
+    int64 AccountID = 1 [(gogoproto.jsontag) = "account_id"] ;
+    int64 TopicID = 2 [(gogoproto.jsontag) = "topic_id"] ;
+}
+
+message MsgTopicLeaved {
+    int64 AccountID = 1 [(gogoproto.jsontag) = "account_id"] ;
+    int64 TopicID = 2 [(gogoproto.jsontag) = "topic_id"] ;
+}
+
+message MsgTopicInviteSent {
+    int64 ID = 1 [(gogoproto.jsontag) = "id"] ;
+}
+
+message MsgTopicFollowRequested {
+    int64 ID = 1 [(gogoproto.jsontag) = "id"] ;
+}
+
+message MsgTopicFollowApproved {
+    int64 ID = 1 [(gogoproto.jsontag) = "id"] ;
+}
+
+message MsgTopicFollowRejected {
+    int64 ID = 1 [(gogoproto.jsontag) = "id"] ;
+}

@@ -2,8 +2,10 @@ package service
 
 import (
 	"context"
+
 	discuss "valerian/app/service/discuss/api"
 	"valerian/app/service/feed/model"
+	topic "valerian/app/service/topic/api"
 	"valerian/library/database/sqalx"
 )
 
@@ -20,6 +22,7 @@ type IDao interface {
 	DelAccountFeedByCond(c context.Context, node sqalx.Node, accountID int64, targetType string, targetID int64) (err error)
 
 	GetDiscussion(c context.Context, id int64) (info *discuss.DiscussionInfo, err error)
+	GetTopic(c context.Context, id int64) (info *topic.TopicInfo, err error)
 
 	Ping(c context.Context) (err error)
 	Close()

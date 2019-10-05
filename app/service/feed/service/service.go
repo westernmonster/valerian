@@ -9,17 +9,15 @@ import (
 	"valerian/app/service/feed/dao"
 	"valerian/library/conf/env"
 	"valerian/library/log"
-
-	"github.com/nats-io/stan.go"
+	"valerian/library/mq"
 )
 
 // Service struct of service
 type Service struct {
-	c            *conf.Config
-	d            IDao
-	sc           stan.Conn
-	missch       chan func()
-	feedConsumer *FeedConsumer
+	c      *conf.Config
+	d      IDao
+	mq     *mq.MessageQueue
+	missch chan func()
 }
 
 // New create new service
@@ -27,26 +25,10 @@ func New(c *conf.Config) (s *Service) {
 	s = &Service{
 		c:      c,
 		d:      dao.New(c),
+		mq:     mq.New(env.Hostname, c.Nats),
 		missch: make(chan func(), 1024),
 	}
 
-	servers := strings.Join(c.Nats.Nodes, ",")
-	if sc, err := stan.Connect("valerian",
-		env.Hostname,
-		stan.Pings(10, 5),
-		stan.NatsURL(servers),
-		stan.SetConnectionLostHandler(func(_ stan.Conn, reason error) {
-			log.Errorf("Nats Connection lost, reason: %v", reason)
-			panic(reason)
-		}),
-	); err != nil {
-		log.Errorf("connect to servers failed %#v\n", err)
-		panic(err)
-	} else {
-		s.sc = sc
-	}
-
-	s.initFeedConsumer()
 	go s.cacheproc()
 	return
 }
@@ -59,8 +41,6 @@ func (s *Service) Ping(c context.Context) (err error) {
 // Close dao.
 func (s *Service) Close() {
 	s.d.Close()
-	s.feedConsumer.Unsubscribe()
-	s.sc.Close()
 }
 
 func (s *Service) addCache(f func()) {
