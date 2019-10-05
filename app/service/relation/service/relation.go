@@ -197,6 +197,8 @@ func (p *Service) Follow(c context.Context, aid int64, fid int64) (err error) {
 		}
 	}()
 
+	log.For(c).Info(fmt.Sprintf("aid(%d), fid(%d)"))
+
 	var followingAttr uint32
 	var fansAttr uint32
 	var friend bool
