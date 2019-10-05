@@ -34,7 +34,7 @@ func route(e *mars.Engine) {
 	g := e.Group("/api/v1/topic")
 	{
 		g.GET("/get", authSvc.User, getTopic)
-
+		g.GET("/meta", authSvc.User, topicMeta)
 		g.POST("/add", authSvc.User, createTopic)
 		g.POST("/edit", authSvc.User, editTopic)
 		g.POST("/del", authSvc.User, deleteTopic)
@@ -42,14 +42,18 @@ func route(e *mars.Engine) {
 		g.POST("/follow", authSvc.User, followTopic)
 		g.POST("/leave", authSvc.User, leave)
 		g.POST("/invite", authSvc.User, inviteFans)
-
+		g.POST("/follow", authSvc.User, followTopic)
 		g.POST("/members", authSvc.User, editTopicMembers)
 		g.POST("/auth_topics", authSvc.User, editAuthTopics)
 		g.POST("/catalogs", authSvc.User, editTopicCatalogs)
 
+		g.GET("/list/followed", authSvc.User, followedTopics)
+		g.GET("/list/has_edit_permission", authSvc.User, topicsWithEditPermission)
 		g.GET("/list/activities", authSvc.User, getActivites)
 		g.GET("/list/catalogs", authSvc.User, topicCatalogs)
+		g.GET("/list/catalog_taxonomies", authSvc.User, topicCatalogTaxonomies)
 		g.GET("/list/members", authSvc.User, topicMembers)
+		g.GET("/list/member_fans", authSvc.User, memberFansList)
 		g.GET("/list/auth_topics", authSvc.User, authTopics)
 	}
 

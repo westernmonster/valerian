@@ -1,6 +1,6 @@
 package model
 
-type TopicSearchItem struct {
+type CanEditTopicItem struct {
 	// ID
 	ID int64 `json:"id,string" swaggertype:"string"`
 	// 话题名
@@ -22,7 +22,7 @@ type TopicSearchItem struct {
 	DiscussionCount int `json:"discussion_count"`
 
 	// EditPermission 编辑权限
-	EditPermission *string `json:"edit_permission,omitempty"`
+	EditPermission string `json:"edit_permission,omitempty"`
 
 	// 是否有二级目录
 	HasCatalogTaxonomy bool `json:"has_catalog_taxonomy"`
@@ -31,9 +31,9 @@ type TopicSearchItem struct {
 	IsAuthed bool `json:"is_authed"`
 }
 
-type TopicSearchResp struct {
-	Items  []*TopicSearchItem `json:"items"`
-	Paging *Paging            `json:"paging"`
+type CanEditTopicsResp struct {
+	Items  []*CanEditTopicItem `json:"items"`
+	Paging *Paging             `json:"paging"`
 }
 
 type Creator struct {

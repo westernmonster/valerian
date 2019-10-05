@@ -9,6 +9,19 @@ import (
 	"valerian/library/log"
 )
 
+func (p *Dao) HasTaxonomy(c context.Context, node sqalx.Node, topicID int64) (has bool, err error) {
+	var count int
+	sqlSelect := "SELECT COUNT(1) as count FROM topic_catalogs a WHERE a.topic_id=? AND a.type=? AND a.deleted=0"
+	if err = node.GetContext(c, &count, sqlSelect, topicID, model.TopicCatalogTaxonomy); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.HaxTaxonomy error(%+v), topic_id(%d)", err, topicID))
+	}
+
+	if count > 0 {
+		has = true
+	}
+	return
+}
+
 func (p *Dao) GetTopicCatalogChildrenCount(c context.Context, node sqalx.Node, topicID, parentID int64) (count int, err error) {
 	sqlSelect := "SELECT COUNT(1) as count FROM topic_catalogs a WHERE a.topic_id=? AND a.parent_id = ? AND a.deleted=0"
 	if err = node.GetContext(c, &count, sqlSelect, topicID, parentID); err != nil {

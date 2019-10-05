@@ -78,6 +78,7 @@ func (p *Service) Leave(c context.Context, topicID int64) (err error) {
 
 	p.addCache(func() {
 		p.d.DelTopicMembersCache(context.TODO(), topicID)
+		p.onTopicLeaved(c, aid, topicID)
 	})
 
 	return
@@ -301,6 +302,10 @@ func (p *Service) BulkSaveMembers(c context.Context, req *model.ArgBatchSavedTop
 				return
 			}
 
+			p.addCache(func() {
+				p.onTopicFollowed(c, v.AccountID, req.TopicID)
+			})
+
 			break
 		case "U":
 			if member == nil {
@@ -322,6 +327,10 @@ func (p *Service) BulkSaveMembers(c context.Context, req *model.ArgBatchSavedTop
 			if err = p.d.IncrTopicStat(c, tx, &model.TopicStat{TopicID: req.TopicID, MemberCount: -1}); err != nil {
 				return
 			}
+
+			p.addCache(func() {
+				p.onTopicLeaved(c, v.AccountID, req.TopicID)
+			})
 			break
 		}
 
@@ -404,7 +413,9 @@ func (p *Service) addMember(c context.Context, node sqalx.Node, topicID, aid int
 
 	p.addCache(func() {
 		p.d.DelTopicMembersCache(context.TODO(), topicID)
+		p.onTopicFollowed(c, aid, topicID)
 	})
+
 	return
 }
 

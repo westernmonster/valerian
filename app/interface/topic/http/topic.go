@@ -156,33 +156,6 @@ func changeOwner(c *mars.Context) {
 	c.JSON(nil, srv.ChangeOwner(c, arg))
 }
 
-// @Summary 收藏话题
-// @Description 收藏话题
-// @Tags topic
-// @Accept json
-// @Produce json
-// @Param Authorization header string true "Bearer"
-// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
-// @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param id query string true "ID"
-// @Success 200 "成功后返回bool值"
-// @Failure 400 "验证请求失败"
-// @Failure 401 "登录验证失败"
-// @Failure 500 "服务器端错误"
-// @Router /topic/fav [post]
-func favTopic(c *mars.Context) {
-	idStr := c.Request.Form.Get("id")
-	if id, err := strconv.ParseInt(idStr, 10, 64); err != nil {
-		c.JSON(nil, ecode.RequestErr)
-		return
-	} else if id == 0 {
-		c.JSON(nil, ecode.RequestErr)
-		return
-	} else {
-		c.JSON(srv.FavTopic(c, id))
-	}
-}
-
 // @Summary 有编辑权限的话题列表
 // @Description 有编辑权限的话题列表
 // @Tags topic
@@ -194,12 +167,13 @@ func favTopic(c *mars.Context) {
 // @Param query query string true "查询条件"
 // @Param limit query integer false "每页大小"
 // @Param offset query integer false "offset"
-// @Success 200 {object} model.TopicSearchResp "成员"
+// @Success 200 {object} model.CanEditTopicsResp "成员"
 // @Failure 400 "请求验证失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /topic/list/has_edit_permission [get]
 func topicsWithEditPermission(c *mars.Context) {
+	c.JSON(srv.GetUserCanEditTopics(c))
 }
 
 // @Summary 已经加入话题列表
@@ -218,7 +192,7 @@ func topicsWithEditPermission(c *mars.Context) {
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /topic/list/followed [get]
-func joinedTopics(c *mars.Context) {
+func followedTopics(c *mars.Context) {
 	var (
 		err    error
 		offset int

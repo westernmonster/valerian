@@ -10,6 +10,7 @@ import (
 	"valerian/library/ecode"
 	"valerian/library/gid"
 	"valerian/library/log"
+	"valerian/library/net/metadata"
 )
 
 func (p *Service) isAuthTopic(c context.Context, node sqalx.Node, toTopicID, fromTopicID int64) (isAuth bool, err error) {
@@ -192,5 +193,56 @@ func (p *Service) getAuthTopics(c context.Context, node sqalx.Node, topicID int6
 			p.d.SetAuthTopicsCache(context.TODO(), topicID, data)
 		})
 	}
+	return
+}
+
+func (p *Service) GetUserCanEditTopics(c context.Context) (resp *model.CanEditTopicsResp, err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+
+	var data []*model.TopicIDItem
+	if data, err = p.d.GetUserCanEditTopicIDs(c, p.d.DB(), aid); err != nil {
+		return
+	}
+
+	resp = &model.CanEditTopicsResp{
+		Items:  make([]*model.CanEditTopicItem, len(data)),
+		Paging: &model.Paging{},
+	}
+
+	for i, v := range data {
+		var t *model.Topic
+		if t, err = p.getTopic(c, p.d.DB(), v.TopicID); err != nil {
+			return
+		}
+		item := &model.CanEditTopicItem{
+			ID:             v.TopicID,
+			Name:           t.Name,
+			Introduction:   t.Introduction,
+			EditPermission: t.EditPermission,
+			Avatar:         t.Avatar,
+		}
+
+		var stat *model.TopicStat
+		if stat, err = p.GetTopicStat(c, v.TopicID); err != nil {
+			return
+		}
+
+		item.MemberCount = stat.MemberCount
+		item.ArticleCount = stat.ArticleCount
+		item.DiscussionCount = stat.DiscussionCount
+
+		if item.HasCatalogTaxonomy, err = p.d.HasTaxonomy(c, p.d.DB(), v.TopicID); err != nil {
+			return
+		}
+
+		resp.Items[i] = item
+	}
+
+	resp.Paging.IsEnd = true
+
 	return
 }

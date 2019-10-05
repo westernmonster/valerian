@@ -2,11 +2,9 @@ package service
 
 import (
 	"context"
-	"net/url"
 	"time"
 
 	"valerian/app/interface/topic/model"
-	"valerian/library/conf/env"
 	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
 	"valerian/library/gid"
@@ -112,17 +110,11 @@ func (p *Service) Invite(c context.Context, arg *model.ArgTopicInvite) (err erro
 		if err = p.d.AddTopicInviteRequest(c, p.d.DB(), item); err != nil {
 			return
 		}
+
+		p.addCache(func() {
+			p.onTopicInviteSent(c, item.ID)
+		})
 	}
 
 	return
-}
-
-func genURL(path string, param url.Values) (uri string, err error) {
-	u, err := url.Parse(env.SiteURL + path)
-	if err != nil {
-		return
-	}
-	u.RawQuery = param.Encode()
-
-	return u.String(), nil
 }

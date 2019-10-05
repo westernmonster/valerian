@@ -102,6 +102,10 @@ func (p *Service) CreateTopic(c context.Context, arg *model.ArgCreateTopic) (top
 	}
 
 	topicID = item.ID
+
+	p.addCache(func() {
+		p.onTopicAdded(context.Background(), topicID)
+	})
 	return
 }
 
@@ -396,62 +400,5 @@ func (p *Service) getAccountTopicSetting(c context.Context, node sqalx.Node, aid
 }
 
 func (p *Service) DelTopic(c context.Context, topicID int64) (err error) {
-	return
-}
-
-func (p *Service) FavTopic(c context.Context, topicID int64) (faved bool, err error) {
-	aid, ok := metadata.Value(c, metadata.Aid).(int64)
-	if !ok {
-		err = ecode.AcquireAccountIDFailed
-		return
-	}
-
-	var tx sqalx.Node
-	if tx, err = p.d.DB().Beginx(c); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
-		return
-	}
-
-	defer func() {
-		if err != nil {
-			if err1 := tx.Rollback(); err1 != nil {
-				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
-			}
-			return
-		}
-	}()
-
-	var item *model.AccountTopicSetting
-	if item, err = p.d.GetAccountTopicSettingByCond(c, tx, map[string]interface{}{"account_id": aid, "topic_id": topicID}); err != nil {
-		return
-	} else if item == nil {
-		item = &model.AccountTopicSetting{
-			ID:               gid.NewID(),
-			AccountID:        aid,
-			TopicID:          topicID,
-			Important:        false,
-			MuteNotification: false,
-			Fav:              true,
-			CreatedAt:        time.Now().Unix(),
-			UpdatedAt:        time.Now().Unix(),
-		}
-
-		faved = true
-		if err = p.d.AddAccountTopicSetting(c, tx, item); err != nil {
-			return
-		}
-	} else {
-		item.Fav = !item.Fav
-		faved = bool(item.Fav)
-
-		if err = p.d.UpdateAccountTopicSetting(c, tx, item); err != nil {
-			return
-		}
-	}
-
-	if err = tx.Commit(); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
-		return
-	}
 	return
 }

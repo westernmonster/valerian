@@ -24,6 +24,7 @@ type IDao interface {
 	UpdateTopicCatalog(c context.Context, node sqalx.Node, item *model.TopicCatalog) (err error)
 	DelTopicCatalog(c context.Context, node sqalx.Node, id int64) (err error)
 	GetTopicCatalogMaxChildrenSeq(c context.Context, node sqalx.Node, topicID, parentID int64) (seq int, err error)
+	HasTaxonomy(c context.Context, node sqalx.Node, topicID int64) (has bool, err error)
 
 	GetAuthTopicsByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.AuthTopic, err error)
 	GetAuthTopics(c context.Context, node sqalx.Node) (items []*model.AuthTopic, err error)
@@ -32,6 +33,7 @@ type IDao interface {
 	AddAuthTopic(c context.Context, node sqalx.Node, item *model.AuthTopic) (err error)
 	UpdateAuthTopic(c context.Context, node sqalx.Node, item *model.AuthTopic) (err error)
 	DelAuthTopic(c context.Context, node sqalx.Node, id int64) (err error)
+	GetUserCanEditTopicIDs(c context.Context, node sqalx.Node, aid int64) (items []*model.TopicIDItem, err error)
 
 	GetTopicsByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.Topic, err error)
 	GetTopics(c context.Context, node sqalx.Node) (items []*model.Topic, err error)

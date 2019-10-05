@@ -10,6 +10,33 @@ import (
 )
 
 // GetAll get all records
+func (p *Dao) GetUserCanEditTopicIDs(c context.Context, node sqalx.Node, aid int64) (items []*model.TopicIDItem, err error) {
+	items = make([]*model.TopicIDItem, 0)
+	// 当前用户是管理员的话题
+	// 用户所在话题角色是普通用户，该话题被授权为edit，找出授权话题
+	// 用户所在话题角色是管理员，该话题被授权为admin_edit，找出授权话题
+	sqlSelect := `
+SELECT topic_id
+FROM topic_members
+WHERE account_id = ? AND role IN ( 'owner', 'admin' )
+UNION
+SELECT b.topic_id
+FROM topic_members a JOIN auth_topics b ON a.topic_id = b.to_topic_id
+WHERE a.account_id = ? AND a.role = 'user' AND b.permission = 'edit'
+UNION
+SELECT b.topic_id
+FROM topic_members a JOIN auth_topics b ON a.topic_id = b.to_topic_id
+WHERE a.account_id = ? AND a.role IN ( 'owner', 'admin' ) AND b.permission = 'admin_edit'
+`
+
+	if err = node.SelectContext(c, &items, sqlSelect, aid, aid, aid); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetUserCanEditTopicIDs err(%+v)", err))
+		return
+	}
+	return
+}
+
+// GetAll get all records
 func (p *Dao) GetAuthTopics(c context.Context, node sqalx.Node) (items []*model.AuthTopic, err error) {
 	items = make([]*model.AuthTopic, 0)
 	sqlSelect := "SELECT a.* FROM auth_topics a WHERE a.deleted=0 ORDER BY a.id DESC "

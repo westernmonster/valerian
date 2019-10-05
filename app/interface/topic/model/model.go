@@ -107,3 +107,7 @@ type DiscussCategory struct {
 	CreatedAt int64         `db:"created_at" json:"created_at"`    // CreatedAt 创建时间
 	UpdatedAt int64         `db:"updated_at" json:"updated_at"`    // UpdatedAt 更新时间
 }
+
+type TopicIDItem struct {
+	TopicID int64 `db:"topic_id" json:"topic_id,string"` // TopicID 话题ID
+}
