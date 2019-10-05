@@ -23,14 +23,25 @@ type Config struct {
 
 type MessageQueue struct {
 	c             *Config
+	clientID      string
 	subscriptions map[string]stan.Subscription
 	conn          stan.Conn
 }
 
-func (p *MessageQueue) Init(clientID string, config *Config) (err error) {
-	p.c = config
+func New(clientID string, config *Config) *MessageQueue {
+	mq := &MessageQueue{
+		c:        config,
+		clientID: clientID,
+	}
+	mq.init()
+
+	return mq
+}
+
+func (p *MessageQueue) init() {
 	servers := strings.Join(p.c.Nodes, ",")
-	if p.conn, err = stan.Connect(p.c.ClusterID, clientID,
+	var err error
+	if p.conn, err = stan.Connect(p.c.ClusterID, p.clientID,
 		stan.Pings(p.c.PingInterval, p.c.PingMaxOut),
 		stan.NatsURL(servers),
 		stan.SetConnectionLostHandler(func(_ stan.Conn, reason error) {
@@ -65,11 +76,12 @@ func (p *MessageQueue) QueueSubscribe(subject string, qgroup string, cb stan.Msg
 // 每个组都会收到消息，但是组内成员是随机分配一个接收
 func (p *MessageQueue) QueueSubscribeWithOpts(subject string, qgroup string, cb stan.MsgHandler, options ...stan.SubscriptionOption) (err error) {
 	var sub stan.Subscription
+	key := fmt.Sprintf("%s_%s", subject, qgroup)
+	options = append(options, stan.DurableName(key))
+
 	if sub, err = p.conn.QueueSubscribe(subject, qgroup, cb, options...); err != nil {
 		log.Error(fmt.Sprintf("mq.QueueSubscribe(), subject(%s) ,qgroup(%s), error(%+v)", subject, qgroup, err))
 	}
-
-	key := fmt.Sprintf("%s_%s", subject, qgroup)
 
 	if _, ok := p.subscriptions[key]; ok {
 		err = errors.Errorf("subscription already exist, key(%s)", key)
