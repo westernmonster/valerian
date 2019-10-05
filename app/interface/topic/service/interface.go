@@ -7,6 +7,7 @@ import (
 	"valerian/app/service/discuss/api"
 	discuss "valerian/app/service/discuss/api"
 	feed "valerian/app/service/feed/api"
+	relation "valerian/app/service/relation/api"
 	stopic "valerian/app/service/topic/api"
 
 	"valerian/library/database/sqalx"
@@ -89,6 +90,8 @@ type IDao interface {
 	UpdateTopicStat(c context.Context, node sqalx.Node, item *model.TopicStat) (err error)
 	IncrTopicStat(c context.Context, node sqalx.Node, item *model.TopicStat) (err error)
 	GetTopicStatByID(c context.Context, node sqalx.Node, topicID int64) (item *model.TopicStat, err error)
+
+	GetFans(c context.Context, accountID int64, limit, offset int) (resp *relation.FansResp, err error)
 
 	GetTopicMeta(c context.Context, aid, topicID int64) (info *stopic.TopicMetaInfo, err error)
 	GetTopicFeedPaged(c context.Context, topicID int64, limit, offset int) (info *feed.TopicFeedResp, err error)

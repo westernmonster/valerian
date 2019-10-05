@@ -10,6 +10,7 @@ import (
 	account "valerian/app/service/account/api"
 	discuss "valerian/app/service/discuss/api"
 	feed "valerian/app/service/feed/api"
+	relation "valerian/app/service/relation/api"
 	stopic "valerian/app/service/topic/api"
 	"valerian/library/cache/memcache"
 	"valerian/library/conf/env"
@@ -23,15 +24,16 @@ import (
 
 // Dao dao struct
 type Dao struct {
-	db         sqalx.Node
-	mc         *memcache.Pool
-	mcExpire   int32
-	c          *conf.Config
-	accountRPC account.AccountClient
-	feedRPC    feed.FeedClient
-	discussRPC discuss.DiscussionClient
-	topicRPC   stopic.TopicClient
-	sc         stan.Conn
+	db          sqalx.Node
+	mc          *memcache.Pool
+	mcExpire    int32
+	c           *conf.Config
+	accountRPC  account.AccountClient
+	feedRPC     feed.FeedClient
+	discussRPC  discuss.DiscussionClient
+	topicRPC    stopic.TopicClient
+	relationRPC relation.RelationClient
+	sc          stan.Conn
 }
 
 func New(c *conf.Config) (dao *Dao) {
@@ -56,6 +58,12 @@ func New(c *conf.Config) (dao *Dao) {
 		panic(err)
 	} else {
 		dao.sc = sc
+	}
+
+	if relationRPC, err := relation.NewClient(c.RelationRPC); err != nil {
+		panic(errors.WithMessage(err, "Failed to dial relation service"))
+	} else {
+		dao.relationRPC = relationRPC
 	}
 
 	if accountRPC, err := account.NewClient(c.AccountRPC); err != nil {

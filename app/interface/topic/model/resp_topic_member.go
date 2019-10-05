@@ -1,7 +1,5 @@
 package model
 
-import "valerian/library/database/sqlx/types"
-
 type TopicMemberResp struct {
 	// 账户ID
 	AccountID int64 `db:"account_id" json:"account_id,string" swaggertype:"string"`
@@ -38,16 +36,16 @@ type FollowItem struct {
 	Gender *int `json:"gender,omitempty" db:"gender"`
 
 	// 是否身份认证
-	IDCert types.BitBool `json:"id_cert" db:"id_cert"`
+	IDCert bool `json:"id_cert" db:"id_cert"`
 
 	// 是否工作认证
-	WorkCert types.BitBool `json:"work_cert" db:"work_cert"`
+	WorkCert bool `json:"work_cert" db:"work_cert"`
 
 	// 是否机构用户
-	IsOrg types.BitBool `json:"is_org" db:"is_org"`
+	IsOrg bool `json:"is_org" db:"is_org"`
 
 	// 是否VIP
-	IsVIP types.BitBool `json:"is_vip" db:"is_vip"`
+	IsVIP bool `json:"is_vip" db:"is_vip"`
 
 	// 关注数
 	FollowCount int `json:"follow_count" db:"-"`
