@@ -8,6 +8,7 @@ import (
 
 	"valerian/app/service/relation/model"
 	"valerian/library/database/sqalx"
+	"valerian/library/database/sqlx"
 	"valerian/library/log"
 )
 
@@ -21,6 +22,33 @@ func (p *Dao) GetFollowingsPaged(c context.Context, node sqalx.Node, aid int64, 
 	if err = node.SelectContext(c, &items, sql, aid, offset, limit); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetFollowingsPaged error(%+v), aid(%d) limit(%d) offset(%d)", err, aid, limit, offset))
 	}
+	return
+}
+
+func (p *Dao) GetFollowingIDs(c context.Context, node sqalx.Node, aid int64) (items []int64, err error) {
+	// items: = make([]*model.AccountFans, 0)
+	items = make([]int64, 0)
+	sqlSelect := "SELECT a.target_account_id FROM account_followings a WHERE a.deleted=0 AND a.account_id =?"
+
+	var rows *sqlx.Rows
+	if rows, err = node.QueryxContext(c, sqlSelect, aid); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetFollowingIDs err(%+v)", err))
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var (
+			targetID int64
+		)
+		if err = rows.Scan(&targetID); err != nil {
+			log.For(c).Error(fmt.Sprintf("dao.GetFollowingIDs err(%+v)", err))
+			return
+		}
+		items = append(items, targetID)
+	}
+
+	err = rows.Err()
 	return
 }
 

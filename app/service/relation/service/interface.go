@@ -29,6 +29,9 @@ type IDao interface {
 	GetFansPaged(c context.Context, node sqalx.Node, aid int64, limit, offset int) (items []*model.AccountFans, err error)
 	GetFollowingsPaged(c context.Context, node sqalx.Node, aid int64, limit, offset int) (items []*model.AccountFollowing, err error)
 
+	GetFansIDs(c context.Context, node sqalx.Node, aid int64) (items []int64, err error)
+	GetFollowingIDs(c context.Context, node sqalx.Node, aid int64) (items []int64, err error)
+
 	GetAccountStatByID(c context.Context, node sqalx.Node, aid int64) (item *model.AccountStat, err error)
 	IncrAccountStat(c context.Context, node sqalx.Node, item *model.AccountStat) (err error)
 	AddAccountStat(c context.Context, node sqalx.Node, item *model.AccountStat) (err error)
