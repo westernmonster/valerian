@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"valerian/app/interface/account/model"
+	account "valerian/app/service/account/api"
 	relation "valerian/app/service/relation/api"
 	"valerian/library/conf/env"
 	"valerian/library/ecode"
@@ -68,8 +69,8 @@ func (p *Service) FansPaged(c context.Context, aid int64, query string, limit, o
 			IsVIP:        acc.IsVIP,
 		}
 
-		var stat *relation.StatInfo
-		if stat, err = p.d.Stat(c, v.AccountID, v.AccountID); err != nil {
+		var stat *account.AccountStatInfo
+		if stat, err = p.d.GetAccountStat(c, v.AccountID); err != nil {
 			return
 		}
 

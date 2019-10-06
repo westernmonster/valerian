@@ -6,7 +6,6 @@ import (
 
 	"valerian/app/interface/account/model"
 	account "valerian/app/service/account/api"
-	relation "valerian/app/service/relation/api"
 	"valerian/library/ecode"
 
 	"github.com/asaskevich/govalidator"
@@ -244,24 +243,24 @@ func (p *Service) GetProfile(c context.Context, aid int64) (profile *model.Profi
 		return
 	}
 
-	var stat *relation.StatInfo
-	if stat, err = p.d.Stat(c, aid, aid); err != nil {
+	var isFollowing bool
+	if isFollowing, err = p.d.IsFollowing(c, aid, aid); err != nil {
+		return
+	}
+
+	var stat *account.AccountStatInfo
+	if stat, err = p.d.GetAccountStat(c, aid); err != nil {
 		return
 	}
 
 	profile.Stat = &model.MemberInfoStat{
-		FansCount:      int(stat.Fans),
-		FollowingCount: int(stat.Following),
+		FansCount:       int(stat.Fans),
+		FollowingCount:  int(stat.Following),
+		TopicCount:      int(stat.TopicCount),
+		ArticleCount:    int(stat.ArticleCount),
+		DiscussionCount: int(stat.DiscussionCount),
+		IsFollow:        isFollowing,
 	}
-
-	var accountStat *account.AccountStatInfo
-	if accountStat, err = p.d.GetAccountStat(c, aid); err != nil {
-		return
-	}
-
-	profile.Stat.TopicCount = int(accountStat.TopicCount)
-	profile.Stat.ArticleCount = int(accountStat.ArticleCount)
-	profile.Stat.DiscussionCount = int(accountStat.DiscussionCount)
 
 	var setting *model.SettingResp
 	if setting, err = p.getAccountSetting(c, p.d.DB(), aid); err != nil {

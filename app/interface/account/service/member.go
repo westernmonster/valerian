@@ -9,7 +9,6 @@ import (
 	account "valerian/app/service/account/api"
 	discuss "valerian/app/service/discuss/api"
 	feed "valerian/app/service/feed/api"
-	relation "valerian/app/service/relation/api"
 	topic "valerian/app/service/topic/api"
 	"valerian/library/ecode"
 	"valerian/library/net/metadata"
@@ -42,25 +41,24 @@ func (p *Service) GetMemberInfo(c context.Context, targetID int64) (resp *model.
 		IsVIP:          f.IsVIP,
 	}
 
-	var stat *relation.StatInfo
-	if stat, err = p.d.Stat(c, aid, targetID); err != nil {
+	var isFollowing bool
+	if isFollowing, err = p.d.IsFollowing(c, aid, targetID); err != nil {
 		return
 	}
+
+	var stat *account.AccountStatInfo
+	if stat, err = p.d.GetAccountStat(c, aid); err != nil {
+		return
+	}
+
 	resp.Stat = &model.MemberInfoStat{
-		FansCount:      int(stat.Fans),
-		FollowingCount: int(stat.Following),
-		IsFollow:       stat.IsFollowing,
+		FansCount:       int(stat.Fans),
+		FollowingCount:  int(stat.Following),
+		TopicCount:      int(stat.TopicCount),
+		ArticleCount:    int(stat.ArticleCount),
+		DiscussionCount: int(stat.DiscussionCount),
+		IsFollow:        isFollowing,
 	}
-
-	var accountStat *account.AccountStatInfo
-	if accountStat, err = p.d.GetAccountStat(c, targetID); err != nil {
-		return
-	}
-
-	resp.Stat.TopicCount = int(accountStat.TopicCount)
-	resp.Stat.ArticleCount = int(accountStat.ArticleCount)
-	resp.Stat.DiscussionCount = int(accountStat.DiscussionCount)
-
 	return
 }
 
@@ -202,7 +200,7 @@ func (p *Service) GetMemberTopicsPaged(c context.Context, aid int64, limit, offs
 		item := &model.MemberTopic{
 			ID:           v.ID,
 			Name:         v.Name,
-			MemberCount:  int(v.MemberCount),
+			MemberCount:  int(v.Stat.MemberCount),
 			Introduction: v.Introduction,
 		}
 
