@@ -2,13 +2,16 @@ package model
 
 import "valerian/library/database/sqlx/types"
 
-type AccountRelationStat struct {
-	AccountID int64 `db:"account_id" json:"account_id,string"` // AccountID 用户ID
-	Following int   `db:"following" json:"following"`          // Following 关注数
-	Fans      int   `db:"fans" json:"fans"`                    // Fans 粉丝数
-	Black     int   `db:"black" json:"black"`                  // Black 黑名单数
-	CreatedAt int64 `db:"created_at" json:"created_at"`        // CreatedAt 创建时间
-	UpdatedAt int64 `db:"updated_at" json:"updated_at"`        // UpdatedAt 更新时间
+type AccountStat struct {
+	AccountID       int64 `db:"account_id" json:"account_id,string"`      // AccountID 用户ID
+	Following       int   `db:"following" json:"following"`               // Following 关注数
+	Fans            int   `db:"fans" json:"fans"`                         // Fans 粉丝数
+	ArticleCount    int   `db:"article_count" json:"article_count"`       // ArticleCount 文章数
+	DiscussionCount int   `db:"discussion_count" json:"discussion_count"` // DiscussionCount 讨论数
+	TopicCount      int   `db:"topic_count" json:"topic_count"`           // TopicCount 讨论数
+	Black           int   `db:"black" json:"black"`                       // Black 黑名单数
+	CreatedAt       int64 `db:"created_at" json:"created_at"`             // CreatedAt 创建时间
+	UpdatedAt       int64 `db:"updated_at" json:"updated_at"`             // UpdatedAt 更新时间
 }
 
 type AccountFollowing struct {
@@ -31,16 +34,16 @@ type AccountFans struct {
 	UpdatedAt       int64         `db:"updated_at" json:"updated_at"`                      // UpdatedAt 更新时间
 }
 
-func (st *AccountRelationStat) Count() int {
+func (st *AccountStat) Count() int {
 	return int(st.Following)
 }
 
 // BlackCount get count of black, including attr black.
-func (st *AccountRelationStat) BlackCount() int {
+func (st *AccountStat) BlackCount() int {
 	return int(st.Black)
 }
 
 // Empty get if the stat is empty.
-func (st *AccountRelationStat) Empty() bool {
+func (st *AccountStat) Empty() bool {
 	return st.Following == 0 && st.Black == 0 && st.Fans == 0
 }

@@ -23,10 +23,10 @@ message RelationInfo {
     uint32 Attribute = 2 [(gogoproto.jsontag) = "attribute"];
 
     // unix timestamp
-    int64 CreatedAt = 10 [(gogoproto.jsontag) = "created_at"];
+    int64 CreatedAt = 3 [(gogoproto.jsontag) = "created_at"];
 
     // unix timestamp
-    int64 UpdatedAt = 11 [(gogoproto.jsontag) = "updated_at"];
+    int64 UpdatedAt = 4 [(gogoproto.jsontag) = "updated_at"];
 }
 
 
@@ -46,7 +46,7 @@ message AidReq {
 }
 
 message IsFollowingResp {
-    bool IsFollowing = 7 [(gogoproto.jsontag) = "is_following"];
+    bool IsFollowing = 1 [(gogoproto.jsontag) = "is_following"];
 }
 
 

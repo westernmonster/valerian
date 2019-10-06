@@ -38,10 +38,6 @@ func (p *Service) Unfollow(c context.Context, aid int64, fid int64) (err error) 
 		return
 	}
 
-	if err = p.initStat(c, p.d.DB(), aid, fid); err != nil {
-		return
-	}
-
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
@@ -59,8 +55,8 @@ func (p *Service) Unfollow(c context.Context, aid int64, fid int64) (err error) 
 
 	var followingAttr uint32
 	var friend bool
-	var statCurrent = &model.AccountRelationStat{AccountID: aid}
-	var statTarget = &model.AccountRelationStat{AccountID: fid}
+	var statCurrent = &model.AccountStat{AccountID: aid}
+	var statTarget = &model.AccountStat{AccountID: fid}
 
 	// 如果没有关注对方，则设置为AttrNoRelation
 	var followingItem *model.AccountFollowing
@@ -115,13 +111,13 @@ func (p *Service) Unfollow(c context.Context, aid int64, fid int64) (err error) 
 	statTarget.Fans = -1
 
 	if !statCurrent.Empty() {
-		if err = p.d.IncrStat(c, tx, statCurrent); err != nil {
+		if err = p.d.IncrAccountStat(c, tx, statCurrent); err != nil {
 			return
 		}
 	}
 
 	if !statTarget.Empty() {
-		if err = p.d.IncrStat(c, tx, statTarget); err != nil {
+		if err = p.d.IncrAccountStat(c, tx, statTarget); err != nil {
 			return
 		}
 	}
@@ -152,10 +148,6 @@ func (p *Service) Follow(c context.Context, aid int64, fid int64) (err error) {
 		return
 	}
 
-	if err = p.initStat(c, p.d.DB(), aid, fid); err != nil {
-		return
-	}
-
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
@@ -176,8 +168,8 @@ func (p *Service) Follow(c context.Context, aid int64, fid int64) (err error) {
 	var followingAttr uint32
 	var fansAttr uint32
 	var friend bool
-	var statCurrent = &model.AccountRelationStat{AccountID: aid}
-	var statTarget = &model.AccountRelationStat{AccountID: fid}
+	var statCurrent = &model.AccountStat{AccountID: aid}
+	var statTarget = &model.AccountStat{AccountID: fid}
 
 	// 如果没有关注对方，则设置为AttrNoRelation
 	var followingItem *model.AccountFollowing
@@ -296,13 +288,13 @@ func (p *Service) Follow(c context.Context, aid int64, fid int64) (err error) {
 	}
 
 	if !statCurrent.Empty() {
-		if err = p.d.IncrStat(c, tx, statCurrent); err != nil {
+		if err = p.d.IncrAccountStat(c, tx, statCurrent); err != nil {
 			return
 		}
 	}
 
 	if !statTarget.Empty() {
-		if err = p.d.IncrStat(c, tx, statTarget); err != nil {
+		if err = p.d.IncrAccountStat(c, tx, statTarget); err != nil {
 			return
 		}
 	}

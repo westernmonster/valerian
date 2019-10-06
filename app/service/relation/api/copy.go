@@ -37,14 +37,3 @@ func FromFansResp(items []*model.FansResp) *FansResp {
 
 	return resp
 }
-
-func FromStatResp(v *model.AccountRelationStat) *StatInfo {
-	reply := &StatInfo{
-		AccountID: v.AccountID,
-		Fans:      int32(v.Fans),
-		Following: int32(v.Following),
-		Black:     int32(v.Black),
-	}
-
-	return reply
-}

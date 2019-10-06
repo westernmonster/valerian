@@ -75,14 +75,15 @@ func (s *server) Unfollow(ctx context.Context, req *api.FollowReq) (*api.EmptySt
 	return &api.EmptyStruct{}, nil
 }
 
-func (s *server) Stat(ctx context.Context, req *api.FollowReq) (*api.StatInfo, error) {
-	resp, isFollowing, err := s.svr.Stat(ctx, req.AccountID, req.TargetAccountID)
+func (s *server) IsFollowing(ctx context.Context, req *api.FollowReq) (*api.IsFollowingResp, error) {
+	isFollowing, err := s.svr.IsFollowing(ctx, req.AccountID, req.TargetAccountID)
 	if err != nil {
 		return nil, err
 	}
 
-	info := api.FromStatResp(resp)
-	info.IsFollowing = isFollowing
-	return info, nil
+	resp := &api.IsFollowingResp{
+		IsFollowing: isFollowing,
+	}
+	return resp, nil
 
 }

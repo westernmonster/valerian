@@ -10,9 +10,9 @@ import (
 )
 
 // GetByID get a record by Account ID
-func (p *Dao) GetStatByID(c context.Context, node sqalx.Node, aid int64) (item *model.AccountRelationStat, err error) {
-	item = new(model.AccountRelationStat)
-	sqlSelect := "SELECT a.* FROM account_relation_stats a WHERE a.account_id=? "
+func (p *Dao) GetAccountStatByID(c context.Context, node sqalx.Node, aid int64) (item *model.AccountStat, err error) {
+	item = new(model.AccountStat)
+	sqlSelect := "SELECT a.* FROM account_stats a WHERE a.account_id=? "
 
 	if err = node.GetContext(c, item, sqlSelect, aid); err != nil {
 		if err == sql.ErrNoRows {
@@ -20,18 +20,29 @@ func (p *Dao) GetStatByID(c context.Context, node sqalx.Node, aid int64) (item *
 			err = nil
 			return
 		}
-		log.For(c).Error(fmt.Sprintf("dao.GetStatByID err(%+v), id(%+v)", err, aid))
+		log.For(c).Error(fmt.Sprintf("dao.GetAccountStatByID err(%+v), account_id(%+v)", err, aid))
 	}
 
 	return
 }
 
-// Insert insert a new record
-func (p *Dao) AddStat(c context.Context, node sqalx.Node, item *model.AccountRelationStat) (err error) {
-	sqlInsert := "INSERT IGNORE INTO account_relation_stats( account_id,following,fans,black,created_at,updated_at) VALUES ( ?,?,?,?,?,?)"
+func (p *Dao) IncrAccountStat(c context.Context, node sqalx.Node, item *model.AccountStat) (err error) {
+	sqlUpdate := "UPDATE account_stats SET following=following + ?,fans=fans+?,article_count=article_count+?,discussion_count=discussion_count+?,topic_count=topic_count+?,black=black+?,updated_at=? WHERE account_id=?"
 
-	if _, err = node.ExecContext(c, sqlInsert, item.AccountID, item.Following, item.Fans, item.Black, item.CreatedAt, item.UpdatedAt); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.AddStats err(%+v), item(%+v)", err, item))
+	_, err = node.ExecContext(c, sqlUpdate, item.Following, item.Fans, item.ArticleCount, item.DiscussionCount, item.TopicCount, item.Black, item.UpdatedAt, item.AccountID)
+	if err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.IncrAccountStats err(%+v), item(%+v)", err, item))
+		return
+	}
+
+	return
+}
+
+func (p *Dao) AddAccountStat(c context.Context, node sqalx.Node, item *model.AccountStat) (err error) {
+	sqlInsert := "INSERT IGNORE INTO account_stats( account_id,following,fans,article_count,discussion_count,topic_count,black,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?,?,?)"
+
+	if _, err = node.ExecContext(c, sqlInsert, item.AccountID, item.Following, item.Fans, item.ArticleCount, item.DiscussionCount, item.TopicCount, item.Black, item.CreatedAt, item.UpdatedAt); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.AddAccountStats err(%+v), item(%+v)", err, item))
 		return
 	}
 
@@ -39,24 +50,12 @@ func (p *Dao) AddStat(c context.Context, node sqalx.Node, item *model.AccountRel
 }
 
 // Update update a exist record
-func (p *Dao) UpdateStat(c context.Context, node sqalx.Node, item *model.AccountRelationStat) (err error) {
-	sqlUpdate := "UPDATE account_relation_stats SET following=?,fans=?,black=?,updated_at=? WHERE account_id=?"
+func (p *Dao) UpdateAccountStat(c context.Context, node sqalx.Node, item *model.AccountStat) (err error) {
+	sqlUpdate := "UPDATE account_stats SET following=?,fans=?,article_count=?,discussion_count=?,topic_count=?,black=?,updated_at=? WHERE account_id=?"
 
-	_, err = node.ExecContext(c, sqlUpdate, item.Following, item.Fans, item.Black, item.UpdatedAt, item.AccountID)
+	_, err = node.ExecContext(c, sqlUpdate, item.Following, item.Fans, item.ArticleCount, item.DiscussionCount, item.TopicCount, item.Black, item.UpdatedAt, item.AccountID)
 	if err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.UpdateStats err(%+v), item(%+v)", err, item))
-		return
-	}
-
-	return
-}
-
-func (p *Dao) IncrStat(c context.Context, node sqalx.Node, item *model.AccountRelationStat) (err error) {
-	sqlUpdate := "UPDATE account_relation_stats SET following=following+?,fans=fans+?,black=black+?,updated_at=? WHERE account_id=?"
-
-	_, err = node.ExecContext(c, sqlUpdate, item.Following, item.Fans, item.Black, item.UpdatedAt, item.AccountID)
-	if err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.IncrStats err(%+v), item(%+v)", err, item))
+		log.For(c).Error(fmt.Sprintf("dao.UpdateAccountStats err(%+v), item(%+v)", err, item))
 		return
 	}
 

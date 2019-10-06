@@ -29,10 +29,10 @@ type IDao interface {
 	GetFansPaged(c context.Context, node sqalx.Node, aid int64, limit, offset int) (items []*model.AccountFans, err error)
 	GetFollowingsPaged(c context.Context, node sqalx.Node, aid int64, limit, offset int) (items []*model.AccountFollowing, err error)
 
-	GetStatByID(c context.Context, node sqalx.Node, aid int64) (item *model.AccountRelationStat, err error)
-	AddStat(c context.Context, node sqalx.Node, item *model.AccountRelationStat) (err error)
-	UpdateStat(c context.Context, node sqalx.Node, item *model.AccountRelationStat) (err error)
-	IncrStat(c context.Context, node sqalx.Node, item *model.AccountRelationStat) (err error)
+	GetAccountStatByID(c context.Context, node sqalx.Node, aid int64) (item *model.AccountStat, err error)
+	IncrAccountStat(c context.Context, node sqalx.Node, item *model.AccountStat) (err error)
+	AddAccountStat(c context.Context, node sqalx.Node, item *model.AccountStat) (err error)
+	UpdateAccountStat(c context.Context, node sqalx.Node, item *model.AccountStat) (err error)
 
 	SetFollowingsCache(c context.Context, aid int64, page, pageSize int, data []*model.AccountFollowing) (err error)
 	FollowingsCache(c context.Context, aid int64, page, pageSize int) (data []*model.AccountFollowing, err error)
