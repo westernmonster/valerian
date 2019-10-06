@@ -31,6 +31,8 @@ type Service struct {
 		GetAccountByID(c context.Context, node sqalx.Node, id int64) (item *model.Account, err error)
 		AddAccount(c context.Context, node sqalx.Node, item *model.Account) (err error)
 
+		AddAccountStat(c context.Context, node sqalx.Node, item *model.AccountStat) (err error)
+
 		MobileValcodeCache(c context.Context, vtype int, mobile string) (code string, err error)
 		DelMobileValcodeCache(c context.Context, vtype int, mobile string) (err error)
 		EmailValcodeCache(c context.Context, vtype int, mobile string) (code string, err error)

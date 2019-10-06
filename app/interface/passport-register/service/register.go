@@ -83,6 +83,15 @@ func (p *Service) MobileRegister(c context.Context, arg *model.ArgMobile) (resp 
 	if err = p.d.AddAccount(c, tx, item); err != nil {
 		return
 	}
+
+	if err = p.d.AddAccountStat(c, tx, &model.AccountStat{
+		AccountID: item.ID,
+		CreatedAt: time.Now().Unix(),
+		UpdatedAt: time.Now().Unix(),
+	}); err != nil {
+		return
+	}
+
 	if err = tx.Commit(); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 		return
@@ -164,6 +173,15 @@ func (p *Service) EmailRegister(c context.Context, arg *model.ArgEmail) (resp *m
 	if err = p.d.AddAccount(c, tx, item); err != nil {
 		return
 	}
+
+	if err = p.d.AddAccountStat(c, tx, &model.AccountStat{
+		AccountID: item.ID,
+		CreatedAt: time.Now().Unix(),
+		UpdatedAt: time.Now().Unix(),
+	}); err != nil {
+		return
+	}
+
 	if err = tx.Commit(); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 		return
