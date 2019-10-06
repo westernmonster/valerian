@@ -198,7 +198,7 @@ func (p *Service) addArticleRelation(c context.Context, node sqalx.Node, article
 		return
 	}
 
-	if err = p.d.AddTopicStat(c, node, &model.TopicStat{TopicID: item.TopicID, ArticleCount: 1}); err != nil {
+	if err = p.d.IncrTopicStat(c, node, &model.TopicStat{TopicID: item.TopicID, ArticleCount: 1}); err != nil {
 		return
 	}
 
@@ -418,7 +418,7 @@ func (p *Service) DelArticleRelation(c context.Context, arg *model.ArgDelArticle
 		return
 	}
 
-	if err = p.d.AddTopicStat(c, tx, &model.TopicStat{TopicID: catalog.TopicID, ArticleCount: -1}); err != nil {
+	if err = p.d.IncrTopicStat(c, tx, &model.TopicStat{TopicID: catalog.TopicID, ArticleCount: -1}); err != nil {
 		return
 	}
 

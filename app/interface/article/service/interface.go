@@ -69,22 +69,9 @@ type IDao interface {
 	UpdateReviseFile(c context.Context, node sqalx.Node, item *model.ReviseFile) (err error)
 	DelReviseFile(c context.Context, node sqalx.Node, id int64) (err error)
 
-	GetArticleStatByID(c context.Context, node sqalx.Node, discussionID int64) (item *model.ArticleStat, err error)
-	AddArticleStat(c context.Context, node sqalx.Node, item *model.ArticleStat) (err error)
-	UpdateArticleStat(c context.Context, node sqalx.Node, item *model.ArticleStat) (err error)
 	IncrArticleStat(c context.Context, node sqalx.Node, item *model.ArticleStat) (err error)
-
-	GetReviseStatByID(c context.Context, node sqalx.Node, discussionID int64) (item *model.ReviseStat, err error)
-	AddReviseStat(c context.Context, node sqalx.Node, item *model.ReviseStat) (err error)
-	UpdateReviseStat(c context.Context, node sqalx.Node, item *model.ReviseStat) (err error)
 	IncrReviseStat(c context.Context, node sqalx.Node, item *model.ReviseStat) (err error)
-
-	GetTopicStatForUpdate(c context.Context, node sqalx.Node, topicID int64) (item *model.TopicStat, err error)
-	AddTopicStat(c context.Context, node sqalx.Node, item *model.TopicStat) (err error)
-	UpdateTopicStat(c context.Context, node sqalx.Node, item *model.TopicStat) (err error)
 	IncrTopicStat(c context.Context, node sqalx.Node, item *model.TopicStat) (err error)
-	GetTopicStatByID(c context.Context, node sqalx.Node, topicID int64) (item *model.TopicStat, err error)
-
 	IncrAccountStat(c context.Context, node sqalx.Node, item *model.AccountStat) (err error)
 
 	GetTopic(c context.Context, id int64) (info *topic.TopicInfo, err error)
