@@ -21,6 +21,11 @@ type IDao interface {
 	UpdateAccountFeed(c context.Context, node sqalx.Node, item *model.AccountFeed) (err error)
 	DelAccountFeedByCond(c context.Context, node sqalx.Node, accountID int64, targetType string, targetID int64) (err error)
 
+	GetFeedPaged(c context.Context, node sqalx.Node, accountID int64, limit, offset int) (items []*model.Feed, err error)
+	AddFeed(c context.Context, node sqalx.Node, item *model.Feed) (err error)
+	UpdateFeed(c context.Context, node sqalx.Node, item *model.Feed) (err error)
+	DelFeedByCond(c context.Context, node sqalx.Node, accountID int64, targetType string, targetID int64) (err error)
+
 	GetDiscussion(c context.Context, id int64) (info *discuss.DiscussionInfo, err error)
 	GetTopic(c context.Context, id int64) (info *topic.TopicInfo, err error)
 
