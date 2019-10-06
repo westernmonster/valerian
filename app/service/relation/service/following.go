@@ -36,7 +36,7 @@ func (p *Service) FollowingPaged(c context.Context, aid int64, limit, offset int
 
 	for _, v := range items {
 		resp = append(resp, &model.FollowingResp{
-			AccountID: v.AccountID,
+			AccountID: v.TargetAccountID,
 			Attribute: v.Attribute,
 			CreatedAt: v.CreatedAt,
 			UpdatedAt: v.UpdatedAt,

@@ -35,7 +35,7 @@ func (p *Service) FansPaged(c context.Context, aid int64, limit, offset int) (re
 
 	for _, v := range items {
 		resp = append(resp, &model.FansResp{
-			AccountID: v.AccountID,
+			AccountID: v.TargetAccountID,
 			Attribute: v.Attribute,
 			CreatedAt: v.CreatedAt,
 			UpdatedAt: v.UpdatedAt,
