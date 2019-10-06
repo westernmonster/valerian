@@ -38,18 +38,6 @@ func (p *Service) onDelDiscussion(c context.Context, id int64, topicID int64) {
 	}
 }
 
-func (p *Service) initStat(c context.Context, aid, topicID int64) (err error) {
-	if err = p.d.AddAccountStat(c, p.d.DB(), &model.AccountResStat{
-		AccountID: aid,
-		CreatedAt: time.Now().Unix(),
-		UpdatedAt: time.Now().Unix(),
-	}); err != nil {
-		return
-	}
-
-	return
-}
-
 func (p *Service) initDiscussionStat(c context.Context, discussionID int64) (err error) {
 	if err = p.d.AddDiscussionStat(c, p.d.DB(), &model.DiscussionStat{
 		DiscussionID: discussionID,
@@ -88,10 +76,6 @@ func (p *Service) AddDiscussion(c context.Context, arg *model.ArgAddDiscuss) (id
 	}
 
 	if err = p.checkCategory(c, p.d.DB(), arg.CategoryID); err != nil {
-		return
-	}
-
-	if err = p.initStat(c, aid, arg.TopicID); err != nil {
 		return
 	}
 
@@ -149,7 +133,7 @@ func (p *Service) AddDiscussion(c context.Context, arg *model.ArgAddDiscuss) (id
 	}
 
 	// Update Stat
-	if err = p.d.IncrAccountStat(c, tx, &model.AccountResStat{AccountID: aid, DiscussionCount: 1}); err != nil {
+	if err = p.d.IncrAccountStat(c, tx, &model.AccountStat{AccountID: aid, DiscussionCount: 1}); err != nil {
 		return
 	}
 	if err = p.d.IncrTopicStat(c, tx, &model.TopicStat{TopicID: arg.TopicID, DiscussionCount: 1}); err != nil {
@@ -274,10 +258,6 @@ func (p *Service) DelDiscussion(c context.Context, id int64) (err error) {
 		return
 	}
 
-	if err = p.initStat(c, aid, item.TopicID); err != nil {
-		return
-	}
-
 	if item.CreatedBy != aid {
 		if err = p.checkTopicManager(c, item.TopicID, aid); err != nil {
 			return
@@ -307,7 +287,7 @@ func (p *Service) DelDiscussion(c context.Context, id int64) (err error) {
 		return
 	}
 
-	if err = p.d.IncrAccountStat(c, tx, &model.AccountResStat{AccountID: aid, DiscussionCount: -1}); err != nil {
+	if err = p.d.IncrAccountStat(c, tx, &model.AccountStat{AccountID: aid, DiscussionCount: -1}); err != nil {
 		return
 	}
 	if err = p.d.IncrTopicStat(c, tx, &model.TopicStat{TopicID: item.TopicID, DiscussionCount: -1}); err != nil {

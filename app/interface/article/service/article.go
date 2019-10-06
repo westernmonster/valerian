@@ -92,7 +92,7 @@ func (p *Service) AddArticle(c context.Context, arg *model.ArgAddArticle) (id in
 		return
 	}
 
-	if err = p.d.AddAccountStat(c, tx, &model.AccountResStat{AccountID: item.CreatedBy, ArticleCount: 1}); err != nil {
+	if err = p.d.IncrAccountStat(c, tx, &model.AccountStat{AccountID: item.CreatedBy, ArticleCount: 1}); err != nil {
 		return
 	}
 

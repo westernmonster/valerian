@@ -37,16 +37,9 @@ type IDao interface {
 	DelDiscussionFile(c context.Context, node sqalx.Node, id int64) (err error)
 	DelDiscussionFiles(c context.Context, node sqalx.Node, discussionID int64) (err error)
 
-	GetAccountStatByID(c context.Context, node sqalx.Node, aid int64) (item *model.AccountResStat, err error)
-	AddAccountStat(c context.Context, node sqalx.Node, item *model.AccountResStat) (err error)
-	UpdateAccountStat(c context.Context, node sqalx.Node, item *model.AccountResStat) (err error)
-	IncrAccountStat(c context.Context, node sqalx.Node, item *model.AccountResStat) (err error)
+	IncrAccountStat(c context.Context, node sqalx.Node, item *model.AccountStat) (err error)
 
-	GetTopicStatForUpdate(c context.Context, node sqalx.Node, topicID int64) (item *model.TopicStat, err error)
-	AddTopicStat(c context.Context, node sqalx.Node, item *model.TopicStat) (err error)
-	UpdateTopicStat(c context.Context, node sqalx.Node, item *model.TopicStat) (err error)
 	IncrTopicStat(c context.Context, node sqalx.Node, item *model.TopicStat) (err error)
-	GetTopicStatByID(c context.Context, node sqalx.Node, topicID int64) (item *model.TopicStat, err error)
 
 	GetTopic(c context.Context, id int64) (info *topic.TopicInfo, err error)
 	GetAccountBaseInfo(c context.Context, aid int64) (info *account.BaseInfoReply, err error)
