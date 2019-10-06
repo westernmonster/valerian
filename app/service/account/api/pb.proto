@@ -63,16 +63,24 @@ message ProfileReply {
     bool IsOrg  = 10 [(gogoproto.jsontag) = "is_org"] ;
 
     bool IsVIP  = 11 [(gogoproto.jsontag) = "is_vip"] ;
+
+    AccountStatInfo Stat = 12 [(gogoproto.jsontag) = "stat"];
 }
 
 message AccountStatInfo {
-    int64 AccountID  = 1 [(gogoproto.jsontag) = "account_id"] ;
+    int32 Following = 1 [(gogoproto.jsontag) = "following"];
 
-    int32 TopicCount  = 2 [(gogoproto.jsontag) = "topic_count"] ;
+    int32 Fans = 2 [(gogoproto.jsontag) = "fans"];
 
-    int32 ArticleCount  = 3 [(gogoproto.jsontag) = "article_count"] ;
+    int32 Black = 3 [(gogoproto.jsontag) = "black"];
 
-    int32 DiscussionCount  = 4 [(gogoproto.jsontag) = "discussion_count"] ;
+    int32 TopicCount  = 4 [(gogoproto.jsontag) = "topic_count"] ;
+
+    int32 ArticleCount  = 5 [(gogoproto.jsontag) = "article_count"] ;
+
+    int32 DiscussionCount  = 6 [(gogoproto.jsontag) = "discussion_count"] ;
+
+    bool IsFollowing = 7 [(gogoproto.jsontag) = "is_following"];
 }
 
 message AidReq {

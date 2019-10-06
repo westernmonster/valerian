@@ -28,36 +28,6 @@ func (p *Service) onUnfollow(c context.Context, aid, fid int64) {
 	}
 }
 
-func (p *Service) initStat(c context.Context, node sqalx.Node, aid int64, fid int64) (err error) {
-	var statCurrent, statTarget *model.AccountRelationStat
-
-	if statCurrent, err = p.d.GetStatByID(c, node, aid); err != nil {
-		return
-	} else if statCurrent == nil {
-		if err = p.d.AddStat(c, node, &model.AccountRelationStat{
-			AccountID: aid,
-			CreatedAt: time.Now().Unix(),
-			UpdatedAt: time.Now().Unix(),
-		}); err != nil {
-			return
-		}
-	}
-
-	if statTarget, err = p.d.GetStatByID(c, node, aid); err != nil {
-		return
-	} else if statTarget == nil {
-		if err = p.d.AddStat(c, node, &model.AccountRelationStat{
-			AccountID: fid,
-			CreatedAt: time.Now().Unix(),
-			UpdatedAt: time.Now().Unix(),
-		}); err != nil {
-			return
-		}
-	}
-
-	return
-}
-
 // Unfollow 取关
 func (p *Service) Unfollow(c context.Context, aid int64, fid int64) (err error) {
 	if aid <= 0 || fid <= 0 {

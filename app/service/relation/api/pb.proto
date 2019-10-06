@@ -45,16 +45,8 @@ message AidReq {
     int64 AccountID = 1 [(gogoproto.jsontag) = "account_id"];
 }
 
-message StatInfo {
-    int64 AccountID = 1 [(gogoproto.jsontag) = "account_id"];
-
-    int32 Following = 2 [(gogoproto.jsontag) = "following"];
-
-    int32 Fans = 3 [(gogoproto.jsontag) = "fans"];
-
-    int32 Black = 4 [(gogoproto.jsontag) = "black"];
-
-    bool IsFollowing = 5 [(gogoproto.jsontag) = "is_following"];
+message IsFollowingResp {
+    bool IsFollowing = 7 [(gogoproto.jsontag) = "is_following"];
 }
 
 
@@ -67,7 +59,7 @@ service Relation {
 
     rpc  Unfollow(FollowReq) returns (EmptyStruct);
 
-    rpc  Stat(FollowReq) returns (StatInfo);
+    rpc  IsFollowing(FollowReq) returns (IsFollowingResp);
 }
 
 

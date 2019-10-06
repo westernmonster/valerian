@@ -15,7 +15,7 @@ type Service struct {
 	d interface {
 		GetAccountByID(c context.Context, node sqalx.Node, id int64) (item *model.Account, err error)
 
-		GetAccountStatByID(c context.Context, node sqalx.Node, aid int64) (item *model.AccountResStat, err error)
+		GetAccountStatByID(c context.Context, node sqalx.Node, aid int64) (item *model.AccountStat, err error)
 
 		SetAccountCache(c context.Context, m *model.Account) (err error)
 		AccountCache(c context.Context, accountID int64) (m *model.Account, err error)
