@@ -79,8 +79,6 @@ message AccountStatInfo {
     int32 ArticleCount  = 5 [(gogoproto.jsontag) = "article_count"] ;
 
     int32 DiscussionCount  = 6 [(gogoproto.jsontag) = "discussion_count"] ;
-
-    bool IsFollowing = 7 [(gogoproto.jsontag) = "is_following"];
 }
 
 message AidReq {
