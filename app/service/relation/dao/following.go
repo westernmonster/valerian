@@ -16,6 +16,8 @@ func (p *Dao) GetFollowingsPaged(c context.Context, node sqalx.Node, aid int64, 
 
 	sql := "SELECT a.* FROM account_followings a WHERE a.deleted=0 AND a.account_id=? ORDER BY a.id DESC limit ?,?"
 
+	log.For(c).Info(fmt.Sprintf("dao.GetFollowingsPaged  aid(%d) limit(%d) offset(%d)", aid, limit, offset))
+
 	if err = node.SelectContext(c, &items, sql, aid, offset, limit); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetFollowingsPaged error(%+v), aid(%d) limit(%d) offset(%d)", err, aid, limit, offset))
 	}

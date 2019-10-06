@@ -2,7 +2,9 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"valerian/app/service/relation/model"
+	"valerian/library/log"
 )
 
 // Fans 分页获取关注列表
@@ -12,6 +14,7 @@ func (p *Service) FansPaged(c context.Context, aid int64, limit, offset int) (re
 		items    []*model.AccountFans
 	)
 
+	log.For(c).Info(fmt.Sprintf("service.FansPaged aid(%d)", aid))
 	resp = make([]*model.FansResp, 0)
 
 	if items, err = p.d.FansCache(c, aid, limit, offset); err != nil {

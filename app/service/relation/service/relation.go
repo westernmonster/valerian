@@ -163,6 +163,10 @@ func (p *Service) Unfollow(c context.Context, aid int64, fid int64) (err error) 
 
 	p.addCache(func() {
 		p.onFollow(context.Background(), aid, fid)
+		p.d.DelFansCache(context.Background(), aid)
+		p.d.DelFansCache(context.Background(), fid)
+		p.d.DelFollowingsCache(context.Background(), aid)
+		p.d.DelFollowingsCache(context.Background(), fid)
 	})
 
 	return
@@ -197,7 +201,7 @@ func (p *Service) Follow(c context.Context, aid int64, fid int64) (err error) {
 		}
 	}()
 
-	log.For(c).Info(fmt.Sprintf("aid(%d), fid(%d)"))
+	log.For(c).Info(fmt.Sprintf("aid(%d), fid(%d)", aid, fid))
 
 	var followingAttr uint32
 	var fansAttr uint32
@@ -340,6 +344,10 @@ func (p *Service) Follow(c context.Context, aid int64, fid int64) (err error) {
 
 	p.addCache(func() {
 		p.onUnfollow(context.Background(), aid, fid)
+		p.d.DelFansCache(context.Background(), aid)
+		p.d.DelFansCache(context.Background(), fid)
+		p.d.DelFollowingsCache(context.Background(), aid)
+		p.d.DelFollowingsCache(context.Background(), fid)
 	})
 
 	return

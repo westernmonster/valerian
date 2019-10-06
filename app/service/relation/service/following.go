@@ -2,7 +2,9 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"valerian/app/service/relation/model"
+	"valerian/library/log"
 )
 
 // Following 分页获取关注列表
@@ -13,6 +15,8 @@ func (p *Service) FollowingPaged(c context.Context, aid int64, limit, offset int
 	)
 
 	resp = make([]*model.FollowingResp, 0)
+
+	log.For(c).Info(fmt.Sprintf("service.FollowingPaged aid(%d)", aid))
 
 	if items, err = p.d.FollowingsCache(c, aid, limit, offset); err != nil {
 		addCache = false

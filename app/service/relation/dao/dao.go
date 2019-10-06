@@ -61,9 +61,8 @@ func (d *Dao) Ping(c context.Context) (err error) {
 	if err = d.db.Ping(c); err != nil {
 		log.Info(fmt.Sprintf("dao.db.Ping() error(%v)", err))
 	}
-	log.Info(fmt.Sprintf("dao.mc.Ping() error(%v)", err))
 	if err = d.pingMC(c); err != nil {
-		return
+		log.Info(fmt.Sprintf("dao.mc.Ping() error(%v)", err))
 	}
 	return
 }

@@ -15,6 +15,7 @@ func (p *Dao) GetFansPaged(c context.Context, node sqalx.Node, aid int64, limit,
 
 	sql := "SELECT a.* FROM account_fans a WHERE a.deleted=0 AND a.account_id=? ORDER BY a.id DESC limit ?,?"
 
+	log.For(c).Info(fmt.Sprintf("dao.GetFansPaged  account_id(%d) limit(%d) offset(%d)", aid, limit, offset))
 	if err = node.SelectContext(c, &items, sql, aid, offset, limit); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetFansPaged error(%+v), account_id(%d) limit(%d) offset(%d)", err, aid, limit, offset))
 	}

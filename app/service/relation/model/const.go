@@ -1,5 +1,7 @@
 package model
 
+// attribute bit. priority black > following > whisper > no relation.
+// black(128) friend(4) following(2) whisper(1)
 const (
 	AttrNoRelation = uint32(0)
 	AttrWhisper    = uint32(1)
