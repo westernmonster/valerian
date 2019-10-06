@@ -69,7 +69,9 @@ type IDao interface {
 	UpdateReviseFile(c context.Context, node sqalx.Node, item *model.ReviseFile) (err error)
 	DelReviseFile(c context.Context, node sqalx.Node, id int64) (err error)
 
+	AddArticleStat(c context.Context, node sqalx.Node, item *model.ArticleStat) (err error)
 	IncrArticleStat(c context.Context, node sqalx.Node, item *model.ArticleStat) (err error)
+	AddReviseStat(c context.Context, node sqalx.Node, item *model.ReviseStat) (err error)
 	IncrReviseStat(c context.Context, node sqalx.Node, item *model.ReviseStat) (err error)
 	IncrTopicStat(c context.Context, node sqalx.Node, item *model.TopicStat) (err error)
 	IncrAccountStat(c context.Context, node sqalx.Node, item *model.AccountStat) (err error)

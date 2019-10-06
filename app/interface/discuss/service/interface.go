@@ -38,7 +38,6 @@ type IDao interface {
 	DelDiscussionFiles(c context.Context, node sqalx.Node, discussionID int64) (err error)
 
 	IncrAccountStat(c context.Context, node sqalx.Node, item *model.AccountStat) (err error)
-
 	IncrTopicStat(c context.Context, node sqalx.Node, item *model.TopicStat) (err error)
 
 	GetTopic(c context.Context, id int64) (info *topic.TopicInfo, err error)
@@ -55,7 +54,6 @@ type IDao interface {
 
 	GetDiscussionStatByID(c context.Context, node sqalx.Node, discussionID int64) (item *model.DiscussionStat, err error)
 	AddDiscussionStat(c context.Context, node sqalx.Node, item *model.DiscussionStat) (err error)
-	UpdateDiscussionStat(c context.Context, node sqalx.Node, item *model.DiscussionStat) (err error)
 	IncrDiscussionStat(c context.Context, node sqalx.Node, item *model.DiscussionStat) (err error)
 
 	Ping(c context.Context) (err error)

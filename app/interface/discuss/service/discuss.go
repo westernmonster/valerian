@@ -132,6 +132,14 @@ func (p *Service) AddDiscussion(c context.Context, arg *model.ArgAddDiscuss) (id
 		return
 	}
 
+	if err = p.d.AddDiscussionStat(c, tx, &model.DiscussionStat{
+		DiscussionID: item.ID,
+		CreatedAt:    time.Now().Unix(),
+		UpdatedAt:    time.Now().Unix(),
+	}); err != nil {
+		return
+	}
+
 	// Update Stat
 	if err = p.d.IncrAccountStat(c, tx, &model.AccountStat{AccountID: aid, DiscussionCount: 1}); err != nil {
 		return
@@ -285,11 +293,13 @@ func (p *Service) DelDiscussion(c context.Context, id int64) (err error) {
 
 	if err = p.d.DelDiscussionFiles(c, tx, id); err != nil {
 		return
+
 	}
 
 	if err = p.d.IncrAccountStat(c, tx, &model.AccountStat{AccountID: aid, DiscussionCount: -1}); err != nil {
 		return
 	}
+
 	if err = p.d.IncrTopicStat(c, tx, &model.TopicStat{TopicID: item.TopicID, DiscussionCount: -1}); err != nil {
 		return
 	}

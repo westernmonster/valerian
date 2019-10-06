@@ -30,7 +30,7 @@ func (p *Dao) GetReviseStatByID(c context.Context, node sqalx.Node, reviseID int
 
 // Insert insert a new record
 func (p *Dao) AddReviseStat(c context.Context, node sqalx.Node, item *model.ReviseStat) (err error) {
-	sqlInsert := "INSERT INTO revise_stats( revise_id,like_count,dislike_count,comment_count,created_at,updated_at) VALUES ( ?,?,?,?,?,?)"
+	sqlInsert := "INSERT IGNORE INTO revise_stats( revise_id,like_count,dislike_count,comment_count,created_at,updated_at) VALUES ( ?,?,?,?,?,?)"
 
 	if _, err = node.ExecContext(c, sqlInsert, item.ReviseID, item.LikeCount, item.DislikeCount, item.CommentCount, item.CreatedAt, item.UpdatedAt); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.AddReviseStats err(%+v), item(%+v)", err, item))

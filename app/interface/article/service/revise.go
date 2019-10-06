@@ -126,6 +126,14 @@ func (p *Service) AddRevise(c context.Context, arg *model.ArgAddRevise) (id int6
 		return
 	}
 
+	if err = p.d.AddReviseStat(c, tx, &model.ReviseStat{
+		ReviseID:  item.ID,
+		CreatedAt: time.Now().Unix(),
+		UpdatedAt: time.Now().Unix(),
+	}); err != nil {
+		return
+	}
+
 	if err = tx.Commit(); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 	}

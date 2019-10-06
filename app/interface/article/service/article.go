@@ -84,6 +84,14 @@ func (p *Service) AddArticle(c context.Context, arg *model.ArgAddArticle) (id in
 		return
 	}
 
+	if err = p.d.AddArticleStat(c, tx, &model.ArticleStat{
+		ArticleID: item.ID,
+		CreatedAt: time.Now().Unix(),
+		UpdatedAt: time.Now().Unix(),
+	}); err != nil {
+		return
+	}
+
 	if err = p.bulkCreateFiles(c, tx, item.ID, arg.Files); err != nil {
 		return
 	}
