@@ -71,9 +71,21 @@ message IDReq {
     int64 ID = 1 [(gogoproto.jsontag) = "id"];
 }
 
+message UserArticlesReq {
+    int64 AccountID = 1 [(gogoproto.jsontag) = "aid"];
+    int32 Limit = 2 [(gogoproto.jsontag) = "limit"];
+    int32 Offset = 3 [(gogoproto.jsontag) = "offset"];
+}
+
+message UserArticlesResp {
+    repeated ArticleInfo Items = 1 [(gogoproto.jsontag) = 'items'];
+}
+
+
 service Article {
     rpc GetArticleInfo(IDReq) returns (ArticleInfo);
     rpc GetReviseInfo(IDReq) returns (ReviseInfo);
+    rpc GetUserArticlesPaged(UserArticlesReq) returns (UserArticlesResp);
 }
 
 

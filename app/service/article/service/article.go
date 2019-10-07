@@ -61,3 +61,11 @@ func (p *Service) GetArticleImageUrls(c context.Context, articleID int64) (urls 
 func (p *Service) GetArticleStat(c context.Context, articleID int64) (stat *model.ArticleStat, err error) {
 	return p.d.GetArticleStatByID(c, p.d.DB(), articleID)
 }
+
+func (p *Service) GetUserArticlesPaged(c context.Context, aid int64, limit, offset int) (items []*model.Article, err error) {
+	if items, err = p.d.GetUserArticlesPaged(c, p.d.DB(), aid, limit, offset); err != nil {
+		return
+	}
+
+	return
+}
