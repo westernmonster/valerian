@@ -360,3 +360,13 @@ push-service-relation:
 	docker push registry.cn-hangzhou.aliyuncs.com/valerian/service-relation:${DOCKER_TAG}
 deploy-service-relation:
 	helm install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/service-relation:${DOCKER_TAG} --set global.name=service-relation --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=service.relation --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=45745073da6011e9884c0a58ac14008b  --set env.treeId=1304 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc --name service-relation-uat ./build/k8s
+
+build-service-article:
+	go env -w GOPROXY=https://goproxy.cn,direct
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/service/article/cmd/cmd"   app/service/article/cmd/main.go
+docker-service-article:
+	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/service-article:${DOCKER_TAG} ./app/service/article/cmd/
+push-service-article:
+	docker push registry.cn-hangzhou.aliyuncs.com/valerian/service-article:${DOCKER_TAG}
+deploy-service-article:
+	helm install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/service-article:${DOCKER_TAG} --set global.name=service-article --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=service.article --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=68fefc9de93811e986590a58ac140094  --set env.treeId=1310 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc --name service-article-uat ./build/k8s
