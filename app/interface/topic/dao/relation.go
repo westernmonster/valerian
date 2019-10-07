@@ -22,7 +22,3 @@ func (p *Dao) Unfollow(c context.Context, accountID, targetAccountID int64) (err
 	_, err = p.relationRPC.Unfollow(c, &relation.FollowReq{AccountID: accountID, TargetAccountID: targetAccountID})
 	return
 }
-
-func (p *Dao) Stat(c context.Context, aid, targetID int64) (resp *relation.StatInfo, err error) {
-	return p.relationRPC.Stat(c, &relation.FollowReq{AccountID: aid, TargetAccountID: targetID})
-}

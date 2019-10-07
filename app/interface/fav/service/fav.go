@@ -108,7 +108,7 @@ func (p *Service) GetFavsPaged(c context.Context, targetType string, limit, offs
 				ID:           t.ID,
 				Name:         t.Name,
 				Introduction: t.Introduction,
-				MemberCount:  int(t.MemberCount),
+				MemberCount:  int(t.Stat.MemberCount),
 			}
 			avatar := t.GetAvatarValue()
 			item.Topic.Avatar = &avatar
