@@ -24,6 +24,7 @@
     - feed 1307
     - fav 1308
     - like 1309
+    - article 1310
   * interface 4
     - account  1401
     - article 1402
