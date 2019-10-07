@@ -3,7 +3,7 @@ package dao
 import (
 	"context"
 	"fmt"
-	"valerian/app/interface/article/model"
+	"valerian/app/service/article/model"
 	"valerian/library/cache/memcache"
 	"valerian/library/log"
 )

@@ -201,8 +201,18 @@ func (p *Service) UpdateArticle(c context.Context, arg *model.ArgUpdateArticle) 
 
 func (p *Service) GetArticle(c context.Context, id int64, include string) (item *model.ArticleResp, err error) {
 	inc := includeParam(include)
-	if item, err = p.getArticle(c, p.d.DB(), id); err != nil {
+	var data *model.Article
+	if data, err = p.getArticle(c, p.d.DB(), id); err != nil {
 		return
+	}
+
+	item = &model.ArticleResp{
+		ID:        data.ID,
+		Title:     data.Title,
+		Content:   data.Content,
+		CreatedBy: data.CreatedBy,
+		Files:     make([]*model.ArticleFileResp, 0),
+		Relations: make([]*model.ArticleRelationResp, 0),
 	}
 
 	var account *account.BaseInfoReply
@@ -239,7 +249,7 @@ func (p *Service) GetArticle(c context.Context, id int64, include string) (item 
 	return
 }
 
-func (p *Service) getArticle(c context.Context, node sqalx.Node, articleID int64) (item *model.ArticleResp, err error) {
+func (p *Service) getArticle(c context.Context, node sqalx.Node, articleID int64) (item *model.Article, err error) {
 	var addCache = true
 	if item, err = p.d.ArticleCache(c, articleID); err != nil {
 		addCache = false
@@ -253,15 +263,6 @@ func (p *Service) getArticle(c context.Context, node sqalx.Node, articleID int64
 	} else if a == nil {
 		err = ecode.ArticleNotExist
 		return
-	}
-
-	item = &model.ArticleResp{
-		ID:        a.ID,
-		Title:     a.Title,
-		Content:   a.Content,
-		CreatedBy: a.CreatedBy,
-		Files:     make([]*model.ArticleFileResp, 0),
-		Relations: make([]*model.ArticleRelationResp, 0),
 	}
 
 	if addCache {

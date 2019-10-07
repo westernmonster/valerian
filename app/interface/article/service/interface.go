@@ -82,8 +82,8 @@ type IDao interface {
 	TopicCatalogCache(c context.Context, topicID int64) (m []*model.TopicLevel1Catalog, err error)
 	DelTopicCatalogCache(c context.Context, topicID int64) (err error)
 
-	SetArticleCache(c context.Context, m *model.ArticleResp) (err error)
-	ArticleCache(c context.Context, articleID int64) (m *model.ArticleResp, err error)
+	SetArticleCache(c context.Context, m *model.Article) (err error)
+	ArticleCache(c context.Context, articleID int64) (m *model.Article, err error)
 	DelArticleCache(c context.Context, articleID int64) (err error)
 
 	SetArticleFileCache(c context.Context, articleID int64, m []*model.ArticleFileResp) (err error)

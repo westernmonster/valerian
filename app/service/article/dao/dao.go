@@ -11,6 +11,8 @@ import (
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
 	"valerian/library/stat/prom"
+
+	"github.com/pkg/errors"
 )
 
 // Dao dao struct
@@ -29,6 +31,13 @@ func New(c *conf.Config) (dao *Dao) {
 		mc:       memcache.NewPool(c.Memcache.Main.Config),
 		mcExpire: int32(time.Duration(c.Memcache.Main.Expire) / time.Second),
 	}
+
+	if accountRPC, err := account.NewClient(c.AccountRPC); err != nil {
+		panic(errors.WithMessage(err, "Failed to dial account service"))
+	} else {
+		dao.accountRPC = accountRPC
+	}
+
 	return
 }
 

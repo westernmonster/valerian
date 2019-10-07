@@ -1,0 +1,80 @@
+syntax = "proto3";
+package service.article;
+option go_package = "api";
+
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+// EmptyStruct 空的message，对应真实service只返回error，没有具体返回值
+message EmptyStruct {
+}
+
+message Creator {
+    int64 ID = 1 [(gogoproto.jsontag) = "id"];
+
+    string  UserName = 2 [(gogoproto.jsontag) = "user_name"];
+
+    string Avatar   = 3 [(gogoproto.jsontag) = "avatar"];
+
+    oneof Introduction {
+        string  IntroductionValue = 4 [(gogoproto.jsontag) = "introduction"] ;
+    }
+}
+
+message ArticleInfo {
+    int64 ID = 1 [(gogoproto.jsontag) = "id"];
+    string  Title = 2 [(gogoproto.jsontag) = "title"];
+    string  Excerpt = 3 [(gogoproto.jsontag) = "excerpt"];
+    repeated string ImageUrls  = 4 [(gogoproto.jsontag) = "image_urls"];
+
+    Creator  Creator  = 5 [(gogoproto.jsontag) = "creator"];
+
+    // unix timestamp
+    int64 CreatedAt = 6 [(gogoproto.jsontag) = "created_at"];
+    // unix timestamp
+    int64 UpdatedAt = 7 [(gogoproto.jsontag) = "updated_at"];
+
+    ArticleStat  Stat = 8 [(gogoproto.jsontag) = "stat"];
+}
+
+message ArticleStat {
+    int32 ReviseCount = 1 [(gogoproto.jsontag) = "revise_count"];
+    int32 LikeCount = 2 [(gogoproto.jsontag) = "like_count"];
+    int32 DislikeCount = 3 [(gogoproto.jsontag) = "dislike_count"];
+    int32 CommentCount = 4 [(gogoproto.jsontag) = "comment_count"];
+}
+
+
+message ReviseStat {
+    int32 LikeCount = 2 [(gogoproto.jsontag) = "like_count"];
+    int32 DislikeCount = 3 [(gogoproto.jsontag) = "dislike_count"];
+    int32 CommentCount = 4 [(gogoproto.jsontag) = "comment_count"];
+}
+message ReviseInfo {
+    int64 ID = 1 [(gogoproto.jsontag) = "id"];
+    string  Title = 2 [(gogoproto.jsontag) = "title"];
+    string  Excerpt = 3 [(gogoproto.jsontag) = "excerpt"];
+    repeated string ImageUrls  = 4 [(gogoproto.jsontag) = "image_urls"];
+
+    Creator  Creator  = 5 [(gogoproto.jsontag) = "creator"];
+
+    // unix timestamp
+    int64 CreatedAt = 6 [(gogoproto.jsontag) = "created_at"];
+    // unix timestamp
+    int64 UpdatedAt = 7 [(gogoproto.jsontag) = "updated_at"];
+
+    ReviseStat  Stat = 8 [(gogoproto.jsontag) = "stat"];
+}
+
+
+message IDReq {
+    int64 ID = 1 [(gogoproto.jsontag) = "id"];
+}
+
+service Article {
+    rpc GetArticleInfo(IDReq) returns (ArticleInfo);
+    rpc GetReviseInfo(IDReq) returns (ReviseInfo);
+}
+
+
+

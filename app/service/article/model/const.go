@@ -69,3 +69,10 @@ const (
 	ReportTypeIncorrect  = 4 // 内容有误
 	ReportTypeOther      = 5 // 其他
 )
+
+const (
+	TargetTypeTopic      = "topic"
+	TargetTypeDiscussion = "discussion"
+	TargetTypeRevise     = "revise"
+	TargetTypeArticle    = "article"
+)
