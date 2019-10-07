@@ -40,7 +40,7 @@ type server struct {
 }
 
 func (s *server) GetDiscussionInfo(ctx context.Context, req *api.IDReq) (*api.DiscussionInfo, error) {
-	resp, imgs, err := s.svr.GetDiscussion(ctx, req.ID)
+	v, imgs, err := s.svr.GetDiscussion(ctx, req.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,23 @@ func (s *server) GetDiscussionInfo(ctx context.Context, req *api.IDReq) (*api.Di
 		return nil, err
 	}
 
-	return api.FromDiscussion(resp, stat, imgs), nil
+	m, err := s.svr.GetAccountBaseInfo(ctx, v.CreatedBy)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := api.FromDiscussion(v, stat, imgs)
+	resp.Creator = &api.Creator{
+		ID:       m.ID,
+		UserName: m.UserName,
+		Avatar:   m.Avatar,
+	}
+
+	if m.Introduction != nil {
+		resp.Creator.Introduction = &api.Creator_IntroductionValue{m.GetIntroductionValue()}
+	}
+
+	return resp, err
 }
 
 func (s *server) GetDiscussionCategories(ctx context.Context, req *api.CategoriesReq) (*api.CategoriesResp, error) {

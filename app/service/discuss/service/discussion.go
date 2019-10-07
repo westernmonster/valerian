@@ -2,10 +2,16 @@ package service
 
 import (
 	"context"
+
+	account "valerian/app/service/account/api"
 	"valerian/app/service/discuss/api"
 	"valerian/app/service/discuss/model"
 	"valerian/library/ecode"
 )
+
+func (p *Service) GetAccountBaseInfo(c context.Context, aid int64) (info *account.BaseInfoReply, err error) {
+	return p.d.GetAccountBaseInfo(c, aid)
+}
 
 func (p *Service) GetUserDiscussionsPaged(c context.Context, aid int64, limit, offset int) (items []*api.DiscussionInfo, err error) {
 	var data []*model.Discussion
@@ -37,6 +43,20 @@ func (p *Service) GetUserDiscussionsPaged(c context.Context, aid int64, limit, o
 
 		items[i] = api.FromDiscussion(v, stat, imageUrls)
 
+		var acc *account.BaseInfoReply
+		if acc, err = p.GetAccountBaseInfo(c, v.CreatedBy); err != nil {
+			return
+		}
+
+		items[i].Creator = &api.Creator{
+			ID:       acc.ID,
+			UserName: acc.UserName,
+			Avatar:   acc.Avatar,
+		}
+
+		if acc.Introduction != nil {
+			items[i].Creator.Introduction = &api.Creator_IntroductionValue{acc.GetIntroductionValue()}
+		}
 	}
 
 	return

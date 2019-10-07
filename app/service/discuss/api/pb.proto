@@ -10,7 +10,8 @@ message EmptyStruct {
 
 message DiscussionStat {
     int32 LikeCount = 1 [(gogoproto.jsontag) = "like_count"];
-    int32 CommentCount = 2 [(gogoproto.jsontag) = "comment_count"];
+    int32 DislikeCount = 2 [(gogoproto.jsontag) = "dislike_count"];
+    int32 CommentCount = 3 [(gogoproto.jsontag) = "comment_count"];
 }
 
 message CategoriesResp {
@@ -28,33 +29,46 @@ message CategoryInfo {
 }
 
 
+message Creator {
+    int64 ID = 1 [(gogoproto.jsontag) = "id"];
+
+    string  UserName = 2 [(gogoproto.jsontag) = "user_name"];
+
+    string Avatar   = 3 [(gogoproto.jsontag) = "avatar"];
+
+    oneof Introduction {
+        string  IntroductionValue = 4 [(gogoproto.jsontag) = "introduction"] ;
+    }
+}
+
+
+
 message DiscussionInfo {
     int64 ID = 1 [(gogoproto.jsontag) = "id"];
+
     int64 TopicID = 2 [(gogoproto.jsontag) = "topic_id"];
+
     int64 CategoryID = 3 [(gogoproto.jsontag) = "category_id"];
-    int64 CreatedBy = 4 [(gogoproto.jsontag) = "created_by"];
+
+    Creator Creator = 4 [(gogoproto.jsontag) = "creator"];
 
     oneof Title {
         string  TitleValue = 5 [(gogoproto.jsontag) = "title"] ;
     }
 
-    string  Content = 6 [(gogoproto.jsontag) = "content"];
-
-    string  ContentText = 7 [(gogoproto.jsontag) = "content_text"];
-
+    string  Excerpt = 6 [(gogoproto.jsontag) = "excerpt"];
 
     // unix timestamp
-    int64 CreatedAt = 8 [(gogoproto.jsontag) = "created_at"];
+    int64 CreatedAt = 7 [(gogoproto.jsontag) = "created_at"];
 
     // unix timestamp
-    int64 UpdatedAt = 9 [(gogoproto.jsontag) = "updated_at"];
+    int64 UpdatedAt = 8 [(gogoproto.jsontag) = "updated_at"];
 
-    DiscussionStat  Stat = 10 [(gogoproto.jsontag) = "stat"];
+    DiscussionStat  Stat = 9 [(gogoproto.jsontag) = "stat"];
+
+    repeated string ImageUrls  = 10 [(gogoproto.jsontag) = "image_urls"];
 
     bool Deleted = 11 [(gogoproto.jsontag) = "deleted"];
-
-    repeated string ImageUrls  = 12 [(gogoproto.jsontag) = "image_urls"];
-
 }
 
 
@@ -82,6 +96,4 @@ service Discussion {
     rpc GetDiscussionCategories(CategoriesReq) returns (CategoriesResp);
     rpc GetUserDiscussionsPaged(UserDiscussionsReq) returns (UserDiscussionsResp);
 }
-
-
 

@@ -10,6 +10,7 @@ replace (
 )
 
 require (
+	github.com/Azure/azure-sdk-for-go v21.1.0+incompatible
 	github.com/BurntSushi/toml v0.3.1
 	github.com/PuerkitoBio/goquery v1.5.0
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751

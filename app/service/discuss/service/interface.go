@@ -2,6 +2,8 @@ package service
 
 import (
 	"context"
+
+	account "valerian/app/service/account/api"
 	"valerian/app/service/discuss/model"
 	"valerian/library/database/sqalx"
 )
@@ -33,6 +35,8 @@ type IDao interface {
 	AddImageURL(c context.Context, node sqalx.Node, item *model.ImageURL) (err error)
 	UpdateImageURL(c context.Context, node sqalx.Node, item *model.ImageURL) (err error)
 	DelImageURL(c context.Context, node sqalx.Node, id int64) (err error)
+
+	GetAccountBaseInfo(c context.Context, aid int64) (info *account.BaseInfoReply, err error)
 
 	Ping(c context.Context) (err error)
 	Close()

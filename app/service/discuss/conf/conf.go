@@ -32,6 +32,7 @@ type Config struct {
 	DB     *DB
 
 	WardenServer *warden.ServerConfig
+	AccountRPC   *warden.ClientConfig
 	// Auth
 	Auth      *auth.Config
 	Memcache  *Memcache
