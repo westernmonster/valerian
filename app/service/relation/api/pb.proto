@@ -41,6 +41,10 @@ message FollowReq {
     int64 TargetAccountID = 2 [(gogoproto.jsontag) = "target_account_id"];
 }
 
+message IDsResp {
+    repeated int64 IDs = 1 [(gogoproto.jsontag) = 'ids'];
+}
+
 message AidReq {
     int64 AccountID = 1 [(gogoproto.jsontag) = "account_id"];
 }
@@ -60,6 +64,8 @@ service Relation {
     rpc  Unfollow(FollowReq) returns (EmptyStruct);
 
     rpc  IsFollowing(FollowReq) returns (IsFollowingResp);
+
+    rpc  GetFansIDs(AidReq) returns (IDsResp);
 }
 
 

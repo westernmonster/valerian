@@ -24,6 +24,7 @@ import (
 // @Failure 500 "服务器端错误"
 // @Router /account/list/recent [get]
 func recent(c *mars.Context) {
+	//TODO: recent logic
 }
 
 // @Summary 获取用户资料
@@ -208,6 +209,7 @@ func memberDiscuss(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /account/list/articles [get]
 func memberArticles(c *mars.Context) {
+	// TODO: member articles
 }
 
 // @Summary 拉黑
@@ -225,4 +227,5 @@ func memberArticles(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /account/block [post]
 func block(c *mars.Context) {
+	// TODO: block user
 }

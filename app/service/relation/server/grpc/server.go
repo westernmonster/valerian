@@ -87,3 +87,12 @@ func (s *server) IsFollowing(ctx context.Context, req *api.FollowReq) (*api.IsFo
 	return resp, nil
 
 }
+
+func (s *server) GetFansIDs(ctx context.Context, req *api.AidReq) (*api.IDsResp, error) {
+	ids, err := s.svr.GetFansIDs(ctx, req.AccountID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.IDsResp{IDs: ids}, nil
+}

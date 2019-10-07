@@ -10,6 +10,7 @@ import (
 	"valerian/library/log"
 )
 
+// GetAll get all records
 func (p *Dao) GetArticles(c context.Context, node sqalx.Node) (items []*model.Article, err error) {
 	items = make([]*model.Article, 0)
 	sqlSelect := "SELECT a.* FROM articles a WHERE a.deleted=0 ORDER BY a.id DESC "
@@ -37,6 +38,10 @@ func (p *Dao) GetArticlesByCond(c context.Context, node sqalx.Node, cond map[str
 	}
 	if val, ok := cond["content"]; ok {
 		clause += " AND a.content =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["content_text"]; ok {
+		clause += " AND a.content_text =?"
 		condition = append(condition, val)
 	}
 	if val, ok := cond["disable_revise"]; ok {
@@ -96,6 +101,10 @@ func (p *Dao) GetArticleByCond(c context.Context, node sqalx.Node, cond map[stri
 		clause += " AND a.content =?"
 		condition = append(condition, val)
 	}
+	if val, ok := cond["content_text"]; ok {
+		clause += " AND a.content_text =?"
+		condition = append(condition, val)
+	}
 	if val, ok := cond["disable_revise"]; ok {
 		clause += " AND a.disable_revise =?"
 		condition = append(condition, val)
@@ -126,9 +135,9 @@ func (p *Dao) GetArticleByCond(c context.Context, node sqalx.Node, cond map[stri
 
 // Insert insert a new record
 func (p *Dao) AddArticle(c context.Context, node sqalx.Node, item *model.Article) (err error) {
-	sqlInsert := "INSERT INTO articles( id,title,content,disable_revise,disable_comment,created_by,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?,?,?)"
+	sqlInsert := "INSERT INTO articles( id,title,content,content_text,disable_revise,disable_comment,created_by,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?,?,?,?)"
 
-	if _, err = node.ExecContext(c, sqlInsert, item.ID, item.Title, item.Content, item.DisableRevise, item.DisableComment, item.CreatedBy, item.Deleted, item.CreatedAt, item.UpdatedAt); err != nil {
+	if _, err = node.ExecContext(c, sqlInsert, item.ID, item.Title, item.Content, item.ContentText, item.DisableRevise, item.DisableComment, item.CreatedBy, item.Deleted, item.CreatedAt, item.UpdatedAt); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.AddArticles err(%+v), item(%+v)", err, item))
 		return
 	}
@@ -138,9 +147,9 @@ func (p *Dao) AddArticle(c context.Context, node sqalx.Node, item *model.Article
 
 // Update update a exist record
 func (p *Dao) UpdateArticle(c context.Context, node sqalx.Node, item *model.Article) (err error) {
-	sqlUpdate := "UPDATE articles SET title=?,content=?,disable_revise=?,disable_comment=?,created_by=?,updated_at=? WHERE id=?"
+	sqlUpdate := "UPDATE articles SET title=?,content=?,content_text=?,disable_revise=?,disable_comment=?,created_by=?,updated_at=? WHERE id=?"
 
-	_, err = node.ExecContext(c, sqlUpdate, item.Title, item.Content, item.DisableRevise, item.DisableComment, item.CreatedBy, item.UpdatedAt, item.ID)
+	_, err = node.ExecContext(c, sqlUpdate, item.Title, item.Content, item.ContentText, item.DisableRevise, item.DisableComment, item.CreatedBy, item.UpdatedAt, item.ID)
 	if err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.UpdateArticles err(%+v), item(%+v)", err, item))
 		return
