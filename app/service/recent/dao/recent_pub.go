@@ -1,0 +1,146 @@
+package dao
+
+import (
+	"context"
+	"database/sql"
+	"fmt"
+	"valerian/app/service/recent/model"
+	"valerian/library/database/sqalx"
+	"valerian/library/log"
+)
+
+// GetAll get all records
+func (p *Dao) GetRecentPubs(c context.Context, node sqalx.Node) (items []*model.RecentPub, err error) {
+	items = make([]*model.RecentPub, 0)
+	sqlSelect := "SELECT a.* FROM recent_pubs a WHERE a.deleted=0 ORDER BY a.id DESC "
+
+	if err = node.SelectContext(c, &items, sqlSelect); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetRecentPubs err(%+v)", err))
+		return
+	}
+	return
+}
+
+// GetAllByCondition get records by condition
+func (p *Dao) GetRecentPubsByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.RecentPub, err error) {
+	items = make([]*model.RecentPub, 0)
+	condition := make([]interface{}, 0)
+	clause := ""
+
+	if val, ok := cond["id"]; ok {
+		clause += " AND a.id =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["account_id"]; ok {
+		clause += " AND a.account_id =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["target_id"]; ok {
+		clause += " AND a.target_id =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["target_type"]; ok {
+		clause += " AND a.target_type =?"
+		condition = append(condition, val)
+	}
+
+	sqlSelect := fmt.Sprintf("SELECT a.* FROM recent_pubs a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
+
+	if err = node.SelectContext(c, &items, sqlSelect, condition...); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetRecentPubsByCond err(%+v), condition(%+v)", err, cond))
+		return
+	}
+	return
+}
+
+// GetByID get a record by ID
+func (p *Dao) GetRecentPubByID(c context.Context, node sqalx.Node, id int64) (item *model.RecentPub, err error) {
+	item = new(model.RecentPub)
+	sqlSelect := "SELECT a.* FROM recent_pubs a WHERE a.id=? AND a.deleted=0"
+
+	if err = node.GetContext(c, item, sqlSelect, id); err != nil {
+		if err == sql.ErrNoRows {
+			item = nil
+			err = nil
+			return
+		}
+		log.For(c).Error(fmt.Sprintf("dao.GetRecentPubByID err(%+v), id(%+v)", err, id))
+	}
+
+	return
+}
+
+// GetByCondition get a record by condition
+func (p *Dao) GetRecentPubByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (item *model.RecentPub, err error) {
+	item = new(model.RecentPub)
+	condition := make([]interface{}, 0)
+	clause := ""
+
+	if val, ok := cond["id"]; ok {
+		clause += " AND a.id =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["account_id"]; ok {
+		clause += " AND a.account_id =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["target_id"]; ok {
+		clause += " AND a.target_id =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["target_type"]; ok {
+		clause += " AND a.target_type =?"
+		condition = append(condition, val)
+	}
+
+	sqlSelect := fmt.Sprintf("SELECT a.* FROM recent_pubs a WHERE a.deleted=0 %s", clause)
+
+	if err = node.GetContext(c, item, sqlSelect, condition...); err != nil {
+		if err == sql.ErrNoRows {
+			item = nil
+			err = nil
+			return
+		}
+		log.For(c).Error(fmt.Sprintf("dao.GetRecentPubsByCond err(%+v), condition(%+v)", err, cond))
+		return
+	}
+
+	return
+}
+
+// Insert insert a new record
+func (p *Dao) AddRecentPub(c context.Context, node sqalx.Node, item *model.RecentPub) (err error) {
+	sqlInsert := "INSERT INTO recent_pubs( id,account_id,target_id,target_type,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?)"
+
+	if _, err = node.ExecContext(c, sqlInsert, item.ID, item.AccountID, item.TargetID, item.TargetType, item.Deleted, item.CreatedAt, item.UpdatedAt); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.AddRecentPubs err(%+v), item(%+v)", err, item))
+		return
+	}
+
+	return
+}
+
+// Update update a exist record
+func (p *Dao) UpdateRecentPub(c context.Context, node sqalx.Node, item *model.RecentPub) (err error) {
+	sqlUpdate := "UPDATE recent_pubs SET account_id=?,target_id=?,target_type=?,updated_at=? WHERE id=?"
+
+	_, err = node.ExecContext(c, sqlUpdate, item.AccountID, item.TargetID, item.TargetType, item.UpdatedAt, item.ID)
+	if err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.UpdateRecentPubs err(%+v), item(%+v)", err, item))
+		return
+	}
+
+	return
+}
+
+// Delete logic delete a exist record
+func (p *Dao) DelRecentPub(c context.Context, node sqalx.Node, id int64) (err error) {
+	sqlDelete := "UPDATE recent_pubs SET deleted=1 WHERE id=? "
+
+	if _, err = node.ExecContext(c, sqlDelete, id); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.DelRecentPubs err(%+v), item(%+v)", err, id))
+		return
+	}
+
+	return
+}

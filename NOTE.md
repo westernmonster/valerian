@@ -25,6 +25,7 @@
     - fav 1308
     - like 1309
     - article 1310
+    - recent 1311
   * interface 4
     - account  1401
     - article 1402
