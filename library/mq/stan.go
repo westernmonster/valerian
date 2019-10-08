@@ -30,8 +30,9 @@ type MessageQueue struct {
 
 func New(clientID string, config *Config) *MessageQueue {
 	mq := &MessageQueue{
-		c:        config,
-		clientID: clientID,
+		c:             config,
+		clientID:      clientID,
+		subscriptions: make(map[string]stan.Subscription),
 	}
 	mq.init()
 
