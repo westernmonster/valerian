@@ -30,12 +30,12 @@ func New(c *conf.Config) (s *Service) {
 		missch: make(chan func(), 1024),
 	}
 
-	if err := s.mq.QueueSubscribe(model.BusArticleAdded, "topic-feed", s.onArticleAdded); err != nil {
+	if err := s.mq.QueueSubscribe(model.BusCatalogArticleAdded, "topic-feed", s.onArticleAdded); err != nil {
 		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, model.BusArticleAdded, "topic-feed")
 		panic(err)
 	}
 
-	if err := s.mq.QueueSubscribe(model.BusArticleDeleted, "topic-feed", s.onArticleDeleted); err != nil {
+	if err := s.mq.QueueSubscribe(model.BusCatalogArticleDeleted, "topic-feed", s.onArticleDeleted); err != nil {
 		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, model.BusArticleDeleted, "topic-feed")
 		panic(err)
 	}

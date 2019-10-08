@@ -13,14 +13,14 @@ import (
 
 func (p *Service) onArticleAdded(m *stan.Msg) {
 	var err error
-	info := new(model.MsgArticleAdded)
+	info := new(model.MsgCatalogArticleAdded)
 	if err = info.Unmarshal(m.Data); err != nil {
 		log.Errorf("onReviseAdded Unmarshal failed %#v", err)
 		return
 	}
 
 	var article *article.ArticleInfo
-	if article, err = p.d.GetArticle(context.Background(), info.ID); err != nil {
+	if article, err = p.d.GetArticle(context.Background(), info.ArticleID); err != nil {
 		return
 	}
 
@@ -48,13 +48,13 @@ func (p *Service) onArticleAdded(m *stan.Msg) {
 
 func (p *Service) onArticleDeleted(m *stan.Msg) {
 	var err error
-	info := new(model.MsgArticleDeleted)
+	info := new(model.MsgCatalogArticleDeleted)
 	if err = info.Unmarshal(m.Data); err != nil {
 		log.Errorf("onReviseAdded Unmarshal failed %#v", err)
 		return
 	}
 
-	if err = p.d.DelTopicFeedByCond(context.Background(), p.d.DB(), info.TopicID, model.TargetTypeArticle, info.ID); err != nil {
+	if err = p.d.DelTopicFeedByCond(context.Background(), p.d.DB(), info.TopicID, model.TargetTypeArticle, info.ArticleID); err != nil {
 		log.Errorf("service.DelTopicFeedByCond() failed %#v", err)
 		return
 	}

@@ -22,16 +22,26 @@ const (
 
 const (
 	BusDiscussionAdded   = "discussion.added"
+	BusDiscussionUpdated = "discussion.updated"
 	BusDiscussionDeleted = "discussion.deleted"
 
 	BusArticleAdded   = "article.added"
+	BusArticleUpdated = "article.updated"
 	BusArticleDeleted = "article.deleted"
+
+	BusReviseAdded   = "revise.added"
+	BusReviseUpdated = "revise.updated"
+	BusReviseDeleted = "revise.deleted"
+
+	BusCatalogArticleAdded   = "catalog.article.added"
+	BusCatalogArticleDeleted = "catalog.article.deleted"
 
 	BusReviseAdded   = "revise.added"
 	BusReviseDeleted = "revise.deleted"
 
-	BusTopicAdded   = "topic.added"
-	BusTopicDeleted = "topic.deleted"
+	BusTopicAdded    = "topic.added"
+	BusTopicFollowed = "topic.followed"
+	BusTopicDeleted  = "topic.deleted"
 
 	BusMemberFollowed   = "member.followed"
 	BusMemberUnfollowed = "member.unfollowed"

@@ -3,7 +3,6 @@ package model;
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
-
 message MsgCatalogArticleAdded {
     int64 ArticleID = 1 [(gogoproto.jsontag) = "article_id"] ;
     int64 TopicID = 2 [(gogoproto.jsontag) = "topic_id"] ;
@@ -33,6 +32,19 @@ message MsgArticleUpdated {
 
 message MsgArticleDeleted {
     int64 ArticleID = 1 [(gogoproto.jsontag) = "article_id"] ;
+    int64 CreatedBy = 2 [(gogoproto.jsontag) = "created_by"] ;
+    int64 ActorID = 3 [(gogoproto.jsontag) = "actor_id"] ;
+    int64 ActionTime = 4 [(gogoproto.jsontag) = "action_time"] ;
+}
+
+message MsgArticleLiked {
+    int64 ArticleID = 1 [(gogoproto.jsontag) = "article_id"] ;
+    int64 ActorID = 2 [(gogoproto.jsontag) = "actor_id"] ;
+    int64 ActionTime = 4 [(gogoproto.jsontag) = "action_time"] ;
+}
+
+message MsgArticleFaved {
+    int64 ArticleID = 1 [(gogoproto.jsontag) = "article_id"] ;
     int64 ActorID = 2 [(gogoproto.jsontag) = "actor_id"] ;
     int64 ActionTime = 4 [(gogoproto.jsontag) = "action_time"] ;
 }
@@ -55,6 +67,18 @@ message MsgReviseDeleted {
     int64 ActionTime = 4 [(gogoproto.jsontag) = "action_time"] ;
 }
 
+message MsgReviseLiked {
+    int64 ReviseID = 1 [(gogoproto.jsontag) = "revise_id"] ;
+    int64 ActorID = 2 [(gogoproto.jsontag) = "actor_id"] ;
+    int64 ActionTime = 4 [(gogoproto.jsontag) = "action_time"] ;
+}
+
+message MsgReviseFaved {
+    int64 ReviseID = 1 [(gogoproto.jsontag) = "revise_id"] ;
+    int64 ActorID = 2 [(gogoproto.jsontag) = "actor_id"] ;
+    int64 ActionTime = 4 [(gogoproto.jsontag) = "action_time"] ;
+}
+
 message MsgDiscussionAdded {
     int64 DiscussionID = 1 [(gogoproto.jsontag) = "discussion_id"] ;
     int64 ActorID = 2 [(gogoproto.jsontag) = "actor_id"] ;
@@ -68,6 +92,18 @@ message MsgDiscussionUpdated {
 }
 
 message MsgDiscussionDeleted {
+    int64 DiscussionID = 1 [(gogoproto.jsontag) = "discussion_id"] ;
+    int64 ActorID = 2 [(gogoproto.jsontag) = "actor_id"] ;
+    int64 ActionTime = 4 [(gogoproto.jsontag) = "action_time"] ;
+}
+
+message MsgDiscussionLiked {
+    int64 DiscussionID = 1 [(gogoproto.jsontag) = "discussion_id"] ;
+    int64 ActorID = 2 [(gogoproto.jsontag) = "actor_id"] ;
+    int64 ActionTime = 4 [(gogoproto.jsontag) = "action_time"] ;
+}
+
+message MsgDiscussionFaved {
     int64 DiscussionID = 1 [(gogoproto.jsontag) = "discussion_id"] ;
     int64 ActorID = 2 [(gogoproto.jsontag) = "actor_id"] ;
     int64 ActionTime = 4 [(gogoproto.jsontag) = "action_time"] ;
