@@ -5,13 +5,11 @@ import (
 	"fmt"
 	"time"
 
-	"valerian/app/interface/topic/conf"
 	account "valerian/app/service/account/api"
 	article "valerian/app/service/article/api"
 	discuss "valerian/app/service/discuss/api"
-	relation "valerian/app/service/relation/api"
-	topicFeed "valerian/app/service/topic-feed/api"
-	stopic "valerian/app/service/topic/api"
+	"valerian/app/service/topic-feed/conf"
+	topic "valerian/app/service/topic/api"
 	"valerian/library/cache/memcache"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
@@ -22,16 +20,15 @@ import (
 
 // Dao dao struct
 type Dao struct {
-	db           sqalx.Node
-	mc           *memcache.Pool
-	mcExpire     int32
-	c            *conf.Config
-	accountRPC   account.AccountClient
-	topicFeedRPC topicFeed.TopicFeedClient
-	discussRPC   discuss.DiscussionClient
-	articleRPC   article.ArticleClient
-	topicRPC     stopic.TopicClient
-	relationRPC  relation.RelationClient
+	db       sqalx.Node
+	mc       *memcache.Pool
+	mcExpire int32
+	c        *conf.Config
+
+	accountRPC account.AccountClient
+	topicRPC   topic.TopicClient
+	articleRPC article.ArticleClient
+	discussRPC discuss.DiscussionClient
 }
 
 func New(c *conf.Config) (dao *Dao) {
@@ -42,21 +39,16 @@ func New(c *conf.Config) (dao *Dao) {
 		mcExpire: int32(time.Duration(c.Memcache.Main.Expire) / time.Second),
 	}
 
-	if relationRPC, err := relation.NewClient(c.RelationRPC); err != nil {
-		panic(errors.WithMessage(err, "Failed to dial relation service"))
-	} else {
-		dao.relationRPC = relationRPC
-	}
-
 	if accountRPC, err := account.NewClient(c.AccountRPC); err != nil {
 		panic(errors.WithMessage(err, "Failed to dial account service"))
 	} else {
 		dao.accountRPC = accountRPC
 	}
-	if discussRPC, err := discuss.NewClient(c.DiscussRPC); err != nil {
-		panic(errors.WithMessage(err, "Failed to dial discuss service"))
+
+	if topicRPC, err := topic.NewClient(c.TopicRPC); err != nil {
+		panic(errors.WithMessage(err, "Failed to dial topic service"))
 	} else {
-		dao.discussRPC = discussRPC
+		dao.topicRPC = topicRPC
 	}
 
 	if articleRPC, err := article.NewClient(c.ArticleRPC); err != nil {
@@ -65,16 +57,10 @@ func New(c *conf.Config) (dao *Dao) {
 		dao.articleRPC = articleRPC
 	}
 
-	if topicFeedRPC, err := topicFeed.NewClient(c.TopicFeedRPC); err != nil {
-		panic(errors.WithMessage(err, "Failed to dial topic feed service"))
+	if discussRPC, err := discuss.NewClient(c.AccountRPC); err != nil {
+		panic(errors.WithMessage(err, "Failed to dial discuss service"))
 	} else {
-		dao.topicFeedRPC = topicFeedRPC
-	}
-
-	if topicRPC, err := stopic.NewClient(c.TopicRPC); err != nil {
-		panic(errors.WithMessage(err, "Failed to dial topic service"))
-	} else {
-		dao.topicRPC = topicRPC
+		dao.discussRPC = discussRPC
 	}
 
 	return

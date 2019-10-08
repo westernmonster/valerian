@@ -34,11 +34,12 @@ type Config struct {
 	DB     *DB
 	Ecode  *ecode.Config
 
-	AccountRPC  *warden.ClientConfig
-	DiscussRPC  *warden.ClientConfig
-	FeedRPC     *warden.ClientConfig
-	TopicRPC    *warden.ClientConfig
-	RelationRPC *warden.ClientConfig
+	AccountRPC   *warden.ClientConfig
+	DiscussRPC   *warden.ClientConfig
+	TopicFeedRPC *warden.ClientConfig
+	TopicRPC     *warden.ClientConfig
+	RelationRPC  *warden.ClientConfig
+	ArticleRPC   *warden.ClientConfig
 
 	// Auth
 	Auth      *auth.Config

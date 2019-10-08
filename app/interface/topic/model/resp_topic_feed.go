@@ -80,6 +80,13 @@ type TargetArticle struct {
 	ReviseCount int `json:"revise_count"`
 	// 评论数
 	CommentCount int `json:"comment_count"`
+
+	// 创建时间
+	CreatedAt int64 `json:"created_at"`
+	// 更新时间
+	UpdatedAt int64 `json:"updated_at"`
+
+	Creator *Creator `json:"creator,omitempty"`
 }
 
 type TargetDiscussion struct {
@@ -100,6 +107,8 @@ type TargetDiscussion struct {
 
 	// 评论数
 	CommentCount int `json:"comment_count"`
+
+	Creator *Creator `json:"creator,omitempty"`
 }
 
 type TargetComment struct {
@@ -111,6 +120,8 @@ type TargetComment struct {
 	Excerpt string `json:"excerpt"`
 	// 子评论数
 	CommentCount int `json:"comment_count"`
+
+	Creator *Creator `json:"creator,omitempty"`
 }
 
 type TargetTopic struct {
@@ -133,6 +144,8 @@ type TargetTopic struct {
 
 	// 讨论数
 	DiscussionCount int `json:"discussion_count"`
+
+	Creator *Creator `json:"creator,omitempty"`
 }
 
 type TargetMember struct {

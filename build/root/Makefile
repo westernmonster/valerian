@@ -383,3 +383,37 @@ push-service-recent:
 	docker push registry.cn-hangzhou.aliyuncs.com/valerian/service-recent:${DOCKER_TAG}
 deploy-service-recent:
 	helm install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/service-recent:${DOCKER_TAG} --set global.name=service-recent --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=service.recent --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=68fefc9de93811e986590a58ac140094  --set env.treeId=1310 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc --name service-recent-uat ./build/k8s
+
+
+service-topic-feed: build-service-topic-feed docker-service-topic-feed push-service-topic-feed deploy-service-topic-feed
+build-service-topic-feed:
+	go env -w GOPROXY=https://goproxy.cn,direct
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/service/topic-feed/cmd/cmd"   app/service/topic-feed/cmd/main.go
+docker-service-topic-feed:
+	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/service-topic-feed:${DOCKER_TAG} ./app/service/topic-feed/cmd/
+push-service-topic-feed:
+	docker push registry.cn-hangzhou.aliyuncs.com/valerian/service-topic-feed:${DOCKER_TAG}
+deploy-service-topic-feed:
+	helm install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/service-topic-feed:${DOCKER_TAG} --set global.name=service-topic-feed --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=service.topic-feed --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=08b7ff7eea0811e986590a58ac140094  --set env.treeId=1312 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc --name service-topic-feed-uat ./build/k8s
+
+service-account-feed: build-service-account-feed docker-service-account-feed push-service-account-feed deploy-service-account-feed
+build-service-account-feed:
+	go env -w GOPROXY=https://goproxy.cn,direct
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/service/account-feed/cmd/cmd"   app/service/account-feed/cmd/main.go
+docker-service-account-feed:
+	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/service-account-feed:${DOCKER_TAG} ./app/service/account-feed/cmd/
+push-service-account-feed:
+	docker push registry.cn-hangzhou.aliyuncs.com/valerian/service-account-feed:${DOCKER_TAG}
+deploy-service-account-feed:
+	helm install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/service-account-feed:${DOCKER_TAG} --set global.name=service-account-feed --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=service.account-feed --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=0fdd0111ea0811e9b6a00a58ac14002b  --set env.treeId=1313 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc --name service-account-feed-uat ./build/k8s
+
+service-message: build-service-message docker-service-message push-service-message deploy-service-message
+build-service-message:
+	go env -w GOPROXY=https://goproxy.cn,direct
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/service/message/cmd/cmd"   app/service/message/cmd/main.go
+docker-service-message:
+	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/service-message:${DOCKER_TAG} ./app/service/message/cmd/
+push-service-message:
+	docker push registry.cn-hangzhou.aliyuncs.com/valerian/service-message:${DOCKER_TAG}
+deploy-service-message:
+	helm install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/service-message:${DOCKER_TAG} --set global.name=service-message --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=service.message --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=16e51e5cea0811e98a140a58ac14011e  --set env.treeId=1314 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc --name service-message-uat ./build/k8s

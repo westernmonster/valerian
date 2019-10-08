@@ -6,13 +6,35 @@ import (
 	"strconv"
 	"valerian/app/interface/topic/model"
 	account "valerian/app/service/account/api"
-	discuss "valerian/app/service/discuss/api"
-	feed "valerian/app/service/feed/api"
+	article "valerian/app/service/article/api"
+	topicFeed "valerian/app/service/topic-feed/api"
 	"valerian/library/ecode"
 )
 
+func (p *Service) FromArticle(v *article.ArticleInfo) (item *model.TargetArticle) {
+	item = &model.TargetArticle{
+		ID:           v.ID,
+		Title:        v.Title,
+		Excerpt:      v.Excerpt,
+		ImageUrls:    v.ImageUrls,
+		ReviseCount:  int(v.Stat.ReviseCount),
+		CommentCount: int(v.Stat.CommentCount),
+		LikeCount:    int(v.Stat.LikeCount),
+		DislikeCount: int(v.Stat.DislikeCount),
+		Creator: &model.Creator{
+			ID:       v.Creator.ID,
+			Avatar:   v.Creator.Avatar,
+			UserName: v.Creator.UserName,
+		},
+	}
+
+	intro := v.Creator.GetIntroductionValue()
+	item.Creator.Introduction = &intro
+	return
+}
+
 func (p *Service) GetTopicFeedPaged(c context.Context, topicID int64, limit, offset int) (resp *model.FeedResp, err error) {
-	var data *feed.TopicFeedResp
+	var data *topicFeed.TopicFeedResp
 	if data, err = p.d.GetTopicFeedPaged(c, topicID, limit, offset); err != nil {
 		return
 	}
@@ -52,37 +74,31 @@ func (p *Service) GetTopicFeedPaged(c context.Context, topicID int64, limit, off
 		intro := account.GetIntroductionValue()
 		item.Source.Actor.Introduction = &intro
 
-		if v.TargetType == model.TargetTypeDiscussion {
-			var discuss *discuss.DiscussionInfo
-			if discuss, err = p.d.GetDiscussion(c, v.TargetID); err != nil {
+		if v.TargetType == model.TargetTypeArticle {
+			var article *article.ArticleInfo
+			if article, err = p.d.GetArticle(c, v.TargetID); err != nil {
 				return
 			}
 
-			item.Target.Discussion = &model.TargetDiscussion{
-				ID:           discuss.ID,
-				Images:       make([]string, 0),
-				Excerpt:      discuss.Excerpt,
-				LikeCount:    int(discuss.Stat.LikeCount),
-				CommentCount: int(discuss.Stat.CommentCount),
-			}
-
-			title := discuss.GetTitleValue()
-			item.Target.Discussion.Title = &title
+			item.Target.Article = p.FromArticle(article)
 		}
 
 		resp.Items[i] = item
 	}
 
-	param := url.Values{}
-	param.Set("topic_id", strconv.FormatInt(topicID, 10))
-	param.Set("limit", strconv.Itoa(limit))
-	param.Set("offset", strconv.Itoa(offset-limit))
-
-	if resp.Paging.Prev, err = genURL("/api/v1/topic/list/activities", param); err != nil {
+	if resp.Paging.Prev, err = genURL("/api/v1/topic/list/activities", url.Values{
+		"topic_id": []string{strconv.FormatInt(topicID, 10)},
+		"limit":    []string{strconv.Itoa(limit)},
+		"offset":   []string{strconv.Itoa(offset - limit)},
+	}); err != nil {
 		return
 	}
-	param.Set("offset", strconv.Itoa(offset+limit))
-	if resp.Paging.Next, err = genURL("/api/v1/topic/list/activities", param); err != nil {
+
+	if resp.Paging.Next, err = genURL("/api/v1/topic/list/activities", url.Values{
+		"topic_id": []string{strconv.FormatInt(topicID, 10)},
+		"limit":    []string{strconv.Itoa(limit)},
+		"offset":   []string{strconv.Itoa(offset + limit)},
+	}); err != nil {
 		return
 	}
 
