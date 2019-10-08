@@ -372,3 +372,14 @@ push-service-article:
 	docker push registry.cn-hangzhou.aliyuncs.com/valerian/service-article:${DOCKER_TAG}
 deploy-service-article:
 	helm install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/service-article:${DOCKER_TAG} --set global.name=service-article --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=service.article --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=68fefc9de93811e986590a58ac140094  --set env.treeId=1310 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc --name service-article-uat ./build/k8s
+
+service-recent: build-service-recent docker-service-recent push-service-recent deploy-service-recent
+build-service-recent:
+	go env -w GOPROXY=https://goproxy.cn,direct
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/service/recent/cmd/cmd"   app/service/recent/cmd/main.go
+docker-service-recent:
+	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/service-recent:${DOCKER_TAG} ./app/service/recent/cmd/
+push-service-recent:
+	docker push registry.cn-hangzhou.aliyuncs.com/valerian/service-recent:${DOCKER_TAG}
+deploy-service-recent:
+	helm install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/service-recent:${DOCKER_TAG} --set global.name=service-recent --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=service.recent --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=68fefc9de93811e986590a58ac140094  --set env.treeId=1310 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc --name service-recent-uat ./build/k8s
