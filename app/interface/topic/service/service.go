@@ -40,6 +40,7 @@ func (s *Service) Ping(c context.Context) (err error) {
 // Close dao.
 func (s *Service) Close() {
 	s.d.Close()
+	s.mq.Close()
 }
 
 func (s *Service) addCache(f func()) {

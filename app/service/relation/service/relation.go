@@ -12,22 +12,6 @@ import (
 	"valerian/library/log"
 )
 
-func (p *Service) onFollow(c context.Context, aid, fid int64) {
-	// 关注通知
-	if err := p.d.NotifyFollow(c, aid, fid); err != nil {
-		log.For(c).Error(fmt.Sprintf("Failed to set recent follow notify aid(%d) fid(%d): %+v", aid, fid, err))
-		return
-	}
-}
-
-func (p *Service) onUnfollow(c context.Context, aid, fid int64) {
-	// 取关通知
-	if err := p.d.NotifyUnfollow(c, aid, fid); err != nil {
-		log.For(c).Error(fmt.Sprintf("Failed to set recent follow notify aid(%d) fid(%d): %+v", aid, fid, err))
-		return
-	}
-}
-
 // Unfollow 取关
 func (p *Service) Unfollow(c context.Context, aid int64, fid int64) (err error) {
 	if aid <= 0 || fid <= 0 {

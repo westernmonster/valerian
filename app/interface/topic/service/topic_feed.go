@@ -9,7 +9,6 @@ import (
 	discuss "valerian/app/service/discuss/api"
 	feed "valerian/app/service/feed/api"
 	"valerian/library/ecode"
-	"valerian/library/xstr"
 )
 
 func (p *Service) GetTopicFeedPaged(c context.Context, topicID int64, limit, offset int) (resp *model.FeedResp, err error) {
@@ -62,7 +61,7 @@ func (p *Service) GetTopicFeedPaged(c context.Context, topicID int64, limit, off
 			item.Target.Discussion = &model.TargetDiscussion{
 				ID:           discuss.ID,
 				Images:       make([]string, 0),
-				Excerpt:      xstr.Excerpt(discuss.ContentText),
+				Excerpt:      discuss.Excerpt,
 				LikeCount:    int(discuss.Stat.LikeCount),
 				CommentCount: int(discuss.Stat.CommentCount),
 			}

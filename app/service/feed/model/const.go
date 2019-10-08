@@ -33,7 +33,8 @@ const (
 	BusTopicAdded   = "topic.added"
 	BusTopicDeleted = "topic.deleted"
 
-	BusMemberFollowed = "member.followed"
+	BusMemberFollowed   = "member.followed"
+	BusMemberUnfollowed = "member.unfollowed"
 
 	BusDiscussionLiked     = "discussion.liked"
 	BusDiscussionCommented = "discussion.commented"

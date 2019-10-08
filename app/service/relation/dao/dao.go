@@ -3,17 +3,13 @@ package dao
 import (
 	"context"
 	"fmt"
-	"strings"
 	"time"
 
 	"valerian/app/service/relation/conf"
 	"valerian/library/cache/memcache"
-	"valerian/library/conf/env"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
 	"valerian/library/stat/prom"
-
-	stan "github.com/nats-io/stan.go"
 )
 
 // Dao dao struct
@@ -22,7 +18,6 @@ type Dao struct {
 	mc       *memcache.Pool
 	mcExpire int32
 	c        *conf.Config
-	sc       stan.Conn
 }
 
 func New(c *conf.Config) (dao *Dao) {
@@ -31,22 +26,6 @@ func New(c *conf.Config) (dao *Dao) {
 		db:       sqalx.NewMySQL(c.DB.Main),
 		mc:       memcache.NewPool(c.Memcache.Main.Config),
 		mcExpire: int32(time.Duration(c.Memcache.Main.Expire) / time.Second),
-	}
-
-	servers := strings.Join(c.Nats.Nodes, ",")
-	if sc, err := stan.Connect("valerian",
-		env.Hostname,
-		stan.Pings(10, 5),
-		stan.NatsURL(servers),
-		stan.SetConnectionLostHandler(func(_ stan.Conn, reason error) {
-			log.Errorf("Nats Connection lost, reason: %v", reason)
-			panic(reason)
-		}),
-	); err != nil {
-		log.Errorf("connect to servers failed %#v\n", err)
-		panic(err)
-	} else {
-		dao.sc = sc
 	}
 
 	return
@@ -74,10 +53,6 @@ func (d *Dao) Close() {
 	}
 	if d.db != nil {
 		d.db.Close()
-	}
-
-	if d.sc != nil {
-		d.sc.Close()
 	}
 }
 

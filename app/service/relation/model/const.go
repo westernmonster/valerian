@@ -50,3 +50,8 @@ func UnsetAttr(attribute uint32, mask uint32) uint32 {
 func (f *AccountFollowing) Following() bool {
 	return AttrFollowing == Attr(f.Attribute) || Attr(f.Attribute) == AttrFriend
 }
+
+const (
+	BusMemberFollowed   = "member.followed"
+	BusMemberUnfollowed = "member.unfollowed"
+)
