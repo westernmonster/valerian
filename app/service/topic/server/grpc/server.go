@@ -50,7 +50,11 @@ func (s *server) GetTopicInfo(ctx context.Context, req *api.TopicReq) (*api.Topi
 		return nil, err
 	}
 
-	return api.FromTopic(resp, stat), nil
+	acc, err := s.svr.GetAccountBaseInfo(ctx, resp.CreatedBy)
+	if err != nil {
+		return nil, err
+	}
+	return api.FromTopic(resp, stat, acc), nil
 }
 
 func (s *server) GetTopicMemberRole(ctx context.Context, req *api.TopicMemberRoleReq) (resp *api.MemberRoleReply, err error) {
@@ -103,7 +107,12 @@ func (s *server) GetUserTopicsPaged(ctx context.Context, req *api.UserTopicsReq)
 			return nil, err
 		}
 
-		resp.Items[i] = api.FromTopic(v, stat)
+		m, err := s.svr.GetAccountBaseInfo(ctx, v.CreatedBy)
+		if err != nil {
+			return nil, err
+		}
+
+		resp.Items[i] = api.FromTopic(v, stat, m)
 	}
 
 	return

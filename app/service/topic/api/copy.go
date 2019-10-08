@@ -1,8 +1,12 @@
 package api
 
-import "valerian/app/service/topic/model"
+import (
+	"valerian/app/service/topic/model"
 
-func FromTopic(v *model.Topic, stat *model.TopicStat) *TopicInfo {
+	account "valerian/app/service/account/api"
+)
+
+func FromTopic(v *model.Topic, stat *model.TopicStat, acc *account.BaseInfoReply) *TopicInfo {
 	reply := &TopicInfo{
 		ID:              v.ID,
 		Name:            v.Name,
@@ -15,7 +19,6 @@ func FromTopic(v *model.Topic, stat *model.TopicStat) *TopicInfo {
 		JoinPermission:  v.JoinPermission,
 		CatalogViewType: v.CatalogViewType,
 		TopicHome:       v.TopicHome,
-		CreatedBy:       v.CreatedBy,
 		CreatedAt:       v.CreatedAt,
 		UpdatedAt:       v.UpdatedAt,
 	}
@@ -32,6 +35,16 @@ func FromTopic(v *model.Topic, stat *model.TopicStat) *TopicInfo {
 
 	if v.Bg != nil {
 		reply.Bg = &TopicInfo_BgValue{*v.Bg}
+	}
+
+	reply.Creator = &Creator{
+		ID:       acc.ID,
+		UserName: acc.UserName,
+		Avatar:   acc.Avatar,
+	}
+
+	if acc.Introduction != nil {
+		reply.Creator.Introduction = &Creator_IntroductionValue{acc.GetIntroductionValue()}
 	}
 
 	return reply

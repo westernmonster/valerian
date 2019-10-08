@@ -13,6 +13,18 @@ message MemberRoleReply {
     string  Role = 2 [(gogoproto.jsontag) = "role"];
 }
 
+message Creator {
+    int64 ID = 1 [(gogoproto.jsontag) = "id"];
+
+    string  UserName = 2 [(gogoproto.jsontag) = "user_name"];
+
+    string Avatar   = 3 [(gogoproto.jsontag) = "avatar"];
+
+    oneof Introduction {
+        string  IntroductionValue = 4 [(gogoproto.jsontag) = "introduction"] ;
+    }
+}
+
 message TopicInfo {
     int64 ID = 1 [(gogoproto.jsontag) = "id"];
 
@@ -44,7 +56,7 @@ message TopicInfo {
 
     string TopicHome = 13 [(gogoproto.jsontag) = "topic_home"];
 
-    int64 CreatedBy = 14 [(gogoproto.jsontag) = "created_by"];
+    Creator  Creator  = 14 [(gogoproto.jsontag) = "creator"];
 
     // unix timestamp
     int64 CreatedAt = 15 [(gogoproto.jsontag) = "created_at"];

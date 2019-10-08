@@ -3,11 +3,16 @@ package service
 import (
 	"context"
 	"time"
+	account "valerian/app/service/account/api"
 	"valerian/app/service/topic/model"
 	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
 	"valerian/library/gid"
 )
+
+func (p *Service) GetAccountBaseInfo(c context.Context, aid int64) (info *account.BaseInfoReply, err error) {
+	return p.d.GetAccountBaseInfo(c, aid)
+}
 
 func (p *Service) GetUserTopicsPaged(c context.Context, aid int64, limit, offset int) (items []*model.Topic, err error) {
 	return p.d.GetUserTopicsPaged(c, p.d.DB(), aid, limit, offset)
