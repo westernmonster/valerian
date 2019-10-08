@@ -1,0 +1,66 @@
+syntax = "proto3";
+package service.recent;
+option go_package = "api";
+
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+// EmptyStruct 空的message，对应真实service只返回error，没有具体返回值
+message EmptyStruct {
+}
+
+message RecentPubInfo {
+    int64 ID = 1 [(gogoproto.jsontag) = "id"];
+    int64 AccountID = 2 [(gogoproto.jsontag) = "account_id"];
+    int64 TargetID = 3 [(gogoproto.jsontag) = "target_id"];
+    string TargetType = 4 [(gogoproto.jsontag) = "target_type"];
+
+    // unix timestamp
+    int64 CreatedAt = 5 [(gogoproto.jsontag) = "created_at"];
+    // unix timestamp
+    int64 UpdatedAt = 6 [(gogoproto.jsontag) = "updated_at"];
+}
+
+
+message RecentViewInfo {
+    int64 ID = 1 [(gogoproto.jsontag) = "id"];
+    int64 AccountID = 2 [(gogoproto.jsontag) = "account_id"];
+    int64 TargetID = 3 [(gogoproto.jsontag) = "target_id"];
+    string TargetType = 4 [(gogoproto.jsontag) = "target_type"];
+
+    // unix timestamp
+    int64 CreatedAt = 5 [(gogoproto.jsontag) = "created_at"];
+    // unix timestamp
+    int64 UpdatedAt = 6 [(gogoproto.jsontag) = "updated_at"];
+}
+
+
+message RecentPubsReq {
+    int64 AccountID = 1 [(gogoproto.jsontag) = "aid"];
+    int32 Limit = 2 [(gogoproto.jsontag) = "limit"];
+    int32 Offset = 3 [(gogoproto.jsontag) = "offset"];
+}
+
+message RecentPubsResp {
+    repeated RecentPubInfo Items = 1 [(gogoproto.jsontag) = 'items'];
+}
+
+message RecentViewsReq {
+    int64 AccountID = 1 [(gogoproto.jsontag) = "aid"];
+    int32 Limit = 2 [(gogoproto.jsontag) = "limit"];
+    int32 Offset = 3 [(gogoproto.jsontag) = "offset"];
+}
+
+message RecentViewsResp {
+    repeated RecentViewInfo Items = 1 [(gogoproto.jsontag) = 'items'];
+}
+
+
+service Recent {
+    rpc GetRecentPubsPaged(RecentPubsReq) returns (RecentPubsResp);
+    rpc GetRecentViewsPaged(RecentViewsReq) returns (RecentViewsResp);
+}
+
+
+
+

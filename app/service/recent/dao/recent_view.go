@@ -9,6 +9,17 @@ import (
 	"valerian/library/log"
 )
 
+func (p *Dao) GetUserRecentViewsPaged(c context.Context, node sqalx.Node, aid int64, limit, offset int) (items []*model.RecentView, err error) {
+	items = make([]*model.RecentView, 0)
+	sqlSelect := "SELECT a.* FROM recent_views a WHERE a.deleted=0 AND a.account_id=? ORDER BY a.id DESC limit ?,?"
+
+	if err = node.SelectContext(c, &items, sqlSelect, aid, offset, limit); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetUserRecentViewsPaged err(%+v) aid(%d) limit(%d) offset(%d)", err, aid, limit, offset))
+		return
+	}
+	return
+}
+
 // GetAll get all records
 func (p *Dao) GetRecentViews(c context.Context, node sqalx.Node) (items []*model.RecentView, err error) {
 	items = make([]*model.RecentView, 0)

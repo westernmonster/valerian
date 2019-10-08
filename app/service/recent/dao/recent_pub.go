@@ -9,6 +9,17 @@ import (
 	"valerian/library/log"
 )
 
+func (p *Dao) GetUserRecentPubsPaged(c context.Context, node sqalx.Node, aid int64, limit, offset int) (items []*model.RecentPub, err error) {
+	items = make([]*model.RecentPub, 0)
+	sqlSelect := "SELECT a.* FROM recent_pubs a WHERE a.deleted=0 AND a.account_id=? ORDER BY a.id DESC limit ?,?"
+
+	if err = node.SelectContext(c, &items, sqlSelect, aid, offset, limit); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetUserRecentPubsPaged err(%+v) aid(%d) limit(%d) offset(%d)", err, aid, limit, offset))
+		return
+	}
+	return
+}
+
 // GetAll get all records
 func (p *Dao) GetRecentPubs(c context.Context, node sqalx.Node) (items []*model.RecentPub, err error) {
 	items = make([]*model.RecentPub, 0)
