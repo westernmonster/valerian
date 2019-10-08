@@ -10,10 +10,175 @@ import (
 	article "valerian/app/service/article/api"
 	discuss "valerian/app/service/discuss/api"
 	feed "valerian/app/service/feed/api"
+	recent "valerian/app/service/recent/api"
 	topic "valerian/app/service/topic/api"
 	"valerian/library/ecode"
 	"valerian/library/net/metadata"
 )
+
+func (p *Service) FromDiscussion(v *discuss.DiscussionInfo) (item *model.TargetDiscuss) {
+	item = &model.TargetDiscuss{
+		ID:           v.ID,
+		Excerpt:      v.Excerpt,
+		ImageUrls:    v.ImageUrls,
+		CommentCount: int(v.Stat.CommentCount),
+		LikeCount:    int(v.Stat.LikeCount),
+		DislikeCount: int(v.Stat.DislikeCount),
+		Creator: &model.Creator{
+			ID:       v.Creator.ID,
+			Avatar:   v.Creator.Avatar,
+			UserName: v.Creator.UserName,
+		},
+	}
+
+	title := v.GetTitleValue()
+	item.Title = &title
+
+	intro := v.Creator.GetIntroductionValue()
+	item.Creator.Introduction = &intro
+	return
+}
+
+func (p *Service) FromRevise(v *article.ReviseInfo) (item *model.TargetRevise) {
+	item = &model.TargetRevise{
+		ID:           v.ID,
+		Title:        v.Title,
+		Excerpt:      v.Excerpt,
+		ImageUrls:    v.ImageUrls,
+		CommentCount: int(v.Stat.CommentCount),
+		LikeCount:    int(v.Stat.LikeCount),
+		DislikeCount: int(v.Stat.DislikeCount),
+		Creator: &model.Creator{
+			ID:       v.Creator.ID,
+			Avatar:   v.Creator.Avatar,
+			UserName: v.Creator.UserName,
+		},
+	}
+
+	intro := v.Creator.GetIntroductionValue()
+	item.Creator.Introduction = &intro
+	return
+}
+
+func (p *Service) FromArticle(v *article.ArticleInfo) (item *model.TargetArticle) {
+	item = &model.TargetArticle{
+		ID:           v.ID,
+		Title:        v.Title,
+		Excerpt:      v.Excerpt,
+		ImageUrls:    v.ImageUrls,
+		ReviseCount:  int(v.Stat.ReviseCount),
+		CommentCount: int(v.Stat.CommentCount),
+		LikeCount:    int(v.Stat.LikeCount),
+		DislikeCount: int(v.Stat.DislikeCount),
+		Creator: &model.Creator{
+			ID:       v.Creator.ID,
+			Avatar:   v.Creator.Avatar,
+			UserName: v.Creator.UserName,
+		},
+	}
+
+	intro := v.Creator.GetIntroductionValue()
+	item.Creator.Introduction = &intro
+	return
+}
+
+func (p *Service) FromTopic(v *topic.TopicInfo) (item *model.TargetTopic) {
+	item = &model.TargetTopic{
+		ID:              v.ID,
+		Name:            v.Name,
+		Introduction:    v.Introduction,
+		MemberCount:     int(v.Stat.MemberCount),
+		DiscussionCount: int(v.Stat.DiscussionCount),
+		ArticleCount:    int(v.Stat.ArticleCount),
+		Creator: &model.Creator{
+			ID:       v.Creator.ID,
+			Avatar:   v.Creator.Avatar,
+			UserName: v.Creator.UserName,
+		},
+	}
+
+	intro := v.Creator.GetIntroductionValue()
+	item.Creator.Introduction = &intro
+
+	avatar := v.GetAvatarValue()
+	item.Avatar = &avatar
+	return
+}
+
+func (p *Service) GetMemberRecentPubsPaged(c context.Context, aid int64, atype string, limit, offset int) (resp *model.RecentPublishResp, err error) {
+	var data *recent.RecentPubsResp
+	if data, err = p.d.GetRecentPubsPaged(c, aid, limit, offset); err != nil {
+		return
+	}
+
+	resp = &model.RecentPublishResp{
+		Items:  make([]*model.PublishItem, len(data.Items)),
+		Paging: &model.Paging{},
+	}
+
+	for i, v := range data.Items {
+		item := &model.PublishItem{
+			Type: v.TargetType,
+		}
+
+		switch v.TargetType {
+		case model.TargetTypeArticle:
+			var article *article.ArticleInfo
+			if article, err = p.d.GetArticle(c, v.TargetID); err != nil {
+				return
+			}
+
+			item.Article = p.FromArticle(article)
+			break
+		case model.TargetTypeRevise:
+			var revise *article.ReviseInfo
+			if revise, err = p.d.GetRevise(c, v.TargetID); err != nil {
+				return
+			}
+
+			item.Revise = p.FromRevise(revise)
+			break
+		case model.TargetTypeDiscussion:
+			var discuss *discuss.DiscussionInfo
+			if discuss, err = p.d.GetDiscussion(c, v.TargetID); err != nil {
+				return
+			}
+
+			item.Discussion = p.FromDiscussion(discuss)
+			break
+		}
+
+		resp.Items[i] = item
+	}
+
+	if resp.Paging.Prev, err = genURL("/api/v1/account/list/recent", url.Values{
+		"id":     []string{strconv.FormatInt(aid, 10)},
+		"type":   []string{atype},
+		"limit":  []string{strconv.Itoa(limit)},
+		"offset": []string{strconv.Itoa(offset - limit)},
+	}); err != nil {
+		return
+	}
+
+	if resp.Paging.Next, err = genURL("/api/v1/account/list/recent", url.Values{
+		"id":     []string{strconv.FormatInt(aid, 10)},
+		"type":   []string{atype},
+		"limit":  []string{strconv.Itoa(limit)},
+		"offset": []string{strconv.Itoa(offset + limit)},
+	}); err != nil {
+		return
+	}
+	if len(resp.Items) < limit {
+		resp.Paging.IsEnd = true
+		resp.Paging.Next = ""
+	}
+
+	if offset == 0 {
+		resp.Paging.Prev = ""
+	}
+
+	return
+}
 
 func (p *Service) GetMemberInfo(c context.Context, targetID int64) (resp *model.MemberInfo, err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
@@ -87,37 +252,68 @@ func (p *Service) GetMemberActivitiesPaged(c context.Context, aid int64, limit, 
 			},
 		}
 
-		// if v.TargetType == model.TargetTypeDiscussion {
-		// var discuss *discuss.DiscussionInfo
-		// if discuss, err = p.d.GetDiscussion(c, v.TargetID); err != nil {
-		// 	return
-		// }
+		switch v.TargetType {
 
-		// item.Target.Discussion = &model.TargetDiscussion{
-		// 	ID:           discuss.ID,
-		// 	Images:       make([]string, 0),
-		// 	Excerpt:      xstr.Excerpt(discuss.ContentText),
-		// 	LikeCount:    int(discuss.Stat.LikeCount),
-		// 	CommentCount: int(discuss.Stat.CommentCount),
-		// }
+		case model.TargetTypeArticle:
+			var article *article.ArticleInfo
+			if article, err = p.d.GetArticle(c, v.TargetID); err != nil {
+				return
+			}
 
-		// title := discuss.GetTitleValue()
-		// item.Target.Discussion.Title = &title
-		// }
+			item.Target.Article = p.FromArticle(article)
+			break
+		case model.TargetTypeRevise:
+			var revise *article.ReviseInfo
+			if revise, err = p.d.GetRevise(c, v.TargetID); err != nil {
+				return
+			}
+
+			item.Target.Revise = p.FromRevise(revise)
+			break
+		case model.TargetTypeDiscussion:
+			var discuss *discuss.DiscussionInfo
+			if discuss, err = p.d.GetDiscussion(c, v.TargetID); err != nil {
+				return
+			}
+
+			item.Target.Discussion = p.FromDiscussion(discuss)
+			break
+
+		case model.TargetTypeTopic:
+			var topic *topic.TopicInfo
+			if topic, err = p.d.GetTopic(c, v.TargetID); err != nil {
+				return
+			}
+
+			item.Target.Topic = p.FromTopic(topic)
+			break
+
+		case model.TargetTypeMember:
+			var info *model.MemberInfo
+			if info, err = p.GetMemberInfo(c, v.TargetID); err != nil {
+				return
+			}
+
+			item.Target.Member = info
+			break
+		}
 
 		resp.Items[i] = item
 	}
 
-	param := url.Values{}
-	param.Set("account_id", strconv.FormatInt(aid, 10))
-	param.Set("limit", strconv.Itoa(limit))
-	param.Set("offset", strconv.Itoa(offset-limit))
-
-	if resp.Paging.Prev, err = genURL("/api/v1/account/list/activities", param); err != nil {
+	if resp.Paging.Prev, err = genURL("/api/v1/account/list/activities", url.Values{
+		"id":     []string{strconv.FormatInt(aid, 10)},
+		"limit":  []string{strconv.Itoa(limit)},
+		"offset": []string{strconv.Itoa(offset - limit)},
+	}); err != nil {
 		return
 	}
-	param.Set("offset", strconv.Itoa(offset+limit))
-	if resp.Paging.Next, err = genURL("/api/v1/account/list/activities", param); err != nil {
+
+	if resp.Paging.Next, err = genURL("/api/v1/account/list/activities", url.Values{
+		"id":     []string{strconv.FormatInt(aid, 10)},
+		"limit":  []string{strconv.Itoa(limit)},
+		"offset": []string{strconv.Itoa(offset + limit)},
+	}); err != nil {
 		return
 	}
 
@@ -157,17 +353,19 @@ func (p *Service) GetMemberArticlesPaged(c context.Context, aid int64, limit, of
 
 		resp.Items[i] = item
 	}
-
-	param := url.Values{}
-	param.Set("account_id", strconv.FormatInt(aid, 10))
-	param.Set("limit", strconv.Itoa(limit))
-	param.Set("offset", strconv.Itoa(offset-limit))
-
-	if resp.Paging.Prev, err = genURL("/api/v1/account/list/articles", param); err != nil {
+	if resp.Paging.Prev, err = genURL("/api/v1/account/list/articles", url.Values{
+		"id":     []string{strconv.FormatInt(aid, 10)},
+		"limit":  []string{strconv.Itoa(limit)},
+		"offset": []string{strconv.Itoa(offset - limit)},
+	}); err != nil {
 		return
 	}
-	param.Set("offset", strconv.Itoa(offset+limit))
-	if resp.Paging.Next, err = genURL("/api/v1/account/list/articles", param); err != nil {
+
+	if resp.Paging.Next, err = genURL("/api/v1/account/list/articles", url.Values{
+		"id":     []string{strconv.FormatInt(aid, 10)},
+		"limit":  []string{strconv.Itoa(limit)},
+		"offset": []string{strconv.Itoa(offset + limit)},
+	}); err != nil {
 		return
 	}
 
@@ -209,17 +407,19 @@ func (p *Service) GetMemberDiscussionsPaged(c context.Context, aid int64, limit,
 
 		resp.Items[i] = item
 	}
-
-	param := url.Values{}
-	param.Set("account_id", strconv.FormatInt(aid, 10))
-	param.Set("limit", strconv.Itoa(limit))
-	param.Set("offset", strconv.Itoa(offset-limit))
-
-	if resp.Paging.Prev, err = genURL("/api/v1/account/list/discussions", param); err != nil {
+	if resp.Paging.Prev, err = genURL("/api/v1/account/list/discussions", url.Values{
+		"id":     []string{strconv.FormatInt(aid, 10)},
+		"limit":  []string{strconv.Itoa(limit)},
+		"offset": []string{strconv.Itoa(offset - limit)},
+	}); err != nil {
 		return
 	}
-	param.Set("offset", strconv.Itoa(offset+limit))
-	if resp.Paging.Next, err = genURL("/api/v1/account/list/discussions", param); err != nil {
+
+	if resp.Paging.Next, err = genURL("/api/v1/account/list/discussions", url.Values{
+		"id":     []string{strconv.FormatInt(aid, 10)},
+		"limit":  []string{strconv.Itoa(limit)},
+		"offset": []string{strconv.Itoa(offset + limit)},
+	}); err != nil {
 		return
 	}
 
@@ -259,16 +459,19 @@ func (p *Service) GetMemberTopicsPaged(c context.Context, aid int64, limit, offs
 		resp.Items[i] = item
 	}
 
-	param := url.Values{}
-	param.Set("account_id", strconv.FormatInt(aid, 10))
-	param.Set("limit", strconv.Itoa(limit))
-	param.Set("offset", strconv.Itoa(offset-limit))
-
-	if resp.Paging.Prev, err = genURL("/api/v1/account/list/topics", param); err != nil {
+	if resp.Paging.Prev, err = genURL("/api/v1/account/list/topics", url.Values{
+		"id":     []string{strconv.FormatInt(aid, 10)},
+		"limit":  []string{strconv.Itoa(limit)},
+		"offset": []string{strconv.Itoa(offset - limit)},
+	}); err != nil {
 		return
 	}
-	param.Set("offset", strconv.Itoa(offset+limit))
-	if resp.Paging.Next, err = genURL("/api/v1/account/list/topics", param); err != nil {
+
+	if resp.Paging.Next, err = genURL("/api/v1/account/list/topics", url.Values{
+		"id":     []string{strconv.FormatInt(aid, 10)},
+		"limit":  []string{strconv.Itoa(limit)},
+		"offset": []string{strconv.Itoa(offset + limit)},
+	}); err != nil {
 		return
 	}
 

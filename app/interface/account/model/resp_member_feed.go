@@ -1,5 +1,17 @@
 package model
 
+type Creator struct {
+	// 用户ID
+	ID int64 `json:"id,string" swaggertype:"string"`
+	// 用户名
+	UserName string `json:"user_name"`
+	// 头像
+	Avatar string `json:"avatar"`
+
+	// 自我介绍
+	Introduction *string `json:"introduction,omitempty"`
+}
+
 type FeedItem struct {
 	// 来源
 	Source *FeedSource `json:"source"`
@@ -85,13 +97,15 @@ type TargetArticle struct {
 
 	// 评论数
 	CommentCount int `json:"comment_count"`
+
+	Creator *Creator `json:"creator,omitempty"`
 }
 
 type TargetRevise struct {
 	// ID
 	ID int64 `json:"id,string" swaggertype:"string"`
 	// 文章标题
-	Title *string `json:"title,omitempty"`
+	Title string `json:"title,omitempty"`
 	// 评论内容
 	Excerpt string `json:"excerpt"`
 
@@ -106,6 +120,8 @@ type TargetRevise struct {
 
 	// 图片
 	ImageUrls []string `json:"images"`
+
+	Creator *Creator `json:"creator,omitempty"`
 }
 
 type TargetDiscuss struct {
@@ -127,6 +143,8 @@ type TargetDiscuss struct {
 
 	// 图片
 	ImageUrls []string `json:"images"`
+
+	Creator *Creator `json:"creator,omitempty"`
 }
 
 type TargetTopic struct {
@@ -149,6 +167,8 @@ type TargetTopic struct {
 
 	// 简介
 	Introduction string `json:"introduction"`
+
+	Creator *Creator `json:"creator,omitempty"`
 }
 
 type FeedResp struct {

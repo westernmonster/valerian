@@ -15,7 +15,7 @@ import (
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param id query string true "ID"
-// @Param type query string true "类型：article,revise,discussion"
+// @Param type query string true "类型：all,article,revise,discussion"
 // @Param limit query integer false "每页大小"
 // @Param offset query integer false "offset"
 // @Success 200 {object} model.RecentPublishResp "个人资料"
@@ -24,7 +24,33 @@ import (
 // @Failure 500 "服务器端错误"
 // @Router /account/list/recent [get]
 func recent(c *mars.Context) {
-	//TODO: recent logic
+	var (
+		id     int64
+		err    error
+		offset int
+		limit  int
+	)
+
+	params := c.Request.Form
+
+	if offset, err = strconv.Atoi(params.Get("offset")); err != nil {
+		offset = 0
+	} else if offset < 0 {
+		offset = 0
+	}
+
+	if limit, err = strconv.Atoi(params.Get("limit")); err != nil {
+		limit = 10
+	} else if limit < 0 {
+		limit = 10
+	}
+
+	if id, err = strconv.ParseInt(params.Get("id"), 10, 64); err != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+
+	c.JSON(srv.GetMemberRecentPubsPaged(c, id, params.Get("query"), limit, offset))
 }
 
 // @Summary 获取用户资料

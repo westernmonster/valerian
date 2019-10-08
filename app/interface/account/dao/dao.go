@@ -10,6 +10,7 @@ import (
 	article "valerian/app/service/article/api"
 	discuss "valerian/app/service/discuss/api"
 	feed "valerian/app/service/feed/api"
+	recent "valerian/app/service/recent/api"
 	relation "valerian/app/service/relation/api"
 	topic "valerian/app/service/topic/api"
 	"valerian/library/cache/memcache"
@@ -33,6 +34,7 @@ type Dao struct {
 	topicRPC     topic.TopicClient
 	discussRPC   discuss.DiscussionClient
 	feedRPC      feed.FeedClient
+	recentRPC    recent.RecentClient
 }
 
 func New(c *conf.Config) (dao *Dao) {
@@ -57,7 +59,7 @@ func New(c *conf.Config) (dao *Dao) {
 		dao.relationRPC = relationRPC
 	}
 
-	if articleRPC, err := article.NewClient(c.RelationRPC); err != nil {
+	if articleRPC, err := article.NewClient(c.ArticleRPC); err != nil {
 		panic(errors.WithMessage(err, "Failed to dial article service"))
 	} else {
 		dao.articleRPC = articleRPC
@@ -79,6 +81,12 @@ func New(c *conf.Config) (dao *Dao) {
 		panic(errors.WithMessage(err, "Failed to dial topic service"))
 	} else {
 		dao.discussRPC = discussRPC
+	}
+
+	if recentRPC, err := recent.NewClient(c.RecentRPC); err != nil {
+		panic(errors.WithMessage(err, "Failed to dial recent service"))
+	} else {
+		dao.recentRPC = recentRPC
 	}
 
 	return

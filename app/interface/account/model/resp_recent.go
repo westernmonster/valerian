@@ -11,6 +11,9 @@ type PublishItem struct {
 	// 文章补充
 	Revise *TargetRevise `json:"revise,omitempty"`
 
+	// 话题
+	Topic *TargetTopic `json:"topic,omitempty"`
+
 	// 讨论
 	Discussion *TargetDiscuss `json:"discussion,omitempty"`
 }

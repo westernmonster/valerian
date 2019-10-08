@@ -10,6 +10,7 @@ import (
 	article "valerian/app/service/article/api"
 	discuss "valerian/app/service/discuss/api"
 	feed "valerian/app/service/feed/api"
+	recent "valerian/app/service/recent/api"
 	relation "valerian/app/service/relation/api"
 	topic "valerian/app/service/topic/api"
 	"valerian/library/database/sqalx"
@@ -43,8 +44,14 @@ type Service struct {
 		GetUserDiscussionsPaged(c context.Context, aid int64, limit, offset int) (resp *discuss.UserDiscussionsResp, err error)
 		GetUserTopicsPaged(c context.Context, aid int64, limit, offset int) (resp *topic.UserTopicsResp, err error)
 		GetUserArticlesPaged(c context.Context, aid int64, limit, offset int) (resp *article.UserArticlesResp, err error)
+		GetRecentPubsPaged(c context.Context, accountID int64, limit, offset int) (info *recent.RecentPubsResp, err error)
 
 		GetArticle(c context.Context, id int64) (info *article.ArticleInfo, err error)
+		GetTopic(c context.Context, id int64) (resp *topic.TopicInfo, err error)
+		GetDiscussion(c context.Context, id int64) (info *discuss.DiscussionInfo, err error)
+		GetRevise(c context.Context, id int64) (info *article.ReviseInfo, err error)
+
+		GetRecentViewsPaged(c context.Context, accountID int64, limit, offset int) (info *recent.RecentViewsResp, err error)
 
 		ProfileCache(c context.Context, id int64) (m *model.Profile, err error)
 		SetProfileCache(c context.Context, m *model.Profile) (err error)

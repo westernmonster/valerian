@@ -28,3 +28,11 @@ const (
 	ValcodeForgetPassword = 2
 	ValcodeLogin          = 3
 )
+
+const (
+	TargetTypeTopic      = "topic"
+	TargetTypeDiscussion = "discussion"
+	TargetTypeRevise     = "revise"
+	TargetTypeArticle    = "article"
+	TargetTypeMember     = "member"
+)

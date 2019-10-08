@@ -14,3 +14,11 @@ func (p *Dao) GetUserTopicsPaged(c context.Context, aid int64, limit, offset int
 
 	return
 }
+
+func (p *Dao) GetTopic(c context.Context, id int64) (resp *topic.TopicInfo, err error) {
+	if resp, err = p.topicRPC.GetTopicInfo(c, &topic.TopicReq{ID: id}); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetUserTopicsPaged error(%+v), id(%d) ", err, id))
+	}
+
+	return
+}
