@@ -8,7 +8,7 @@ import (
 )
 
 // AppID unique app id for service discovery
-const AppID = "service.topic-feed"
+const AppID = "service.account-feed"
 
 // NewClient new member grpc client
 func NewClient(cfg *warden.ClientConfig, opts ...grpc.DialOption) (AccountFeedClient, error) {

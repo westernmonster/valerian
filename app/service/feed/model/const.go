@@ -36,9 +36,6 @@ const (
 	BusCatalogArticleAdded   = "catalog.article.added"
 	BusCatalogArticleDeleted = "catalog.article.deleted"
 
-	BusReviseAdded   = "revise.added"
-	BusReviseDeleted = "revise.deleted"
-
 	BusTopicAdded    = "topic.added"
 	BusTopicFollowed = "topic.followed"
 	BusTopicDeleted  = "topic.deleted"

@@ -40,7 +40,7 @@ type server struct {
 }
 
 func (s *server) GetAccountFeedPaged(ctx context.Context, req *api.AccountFeedReq) (*api.AccountFeedResp, error) {
-	resp, err := s.svr.GetAccountFeedPaged(ctx, req.TopicID, int(req.Limit), int(req.Offset))
+	resp, err := s.svr.GetAccountFeedPaged(ctx, req.AccountID, int(req.Limit), int(req.Offset))
 	if err != nil {
 		return nil, err
 	}

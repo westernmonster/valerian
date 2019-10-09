@@ -16,7 +16,7 @@ message AccountFeedResp {
 message AccountFeedInfo {
     int64 ID = 1 [(gogoproto.jsontag) = "id"];
 
-    int64 AccountID = 2 [(gogoproto.jsontag) = "topic_id"];
+    int64 AccountID = 2 [(gogoproto.jsontag) = "account_id"];
 
     string ActionType = 3 [(gogoproto.jsontag) = "action_type"];
 
@@ -39,7 +39,7 @@ message AccountFeedInfo {
 
 
 message AccountFeedReq {
-    int64 TopicID = 1 [(gogoproto.jsontag) = "topic_id"];
+    int64 AccountID = 1 [(gogoproto.jsontag) = "account_id"];
     int32 Limit = 2 [(gogoproto.jsontag) = "limit"];
     int32 Offset = 3 [(gogoproto.jsontag) = "offset"];
 }

@@ -6,10 +6,10 @@ import (
 	"time"
 
 	"valerian/app/interface/account/conf"
+	accountFeed "valerian/app/service/account-feed/api"
 	account "valerian/app/service/account/api"
 	article "valerian/app/service/article/api"
 	discuss "valerian/app/service/discuss/api"
-	feed "valerian/app/service/feed/api"
 	recent "valerian/app/service/recent/api"
 	relation "valerian/app/service/relation/api"
 	topic "valerian/app/service/topic/api"
@@ -22,19 +22,19 @@ import (
 
 // Dao dao struct
 type Dao struct {
-	mc           *memcache.Pool
-	mcExpire     int32
-	authMC       *memcache.Pool
-	authMCExpire int32
-	db           sqalx.Node
-	c            *conf.Config
-	accountRPC   account.AccountClient
-	relationRPC  relation.RelationClient
-	articleRPC   article.ArticleClient
-	topicRPC     topic.TopicClient
-	discussRPC   discuss.DiscussionClient
-	feedRPC      feed.FeedClient
-	recentRPC    recent.RecentClient
+	mc             *memcache.Pool
+	mcExpire       int32
+	authMC         *memcache.Pool
+	authMCExpire   int32
+	db             sqalx.Node
+	c              *conf.Config
+	accountRPC     account.AccountClient
+	relationRPC    relation.RelationClient
+	articleRPC     article.ArticleClient
+	topicRPC       topic.TopicClient
+	discussRPC     discuss.DiscussionClient
+	accountFeedRPC accountFeed.AccountFeedClient
+	recentRPC      recent.RecentClient
 }
 
 func New(c *conf.Config) (dao *Dao) {
@@ -65,10 +65,10 @@ func New(c *conf.Config) (dao *Dao) {
 		dao.articleRPC = articleRPC
 	}
 
-	if feedRPC, err := feed.NewClient(c.AccountRPC); err != nil {
-		panic(errors.WithMessage(err, "Failed to dial feed service"))
+	if accountFeedRPC, err := accountFeed.NewClient(c.AccountFeedRPC); err != nil {
+		panic(errors.WithMessage(err, "Failed to dial accountFeed service"))
 	} else {
-		dao.feedRPC = feedRPC
+		dao.accountFeedRPC = accountFeedRPC
 	}
 
 	if topicRPC, err := topic.NewClient(c.TopicRPC); err != nil {

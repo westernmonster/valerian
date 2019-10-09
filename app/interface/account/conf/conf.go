@@ -32,16 +32,16 @@ type Config struct {
 	Tracer *tracing.Config
 	DB     *DB
 	// Auth
-	AccountRPC  *warden.ClientConfig
-	RelationRPC *warden.ClientConfig
-	FeedRPC     *warden.ClientConfig
-	DiscussRPC  *warden.ClientConfig
-	TopicRPC    *warden.ClientConfig
-	ArticleRPC  *warden.ClientConfig
-	RecentRPC   *warden.ClientConfig
-	Auth        *auth.Config
-	Memcache    *Memcache
-	Discovery   *discovery.Config
+	AccountRPC     *warden.ClientConfig
+	RelationRPC    *warden.ClientConfig
+	AccountFeedRPC *warden.ClientConfig
+	DiscussRPC     *warden.ClientConfig
+	TopicRPC       *warden.ClientConfig
+	ArticleRPC     *warden.ClientConfig
+	RecentRPC      *warden.ClientConfig
+	Auth           *auth.Config
+	Memcache       *Memcache
+	Discovery      *discovery.Config
 }
 
 // DB db config.
