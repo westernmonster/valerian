@@ -39,7 +39,7 @@ func (p *Service) onArticleAdded(m *stan.Msg) {
 	}
 
 	if err = p.d.AddTopicFeed(context.Background(), p.d.DB(), feed); err != nil {
-		log.Errorf("service.AddTopicFeed() failed %#v", err)
+		log.Errorf("service.onArticleAdded() failed %#v", err)
 		return
 	}
 
