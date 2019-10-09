@@ -5,6 +5,7 @@ import (
 	"time"
 	"valerian/app/service/account-feed/model"
 	article "valerian/app/service/article/api"
+	"valerian/app/service/feed/def"
 	"valerian/library/gid"
 	"valerian/library/log"
 
@@ -13,7 +14,7 @@ import (
 
 func (p *Service) onReviseAdded(m *stan.Msg) {
 	var err error
-	info := new(model.MsgReviseAdded)
+	info := new(def.MsgReviseAdded)
 	if err = info.Unmarshal(m.Data); err != nil {
 		log.Errorf("service.onReviseAdded Unmarshal failed %#v", err)
 		return
@@ -27,11 +28,11 @@ func (p *Service) onReviseAdded(m *stan.Msg) {
 	feed := &model.AccountFeed{
 		ID:         gid.NewID(),
 		AccountID:  info.ActorID,
-		ActionType: model.ActionTypeCreateRevise,
+		ActionType: def.ActionTypeCreateRevise,
 		ActionTime: time.Now().Unix(),
-		ActionText: model.ActionTextCreateRevise,
+		ActionText: def.ActionTextCreateRevise,
 		TargetID:   article.ID,
-		TargetType: model.TargetTypeRevise,
+		TargetType: def.TargetTypeRevise,
 		CreatedAt:  time.Now().Unix(),
 		UpdatedAt:  time.Now().Unix(),
 	}
@@ -46,7 +47,7 @@ func (p *Service) onReviseAdded(m *stan.Msg) {
 
 func (p *Service) onReviseUpdated(m *stan.Msg) {
 	var err error
-	info := new(model.MsgReviseUpdated)
+	info := new(def.MsgReviseUpdated)
 	if err = info.Unmarshal(m.Data); err != nil {
 		log.Errorf("service.onReviseUpdated Unmarshal failed %#v", err)
 		return
@@ -60,11 +61,11 @@ func (p *Service) onReviseUpdated(m *stan.Msg) {
 	feed := &model.AccountFeed{
 		ID:         gid.NewID(),
 		AccountID:  info.ActorID,
-		ActionType: model.ActionTypeUpdateRevise,
+		ActionType: def.ActionTypeUpdateRevise,
 		ActionTime: time.Now().Unix(),
-		ActionText: model.ActionTextUpdateRevise,
+		ActionText: def.ActionTextUpdateRevise,
 		TargetID:   article.ID,
-		TargetType: model.TargetTypeRevise,
+		TargetType: def.TargetTypeRevise,
 		CreatedAt:  time.Now().Unix(),
 		UpdatedAt:  time.Now().Unix(),
 	}
@@ -79,13 +80,13 @@ func (p *Service) onReviseUpdated(m *stan.Msg) {
 
 func (p *Service) onReviseDeleted(m *stan.Msg) {
 	var err error
-	info := new(model.MsgReviseDeleted)
+	info := new(def.MsgReviseDeleted)
 	if err = info.Unmarshal(m.Data); err != nil {
 		log.Errorf("service.onReviseDeleted Unmarshal failed %#v", err)
 		return
 	}
 
-	if err = p.d.DelAccountFeedByCond(context.Background(), p.d.DB(), model.TargetTypeRevise, info.ReviseID); err != nil {
+	if err = p.d.DelAccountFeedByCond(context.Background(), p.d.DB(), def.TargetTypeRevise, info.ReviseID); err != nil {
 		log.Errorf("service.onReviseDeleted() failed %#v", err)
 		return
 	}

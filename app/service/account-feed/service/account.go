@@ -6,6 +6,7 @@ import (
 
 	"valerian/app/service/account-feed/model"
 	account "valerian/app/service/account/api"
+	"valerian/app/service/feed/def"
 	"valerian/library/gid"
 	"valerian/library/log"
 
@@ -14,7 +15,7 @@ import (
 
 func (p *Service) onMemberFollowed(m *stan.Msg) {
 	var err error
-	info := new(model.MsgMemberFollowed)
+	info := new(def.MsgMemberFollowed)
 	if err = info.Unmarshal(m.Data); err != nil {
 		log.Errorf("onMemberFollowed Unmarshal failed %#v", err)
 		return
@@ -28,11 +29,11 @@ func (p *Service) onMemberFollowed(m *stan.Msg) {
 	feed := &model.AccountFeed{
 		ID:         gid.NewID(),
 		AccountID:  info.AccountID,
-		ActionType: model.ActionTypeFollowMember,
+		ActionType: def.ActionTypeFollowMember,
 		ActionTime: time.Now().Unix(),
-		ActionText: model.ActionTextFollowMember,
+		ActionText: def.ActionTextFollowMember,
 		TargetID:   member.ID,
-		TargetType: model.TargetTypeMember,
+		TargetType: def.TargetTypeMember,
 		CreatedAt:  time.Now().Unix(),
 		UpdatedAt:  time.Now().Unix(),
 	}

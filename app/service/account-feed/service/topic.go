@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 	"valerian/app/service/account-feed/model"
+	"valerian/app/service/feed/def"
 	topic "valerian/app/service/topic/api"
 	"valerian/library/gid"
 	"valerian/library/log"
@@ -13,7 +14,7 @@ import (
 
 func (p *Service) onTopicAdded(m *stan.Msg) {
 	var err error
-	info := new(model.MsgTopicAdded)
+	info := new(def.MsgTopicAdded)
 	if err = info.Unmarshal(m.Data); err != nil {
 		log.Errorf("service.onTopicAdded Unmarshal failed %#v", err)
 		return
@@ -27,11 +28,11 @@ func (p *Service) onTopicAdded(m *stan.Msg) {
 	feed := &model.AccountFeed{
 		ID:         gid.NewID(),
 		AccountID:  info.ActorID,
-		ActionType: model.ActionTypeCreateTopic,
+		ActionType: def.ActionTypeCreateTopic,
 		ActionTime: time.Now().Unix(),
-		ActionText: model.ActionTextCreateTopic,
+		ActionText: def.ActionTextCreateTopic,
 		TargetID:   topic.ID,
-		TargetType: model.TargetTypeTopic,
+		TargetType: def.TargetTypeTopic,
 		CreatedAt:  time.Now().Unix(),
 		UpdatedAt:  time.Now().Unix(),
 	}
@@ -46,7 +47,7 @@ func (p *Service) onTopicAdded(m *stan.Msg) {
 
 func (p *Service) onTopicFollowed(m *stan.Msg) {
 	var err error
-	info := new(model.MsgTopicFollowed)
+	info := new(def.MsgTopicFollowed)
 	if err = info.Unmarshal(m.Data); err != nil {
 		log.Errorf("service.onTopicFollowed Unmarshal failed %#v", err)
 		return
@@ -60,11 +61,11 @@ func (p *Service) onTopicFollowed(m *stan.Msg) {
 	feed := &model.AccountFeed{
 		ID:         gid.NewID(),
 		AccountID:  info.ActorID,
-		ActionType: model.ActionTypeFollowTopic,
+		ActionType: def.ActionTypeFollowTopic,
 		ActionTime: time.Now().Unix(),
-		ActionText: model.ActionTextFollowTopic,
+		ActionText: def.ActionTextFollowTopic,
 		TargetID:   topic.ID,
-		TargetType: model.TargetTypeTopic,
+		TargetType: def.TargetTypeTopic,
 		CreatedAt:  time.Now().Unix(),
 		UpdatedAt:  time.Now().Unix(),
 	}
@@ -79,13 +80,13 @@ func (p *Service) onTopicFollowed(m *stan.Msg) {
 
 func (p *Service) onTopicDeleted(m *stan.Msg) {
 	var err error
-	info := new(model.MsgTopicDeleted)
+	info := new(def.MsgTopicDeleted)
 	if err = info.Unmarshal(m.Data); err != nil {
 		log.Errorf("service.onTopicDeleted Unmarshal failed %#v", err)
 		return
 	}
 
-	if err = p.d.DelAccountFeedByCond(context.Background(), p.d.DB(), model.TargetTypeTopic, info.TopicID); err != nil {
+	if err = p.d.DelAccountFeedByCond(context.Background(), p.d.DB(), def.TargetTypeTopic, info.TopicID); err != nil {
 		log.Errorf("service.onTopicDeleted() failed %#v", err)
 		return
 	}

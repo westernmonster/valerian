@@ -7,7 +7,7 @@ import (
 
 	"valerian/app/service/account-feed/conf"
 	"valerian/app/service/account-feed/dao"
-	"valerian/app/service/account-feed/model"
+	"valerian/app/service/feed/def"
 	"valerian/library/conf/env"
 	"valerian/library/log"
 	"valerian/library/mq"
@@ -30,63 +30,63 @@ func New(c *conf.Config) (s *Service) {
 		missch: make(chan func(), 1024),
 	}
 
-	if err := s.mq.QueueSubscribe(model.BusArticleAdded, "account-feed", s.onArticleAdded); err != nil {
-		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, model.BusArticleAdded, "account-feed")
+	if err := s.mq.QueueSubscribe(def.BusArticleAdded, "account-feed", s.onArticleAdded); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusArticleAdded, "account-feed")
 		panic(err)
 	}
 
-	if err := s.mq.QueueSubscribe(model.BusArticleUpdated, "account-feed", s.onArticleUpdated); err != nil {
-		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, model.BusArticleUpdated, "account-feed")
+	if err := s.mq.QueueSubscribe(def.BusArticleUpdated, "account-feed", s.onArticleUpdated); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusArticleUpdated, "account-feed")
 		panic(err)
 	}
 
-	if err := s.mq.QueueSubscribe(model.BusArticleDeleted, "account-feed", s.onArticleDeleted); err != nil {
-		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, model.BusArticleDeleted, "account-feed")
+	if err := s.mq.QueueSubscribe(def.BusArticleDeleted, "account-feed", s.onArticleDeleted); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusArticleDeleted, "account-feed")
 		panic(err)
 	}
 
-	if err := s.mq.QueueSubscribe(model.BusReviseAdded, "account-feed", s.onReviseAdded); err != nil {
-		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, model.BusReviseAdded, "account-feed")
+	if err := s.mq.QueueSubscribe(def.BusReviseAdded, "account-feed", s.onReviseAdded); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusReviseAdded, "account-feed")
 		panic(err)
 	}
 
-	if err := s.mq.QueueSubscribe(model.BusReviseUpdated, "account-feed", s.onReviseUpdated); err != nil {
-		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, model.BusReviseUpdated, "account-feed")
+	if err := s.mq.QueueSubscribe(def.BusReviseUpdated, "account-feed", s.onReviseUpdated); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusReviseUpdated, "account-feed")
 		panic(err)
 	}
 
-	if err := s.mq.QueueSubscribe(model.BusReviseDeleted, "account-feed", s.onReviseDeleted); err != nil {
-		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, model.BusReviseDeleted, "account-feed")
+	if err := s.mq.QueueSubscribe(def.BusReviseDeleted, "account-feed", s.onReviseDeleted); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusReviseDeleted, "account-feed")
 		panic(err)
 	}
 
-	if err := s.mq.QueueSubscribe(model.BusDiscussionAdded, "account-feed", s.onDiscussionAdded); err != nil {
-		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, model.BusDiscussionAdded, "account-feed")
+	if err := s.mq.QueueSubscribe(def.BusDiscussionAdded, "account-feed", s.onDiscussionAdded); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusDiscussionAdded, "account-feed")
 		panic(err)
 	}
 
-	if err := s.mq.QueueSubscribe(model.BusDiscussionUpdated, "account-feed", s.onDiscussionUpdated); err != nil {
-		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, model.BusDiscussionUpdated, "account-feed")
+	if err := s.mq.QueueSubscribe(def.BusDiscussionUpdated, "account-feed", s.onDiscussionUpdated); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusDiscussionUpdated, "account-feed")
 		panic(err)
 	}
 
-	if err := s.mq.QueueSubscribe(model.BusDiscussionDeleted, "account-feed", s.onDiscussionDeleted); err != nil {
-		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, model.BusDiscussionDeleted, "account-feed")
+	if err := s.mq.QueueSubscribe(def.BusDiscussionDeleted, "account-feed", s.onDiscussionDeleted); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusDiscussionDeleted, "account-feed")
 		panic(err)
 	}
 
-	if err := s.mq.QueueSubscribe(model.BusTopicAdded, "account-feed", s.onTopicAdded); err != nil {
-		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, model.BusTopicAdded, "account-feed")
+	if err := s.mq.QueueSubscribe(def.BusTopicAdded, "account-feed", s.onTopicAdded); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusTopicAdded, "account-feed")
 		panic(err)
 	}
 
-	if err := s.mq.QueueSubscribe(model.BusTopicFollowed, "account-feed", s.onTopicFollowed); err != nil {
-		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, model.BusTopicFollowed, "account-feed")
+	if err := s.mq.QueueSubscribe(def.BusTopicFollowed, "account-feed", s.onTopicFollowed); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusTopicFollowed, "account-feed")
 		panic(err)
 	}
 
-	if err := s.mq.QueueSubscribe(model.BusTopicDeleted, "account-feed", s.onTopicDeleted); err != nil {
-		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, model.BusTopicDeleted, "account-feed")
+	if err := s.mq.QueueSubscribe(def.BusTopicDeleted, "account-feed", s.onTopicDeleted); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusTopicDeleted, "account-feed")
 		panic(err)
 	}
 

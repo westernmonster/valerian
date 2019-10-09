@@ -5,6 +5,7 @@ import (
 	"time"
 	"valerian/app/service/account-feed/model"
 	article "valerian/app/service/article/api"
+	"valerian/app/service/feed/def"
 	"valerian/library/gid"
 	"valerian/library/log"
 
@@ -13,7 +14,7 @@ import (
 
 func (p *Service) onArticleAdded(m *stan.Msg) {
 	var err error
-	info := new(model.MsgArticleCreated)
+	info := new(def.MsgArticleCreated)
 	if err = info.Unmarshal(m.Data); err != nil {
 		log.Errorf("service.onArticleAdded Unmarshal failed %#v", err)
 		return
@@ -27,11 +28,11 @@ func (p *Service) onArticleAdded(m *stan.Msg) {
 	feed := &model.AccountFeed{
 		ID:         gid.NewID(),
 		AccountID:  info.ActorID,
-		ActionType: model.ActionTypeCreateArticle,
+		ActionType: def.ActionTypeCreateArticle,
 		ActionTime: time.Now().Unix(),
-		ActionText: model.ActionTextCreateArticle,
+		ActionText: def.ActionTextCreateArticle,
 		TargetID:   article.ID,
-		TargetType: model.TargetTypeArticle,
+		TargetType: def.TargetTypeArticle,
 		CreatedAt:  time.Now().Unix(),
 		UpdatedAt:  time.Now().Unix(),
 	}
@@ -46,7 +47,7 @@ func (p *Service) onArticleAdded(m *stan.Msg) {
 
 func (p *Service) onArticleUpdated(m *stan.Msg) {
 	var err error
-	info := new(model.MsgArticleUpdated)
+	info := new(def.MsgArticleUpdated)
 	if err = info.Unmarshal(m.Data); err != nil {
 		log.Errorf("service.onArticleUpdated Unmarshal failed %#v", err)
 		return
@@ -60,11 +61,11 @@ func (p *Service) onArticleUpdated(m *stan.Msg) {
 	feed := &model.AccountFeed{
 		ID:         gid.NewID(),
 		AccountID:  info.ActorID,
-		ActionType: model.ActionTypeUpdateArticle,
+		ActionType: def.ActionTypeUpdateArticle,
 		ActionTime: time.Now().Unix(),
-		ActionText: model.ActionTextUpdateArticle,
+		ActionText: def.ActionTextUpdateArticle,
 		TargetID:   article.ID,
-		TargetType: model.TargetTypeArticle,
+		TargetType: def.TargetTypeArticle,
 		CreatedAt:  time.Now().Unix(),
 		UpdatedAt:  time.Now().Unix(),
 	}
@@ -79,7 +80,7 @@ func (p *Service) onArticleUpdated(m *stan.Msg) {
 
 func (p *Service) onArticleLiked(m *stan.Msg) {
 	var err error
-	info := new(model.MsgArticleLiked)
+	info := new(def.MsgArticleLiked)
 	if err = info.Unmarshal(m.Data); err != nil {
 		log.Errorf("service.onArticleLiked Unmarshal failed %#v", err)
 		return
@@ -93,11 +94,11 @@ func (p *Service) onArticleLiked(m *stan.Msg) {
 	feed := &model.AccountFeed{
 		ID:         gid.NewID(),
 		AccountID:  info.ActorID,
-		ActionType: model.ActionTypeLikeArticle,
+		ActionType: def.ActionTypeLikeArticle,
 		ActionTime: time.Now().Unix(),
-		ActionText: model.ActionTextLikeArticle,
+		ActionText: def.ActionTextLikeArticle,
 		TargetID:   article.ID,
-		TargetType: model.TargetTypeArticle,
+		TargetType: def.TargetTypeArticle,
 		CreatedAt:  time.Now().Unix(),
 		UpdatedAt:  time.Now().Unix(),
 	}
@@ -112,7 +113,7 @@ func (p *Service) onArticleLiked(m *stan.Msg) {
 
 func (p *Service) onArticleFavd(m *stan.Msg) {
 	var err error
-	info := new(model.MsgArticleFaved)
+	info := new(def.MsgArticleFaved)
 	if err = info.Unmarshal(m.Data); err != nil {
 		log.Errorf("service.onArticleFavd Unmarshal failed %#v", err)
 		return
@@ -126,11 +127,11 @@ func (p *Service) onArticleFavd(m *stan.Msg) {
 	feed := &model.AccountFeed{
 		ID:         gid.NewID(),
 		AccountID:  info.ActorID,
-		ActionType: model.ActionTypeFavArticle,
+		ActionType: def.ActionTypeFavArticle,
 		ActionTime: time.Now().Unix(),
-		ActionText: model.ActionTextFavArticle,
+		ActionText: def.ActionTextFavArticle,
 		TargetID:   article.ID,
-		TargetType: model.TargetTypeArticle,
+		TargetType: def.TargetTypeArticle,
 		CreatedAt:  time.Now().Unix(),
 		UpdatedAt:  time.Now().Unix(),
 	}
@@ -145,13 +146,13 @@ func (p *Service) onArticleFavd(m *stan.Msg) {
 
 func (p *Service) onArticleDeleted(m *stan.Msg) {
 	var err error
-	info := new(model.MsgArticleDeleted)
+	info := new(def.MsgArticleDeleted)
 	if err = info.Unmarshal(m.Data); err != nil {
 		log.Errorf("service.onArticleDeleted Unmarshal failed %#v", err)
 		return
 	}
 
-	if err = p.d.DelAccountFeedByCond(context.Background(), p.d.DB(), model.TargetTypeArticle, info.ArticleID); err != nil {
+	if err = p.d.DelAccountFeedByCond(context.Background(), p.d.DB(), def.TargetTypeArticle, info.ArticleID); err != nil {
 		log.Errorf("service.onArticleDeleted() failed %#v", err)
 		return
 	}

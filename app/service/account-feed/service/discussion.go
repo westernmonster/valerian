@@ -5,6 +5,7 @@ import (
 	"time"
 	"valerian/app/service/account-feed/model"
 	discuss "valerian/app/service/discuss/api"
+	"valerian/app/service/feed/def"
 	"valerian/library/gid"
 	"valerian/library/log"
 
@@ -13,7 +14,7 @@ import (
 
 func (p *Service) onDiscussionAdded(m *stan.Msg) {
 	var err error
-	info := new(model.MsgDiscussionAdded)
+	info := new(def.MsgDiscussionAdded)
 	if err = info.Unmarshal(m.Data); err != nil {
 		log.Errorf("service.onDiscussionAdded Unmarshal failed %#v", err)
 		return
@@ -27,11 +28,11 @@ func (p *Service) onDiscussionAdded(m *stan.Msg) {
 	feed := &model.AccountFeed{
 		ID:         gid.NewID(),
 		AccountID:  info.ActorID,
-		ActionType: model.ActionTypeCreateDiscussion,
+		ActionType: def.ActionTypeCreateDiscussion,
 		ActionTime: time.Now().Unix(),
-		ActionText: model.ActionTextCreateDiscussion,
+		ActionText: def.ActionTextCreateDiscussion,
 		TargetID:   discuss.ID,
-		TargetType: model.TargetTypeDiscussion,
+		TargetType: def.TargetTypeDiscussion,
 		CreatedAt:  time.Now().Unix(),
 		UpdatedAt:  time.Now().Unix(),
 	}
@@ -46,7 +47,7 @@ func (p *Service) onDiscussionAdded(m *stan.Msg) {
 
 func (p *Service) onDiscussionUpdated(m *stan.Msg) {
 	var err error
-	info := new(model.MsgDiscussionUpdated)
+	info := new(def.MsgDiscussionUpdated)
 	if err = info.Unmarshal(m.Data); err != nil {
 		log.Errorf("service.onDiscussionUpdated Unmarshal failed %#v", err)
 		return
@@ -60,11 +61,11 @@ func (p *Service) onDiscussionUpdated(m *stan.Msg) {
 	feed := &model.AccountFeed{
 		ID:         gid.NewID(),
 		AccountID:  info.ActorID,
-		ActionType: model.ActionTypeUpdateDiscussion,
+		ActionType: def.ActionTypeUpdateDiscussion,
 		ActionTime: time.Now().Unix(),
-		ActionText: model.ActionTextUpdateDiscussion,
+		ActionText: def.ActionTextUpdateDiscussion,
 		TargetID:   discuss.ID,
-		TargetType: model.TargetTypeDiscussion,
+		TargetType: def.TargetTypeDiscussion,
 		CreatedAt:  time.Now().Unix(),
 		UpdatedAt:  time.Now().Unix(),
 	}
@@ -79,13 +80,13 @@ func (p *Service) onDiscussionUpdated(m *stan.Msg) {
 
 func (p *Service) onDiscussionDeleted(m *stan.Msg) {
 	var err error
-	info := new(model.MsgDiscussionDeleted)
+	info := new(def.MsgDiscussionDeleted)
 	if err = info.Unmarshal(m.Data); err != nil {
 		log.Errorf("service.onDiscussionDeleted Unmarshal failed %#v", err)
 		return
 	}
 
-	if err = p.d.DelAccountFeedByCond(context.Background(), p.d.DB(), model.TargetTypeDiscussion, info.DiscussionID); err != nil {
+	if err = p.d.DelAccountFeedByCond(context.Background(), p.d.DB(), def.TargetTypeDiscussion, info.DiscussionID); err != nil {
 		log.Errorf("service.onDiscussionDeleted() failed %#v", err)
 		return
 	}
