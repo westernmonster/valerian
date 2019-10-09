@@ -39,20 +39,11 @@ type server struct {
 	svr *service.Service
 }
 
-func (s *server) GetTopicFeedPaged(ctx context.Context, req *api.TopicFeedReq) (*api.TopicFeedResp, error) {
-	resp, err := s.svr.GetTopicFeedPaged(ctx, req.TopicID, int(req.Limit), int(req.Offset))
+func (s *server) GetFeedPaged(ctx context.Context, req *api.FeedReq) (*api.FeedResp, error) {
+	resp, err := s.svr.GetFeedPaged(ctx, req.AccountID, int(req.Limit), int(req.Offset))
 	if err != nil {
 		return nil, err
 	}
 
-	return api.FromTopicFeed(resp), nil
-}
-
-func (s *server) GetAccountFeedPaged(ctx context.Context, req *api.AccountFeedReq) (*api.AccountFeedResp, error) {
-	resp, err := s.svr.GetAccountFeedPaged(ctx, req.AccountID, int(req.Limit), int(req.Offset))
-	if err != nil {
-		return nil, err
-	}
-
-	return api.FromAccountFeed(resp), nil
+	return api.FromFeed(resp), nil
 }

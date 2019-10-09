@@ -69,11 +69,11 @@ func (p *Dao) DelFeed(c context.Context, node sqalx.Node, id int64) (err error) 
 }
 
 // Delete logic delete a exist record
-func (p *Dao) DelFeedByCond(c context.Context, node sqalx.Node, accountID int64, targetType string, targetID int64) (err error) {
-	sqlDelete := "UPDATE feeds SET deleted=1 WHERE account_id=? AND target_type=? AND target_id=?"
+func (p *Dao) DelFeedByCond(c context.Context, node sqalx.Node, targetType string, targetID int64) (err error) {
+	sqlDelete := "UPDATE feeds SET deleted=1 WHERE  target_type=? AND target_id=?"
 
-	if _, err = node.ExecContext(c, sqlDelete, accountID, targetType, targetID); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.DelFeed err(%+v), account_id(%+v), target_type(%+v), target_id(%+v)", err, accountID, targetType, targetID))
+	if _, err = node.ExecContext(c, sqlDelete, targetType, targetID); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.DelFeed err(%+v), target_type(%+v), target_id(%+v)", err, targetType, targetID))
 		return
 	}
 
