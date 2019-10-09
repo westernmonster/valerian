@@ -184,7 +184,7 @@ func (p *Service) Invite(c context.Context, arg *model.ArgTopicInvite) (err erro
 		}
 
 		p.addCache(func() {
-			p.onTopicInviteSent(c, item.ID)
+			p.onTopicInviteSent(c, item.ID, item.TopicID, aid, item.CreatedAt)
 		})
 	}
 

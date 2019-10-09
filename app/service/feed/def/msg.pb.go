@@ -1370,6 +1370,329 @@ func (m *MsgTopicFollowed) GetActionTime() int64 {
 	return 0
 }
 
+type MsgTopicLeaved struct {
+	TopicID              int64    `protobuf:"varint,1,opt,name=TopicID,proto3" json:"topic_id"`
+	ActorID              int64    `protobuf:"varint,2,opt,name=ActorID,proto3" json:"actor_id"`
+	ActionTime           int64    `protobuf:"varint,4,opt,name=ActionTime,proto3" json:"action_time"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *MsgTopicLeaved) Reset()         { *m = MsgTopicLeaved{} }
+func (m *MsgTopicLeaved) String() string { return proto.CompactTextString(m) }
+func (*MsgTopicLeaved) ProtoMessage()    {}
+func (*MsgTopicLeaved) Descriptor() ([]byte, []int) {
+	return fileDescriptor_c06e4cca6c2cc899, []int{21}
+}
+func (m *MsgTopicLeaved) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgTopicLeaved) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgTopicLeaved.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgTopicLeaved) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgTopicLeaved.Merge(m, src)
+}
+func (m *MsgTopicLeaved) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgTopicLeaved) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgTopicLeaved.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgTopicLeaved proto.InternalMessageInfo
+
+func (m *MsgTopicLeaved) GetTopicID() int64 {
+	if m != nil {
+		return m.TopicID
+	}
+	return 0
+}
+
+func (m *MsgTopicLeaved) GetActorID() int64 {
+	if m != nil {
+		return m.ActorID
+	}
+	return 0
+}
+
+func (m *MsgTopicLeaved) GetActionTime() int64 {
+	if m != nil {
+		return m.ActionTime
+	}
+	return 0
+}
+
+type MsgTopicFollowRequested struct {
+	TopicID              int64    `protobuf:"varint,1,opt,name=TopicID,proto3" json:"topic_id"`
+	ActorID              int64    `protobuf:"varint,2,opt,name=ActorID,proto3" json:"actor_id"`
+	ActionTime           int64    `protobuf:"varint,4,opt,name=ActionTime,proto3" json:"action_time"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *MsgTopicFollowRequested) Reset()         { *m = MsgTopicFollowRequested{} }
+func (m *MsgTopicFollowRequested) String() string { return proto.CompactTextString(m) }
+func (*MsgTopicFollowRequested) ProtoMessage()    {}
+func (*MsgTopicFollowRequested) Descriptor() ([]byte, []int) {
+	return fileDescriptor_c06e4cca6c2cc899, []int{22}
+}
+func (m *MsgTopicFollowRequested) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgTopicFollowRequested) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgTopicFollowRequested.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgTopicFollowRequested) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgTopicFollowRequested.Merge(m, src)
+}
+func (m *MsgTopicFollowRequested) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgTopicFollowRequested) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgTopicFollowRequested.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgTopicFollowRequested proto.InternalMessageInfo
+
+func (m *MsgTopicFollowRequested) GetTopicID() int64 {
+	if m != nil {
+		return m.TopicID
+	}
+	return 0
+}
+
+func (m *MsgTopicFollowRequested) GetActorID() int64 {
+	if m != nil {
+		return m.ActorID
+	}
+	return 0
+}
+
+func (m *MsgTopicFollowRequested) GetActionTime() int64 {
+	if m != nil {
+		return m.ActionTime
+	}
+	return 0
+}
+
+type MsgTopicFollowRejected struct {
+	TopicID              int64    `protobuf:"varint,1,opt,name=TopicID,proto3" json:"topic_id"`
+	ActorID              int64    `protobuf:"varint,2,opt,name=ActorID,proto3" json:"actor_id"`
+	ActionTime           int64    `protobuf:"varint,4,opt,name=ActionTime,proto3" json:"action_time"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *MsgTopicFollowRejected) Reset()         { *m = MsgTopicFollowRejected{} }
+func (m *MsgTopicFollowRejected) String() string { return proto.CompactTextString(m) }
+func (*MsgTopicFollowRejected) ProtoMessage()    {}
+func (*MsgTopicFollowRejected) Descriptor() ([]byte, []int) {
+	return fileDescriptor_c06e4cca6c2cc899, []int{23}
+}
+func (m *MsgTopicFollowRejected) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgTopicFollowRejected) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgTopicFollowRejected.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgTopicFollowRejected) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgTopicFollowRejected.Merge(m, src)
+}
+func (m *MsgTopicFollowRejected) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgTopicFollowRejected) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgTopicFollowRejected.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgTopicFollowRejected proto.InternalMessageInfo
+
+func (m *MsgTopicFollowRejected) GetTopicID() int64 {
+	if m != nil {
+		return m.TopicID
+	}
+	return 0
+}
+
+func (m *MsgTopicFollowRejected) GetActorID() int64 {
+	if m != nil {
+		return m.ActorID
+	}
+	return 0
+}
+
+func (m *MsgTopicFollowRejected) GetActionTime() int64 {
+	if m != nil {
+		return m.ActionTime
+	}
+	return 0
+}
+
+type MsgTopicFollowApproved struct {
+	TopicID              int64    `protobuf:"varint,1,opt,name=TopicID,proto3" json:"topic_id"`
+	ActorID              int64    `protobuf:"varint,2,opt,name=ActorID,proto3" json:"actor_id"`
+	ActionTime           int64    `protobuf:"varint,4,opt,name=ActionTime,proto3" json:"action_time"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *MsgTopicFollowApproved) Reset()         { *m = MsgTopicFollowApproved{} }
+func (m *MsgTopicFollowApproved) String() string { return proto.CompactTextString(m) }
+func (*MsgTopicFollowApproved) ProtoMessage()    {}
+func (*MsgTopicFollowApproved) Descriptor() ([]byte, []int) {
+	return fileDescriptor_c06e4cca6c2cc899, []int{24}
+}
+func (m *MsgTopicFollowApproved) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgTopicFollowApproved) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgTopicFollowApproved.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgTopicFollowApproved) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgTopicFollowApproved.Merge(m, src)
+}
+func (m *MsgTopicFollowApproved) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgTopicFollowApproved) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgTopicFollowApproved.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgTopicFollowApproved proto.InternalMessageInfo
+
+func (m *MsgTopicFollowApproved) GetTopicID() int64 {
+	if m != nil {
+		return m.TopicID
+	}
+	return 0
+}
+
+func (m *MsgTopicFollowApproved) GetActorID() int64 {
+	if m != nil {
+		return m.ActorID
+	}
+	return 0
+}
+
+func (m *MsgTopicFollowApproved) GetActionTime() int64 {
+	if m != nil {
+		return m.ActionTime
+	}
+	return 0
+}
+
+type MsgTopicInviteSent struct {
+	InviteID             int64    `protobuf:"varint,1,opt,name=InviteID,proto3" json:"invite_id"`
+	TopicID              int64    `protobuf:"varint,2,opt,name=TopicID,proto3" json:"topic_id"`
+	ActorID              int64    `protobuf:"varint,3,opt,name=ActorID,proto3" json:"actor_id"`
+	ActionTime           int64    `protobuf:"varint,4,opt,name=ActionTime,proto3" json:"action_time"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *MsgTopicInviteSent) Reset()         { *m = MsgTopicInviteSent{} }
+func (m *MsgTopicInviteSent) String() string { return proto.CompactTextString(m) }
+func (*MsgTopicInviteSent) ProtoMessage()    {}
+func (*MsgTopicInviteSent) Descriptor() ([]byte, []int) {
+	return fileDescriptor_c06e4cca6c2cc899, []int{25}
+}
+func (m *MsgTopicInviteSent) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgTopicInviteSent) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgTopicInviteSent.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgTopicInviteSent) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgTopicInviteSent.Merge(m, src)
+}
+func (m *MsgTopicInviteSent) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgTopicInviteSent) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgTopicInviteSent.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgTopicInviteSent proto.InternalMessageInfo
+
+func (m *MsgTopicInviteSent) GetInviteID() int64 {
+	if m != nil {
+		return m.InviteID
+	}
+	return 0
+}
+
+func (m *MsgTopicInviteSent) GetTopicID() int64 {
+	if m != nil {
+		return m.TopicID
+	}
+	return 0
+}
+
+func (m *MsgTopicInviteSent) GetActorID() int64 {
+	if m != nil {
+		return m.ActorID
+	}
+	return 0
+}
+
+func (m *MsgTopicInviteSent) GetActionTime() int64 {
+	if m != nil {
+		return m.ActionTime
+	}
+	return 0
+}
+
 func init() {
 	proto.RegisterType((*MsgCatalogArticleAdded)(nil), "def.MsgCatalogArticleAdded")
 	proto.RegisterType((*MsgCatalogArticleDeleted)(nil), "def.MsgCatalogArticleDeleted")
@@ -1392,47 +1715,56 @@ func init() {
 	proto.RegisterType((*MsgTopicAdded)(nil), "def.MsgTopicAdded")
 	proto.RegisterType((*MsgTopicDeleted)(nil), "def.MsgTopicDeleted")
 	proto.RegisterType((*MsgTopicFollowed)(nil), "def.MsgTopicFollowed")
+	proto.RegisterType((*MsgTopicLeaved)(nil), "def.MsgTopicLeaved")
+	proto.RegisterType((*MsgTopicFollowRequested)(nil), "def.MsgTopicFollowRequested")
+	proto.RegisterType((*MsgTopicFollowRejected)(nil), "def.MsgTopicFollowRejected")
+	proto.RegisterType((*MsgTopicFollowApproved)(nil), "def.MsgTopicFollowApproved")
+	proto.RegisterType((*MsgTopicInviteSent)(nil), "def.MsgTopicInviteSent")
 }
 
 func init() { proto.RegisterFile("msg.proto", fileDescriptor_c06e4cca6c2cc899) }
 
 var fileDescriptor_c06e4cca6c2cc899 = []byte{
-	// 552 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x97, 0x4f, 0x6f, 0xd3, 0x3e,
-	0x18, 0xc7, 0xe5, 0xf5, 0xa7, 0x1f, 0xeb, 0x43, 0xbb, 0xd2, 0x08, 0x50, 0xc4, 0xa1, 0x41, 0x3b,
-	0x20, 0x90, 0xc6, 0x7a, 0x40, 0x9c, 0x51, 0xbb, 0x68, 0x52, 0x25, 0x72, 0xa9, 0xca, 0xb9, 0xca,
-	0x1f, 0xcf, 0x58, 0x24, 0x75, 0x15, 0xbb, 0x43, 0x7b, 0x17, 0x08, 0x10, 0x42, 0x9c, 0x11, 0x6f,
-	0x80, 0x17, 0xc1, 0xb8, 0xf1, 0x0a, 0x22, 0xd4, 0x63, 0x5e, 0x05, 0x8a, 0x1d, 0x27, 0xcd, 0x76,
-	0x81, 0x89, 0x6a, 0xe6, 0x56, 0x7f, 0x9f, 0xaf, 0xe5, 0xcf, 0x63, 0xfb, 0xa9, 0x9f, 0x40, 0x3b,
-	0xe1, 0xe4, 0x70, 0x99, 0x32, 0xc1, 0xac, 0x56, 0x84, 0x4f, 0xee, 0x3d, 0x26, 0x54, 0xbc, 0x5c,
-	0x05, 0x87, 0x21, 0x4b, 0x86, 0x84, 0x11, 0x36, 0x94, 0xb1, 0x60, 0x75, 0x22, 0x47, 0x72, 0x20,
-	0x7f, 0xa9, 0x39, 0xfb, 0xdf, 0x10, 0xdc, 0xf5, 0x38, 0x39, 0xf2, 0x85, 0x1f, 0x33, 0x32, 0x4a,
-	0x05, 0x0d, 0x63, 0x3c, 0x8a, 0x22, 0x1c, 0x59, 0x07, 0xd0, 0x2e, 0xc7, 0x13, 0xd7, 0x46, 0xf7,
-	0xd1, 0xc3, 0xd6, 0x78, 0x2f, 0xcf, 0x1c, 0xf0, 0x95, 0x38, 0xa7, 0xd1, 0xb4, 0x36, 0x58, 0x0f,
-	0xe0, 0xc6, 0x8c, 0x2d, 0x69, 0x38, 0x71, 0xed, 0x1d, 0xe9, 0xed, 0xe4, 0x99, 0xb3, 0x2b, 0x0a,
-	0xa9, 0x70, 0xea, 0x60, 0xe1, 0x1b, 0x85, 0x82, 0xa5, 0x13, 0xd7, 0x6e, 0xd5, 0x3e, 0xbf, 0x90,
-	0xa4, 0xaf, 0x0c, 0x5a, 0x43, 0x80, 0x51, 0x28, 0x28, 0x5b, 0xcc, 0x68, 0x82, 0xed, 0xff, 0xa4,
-	0xb5, 0x97, 0x67, 0xce, 0x4d, 0x5f, 0xaa, 0x73, 0x41, 0x13, 0x3c, 0xdd, 0xb0, 0xec, 0x7f, 0x47,
-	0x60, 0x5f, 0xca, 0xc4, 0xc5, 0x31, 0x16, 0xff, 0x5e, 0x2e, 0x9f, 0x10, 0xf4, 0x3d, 0xae, 0x93,
-	0x38, 0x4a, 0xb1, 0x7f, 0xa5, 0x24, 0x34, 0xdc, 0xce, 0x16, 0xe1, 0x5e, 0x2c, 0x23, 0x93, 0xe0,
-	0xce, 0x1b, 0x70, 0x57, 0x3b, 0xfe, 0x03, 0x68, 0x97, 0x5b, 0x3e, 0x3e, 0x2b, 0xf1, 0xa4, 0x3b,
-	0x54, 0xe2, 0x3c, 0x38, 0x9b, 0xd6, 0x86, 0xed, 0x5d, 0x82, 0x8f, 0x08, 0x7a, 0x75, 0x2a, 0xcf,
-	0xe9, 0x2b, 0x73, 0x76, 0xb9, 0x89, 0x76, 0xec, 0x9f, 0x9a, 0x83, 0xf6, 0x1e, 0xc1, 0x9e, 0xc7,
-	0xc9, 0x14, 0x9f, 0x52, 0x5e, 0xfe, 0x91, 0x3d, 0x82, 0x5d, 0x35, 0xac, 0xc0, 0xba, 0x79, 0xe6,
-	0xb4, 0x53, 0xa9, 0x15, 0xab, 0x55, 0xe1, 0xed, 0x61, 0x7d, 0x40, 0x70, 0xab, 0xc2, 0xd2, 0x35,
-	0x63, 0x1c, 0x98, 0xae, 0x17, 0x13, 0xc0, 0x1a, 0x07, 0xa9, 0x6e, 0xbf, 0x71, 0x58, 0xea, 0xe6,
-	0x9b, 0x80, 0xf5, 0x19, 0x81, 0xe5, 0x71, 0xe2, 0x52, 0x1e, 0xae, 0x38, 0xa7, 0x6c, 0xa1, 0xae,
-	0xfe, 0x53, 0xe8, 0xd4, 0x52, 0x85, 0xd7, 0xcf, 0x33, 0xa7, 0x1b, 0x55, 0x7a, 0xb1, 0x72, 0xc3,
-	0xb6, 0x3d, 0xcc, 0x2f, 0x08, 0x6e, 0x37, 0x30, 0x75, 0x29, 0x18, 0x0f, 0xaa, 0x4b, 0xc3, 0x34,
-	0xd0, 0x4b, 0x07, 0xaf, 0x4a, 0xc5, 0x78, 0x4c, 0x55, 0x3a, 0xa6, 0x61, 0x7e, 0x55, 0xed, 0x83,
-	0x87, 0x93, 0x00, 0xa7, 0xc7, 0x2c, 0x8e, 0xd9, 0xeb, 0xf2, 0x69, 0x0b, 0x43, 0xb6, 0x5a, 0x88,
-	0x0b, 0x4f, 0x9b, 0x12, 0xd5, 0xd3, 0xa6, 0x0d, 0xd6, 0x33, 0xe8, 0xcd, 0xfc, 0x94, 0x60, 0x51,
-	0xcf, 0x51, 0x90, 0x77, 0xf2, 0xcc, 0xe9, 0x0b, 0x19, 0x9a, 0x6f, 0x4c, 0xbd, 0xe8, 0xfe, 0x73,
-	0xea, 0x37, 0x08, 0xba, 0x1e, 0x27, 0xb2, 0x2d, 0x55, 0x75, 0xbf, 0xd1, 0xc1, 0xa2, 0xdf, 0xec,
-	0x60, 0xff, 0xee, 0x46, 0xbe, 0x55, 0x1d, 0x82, 0x5c, 0x47, 0x97, 0xce, 0xb5, 0x43, 0xbd, 0x53,
-	0x6f, 0x9d, 0x5c, 0xa7, 0x3a, 0xdc, 0xeb, 0xa6, 0x1a, 0x77, 0xce, 0xd7, 0x03, 0xf4, 0x63, 0x3d,
-	0x40, 0x3f, 0xd7, 0x03, 0x14, 0xfc, 0x2f, 0xbf, 0xcb, 0x9e, 0xfc, 0x0a, 0x00, 0x00, 0xff, 0xff,
-	0x5e, 0xe9, 0x83, 0x14, 0xd8, 0x0d, 0x00, 0x00,
+	// 623 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x98, 0xcd, 0x6e, 0xd3, 0x40,
+	0x10, 0xc7, 0xb5, 0x2d, 0x82, 0x66, 0x48, 0x1a, 0x62, 0xf1, 0x11, 0x71, 0x88, 0x51, 0x0f, 0x08,
+	0xa4, 0xd2, 0x1c, 0x10, 0x67, 0x94, 0x34, 0xaa, 0x14, 0xa9, 0xbe, 0x84, 0x70, 0x8e, 0x1c, 0x7b,
+	0x6b, 0x16, 0x92, 0x6c, 0xf0, 0x6e, 0x82, 0xfa, 0x16, 0x7c, 0x09, 0x41, 0xcf, 0x88, 0x17, 0xe0,
+	0x05, 0xb8, 0x51, 0x6e, 0x3c, 0x81, 0x85, 0x72, 0xf4, 0x53, 0x20, 0xef, 0x78, 0xed, 0xb8, 0xbd,
+	0x40, 0x45, 0x94, 0xe5, 0x96, 0x9d, 0xf9, 0x5b, 0xf3, 0xdb, 0x9d, 0x1d, 0xcf, 0x38, 0x50, 0x1a,
+	0x8b, 0x60, 0x6f, 0x1a, 0x72, 0xc9, 0xad, 0x4d, 0x9f, 0x1e, 0xdd, 0x7e, 0x10, 0x30, 0xf9, 0x6c,
+	0x36, 0xdc, 0xf3, 0xf8, 0xb8, 0x19, 0xf0, 0x80, 0x37, 0x95, 0x6f, 0x38, 0x3b, 0x52, 0x2b, 0xb5,
+	0x50, 0xbf, 0xf0, 0x99, 0x9d, 0xef, 0x04, 0x6e, 0x3a, 0x22, 0xd8, 0x77, 0xa5, 0x3b, 0xe2, 0x41,
+	0x2b, 0x94, 0xcc, 0x1b, 0xd1, 0x96, 0xef, 0x53, 0xdf, 0xda, 0x85, 0x52, 0xba, 0xee, 0x76, 0xea,
+	0xe4, 0x0e, 0xb9, 0xb7, 0xd9, 0xde, 0x8e, 0x23, 0x1b, 0x5c, 0x34, 0x0e, 0x98, 0xdf, 0xcb, 0x05,
+	0xd6, 0x5d, 0xb8, 0xd2, 0xe7, 0x53, 0xe6, 0x75, 0x3b, 0xf5, 0x0d, 0xa5, 0x2d, 0xc7, 0x91, 0xbd,
+	0x25, 0x13, 0x53, 0xa2, 0xd4, 0xce, 0x44, 0xd7, 0xf2, 0x24, 0x0f, 0xbb, 0x9d, 0xfa, 0x66, 0xae,
+	0x73, 0x13, 0x93, 0xd2, 0xa5, 0x4e, 0xab, 0x09, 0xd0, 0xf2, 0x24, 0xe3, 0x93, 0x3e, 0x1b, 0xd3,
+	0xfa, 0x25, 0x25, 0xad, 0xc6, 0x91, 0x7d, 0xd5, 0x55, 0xd6, 0x81, 0x64, 0x63, 0xda, 0x5b, 0x92,
+	0xec, 0xfc, 0x20, 0x50, 0x3f, 0xb7, 0x93, 0x0e, 0x1d, 0x51, 0xf9, 0xff, 0xed, 0xe5, 0x84, 0x40,
+	0xcd, 0x11, 0x7a, 0x13, 0xfb, 0x21, 0x75, 0x2f, 0xb4, 0x09, 0x0d, 0xb7, 0xb1, 0x42, 0xb8, 0xa7,
+	0x53, 0xdf, 0x24, 0xb8, 0xd3, 0x02, 0xdc, 0xc5, 0xd2, 0xbf, 0x0b, 0xa5, 0xf4, 0xc8, 0xdb, 0xc7,
+	0x29, 0x9e, 0x52, 0x7b, 0x68, 0x1c, 0x0c, 0x8f, 0x7b, 0xb9, 0x60, 0x75, 0x97, 0xe0, 0x23, 0x81,
+	0x6a, 0xbe, 0x95, 0x43, 0xf6, 0xc2, 0x9c, 0x53, 0x2e, 0xa2, 0x1d, 0xb8, 0x73, 0x73, 0xd0, 0xde,
+	0x13, 0xd8, 0x76, 0x44, 0xd0, 0xa3, 0x73, 0x26, 0xd2, 0x17, 0xd9, 0x7d, 0xd8, 0xc2, 0x65, 0x06,
+	0x56, 0x89, 0x23, 0xbb, 0x14, 0x2a, 0x5b, 0x12, 0x2d, 0x73, 0xaf, 0x0e, 0xeb, 0x03, 0x81, 0x6b,
+	0x19, 0x96, 0xae, 0x19, 0xe3, 0xc0, 0x74, 0xbd, 0x98, 0x00, 0x56, 0x48, 0x24, 0xde, 0x7e, 0xe3,
+	0xb0, 0xf0, 0xe6, 0x9b, 0x80, 0xf5, 0x99, 0x80, 0xe5, 0x88, 0xa0, 0xc3, 0x84, 0x37, 0x13, 0x82,
+	0xf1, 0x09, 0x5e, 0xfd, 0x47, 0x50, 0xce, 0x4d, 0x19, 0x5e, 0x2d, 0x8e, 0xec, 0x8a, 0x9f, 0xd9,
+	0x93, 0xc8, 0x05, 0xd9, 0xea, 0x30, 0xbf, 0x10, 0xb8, 0x5e, 0xc0, 0xd4, 0xa5, 0x60, 0x3c, 0xa8,
+	0x2e, 0x0d, 0xd3, 0x40, 0xcf, 0x25, 0x1e, 0x4b, 0xc5, 0x78, 0x4c, 0x2c, 0x1d, 0xd3, 0x30, 0xbf,
+	0xe2, 0xf8, 0xe0, 0xd0, 0xf1, 0x90, 0x86, 0x07, 0x7c, 0x34, 0xe2, 0xaf, 0xd2, 0xd6, 0xe6, 0x79,
+	0x7c, 0x36, 0x91, 0x67, 0x5a, 0x1b, 0x1a, 0xb1, 0xb5, 0x69, 0x81, 0xf5, 0x18, 0xaa, 0x7d, 0x37,
+	0x0c, 0xa8, 0xcc, 0x9f, 0x41, 0xc8, 0x1b, 0x71, 0x64, 0xd7, 0xa4, 0x72, 0x0d, 0x96, 0x1e, 0x3d,
+	0xab, 0xfe, 0x7b, 0xea, 0xd7, 0x04, 0x2a, 0x8e, 0x08, 0xd4, 0x58, 0x8a, 0x75, 0xbf, 0x34, 0xc1,
+	0x92, 0x3f, 0x9c, 0x60, 0xff, 0xed, 0x41, 0xbe, 0xc5, 0x09, 0x41, 0xc5, 0xd1, 0xa5, 0xb3, 0x76,
+	0xa8, 0x77, 0xd8, 0xeb, 0x54, 0x9c, 0x2c, 0xb9, 0x6b, 0xa7, 0x7a, 0x83, 0x1d, 0x45, 0xc5, 0x39,
+	0xa4, 0xaa, 0x2c, 0xd6, 0xce, 0x74, 0x42, 0xe0, 0x56, 0xf1, 0xa4, 0x7a, 0xf4, 0xe5, 0x8c, 0x0a,
+	0x23, 0xd2, 0xf8, 0x09, 0xbf, 0x59, 0x0b, 0x70, 0xcf, 0xa9, 0x67, 0x28, 0x5b, 0x6b, 0x3a, 0x0d,
+	0xb9, 0x11, 0x49, 0xfd, 0x86, 0xef, 0x60, 0x8c, 0x33, 0x99, 0x33, 0x49, 0x9f, 0xd0, 0x89, 0x4c,
+	0xc6, 0x17, 0x5c, 0x15, 0xc7, 0x17, 0xa6, 0x6c, 0x6a, 0x7c, 0xd1, 0xee, 0xb5, 0x7f, 0x18, 0xb7,
+	0xcb, 0xa7, 0x8b, 0x06, 0xf9, 0xb9, 0x68, 0x90, 0x5f, 0x8b, 0x06, 0x19, 0x5e, 0x56, 0xff, 0x61,
+	0x3c, 0xfc, 0x1d, 0x00, 0x00, 0xff, 0xff, 0x7c, 0xda, 0xab, 0x3e, 0x04, 0x11, 0x00, 0x00,
 }
 
 func (m *MsgCatalogArticleAdded) Marshal() (dAtA []byte, err error) {
@@ -2332,6 +2664,221 @@ func (m *MsgTopicFollowed) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *MsgTopicLeaved) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgTopicLeaved) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgTopicLeaved) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.ActionTime != 0 {
+		i = encodeVarintMsg(dAtA, i, uint64(m.ActionTime))
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.ActorID != 0 {
+		i = encodeVarintMsg(dAtA, i, uint64(m.ActorID))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.TopicID != 0 {
+		i = encodeVarintMsg(dAtA, i, uint64(m.TopicID))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgTopicFollowRequested) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgTopicFollowRequested) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgTopicFollowRequested) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.ActionTime != 0 {
+		i = encodeVarintMsg(dAtA, i, uint64(m.ActionTime))
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.ActorID != 0 {
+		i = encodeVarintMsg(dAtA, i, uint64(m.ActorID))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.TopicID != 0 {
+		i = encodeVarintMsg(dAtA, i, uint64(m.TopicID))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgTopicFollowRejected) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgTopicFollowRejected) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgTopicFollowRejected) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.ActionTime != 0 {
+		i = encodeVarintMsg(dAtA, i, uint64(m.ActionTime))
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.ActorID != 0 {
+		i = encodeVarintMsg(dAtA, i, uint64(m.ActorID))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.TopicID != 0 {
+		i = encodeVarintMsg(dAtA, i, uint64(m.TopicID))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgTopicFollowApproved) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgTopicFollowApproved) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgTopicFollowApproved) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.ActionTime != 0 {
+		i = encodeVarintMsg(dAtA, i, uint64(m.ActionTime))
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.ActorID != 0 {
+		i = encodeVarintMsg(dAtA, i, uint64(m.ActorID))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.TopicID != 0 {
+		i = encodeVarintMsg(dAtA, i, uint64(m.TopicID))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgTopicInviteSent) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgTopicInviteSent) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgTopicInviteSent) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.ActionTime != 0 {
+		i = encodeVarintMsg(dAtA, i, uint64(m.ActionTime))
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.ActorID != 0 {
+		i = encodeVarintMsg(dAtA, i, uint64(m.ActorID))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.TopicID != 0 {
+		i = encodeVarintMsg(dAtA, i, uint64(m.TopicID))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.InviteID != 0 {
+		i = encodeVarintMsg(dAtA, i, uint64(m.InviteID))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintMsg(dAtA []byte, offset int, v uint64) int {
 	offset -= sovMsg(v)
 	base := offset
@@ -2778,6 +3325,114 @@ func (m *MsgTopicFollowed) Size() (n int) {
 	}
 	var l int
 	_ = l
+	if m.TopicID != 0 {
+		n += 1 + sovMsg(uint64(m.TopicID))
+	}
+	if m.ActorID != 0 {
+		n += 1 + sovMsg(uint64(m.ActorID))
+	}
+	if m.ActionTime != 0 {
+		n += 1 + sovMsg(uint64(m.ActionTime))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *MsgTopicLeaved) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.TopicID != 0 {
+		n += 1 + sovMsg(uint64(m.TopicID))
+	}
+	if m.ActorID != 0 {
+		n += 1 + sovMsg(uint64(m.ActorID))
+	}
+	if m.ActionTime != 0 {
+		n += 1 + sovMsg(uint64(m.ActionTime))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *MsgTopicFollowRequested) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.TopicID != 0 {
+		n += 1 + sovMsg(uint64(m.TopicID))
+	}
+	if m.ActorID != 0 {
+		n += 1 + sovMsg(uint64(m.ActorID))
+	}
+	if m.ActionTime != 0 {
+		n += 1 + sovMsg(uint64(m.ActionTime))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *MsgTopicFollowRejected) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.TopicID != 0 {
+		n += 1 + sovMsg(uint64(m.TopicID))
+	}
+	if m.ActorID != 0 {
+		n += 1 + sovMsg(uint64(m.ActorID))
+	}
+	if m.ActionTime != 0 {
+		n += 1 + sovMsg(uint64(m.ActionTime))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *MsgTopicFollowApproved) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.TopicID != 0 {
+		n += 1 + sovMsg(uint64(m.TopicID))
+	}
+	if m.ActorID != 0 {
+		n += 1 + sovMsg(uint64(m.ActorID))
+	}
+	if m.ActionTime != 0 {
+		n += 1 + sovMsg(uint64(m.ActionTime))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *MsgTopicInviteSent) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.InviteID != 0 {
+		n += 1 + sovMsg(uint64(m.InviteID))
+	}
 	if m.TopicID != 0 {
 		n += 1 + sovMsg(uint64(m.TopicID))
 	}
@@ -5125,6 +5780,580 @@ func (m *MsgTopicFollowed) Unmarshal(dAtA []byte) error {
 				}
 			}
 		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ActorID", wireType)
+			}
+			m.ActorID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsg
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ActorID |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ActionTime", wireType)
+			}
+			m.ActionTime = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsg
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ActionTime |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMsg(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthMsg
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthMsg
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgTopicLeaved) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMsg
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgTopicLeaved: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgTopicLeaved: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TopicID", wireType)
+			}
+			m.TopicID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsg
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.TopicID |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ActorID", wireType)
+			}
+			m.ActorID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsg
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ActorID |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ActionTime", wireType)
+			}
+			m.ActionTime = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsg
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ActionTime |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMsg(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthMsg
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthMsg
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgTopicFollowRequested) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMsg
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgTopicFollowRequested: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgTopicFollowRequested: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TopicID", wireType)
+			}
+			m.TopicID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsg
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.TopicID |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ActorID", wireType)
+			}
+			m.ActorID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsg
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ActorID |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ActionTime", wireType)
+			}
+			m.ActionTime = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsg
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ActionTime |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMsg(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthMsg
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthMsg
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgTopicFollowRejected) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMsg
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgTopicFollowRejected: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgTopicFollowRejected: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TopicID", wireType)
+			}
+			m.TopicID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsg
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.TopicID |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ActorID", wireType)
+			}
+			m.ActorID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsg
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ActorID |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ActionTime", wireType)
+			}
+			m.ActionTime = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsg
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ActionTime |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMsg(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthMsg
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthMsg
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgTopicFollowApproved) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMsg
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgTopicFollowApproved: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgTopicFollowApproved: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TopicID", wireType)
+			}
+			m.TopicID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsg
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.TopicID |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ActorID", wireType)
+			}
+			m.ActorID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsg
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ActorID |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ActionTime", wireType)
+			}
+			m.ActionTime = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsg
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ActionTime |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMsg(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthMsg
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthMsg
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgTopicInviteSent) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMsg
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgTopicInviteSent: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgTopicInviteSent: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field InviteID", wireType)
+			}
+			m.InviteID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsg
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.InviteID |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TopicID", wireType)
+			}
+			m.TopicID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsg
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.TopicID |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field ActorID", wireType)
 			}

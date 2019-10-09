@@ -104,7 +104,7 @@ func (p *Service) CreateTopic(c context.Context, arg *model.ArgCreateTopic) (top
 	topicID = item.ID
 
 	p.addCache(func() {
-		p.onTopicAdded(context.Background(), topicID)
+		p.onTopicAdded(context.Background(), topicID, aid, item.CreatedAt)
 	})
 	return
 }

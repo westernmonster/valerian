@@ -1,40 +1,6 @@
 package model
 
 const (
-	BusDiscussionAdded   = "discussion.added"
-	BusDiscussionDeleted = "discussion.deleted"
-
-	BusArticleAdded   = "article.added"
-	BusArticleDeleted = "article.deleted"
-
-	BusReviseAdded   = "revise.added"
-	BusReviseDeleted = "revise.deleted"
-
-	BusTopicAdded           = "topic.added"
-	BusTopicDeleted         = "topic.deleted"
-	BusTopicFollowed        = "topic.followed"
-	BusTopicLeaved          = "topic.leaved"
-	BusTopicInviteSent      = "topic.invite.sent"
-	BusTopicFollowRequested = "topic.follow.requested"
-	BusTopicFollowRejected  = "topic.follow.rejected"
-	BusTopicFollowApproved  = "topic.follow.approved"
-
-	BusMemberFollowed = "member.followed"
-
-	BusDiscussionLiked     = "discussion.liked"
-	BusDiscussionCommented = "discussion.commented"
-
-	BusArticleLiked     = "article.liked"
-	BusArticleCommented = "article.commented"
-
-	BusReviseLiked     = "revise.liked"
-	BusReviseCommented = "revise.commented"
-
-	BusCommentLiked   = "comment.liked"
-	BusCommentReplied = "comment.replied"
-)
-
-const (
 	TopicCatalogTaxonomy = "taxonomy"
 	TopicCatalogArticle  = "article"
 	TopicCatalogTestSet  = "test_set"

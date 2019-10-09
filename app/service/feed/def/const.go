@@ -78,9 +78,14 @@ const (
 	BusReviseLiked   = "revise.liked"
 	BusReviseFaved   = "revise.faved"
 
-	BusTopicAdded    = "topic.added"
-	BusTopicFollowed = "topic.followed"
-	BusTopicDeleted  = "topic.deleted"
+	BusTopicAdded           = "topic.added"
+	BusTopicFollowed        = "topic.followed"
+	BusTopicDeleted         = "topic.deleted"
+	BusTopicLeaved          = "topic.leaved"
+	BusTopicFollowRequested = "topic.follow.requested"
+	BusTopicFollowApproved  = "topic.follow.approved"
+	BusTopicFollowRejected  = "topic.follow.rejected"
+	BusTopicInviteSent      = "topic.invite.sent"
 
 	BusMemberFollowed   = "member.followed"
 	BusMemberUnfollowed = "member.unfollowed"

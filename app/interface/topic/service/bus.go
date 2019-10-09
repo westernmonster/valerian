@@ -3,12 +3,13 @@ package service
 import (
 	"context"
 	"fmt"
-	"valerian/app/interface/topic/model"
+
+	"valerian/app/service/feed/def"
 	"valerian/library/log"
 )
 
-func (p *Service) onTopicAdded(c context.Context, id int64) {
-	msg := &model.MsgTopicAdded{ID: id}
+func (p *Service) onTopicAdded(c context.Context, topicID, aid, actionTime int64) {
+	msg := &def.MsgTopicAdded{TopicID: topicID, ActorID: aid, ActionTime: actionTime}
 
 	var data []byte
 	var err error
@@ -18,7 +19,7 @@ func (p *Service) onTopicAdded(c context.Context, id int64) {
 		return
 	}
 
-	if err = p.mq.Publish(model.BusTopicAdded, data); err != nil {
+	if err = p.mq.Publish(def.BusTopicAdded, data); err != nil {
 		log.For(c).Error(fmt.Sprintf("onTopicAdded.Publish(), err(%+v)", err))
 		return
 	}
@@ -26,8 +27,8 @@ func (p *Service) onTopicAdded(c context.Context, id int64) {
 	return
 }
 
-func (p *Service) onTopicDeleted(c context.Context, id int64) {
-	msg := &model.MsgTopicDeleted{ID: id}
+func (p *Service) onTopicDeleted(c context.Context, topicID, aid, actionTime int64) {
+	msg := &def.MsgTopicDeleted{TopicID: topicID, ActorID: aid, ActionTime: actionTime}
 
 	var data []byte
 	var err error
@@ -37,7 +38,7 @@ func (p *Service) onTopicDeleted(c context.Context, id int64) {
 		return
 	}
 
-	if err = p.mq.Publish(model.BusTopicDeleted, data); err != nil {
+	if err = p.mq.Publish(def.BusTopicDeleted, data); err != nil {
 		log.For(c).Error(fmt.Sprintf("onTopicDeleted.Publish(), err(%+v)", err))
 		return
 	}
@@ -45,8 +46,8 @@ func (p *Service) onTopicDeleted(c context.Context, id int64) {
 	return
 }
 
-func (p *Service) onTopicFollowed(c context.Context, aid, topicID int64) {
-	msg := &model.MsgTopicFollowed{AccountID: aid, TopicID: topicID}
+func (p *Service) onTopicFollowed(c context.Context, topicID, aid, actionTime int64) {
+	msg := &def.MsgTopicFollowed{TopicID: topicID, ActorID: aid, ActionTime: actionTime}
 
 	var data []byte
 	var err error
@@ -56,7 +57,7 @@ func (p *Service) onTopicFollowed(c context.Context, aid, topicID int64) {
 		return
 	}
 
-	if err = p.mq.Publish(model.BusTopicFollowed, data); err != nil {
+	if err = p.mq.Publish(def.BusTopicFollowed, data); err != nil {
 		log.For(c).Error(fmt.Sprintf("onTopicFollowed.Publish(), err(%+v)", err))
 		return
 	}
@@ -64,8 +65,8 @@ func (p *Service) onTopicFollowed(c context.Context, aid, topicID int64) {
 	return
 }
 
-func (p *Service) onTopicLeaved(c context.Context, aid, topicID int64) {
-	msg := &model.MsgTopicLeaved{AccountID: aid, TopicID: topicID}
+func (p *Service) onTopicLeaved(c context.Context, topicID, aid, actionTime int64) {
+	msg := &def.MsgTopicLeaved{TopicID: topicID, ActorID: aid, ActionTime: actionTime}
 
 	var data []byte
 	var err error
@@ -75,7 +76,7 @@ func (p *Service) onTopicLeaved(c context.Context, aid, topicID int64) {
 		return
 	}
 
-	if err = p.mq.Publish(model.BusTopicLeaved, data); err != nil {
+	if err = p.mq.Publish(def.BusTopicLeaved, data); err != nil {
 		log.For(c).Error(fmt.Sprintf("onTopicLeaved.Publish(), err(%+v)", err))
 		return
 	}
@@ -83,8 +84,8 @@ func (p *Service) onTopicLeaved(c context.Context, aid, topicID int64) {
 	return
 }
 
-func (p *Service) onTopicFollowRequested(c context.Context, id int64) {
-	msg := &model.MsgTopicFollowRequested{ID: id}
+func (p *Service) onTopicFollowRequested(c context.Context, topicID, aid, actionTime int64) {
+	msg := &def.MsgTopicFollowRequested{TopicID: topicID, ActorID: aid, ActionTime: actionTime}
 
 	var data []byte
 	var err error
@@ -94,7 +95,7 @@ func (p *Service) onTopicFollowRequested(c context.Context, id int64) {
 		return
 	}
 
-	if err = p.mq.Publish(model.BusTopicFollowRequested, data); err != nil {
+	if err = p.mq.Publish(def.BusTopicFollowRequested, data); err != nil {
 		log.For(c).Error(fmt.Sprintf("onTopicFollowRequested.Publish(), err(%+v)", err))
 		return
 	}
@@ -102,8 +103,8 @@ func (p *Service) onTopicFollowRequested(c context.Context, id int64) {
 	return
 }
 
-func (p *Service) onTopicFollowRejected(c context.Context, id int64) {
-	msg := &model.MsgTopicFollowRejected{ID: id}
+func (p *Service) onTopicFollowRejected(c context.Context, topicID, aid, actionTime int64) {
+	msg := &def.MsgTopicFollowRejected{TopicID: topicID, ActorID: aid, ActionTime: actionTime}
 
 	var data []byte
 	var err error
@@ -113,7 +114,7 @@ func (p *Service) onTopicFollowRejected(c context.Context, id int64) {
 		return
 	}
 
-	if err = p.mq.Publish(model.BusTopicFollowRejected, data); err != nil {
+	if err = p.mq.Publish(def.BusTopicFollowRejected, data); err != nil {
 		log.For(c).Error(fmt.Sprintf("onTopicFollowRejected.Publish(), err(%+v)", err))
 		return
 	}
@@ -121,8 +122,8 @@ func (p *Service) onTopicFollowRejected(c context.Context, id int64) {
 	return
 }
 
-func (p *Service) onTopicFollowApproved(c context.Context, id int64) {
-	msg := &model.MsgTopicFollowApproved{ID: id}
+func (p *Service) onTopicFollowApproved(c context.Context, topicID, aid, actionTime int64) {
+	msg := &def.MsgTopicFollowApproved{TopicID: topicID, ActorID: aid, ActionTime: actionTime}
 
 	var data []byte
 	var err error
@@ -132,7 +133,7 @@ func (p *Service) onTopicFollowApproved(c context.Context, id int64) {
 		return
 	}
 
-	if err = p.mq.Publish(model.BusTopicFollowApproved, data); err != nil {
+	if err = p.mq.Publish(def.BusTopicFollowApproved, data); err != nil {
 		log.For(c).Error(fmt.Sprintf("onTopicFollowApproved.Publish(), err(%+v)", err))
 		return
 	}
@@ -140,8 +141,8 @@ func (p *Service) onTopicFollowApproved(c context.Context, id int64) {
 	return
 }
 
-func (p *Service) onTopicInviteSent(c context.Context, id int64) {
-	msg := &model.MsgTopicInviteSent{ID: id}
+func (p *Service) onTopicInviteSent(c context.Context, id, topicID, aid, actionTime int64) {
+	msg := &def.MsgTopicInviteSent{InviteID: id, TopicID: topicID, ActorID: aid, ActionTime: actionTime}
 
 	var data []byte
 	var err error
@@ -151,8 +152,46 @@ func (p *Service) onTopicInviteSent(c context.Context, id int64) {
 		return
 	}
 
-	if err = p.mq.Publish(model.BusTopicInviteSent, data); err != nil {
+	if err = p.mq.Publish(def.BusTopicInviteSent, data); err != nil {
 		log.For(c).Error(fmt.Sprintf("onTopicInviteSent.Publish(), err(%+v)", err))
+		return
+	}
+
+	return
+}
+
+func (p *Service) onCatalogArticleAdded(c context.Context, articleID, topicID, aid, actionTime int64) {
+	msg := &def.MsgCatalogArticleAdded{ArticleID: articleID, TopicID: topicID, ActorID: aid, ActionTime: actionTime}
+
+	var data []byte
+	var err error
+
+	if data, err = msg.Marshal(); err != nil {
+		log.For(c).Error(fmt.Sprintf("onCatalogArticleAdded.Marshal(), err(%+v)", err))
+		return
+	}
+
+	if err = p.mq.Publish(def.BusCatalogArticleAdded, data); err != nil {
+		log.For(c).Error(fmt.Sprintf("onCatalogArticleAdded.Publish(), err(%+v)", err))
+		return
+	}
+
+	return
+}
+
+func (p *Service) onCatalogArticleDeleted(c context.Context, articleID, topicID, aid, actionTime int64) {
+	msg := &def.MsgCatalogArticleDeleted{ArticleID: articleID, TopicID: topicID, ActorID: aid, ActionTime: actionTime}
+
+	var data []byte
+	var err error
+
+	if data, err = msg.Marshal(); err != nil {
+		log.For(c).Error(fmt.Sprintf("onCatalogArticleDeleted.Marshal(), err(%+v)", err))
+		return
+	}
+
+	if err = p.mq.Publish(def.BusCatalogArticleDeleted, data); err != nil {
+		log.For(c).Error(fmt.Sprintf("onCatalogArticleDeleted.Publish(), err(%+v)", err))
 		return
 	}
 

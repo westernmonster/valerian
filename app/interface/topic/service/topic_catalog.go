@@ -290,6 +290,12 @@ func (p *Service) SaveCatalogs(c context.Context, req *model.ArgSaveTopicCatalog
 			if _, err = p.createCatalog(c, tx, req.TopicID, v.Name, v.Seq, v.Type, v.RefID, req.ParentID); err != nil {
 				return
 			}
+
+			if v.Type == model.TopicCatalogArticle {
+				p.addCache(func() {
+					p.onCatalogArticleAdded(c, *v.RefID, req.TopicID, aid, time.Now().Unix())
+				})
+			}
 			continue
 		}
 
@@ -350,6 +356,12 @@ func (p *Service) SaveCatalogs(c context.Context, req *model.ArgSaveTopicCatalog
 
 		if err = p.d.DelTopicCatalog(c, tx, k); err != nil {
 			return
+		}
+
+		if v.Item.Type == model.TopicCatalogArticle {
+			p.addCache(func() {
+				p.onCatalogArticleDeleted(c, *v.Item.RefID, req.TopicID, aid, time.Now().Unix())
+			})
 		}
 	}
 
