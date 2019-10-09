@@ -39,9 +39,11 @@ type Config struct {
 
 	WardenServer *warden.ServerConfig
 
-	DiscussRPC *warden.ClientConfig
-	TopicRPC   *warden.ClientConfig
-	AccountRPC *warden.ClientConfig
+	AccountRPC  *warden.ClientConfig
+	TopicRPC    *warden.ClientConfig
+	ArticleRPC  *warden.ClientConfig
+	DiscussRPC  *warden.ClientConfig
+	RelationRPC *warden.ClientConfig
 }
 
 // DB db config.

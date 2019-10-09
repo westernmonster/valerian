@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 	article "valerian/app/service/article/api"
+	"valerian/app/service/feed/def"
 	"valerian/app/service/topic-feed/model"
 	"valerian/library/gid"
 	"valerian/library/log"
@@ -13,7 +14,7 @@ import (
 
 func (p *Service) onArticleAdded(m *stan.Msg) {
 	var err error
-	info := new(model.MsgCatalogArticleAdded)
+	info := new(def.MsgCatalogArticleAdded)
 	if err = info.Unmarshal(m.Data); err != nil {
 		log.Errorf("onReviseAdded Unmarshal failed %#v", err)
 		return
@@ -27,13 +28,13 @@ func (p *Service) onArticleAdded(m *stan.Msg) {
 	feed := &model.TopicFeed{
 		ID:         gid.NewID(),
 		TopicID:    info.TopicID,
-		ActionType: model.ActionTypeCreateArticle,
+		ActionType: def.ActionTypeCreateArticle,
 		ActionTime: time.Now().Unix(),
-		ActionText: model.ActionTextCreateArticle,
+		ActionText: def.ActionTextCreateArticle,
 		ActorID:    article.Creator.ID,
-		ActorType:  model.ActorTypeUser,
+		ActorType:  def.ActorTypeUser,
 		TargetID:   article.ID,
-		TargetType: model.TargetTypeArticle,
+		TargetType: def.TargetTypeArticle,
 		CreatedAt:  time.Now().Unix(),
 		UpdatedAt:  time.Now().Unix(),
 	}
@@ -48,13 +49,13 @@ func (p *Service) onArticleAdded(m *stan.Msg) {
 
 func (p *Service) onArticleDeleted(m *stan.Msg) {
 	var err error
-	info := new(model.MsgCatalogArticleDeleted)
+	info := new(def.MsgCatalogArticleDeleted)
 	if err = info.Unmarshal(m.Data); err != nil {
 		log.Errorf("onReviseAdded Unmarshal failed %#v", err)
 		return
 	}
 
-	if err = p.d.DelTopicFeedByCond(context.Background(), p.d.DB(), info.TopicID, model.TargetTypeArticle, info.ArticleID); err != nil {
+	if err = p.d.DelTopicFeedByCond(context.Background(), p.d.DB(), info.TopicID, def.TargetTypeArticle, info.ArticleID); err != nil {
 		log.Errorf("service.DelTopicFeedByCond() failed %#v", err)
 		return
 	}

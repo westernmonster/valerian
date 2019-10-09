@@ -1,7 +1,7 @@
 package service
 
 import (
-	"valerian/app/service/topic-feed/model"
+	"valerian/app/service/feed/def"
 	"valerian/library/log"
 
 	"github.com/nats-io/stan.go"
@@ -9,7 +9,7 @@ import (
 
 func (p *Service) onReviseAdded(m *stan.Msg) {
 	var err error
-	info := new(model.MsgReviseAdded)
+	info := new(def.MsgReviseAdded)
 	if err = info.Unmarshal(m.Data); err != nil {
 		log.Errorf("onReviseAdded Unmarshal failed %#v", err)
 		return
@@ -40,7 +40,7 @@ func (p *Service) onReviseAdded(m *stan.Msg) {
 
 func (p *Service) onReviseDeleted(m *stan.Msg) {
 	var err error
-	info := new(model.MsgReviseDeleted)
+	info := new(def.MsgReviseDeleted)
 	if err = info.Unmarshal(m.Data); err != nil {
 		log.Errorf("onReviseAdded Unmarshal failed %#v", err)
 		return

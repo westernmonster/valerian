@@ -5,9 +5,9 @@ import (
 	"net/url"
 	"strings"
 
+	"valerian/app/service/feed/def"
 	"valerian/app/service/topic-feed/conf"
 	"valerian/app/service/topic-feed/dao"
-	"valerian/app/service/topic-feed/model"
 	"valerian/library/conf/env"
 	"valerian/library/log"
 	"valerian/library/mq"
@@ -30,23 +30,23 @@ func New(c *conf.Config) (s *Service) {
 		missch: make(chan func(), 1024),
 	}
 
-	if err := s.mq.QueueSubscribe(model.BusCatalogArticleAdded, "topic-feed", s.onArticleAdded); err != nil {
-		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, model.BusArticleAdded, "topic-feed")
+	if err := s.mq.QueueSubscribe(def.BusCatalogArticleAdded, "topic-feed", s.onArticleAdded); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusArticleAdded, "topic-feed")
 		panic(err)
 	}
 
-	if err := s.mq.QueueSubscribe(model.BusCatalogArticleDeleted, "topic-feed", s.onArticleDeleted); err != nil {
-		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, model.BusArticleDeleted, "topic-feed")
+	if err := s.mq.QueueSubscribe(def.BusCatalogArticleDeleted, "topic-feed", s.onArticleDeleted); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusArticleDeleted, "topic-feed")
 		panic(err)
 	}
 
-	if err := s.mq.QueueSubscribe(model.BusReviseAdded, "topic-feed", s.onReviseAdded); err != nil {
-		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, model.BusReviseAdded, "topic-feed")
+	if err := s.mq.QueueSubscribe(def.BusReviseAdded, "topic-feed", s.onReviseAdded); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusReviseAdded, "topic-feed")
 		panic(err)
 	}
 
-	if err := s.mq.QueueSubscribe(model.BusReviseDeleted, "topic-feed", s.onReviseDeleted); err != nil {
-		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, model.BusReviseDeleted, "topic-feed")
+	if err := s.mq.QueueSubscribe(def.BusReviseDeleted, "topic-feed", s.onReviseDeleted); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusReviseDeleted, "topic-feed")
 		panic(err)
 	}
 
