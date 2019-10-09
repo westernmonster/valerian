@@ -1,8 +1,8 @@
 package http
 
 import (
-	"valerian/app/service/topic-feed/conf"
-	"valerian/app/service/topic-feed/service"
+	"valerian/app/service/account-feed/conf"
+	"valerian/app/service/account-feed/service"
 	"valerian/library/ecode"
 	"valerian/library/log"
 	"valerian/library/net/http/mars"

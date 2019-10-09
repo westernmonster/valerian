@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"valerian/app/service/topic-feed/api"
-	"valerian/app/service/topic-feed/service"
+	"valerian/app/service/account-feed/api"
+	"valerian/app/service/account-feed/service"
 	"valerian/library/log"
 	"valerian/library/net/metadata"
 	"valerian/library/net/rpc/warden"
@@ -27,7 +27,7 @@ func New(cfg *warden.ServerConfig, s *service.Service) *warden.Server {
 		}
 		return
 	})
-	api.RegisterTopicFeedServer(w.Server(), &server{s})
+	api.RegisterAccountFeedServer(w.Server(), &server{s})
 	ws, err := w.Start()
 	if err != nil {
 		panic(err)
@@ -39,11 +39,11 @@ type server struct {
 	svr *service.Service
 }
 
-func (s *server) GetTopicFeedPaged(ctx context.Context, req *api.TopicFeedReq) (*api.TopicFeedResp, error) {
-	resp, err := s.svr.GetTopicFeedPaged(ctx, req.TopicID, int(req.Limit), int(req.Offset))
+func (s *server) GetAccountFeedPaged(ctx context.Context, req *api.AccountFeedReq) (*api.AccountFeedResp, error) {
+	resp, err := s.svr.GetAccountFeedPaged(ctx, req.TopicID, int(req.Limit), int(req.Offset))
 	if err != nil {
 		return nil, err
 	}
 
-	return api.FromTopicFeed(resp), nil
+	return api.FromAccountFeed(resp), nil
 }

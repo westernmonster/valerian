@@ -10,12 +10,10 @@ func FromAccountFeed(items []*model.AccountFeed) *AccountFeedResp {
 	for i, v := range items {
 		reply := &AccountFeedInfo{
 			ID:         v.ID,
-			TopicID:    v.TopicID,
+			AccountID:  v.AccountID,
 			ActionType: v.ActionType,
 			ActionTime: v.ActionTime,
 			ActionText: v.ActionText,
-			ActorID:    v.ActorID,
-			ActorType:  v.ActorType,
 			TargetID:   v.TargetID,
 			TargetType: v.TargetType,
 			CreatedAt:  v.CreatedAt,

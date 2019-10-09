@@ -16,17 +16,13 @@ message AccountFeedResp {
 message AccountFeedInfo {
     int64 ID = 1 [(gogoproto.jsontag) = "id"];
 
-    int64 TopicID = 2 [(gogoproto.jsontag) = "topic_id"];
+    int64 AccountID = 2 [(gogoproto.jsontag) = "topic_id"];
 
     string ActionType = 3 [(gogoproto.jsontag) = "action_type"];
 
     int64 ActionTime = 4 [(gogoproto.jsontag) = "action_time"];
 
     string ActionText = 5 [(gogoproto.jsontag) = "action_text"];
-
-    int64 ActorID = 6 [(gogoproto.jsontag) = "actor_id"];
-
-    string ActorType = 7 [(gogoproto.jsontag) = "actor_type"];
 
     int64 TargetID = 8 [(gogoproto.jsontag) = "target_id"];
 
