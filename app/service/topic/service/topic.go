@@ -10,6 +10,10 @@ import (
 	"valerian/library/gid"
 )
 
+func (p *Service) GetBelongsTopicIDs(c context.Context, aid int64) (ids []int64, err error) {
+	return p.d.GetMemberBelongsTopicIDs(c, p.d.DB(), aid)
+}
+
 func (p *Service) GetAccountBaseInfo(c context.Context, aid int64) (info *account.BaseInfoReply, err error) {
 	return p.d.GetAccountBaseInfo(c, aid)
 }

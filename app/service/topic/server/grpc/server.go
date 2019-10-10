@@ -117,3 +117,12 @@ func (s *server) GetUserTopicsPaged(ctx context.Context, req *api.UserTopicsReq)
 
 	return
 }
+
+func (s *server) GetBelongsTopicIDs(ctx context.Context, req *api.AidReq) (*api.IDsResp, error) {
+	ids, err := s.svr.GetBelongsTopicIDs(ctx, req.AccountID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.IDsResp{IDs: ids}, nil
+}
