@@ -4,6 +4,10 @@ import (
 	"context"
 
 	"valerian/app/interface/like/model"
+	account "valerian/app/service/account/api"
+	article "valerian/app/service/article/api"
+	discuss "valerian/app/service/discuss/api"
+	topic "valerian/app/service/topic/api"
 	"valerian/library/database/sqalx"
 )
 
@@ -28,6 +32,13 @@ type IDao interface {
 	CancelLike(c context.Context, aid, targetID int64, targetType string) (err error)
 	Dislike(c context.Context, aid, targetID int64, targetType string) (err error)
 	CancelDislike(c context.Context, aid, targetID int64, targetType string) (err error)
+
+	GetAccountBaseInfo(c context.Context, aid int64) (info *account.BaseInfoReply, err error)
+	GetAccountProfile(c context.Context, aid int64) (info *account.ProfileReply, err error)
+	GetArticle(c context.Context, id int64) (info *article.ArticleInfo, err error)
+	GetRevise(c context.Context, id int64) (info *article.ReviseInfo, err error)
+	GetDiscussion(c context.Context, id int64) (info *discuss.DiscussionInfo, err error)
+	GetTopic(c context.Context, id int64) (resp *topic.TopicInfo, err error)
 
 	Ping(c context.Context) (err error)
 	Close()

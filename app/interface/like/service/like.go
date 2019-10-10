@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"time"
 
 	"valerian/app/interface/like/model"
 	"valerian/library/ecode"
@@ -18,6 +19,25 @@ func (p *Service) Like(c context.Context, arg *model.ArgLike) (err error) {
 	if err = p.d.Like(c, aid, arg.TargetID, arg.TargetType); err != nil {
 		return
 	}
+
+	p.addCache(func() {
+		switch arg.TargetType {
+		case model.TargetTypeArticle:
+			p.onArticleLiked(context.Background(), arg.TargetID, aid, time.Now().Unix())
+			break
+		case model.TargetTypeRevise:
+			p.onReviseLiked(context.Background(), arg.TargetID, aid, time.Now().Unix())
+			break
+		case model.TargetTypeDiscussion:
+			p.onDiscussionLiked(context.Background(), arg.TargetID, aid, time.Now().Unix())
+			break
+
+		case model.TargetTypeComment:
+			// p.onTopicLiked(context.Background(), arg.TargetID, aid, fav.CreatedAt)
+			break
+
+		}
+	})
 
 	return
 }
