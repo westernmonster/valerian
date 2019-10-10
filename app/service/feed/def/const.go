@@ -82,6 +82,7 @@ const (
 	BusTopicFollowed        = "topic.followed"
 	BusTopicDeleted         = "topic.deleted"
 	BusTopicLeaved          = "topic.leaved"
+	BusTopicFaved           = "topic.faved"
 	BusTopicFollowRequested = "topic.follow.requested"
 	BusTopicFollowApproved  = "topic.follow.approved"
 	BusTopicFollowRejected  = "topic.follow.rejected"

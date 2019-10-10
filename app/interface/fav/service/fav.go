@@ -164,6 +164,24 @@ func (p *Service) Fav(c context.Context, arg *model.ArgAddFav) (err error) {
 		return
 	}
 
+	p.addCache(func() {
+		switch arg.TargetType {
+		case model.TargetTypeArticle:
+			p.onArticleFaved(context.Background(), arg.TargetID, aid, fav.CreatedAt)
+			break
+		case model.TargetTypeRevise:
+			p.onReviseFaved(context.Background(), arg.TargetID, aid, fav.CreatedAt)
+			break
+		case model.TargetTypeDiscussion:
+			p.onDiscussionFaved(context.Background(), arg.TargetID, aid, fav.CreatedAt)
+			break
+
+		case model.TargetTypeTopic:
+			p.onTopicFaved(context.Background(), arg.TargetID, aid, fav.CreatedAt)
+			break
+
+		}
+	})
 	return
 }
 
