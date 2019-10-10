@@ -7,24 +7,24 @@ import (
 	"valerian/library/log"
 )
 
-// func (p *Service) onTopicLiked(c context.Context, topicID, aid, actionTime int64) {
-// 	msg := &def.MsgTopicLiked{TopicID: topicID, ActorID: aid, ActionTime: actionTime}
+func (p *Service) onCommentLiked(c context.Context, topicID, aid, actionTime int64) {
+	msg := &def.MsgCommentLiked{CommentID: topicID, ActorID: aid, ActionTime: actionTime}
 
-// 	var data []byte
-// 	var err error
+	var data []byte
+	var err error
 
-// 	if data, err = msg.Marshal(); err != nil {
-// 		log.For(c).Error(fmt.Sprintf("onTopicLiked.Marshal(), err(%+v)", err))
-// 		return
-// 	}
+	if data, err = msg.Marshal(); err != nil {
+		log.For(c).Error(fmt.Sprintf("onCommentLiked.Marshal(), err(%+v)", err))
+		return
+	}
 
-// 	if err = p.mq.Publish(def.BusTopicLiked, data); err != nil {
-// 		log.For(c).Error(fmt.Sprintf("onTopicLiked.Publish(), err(%+v)", err))
-// 		return
-// 	}
+	if err = p.mq.Publish(def.BusCommentLiked, data); err != nil {
+		log.For(c).Error(fmt.Sprintf("onCommentLiked.Publish(), err(%+v)", err))
+		return
+	}
 
-// 	return
-// }
+	return
+}
 
 func (p *Service) onArticleLiked(c context.Context, topicID, aid, actionTime int64) {
 	msg := &def.MsgArticleLiked{ArticleID: topicID, ActorID: aid, ActionTime: actionTime}

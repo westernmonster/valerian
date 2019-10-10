@@ -176,3 +176,9 @@ message MsgTopicInviteSent {
     int64 ActionTime = 4 [(gogoproto.jsontag) = "action_time"] ;
 }
 
+
+message MsgCommentLiked {
+    int64 CommentID = 1 [(gogoproto.jsontag) = "comment_id"] ;
+    int64 ActorID = 2 [(gogoproto.jsontag) = "actor_id"] ;
+    int64 ActionTime = 4 [(gogoproto.jsontag) = "action_time"] ;
+}

@@ -16,6 +16,29 @@ func (p *Service) Like(c context.Context, arg *model.ArgLike) (err error) {
 		return
 	}
 
+	switch arg.TargetType {
+	case model.TargetTypeArticle:
+		if _, err = p.d.GetArticle(c, arg.TargetID); err != nil {
+			return
+		}
+		break
+	case model.TargetTypeRevise:
+		if _, err = p.d.GetRevise(c, arg.TargetID); err != nil {
+			return
+		}
+		break
+	case model.TargetTypeDiscussion:
+		if _, err = p.d.GetDiscussion(c, arg.TargetID); err != nil {
+			return
+		}
+		break
+	case model.TargetTypeComment:
+		// if _, err = p.d.GetTopic(c, arg.TargetID); err != nil {
+		// 	return
+		// }
+		break
+	}
+
 	if err = p.d.Like(c, aid, arg.TargetID, arg.TargetType); err != nil {
 		return
 	}
@@ -33,7 +56,7 @@ func (p *Service) Like(c context.Context, arg *model.ArgLike) (err error) {
 			break
 
 		case model.TargetTypeComment:
-			// p.onTopicLiked(context.Background(), arg.TargetID, aid, fav.CreatedAt)
+			p.onCommentLiked(context.Background(), arg.TargetID, aid, time.Now().Unix())
 			break
 
 		}

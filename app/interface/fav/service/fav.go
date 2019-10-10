@@ -123,7 +123,6 @@ func (p *Service) Fav(c context.Context, arg *model.ArgAddFav) (err error) {
 	}
 
 	switch arg.TargetType {
-
 	case model.TargetTypeArticle:
 		if _, err = p.d.GetArticle(c, arg.TargetID); err != nil {
 			return
@@ -133,22 +132,17 @@ func (p *Service) Fav(c context.Context, arg *model.ArgAddFav) (err error) {
 		if _, err = p.d.GetRevise(c, arg.TargetID); err != nil {
 			return
 		}
-
 		break
 	case model.TargetTypeDiscussion:
 		if _, err = p.d.GetDiscussion(c, arg.TargetID); err != nil {
 			return
 		}
-
 		break
-
 	case model.TargetTypeTopic:
 		if _, err = p.d.GetTopic(c, arg.TargetID); err != nil {
 			return
 		}
-
 		break
-
 	}
 
 	fav = &model.Fav{
