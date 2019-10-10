@@ -43,6 +43,7 @@ type IDao interface {
 
 	GetTopicMemberByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (item *model.TopicMember, err error)
 	GetMemberBelongsTopicIDs(c context.Context, node sqalx.Node, accountID int64) (items []int64, err error)
+	GetTopicMemberIDs(c context.Context, node sqalx.Node, topicID int64) (items []int64, err error)
 
 	IsFav(c context.Context, aid, targetID int64, targetType string) (isFav bool, err error)
 

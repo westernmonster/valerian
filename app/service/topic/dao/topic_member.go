@@ -15,6 +15,32 @@ const (
 	_getTopicMembersPagedSQL = "SELECT a.* FROM topic_members a WHERE a.deleted=0 AND a.topic_id=? ORDER BY a.role,a.id DESC limit ?,?"
 )
 
+func (p *Dao) GetTopicMemberIDs(c context.Context, node sqalx.Node, topicID int64) (items []int64, err error) {
+	items = make([]int64, 0)
+	sqlSelect := "SELECT a.account_id FROM topic_members a WHERE a.deleted=0 AND a.topic_id=?"
+
+	var rows *sqlx.Rows
+	if rows, err = node.QueryxContext(c, sqlSelect, topicID); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetTopicMemberIDs err(%+v)", err))
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var (
+			targetID int64
+		)
+		if err = rows.Scan(&targetID); err != nil {
+			log.For(c).Error(fmt.Sprintf("dao.GetTopicMemberIDs err(%+v)", err))
+			return
+		}
+		items = append(items, targetID)
+	}
+
+	err = rows.Err()
+	return
+}
+
 func (p *Dao) GetMemberBelongsTopicIDs(c context.Context, node sqalx.Node, accountID int64) (items []int64, err error) {
 	items = make([]int64, 0)
 	sqlSelect := "SELECT a.topic_id FROM topic_members a WHERE a.deleted=0 AND a.account_id=?"

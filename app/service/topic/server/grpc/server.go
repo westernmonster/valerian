@@ -126,3 +126,12 @@ func (s *server) GetBelongsTopicIDs(ctx context.Context, req *api.AidReq) (*api.
 
 	return &api.IDsResp{IDs: ids}, nil
 }
+
+func (s *server) GetTopicMemberIDs(ctx context.Context, req *api.TopicReq) (*api.IDsResp, error) {
+	ids, err := s.svr.GetTopicMemberIDs(ctx, req.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.IDsResp{IDs: ids}, nil
+}

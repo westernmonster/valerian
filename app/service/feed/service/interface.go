@@ -24,6 +24,8 @@ type IDao interface {
 	GetArticle(c context.Context, id int64) (info *article.ArticleInfo, err error)
 	GetRevise(c context.Context, id int64) (info *article.ReviseInfo, err error)
 	GetAccountBaseInfo(c context.Context, aid int64) (info *account.BaseInfoReply, err error)
+	GetBelongsTopicIDs(c context.Context, aid int64) (resp *topic.IDsResp, err error)
+	GetTopicMemberIDs(c context.Context, topicID int64) (resp *topic.IDsResp, err error)
 
 	Ping(c context.Context) (err error)
 	Close()
