@@ -1,6 +1,9 @@
 package http
 
-import "valerian/library/net/http/mars"
+import (
+	"strconv"
+	"valerian/library/net/http/mars"
+)
 
 // @Summary 首页动态
 // @Description 首页动态
@@ -18,4 +21,25 @@ import "valerian/library/net/http/mars"
 // @Failure 500 "服务器端错误"
 // @Router /list/activities [get]
 func getActivites(c *mars.Context) {
+	var (
+		err    error
+		offset int
+		limit  int
+	)
+
+	params := c.Request.Form
+
+	if offset, err = strconv.Atoi(params.Get("offset")); err != nil {
+		offset = 0
+	} else if offset < 0 {
+		offset = 0
+	}
+
+	if limit, err = strconv.Atoi(params.Get("limit")); err != nil {
+		limit = 10
+	} else if limit < 0 {
+		limit = 10
+	}
+
+	c.JSON(srv.GetFeedPaged(c, limit, offset))
 }
