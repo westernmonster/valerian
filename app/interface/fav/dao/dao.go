@@ -3,33 +3,33 @@ package dao
 import (
 	"context"
 	"fmt"
-	"strings"
 	"time"
 
 	"valerian/app/interface/fav/conf"
 	account "valerian/app/service/account/api"
+	article "valerian/app/service/article/api"
 	discuss "valerian/app/service/discuss/api"
+	relation "valerian/app/service/relation/api"
 	topic "valerian/app/service/topic/api"
 	"valerian/library/cache/memcache"
-	"valerian/library/conf/env"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
 	"valerian/library/stat/prom"
 
-	"github.com/nats-io/stan.go"
 	"github.com/pkg/errors"
 )
 
 // Dao dao struct
 type Dao struct {
-	db         sqalx.Node
-	mc         *memcache.Pool
-	mcExpire   int32
-	c          *conf.Config
-	sc         stan.Conn
-	accountRPC account.AccountClient
-	topicRPC   topic.TopicClient
-	discussRPC discuss.DiscussionClient
+	db          sqalx.Node
+	mc          *memcache.Pool
+	mcExpire    int32
+	c           *conf.Config
+	accountRPC  account.AccountClient
+	discussRPC  discuss.DiscussionClient
+	articleRPC  article.ArticleClient
+	topicRPC    topic.TopicClient
+	relationRPC relation.RelationClient
 }
 
 func New(c *conf.Config) (dao *Dao) {
@@ -40,26 +40,27 @@ func New(c *conf.Config) (dao *Dao) {
 		mcExpire: int32(time.Duration(c.Memcache.Main.Expire) / time.Second),
 	}
 
-	servers := strings.Join(c.Nats.Nodes, ",")
-	if sc, err := stan.Connect("valerian",
-		env.Hostname,
-		stan.Pings(10, 5),
-		stan.NatsURL(servers),
-		stan.SetConnectionLostHandler(func(_ stan.Conn, reason error) {
-			log.Errorf("Nats Connection lost, reason: %v", reason)
-			panic(reason)
-		}),
-	); err != nil {
-		log.Errorf("connect to servers failed %#v\n", err)
-		panic(err)
+	if relationRPC, err := relation.NewClient(c.RelationRPC); err != nil {
+		panic(errors.WithMessage(err, "Failed to dial relation service"))
 	} else {
-		dao.sc = sc
+		dao.relationRPC = relationRPC
 	}
 
 	if accountRPC, err := account.NewClient(c.AccountRPC); err != nil {
 		panic(errors.WithMessage(err, "Failed to dial account service"))
 	} else {
 		dao.accountRPC = accountRPC
+	}
+	if discussRPC, err := discuss.NewClient(c.DiscussRPC); err != nil {
+		panic(errors.WithMessage(err, "Failed to dial discuss service"))
+	} else {
+		dao.discussRPC = discussRPC
+	}
+
+	if articleRPC, err := article.NewClient(c.ArticleRPC); err != nil {
+		panic(errors.WithMessage(err, "Failed to dial article service"))
+	} else {
+		dao.articleRPC = articleRPC
 	}
 
 	if topicRPC, err := topic.NewClient(c.TopicRPC); err != nil {
@@ -68,11 +69,6 @@ func New(c *conf.Config) (dao *Dao) {
 		dao.topicRPC = topicRPC
 	}
 
-	if discussRPC, err := discuss.NewClient(c.DiscussRPC); err != nil {
-		panic(errors.WithMessage(err, "Failed to dial topic service"))
-	} else {
-		dao.discussRPC = discussRPC
-	}
 	return
 }
 

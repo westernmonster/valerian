@@ -36,10 +36,11 @@ type Config struct {
 	Discovery *discovery.Config
 	Nats      *NatsConfig
 
-	AccountRPC *warden.ClientConfig
-	TopicRPC   *warden.ClientConfig
-	DiscussRPC *warden.ClientConfig
-	ArticleRPC *warden.ClientConfig
+	AccountRPC  *warden.ClientConfig
+	DiscussRPC  *warden.ClientConfig
+	TopicRPC    *warden.ClientConfig
+	RelationRPC *warden.ClientConfig
+	ArticleRPC  *warden.ClientConfig
 }
 
 type NatsConfig struct {
