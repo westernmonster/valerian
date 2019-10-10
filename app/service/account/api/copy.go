@@ -37,15 +37,16 @@ func FromStat(model *model.AccountStat) *AccountStatInfo {
 	return reply
 }
 
-func FromProfileInfo(model *model.BaseInfo) *ProfileReply {
+func FromProfileInfo(model *model.ProfileInfo) *ProfileReply {
 	reply := &ProfileReply{
-		ID:       model.ID,
-		UserName: model.UserName,
-		Avatar:   model.Avatar,
-		IDCert:   model.IDCert,
-		WorkCert: model.WorkCert,
-		IsOrg:    model.IsOrg,
-		IsVIP:    model.IsVIP,
+		ID:        model.ID,
+		UserName:  model.UserName,
+		Avatar:    model.Avatar,
+		IDCert:    model.IDCert,
+		WorkCert:  model.WorkCert,
+		IsOrg:     model.IsOrg,
+		IsVIP:     model.IsVIP,
+		CreatedAt: model.CreatedAt,
 	}
 
 	if model.Gender != nil {
@@ -54,6 +55,13 @@ func FromProfileInfo(model *model.BaseInfo) *ProfileReply {
 
 	if model.Introduction != nil {
 		reply.Introduction = &ProfileReply_IntroductionValue{*model.Introduction}
+	}
+
+	if model.Location != nil {
+		reply.Location = &ProfileReply_LocationValue{*model.Location}
+		if model.LocationString != nil {
+			reply.LocationString = &ProfileReply_LocationStringValue{*model.LocationString}
+		}
 	}
 
 	return reply

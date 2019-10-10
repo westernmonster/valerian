@@ -6,10 +6,10 @@ import (
 	"strconv"
 
 	"valerian/app/interface/account/model"
+	feed "valerian/app/service/account-feed/api"
 	account "valerian/app/service/account/api"
 	article "valerian/app/service/article/api"
 	discuss "valerian/app/service/discuss/api"
-	feed "valerian/app/service/feed/api"
 	recent "valerian/app/service/recent/api"
 	topic "valerian/app/service/topic/api"
 	"valerian/library/ecode"

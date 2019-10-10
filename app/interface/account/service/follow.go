@@ -8,7 +8,6 @@ import (
 	"valerian/app/interface/account/model"
 	account "valerian/app/service/account/api"
 	relation "valerian/app/service/relation/api"
-	"valerian/library/conf/env"
 	"valerian/library/ecode"
 	"valerian/library/net/metadata"
 )
@@ -104,16 +103,6 @@ func (p *Service) FansPaged(c context.Context, aid int64, query string, limit, o
 	}
 
 	return
-}
-
-func genURL(path string, param url.Values) (uri string, err error) {
-	u, err := url.Parse(env.SiteURL + path)
-	if err != nil {
-		return
-	}
-	u.RawQuery = param.Encode()
-
-	return u.String(), nil
 }
 
 func (p *Service) FollowPaged(c context.Context, aid int64, query string, limit, offset int) (resp *model.MemberResp, err error) {

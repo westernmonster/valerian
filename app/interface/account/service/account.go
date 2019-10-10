@@ -273,13 +273,6 @@ func (p *Service) GetProfile(c context.Context, aid int64) (profile *model.Profi
 }
 
 func (p *Service) getProfile(c context.Context, accountID int64) (profile *model.Profile, err error) {
-	addCache := true
-	if profile, err = p.d.ProfileCache(c, accountID); err != nil {
-		addCache = false
-	} else if profile != nil {
-		return
-	}
-
 	var item *model.Account
 	if item, err = p.getAccountByID(c, accountID); err != nil {
 		return
@@ -316,12 +309,6 @@ func (p *Service) getProfile(c context.Context, accountID int64) (profile *model
 		} else {
 			profile.LocationString = &v
 		}
-	}
-
-	if addCache {
-		p.addCache(func() {
-			p.d.SetProfileCache(context.TODO(), profile)
-		})
 	}
 
 	return

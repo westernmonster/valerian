@@ -25,30 +25,12 @@ func baseInfoFromAccount(account *model.Account) (info *model.BaseInfo) {
 }
 
 func (p *Service) BaseInfo(c context.Context, aid int64) (info *model.BaseInfo, err error) {
-	var needCache = true
-
 	var account *model.Account
-	if account, err = p.d.AccountCache(c, aid); err != nil {
-		needCache = false
-	} else if account != nil {
-		info = baseInfoFromAccount(account)
-		return
-	}
-
-	if account, err = p.d.GetAccountByID(c, p.d.DB(), aid); err != nil {
-		return
-	} else if account == nil {
-		err = ecode.UserNotExist
+	if account, err = p.getAccountByID(c, aid); err != nil {
 		return
 	}
 
 	info = baseInfoFromAccount(account)
-
-	if needCache {
-		p.addCache(func() {
-			p.d.SetAccountCache(context.TODO(), account)
-		})
-	}
 	return
 }
 
@@ -94,5 +76,93 @@ func (p *Service) BatchBaseInfo(c context.Context, aids []int64) (data map[int64
 		p.d.SetBatchAccountCache(context.TODO(), missA)
 	})
 
+	return
+}
+
+func (p *Service) GetProfile(c context.Context, accountID int64) (profile *model.ProfileInfo, err error) {
+	var item *model.Account
+	if item, err = p.getAccountByID(c, accountID); err != nil {
+		return
+	}
+
+	profile = &model.ProfileInfo{
+		ID:           item.ID,
+		UserName:     item.UserName,
+		Gender:       item.Gender,
+		Location:     item.Location,
+		Introduction: item.Introduction,
+		Avatar:       item.Avatar,
+		IDCert:       bool(item.IDCert),
+		WorkCert:     bool(item.WorkCert),
+		IsOrg:        bool(item.IsOrg),
+		IsVIP:        bool(item.IsVIP),
+		Role:         item.Role,
+		CreatedAt:    item.CreatedAt,
+		UpdatedAt:    item.UpdatedAt,
+	}
+
+	if item.Location != nil {
+		if v, e := p.getLocationString(c, *item.Location); e != nil {
+			return nil, e
+		} else {
+			profile.LocationString = &v
+		}
+	}
+
+	return
+}
+
+func (p *Service) getLocationString(c context.Context, nodeID int64) (locationString string, err error) {
+	arr := []string{}
+
+	id := nodeID
+	var item *model.Area
+	for {
+		if item, err = p.d.GetArea(c, p.d.DB(), id); err != nil {
+			return
+		} else if item == nil {
+			err = ecode.AreaNotExist
+			return
+		}
+
+		arr = append(arr, item.Name)
+
+		if item.Parent == 0 {
+			break
+		}
+
+		id = item.Parent
+	}
+
+	locationString = ""
+
+	for i := len(arr) - 1; i >= 0; i-- {
+		locationString += arr[i] + " "
+	}
+
+	return
+}
+
+func (p *Service) getAccountByID(c context.Context, aid int64) (account *model.Account, err error) {
+	var needCache = true
+
+	if account, err = p.d.AccountCache(c, aid); err != nil {
+		needCache = false
+	} else if account != nil {
+		return
+	}
+
+	if account, err = p.d.GetAccountByID(c, p.d.DB(), aid); err != nil {
+		return
+	} else if account == nil {
+		err = ecode.UserNotExist
+		return
+	}
+
+	if needCache {
+		p.addCache(func() {
+			p.d.SetAccountCache(context.TODO(), account)
+		})
+	}
 	return
 }

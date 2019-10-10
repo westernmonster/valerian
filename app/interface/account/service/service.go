@@ -2,17 +2,19 @@ package service
 
 import (
 	"context"
+	"net/url"
 
 	"valerian/app/interface/account/conf"
 	"valerian/app/interface/account/dao"
 	"valerian/app/interface/account/model"
+	feed "valerian/app/service/account-feed/api"
 	account "valerian/app/service/account/api"
 	article "valerian/app/service/article/api"
 	discuss "valerian/app/service/discuss/api"
-	feed "valerian/app/service/feed/api"
 	recent "valerian/app/service/recent/api"
 	relation "valerian/app/service/relation/api"
 	topic "valerian/app/service/topic/api"
+	"valerian/library/conf/env"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
 )
@@ -112,4 +114,14 @@ func (s *Service) cacheproc() {
 		f := <-s.missch
 		f()
 	}
+}
+
+func genURL(path string, param url.Values) (uri string, err error) {
+	u, err := url.Parse(env.SiteURL + path)
+	if err != nil {
+		return
+	}
+	u.RawQuery = param.Encode()
+
+	return u.String(), nil
 }

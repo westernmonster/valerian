@@ -29,8 +29,8 @@ message BaseInfoReply {
 }
 
 message BaseInfosReply {
-  // member基本信息集合
-  map<int64, BaseInfoReply> base_infos = 1;
+    // member基本信息集合
+    map<int64, BaseInfoReply> base_infos = 1;
 }
 
 message ProfileReply {
@@ -64,7 +64,9 @@ message ProfileReply {
 
     bool IsVIP  = 11 [(gogoproto.jsontag) = "is_vip"] ;
 
-    AccountStatInfo Stat = 12 [(gogoproto.jsontag) = "stat"];
+    int64 CreatedAt  = 12 [(gogoproto.jsontag) = "created_at"] ;
+
+    AccountStatInfo Stat = 13 [(gogoproto.jsontag) = "stat"];
 }
 
 message AccountStatInfo {
@@ -82,21 +84,23 @@ message AccountStatInfo {
 }
 
 message AidReq {
-  int64 aid = 1 [(gogoproto.jsontag) = "aid"] ;
-  string remoteIP = 2 [ (gogoproto.jsontag) = "remoteIP" ];
+    int64 aid = 1 [(gogoproto.jsontag) = "aid"] ;
+    string remoteIP = 2 [ (gogoproto.jsontag) = "remoteIP" ];
 }
 
 message AidsReq {
-  // aid 列表
-  repeated int64 aids = 1 [ (gogoproto.jsontag) = "aids" ];
-  string remoteIP = 2 [ (gogoproto.jsontag) = "remoteIP" ];
+    // aid 列表
+    repeated int64 aids = 1 [ (gogoproto.jsontag) = "aids" ];
+    string remoteIP = 2 [ (gogoproto.jsontag) = "remoteIP" ];
 }
 
 
 service Account {
-  rpc BasicInfo(AidReq) returns (BaseInfoReply);
+    rpc Profile(AidReq) returns (ProfileReply);
 
-  rpc AccountStat(AidReq) returns (AccountStatInfo);
+    rpc BasicInfo(AidReq) returns (BaseInfoReply);
 
-  rpc BaseInfos(AidsReq) returns (BaseInfosReply);
+    rpc AccountStat(AidReq) returns (AccountStatInfo);
+
+    rpc BaseInfos(AidsReq) returns (BaseInfosReply);
 }

@@ -91,10 +91,8 @@ const (
 	BusMemberUnfollowed = "member.unfollowed"
 
 	BusDiscussionCommented = "discussion.commented"
-
-	BusArticleCommented = "article.commented"
-
-	BusReviseCommented = "revise.commented"
+	BusArticleCommented    = "article.commented"
+	BusReviseCommented     = "revise.commented"
 
 	BusCommentLiked   = "comment.liked"
 	BusCommentReplied = "comment.replied"

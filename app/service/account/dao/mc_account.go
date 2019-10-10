@@ -3,28 +3,13 @@ package dao
 import (
 	"context"
 	"fmt"
-
-	"valerian/app/interface/account/model"
+	"valerian/app/service/account/model"
 	"valerian/library/cache/memcache"
 	"valerian/library/log"
 )
 
 func accountKey(aid int64) string {
 	return fmt.Sprintf("account_%d", aid)
-}
-
-// pingMC ping memcache.
-func (p *Dao) pingMC(c context.Context) (err error) {
-	conn := p.mc.Get(c)
-	defer conn.Close()
-	if err = conn.Set(&memcache.Item{
-		Key:        "ping",
-		Value:      []byte{1},
-		Expiration: p.mcExpire,
-	}); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.pingMC error(%+v)", err))
-	}
-	return
 }
 
 func (p *Dao) SetAccountCache(c context.Context, m *model.Account) (err error) {
@@ -71,6 +56,49 @@ func (p *Dao) DelAccountCache(c context.Context, accountID int64) (err error) {
 		}
 		log.For(c).Error(fmt.Sprintf("conn.Delete(%s) error(%v)", key, err))
 		return
+	}
+	return
+}
+
+func (d *Dao) BatchAccountCache(c context.Context, aids []int64) (cached map[int64]*model.Account, missed []int64, err error) {
+	cached = make(map[int64]*model.Account, len(aids))
+	if len(aids) == 0 {
+		return
+	}
+	keys := make([]string, 0, len(aids))
+	aidmap := make(map[string]int64, len(aids))
+	for _, aid := range aids {
+		k := accountKey(aid)
+		keys = append(keys, k)
+		aidmap[k] = aid
+	}
+	conn := d.mc.Get(c)
+	defer conn.Close()
+	bases, err := conn.GetMulti(keys)
+	if err != nil {
+		log.For(c).Error(fmt.Sprintf("conn.Gets(%v) error(%v)", keys, err))
+		return
+	}
+	for _, base := range bases {
+		b := &model.Account{}
+		if err = conn.Scan(base, b); err != nil {
+			log.For(c).Error(fmt.Sprintf("json.Unmarshal(%v) error(%v)", base.Value, err))
+			return
+		}
+		cached[aidmap[base.Key]] = b
+		delete(aidmap, base.Key)
+	}
+	missed = make([]int64, 0, len(aidmap))
+	for _, bid := range aidmap {
+		missed = append(missed, bid)
+	}
+	return
+
+}
+
+func (d *Dao) SetBatchAccountCache(c context.Context, bs []*model.Account) (err error) {
+	for _, info := range bs {
+		d.SetAccountCache(c, info)
 	}
 	return
 }

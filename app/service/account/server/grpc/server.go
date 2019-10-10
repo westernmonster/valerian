@@ -39,6 +39,25 @@ type server struct {
 	svr *service.Service
 }
 
+func (s *server) Profile(ctx context.Context, req *api.AidReq) (*api.ProfileReply, error) {
+	resp, err := s.svr.GetProfile(ctx, req.Aid)
+	if err != nil {
+		return nil, err
+	}
+
+	reply := api.FromProfileInfo(resp)
+
+	stat, err := s.svr.GetAccountStat(ctx, req.Aid)
+	if err != nil {
+		return nil, err
+	}
+
+	statInfo := api.FromStat(stat)
+	reply.Stat = statInfo
+
+	return reply, nil
+}
+
 func (s *server) BasicInfo(ctx context.Context, req *api.AidReq) (*api.BaseInfoReply, error) {
 	resp, err := s.svr.BaseInfo(ctx, req.Aid)
 	if err != nil {
