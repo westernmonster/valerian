@@ -24,7 +24,7 @@ func (p *Service) isAuthTopic(c context.Context, node sqalx.Node, toTopicID, fro
 	return
 }
 
-func (p *Service) checkAuthTopics(c context.Context, topicID int64, items []*model.ArgAuthTopic) (err error) {
+func (p *Service) checkAuthTopics(c context.Context, node sqalx.Node, topicID int64, items []*model.ArgAuthTopic) (err error) {
 	// must unique and not equal to current topic
 	dic := make(map[int64]bool)
 	for _, v := range items {
@@ -35,6 +35,10 @@ func (p *Service) checkAuthTopics(c context.Context, topicID int64, items []*mod
 
 		if dic[v.TopicID] {
 			err = ecode.AuthTopicDuplicate
+			return
+		}
+
+		if err = p.checkTopic(c, node, v.TopicID); err != nil {
 			return
 		}
 
@@ -74,7 +78,7 @@ func (p *Service) bulkSaveAuthTopics(c context.Context, node sqalx.Node, topicID
 		}
 	}()
 
-	if err = p.checkAuthTopics(c, topicID, items); err != nil {
+	if err = p.checkAuthTopics(c, tx, topicID, items); err != nil {
 		return
 	}
 

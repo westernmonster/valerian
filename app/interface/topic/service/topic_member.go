@@ -271,6 +271,11 @@ func (p *Service) BulkSaveMembers(c context.Context, req *model.ArgBatchSavedTop
 			if member != nil {
 				continue
 			}
+
+			if _, err = p.d.GetAccountBaseInfo(c, v.AccountID); err != nil {
+				return
+			}
+
 			item := &model.TopicMember{
 				ID:        gid.NewID(),
 				AccountID: v.AccountID,
