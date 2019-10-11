@@ -274,10 +274,9 @@ func (p *Service) getArticle(c context.Context, node sqalx.Node, articleID int64
 		return
 	}
 
-	var a *model.Article
-	if a, err = p.d.GetArticleByID(c, p.d.DB(), articleID); err != nil {
+	if item, err = p.d.GetArticleByID(c, p.d.DB(), articleID); err != nil {
 		return
-	} else if a == nil {
+	} else if item == nil {
 		err = ecode.ArticleNotExist
 		return
 	}
