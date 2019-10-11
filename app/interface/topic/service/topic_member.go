@@ -372,6 +372,11 @@ func (p *Service) addMember(c context.Context, node sqalx.Node, topicID, aid int
 		}
 	}()
 	{
+
+		if _, err = p.d.GetAccountBaseInfo(c, aid); err != nil {
+			return
+		}
+
 		var member *model.TopicMember
 		if member, err = p.d.GetTopicMemberByCond(c, node, map[string]interface{}{"account_id": aid, "topic_id": topicID}); err != nil {
 			return
