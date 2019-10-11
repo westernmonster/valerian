@@ -110,6 +110,18 @@ func (p *Service) AddArticle(c context.Context, arg *model.ArgAddArticle) (id in
 
 	id = item.ID
 
+	var relations []*model.ArticleRelationResp
+	if relations, err = p.getArticleRelations(c, p.d.DB(), item.ID); err != nil {
+		return
+	}
+
+	p.addCache(func() {
+		p.onArticleAdded(context.Background(), item.ID, aid, time.Now().Unix())
+		for _, v := range relations {
+			p.onCatalogArticleAdded(context.Background(), item.ID, v.ToTopicID, aid, time.Now().Unix())
+		}
+	})
+
 	return
 }
 
@@ -190,6 +202,7 @@ func (p *Service) UpdateArticle(c context.Context, arg *model.ArgUpdateArticle) 
 
 	p.addCache(func() {
 		p.d.DelArticleCache(context.TODO(), arg.ID)
+		p.onArticleUpdated(context.Background(), arg.ID, aid, time.Now().Unix())
 	})
 
 	return

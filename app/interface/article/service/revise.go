@@ -139,11 +139,19 @@ func (p *Service) AddRevise(c context.Context, arg *model.ArgAddRevise) (id int6
 	}
 
 	id = item.ID
+	p.addCache(func() {
+		p.onReviseAdded(context.Background(), item.ID, aid, time.Now().Unix())
+	})
 
 	return
 }
 
 func (p *Service) UpdateRevise(c context.Context, arg *model.ArgUpdateRevise) (err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
@@ -179,6 +187,7 @@ func (p *Service) UpdateRevise(c context.Context, arg *model.ArgUpdateRevise) (e
 
 	p.addCache(func() {
 		p.d.DelReviseCache(context.TODO(), arg.ID)
+		p.onReviseUpdated(context.Background(), arg.ID, aid, time.Now().Unix())
 	})
 
 	return

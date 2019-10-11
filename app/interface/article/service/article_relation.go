@@ -12,6 +12,7 @@ import (
 	"valerian/library/ecode"
 	"valerian/library/gid"
 	"valerian/library/log"
+	"valerian/library/net/metadata"
 )
 
 func (p *Service) GetArticleRelations(c context.Context, articleID int64) (items []*model.ArticleRelationResp, err error) {
@@ -87,7 +88,7 @@ func (p *Service) getCatalogFullPath(c context.Context, node sqalx.Node, article
 	return
 }
 
-func (p *Service) checkArticleRelations(items []*model.AddArticleRelation) (err error) {
+func (p *Service) checkArticleRelations(c context.Context, items []*model.AddArticleRelation) (err error) {
 	if len(items) == 0 {
 		return ecode.NeedPrimaryTopic
 	}
@@ -95,6 +96,9 @@ func (p *Service) checkArticleRelations(items []*model.AddArticleRelation) (err 
 	primary := false
 	dic := make(map[int64]bool)
 	for _, v := range items {
+		if _, err = p.d.GetTopic(c, v.TopicID); err != nil {
+			return
+		}
 		if primary == true && v.Primary {
 			return ecode.OnlyAllowOnePrimaryTopic
 		}
@@ -129,7 +133,7 @@ func (p *Service) checkTopicCatalogTaxonomy(c context.Context, node sqalx.Node, 
 }
 
 func (p *Service) bulkCreateArticleRelations(c context.Context, node sqalx.Node, articleID int64, title string, relations []*model.AddArticleRelation) (err error) {
-	if err = p.checkArticleRelations(relations); err != nil {
+	if err = p.checkArticleRelations(c, relations); err != nil {
 		return
 	}
 
@@ -379,6 +383,11 @@ func (p *Service) AddArticleRelation(c context.Context, arg *model.ArgAddArticle
 }
 
 func (p *Service) DelArticleRelation(c context.Context, arg *model.ArgDelArticleRelation) (err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
@@ -429,6 +438,7 @@ func (p *Service) DelArticleRelation(c context.Context, arg *model.ArgDelArticle
 
 	p.addCache(func() {
 		p.d.DelTopicCatalogCache(context.TODO(), catalog.TopicID)
+		p.onCatalogArticleDeleted(context.Background(), arg.ArticleID, catalog.TopicID, aid, time.Now().Unix())
 	})
 
 	return
