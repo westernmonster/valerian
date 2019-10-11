@@ -101,6 +101,11 @@ func (p *Service) AddRevise(c context.Context, arg *model.ArgAddRevise) (id int6
 		}
 	}()
 
+	// check article
+	if _, err = p.getArticle(c, tx, arg.ArticleID); err != nil {
+		return
+	}
+
 	item := &model.Revise{
 		ID:        gid.NewID(),
 		ArticleID: arg.ArticleID,
