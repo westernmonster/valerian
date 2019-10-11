@@ -7,6 +7,8 @@ import (
 
 	"valerian/app/interface/article/conf"
 	account "valerian/app/service/account/api"
+	fav "valerian/app/service/fav/api"
+	like "valerian/app/service/like/api"
 	topic "valerian/app/service/topic/api"
 	"valerian/library/cache/memcache"
 	"valerian/library/database/sqalx"
@@ -24,6 +26,8 @@ type Dao struct {
 	c          *conf.Config
 	accountRPC account.AccountClient
 	topicRPC   topic.TopicClient
+	likeRPC    like.LikeClient
+	favRPC     fav.FavClient
 }
 
 func New(c *conf.Config) (dao *Dao) {
@@ -44,6 +48,18 @@ func New(c *conf.Config) (dao *Dao) {
 		panic(errors.WithMessage(err, "Failed to dial topic service"))
 	} else {
 		dao.topicRPC = topicRPC
+	}
+
+	if likeRPC, err := like.NewClient(c.TopicRPC); err != nil {
+		panic(errors.WithMessage(err, "Failed to dial like service"))
+	} else {
+		dao.likeRPC = likeRPC
+	}
+
+	if favRPC, err := fav.NewClient(c.TopicRPC); err != nil {
+		panic(errors.WithMessage(err, "Failed to dial fav service"))
+	} else {
+		dao.favRPC = favRPC
 	}
 
 	return

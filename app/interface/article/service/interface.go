@@ -69,6 +69,7 @@ type IDao interface {
 	UpdateReviseFile(c context.Context, node sqalx.Node, item *model.ReviseFile) (err error)
 	DelReviseFile(c context.Context, node sqalx.Node, id int64) (err error)
 
+	GetArticleStatByID(c context.Context, node sqalx.Node, articleID int64) (item *model.ArticleStat, err error)
 	AddArticleStat(c context.Context, node sqalx.Node, item *model.ArticleStat) (err error)
 	IncrArticleStat(c context.Context, node sqalx.Node, item *model.ArticleStat) (err error)
 	AddReviseStat(c context.Context, node sqalx.Node, item *model.ReviseStat) (err error)
@@ -77,6 +78,9 @@ type IDao interface {
 	IncrAccountStat(c context.Context, node sqalx.Node, item *model.AccountStat) (err error)
 
 	GetTopic(c context.Context, id int64) (info *topic.TopicInfo, err error)
+	IsLike(c context.Context, aid, targetID int64, targetType string) (isLike bool, err error)
+	IsDislike(c context.Context, aid, targetID int64, targetType string) (isLike bool, err error)
+	IsFav(c context.Context, aid, targetID int64, targetType string) (isFav bool, err error)
 
 	SetTopicCatalogCache(c context.Context, topicID int64, m []*model.TopicLevel1Catalog) (err error)
 	TopicCatalogCache(c context.Context, topicID int64) (m []*model.TopicLevel1Catalog, err error)

@@ -35,6 +35,8 @@ type Config struct {
 	Ecode  *ecode.Config
 
 	AccountRPC *warden.ClientConfig
+	LikeRPC    *warden.ClientConfig
+	FavRPC     *warden.ClientConfig
 	TopicRPC   *warden.ClientConfig
 	// Auth
 	Auth      *auth.Config

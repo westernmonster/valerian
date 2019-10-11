@@ -287,7 +287,35 @@ func (p *Service) getArticle(c context.Context, node sqalx.Node, articleID int64
 }
 
 func (p *Service) getArticleMeta(c context.Context, node sqalx.Node, articleID int64) (item *model.ArticleMeta, err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+
 	item = new(model.ArticleMeta)
+
+	if item.Like, err = p.d.IsLike(c, aid, articleID, model.TargetTypeArticle); err != nil {
+		return
+	}
+
+	if item.Fav, err = p.d.IsFav(c, aid, articleID, model.TargetTypeArticle); err != nil {
+		return
+	}
+
+	if item.Dislike, err = p.d.IsDislike(c, aid, articleID, model.TargetTypeArticle); err != nil {
+		return
+	}
+
+	var stat *model.ArticleStat
+	if stat, err = p.d.GetArticleStatByID(c, node, articleID); err != nil {
+		return
+	}
+
+	item.LikeCount = stat.LikeCount
+	item.DislikeCount = stat.DislikeCount
+	item.ReviseCount = stat.ReviseCount
+	item.CommentCount = stat.CommentCount
 
 	return
 }
