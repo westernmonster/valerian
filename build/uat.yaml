@@ -81,3 +81,7 @@ spec:
         backend:
           serviceName: interface-like
           servicePort: 8000
+      - path: /api/v1/list/activities
+        backend:
+          serviceName: interface-feed
+          servicePort: 8000
