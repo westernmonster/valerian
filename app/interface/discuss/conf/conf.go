@@ -9,6 +9,7 @@ import (
 	"valerian/library/conf"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
+	"valerian/library/mq"
 	"valerian/library/naming/discovery"
 	"valerian/library/net/http/mars"
 	"valerian/library/net/http/mars/middleware/auth"
@@ -34,16 +35,12 @@ type Config struct {
 	Auth      *auth.Config
 	Memcache  *Memcache
 	Discovery *discovery.Config
-	Nats      *NatsConfig
+	Nats      *mq.Config
+	LikeRPC   *warden.ClientConfig
+	FavRPC    *warden.ClientConfig
 
 	AccountRPC *warden.ClientConfig
 	TopicRPC   *warden.ClientConfig
-}
-
-type NatsConfig struct {
-	Nodes         []string
-	MaxReconnects int
-	ReconnectWait xtime.Duration
 }
 
 // DB db config.

@@ -43,10 +43,9 @@ type IDao interface {
 	GetTopic(c context.Context, id int64) (info *topic.TopicInfo, err error)
 	GetAccountBaseInfo(c context.Context, aid int64) (info *account.BaseInfoReply, err error)
 	GetTopicMemberRole(c context.Context, topicID, accountID int64) (resp *topic.MemberRoleReply, err error)
-
-	NotifyDiscussionAdded(c context.Context, id int64) (err error)
-	NotifyDiscussionUpdated(c context.Context, id int64) (err error)
-	NotifyDiscussionDeleted(c context.Context, id int64, topicID int64) (err error)
+	IsLike(c context.Context, aid, targetID int64, targetType string) (isLike bool, err error)
+	IsDislike(c context.Context, aid, targetID int64, targetType string) (isLike bool, err error)
+	IsFav(c context.Context, aid, targetID int64, targetType string) (isFav bool, err error)
 
 	SetDiscussionFilesCache(c context.Context, discussionID int64, m []*model.DiscussionFileResp) (err error)
 	DiscussionFilesCache(c context.Context, discussionID int64) (m []*model.DiscussionFileResp, err error)

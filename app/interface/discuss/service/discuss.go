@@ -17,27 +17,6 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
-func (p *Service) onAddDiscussion(c context.Context, id int64) {
-	if err := p.d.NotifyDiscussionAdded(c, id); err != nil {
-		log.For(c).Error(fmt.Sprintf("NotifyDiscussionAdded(%d) : %+v", id, err))
-		return
-	}
-}
-
-func (p *Service) onUpdateDiscussion(c context.Context, id int64) {
-	if err := p.d.NotifyDiscussionUpdated(c, id); err != nil {
-		log.For(c).Error(fmt.Sprintf("NotifyDiscussionUpdated(%d) : %+v", id, err))
-		return
-	}
-}
-
-func (p *Service) onDelDiscussion(c context.Context, id int64, topicID int64) {
-	if err := p.d.NotifyDiscussionDeleted(c, id, topicID); err != nil {
-		log.For(c).Error(fmt.Sprintf("NotifyDiscussionDeleted, id(%d) topic_id(%d): %+v", id, topicID, err))
-		return
-	}
-}
-
 func (p *Service) initDiscussionStat(c context.Context, discussionID int64) (err error) {
 	if err = p.d.AddDiscussionStat(c, p.d.DB(), &model.DiscussionStat{
 		DiscussionID: discussionID,
@@ -164,7 +143,7 @@ func (p *Service) AddDiscussion(c context.Context, arg *model.ArgAddDiscuss) (id
 	id = item.ID
 
 	p.addCache(func() {
-		p.onAddDiscussion(context.Background(), id)
+		p.onDiscussionAdded(context.Background(), item.ID, aid, time.Now().Unix())
 	})
 
 	return
@@ -245,7 +224,7 @@ func (p *Service) UpdateDiscussion(c context.Context, arg *model.ArgUpdateDiscus
 	}
 
 	p.addCache(func() {
-		p.onUpdateDiscussion(context.Background(), arg.ID)
+		p.onDiscussionUpdated(context.Background(), arg.ID, aid, time.Now().Unix())
 	})
 
 	return
@@ -310,7 +289,7 @@ func (p *Service) DelDiscussion(c context.Context, id int64) (err error) {
 	}
 
 	p.addCache(func() {
-		p.onDelDiscussion(context.Background(), id, item.TopicID)
+		p.onDiscussionDeleted(context.Background(), id, aid, time.Now().Unix())
 		p.d.DelDiscussionFilesCache(context.TODO(), id)
 	})
 
@@ -380,6 +359,18 @@ func (p *Service) GetDiscussion(c context.Context, discussionID int64) (resp *mo
 	resp.LikeCount = stat.LikeCount
 	resp.DislikeCount = stat.DislikeCount
 	resp.CommentCount = stat.CommentCount
+
+	if resp.Fav, err = p.d.IsFav(c, aid, discussionID, model.TargetTypeDiscussion); err != nil {
+		return
+	}
+
+	if resp.Like, err = p.d.IsLike(c, aid, discussionID, model.TargetTypeDiscussion); err != nil {
+		return
+	}
+
+	if resp.Dislike, err = p.d.IsDislike(c, aid, discussionID, model.TargetTypeDiscussion); err != nil {
+		return
+	}
 
 	if aid == data.CreatedBy {
 		return
