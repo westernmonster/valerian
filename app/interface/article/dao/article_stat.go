@@ -53,7 +53,7 @@ func (p *Dao) UpdateArticleStat(c context.Context, node sqalx.Node, item *model.
 }
 
 func (p *Dao) IncrArticleStat(c context.Context, node sqalx.Node, item *model.ArticleStat) (err error) {
-	sqlUpdate := "UPDATE article_stats SET like_count=like_count+?,dislike_count=dislike_count+?, revise_count=revise_count+?,comment_count=article_count+?,updated_at=? WHERE article_id=?"
+	sqlUpdate := "UPDATE article_stats SET like_count=like_count+?,dislike_count=dislike_count+?, revise_count=revise_count+?,comment_count=comment_count+?,updated_at=? WHERE article_id=?"
 
 	_, err = node.ExecContext(c, sqlUpdate, item.LikeCount, item.DislikeCount, item.ReviseCount, item.CommentCount, time.Now().Unix(), item.ArticleID)
 	if err != nil {
