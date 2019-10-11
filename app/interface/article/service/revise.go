@@ -134,6 +134,10 @@ func (p *Service) AddRevise(c context.Context, arg *model.ArgAddRevise) (id int6
 		return
 	}
 
+	if err = p.d.IncrArticleStat(c, tx, &model.ArticleStat{ReviseCount: 1}); err != nil {
+		return
+	}
+
 	if err = tx.Commit(); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 	}
@@ -203,6 +207,11 @@ func (p *Service) DelRevise(c context.Context, id int64) (err error) {
 }
 
 func (p *Service) GetRevise(c context.Context, reviseID int64) (resp *model.ReviseDetailResp, err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
 	var data *model.Revise
 	if data, err = p.getRevise(c, p.d.DB(), reviseID); err != nil {
 		return
@@ -227,6 +236,27 @@ func (p *Service) GetRevise(c context.Context, reviseID int64) (resp *model.Revi
 	resp.Creator.Introduction = &intro
 
 	if resp.Files, err = p.GetReviseFiles(c, reviseID); err != nil {
+		return
+	}
+
+	var stat *model.ReviseStat
+	if stat, err = p.d.GetReviseStatByID(c, p.d.DB(), reviseID); err != nil {
+		return
+	}
+
+	resp.DislikeCount = stat.DislikeCount
+	resp.LikeCount = stat.LikeCount
+	resp.CommentCount = stat.CommentCount
+
+	if resp.Fav, err = p.d.IsFav(c, aid, reviseID, model.TargetTypeRevise); err != nil {
+		return
+	}
+
+	if resp.Like, err = p.d.IsLike(c, aid, reviseID, model.TargetTypeRevise); err != nil {
+		return
+	}
+
+	if resp.Dislike, err = p.d.IsDislike(c, aid, reviseID, model.TargetTypeRevise); err != nil {
 		return
 	}
 

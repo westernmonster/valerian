@@ -71,6 +71,7 @@ type IDao interface {
 
 	GetArticleStatByID(c context.Context, node sqalx.Node, articleID int64) (item *model.ArticleStat, err error)
 	AddArticleStat(c context.Context, node sqalx.Node, item *model.ArticleStat) (err error)
+	GetReviseStatByID(c context.Context, node sqalx.Node, reviseID int64) (item *model.ReviseStat, err error)
 	IncrArticleStat(c context.Context, node sqalx.Node, item *model.ArticleStat) (err error)
 	AddReviseStat(c context.Context, node sqalx.Node, item *model.ReviseStat) (err error)
 	IncrReviseStat(c context.Context, node sqalx.Node, item *model.ReviseStat) (err error)
