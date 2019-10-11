@@ -19,7 +19,7 @@ func (p *Service) onCatalogArticleAdded(c context.Context, articleID, topicID, a
 		return
 	}
 
-	if err = p.mq.Publish(def.BusArticleAdded, data); err != nil {
+	if err = p.mq.Publish(def.BusCatalogArticleAdded, data); err != nil {
 		log.For(c).Error(fmt.Sprintf("onCatalogArticleAdded.Publish(), err(%+v)", err))
 		return
 	}
@@ -38,7 +38,7 @@ func (p *Service) onCatalogArticleDeleted(c context.Context, articleID, topicID,
 		return
 	}
 
-	if err = p.mq.Publish(def.BusArticleDeleted, data); err != nil {
+	if err = p.mq.Publish(def.BusCatalogArticleDeleted, data); err != nil {
 		log.For(c).Error(fmt.Sprintf("onCatalogArticleDeleted.Publish(), err(%+v)", err))
 		return
 	}
