@@ -22,7 +22,6 @@ func (p *Service) onReviseAdded(m *stan.Msg) {
 
 	var article *article.ReviseInfo
 	if article, err = p.d.GetRevise(context.Background(), info.ReviseID); err != nil {
-		m.Ack()
 		return
 	}
 
@@ -56,7 +55,6 @@ func (p *Service) onReviseUpdated(m *stan.Msg) {
 
 	var article *article.ReviseInfo
 	if article, err = p.d.GetRevise(context.Background(), info.ReviseID); err != nil {
-		m.Ack()
 		return
 	}
 

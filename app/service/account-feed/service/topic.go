@@ -22,7 +22,6 @@ func (p *Service) onTopicAdded(m *stan.Msg) {
 
 	var topic *topic.TopicInfo
 	if topic, err = p.d.GetTopic(context.Background(), info.TopicID); err != nil {
-		m.Ack()
 		return
 	}
 
@@ -56,7 +55,6 @@ func (p *Service) onTopicFollowed(m *stan.Msg) {
 
 	var topic *topic.TopicInfo
 	if topic, err = p.d.GetTopic(context.Background(), info.TopicID); err != nil {
-		m.Ack()
 		return
 	}
 

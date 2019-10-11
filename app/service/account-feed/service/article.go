@@ -22,7 +22,6 @@ func (p *Service) onArticleAdded(m *stan.Msg) {
 
 	var article *article.ArticleInfo
 	if article, err = p.d.GetArticle(context.Background(), info.ArticleID); err != nil {
-		m.Ack()
 		return
 	}
 
@@ -56,7 +55,6 @@ func (p *Service) onArticleUpdated(m *stan.Msg) {
 
 	var article *article.ArticleInfo
 	if article, err = p.d.GetArticle(context.Background(), info.ArticleID); err != nil {
-		m.Ack()
 		return
 	}
 
@@ -90,7 +88,6 @@ func (p *Service) onArticleLiked(m *stan.Msg) {
 
 	var article *article.ArticleInfo
 	if article, err = p.d.GetArticle(context.Background(), info.ArticleID); err != nil {
-		m.Ack()
 		return
 	}
 
@@ -124,7 +121,6 @@ func (p *Service) onArticleFavd(m *stan.Msg) {
 
 	var article *article.ArticleInfo
 	if article, err = p.d.GetArticle(context.Background(), info.ArticleID); err != nil {
-		m.Ack()
 		return
 	}
 
