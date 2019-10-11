@@ -22,6 +22,7 @@ func (p *Service) onDiscussionAdded(m *stan.Msg) {
 
 	var discuss *discuss.DiscussionInfo
 	if discuss, err = p.d.GetDiscussion(context.Background(), info.DiscussionID); err != nil {
+		m.Ack()
 		return
 	}
 
@@ -55,6 +56,7 @@ func (p *Service) onDiscussionUpdated(m *stan.Msg) {
 
 	var discuss *discuss.DiscussionInfo
 	if discuss, err = p.d.GetDiscussion(context.Background(), info.DiscussionID); err != nil {
+		m.Ack()
 		return
 	}
 

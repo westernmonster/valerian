@@ -23,6 +23,7 @@ func (p *Service) onMemberFollowed(m *stan.Msg) {
 
 	var member *account.BaseInfoReply
 	if member, err = p.d.GetAccountBaseInfo(context.Background(), info.TargetAccountID); err != nil {
+		m.Ack()
 		return
 	}
 
