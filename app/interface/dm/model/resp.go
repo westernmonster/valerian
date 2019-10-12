@@ -23,6 +23,7 @@ type MessageItem struct {
 	// like 赞
 	// followed  关注了你
 	// joined 加入了
+	// apply_rejected 申请加入被拒绝
 	Type string `json:"type"`
 
 	ID int64 `json:"id,string" swaggertype:"string"`
@@ -30,6 +31,8 @@ type MessageItem struct {
 	CreatedAt int64 `json:"created_at"`
 
 	Content MessageContent `json:"content"`
+
+	TargetType string `json:"target_type"`
 
 	// 对象
 	// 这是一个interface，包含比较全的对面具体信息，例如文章、话题等

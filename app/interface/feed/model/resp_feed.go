@@ -136,11 +136,27 @@ type TargetComment struct {
 	// ID
 	ID int64 `json:"id,string" swaggertype:"string"`
 
+	// 类型
+	// revise 补充
+	// article 文章
+	// discussion 话题讨论
+	// comment 评论
+	Type string `json:"type"`
+
 	// 内容
 	Excerpt string `json:"excerpt"`
 
 	// 发布日期
 	CreatedAt int64 `json:"created_at"`
+
+	// 资源ID
+	// 表示话题、文章、讨论、评论的ID
+	ResourceID int64 `json:"resource_id,string" swaggertype:"string"`
+
+	// 对象
+	// 这是一个interface，包含比较全的对面具体信息，例如文章、话题等
+	// 业务处理判断主要根据这个对象来
+	Target interface{} `json:"target"`
 }
 
 type TargetArticle struct {

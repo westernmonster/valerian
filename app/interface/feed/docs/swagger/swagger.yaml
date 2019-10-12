@@ -1,0 +1,404 @@
+definitions:
+  model.Actor:
+    properties:
+      avatar:
+        description: 头像
+        type: string
+      id:
+        description: ID
+        type: string
+      name:
+        description: 用户名
+        type: string
+      type:
+        description: |-
+          类型
+          user, org
+        type: string
+    type: object
+  model.Creator:
+    properties:
+      avatar:
+        description: 头像
+        type: string
+      id:
+        description: 用户ID
+        type: string
+      introduction:
+        description: 自我介绍
+        type: string
+      user_name:
+        description: 用户名
+        type: string
+    type: object
+  model.FeedItem:
+    properties:
+      source:
+        $ref: '#/definitions/model.FeedSource'
+        description: 来源
+        type: object
+      target:
+        $ref: '#/definitions/model.FeedTarget'
+        description: 目标
+        type: object
+      target_type:
+        description: |-
+          目标类型
+          article, topic, member, comment
+        type: string
+    type: object
+  model.FeedResp:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/model.FeedItem'
+        type: array
+      paging:
+        $ref: '#/definitions/model.Paging'
+        type: object
+    type: object
+  model.FeedSource:
+    properties:
+      action_text:
+        description: |-
+          文字内容
+          例如：编辑了文章，收藏了文章，关注了用户
+        type: string
+      action_time:
+        description: 时间
+        type: integer
+      action_type:
+        description: |-
+          类型
+          MEMBER_CREATE_TOPIC  创建话题
+          MEMBER_CREATE_DISCUSS 发布讨论
+          MEMBER_CREATE_ARTICLE 发布文章
+          MEMBER_CREATE_REVISE  发布补充
+          MEMBER_FOLLOW_TOPIC  关注话题
+          MEMBER_FOLLOW_MEMBER 关注用户
+          MEMBER_LIKE_ARTICLE  点赞文章
+          MEMBER_LIKE_REVISE 点赞补充
+          MEMBER_LIKE_DISCUSS 点赞讨论
+          MEMBER_FAV_ARTICLE  收藏文章
+          MEMBER_FAV_TOPIC 收藏话题
+        type: string
+      actor:
+        $ref: '#/definitions/model.Actor'
+        description: 动作发起者
+        type: object
+    type: object
+  model.FeedTarget:
+    properties:
+      article:
+        $ref: '#/definitions/model.TargetArticle'
+        description: 文章
+        type: object
+      comment:
+        $ref: '#/definitions/model.TargetComment'
+        description: 评论
+        type: object
+      discussion:
+        $ref: '#/definitions/model.TargetDiscuss'
+        description: 讨论
+        type: object
+      id:
+        description: ID
+        type: string
+      member:
+        $ref: '#/definitions/model.MemberInfo'
+        description: 用户
+        type: object
+      revise:
+        $ref: '#/definitions/model.TargetRevise'
+        description: 补充
+        type: object
+      topic:
+        $ref: '#/definitions/model.TargetTopic'
+        description: 话题
+        type: object
+      type:
+        description: '类型: article,comment,account,topic'
+        type: string
+    type: object
+  model.MemberInfo:
+    properties:
+      avatar:
+        description: 头像
+        type: string
+      gender:
+        description: 性别 1为男， 2为女
+        type: integer
+      id:
+        description: ID
+        format: int64
+        type: string
+      id_cert:
+        description: 是否身份认证
+        type: boolean
+      introduction:
+        description: 自我介绍
+        type: string
+      is_org:
+        description: 是否机构用户
+        type: boolean
+      is_vip:
+        description: 是否VIP
+        type: boolean
+      location:
+        description: 所在地区值
+        type: integer
+      location_string:
+        description: 所在地区名，地区是层级结构，这里将国家、州/省、市、区全部获取出来
+        type: string
+      stat:
+        $ref: '#/definitions/model.MemberInfoStat'
+        description: 状态
+        type: object
+      user_name:
+        description: 用户名
+        format: user_name
+        type: string
+      work_cert:
+        description: 是否工作认证
+        type: boolean
+    type: object
+  model.MemberInfoStat:
+    properties:
+      article_count:
+        description: 文章数
+        type: integer
+      discussion_count:
+        description: 讨论数
+        type: integer
+      fans_count:
+        description: 粉丝数
+        type: integer
+      following_count:
+        description: 关注数
+        type: integer
+      is_follow:
+        description: 是否关注
+        type: boolean
+      topic_count:
+        description: 话题数
+        type: integer
+    type: object
+  model.Paging:
+    properties:
+      is_end:
+        description: 是否结束
+        type: boolean
+      next:
+        description: 下一页
+        type: string
+      prev:
+        description: 上一页
+        type: string
+    type: object
+  model.TargetArticle:
+    properties:
+      comment_count:
+        description: 评论数
+        type: integer
+      creator:
+        $ref: '#/definitions/model.Creator'
+        type: object
+      dislike_count:
+        description: 反对数
+        type: integer
+      excerpt:
+        description: 内容
+        type: string
+      id:
+        description: ID
+        type: string
+      images:
+        description: 图片
+        items:
+          type: string
+        type: array
+      like_count:
+        description: 喜欢数
+        type: integer
+      revise_count:
+        description: 补充个数
+        type: integer
+      title:
+        description: 文章标题
+        type: string
+    type: object
+  model.TargetComment:
+    properties:
+      created_at:
+        description: 发布日期
+        type: integer
+      excerpt:
+        description: 内容
+        type: string
+      id:
+        description: ID
+        type: string
+      resource_id:
+        description: |-
+          资源ID
+          表示话题、文章、讨论、评论的ID
+        type: string
+      target:
+        description: |-
+          对象
+          这是一个interface，包含比较全的对面具体信息，例如文章、话题等
+          业务处理判断主要根据这个对象来
+        type: object
+      type:
+        description: |-
+          类型
+          revise 补充
+          article 文章
+          discussion 话题讨论
+          comment 评论
+        type: string
+    type: object
+  model.TargetDiscuss:
+    properties:
+      comment_count:
+        description: 评论数
+        type: integer
+      creator:
+        $ref: '#/definitions/model.Creator'
+        type: object
+      dislike_count:
+        description: 反对数
+        type: integer
+      excerpt:
+        description: 评论内容
+        type: string
+      id:
+        description: ID
+        type: string
+      images:
+        description: 图片
+        items:
+          type: string
+        type: array
+      like_count:
+        description: 喜欢数
+        type: integer
+      title:
+        description: 标题
+        type: string
+    type: object
+  model.TargetRevise:
+    properties:
+      comment_count:
+        description: 评论数
+        type: integer
+      creator:
+        $ref: '#/definitions/model.Creator'
+        type: object
+      dislike_count:
+        description: 反对数
+        type: integer
+      excerpt:
+        description: 评论内容
+        type: string
+      id:
+        description: ID
+        type: string
+      images:
+        description: 图片
+        items:
+          type: string
+        type: array
+      like_count:
+        description: 喜欢数
+        type: integer
+      title:
+        description: 标题
+        type: string
+    type: object
+  model.TargetTopic:
+    properties:
+      article_count:
+        description: 成员数
+        type: integer
+      avatar:
+        description: |-
+          头像
+          必须为URL
+        type: string
+      creator:
+        $ref: '#/definitions/model.Creator'
+        type: object
+      discussion_count:
+        description: 讨论数
+        type: integer
+      id:
+        description: ID
+        type: string
+      introduction:
+        description: 简介
+        type: string
+      member_count:
+        description: 成员数
+        type: integer
+      name:
+        description: 话题名
+        type: string
+    type: object
+info:
+  contact: {}
+  license: {}
+paths:
+  /list/activities:
+    get:
+      consumes:
+      - application/json
+      description: 首页动态
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Source 来源，1:Web, 2:iOS; 3:Android
+        enum:
+        - 1
+        - 2
+        - 3
+        in: header
+        name: Source
+        required: true
+        type: integer
+      - description: 语言
+        enum:
+        - zh-CN
+        - en-US
+        in: header
+        name: Locale
+        required: true
+        type: string
+      - description: 每页大小
+        in: query
+        name: limit
+        type: integer
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 话题
+          schema:
+            $ref: '#/definitions/model.FeedResp'
+            type: object
+        "400":
+          description: 验证请求失败
+        "401":
+          description: 登录验证失败
+        "500":
+          description: 服务器端错误
+      summary: 首页动态
+      tags:
+      - home

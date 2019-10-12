@@ -1,0 +1,520 @@
+{
+    "info": {
+        "contact": {},
+        "license": {}
+    },
+    "paths": {
+        "/list/activities": {
+            "get": {
+                "description": "首页动态",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "home"
+                ],
+                "summary": "首页动态",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "description": "Source 来源，1:Web, 2:iOS; 3:Android",
+                        "name": "Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh-CN",
+                            "en-US"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "Locale",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "话题",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/model.FeedResp"
+                        }
+                    },
+                    "400": {
+                        "description": "验证请求失败"
+                    },
+                    "401": {
+                        "description": "登录验证失败"
+                    },
+                    "500": {
+                        "description": "服务器端错误"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "model.Actor": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "description": "头像",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "用户名",
+                    "type": "string"
+                },
+                "type": {
+                    "description": "类型\nuser, org",
+                    "type": "string"
+                }
+            }
+        },
+        "model.Creator": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "description": "头像",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "用户ID",
+                    "type": "string"
+                },
+                "introduction": {
+                    "description": "自我介绍",
+                    "type": "string"
+                },
+                "user_name": {
+                    "description": "用户名",
+                    "type": "string"
+                }
+            }
+        },
+        "model.FeedItem": {
+            "type": "object",
+            "properties": {
+                "source": {
+                    "description": "来源",
+                    "type": "object",
+                    "$ref": "#/definitions/model.FeedSource"
+                },
+                "target": {
+                    "description": "目标",
+                    "type": "object",
+                    "$ref": "#/definitions/model.FeedTarget"
+                },
+                "target_type": {
+                    "description": "目标类型\narticle, topic, member, comment",
+                    "type": "string"
+                }
+            }
+        },
+        "model.FeedResp": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.FeedItem"
+                    }
+                },
+                "paging": {
+                    "type": "object",
+                    "$ref": "#/definitions/model.Paging"
+                }
+            }
+        },
+        "model.FeedSource": {
+            "type": "object",
+            "properties": {
+                "action_text": {
+                    "description": "文字内容\n例如：编辑了文章，收藏了文章，关注了用户",
+                    "type": "string"
+                },
+                "action_time": {
+                    "description": "时间",
+                    "type": "integer"
+                },
+                "action_type": {
+                    "description": "类型\nMEMBER_CREATE_TOPIC  创建话题\nMEMBER_CREATE_DISCUSS 发布讨论\nMEMBER_CREATE_ARTICLE 发布文章\nMEMBER_CREATE_REVISE  发布补充\nMEMBER_FOLLOW_TOPIC  关注话题\nMEMBER_FOLLOW_MEMBER 关注用户\nMEMBER_LIKE_ARTICLE  点赞文章\nMEMBER_LIKE_REVISE 点赞补充\nMEMBER_LIKE_DISCUSS 点赞讨论\nMEMBER_FAV_ARTICLE  收藏文章\nMEMBER_FAV_TOPIC 收藏话题",
+                    "type": "string"
+                },
+                "actor": {
+                    "description": "动作发起者",
+                    "type": "object",
+                    "$ref": "#/definitions/model.Actor"
+                }
+            }
+        },
+        "model.FeedTarget": {
+            "type": "object",
+            "properties": {
+                "article": {
+                    "description": "文章",
+                    "type": "object",
+                    "$ref": "#/definitions/model.TargetArticle"
+                },
+                "comment": {
+                    "description": "评论",
+                    "type": "object",
+                    "$ref": "#/definitions/model.TargetComment"
+                },
+                "discussion": {
+                    "description": "讨论",
+                    "type": "object",
+                    "$ref": "#/definitions/model.TargetDiscuss"
+                },
+                "id": {
+                    "description": "ID",
+                    "type": "string"
+                },
+                "member": {
+                    "description": "用户",
+                    "type": "object",
+                    "$ref": "#/definitions/model.MemberInfo"
+                },
+                "revise": {
+                    "description": "补充",
+                    "type": "object",
+                    "$ref": "#/definitions/model.TargetRevise"
+                },
+                "topic": {
+                    "description": "话题",
+                    "type": "object",
+                    "$ref": "#/definitions/model.TargetTopic"
+                },
+                "type": {
+                    "description": "类型: article,comment,account,topic",
+                    "type": "string"
+                }
+            }
+        },
+        "model.MemberInfo": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "description": "头像",
+                    "type": "string"
+                },
+                "gender": {
+                    "description": "性别 1为男， 2为女",
+                    "type": "integer"
+                },
+                "id": {
+                    "description": "ID",
+                    "type": "string",
+                    "format": "int64"
+                },
+                "id_cert": {
+                    "description": "是否身份认证",
+                    "type": "boolean"
+                },
+                "introduction": {
+                    "description": "自我介绍",
+                    "type": "string"
+                },
+                "is_org": {
+                    "description": "是否机构用户",
+                    "type": "boolean"
+                },
+                "is_vip": {
+                    "description": "是否VIP",
+                    "type": "boolean"
+                },
+                "location": {
+                    "description": "所在地区值",
+                    "type": "integer"
+                },
+                "location_string": {
+                    "description": "所在地区名，地区是层级结构，这里将国家、州/省、市、区全部获取出来",
+                    "type": "string"
+                },
+                "stat": {
+                    "description": "状态",
+                    "type": "object",
+                    "$ref": "#/definitions/model.MemberInfoStat"
+                },
+                "user_name": {
+                    "description": "用户名",
+                    "type": "string",
+                    "format": "user_name"
+                },
+                "work_cert": {
+                    "description": "是否工作认证",
+                    "type": "boolean"
+                }
+            }
+        },
+        "model.MemberInfoStat": {
+            "type": "object",
+            "properties": {
+                "article_count": {
+                    "description": "文章数",
+                    "type": "integer"
+                },
+                "discussion_count": {
+                    "description": "讨论数",
+                    "type": "integer"
+                },
+                "fans_count": {
+                    "description": "粉丝数",
+                    "type": "integer"
+                },
+                "following_count": {
+                    "description": "关注数",
+                    "type": "integer"
+                },
+                "is_follow": {
+                    "description": "是否关注",
+                    "type": "boolean"
+                },
+                "topic_count": {
+                    "description": "话题数",
+                    "type": "integer"
+                }
+            }
+        },
+        "model.Paging": {
+            "type": "object",
+            "properties": {
+                "is_end": {
+                    "description": "是否结束",
+                    "type": "boolean"
+                },
+                "next": {
+                    "description": "下一页",
+                    "type": "string"
+                },
+                "prev": {
+                    "description": "上一页",
+                    "type": "string"
+                }
+            }
+        },
+        "model.TargetArticle": {
+            "type": "object",
+            "properties": {
+                "comment_count": {
+                    "description": "评论数",
+                    "type": "integer"
+                },
+                "creator": {
+                    "type": "object",
+                    "$ref": "#/definitions/model.Creator"
+                },
+                "dislike_count": {
+                    "description": "反对数",
+                    "type": "integer"
+                },
+                "excerpt": {
+                    "description": "内容",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID",
+                    "type": "string"
+                },
+                "images": {
+                    "description": "图片",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "like_count": {
+                    "description": "喜欢数",
+                    "type": "integer"
+                },
+                "revise_count": {
+                    "description": "补充个数",
+                    "type": "integer"
+                },
+                "title": {
+                    "description": "文章标题",
+                    "type": "string"
+                }
+            }
+        },
+        "model.TargetComment": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "description": "发布日期",
+                    "type": "integer"
+                },
+                "excerpt": {
+                    "description": "内容",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID",
+                    "type": "string"
+                },
+                "resource_id": {
+                    "description": "资源ID\n表示话题、文章、讨论、评论的ID",
+                    "type": "string"
+                },
+                "target": {
+                    "description": "对象\n这是一个interface，包含比较全的对面具体信息，例如文章、话题等\n业务处理判断主要根据这个对象来",
+                    "type": "object"
+                },
+                "type": {
+                    "description": "类型\nrevise 补充\narticle 文章\ndiscussion 话题讨论\ncomment 评论",
+                    "type": "string"
+                }
+            }
+        },
+        "model.TargetDiscuss": {
+            "type": "object",
+            "properties": {
+                "comment_count": {
+                    "description": "评论数",
+                    "type": "integer"
+                },
+                "creator": {
+                    "type": "object",
+                    "$ref": "#/definitions/model.Creator"
+                },
+                "dislike_count": {
+                    "description": "反对数",
+                    "type": "integer"
+                },
+                "excerpt": {
+                    "description": "评论内容",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID",
+                    "type": "string"
+                },
+                "images": {
+                    "description": "图片",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "like_count": {
+                    "description": "喜欢数",
+                    "type": "integer"
+                },
+                "title": {
+                    "description": "标题",
+                    "type": "string"
+                }
+            }
+        },
+        "model.TargetRevise": {
+            "type": "object",
+            "properties": {
+                "comment_count": {
+                    "description": "评论数",
+                    "type": "integer"
+                },
+                "creator": {
+                    "type": "object",
+                    "$ref": "#/definitions/model.Creator"
+                },
+                "dislike_count": {
+                    "description": "反对数",
+                    "type": "integer"
+                },
+                "excerpt": {
+                    "description": "评论内容",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID",
+                    "type": "string"
+                },
+                "images": {
+                    "description": "图片",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "like_count": {
+                    "description": "喜欢数",
+                    "type": "integer"
+                },
+                "title": {
+                    "description": "标题",
+                    "type": "string"
+                }
+            }
+        },
+        "model.TargetTopic": {
+            "type": "object",
+            "properties": {
+                "article_count": {
+                    "description": "成员数",
+                    "type": "integer"
+                },
+                "avatar": {
+                    "description": "头像\n必须为URL",
+                    "type": "string"
+                },
+                "creator": {
+                    "type": "object",
+                    "$ref": "#/definitions/model.Creator"
+                },
+                "discussion_count": {
+                    "description": "讨论数",
+                    "type": "integer"
+                },
+                "id": {
+                    "description": "ID",
+                    "type": "string"
+                },
+                "introduction": {
+                    "description": "简介",
+                    "type": "string"
+                },
+                "member_count": {
+                    "description": "成员数",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "话题名",
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
