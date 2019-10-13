@@ -73,6 +73,8 @@ github.com/golang/protobuf/ptypes
 github.com/golang/protobuf/ptypes/any
 github.com/golang/protobuf/ptypes/duration
 github.com/golang/protobuf/ptypes/timestamp
+# github.com/google/go-querystring v1.0.0
+github.com/google/go-querystring/query
 # github.com/gopherjs/gopherjs v0.0.0-20181017120253-0766667cb4d1
 github.com/gopherjs/gopherjs/js
 # github.com/h2non/parth v0.0.0-20190131123155-b4df798d6542
@@ -93,6 +95,8 @@ github.com/jtolds/gls
 github.com/konsorten/go-windows-terminal-sequences
 # github.com/leodido/go-urn v1.1.0
 github.com/leodido/go-urn
+# github.com/levigross/grequests v0.0.0-20190908174114-253788527a1a
+github.com/levigross/grequests
 # github.com/logrusorgru/aurora v0.0.0-20181002194514-a7b3b318ed4e
 github.com/logrusorgru/aurora
 # github.com/mailru/easyjson v0.0.0-20180823135443-60711f1a8329

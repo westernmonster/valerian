@@ -8,7 +8,6 @@ import (
 	"valerian/library/cache/memcache"
 	"valerian/library/conf"
 	"valerian/library/database/sqalx"
-	"valerian/library/jpush"
 	"valerian/library/log"
 	"valerian/library/mq"
 	"valerian/library/naming/discovery"
@@ -40,7 +39,6 @@ type Config struct {
 	Auth      *auth.Config
 	Memcache  *Memcache
 	Discovery *discovery.Config
-	JPush     *jpush.Config
 
 	AccountRPC *warden.ClientConfig
 	TopicRPC   *warden.ClientConfig

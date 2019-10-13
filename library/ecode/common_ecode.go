@@ -112,6 +112,7 @@ var (
 	DiscussionFileNotExist         = New(10081) // 未找到该文件
 	ReviseNotExist                 = New(10082) // 补充不存在
 	ReviseFileNotExist             = New(10083) // 补充文件不存在
+	CommentNotExist                = New(10084) // 评论不存在
 
 	TagNotExist      = add(20000) // Tag 不存在
 	ConfigIdsIsEmpty = add(20001) // ConfigIds 不存在

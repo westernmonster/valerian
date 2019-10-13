@@ -29,6 +29,7 @@
     - topic-feed 1312
     - account-feed 1313
     - message 1314
+    - comment 1315
   * interface 4
     - account  1401
     - article 1402
@@ -49,3 +50,5 @@
     - topic 1417
     - valcode 1418
     - like 1419
+    - search 1420
+    - comment 1421

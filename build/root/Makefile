@@ -429,3 +429,14 @@ push-service-message:
 	docker push registry.cn-hangzhou.aliyuncs.com/valerian/service-message:${DOCKER_TAG}
 deploy-service-message:
 	helm upgrade --install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/service-message:${DOCKER_TAG} --set global.name=service-message --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=service.message --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=16e51e5cea0811e98a140a58ac14011e  --set env.treeId=1314 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc service-message-uat ./build/k8s
+
+service-comment: build-service-comment docker-service-comment push-service-comment deploy-service-comment
+build-service-comment:
+	go env -w GOPROXY=https://goproxy.cn,direct
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/service/comment/cmd/cmd"   app/service/comment/cmd/main.go
+docker-service-comment:
+	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/service-comment:${DOCKER_TAG} ./app/service/comment/cmd/
+push-service-comment:
+	docker push registry.cn-hangzhou.aliyuncs.com/valerian/service-comment:${DOCKER_TAG}
+deploy-service-comment:
+	helm upgrade --install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/service-comment:${DOCKER_TAG} --set global.name=service-comment --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=service.comment --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=b596198aedfc11e986590a58ac140094  --set env.treeId=1315 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc service-comment-uat ./build/k8s

@@ -10,7 +10,6 @@ replace (
 )
 
 require (
-	github.com/Azure/azure-sdk-for-go v21.1.0+incompatible
 	github.com/BurntSushi/toml v0.3.1
 	github.com/PuerkitoBio/goquery v1.5.0
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
@@ -30,6 +29,7 @@ require (
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/kylelemons/godebug v1.1.0 // indirect
 	github.com/leodido/go-urn v1.1.0 // indirect
+	github.com/levigross/grequests v0.0.0-20190908174114-253788527a1a
 	github.com/mattn/go-sqlite3 v1.11.0 // indirect
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
 	github.com/montanaflynn/stats v0.5.0

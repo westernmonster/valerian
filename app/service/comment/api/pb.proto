@@ -1,0 +1,64 @@
+syntax = "proto3";
+package service.comment;
+option go_package = "api";
+
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+// EmptyStruct 空的message，对应真实service只返回error，没有具体返回值
+message EmptyStruct {
+}
+
+message Creator {
+    int64 ID = 1 [(gogoproto.jsontag) = "id"];
+
+    string  UserName = 2 [(gogoproto.jsontag) = "user_name"];
+
+    string Avatar   = 3 [(gogoproto.jsontag) = "avatar"];
+
+    oneof Introduction {
+        string  IntroductionValue = 4 [(gogoproto.jsontag) = "introduction"] ;
+    }
+}
+
+message CommentInfo {
+    int64 ID = 1 [(gogoproto.jsontag) = "id"];
+
+    string  Content = 2 [(gogoproto.jsontag) = "content"];
+
+    int64 OwnerID = 3 [(gogoproto.jsontag) = "owner_id"];
+
+    int64 ResourceID = 4 [(gogoproto.jsontag) = "resource_id"];
+
+    bool Featured = 5 [(gogoproto.jsontag) = "featured"];
+
+    bool Deleted = 6 [(gogoproto.jsontag) = "deleted"];
+
+    Creator  Creator  = 7 [(gogoproto.jsontag) = "creator"];
+
+    // unix timestamp
+    int64 CreatedAt = 8 [(gogoproto.jsontag) = "created_at"];
+    // unix timestamp
+    int64 UpdatedAt = 9 [(gogoproto.jsontag) = "updated_at"];
+
+    CommentStat  Stat = 10 [(gogoproto.jsontag) = "stat"];
+}
+
+message CommentStat {
+    int32 LikeCount = 1 [(gogoproto.jsontag) = "like_count"];
+    int32 DislikeCount = 2 [(gogoproto.jsontag) = "dislike_count"];
+    int32 ChildrenCount = 3 [(gogoproto.jsontag) = "children_count"];
+}
+
+
+message IDReq {
+    int64 ID = 1 [(gogoproto.jsontag) = "id"];
+}
+
+service Comment {
+    rpc GetCommentInfo(IDReq) returns (CommentInfo);
+}
+
+
+
+
