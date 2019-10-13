@@ -11,10 +11,12 @@ import (
 )
 
 type IDao interface {
+	GetCommentsPaged(c context.Context, node sqalx.Node, resourceID int64, targetType string, limit, offset int) (items []*model.Comment, err error)
 	GetCommentByID(c context.Context, node sqalx.Node, id int64) (item *model.Comment, err error)
 	AddComment(c context.Context, node sqalx.Node, item *model.Comment) (err error)
 	UpdateComment(c context.Context, node sqalx.Node, item *model.Comment) (err error)
 	DelComment(c context.Context, node sqalx.Node, id int64) (err error)
+	GetAllChildrenComments(c context.Context, node sqalx.Node, resourceID int64) (items []*model.Comment, err error)
 
 	GetCommentStatByID(c context.Context, node sqalx.Node, commentID int64) (item *model.CommentStat, err error)
 	AddCommentStat(c context.Context, node sqalx.Node, item *model.CommentStat) (err error)
@@ -29,6 +31,8 @@ type IDao interface {
 	GetArticle(c context.Context, id int64) (info *article.ArticleInfo, err error)
 	GetRevise(c context.Context, id int64) (info *article.ReviseInfo, err error)
 	GetDiscussion(c context.Context, id int64) (info *discuss.DiscussionInfo, err error)
+	IsLike(c context.Context, aid, targetID int64, targetType string) (isLike bool, err error)
+	IsDislike(c context.Context, aid, targetID int64, targetType string) (isLike bool, err error)
 
 	Ping(c context.Context) (err error)
 	Close()

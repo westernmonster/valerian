@@ -13,12 +13,19 @@ type CommentItem struct {
 	CreatedAt int64 `json:"created_at"`
 	// 发布人
 	Creator *CommentCreator `json:"creator"`
+
+	// 是否点赞
+	Like bool `json:"like"`
+	// 是否反对
+	Dislike bool `json:"dislike"`
 	// 喜欢数
 	LikeCount int `json:"like_count"`
+	// 喜欢数
+	DislikeCount int `json:"dislike_count"`
 	// 子评论数
 	ChildCommentsCount int `json:"child_comments_count"`
 	// 子评论
-	ChildComments []*ChildCommentItem `json:"child_comments"`
+	ChildComments []*ChildCommentItem `json:"child_comments,omitempty"`
 }
 
 type ChildCommentItem struct {
@@ -34,8 +41,16 @@ type ChildCommentItem struct {
 	CreatedAt int64 `json:"created_at"`
 	// 发布人
 	Creator *CommentCreator `json:"creator"`
+
+	// 是否点赞
+	Like bool `json:"like"`
+	// 是否反对
+	Dislike bool `json:"dislike"`
+
 	// 喜欢数
 	LikeCount int `json:"like_count"`
+	// 喜欢数
+	DislikeCount int `json:"dislike_count"`
 
 	// 被回复人
 	ReplyTo *CommentCreator `json:"reply_to"`

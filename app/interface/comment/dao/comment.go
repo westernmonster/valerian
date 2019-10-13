@@ -9,6 +9,26 @@ import (
 	"valerian/library/log"
 )
 
+func (p *Dao) GetCommentsPaged(c context.Context, node sqalx.Node, resourceID int64, targetType string, limit, offset int) (items []*model.Comment, err error) {
+	items = make([]*model.Comment, 0)
+	sqlSelect := "SELECT a.* FROM comments a WHERE a.resource_id=? AND target_type=? ORDER BY a.featured DESC,a.id DESC limit ?,?"
+
+	if err = node.SelectContext(c, &items, sqlSelect, resourceID, targetType, offset, limit); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetCommentsPaged err(%+v) resource_id(%d) target_type(%s) limit(%d) offset(%d)", err, resourceID, targetType, limit, offset))
+	}
+	return
+}
+
+func (p *Dao) GetAllChildrenComments(c context.Context, node sqalx.Node, resourceID int64) (items []*model.Comment, err error) {
+	sqlSelect := "SELECT a.* FROM comments a WHERE a.resource_id=? AND target_type='comment' ORDER BY a.id DESC"
+
+	if err = node.SelectContext(c, &items, sqlSelect, resourceID); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetAllChildrenComments err(%+v), resource_id(%+v)", err, resourceID))
+		return
+	}
+	return
+}
+
 func (p *Dao) GetCommentByID(c context.Context, node sqalx.Node, id int64) (item *model.Comment, err error) {
 	item = new(model.Comment)
 	sqlSelect := "SELECT a.* FROM comments a WHERE a.id=? "

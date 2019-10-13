@@ -41,6 +41,7 @@ type Config struct {
 	DiscussRPC  *warden.ClientConfig
 	TopicRPC    *warden.ClientConfig
 	RelationRPC *warden.ClientConfig
+	LikeRPC     *warden.ClientConfig
 	ArticleRPC  *warden.ClientConfig
 }
 
