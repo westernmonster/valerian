@@ -222,12 +222,18 @@ func (p *Service) GetRevise(c context.Context, reviseID int64) (resp *model.Revi
 		return
 	}
 
+	var article *model.Article
+	if article, err = p.getArticle(c, p.d.DB(), data.ArticleID); err != nil {
+		return
+	}
+
 	var account *account.BaseInfoReply
 	if account, err = p.d.GetAccountBaseInfo(c, data.CreatedBy); err != nil {
 		return
 	}
 	resp = &model.ReviseDetailResp{
 		ID:        data.ID,
+		Title:     article.Title,
 		ArticleID: data.ArticleID,
 		Content:   data.Content,
 	}

@@ -82,8 +82,9 @@ type Actor struct {
 }
 
 type NotificationResp struct {
-	Items  []*MessageItem `json:"items"`
-	Paging *Paging        `json:"paging"`
+	Items       []*MessageItem `json:"items"`
+	Paging      *Paging        `json:"paging"`
+	UnreadCount int            `json:"unread_count"`
 }
 
 type Paging struct {
