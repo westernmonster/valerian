@@ -246,6 +246,18 @@ push-interface-feed:
 deploy-interface-feed:
 	helm upgrade --install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/interface-feed:${DOCKER_TAG} --set global.name=interface-feed --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=interface.feed --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=7f5850a8da6011e9884c0a58ac14008b  --set env.treeId=1408 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc interface-feed-uat ./build/k8s
 
+interface-comment: build-interface-comment docker-interface-comment push-interface-comment deploy-interface-comment
+
+build-interface-comment:
+	go env -w GOPROXY=https://goproxy.cn,direct
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/interface/comment/cmd/cmd"   app/interface/comment/cmd/main.go
+docker-interface-comment:
+	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/interface-comment:${DOCKER_TAG} ./app/interface/comment/cmd/
+push-interface-comment:
+	docker push registry.cn-hangzhou.aliyuncs.com/valerian/interface-comment:${DOCKER_TAG}
+deploy-interface-comment:
+	helm upgrade --install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/interface-comment:${DOCKER_TAG} --set global.name=interface-comment --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=interface.comment --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=0adcc057edfd11e986590a58ac140094  --set env.treeId=1421 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc interface-comment-uat ./build/k8s
+
 
 admin-config: build-admin-config docker-admin-config push-admin-config deploy-admin-config
 

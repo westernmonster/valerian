@@ -214,9 +214,39 @@ func (p *Service) AddComment(c context.Context, arg *model.ArgAddComment) (id in
 
 	id = item.ID
 
-	p.addCache(func() {
-		// p.onCommentAdded(context.Background(), item.ID, aid, time.Now().Unix())
-	})
+	return
+}
+
+func (p *Service) sendNotify(c context.Context, node sqalx.Node, resourceID int64, arg *model.ArgAddComment) (err error) {
+	switch arg.TargetType {
+	case model.TargetTypeArticle:
+		p.addCache(func() {
+			// p.onArtcileCommented()
+		})
+
+		break
+	case model.TargetTypeRevise:
+		if err = p.d.IncrReviseStat(c, node, &model.ReviseStat{ReviseID: arg.TargetID, CommentCount: 1}); err != nil {
+			return
+		}
+		p.addCache(func() {
+			// p.onReviseCommented()
+		})
+		break
+	case model.TargetTypeDiscussion:
+		if err = p.d.IncrDiscussionStat(c, node, &model.DiscussionStat{DiscussionID: arg.TargetID, CommentCount: 1}); err != nil {
+			return
+		}
+		p.addCache(func() {
+			// p.onReviseCommented()
+		})
+		break
+	case model.TargetTypeComment:
+		p.addCache(func() {
+			// p.onCommentReplied()
+		})
+		break
+	}
 
 	return
 }
@@ -241,6 +271,7 @@ func (p *Service) incrStat(c context.Context, node sqalx.Node, resourceID int64,
 		if err = p.d.IncrArticleStat(c, node, &model.ArticleStat{ArticleID: arg.TargetID, CommentCount: 1}); err != nil {
 			return
 		}
+
 		break
 	case model.TargetTypeRevise:
 		if err = p.d.IncrReviseStat(c, node, &model.ReviseStat{ReviseID: arg.TargetID, CommentCount: 1}); err != nil {
@@ -258,7 +289,7 @@ func (p *Service) incrStat(c context.Context, node sqalx.Node, resourceID int64,
 
 }
 
-func (p *Service) DelComment(c context.Context, node sqalx.Node, commentID int64) (err error) {
+func (p *Service) DelComment(c context.Context, commentID int64) (err error) {
 	// 因为被删除评论也会显示，所以不做其他处理
 	return p.d.DelComment(c, p.d.DB(), commentID)
 }

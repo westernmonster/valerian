@@ -1,6 +1,9 @@
 package http
 
 import (
+	"strconv"
+	"valerian/app/interface/comment/model"
+	"valerian/library/ecode"
 	"valerian/library/net/http/mars"
 )
 
@@ -22,6 +25,39 @@ import (
 // @Failure 500 "服务器端错误"
 // @Router /comment/list/comments [get]
 func commentList(c *mars.Context) {
+	var (
+		id     int64
+		err    error
+		offset int
+		limit  int
+	)
+
+	params := c.Request.Form
+
+	if offset, err = strconv.Atoi(params.Get("offset")); err != nil {
+		offset = 0
+	} else if offset < 0 {
+		offset = 0
+	}
+
+	if limit, err = strconv.Atoi(params.Get("limit")); err != nil {
+		limit = 10
+	} else if limit < 0 {
+		limit = 10
+	}
+
+	if id, err = strconv.ParseInt(params.Get("resource_id"), 10, 64); err != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+
+	ctype := params.Get("type")
+	if !model.IsValidTargetType(ctype) {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+
+	c.JSON(srv.GetCommentsPaged(c, id, ctype, limit, offset))
 }
 
 // @Summary 新增评论
@@ -39,6 +75,21 @@ func commentList(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /comment/add [post]
 func addComment(c *mars.Context) {
+	arg := new(model.ArgAddComment)
+	if e := c.Bind(arg); e != nil {
+		return
+	}
+
+	if e := arg.Validate(); e != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+
+	if id, err := srv.AddComment(c, arg); err != nil {
+		c.JSON(nil, err)
+	} else {
+		c.JSON(strconv.FormatInt(id, 10), err)
+	}
 }
 
 // @Summary 删除评论
@@ -56,4 +107,16 @@ func addComment(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /comment/del [post]
 func delComment(c *mars.Context) {
+	arg := new(model.ArgDelete)
+	if e := c.Bind(arg); e != nil {
+		return
+	}
+
+	if e := arg.Validate(); e != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+
+	c.JSON(nil, srv.DelComment(c, arg.ID))
+
 }

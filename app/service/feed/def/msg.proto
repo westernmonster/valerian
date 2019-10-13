@@ -185,21 +185,26 @@ message MsgCommentLiked {
 
 message MsgArticleCommented {
     int64 CommentID = 1 [(gogoproto.jsontag) = "comment_id"] ;
-    int64 ArticleID = 1 [(gogoproto.jsontag) = "article_id"] ;
     int64 ActorID = 2 [(gogoproto.jsontag) = "actor_id"] ;
     int64 ActionTime = 4 [(gogoproto.jsontag) = "action_time"] ;
 }
 
 message MsgReviseCommented {
     int64 CommentID = 1 [(gogoproto.jsontag) = "comment_id"] ;
-    int64 ReviseID = 1 [(gogoproto.jsontag) = "revise_id"] ;
     int64 ActorID = 2 [(gogoproto.jsontag) = "actor_id"] ;
     int64 ActionTime = 4 [(gogoproto.jsontag) = "action_time"] ;
 }
 
 message MsgDiscussionCommented {
     int64 CommentID = 1 [(gogoproto.jsontag) = "comment_id"] ;
-    int64 DiscussionID = 1 [(gogoproto.jsontag) = "discussion_id"] ;
     int64 ActorID = 2 [(gogoproto.jsontag) = "actor_id"] ;
     int64 ActionTime = 4 [(gogoproto.jsontag) = "action_time"] ;
 }
+
+message MsgCommentReplied {
+    int64 CommentID = 1 [(gogoproto.jsontag) = "comment_id"] ;
+    int64 ReplyCommentID = 1 [(gogoproto.jsontag) = "reply_comment_id"] ;
+    int64 ActorID = 2 [(gogoproto.jsontag) = "actor_id"] ;
+    int64 ActionTime = 4 [(gogoproto.jsontag) = "action_time"] ;
+}
+
