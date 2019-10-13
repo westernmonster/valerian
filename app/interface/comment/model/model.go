@@ -5,7 +5,6 @@ import "valerian/library/database/sqlx/types"
 type Comment struct {
 	ID         int64         `db:"id" json:"id,string"`                   // ID ID
 	Content    string        `db:"content" json:"content"`                // Content 内容
-	TargetType string        `db:"target_type" json:"target_type"`        // TargetType 目标类型
 	OwnerID    int64         `db:"owner_id" json:"owner_id,string"`       // OwnerID 资源ID (discussion, article, revise)
 	ResourceID int64         `db:"resource_id" json:"resource_id,string"` // ResourceID 所属对象ID (discussion, article, revise, comment)
 	Featured   types.BitBool `db:"featured" json:"featured"`              // Featured 是否精选

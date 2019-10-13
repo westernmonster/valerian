@@ -57,6 +57,7 @@ func (s *server) GetCommentInfo(ctx context.Context, req *api.IDReq) (*api.Comme
 	resp := &api.CommentInfo{
 		ID:         comment.ID,
 		Content:    comment.Content,
+		TargetType: comment.TargetType,
 		Deleted:    bool(comment.Deleted),
 		Featured:   bool(comment.Featured),
 		OwnerID:    comment.OwnerID,
