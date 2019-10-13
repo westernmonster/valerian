@@ -5,6 +5,8 @@ import (
 
 	"valerian/app/interface/comment/model"
 	account "valerian/app/service/account/api"
+	article "valerian/app/service/article/api"
+	discuss "valerian/app/service/discuss/api"
 	"valerian/library/database/sqalx"
 )
 
@@ -19,7 +21,14 @@ type IDao interface {
 	UpdateCommentStat(c context.Context, node sqalx.Node, item *model.CommentStat) (err error)
 	IncrCommentStat(c context.Context, node sqalx.Node, item *model.CommentStat) (err error)
 
+	IncrReviseStat(c context.Context, node sqalx.Node, item *model.ReviseStat) (err error)
+	IncrArticleStat(c context.Context, node sqalx.Node, item *model.ArticleStat) (err error)
+	IncrDiscussionStat(c context.Context, node sqalx.Node, item *model.DiscussionStat) (err error)
+
 	GetAccountBaseInfo(c context.Context, aid int64) (info *account.BaseInfoReply, err error)
+	GetArticle(c context.Context, id int64) (info *article.ArticleInfo, err error)
+	GetRevise(c context.Context, id int64) (info *article.ReviseInfo, err error)
+	GetDiscussion(c context.Context, id int64) (info *discuss.DiscussionInfo, err error)
 
 	Ping(c context.Context) (err error)
 	Close()

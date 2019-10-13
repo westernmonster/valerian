@@ -25,10 +25,11 @@ func (p *Dao) GetCommentByID(c context.Context, node sqalx.Node, id int64) (item
 	return
 }
 
+// Insert insert a new record
 func (p *Dao) AddComment(c context.Context, node sqalx.Node, item *model.Comment) (err error) {
-	sqlInsert := "INSERT INTO comments( id,content,owner_id,resource_id,featured,deleted,created_by,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?,?,?)"
+	sqlInsert := "INSERT INTO comments( id,content,target_type,owner_id,resource_id,featured,deleted,reply_to,created_by,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?,?,?,?,?)"
 
-	if _, err = node.ExecContext(c, sqlInsert, item.ID, item.Content, item.OwnerID, item.ResourceID, item.Featured, item.Deleted, item.CreatedBy, item.CreatedAt, item.UpdatedAt); err != nil {
+	if _, err = node.ExecContext(c, sqlInsert, item.ID, item.Content, item.TargetType, item.OwnerID, item.ResourceID, item.Featured, item.Deleted, item.ReplyTo, item.CreatedBy, item.CreatedAt, item.UpdatedAt); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.AddComments err(%+v), item(%+v)", err, item))
 		return
 	}
@@ -38,9 +39,9 @@ func (p *Dao) AddComment(c context.Context, node sqalx.Node, item *model.Comment
 
 // Update update a exist record
 func (p *Dao) UpdateComment(c context.Context, node sqalx.Node, item *model.Comment) (err error) {
-	sqlUpdate := "UPDATE comments SET content=?,owner_id=?,resource_id=?,featured=?,created_by=?,updated_at=? WHERE id=?"
+	sqlUpdate := "UPDATE comments SET content=?,target_type=?,owner_id=?,resource_id=?,featured=?,reply_to=?,created_by=?,updated_at=? WHERE id=?"
 
-	_, err = node.ExecContext(c, sqlUpdate, item.Content, item.OwnerID, item.ResourceID, item.Featured, item.CreatedBy, item.UpdatedAt, item.ID)
+	_, err = node.ExecContext(c, sqlUpdate, item.Content, item.TargetType, item.OwnerID, item.ResourceID, item.Featured, item.ReplyTo, item.CreatedBy, item.UpdatedAt, item.ID)
 	if err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.UpdateComments err(%+v), item(%+v)", err, item))
 		return
