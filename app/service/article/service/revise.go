@@ -13,7 +13,17 @@ func (p *Service) GetReviseStat(c context.Context, reviseID int64) (item *model.
 }
 
 func (p *Service) GetRevise(c context.Context, reviseID int64) (item *model.Revise, err error) {
-	return p.getRevise(c, p.d.DB(), reviseID)
+	if item, err = p.getRevise(c, p.d.DB(), reviseID); err != nil {
+		return
+	}
+
+	var article *model.Article
+	if article, err = p.getArticle(c, p.d.DB(), item.ArticleID); err != nil {
+		return
+	}
+
+	item.Title = article.Title
+	return
 }
 
 func (p *Service) getRevise(c context.Context, node sqalx.Node, reviseID int64) (item *model.Revise, err error) {
