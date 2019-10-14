@@ -23,6 +23,7 @@ type FeedItem struct {
 }
 
 type FeedSource struct {
+	Actor *Actor `json:"actor,omitempty"`
 	// 时间
 	ActionTime int64 `json:"action_time"`
 	// 文字内容

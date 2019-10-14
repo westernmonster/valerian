@@ -252,6 +252,18 @@ func (p *Service) GetMemberActivitiesPaged(c context.Context, aid int64, limit, 
 			},
 		}
 
+		var account *model.Account
+		if account, err = p.getAccountByID(c, v.AccountID); err != nil {
+			return
+		}
+
+		item.Source.Actor = &model.Actor{
+			ID:           account.ID,
+			Avatar:       account.Avatar,
+			Name:         account.UserName,
+			Introduction: account.Introduction,
+		}
+
 		switch v.TargetType {
 
 		case model.TargetTypeArticle:
