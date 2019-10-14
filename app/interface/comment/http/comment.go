@@ -120,3 +120,31 @@ func delComment(c *mars.Context) {
 	c.JSON(nil, srv.DelComment(c, arg.ID))
 
 }
+
+// @Summary 获取单个评论
+// @Description 如果当前评论是子评论，则获取父级评论并将起所有子评论返回
+// @Tags comment
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param id query string true "ID"
+// @Success 200 "成功,返回comment_id"
+// @Failure 400 "验证请求失败"
+// @Failure 401 "登录验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /comment/get [get]
+func getComment(c *mars.Context) {
+	idStr := c.Request.Form.Get("id")
+	if id, err := strconv.ParseInt(idStr, 10, 64); err != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	} else if id == 0 {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	} else {
+		c.JSON(srv.GetComment(c, id))
+	}
+
+}

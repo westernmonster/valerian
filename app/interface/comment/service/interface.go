@@ -17,6 +17,7 @@ type IDao interface {
 	UpdateComment(c context.Context, node sqalx.Node, item *model.Comment) (err error)
 	DelComment(c context.Context, node sqalx.Node, id int64) (err error)
 	GetAllChildrenComments(c context.Context, node sqalx.Node, resourceID int64) (items []*model.Comment, err error)
+	GetChildrenComments(c context.Context, node sqalx.Node, resourceID int64, limit int) (items []*model.Comment, err error)
 
 	GetCommentStatByID(c context.Context, node sqalx.Node, commentID int64) (item *model.CommentStat, err error)
 	AddCommentStat(c context.Context, node sqalx.Node, item *model.CommentStat) (err error)

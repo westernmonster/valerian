@@ -1,5 +1,33 @@
 package model
 
+type CommentResp struct {
+	// ID
+	ID int64 `json:"id,string" swaggertype:"string"`
+	// 内容
+	Content string `json:"content"`
+	// 是否精选
+	Featured bool `json:"featured"`
+	// 是否删除
+	IsDelete bool `json:"is_delete"`
+	// 发布日期
+	CreatedAt int64 `json:"created_at"`
+	// 发布人
+	Creator *CommentCreator `json:"creator"`
+
+	// 是否点赞
+	Like bool `json:"like"`
+	// 是否反对
+	Dislike bool `json:"dislike"`
+	// 喜欢数
+	LikeCount int `json:"like_count"`
+	// 喜欢数
+	DislikeCount int `json:"dislike_count"`
+	// 子评论数
+	ChildCommentsCount int `json:"child_comments_count"`
+	// 子评论
+	ChildComments []*ChildCommentItem `json:"child_comments,omitempty"`
+}
+
 type CommentItem struct {
 	// ID
 	ID int64 `json:"id,string" swaggertype:"string"`

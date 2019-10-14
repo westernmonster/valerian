@@ -51,7 +51,7 @@ func (p *Service) GetCommentsPaged(c context.Context, resourceID int64, targetTy
 
 		if item.ChildCommentsCount > 0 {
 			children := make([]*model.Comment, 0)
-			if children, err = p.d.GetAllChildrenComments(c, p.d.DB(), v.ID); err != nil {
+			if children, err = p.d.GetChildrenComments(c, p.d.DB(), v.ID, 2); err != nil {
 				return
 			}
 
@@ -74,17 +74,32 @@ func (p *Service) GetCommentsPaged(c context.Context, resourceID int64, targetTy
 					return
 				}
 
-				var account *account.BaseInfoReply
-				if account, err = p.d.GetAccountBaseInfo(c, x.CreatedBy); err != nil {
+				var acc *account.BaseInfoReply
+				if acc, err = p.d.GetAccountBaseInfo(c, x.CreatedBy); err != nil {
 					return
 				}
 				child.Creator = &model.CommentCreator{
-					ID:       account.ID,
-					UserName: account.UserName,
-					Avatar:   account.Avatar,
+					ID:       acc.ID,
+					UserName: acc.UserName,
+					Avatar:   acc.Avatar,
 				}
-				intro := account.GetIntroductionValue()
+				intro := acc.GetIntroductionValue()
 				child.Creator.Introduction = &intro
+
+				if x.ReplyTo != nil {
+					var rto *account.BaseInfoReply
+					if rto, err = p.d.GetAccountBaseInfo(c, *x.ReplyTo); err != nil {
+						return
+					}
+					child.ReplyTo = &model.CommentCreator{
+						ID:       rto.ID,
+						UserName: rto.UserName,
+						Avatar:   rto.Avatar,
+					}
+					intro := rto.GetIntroductionValue()
+					child.ReplyTo.Introduction = &intro
+				}
+
 				item.ChildComments[j] = child
 			}
 		}
@@ -214,36 +229,32 @@ func (p *Service) AddComment(c context.Context, arg *model.ArgAddComment) (id in
 
 	id = item.ID
 
+	p.sendNotify(item.ResourceID, item.ID, aid, arg)
+
 	return
 }
 
-func (p *Service) sendNotify(c context.Context, node sqalx.Node, resourceID int64, arg *model.ArgAddComment) (err error) {
+func (p *Service) sendNotify(resourceID, commentID int64, aid int64, arg *model.ArgAddComment) (err error) {
 	switch arg.TargetType {
 	case model.TargetTypeArticle:
 		p.addCache(func() {
-			// p.onArtcileCommented()
+			p.onArticleCommented(context.Background(), commentID, aid, time.Now().Unix())
 		})
 
 		break
 	case model.TargetTypeRevise:
-		if err = p.d.IncrReviseStat(c, node, &model.ReviseStat{ReviseID: arg.TargetID, CommentCount: 1}); err != nil {
-			return
-		}
 		p.addCache(func() {
-			// p.onReviseCommented()
+			p.onReviseCommented(context.Background(), commentID, aid, time.Now().Unix())
 		})
 		break
 	case model.TargetTypeDiscussion:
-		if err = p.d.IncrDiscussionStat(c, node, &model.DiscussionStat{DiscussionID: arg.TargetID, CommentCount: 1}); err != nil {
-			return
-		}
 		p.addCache(func() {
-			// p.onReviseCommented()
+			p.onDiscussionCommented(context.Background(), commentID, aid, time.Now().Unix())
 		})
 		break
 	case model.TargetTypeComment:
 		p.addCache(func() {
-			// p.onCommentReplied()
+			p.onCommentReplied(context.Background(), commentID, arg.TargetID, aid, time.Now().Unix())
 		})
 		break
 	}
@@ -284,6 +295,120 @@ func (p *Service) incrStat(c context.Context, node sqalx.Node, resourceID int64,
 		}
 		break
 	}
+
+	return
+
+}
+
+func (p *Service) GetComment(c context.Context, commentID int64) (resp *model.CommentResp, err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+	var data *model.Comment
+	if data, err = p.getComment(c, p.d.DB(), commentID); err != nil {
+		return
+	}
+
+	if data.TargetType == model.TargetTypeComment {
+		if data, err = p.getComment(c, p.d.DB(), data.ResourceID); err != nil {
+			return
+		}
+	}
+
+	resp = &model.CommentResp{
+		ID:        data.ID,
+		Content:   data.Content,
+		Featured:  bool(data.Featured),
+		IsDelete:  bool(data.Deleted),
+		CreatedAt: data.CreatedAt,
+	}
+
+	var stat *model.CommentStat
+	if stat, err = p.d.GetCommentStatByID(c, p.d.DB(), data.ID); err != nil {
+		return
+	}
+
+	resp.LikeCount = stat.LikeCount
+	resp.DislikeCount = stat.DislikeCount
+	resp.ChildCommentsCount = stat.ChildrenCount
+
+	if resp.ChildCommentsCount > 0 {
+		children := make([]*model.Comment, 0)
+		if children, err = p.d.GetAllChildrenComments(c, p.d.DB(), data.ID); err != nil {
+			return
+		}
+
+		resp.ChildComments = make([]*model.ChildCommentItem, len(children))
+
+		for j, x := range children {
+			child := &model.ChildCommentItem{
+				ID:        x.ID,
+				Content:   x.Content,
+				Featured:  bool(x.Featured),
+				IsDelete:  bool(x.Deleted),
+				CreatedAt: x.CreatedAt,
+			}
+
+			if child.Like, err = p.d.IsLike(c, aid, x.ID, model.TargetTypeComment); err != nil {
+				return
+			}
+
+			if child.Dislike, err = p.d.IsDislike(c, aid, x.ID, model.TargetTypeComment); err != nil {
+				return
+			}
+
+			var acc *account.BaseInfoReply
+			if acc, err = p.d.GetAccountBaseInfo(c, x.CreatedBy); err != nil {
+				return
+			}
+			child.Creator = &model.CommentCreator{
+				ID:       acc.ID,
+				UserName: acc.UserName,
+				Avatar:   acc.Avatar,
+			}
+			intro := acc.GetIntroductionValue()
+			child.Creator.Introduction = &intro
+
+			if x.ReplyTo != nil {
+				var rto *account.BaseInfoReply
+				if rto, err = p.d.GetAccountBaseInfo(c, *x.ReplyTo); err != nil {
+					return
+				}
+				child.ReplyTo = &model.CommentCreator{
+					ID:       rto.ID,
+					UserName: rto.UserName,
+					Avatar:   rto.Avatar,
+				}
+				intro := rto.GetIntroductionValue()
+				child.ReplyTo.Introduction = &intro
+			}
+
+			resp.ChildComments[j] = child
+
+		}
+	}
+
+	if resp.Like, err = p.d.IsLike(c, aid, data.ID, model.TargetTypeComment); err != nil {
+		return
+	}
+
+	if resp.Dislike, err = p.d.IsDislike(c, aid, data.ID, model.TargetTypeComment); err != nil {
+		return
+	}
+
+	var account *account.BaseInfoReply
+	if account, err = p.d.GetAccountBaseInfo(c, data.CreatedBy); err != nil {
+		return
+	}
+	resp.Creator = &model.CommentCreator{
+		ID:       account.ID,
+		UserName: account.UserName,
+		Avatar:   account.Avatar,
+	}
+	intro := account.GetIntroductionValue()
+	resp.Creator.Introduction = &intro
 
 	return
 
