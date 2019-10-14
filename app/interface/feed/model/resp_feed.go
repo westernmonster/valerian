@@ -110,7 +110,8 @@ type Actor struct {
 	// 头像
 	Avatar string `json:"avatar"`
 	// 用户名
-	Name string `json:"name"`
+	Name         string  `json:"name"`
+	Introduction *string `json:"introduction"`
 }
 
 type FeedTarget struct {

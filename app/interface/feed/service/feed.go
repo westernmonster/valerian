@@ -133,6 +133,22 @@ func (p *Service) GetFeedPaged(c context.Context, limit, offset int) (resp *mode
 			},
 		}
 
+		var account *account.BaseInfoReply
+		if account, err = p.d.GetAccountBaseInfo(c, v.ActorID); err != nil {
+			return
+		} else if account == nil {
+			return nil, ecode.UserNotExist
+		}
+
+		item.Source.Actor = &model.Actor{
+			ID:     account.ID,
+			Avatar: account.Avatar,
+			Name:   account.UserName,
+		}
+
+		intro := account.GetIntroductionValue()
+		item.Source.Actor.Introduction = &intro
+
 		switch v.TargetType {
 
 		case model.TargetTypeArticle:
