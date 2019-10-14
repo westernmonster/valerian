@@ -78,6 +78,72 @@ func (p *Service) onReviseUpdated(m *stan.Msg) {
 	m.Ack()
 }
 
+func (p *Service) onReviseLiked(m *stan.Msg) {
+	var err error
+	info := new(def.MsgReviseLiked)
+	if err = info.Unmarshal(m.Data); err != nil {
+		log.Errorf("service.onReviseLiked Unmarshal failed %#v", err)
+		return
+	}
+
+	var revise *article.ReviseInfo
+	if revise, err = p.d.GetRevise(context.Background(), info.ReviseID); err != nil {
+		return
+	}
+
+	feed := &model.AccountFeed{
+		ID:         gid.NewID(),
+		AccountID:  info.ActorID,
+		ActionType: def.ActionTypeLikeRevise,
+		ActionTime: time.Now().Unix(),
+		ActionText: def.ActionTextLikeRevise,
+		TargetID:   revise.ID,
+		TargetType: def.TargetTypeRevise,
+		CreatedAt:  time.Now().Unix(),
+		UpdatedAt:  time.Now().Unix(),
+	}
+
+	if err = p.d.AddAccountFeed(context.Background(), p.d.DB(), feed); err != nil {
+		log.Errorf("service.onReviseLiked() failed %#v", err)
+		return
+	}
+
+	m.Ack()
+}
+
+func (p *Service) onReviseFaved(m *stan.Msg) {
+	var err error
+	info := new(def.MsgReviseFaved)
+	if err = info.Unmarshal(m.Data); err != nil {
+		log.Errorf("service.onReviseFaved Unmarshal failed %#v", err)
+		return
+	}
+
+	var revise *article.ReviseInfo
+	if revise, err = p.d.GetRevise(context.Background(), info.ReviseID); err != nil {
+		return
+	}
+
+	feed := &model.AccountFeed{
+		ID:         gid.NewID(),
+		AccountID:  info.ActorID,
+		ActionType: def.ActionTypeFavRevise,
+		ActionTime: time.Now().Unix(),
+		ActionText: def.ActionTextFavRevise,
+		TargetID:   revise.ID,
+		TargetType: def.TargetTypeRevise,
+		CreatedAt:  time.Now().Unix(),
+		UpdatedAt:  time.Now().Unix(),
+	}
+
+	if err = p.d.AddAccountFeed(context.Background(), p.d.DB(), feed); err != nil {
+		log.Errorf("service.onReviseFaved() failed %#v", err)
+		return
+	}
+
+	m.Ack()
+}
+
 func (p *Service) onReviseDeleted(m *stan.Msg) {
 	var err error
 	info := new(def.MsgReviseDeleted)
