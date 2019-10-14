@@ -33,9 +33,9 @@ func (p *Service) Like(c context.Context, arg *model.ArgLike) (err error) {
 		}
 		break
 	case model.TargetTypeComment:
-		// if _, err = p.d.GetTopic(c, arg.TargetID); err != nil {
-		// 	return
-		// }
+		if _, err = p.d.GetComment(c, arg.TargetID); err != nil {
+			return
+		}
 		break
 	}
 
