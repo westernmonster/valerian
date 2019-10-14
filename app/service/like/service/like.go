@@ -82,6 +82,11 @@ func (p *Service) Like(c context.Context, aid, targetID int64, targetType string
 			return
 		}
 		break
+	case model.TargetTypeComment:
+		if err = p.d.IncrCommentStat(c, tx, &model.CommentStat{LikeCount: 1}); err != nil {
+			return
+		}
+		break
 	}
 
 	if err = tx.Commit(); err != nil {
@@ -135,6 +140,11 @@ func (p *Service) CancelLike(c context.Context, aid, targetID int64, targetType 
 		break
 	case model.TargetTypeRevise:
 		if err = p.d.IncrReviseStat(c, tx, &model.ReviseStat{LikeCount: -1}); err != nil {
+			return
+		}
+		break
+	case model.TargetTypeComment:
+		if err = p.d.IncrCommentStat(c, tx, &model.CommentStat{LikeCount: -1}); err != nil {
 			return
 		}
 		break

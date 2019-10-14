@@ -39,6 +39,11 @@ type IDao interface {
 	UpdateReviseStat(c context.Context, node sqalx.Node, item *model.ReviseStat) (err error)
 	IncrReviseStat(c context.Context, node sqalx.Node, item *model.ReviseStat) (err error)
 
+	GetCommentStatByID(c context.Context, node sqalx.Node, commentID int64) (item *model.CommentStat, err error)
+	AddCommentStat(c context.Context, node sqalx.Node, item *model.CommentStat) (err error)
+	UpdateCommentStat(c context.Context, node sqalx.Node, item *model.CommentStat) (err error)
+	IncrCommentStat(c context.Context, node sqalx.Node, item *model.CommentStat) (err error)
+
 	Ping(c context.Context) (err error)
 	Close()
 	DB() sqalx.Node

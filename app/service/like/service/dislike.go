@@ -83,6 +83,11 @@ func (p *Service) Dislike(c context.Context, aid, targetID int64, targetType str
 			return
 		}
 		break
+	case model.TargetTypeComment:
+		if err = p.d.IncrCommentStat(c, tx, &model.CommentStat{DislikeCount: 1}); err != nil {
+			return
+		}
+		break
 	}
 
 	if err = tx.Commit(); err != nil {
@@ -135,6 +140,11 @@ func (p *Service) CancelDislike(c context.Context, aid, targetID int64, targetTy
 		break
 	case model.TargetTypeRevise:
 		if err = p.d.IncrReviseStat(c, tx, &model.ReviseStat{DislikeCount: -1}); err != nil {
+			return
+		}
+		break
+	case model.TargetTypeComment:
+		if err = p.d.IncrCommentStat(c, tx, &model.CommentStat{DislikeCount: -1}); err != nil {
 			return
 		}
 		break
