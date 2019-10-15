@@ -139,7 +139,7 @@ func (p *Service) AddRevise(c context.Context, arg *model.ArgAddRevise) (id int6
 		return
 	}
 
-	if err = p.d.IncrArticleStat(c, tx, &model.ArticleStat{ReviseCount: 1}); err != nil {
+	if err = p.d.IncrArticleStat(c, tx, &model.ArticleStat{ArticleID: item.ArticleID, ReviseCount: 1}); err != nil {
 		return
 	}
 

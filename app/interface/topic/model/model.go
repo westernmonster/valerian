@@ -111,3 +111,15 @@ type DiscussCategory struct {
 type TopicIDItem struct {
 	TopicID int64 `db:"topic_id" json:"topic_id,string"` // TopicID 话题ID
 }
+
+type AccountStat struct {
+	AccountID       int64 `db:"account_id" json:"account_id,string"`      // AccountID 用户ID
+	Following       int   `db:"following" json:"following"`               // Following 关注数
+	Fans            int   `db:"fans" json:"fans"`                         // Fans 粉丝数
+	ArticleCount    int   `db:"article_count" json:"article_count"`       // ArticleCount 文章数
+	DiscussionCount int   `db:"discussion_count" json:"discussion_count"` // DiscussionCount 讨论数
+	TopicCount      int   `db:"topic_count" json:"topic_count"`           // TopicCount 讨论数
+	Black           int   `db:"black" json:"black"`                       // Black 黑名单数
+	CreatedAt       int64 `db:"created_at" json:"created_at"`             // CreatedAt 创建时间
+	UpdatedAt       int64 `db:"updated_at" json:"updated_at"`             // UpdatedAt 更新时间
+}

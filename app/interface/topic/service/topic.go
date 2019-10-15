@@ -96,6 +96,10 @@ func (p *Service) CreateTopic(c context.Context, arg *model.ArgCreateTopic) (top
 		return
 	}
 
+	if err = p.d.IncrAccountStat(c, tx, &model.AccountStat{AccountID: item.CreatedBy, TopicCount: 1}); err != nil {
+		return
+	}
+
 	if err = tx.Commit(); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 		return
