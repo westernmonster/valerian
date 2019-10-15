@@ -93,6 +93,7 @@ type IDao interface {
 	GetTopicStatByID(c context.Context, node sqalx.Node, topicID int64) (item *model.TopicStat, err error)
 
 	IncrAccountStat(c context.Context, node sqalx.Node, item *model.AccountStat) (err error)
+	GetAccountStatByID(c context.Context, node sqalx.Node, aid int64) (item *model.AccountStat, err error)
 
 	GetFans(c context.Context, accountID int64, limit, offset int) (resp *relation.FansResp, err error)
 

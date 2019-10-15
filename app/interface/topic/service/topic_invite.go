@@ -21,51 +21,9 @@ func (p *Service) GetMemberFansList(c context.Context, topicID int64, query stri
 		err = ecode.AcquireAccountIDFailed
 		return
 	}
-	// resp = &model.TopicMemberFansResp{
-	// 	Items:  make([]*model.FollowItem, 0),
-	// 	Paging: &model.Paging{},
-	// }
-
-	// if resp.Items, err = p.d.GetFansPaged(c, p.d.DB(), aid, query, limit, offset); err != nil {
-	// 	return
-	// }
-
-	// param := url.Values{}
-	// param.Set("topic_id", strconv.FormatInt(topicID, 10))
-	// param.Set("query", query)
-	// param.Set("limit", strconv.Itoa(limit))
-	// param.Set("offset", strconv.Itoa(offset-limit))
-
-	// if resp.Paging.Prev, err = genURL("/api/v1/topic/list/member_fans", param); err != nil {
-	// 	return
-	// }
-	// param.Set("offset", strconv.Itoa(offset+limit))
-	// if resp.Paging.Next, err = genURL("/api/v1/topic/list/member_fans", param); err != nil {
-	// 	return
-	// }
-
-	// if len(resp.Items) < limit {
-	// 	resp.Paging.IsEnd = true
-	// 	resp.Paging.Next = ""
-	// }
-
-	// if offset == 0 {
-	// 	resp.Paging.Prev = ""
-	// }
-
-	// for _, v := range resp.Items {
-	// 	if v.IsMember, err = p.isTopicMember(c, p.d.DB(), v.ID, topicID); err != nil {
-	// 		return
-	// 	}
-
-	// 	if v.Invited, err = p.hasInvited(c, p.d.DB(), v.ID, topicID); err != nil {
-	// 		return
-	// 	}
-	// }
-
 	var data *relation.FansResp
-	return
 	if data, err = p.d.GetFans(c, aid, limit, offset); err != nil {
+		return
 	}
 
 	resp = &model.TopicMemberFansResp{
@@ -96,15 +54,21 @@ func (p *Service) GetMemberFansList(c context.Context, topicID int64, query stri
 			member.Gender = &gender
 		}
 
-		// TODO: 返回成员信息
-		// var stat *relation.StatInfo
-		// if stat, err = p.d.Stat(c, v.AccountID, v.AccountID); err != nil {
-		// 	return
-		// }
+		var stat *model.AccountStat
+		if stat, err = p.d.GetAccountStatByID(c, p.d.DB(), v.AccountID); err != nil {
+			return
+		}
 
-		// member.FansCount = int(stat.Fans)
-		// member.FollowingCount = int(stat.Following)
+		member.FansCount = int(stat.Fans)
+		member.FollowingCount = int(stat.Following)
 
+		if member.IsMember, err = p.isTopicMember(c, p.d.DB(), v.AccountID, topicID); err != nil {
+			return
+		}
+
+		if member.Invited, err = p.hasInvited(c, p.d.DB(), v.AccountID, topicID); err != nil {
+			return
+		}
 		resp.Items[i] = member
 	}
 

@@ -48,7 +48,7 @@ type FollowItem struct {
 	IsVIP bool `json:"is_vip" db:"is_vip"`
 
 	// 关注数
-	FollowCount int `json:"follow_count" db:"-"`
+	FollowingCount int `json:"following_count" db:"-"`
 
 	// 粉丝数
 	FansCount int `json:"fans_count"  db:"-"`
