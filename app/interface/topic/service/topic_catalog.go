@@ -19,51 +19,29 @@ type dicItem struct {
 }
 
 func (p *Service) GetCatalogsHierarchy(c context.Context, topicID int64) (items []*model.TopicLevel1Catalog, err error) {
-	var (
-		addCache = true
-	)
-
-	fmt.Println(111111)
-	if items, err = p.d.TopicCatalogCache(c, topicID); err != nil {
-		addCache = false
-	} else if items != nil {
-		return
-	}
-
-	if items, err = p.getCatalogHierarchyOfAll(c, p.d.DB(), topicID); err != nil {
-		return
-	}
-
-	fmt.Println(222222)
-	if addCache {
-		p.addCache(func() {
-			p.d.SetTopicCatalogCache(context.TODO(), topicID, items)
-		})
-	}
-
-	return
+	return p.getCatalogsHierarchy(c, p.d.DB(), topicID)
 }
 
 func (p *Service) getCatalogsHierarchy(c context.Context, node sqalx.Node, topicID int64) (items []*model.TopicLevel1Catalog, err error) {
-	var (
-		addCache = true
-	)
+	// var (
+	// 	addCache = true
+	// )
 
-	if items, err = p.d.TopicCatalogCache(c, topicID); err != nil {
-		addCache = false
-	} else if items != nil {
-		return
-	}
+	// if items, err = p.d.TopicCatalogCache(c, topicID); err != nil {
+	// 	addCache = false
+	// } else if items != nil {
+	// 	return
+	// }
 
 	if items, err = p.getCatalogHierarchyOfAll(c, node, topicID); err != nil {
 		return
 	}
 
-	if addCache {
-		p.addCache(func() {
-			p.d.SetTopicCatalogCache(context.TODO(), topicID, items)
-		})
-	}
+	// if addCache {
+	// 	p.addCache(func() {
+	// 		p.d.SetTopicCatalogCache(context.TODO(), topicID, items)
+	// 	})
+	// }
 
 	return
 }
