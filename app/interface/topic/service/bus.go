@@ -65,6 +65,25 @@ func (p *Service) onTopicFollowed(c context.Context, topicID, aid, actionTime in
 	return
 }
 
+func (p *Service) onTopicViewed(c context.Context, topicID, aid, actionTime int64) {
+	msg := &def.MsgTopicViewed{TopicID: topicID, ActorID: aid, ActionTime: actionTime}
+
+	var data []byte
+	var err error
+
+	if data, err = msg.Marshal(); err != nil {
+		log.For(c).Error(fmt.Sprintf("onTopicViewed.Marshal(), err(%+v)", err))
+		return
+	}
+
+	if err = p.mq.Publish(def.BusTopicViewed, data); err != nil {
+		log.For(c).Error(fmt.Sprintf("onTopicViewed.Publish(), err(%+v)", err))
+		return
+	}
+
+	return
+}
+
 func (p *Service) onTopicLeaved(c context.Context, topicID, aid, actionTime int64) {
 	msg := &def.MsgTopicLeaved{TopicID: topicID, ActorID: aid, ActionTime: actionTime}
 

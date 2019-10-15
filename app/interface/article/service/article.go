@@ -217,6 +217,12 @@ func (p *Service) UpdateArticle(c context.Context, arg *model.ArgUpdateArticle) 
 // }
 
 func (p *Service) GetArticle(c context.Context, id int64, include string) (item *model.ArticleResp, err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+
 	inc := includeParam(include)
 	var data *model.Article
 	if data, err = p.getArticle(c, p.d.DB(), id); err != nil {
@@ -262,6 +268,10 @@ func (p *Service) GetArticle(c context.Context, id int64, include string) (item 
 			return
 		}
 	}
+
+	p.addCache(func() {
+		p.onArticleViewed(context.Background(), id, aid, time.Now().Unix())
+	})
 
 	return
 }

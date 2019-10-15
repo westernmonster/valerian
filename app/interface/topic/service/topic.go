@@ -368,6 +368,10 @@ func (p *Service) GetTopic(c context.Context, topicID int64, include string) (it
 		}
 	}
 
+	p.addCache(func() {
+		p.onTopicViewed(context.Background(), topicID, aid, time.Now().Unix())
+	})
+
 	return
 }
 

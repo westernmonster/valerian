@@ -49,6 +49,13 @@ message MsgArticleFaved {
     int64 ActionTime = 4 [(gogoproto.jsontag) = "action_time"] ;
 }
 
+message MsgArticleViewed {
+    int64 ArticleID = 1 [(gogoproto.jsontag) = "article_id"] ;
+    int64 ActorID = 2 [(gogoproto.jsontag) = "actor_id"] ;
+    int64 ActionTime = 4 [(gogoproto.jsontag) = "action_time"] ;
+}
+
+
 message MsgReviseAdded {
     int64 ReviseID = 1 [(gogoproto.jsontag) = "revise_id"] ;
     int64 ActorID = 2 [(gogoproto.jsontag) = "actor_id"] ;

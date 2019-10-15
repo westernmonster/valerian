@@ -159,3 +159,22 @@ func (p *Service) onReviseDeleted(c context.Context, reviseID, aid, actionTime i
 
 	return
 }
+
+func (p *Service) onArticleViewed(c context.Context, articleID, aid, actionTime int64) {
+	msg := &def.MsgArticleViewed{ArticleID: articleID, ActorID: aid, ActionTime: actionTime}
+
+	var data []byte
+	var err error
+
+	if data, err = msg.Marshal(); err != nil {
+		log.For(c).Error(fmt.Sprintf("onArticleViewed.Marshal(), err(%+v)", err))
+		return
+	}
+
+	if err = p.mq.Publish(def.BusArticleViewed, data); err != nil {
+		log.For(c).Error(fmt.Sprintf("onArticleViewed.Publish(), err(%+v)", err))
+		return
+	}
+
+	return
+}
