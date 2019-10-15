@@ -12,8 +12,12 @@ import (
 )
 
 func (p *Service) IsLike(c context.Context, aid int64, targetID int64, targetType string) (isLike bool, err error) {
+	return p.isLike(c, p.d.DB(), aid, targetID, targetType)
+}
+
+func (p *Service) isLike(c context.Context, node sqalx.Node, aid int64, targetID int64, targetType string) (isLike bool, err error) {
 	var fav *model.Like
-	if fav, err = p.d.GetLikeByCond(c, p.d.DB(), map[string]interface{}{
+	if fav, err = p.d.GetLikeByCond(c, node, map[string]interface{}{
 		"account_id":  aid,
 		"target_type": targetType,
 		"target_id":   targetID,
@@ -42,18 +46,14 @@ func (p *Service) Like(c context.Context, aid, targetID int64, targetType string
 		}
 	}()
 
-	var fav *model.Like
-	if fav, err = p.d.GetLikeByCond(c, tx, map[string]interface{}{
-		"account_id":  aid,
-		"target_type": targetType,
-		"target_id":   targetID,
-	}); err != nil {
+	var isLike bool
+	if isLike, err = p.isLike(c, tx, aid, targetID, targetType); err != nil {
 		return
-	} else if fav != nil {
+	} else if isLike {
 		return
 	}
 
-	fav = &model.Like{
+	fav := &model.Like{
 		ID:         gid.NewID(),
 		AccountID:  aid,
 		TargetID:   targetID,
@@ -64,6 +64,15 @@ func (p *Service) Like(c context.Context, aid, targetID int64, targetType string
 
 	if err = p.d.AddLike(c, tx, fav); err != nil {
 		return
+	}
+
+	var isDislike bool
+	if isDislike, err = p.isDislike(c, tx, aid, targetID, targetType); err != nil {
+		return
+	} else if isDislike {
+		if err = p.cancelDislike(c, tx, aid, targetID, targetType); err != nil {
+			return
+		}
 	}
 
 	switch targetType {
@@ -97,8 +106,12 @@ func (p *Service) Like(c context.Context, aid, targetID int64, targetType string
 }
 
 func (p *Service) CancelLike(c context.Context, aid, targetID int64, targetType string) (err error) {
+	return p.cancelDislike(c, p.d.DB(), aid, targetID, targetType)
+}
+
+func (p *Service) cancelLike(c context.Context, node sqalx.Node, aid, targetID int64, targetType string) (err error) {
 	var tx sqalx.Node
-	if tx, err = p.d.DB().Beginx(c); err != nil {
+	if tx, err = node.Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
 		return
 	}

@@ -12,8 +12,12 @@ import (
 )
 
 func (p *Service) IsDislike(c context.Context, aid int64, targetID int64, targetType string) (isDislike bool, err error) {
+	return p.isDislike(c, p.d.DB(), aid, targetID, targetType)
+}
+
+func (p *Service) isDislike(c context.Context, node sqalx.Node, aid int64, targetID int64, targetType string) (isDislike bool, err error) {
 	var fav *model.Dislike
-	if fav, err = p.d.GetDislikeByCond(c, p.d.DB(), map[string]interface{}{
+	if fav, err = p.d.GetDislikeByCond(c, node, map[string]interface{}{
 		"account_id":  aid,
 		"target_type": targetType,
 		"target_id":   targetID,
@@ -28,8 +32,12 @@ func (p *Service) IsDislike(c context.Context, aid int64, targetID int64, target
 }
 
 func (p *Service) Dislike(c context.Context, aid, targetID int64, targetType string) (err error) {
+	return p.dislike(c, p.d.DB(), aid, targetID, targetType)
+}
+
+func (p *Service) dislike(c context.Context, node sqalx.Node, aid, targetID int64, targetType string) (err error) {
 	var tx sqalx.Node
-	if tx, err = p.d.DB().Beginx(c); err != nil {
+	if tx, err = node.Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
 		return
 	}
@@ -67,6 +75,15 @@ func (p *Service) Dislike(c context.Context, aid, targetID int64, targetType str
 		return
 	}
 
+	var isLike bool
+	if isLike, err = p.isLike(c, tx, aid, targetID, targetType); err != nil {
+		return
+	} else if isLike {
+		if err = p.cancelLike(c, tx, aid, targetID, targetType); err != nil {
+			return
+		}
+	}
+
 	switch targetType {
 	case model.TargetTypeArticle:
 		if err = p.d.IncrArticleStat(c, tx, &model.ArticleStat{DislikeCount: 1}); err != nil {
@@ -98,8 +115,12 @@ func (p *Service) Dislike(c context.Context, aid, targetID int64, targetType str
 }
 
 func (p *Service) CancelDislike(c context.Context, aid, targetID int64, targetType string) (err error) {
+	return p.cancelDislike(c, p.d.DB(), aid, targetID, targetType)
+}
+
+func (p *Service) cancelDislike(c context.Context, node sqalx.Node, aid, targetID int64, targetType string) (err error) {
 	var tx sqalx.Node
-	if tx, err = p.d.DB().Beginx(c); err != nil {
+	if tx, err = node.Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
 		return
 	}
