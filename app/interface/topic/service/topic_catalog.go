@@ -23,6 +23,7 @@ func (p *Service) GetCatalogsHierarchy(c context.Context, topicID int64) (items 
 		addCache = true
 	)
 
+	fmt.Println(111111)
 	if items, err = p.d.TopicCatalogCache(c, topicID); err != nil {
 		addCache = false
 	} else if items != nil {
@@ -33,6 +34,7 @@ func (p *Service) GetCatalogsHierarchy(c context.Context, topicID int64) (items 
 		return
 	}
 
+	fmt.Println(222222)
 	if addCache {
 		p.addCache(func() {
 			p.d.SetTopicCatalogCache(context.TODO(), topicID, items)
