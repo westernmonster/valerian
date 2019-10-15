@@ -21,7 +21,7 @@ type Paging struct {
 	Prev string `json:"prev"`
 }
 
-type DisucssItem struct {
+type DiscussItem struct {
 	// 讨论ID
 	ID int64 `json:"id,string" swaggertype:"string"`
 	// 话题ID
@@ -44,6 +44,9 @@ type DisucssItem struct {
 	// 发布日期
 	CreatedAt int64 `json:"created_at"`
 
+	// 更新日期
+	UpdatedAt int64 `json:"updated_at"`
+
 	// 发布人
 	Creator *Creator `json:"creator"`
 
@@ -59,7 +62,7 @@ type DiscussItemCategory struct {
 }
 
 type DiscussListResp struct {
-	Items  []*DisucssItem `json:"items"`
+	Items  []*DiscussItem `json:"items"`
 	Paging *Paging        `json:"paging"`
 }
 
@@ -99,6 +102,12 @@ type DiscussDetailResp struct {
 	// 是否可以编辑
 	// 讨论所属用户以及管理员可以编辑
 	CanEdit bool `json:"can_edit"`
+
+	// 发布日期
+	CreatedAt int64 `json:"created_at"`
+
+	// 更新日期
+	UpdatedAt int64 `json:"updated_at"`
 }
 
 type DiscussFileResp struct {

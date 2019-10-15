@@ -3,16 +3,20 @@ package service
 import (
 	"context"
 	"fmt"
+	"net/url"
+	"strconv"
 	"strings"
 	"time"
 
 	"valerian/app/interface/discuss/model"
+	account "valerian/app/service/account/api"
 	topic "valerian/app/service/topic/api"
 	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
 	"valerian/library/gid"
 	"valerian/library/log"
 	"valerian/library/net/metadata"
+	"valerian/library/xstr"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -29,19 +33,216 @@ func (p *Service) initDiscussionStat(c context.Context, discussionID int64) (err
 	return
 }
 
-func (p *Service) GetUserDiscussionsPaged(c context.Context, aid int64, limit, offset int) (items []*model.Discussion, err error) {
-	items = make([]*model.Discussion, 0)
-	if items, err = p.d.GetUserDiscussionsPaged(c, p.d.DB(), aid, limit, offset); err != nil {
+func (p *Service) GetUserDiscussionsPaged(c context.Context, aid int64, limit, offset int) (resp *model.DiscussListResp, err error) {
+	var data []*model.Discussion
+	if data, err = p.d.GetUserDiscussionsPaged(c, p.d.DB(), aid, limit, offset); err != nil {
 		return
+	}
+
+	resp = &model.DiscussListResp{
+		Items:  make([]*model.DiscussItem, len(data)),
+		Paging: &model.Paging{},
+	}
+
+	for i, v := range data {
+		item := &model.DiscussItem{
+			ID:        v.ID,
+			TopicID:   v.TopicID,
+			Title:     v.Title,
+			Excerpt:   xstr.Excerpt(v.Content),
+			CreatedAt: v.CreatedAt,
+			UpdatedAt: v.UpdatedAt,
+		}
+
+		var stat *model.DiscussionStat
+		if stat, err = p.d.GetDiscussionStatByID(c, p.d.DB(), v.ID); err != nil {
+			return
+		}
+
+		item.LikeCount = stat.LikeCount
+		item.DislikeCount = stat.DislikeCount
+		item.CommentCount = stat.CommentCount
+
+		var acc *account.BaseInfoReply
+		if acc, err = p.d.GetAccountBaseInfo(c, v.CreatedBy); err != nil {
+			return
+		}
+		item.Creator = &model.Creator{
+			ID:       acc.ID,
+			UserName: acc.UserName,
+			Avatar:   acc.Avatar,
+		}
+		intro := acc.GetIntroductionValue()
+		item.Creator.Introduction = &intro
+
+		if v.CategoryID == -1 {
+			item.Category = &model.DiscussItemCategory{
+				ID:   v.CategoryID,
+				Name: "问答",
+			}
+		} else {
+			var category *model.DiscussCategory
+			if category, err = p.d.GetDiscussCategoryByID(c, p.d.DB(), v.CategoryID); err != nil {
+				return
+			} else if category == nil {
+				err = ecode.DiscussCategoryNotExist
+				return
+			}
+
+			item.Category = &model.DiscussItemCategory{
+				ID:   v.CategoryID,
+				Name: category.Name,
+			}
+
+		}
+
+		if item.ImageUrls, err = p.GetDiscussionImageUrls(c, v.ID); err != nil {
+			return
+		}
+
+		resp.Items[i] = item
+	}
+
+	if resp.Paging.Prev, err = genURL("/api/v1/discussion/list/by_account", url.Values{
+		"account_id": []string{strconv.FormatInt(aid, 10)},
+		"limit":      []string{strconv.Itoa(limit)},
+		"offset":     []string{strconv.Itoa(offset - limit)},
+	}); err != nil {
+		return
+	}
+
+	if resp.Paging.Next, err = genURL("/api/v1/discussion/list/by_account", url.Values{
+		"account_id": []string{strconv.FormatInt(aid, 10)},
+		"limit":      []string{strconv.Itoa(limit)},
+		"offset":     []string{strconv.Itoa(offset + limit)},
+	}); err != nil {
+		return
+	}
+
+	if len(resp.Items) < limit {
+		resp.Paging.IsEnd = true
+		resp.Paging.Next = ""
+	}
+
+	if offset == 0 {
+		resp.Paging.Prev = ""
 	}
 
 	return
 }
 
-func (p *Service) GetTopicDiscussionsPaged(c context.Context, topicID, categoryID int64, limit, offset int) (items []*model.Discussion, err error) {
-	items = make([]*model.Discussion, 0)
-	if items, err = p.d.GetTopicDiscussionsPaged(c, p.d.DB(), topicID, categoryID, limit, offset); err != nil {
+func (p *Service) GetTopicDiscussionsPaged(c context.Context, topicID, categoryID int64, limit, offset int) (resp *model.DiscussListResp, err error) {
+	var data []*model.Discussion
+	if data, err = p.d.GetTopicDiscussionsPaged(c, p.d.DB(), topicID, categoryID, limit, offset); err != nil {
 		return
+	}
+
+	resp = &model.DiscussListResp{
+		Items:  make([]*model.DiscussItem, len(data)),
+		Paging: &model.Paging{},
+	}
+
+	for i, v := range data {
+		item := &model.DiscussItem{
+			ID:        v.ID,
+			TopicID:   v.TopicID,
+			Title:     v.Title,
+			Excerpt:   xstr.Excerpt(v.Content),
+			CreatedAt: v.CreatedAt,
+			UpdatedAt: v.UpdatedAt,
+		}
+
+		var stat *model.DiscussionStat
+		if stat, err = p.d.GetDiscussionStatByID(c, p.d.DB(), v.ID); err != nil {
+			return
+		}
+
+		item.LikeCount = stat.LikeCount
+		item.DislikeCount = stat.DislikeCount
+		item.CommentCount = stat.CommentCount
+
+		var acc *account.BaseInfoReply
+		if acc, err = p.d.GetAccountBaseInfo(c, v.CreatedBy); err != nil {
+			return
+		}
+		item.Creator = &model.Creator{
+			ID:       acc.ID,
+			UserName: acc.UserName,
+			Avatar:   acc.Avatar,
+		}
+		intro := acc.GetIntroductionValue()
+		item.Creator.Introduction = &intro
+
+		if v.CategoryID == -1 {
+			item.Category = &model.DiscussItemCategory{
+				ID:   v.CategoryID,
+				Name: "问答",
+			}
+		} else {
+			var category *model.DiscussCategory
+			if category, err = p.d.GetDiscussCategoryByID(c, p.d.DB(), v.CategoryID); err != nil {
+				return
+			} else if category == nil {
+				err = ecode.DiscussCategoryNotExist
+				return
+			}
+
+			item.Category = &model.DiscussItemCategory{
+				ID:   v.CategoryID,
+				Name: category.Name,
+			}
+
+		}
+
+		if item.ImageUrls, err = p.GetDiscussionImageUrls(c, v.ID); err != nil {
+			return
+		}
+
+		resp.Items[i] = item
+	}
+
+	if resp.Paging.Prev, err = genURL("/api/v1/discussion/list/by_topic", url.Values{
+		"topic_id":    []string{strconv.FormatInt(topicID, 10)},
+		"category_id": []string{strconv.FormatInt(categoryID, 10)},
+		"limit":       []string{strconv.Itoa(limit)},
+		"offset":      []string{strconv.Itoa(offset - limit)},
+	}); err != nil {
+		return
+	}
+
+	if resp.Paging.Next, err = genURL("/api/v1/discussion/list/by_topic", url.Values{
+		"topic_id":    []string{strconv.FormatInt(topicID, 10)},
+		"category_id": []string{strconv.FormatInt(categoryID, 10)},
+		"limit":       []string{strconv.Itoa(limit)},
+		"offset":      []string{strconv.Itoa(offset + limit)},
+	}); err != nil {
+		return
+	}
+
+	if len(resp.Items) < limit {
+		resp.Paging.IsEnd = true
+		resp.Paging.Next = ""
+	}
+
+	if offset == 0 {
+		resp.Paging.Prev = ""
+	}
+
+	return
+}
+
+func (p *Service) GetDiscussionImageUrls(c context.Context, discussionID int64) (urls []string, err error) {
+	urls = make([]string, 0)
+	var imgs []*model.ImageURL
+	if imgs, err = p.d.GetImageUrlsByCond(c, p.d.DB(), map[string]interface{}{
+		"target_type": model.TargetTypeDiscussion,
+		"target_id":   discussionID,
+	}); err != nil {
+		return
+	}
+
+	for _, v := range imgs {
+		urls = append(urls, v.URL)
 	}
 
 	return
@@ -310,11 +511,13 @@ func (p *Service) GetDiscussion(c context.Context, discussionID int64) (resp *mo
 	}
 
 	resp = &model.DiscussDetailResp{
-		ID:      data.ID,
-		TopicID: data.TopicID,
-		Title:   data.Title,
-		Content: data.Content,
-		Files:   make([]*model.DiscussFileResp, 0),
+		ID:        data.ID,
+		TopicID:   data.TopicID,
+		Title:     data.Title,
+		Content:   data.Content,
+		Files:     make([]*model.DiscussFileResp, 0),
+		CreatedAt: data.CreatedAt,
+		UpdatedAt: data.UpdatedAt,
 	}
 
 	if data.CategoryID == -1 {

@@ -37,6 +37,14 @@ type IDao interface {
 	DelDiscussionFile(c context.Context, node sqalx.Node, id int64) (err error)
 	DelDiscussionFiles(c context.Context, node sqalx.Node, discussionID int64) (err error)
 
+	GetImageUrlsByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.ImageURL, err error)
+	GetImageUrls(c context.Context, node sqalx.Node) (items []*model.ImageURL, err error)
+	GetImageURLByID(c context.Context, node sqalx.Node, id int64) (item *model.ImageURL, err error)
+	GetImageURLByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (item *model.ImageURL, err error)
+	AddImageURL(c context.Context, node sqalx.Node, item *model.ImageURL) (err error)
+	UpdateImageURL(c context.Context, node sqalx.Node, item *model.ImageURL) (err error)
+	DelImageURL(c context.Context, node sqalx.Node, id int64) (err error)
+
 	IncrAccountStat(c context.Context, node sqalx.Node, item *model.AccountStat) (err error)
 	IncrTopicStat(c context.Context, node sqalx.Node, item *model.TopicStat) (err error)
 
