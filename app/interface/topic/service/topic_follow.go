@@ -73,19 +73,6 @@ func (p *Service) Follow(c context.Context, arg *model.ArgTopicFollow) (status i
 		return 0, ecode.UserNotExist
 	}
 
-	switch t.JoinPermission {
-	case model.JoinPermissionMember:
-		return model.FollowStatusFollowed, p.addMember(c, tx, arg.TopicID, aid, model.MemberRoleUser)
-	case model.JoinPermissionMemberApprove:
-		break
-	case model.JoinPermissionCertApprove:
-		if !account.IDCert || !account.WorkCert {
-			return model.FollowStatusUnfollowed, ecode.NeedWorkCert
-		}
-	case model.JoinPermissionManualAdd:
-		return model.FollowStatusUnfollowed, ecode.OnlyAllowAdminAdded
-	}
-
 	item := &model.TopicFollowRequest{
 		ID:        gid.NewID(),
 		Status:    model.FollowRequestStatusCommited,
@@ -95,7 +82,32 @@ func (p *Service) Follow(c context.Context, arg *model.ArgTopicFollow) (status i
 		UpdatedAt: time.Now().Unix(),
 	}
 
-	if err = p.d.AddTopicFollowRequest(c, tx, item); err != nil {
+	switch t.JoinPermission {
+	case model.JoinPermissionMember:
+		status = model.FollowStatusFollowed
+		if err = p.addMember(c, tx, arg.TopicID, aid, model.MemberRoleUser); err != nil {
+			return
+		}
+		break
+	case model.JoinPermissionMemberApprove:
+		status = model.FollowStatusApproving
+		if err = p.d.AddTopicFollowRequest(c, tx, item); err != nil {
+			return
+		}
+		break
+	case model.JoinPermissionCertApprove:
+		if !account.IDCert || !account.WorkCert {
+			return model.FollowStatusUnfollowed, ecode.NeedWorkCert
+		}
+
+		status = model.FollowStatusApproving
+		if err = p.d.AddTopicFollowRequest(c, tx, item); err != nil {
+			return
+		}
+		break
+	case model.JoinPermissionManualAdd:
+		status = model.FollowStatusUnfollowed
+		err = ecode.OnlyAllowAdminAdded
 		return
 	}
 
@@ -104,7 +116,7 @@ func (p *Service) Follow(c context.Context, arg *model.ArgTopicFollow) (status i
 		return
 	}
 
-	return model.FollowStatusApproving, nil
+	return
 
 }
 

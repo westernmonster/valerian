@@ -93,3 +93,11 @@ spec:
         backend:
           serviceName: interface-search
           servicePort: 8000
+      - path: /api/v1/list/feedback_types
+        backend:
+          serviceName: interface-feedback
+          servicePort: 8000
+      - path: /api/v1/feedbacks
+        backend:
+          serviceName: interface-feedback
+          servicePort: 8000
