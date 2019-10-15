@@ -212,7 +212,7 @@ func (p *Service) GetMemberInfo(c context.Context, targetID int64) (resp *model.
 	}
 
 	var stat *account.AccountStatInfo
-	if stat, err = p.d.GetAccountStat(c, aid); err != nil {
+	if stat, err = p.d.GetAccountStat(c, targetID); err != nil {
 		return
 	}
 
