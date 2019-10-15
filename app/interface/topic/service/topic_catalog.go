@@ -38,9 +38,9 @@ func (p *Service) getCatalogsHierarchy(c context.Context, node sqalx.Node, topic
 	}
 
 	// if addCache {
-	// 	p.addCache(func() {
-	// 		p.d.SetTopicCatalogCache(context.TODO(), topicID, items)
-	// 	})
+	p.addCache(func() {
+		p.d.SetTopicCatalogCache(context.TODO(), topicID, items)
+	})
 	// }
 
 	return
@@ -82,9 +82,7 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 				return
 			}
 			parent.Article = p.FromArticle(article)
-			continue
 		case model.TopicCatalogTestSet:
-			continue
 		}
 
 		children, eInner := p.d.GetTopicCatalogsByCond(c, node, map[string]interface{}{
@@ -113,9 +111,7 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 					return
 				}
 				child.Article = p.FromArticle(article)
-				continue
 			case model.TopicCatalogTestSet:
-				continue
 			}
 
 			sub, eInner := p.d.GetTopicCatalogsByCond(c, node, map[string]interface{}{
@@ -143,9 +139,7 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 						return
 					}
 					subItem.Article = p.FromArticle(article)
-					continue
 				case model.TopicCatalogTestSet:
-					continue
 				}
 
 				child.Children = append(child.Children, subItem)
