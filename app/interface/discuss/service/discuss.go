@@ -49,7 +49,7 @@ func (p *Service) GetUserDiscussionsPaged(c context.Context, aid int64, limit, o
 			ID:        v.ID,
 			TopicID:   v.TopicID,
 			Title:     v.Title,
-			Excerpt:   xstr.Excerpt(v.Content),
+			Excerpt:   xstr.Excerpt(v.ContentText),
 			CreatedAt: v.CreatedAt,
 			UpdatedAt: v.UpdatedAt,
 		}
@@ -147,7 +147,7 @@ func (p *Service) GetTopicDiscussionsPaged(c context.Context, topicID, categoryI
 			ID:        v.ID,
 			TopicID:   v.TopicID,
 			Title:     v.Title,
-			Excerpt:   xstr.Excerpt(v.Content),
+			Excerpt:   xstr.Excerpt(v.ContentText),
 			CreatedAt: v.CreatedAt,
 			UpdatedAt: v.UpdatedAt,
 		}

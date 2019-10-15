@@ -62,12 +62,14 @@ const (
 	BusDiscussionDeleted = "discussion.deleted"
 	BusDiscussionLiked   = "discussion.liked"
 	BusDiscussionFaved   = "discussion.faved"
+	// BusDiscussionViewed  = "discussion.viewed"
 
 	BusArticleAdded   = "article.added"
 	BusArticleUpdated = "article.updated"
 	BusArticleDeleted = "article.deleted"
 	BusArticleLiked   = "article.liked"
 	BusArticleFaved   = "article.faved"
+	BusArticleViewed  = "article.viewed"
 
 	BusCatalogArticleAdded   = "catalog.article.added"
 	BusCatalogArticleDeleted = "catalog.article.deleted"
@@ -87,6 +89,7 @@ const (
 	BusTopicFollowApproved  = "topic.follow.approved"
 	BusTopicFollowRejected  = "topic.follow.rejected"
 	BusTopicInviteSent      = "topic.invite.sent"
+	BusTopicViewed          = "topic.viewed"
 
 	BusMemberFollowed   = "member.followed"
 	BusMemberUnfollowed = "member.unfollowed"
