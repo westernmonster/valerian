@@ -45,9 +45,9 @@ spec:
         backend:
           serviceName: interface-passport-auth
           servicePort: 8000
-      - path: /api/v1/me
+      - path: /api/v1/certification
         backend:
-          serviceName: interface-account
+          serviceName: interface-certification
           servicePort: 8000
       - path: /api/v1/valcode
         backend:

@@ -14,7 +14,7 @@ import "valerian/library/net/http/mars"
 // @Success 200 "提交成功"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /me/certification/work [post]
+// @Router /certification/work [post]
 func reqWorkCert(c *mars.Context) {
 }
 
@@ -30,6 +30,6 @@ func reqWorkCert(c *mars.Context) {
 // @Failure 42 "尚未发起身份认证"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /me/certification/work [get]
+// @Router /certification/work [get]
 func workCert(c *mars.Context) {
 }

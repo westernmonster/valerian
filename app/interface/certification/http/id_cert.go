@@ -13,7 +13,7 @@ import "valerian/library/net/http/mars"
 // @Success 200 {object} cloudauth.VerifyTokenData "Token"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /me/certification/id [post]
+// @Router /certification/id [post]
 func idCertificationRequest(c *mars.Context) {
 	c.JSON(srv.RequestIDCertification(c))
 }
@@ -30,7 +30,7 @@ func idCertificationRequest(c *mars.Context) {
 // @Failure 42 "尚未发起身份认证"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /me/certification/id/status [get]
+// @Router /certification/id/status [get]
 func idCertificationStatus(c *mars.Context) {
 	c.JSON(srv.GetIDCertificationStatus(c))
 }
@@ -47,6 +47,6 @@ func idCertificationStatus(c *mars.Context) {
 // @Failure 42 "尚未发起身份认证"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /me/certification/id [get]
+// @Router /certification/id [get]
 func idCert(c *mars.Context) {
 }
