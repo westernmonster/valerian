@@ -46,7 +46,7 @@ type TopicLevel1Catalog struct {
 	Children []*TopicLevel2Catalog `json:"children,omitempty"`
 
 	// 文章
-	Article *CatalogArticleItem `json:"article,omitempty"`
+	Article *TargetArticle `json:"article,omitempty"`
 }
 
 func (p *TopicLevel1Catalog) Validate() error {
@@ -179,8 +179,7 @@ type TopicLevel2Catalog struct {
 
 	Children []*TopicChildCatalog `json:"children,omitempty"`
 
-	// 文章
-	Article *CatalogArticleItem `json:"article,omitempty"`
+	Article *TargetArticle `json:"article,omitempty"`
 }
 
 func (p *TopicLevel2Catalog) Validate() error {
@@ -214,8 +213,7 @@ type TopicChildCatalog struct {
 	// 引用ID
 	RefID *int64 `json:"ref_id,string,omitempty" swaggertype:"string"`
 
-	// 文章
-	Article *CatalogArticleItem `json:"article,omitempty"`
+	Article *TargetArticle `json:"article,omitempty"`
 }
 
 func (p *TopicChildCatalog) Validate() error {

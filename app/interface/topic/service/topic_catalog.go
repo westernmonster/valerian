@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 	"valerian/app/interface/topic/model"
+	article "valerian/app/service/article/api"
 	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
 	"valerian/library/gid"
@@ -94,6 +95,18 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 			Children: make([]*model.TopicLevel2Catalog, 0),
 		}
 
+		switch lvl1.Type {
+		case model.TopicCatalogArticle:
+			var article *article.ArticleInfo
+			if article, err = p.d.GetArticle(c, *lvl1.RefID); err != nil {
+				return
+			}
+			parent.Article = p.FromArticle(article)
+			continue
+		case model.TopicCatalogTestSet:
+			continue
+		}
+
 		children, eInner := p.d.GetTopicCatalogsByCond(c, node, map[string]interface{}{
 			"topic_id":  topicID,
 			"parent_id": lvl1.ID,
@@ -113,6 +126,18 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 				Children: make([]*model.TopicChildCatalog, 0),
 			}
 
+			switch lvl2.Type {
+			case model.TopicCatalogArticle:
+				var article *article.ArticleInfo
+				if article, err = p.d.GetArticle(c, *lvl2.RefID); err != nil {
+					return
+				}
+				child.Article = p.FromArticle(article)
+				continue
+			case model.TopicCatalogTestSet:
+				continue
+			}
+
 			sub, eInner := p.d.GetTopicCatalogsByCond(c, node, map[string]interface{}{
 				"topic_id":  topicID,
 				"parent_id": lvl2.ID,
@@ -130,6 +155,19 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 					Type:  lvl3.Type,
 					RefID: lvl3.RefID,
 				}
+
+				switch lvl3.Type {
+				case model.TopicCatalogArticle:
+					var article *article.ArticleInfo
+					if article, err = p.d.GetArticle(c, *lvl3.RefID); err != nil {
+						return
+					}
+					subItem.Article = p.FromArticle(article)
+					continue
+				case model.TopicCatalogTestSet:
+					continue
+				}
+
 				child.Children = append(child.Children, subItem)
 			}
 
