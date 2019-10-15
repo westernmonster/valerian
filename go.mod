@@ -18,6 +18,7 @@ require (
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/codahale/hdrhistogram v0.0.0-20161010025455-3a0bb77429bd // indirect
 	github.com/dgryski/go-farm v0.0.0-20190423205320-6a90982ecee2
+	github.com/fortytw2/leaktest v1.3.0 // indirect
 	github.com/go-openapi/validate v0.19.3
 	github.com/go-ozzo/ozzo-validation v3.6.0+incompatible
 	github.com/go-playground/locales v0.12.1 // indirect
@@ -40,7 +41,7 @@ require (
 	github.com/nats-io/nats-streaming-server v0.16.2 // indirect
 	github.com/nats-io/stan.go v0.5.0
 	github.com/nicksnyder/go-i18n/v2 v2.0.2
-	github.com/olivere/elastic v6.2.23+incompatible // indirect
+	github.com/olivere/elastic v6.2.23+incompatible
 	github.com/opentracing-contrib/go-stdlib v0.0.0-20190519235532-cf7a6c988dc9
 	github.com/opentracing/opentracing-go v1.1.0
 	github.com/pkg/errors v0.8.1
@@ -69,6 +70,7 @@ require (
 	gopkg.in/h2non/gentleman-retry.v2 v2.0.1
 	gopkg.in/h2non/gentleman.v2 v2.0.3
 	gopkg.in/h2non/gock.v1 v1.0.15
+	gopkg.in/olivere/elastic.v6 v6.2.25
 	gopkg.in/yaml.v2 v2.2.2
 	k8s.io/test-infra v0.0.0-20190914015041-e1cbc3ccd91c // indirect
 )
