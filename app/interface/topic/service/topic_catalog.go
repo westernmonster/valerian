@@ -65,8 +65,6 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 		return
 	}
 
-	fmt.Printf("\n\n%+v\n\n", parents)
-
 	for _, lvl1 := range parents {
 		parent := &model.TopicLevel1Catalog{
 			ID:       &lvl1.ID,
