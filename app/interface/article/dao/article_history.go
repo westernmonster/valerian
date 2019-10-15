@@ -34,6 +34,22 @@ func (p *Dao) GetArticleHistoriesMaxSeq(c context.Context, node sqalx.Node, arti
 	return
 }
 
+func (p *Dao) GetLastArticleHistory(c context.Context, node sqalx.Node, articleID int64) (item *model.ArticleHistory, err error) {
+	item = new(model.ArticleHistory)
+	sqlSelect := "SELECT a.* FROM article_histories a WHERE a.article_id=? AND a.deleted=0 ORDER BY a.id DESC LIMIT 1"
+
+	if err = node.GetContext(c, item, sqlSelect, articleID); err != nil {
+		if err == sql.ErrNoRows {
+			item = nil
+			err = nil
+			return
+		}
+		log.For(c).Error(fmt.Sprintf("dao.GetLastArticleHistory err(%+v), article_id(%+v)", err, articleID))
+	}
+
+	return
+}
+
 // GetAll get all records
 func (p *Dao) GetArticleHistories(c context.Context, node sqalx.Node) (items []*model.ArticleHistory, err error) {
 	items = make([]*model.ArticleHistory, 0)

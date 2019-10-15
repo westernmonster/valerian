@@ -29,8 +29,9 @@ type ArticleResp struct {
 
 	CreatedBy int64 `json:"created_by"`
 
-	Updator    *Creator `json:"updator,omitempty"` // Updator 更新人
-	ChangeDesc string   `json:"change_desc"`       // ChangeDesc 修订说明
+	Updator *Creator `json:"updator,omitempty"` // Updator 更新人
+
+	ChangeDesc string `json:"change_desc"` // ChangeDesc 修订说明
 }
 
 type ArticleFileResp struct {

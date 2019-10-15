@@ -34,6 +34,7 @@ type IDao interface {
 	AddArticleHistory(c context.Context, node sqalx.Node, item *model.ArticleHistory) (err error)
 	UpdateArticleHistory(c context.Context, node sqalx.Node, item *model.ArticleHistory) (err error)
 	DelArticleHistory(c context.Context, node sqalx.Node, id int64) (err error)
+	GetLastArticleHistory(c context.Context, node sqalx.Node, articleID int64) (item *model.ArticleHistory, err error)
 
 	AddAccountArticleAttr(c context.Context, node sqalx.Node, item *model.AccountArticleAttr) (err error)
 	UpdateAccountArticleAttr(c context.Context, node sqalx.Node, item *model.AccountArticleAttr) (err error)

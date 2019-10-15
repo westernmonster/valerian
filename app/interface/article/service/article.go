@@ -238,18 +238,38 @@ func (p *Service) GetArticle(c context.Context, id int64, include string) (item 
 		Relations: make([]*model.ArticleRelationResp, 0),
 	}
 
-	var account *account.BaseInfoReply
-	if account, err = p.d.GetAccountBaseInfo(c, item.CreatedBy); err != nil {
+	var acc *account.BaseInfoReply
+	if acc, err = p.d.GetAccountBaseInfo(c, item.CreatedBy); err != nil {
 		return
 	}
 
 	item.Creator = &model.Creator{
-		ID:       account.ID,
-		UserName: account.UserName,
-		Avatar:   account.Avatar,
+		ID:       acc.ID,
+		UserName: acc.UserName,
+		Avatar:   acc.Avatar,
 	}
-	intro := account.GetIntroductionValue()
+	intro := acc.GetIntroductionValue()
 	item.Creator.Introduction = &intro
+
+	var history *model.ArticleHistory
+	if history, err = p.d.GetLastArticleHistory(c, p.d.DB(), id); err != nil {
+		return
+	} else if history != nil {
+		var acc *account.BaseInfoReply
+		if acc, err = p.d.GetAccountBaseInfo(c, history.UpdatedBy); err != nil {
+			return
+		}
+
+		item.Updator = &model.Creator{
+			ID:       acc.ID,
+			UserName: acc.UserName,
+			Avatar:   acc.Avatar,
+		}
+		intro := acc.GetIntroductionValue()
+		item.Updator.Introduction = &intro
+
+		item.ChangeDesc = history.ChangeDesc
+	}
 
 	if inc["files"] {
 		if item.Files, err = p.getArticleFiles(c, p.d.DB(), id); err != nil {
