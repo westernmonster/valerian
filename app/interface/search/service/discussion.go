@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/url"
 	"strconv"
 
@@ -23,6 +24,7 @@ func (p *Service) DiscussionSearch(c context.Context, arg *model.DiscussionSearc
 	}
 
 	for _, v := range data.Result {
+		fmt.Println(string(v))
 		acc := new(model.ESDiscussion)
 		err = json.Unmarshal(v, acc)
 		if err != nil {

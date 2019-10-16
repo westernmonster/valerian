@@ -102,30 +102,30 @@ type ESTopic struct {
 	// CreatedBy 创建人
 	Creator *ESCreator `json:"creator,omitempty"`
 	// CreatedAt 创建时间
-	CreatedAt *int64 `json:"created_at"`
+	CreatedAt *int64 `json:"created_at,omitempty"`
 	// UpdatedAt 更新时间
-	UpdatedAt *int64 `json:"updated_at"`
+	UpdatedAt *int64 `json:"updated_at,omitempty"`
 }
 
 type ESArticle struct {
 	ID int64 `json:"id,string" swaggertype:"string"`
 
 	// 标题
-	Title *string `json:"title"`
+	Title *string `json:"title,omitempty"`
 
 	// 内容
-	Content *string `json:"content"`
+	Content *string `json:"content,omitempty"`
 
 	// 内容
-	ContentText *string `json:"content_text"`
+	ContentText *string `json:"content_text,omitempty"`
 
 	//  禁止补充
-	DisableRevise *bool `json:"disable_revise"`
+	DisableRevise *bool `json:"disable_revise,omitempty"`
 
 	//  禁止评论
-	DisableComment *bool `json:"disable_comment"`
+	DisableComment *bool `json:"disable_comment,omitempty"`
 
-	Creator *ESCreator `json:"creator"`
+	Creator *ESCreator `json:"creator,omitempty"`
 
 	// 创建时间
 	CreatedAt *int64 `json:"created_at,omitempty"`
@@ -151,13 +151,13 @@ type ESDiscussion struct {
 	ID int64 `json:"id,string" swaggertype:"string"`
 
 	// 标题
-	Title *string `json:"title"`
+	Title *string `json:"title,omitempty"`
 
 	// 内容
-	Content *string `json:"content"`
+	Content *string `json:"content,omitempty"`
 
 	// 内容
-	ContentText *string `json:"content_text"`
+	ContentText *string `json:"content_text,omitempty"`
 
 	// 创建时间
 	CreatedAt *int64 `json:"created_at,omitempty"`
@@ -165,9 +165,9 @@ type ESDiscussion struct {
 	// 更新时间
 	UpdatedAt *int64 `json:"updated_at,omitempty"  swaggertype:"string"`
 
-	Creator *ESCreator `json:"creator"`
+	Creator *ESCreator `json:"creator,omitempty"`
 
-	Topic *ESDiscussionTopic `json:"topic"`
+	Topic *ESDiscussionTopic `json:"topic,omitempty"`
 
 	Category *ESDiscussionCategory `json:"category,omitempty"`
 }
@@ -178,5 +178,5 @@ type ESDiscussionCategory struct {
 	// Name
 	Name *string `json:"name,omitempty" `
 
-	Seq *int `json:"seq"`
+	Seq *int `json:"seq,omitempty"`
 }
