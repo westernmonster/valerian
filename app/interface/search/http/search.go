@@ -29,7 +29,7 @@ import (
 // @Failure 500 "服务器端错误"
 // @Router /search/topics [get]
 func searchTopics(c *mars.Context) {
-	arg := new(model.TopicSearchParams)
+	arg := new(model.BasicSearchParams)
 	if e := c.BindWith(arg, binding.Query); e != nil {
 		return
 	}
@@ -39,7 +39,7 @@ func searchTopics(c *mars.Context) {
 		return
 	}
 
-	c.JSON(srv.TopicSearch(c, arg))
+	c.JSON(srv.TopicSearch(c, &model.TopicSearchParams{arg}))
 }
 
 // @Summary 搜索账户
@@ -64,7 +64,7 @@ func searchTopics(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /search/accounts [get]
 func searchAccounts(c *mars.Context) {
-	arg := new(model.AccountSearchParams)
+	arg := new(model.BasicSearchParams)
 	if e := c.BindWith(arg, binding.Query); e != nil {
 		return
 	}
@@ -74,7 +74,7 @@ func searchAccounts(c *mars.Context) {
 		return
 	}
 
-	c.JSON(srv.AccountSearch(c, arg))
+	c.JSON(srv.AccountSearch(c, &model.AccountSearchParams{arg}))
 }
 
 // @Summary 搜索文章
@@ -99,7 +99,7 @@ func searchAccounts(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /search/articles [get]
 func searchArticles(c *mars.Context) {
-	arg := new(model.ArticleSearchParams)
+	arg := new(model.BasicSearchParams)
 	if e := c.BindWith(arg, binding.Query); e != nil {
 		return
 	}
@@ -109,7 +109,7 @@ func searchArticles(c *mars.Context) {
 		return
 	}
 
-	c.JSON(srv.ArticleSearch(c, arg))
+	c.JSON(srv.ArticleSearch(c, &model.ArticleSearchParams{arg}))
 }
 
 // @Summary 搜索讨论
@@ -134,7 +134,7 @@ func searchArticles(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /search/discussions [get]
 func searchDiscusstions(c *mars.Context) {
-	arg := new(model.DiscussionSearchParams)
+	arg := new(model.BasicSearchParams)
 	if e := c.BindWith(arg, binding.Query); e != nil {
 		return
 	}
@@ -144,7 +144,7 @@ func searchDiscusstions(c *mars.Context) {
 		return
 	}
 
-	c.JSON(srv.DiscussionSearch(c, arg))
+	c.JSON(srv.DiscussionSearch(c, &model.DiscussionSearchParams{arg}))
 }
 
 // @Summary 综合搜索
