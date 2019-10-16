@@ -4,6 +4,10 @@ import (
 	"context"
 	"valerian/app/service/recent/model"
 	"valerian/library/database/sqalx"
+
+	article "valerian/app/service/article/api"
+	discuss "valerian/app/service/discuss/api"
+	topic "valerian/app/service/topic/api"
 )
 
 type IDao interface {
@@ -24,6 +28,11 @@ type IDao interface {
 	AddRecentPub(c context.Context, node sqalx.Node, item *model.RecentPub) (err error)
 	UpdateRecentPub(c context.Context, node sqalx.Node, item *model.RecentPub) (err error)
 	DelRecentPub(c context.Context, node sqalx.Node, id int64) (err error)
+
+	GetDiscussion(c context.Context, id int64) (info *discuss.DiscussionInfo, err error)
+	GetTopic(c context.Context, id int64) (info *topic.TopicInfo, err error)
+	GetArticle(c context.Context, id int64) (info *article.ArticleInfo, err error)
+	GetRevise(c context.Context, id int64) (info *article.ReviseInfo, err error)
 
 	Ping(c context.Context) (err error)
 	Close()

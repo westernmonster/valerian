@@ -39,6 +39,10 @@ type Config struct {
 	Memcache  *Memcache
 	Discovery *discovery.Config
 	Nats      *mq.Config
+
+	TopicRPC   *warden.ClientConfig
+	ArticleRPC *warden.ClientConfig
+	DiscussRPC *warden.ClientConfig
 }
 
 // DB db config.

@@ -21,7 +21,7 @@ import (
 
 func (p *Service) GetArticleRevisesPaged(c context.Context, articleID int64, sort string, limit, offset int) (resp *model.ReviseListResp, err error) {
 	var data []*model.Revise
-	if data, err = p.d.GetArticleRevisesPaged(c, p.d.DB(), articleID, sort, offset, limit); err != nil {
+	if data, err = p.d.GetArticleRevisesPaged(c, p.d.DB(), articleID, sort, limit, offset); err != nil {
 		return
 	}
 

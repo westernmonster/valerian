@@ -22,7 +22,7 @@ func (p *Service) GetCommentsPaged(c context.Context, resourceID int64, targetTy
 		return
 	}
 	var data []*model.Comment
-	if data, err = p.d.GetCommentsPaged(c, p.d.DB(), resourceID, targetType, offset, limit); err != nil {
+	if data, err = p.d.GetCommentsPaged(c, p.d.DB(), resourceID, targetType, limit, offset); err != nil {
 		return
 	}
 

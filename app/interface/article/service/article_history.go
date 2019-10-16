@@ -9,9 +9,9 @@ import (
 	"valerian/library/ecode"
 )
 
-func (p *Service) GetArticleHistoriesResp(c context.Context, articleID int64, offset, limit int) (resp *model.ArticleHistoryListResp, err error) {
+func (p *Service) GetArticleHistoriesResp(c context.Context, articleID int64, limit, offset int) (resp *model.ArticleHistoryListResp, err error) {
 	var data []*model.ArticleHistory
-	if data, err = p.d.GetArticleHistoriesPaged(c, p.d.DB(), articleID, offset, limit); err != nil {
+	if data, err = p.d.GetArticleHistoriesPaged(c, p.d.DB(), articleID, limit, offset); err != nil {
 		return
 	}
 
