@@ -37,6 +37,7 @@ func searchTopics(c *mars.Context) {
 
 	fmt.Println(c.Request.Form)
 	fmt.Println(c.Request.URL)
+	fmt.Println(arg)
 	if e := arg.Validate(); e != nil {
 		fmt.Println(e)
 		c.JSON(nil, ecode.RequestErr)
