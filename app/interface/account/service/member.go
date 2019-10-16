@@ -20,7 +20,6 @@ func (p *Service) FromDiscussion(v *discuss.DiscussionInfo) (item *model.TargetD
 	item = &model.TargetDiscuss{
 		ID:           v.ID,
 		Excerpt:      v.Excerpt,
-		ImageUrls:    v.ImageUrls,
 		CommentCount: int(v.Stat.CommentCount),
 		LikeCount:    int(v.Stat.LikeCount),
 		DislikeCount: int(v.Stat.DislikeCount),
@@ -29,6 +28,12 @@ func (p *Service) FromDiscussion(v *discuss.DiscussionInfo) (item *model.TargetD
 			Avatar:   v.Creator.Avatar,
 			UserName: v.Creator.UserName,
 		},
+	}
+
+	if v.ImageUrls == nil {
+		item.ImageUrls = make([]string, 0)
+	} else {
+		item.ImageUrls = v.ImageUrls
 	}
 
 	title := v.GetTitleValue()
@@ -44,7 +49,6 @@ func (p *Service) FromRevise(v *article.ReviseInfo) (item *model.TargetRevise) {
 		ID:           v.ID,
 		Title:        v.Title,
 		Excerpt:      v.Excerpt,
-		ImageUrls:    v.ImageUrls,
 		CommentCount: int(v.Stat.CommentCount),
 		LikeCount:    int(v.Stat.LikeCount),
 		DislikeCount: int(v.Stat.DislikeCount),
@@ -53,6 +57,11 @@ func (p *Service) FromRevise(v *article.ReviseInfo) (item *model.TargetRevise) {
 			Avatar:   v.Creator.Avatar,
 			UserName: v.Creator.UserName,
 		},
+	}
+	if v.ImageUrls == nil {
+		item.ImageUrls = make([]string, 0)
+	} else {
+		item.ImageUrls = v.ImageUrls
 	}
 
 	intro := v.Creator.GetIntroductionValue()
@@ -65,7 +74,6 @@ func (p *Service) FromArticle(v *article.ArticleInfo) (item *model.TargetArticle
 		ID:           v.ID,
 		Title:        v.Title,
 		Excerpt:      v.Excerpt,
-		ImageUrls:    v.ImageUrls,
 		ReviseCount:  int(v.Stat.ReviseCount),
 		CommentCount: int(v.Stat.CommentCount),
 		LikeCount:    int(v.Stat.LikeCount),
@@ -75,6 +83,11 @@ func (p *Service) FromArticle(v *article.ArticleInfo) (item *model.TargetArticle
 			Avatar:   v.Creator.Avatar,
 			UserName: v.Creator.UserName,
 		},
+	}
+	if v.ImageUrls == nil {
+		item.ImageUrls = make([]string, 0)
+	} else {
+		item.ImageUrls = v.ImageUrls
 	}
 
 	intro := v.Creator.GetIntroductionValue()
@@ -356,11 +369,16 @@ func (p *Service) GetMemberArticlesPaged(c context.Context, aid int64, limit, of
 		item := &model.MemberArticle{
 			ID:           v.ID,
 			Title:        v.Title,
-			ImageUrls:    v.ImageUrls,
 			Excerpt:      v.Excerpt,
 			LikeCount:    int(v.Stat.LikeCount),
 			DislikeCount: int(v.Stat.DislikeCount),
 			CommentCount: int(v.Stat.CommentCount),
+		}
+
+		if v.ImageUrls == nil {
+			item.ImageUrls = make([]string, 0)
+		} else {
+			item.ImageUrls = v.ImageUrls
 		}
 
 		resp.Items[i] = item
@@ -407,11 +425,16 @@ func (p *Service) GetMemberDiscussionsPaged(c context.Context, aid int64, limit,
 	for i, v := range data.Items {
 		item := &model.MemberDiscuss{
 			ID:           v.ID,
-			ImageUrls:    v.ImageUrls,
 			Excerpt:      v.Excerpt,
 			LikeCount:    int(v.Stat.LikeCount),
 			DislikeCount: int(v.Stat.DislikeCount),
 			CommentCount: int(v.Stat.CommentCount),
+		}
+
+		if v.ImageUrls == nil {
+			item.ImageUrls = make([]string, 0)
+		} else {
+			item.ImageUrls = v.ImageUrls
 		}
 
 		title := v.GetTitleValue()
