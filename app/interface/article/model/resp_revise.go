@@ -20,6 +20,10 @@ type ReviseItem struct {
 
 	// 评论数
 	CommentCount int `json:"comment_count"`
+
+	CreatedAt int64 `json:"created_at"`
+
+	UpdatedAt int64 `json:"updated_at"`
 }
 
 type ReviseListResp struct {

@@ -10,9 +10,15 @@ import (
 	"valerian/library/log"
 )
 
-func (p *Dao) GetArticleRevisesPaged(c context.Context, node sqalx.Node, articleID int64, limit, offset int) (items []*model.Revise, err error) {
+func (p *Dao) GetArticleRevisesPaged(c context.Context, node sqalx.Node, articleID int64, sort string, limit, offset int) (items []*model.Revise, err error) {
 	items = make([]*model.Revise, 0)
-	sqlSelect := "SELECT a.* FROM revises a WHERE a.deleted=0 AND a.article_id=? ORDER BY a.id DESC limit ?,?"
+	sqlSelect := "SELECT a.* FROM revises a LEFT JOIN revise_stats b ON a.id = b.revise_id WHERE a.deleted=0 AND a.article_id=? %s limit ?,?"
+	s := "ORDER BY a.id DESC"
+	if sort == "hot" {
+		s = "ORDER BY b.like_count DESC, b.dislike_count DESC, a.id DESC"
+	}
+
+	sqlSelect = fmt.Sprintf(sqlSelect, s)
 
 	if err = node.SelectContext(c, &items, sqlSelect, articleID, offset, limit); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetArticleRevisesPaged err(%+v) article_id(%d) limit(%d) offset(%d)", err, articleID, limit, offset))

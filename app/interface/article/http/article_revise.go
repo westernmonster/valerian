@@ -16,6 +16,7 @@ import (
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param article_id query string true "article_id"
+// @Param sort query string true "hot,recent"
 // @Param limit query integer false "每页大小"
 // @Param offset query integer false "offset"
 // @Success 200 {object} model.ReviseListResp "补充列表"
@@ -49,8 +50,23 @@ func getRevises(c *mars.Context) {
 		c.JSON(nil, ecode.RequestErr)
 		return
 	}
+	s := "hot"
+	sortStr := params.Get("sort")
+	if sortStr == "" {
+		s = "hot"
+	} else {
+		s = sortStr
+	}
 
-	c.JSON(srv.GetArticleRevisesPaged(c, id, limit, offset))
+	sorts := []string{"hot", "recent"}
+	for _, v := range sorts {
+		if v != s {
+			c.JSON(nil, ecode.RequestErr)
+			return
+		}
+	}
+
+	c.JSON(srv.GetArticleRevisesPaged(c, id, s, limit, offset))
 }
 
 // @Summary 新增文章补充

@@ -53,7 +53,7 @@ type IDao interface {
 	DelTopicCatalog(c context.Context, node sqalx.Node, id int64) (err error)
 	GetTopicCatalogMaxChildrenSeq(c context.Context, node sqalx.Node, topicID, parentID int64) (seq int, err error)
 
-	GetArticleRevisesPaged(c context.Context, node sqalx.Node, articleID int64, limit, offset int) (items []*model.Revise, err error)
+	GetArticleRevisesPaged(c context.Context, node sqalx.Node, articleID int64, sort string, limit, offset int) (items []*model.Revise, err error)
 	GetRevisesByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.Revise, err error)
 	GetRevises(c context.Context, node sqalx.Node) (items []*model.Revise, err error)
 	GetReviseByID(c context.Context, node sqalx.Node, id int64) (item *model.Revise, err error)
