@@ -34,6 +34,11 @@ func New(c *conf.Config) (s *Service) {
 		panic(err)
 	}
 
+	if err := s.mq.QueueSubscribe(def.BusArticleViewed, "recent", s.onArticleViewed); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusArticleViewed, "recent")
+		panic(err)
+	}
+
 	if err := s.mq.QueueSubscribe(def.BusArticleDeleted, "recent", s.onArticleDeleted); err != nil {
 		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusArticleDeleted, "recent")
 		panic(err)
@@ -61,6 +66,11 @@ func New(c *conf.Config) (s *Service) {
 
 	if err := s.mq.QueueSubscribe(def.BusTopicDeleted, "recent", s.onTopicDeleted); err != nil {
 		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusTopicDeleted, "recent")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusTopicViewed, "recent", s.onTopicViewed); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusTopicViewed, "recent")
 		panic(err)
 	}
 
