@@ -57,6 +57,7 @@ func (p *Service) GetArticleRevisesPaged(c context.Context, articleID int64, sor
 
 	if resp.Paging.Prev, err = genURL("/api/v1/article/list/revises", url.Values{
 		"article_id": []string{strconv.FormatInt(articleID, 10)},
+		"sort":       []string{sort},
 		"limit":      []string{strconv.Itoa(limit)},
 		"offset":     []string{strconv.Itoa(offset - limit)},
 	}); err != nil {
@@ -65,12 +66,15 @@ func (p *Service) GetArticleRevisesPaged(c context.Context, articleID int64, sor
 
 	if resp.Paging.Next, err = genURL("/api/v1/article/list/revises", url.Values{
 		"article_id": []string{strconv.FormatInt(articleID, 10)},
+		"sort":       []string{sort},
 		"limit":      []string{strconv.Itoa(limit)},
 		"offset":     []string{strconv.Itoa(offset + limit)},
 	}); err != nil {
 		return
 	}
 
+	fmt.Println(limit)
+	fmt.Println(resp.Items)
 	if len(resp.Items) < limit {
 		resp.Paging.IsEnd = true
 		resp.Paging.Next = ""
