@@ -80,8 +80,6 @@ func (s *server) GetArticleInfo(ctx context.Context, req *api.IDReq) (*api.Artic
 		},
 	}
 
-	fmt.Printf("%+v\n", resp)
-
 	if m.Introduction != nil {
 		resp.Creator.Introduction = &api.Creator_IntroductionValue{m.GetIntroductionValue()}
 	}
@@ -185,6 +183,8 @@ func (s *server) GetUserArticlesPaged(c context.Context, req *api.UserArticlesRe
 				Avatar:   m.Avatar,
 			},
 		}
+
+		fmt.Printf("%+v\n", resp)
 
 		if m.Introduction != nil {
 			info.Creator.Introduction = &api.Creator_IntroductionValue{m.GetIntroductionValue()}
