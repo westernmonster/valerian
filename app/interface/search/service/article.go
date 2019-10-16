@@ -35,37 +35,37 @@ func (p *Service) ArticleSearch(c context.Context, arg *model.ArticleSearchParam
 	resp.Paging.Total = data.Page.Total
 
 	if resp.Paging.Prev, err = genURL("/api/v1/search/articles", url.Values{
-		"kw":        []string{arg.Bsp.KW},
-		"kw_fields": arg.Bsp.KwFields,
-		"order":     arg.Bsp.Order,
-		"sort":      arg.Bsp.Sort,
-		"debug":     []string{strconv.FormatBool(arg.Bsp.Debug)},
-		"source":    arg.Bsp.Source,
-		"pn":        []string{strconv.Itoa(arg.Bsp.Pn)},
-		"ps":        []string{strconv.Itoa(arg.Bsp.Ps)},
+		"kw":        []string{arg.KW},
+		"kw_fields": arg.KwFields,
+		"order":     arg.Order,
+		"sort":      arg.Sort,
+		"debug":     []string{strconv.FormatBool(arg.Debug)},
+		"source":    arg.Source,
+		"pn":        []string{strconv.Itoa(arg.Pn)},
+		"ps":        []string{strconv.Itoa(arg.Ps)},
 	}); err != nil {
 		return
 	}
 
 	if resp.Paging.Next, err = genURL("/api/v1/search/articles", url.Values{
-		"kw":        []string{arg.Bsp.KW},
-		"kw_fields": arg.Bsp.KwFields,
-		"order":     arg.Bsp.Order,
-		"sort":      arg.Bsp.Sort,
-		"debug":     []string{strconv.FormatBool(arg.Bsp.Debug)},
-		"source":    arg.Bsp.Source,
-		"pn":        []string{strconv.Itoa(arg.Bsp.Pn + 1)},
-		"ps":        []string{strconv.Itoa(arg.Bsp.Ps)},
+		"kw":        []string{arg.KW},
+		"kw_fields": arg.KwFields,
+		"order":     arg.Order,
+		"sort":      arg.Sort,
+		"debug":     []string{strconv.FormatBool(arg.Debug)},
+		"source":    arg.Source,
+		"pn":        []string{strconv.Itoa(arg.Pn + 1)},
+		"ps":        []string{strconv.Itoa(arg.Ps)},
 	}); err != nil {
 		return
 	}
 
-	if len(resp.Data) < arg.Bsp.Ps {
+	if len(resp.Data) < arg.Ps {
 		resp.Paging.IsEnd = true
 		resp.Paging.Next = ""
 	}
 
-	if arg.Bsp.Pn == 1 {
+	if arg.Pn == 1 {
 		resp.Paging.Prev = ""
 	}
 

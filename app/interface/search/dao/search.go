@@ -18,12 +18,12 @@ func (p *Dao) AccountSearch(c context.Context, arg *model.AccountSearchParams) (
 	// 	query = query.Must(elastic.NewTermQuery("deleted", false))
 	// }
 
-	if arg.Bsp.KW != "" {
-		query = query.Must(elastic.NewMultiMatchQuery(arg.Bsp.KW, arg.Bsp.KwFields...).Type("best_fields").TieBreaker(0.6))
+	if arg.KW != "" {
+		query = query.Must(elastic.NewMultiMatchQuery(arg.KW, arg.KwFields...).Type("best_fields").TieBreaker(0.6))
 	}
 
-	if res, err = p.searchResult(c, "accounts", query, arg.Bsp); err != nil {
-		PromError(c, fmt.Sprintf("es:%+v ", arg.Bsp), "%v", err)
+	if res, err = p.searchResult(c, "accounts", query, arg.BasicSearchParams); err != nil {
+		PromError(c, fmt.Sprintf("es:%+v ", arg), "%v", err)
 		return
 	}
 
@@ -39,12 +39,12 @@ func (p *Dao) TopicSearch(c context.Context, arg *model.TopicSearchParams) (res 
 	// 	query = query.Must(elastic.NewTermQuery("deleted", false))
 	// }
 
-	if arg.Bsp.KW != "" {
-		query = query.Must(elastic.NewMultiMatchQuery(arg.Bsp.KW, arg.Bsp.KwFields...).Type("best_fields").TieBreaker(0.6))
+	if arg.KW != "" {
+		query = query.Must(elastic.NewMultiMatchQuery(arg.KW, arg.KwFields...).Type("best_fields").TieBreaker(0.6))
 	}
 
-	if res, err = p.searchResult(c, "topics", query, arg.Bsp); err != nil {
-		PromError(c, fmt.Sprintf("es:%+v ", arg.Bsp), "%v", err)
+	if res, err = p.searchResult(c, "topics", query, arg.BasicSearchParams); err != nil {
+		PromError(c, fmt.Sprintf("es:%+v ", arg), "%v", err)
 		return
 	}
 
@@ -60,12 +60,12 @@ func (p *Dao) ArticleSearch(c context.Context, arg *model.ArticleSearchParams) (
 	// 	query = query.Must(elastic.NewTermQuery("deleted", false))
 	// }
 
-	if arg.Bsp.KW != "" {
-		query = query.Must(elastic.NewMultiMatchQuery(arg.Bsp.KW, arg.Bsp.KwFields...).Type("best_fields").TieBreaker(0.6))
+	if arg.KW != "" {
+		query = query.Must(elastic.NewMultiMatchQuery(arg.KW, arg.KwFields...).Type("best_fields").TieBreaker(0.6))
 	}
 
-	if res, err = p.searchResult(c, "topics", query, arg.Bsp); err != nil {
-		PromError(c, fmt.Sprintf("es:%+v ", arg.Bsp), "%v", err)
+	if res, err = p.searchResult(c, "articles", query, arg.BasicSearchParams); err != nil {
+		PromError(c, fmt.Sprintf("es:%+v ", arg), "%v", err)
 		return
 	}
 
@@ -81,12 +81,12 @@ func (p *Dao) DiscussionSearch(c context.Context, arg *model.DiscussionSearchPar
 	// 	query = query.Must(elastic.NewTermQuery("deleted", false))
 	// }
 
-	if arg.Bsp.KW != "" {
-		query = query.Must(elastic.NewMultiMatchQuery(arg.Bsp.KW, arg.Bsp.KwFields...).Type("best_fields").TieBreaker(0.6))
+	if arg.KW != "" {
+		query = query.Must(elastic.NewMultiMatchQuery(arg.KW, arg.KwFields...).Type("best_fields").TieBreaker(0.6))
 	}
 
-	if res, err = p.searchResult(c, "topics", query, arg.Bsp); err != nil {
-		PromError(c, fmt.Sprintf("es:%+v ", arg.Bsp), "%v", err)
+	if res, err = p.searchResult(c, "discussions", query, arg.BasicSearchParams); err != nil {
+		PromError(c, fmt.Sprintf("es:%+v ", arg), "%v", err)
 		return
 	}
 

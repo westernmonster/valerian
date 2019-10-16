@@ -115,47 +115,51 @@ func (p *BasicSearchParams) Validate() error {
 }
 
 type ArticleSearchParams struct {
-	Bsp *BasicSearchParams
+	*BasicSearchParams
 }
 
 func (p *ArticleSearchParams) Validate() error {
 	return validation.ValidateStruct(
 		p,
-		validation.Field(&p.Bsp),
+		validation.Field(&p.Pn, validation.Required),
+		validation.Field(&p.Ps, validation.Required),
 	)
 }
 
 type AccountSearchParams struct {
-	Bsp *BasicSearchParams
+	*BasicSearchParams
 }
 
 func (p *AccountSearchParams) Validate() error {
 	return validation.ValidateStruct(
 		p,
-		validation.Field(&p.Bsp),
+		validation.Field(&p.Pn, validation.Required),
+		validation.Field(&p.Ps, validation.Required),
 	)
 }
 
 type TopicSearchParams struct {
-	Bsp *BasicSearchParams
+	*BasicSearchParams
 	// Query string `json:"query"`
 }
 
 func (p *TopicSearchParams) Validate() error {
 	return validation.ValidateStruct(
 		p,
-		validation.Field(&p.Bsp),
+		validation.Field(&p.Pn, validation.Required),
+		validation.Field(&p.Ps, validation.Required),
 	)
 }
 
 type DiscussionSearchParams struct {
-	Bsp *BasicSearchParams
+	*BasicSearchParams
 	// Query string `json:"query"`
 }
 
 func (p *DiscussionSearchParams) Validate() error {
 	return validation.ValidateStruct(
 		p,
-		validation.Field(&p.Bsp),
+		validation.Field(&p.Pn, validation.Required),
+		validation.Field(&p.Ps, validation.Required),
 	)
 }
