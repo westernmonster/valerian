@@ -85,7 +85,7 @@ func (p *Dao) DiscussionSearch(c context.Context, arg *model.DiscussionSearchPar
 	// 	query = query.Must(elastic.NewTermQuery("deleted", false))
 	// }
 
-	indexName := fmt.Sprintf("%s_accounts", env.DeployEnv)
+	indexName := fmt.Sprintf("%s_discussions", env.DeployEnv)
 	if arg.KW != "" {
 		query = query.Must(elastic.NewMultiMatchQuery(arg.KW, arg.KwFields...).Type("best_fields").TieBreaker(0.6))
 	}
