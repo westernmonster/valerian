@@ -452,3 +452,14 @@ push-service-comment:
 	docker push registry.cn-hangzhou.aliyuncs.com/valerian/service-comment:${DOCKER_TAG}
 deploy-service-comment:
 	helm upgrade --install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/service-comment:${DOCKER_TAG} --set global.name=service-comment --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=service.comment --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=b596198aedfc11e986590a58ac140094  --set env.treeId=1315 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc service-comment-uat ./build/k8s
+
+service-search: build-service-search docker-service-search push-service-search deploy-service-search
+build-service-search:
+	go env -w GOPROXY=https://goproxy.cn,direct
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/service/search/cmd/cmd"   app/service/search/cmd/main.go
+docker-service-search:
+	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/service-search:${DOCKER_TAG} ./app/service/search/cmd/
+push-service-search:
+	docker push registry.cn-hangzhou.aliyuncs.com/valerian/service-search:${DOCKER_TAG}
+deploy-service-search:
+	helm upgrade --install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/service-search:${DOCKER_TAG} --set global.name=service-search --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=service.search --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=17e3ee7fefff11e986590a58ac140094  --set env.treeId=1316 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc service-search-uat ./build/k8s
