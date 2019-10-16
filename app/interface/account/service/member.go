@@ -28,6 +28,8 @@ func (p *Service) FromDiscussion(v *discuss.DiscussionInfo) (item *model.TargetD
 			Avatar:   v.Creator.Avatar,
 			UserName: v.Creator.UserName,
 		},
+		CreatedAt: v.CreatedAt,
+		UpdatedAt: v.UpdatedAt,
 	}
 
 	if v.ImageUrls == nil {
@@ -57,6 +59,8 @@ func (p *Service) FromRevise(v *article.ReviseInfo) (item *model.TargetRevise) {
 			Avatar:   v.Creator.Avatar,
 			UserName: v.Creator.UserName,
 		},
+		CreatedAt: v.CreatedAt,
+		UpdatedAt: v.UpdatedAt,
 	}
 	if v.ImageUrls == nil {
 		item.ImageUrls = make([]string, 0)
@@ -83,6 +87,8 @@ func (p *Service) FromArticle(v *article.ArticleInfo) (item *model.TargetArticle
 			Avatar:   v.Creator.Avatar,
 			UserName: v.Creator.UserName,
 		},
+		CreatedAt: v.CreatedAt,
+		UpdatedAt: v.UpdatedAt,
 	}
 	if v.ImageUrls == nil {
 		item.ImageUrls = make([]string, 0)
@@ -108,6 +114,8 @@ func (p *Service) FromTopic(v *topic.TopicInfo) (item *model.TargetTopic) {
 			Avatar:   v.Creator.Avatar,
 			UserName: v.Creator.UserName,
 		},
+		CreatedAt: v.CreatedAt,
+		UpdatedAt: v.UpdatedAt,
 	}
 
 	intro := v.Creator.GetIntroductionValue()
@@ -373,6 +381,8 @@ func (p *Service) GetMemberArticlesPaged(c context.Context, aid int64, limit, of
 			LikeCount:    int(v.Stat.LikeCount),
 			DislikeCount: int(v.Stat.DislikeCount),
 			CommentCount: int(v.Stat.CommentCount),
+			CreatedAt:    v.CreatedAt,
+			UpdatedAt:    v.UpdatedAt,
 		}
 
 		if v.ImageUrls == nil {
@@ -429,6 +439,8 @@ func (p *Service) GetMemberDiscussionsPaged(c context.Context, aid int64, limit,
 			LikeCount:    int(v.Stat.LikeCount),
 			DislikeCount: int(v.Stat.DislikeCount),
 			CommentCount: int(v.Stat.CommentCount),
+			CreatedAt:    v.CreatedAt,
+			UpdatedAt:    v.UpdatedAt,
 		}
 
 		if v.ImageUrls == nil {
@@ -487,6 +499,8 @@ func (p *Service) GetMemberTopicsPaged(c context.Context, aid int64, limit, offs
 			Name:         v.Name,
 			MemberCount:  int(v.Stat.MemberCount),
 			Introduction: v.Introduction,
+			CreatedAt:    v.CreatedAt,
+			UpdatedAt:    v.UpdatedAt,
 		}
 
 		avatar := v.GetAvatarValue()

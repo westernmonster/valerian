@@ -100,6 +100,10 @@ type TargetArticle struct {
 	CommentCount int `json:"comment_count"`
 
 	Creator *Creator `json:"creator,omitempty"`
+
+	CreatedAt int64 `json:"created_at"`
+
+	UpdatedAt int64 `json:"updated_at"`
 }
 
 type TargetRevise struct {
@@ -123,6 +127,10 @@ type TargetRevise struct {
 	ImageUrls []string `json:"images"`
 
 	Creator *Creator `json:"creator,omitempty"`
+
+	CreatedAt int64 `json:"created_at"`
+
+	UpdatedAt int64 `json:"updated_at"`
 }
 
 type TargetDiscuss struct {
@@ -146,6 +154,10 @@ type TargetDiscuss struct {
 	ImageUrls []string `json:"images"`
 
 	Creator *Creator `json:"creator,omitempty"`
+
+	CreatedAt int64 `json:"created_at"`
+
+	UpdatedAt int64 `json:"updated_at"`
 }
 
 type TargetTopic struct {
@@ -170,6 +182,10 @@ type TargetTopic struct {
 	Introduction string `json:"introduction"`
 
 	Creator *Creator `json:"creator,omitempty"`
+
+	CreatedAt int64 `json:"created_at"`
+
+	UpdatedAt int64 `json:"updated_at"`
 }
 
 type FeedResp struct {

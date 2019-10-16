@@ -13,6 +13,10 @@ type MemberTopic struct {
 
 	// 简介
 	Introduction string `json:"introduction"`
+
+	CreatedAt int64 `json:"created_at"`
+
+	UpdatedAt int64 `json:"updated_at"`
 }
 
 type MemberTopicResp struct {
