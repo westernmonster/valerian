@@ -144,7 +144,9 @@ func (s *server) GetUserArticlesPaged(c context.Context, req *api.UserArticlesRe
 		return nil, err
 	}
 
-	resp := &api.UserArticlesResp{}
+	resp := &api.UserArticlesResp{
+		Items: make([]*api.ArticleInfo, len(items)),
+	}
 
 	for i, v := range items {
 		stat, err := s.svr.GetArticleStat(c, v.ID)
