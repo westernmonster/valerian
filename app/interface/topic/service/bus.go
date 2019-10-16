@@ -27,6 +27,25 @@ func (p *Service) onTopicAdded(c context.Context, topicID, aid, actionTime int64
 	return
 }
 
+func (p *Service) onTopicUpdated(c context.Context, topicID, aid, actionTime int64) {
+	msg := &def.MsgTopicUpdated{TopicID: topicID, ActorID: aid, ActionTime: actionTime}
+
+	var data []byte
+	var err error
+
+	if data, err = msg.Marshal(); err != nil {
+		log.For(c).Error(fmt.Sprintf("onTopicUpdated.Marshal(), err(%+v)", err))
+		return
+	}
+
+	if err = p.mq.Publish(def.BusTopicUpdated, data); err != nil {
+		log.For(c).Error(fmt.Sprintf("onTopicUpdated.Publish(), err(%+v)", err))
+		return
+	}
+
+	return
+}
+
 func (p *Service) onTopicDeleted(c context.Context, topicID, aid, actionTime int64) {
 	msg := &def.MsgTopicDeleted{TopicID: topicID, ActorID: aid, ActionTime: actionTime}
 

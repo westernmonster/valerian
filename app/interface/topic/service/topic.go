@@ -128,7 +128,15 @@ func (p *Service) UpdateTopic(c context.Context, arg *model.ArgUpdateTopic) (err
 		return
 	}
 
-	return p.updateTopic(c, p.d.DB(), aid, arg)
+	if err = p.updateTopic(c, p.d.DB(), aid, arg); err != nil {
+		return
+	}
+
+	p.addCache(func() {
+		p.onTopicUpdated(context.Background(), arg.ID, aid, time.Now().Unix())
+	})
+
+	return
 }
 
 func (p *Service) updateTopic(c context.Context, node sqalx.Node, aid int64, arg *model.ArgUpdateTopic) (err error) {
