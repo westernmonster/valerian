@@ -88,22 +88,22 @@ type SearchResult struct {
 
 type BasicSearchParams struct {
 	// 搜索关键词
-	KW string `json:"kw"`
+	KW string `json:"kw" form:"kw"`
 	// 搜索关键词所用的字段
-	KwFields []string `json:"kw_fields"`
+	KwFields []string `json:"kw_fields" form:"kw_fields"`
 	// 排序的顺序
 	// desc, asc
-	Order []string `json:"order"`
+	Order []string `json:"order" form:"order"`
 	// 排序的字段
-	Sort []string `json:"sort"`
+	Sort []string `json:"sort" form:"sort"`
 	// 页码
-	Pn int `json:"pn"`
+	Pn int `json:"pn" form:"pn"`
 	// 每页大小
-	Ps int `json:"ps"`
+	Ps int `json:"ps" form:"ps"`
 	// 是否输出Debug信息
-	Debug bool `json:"debug"`
+	Debug bool `json:"debug" form:"debug"`
 	// 输出的字段
-	Source []string `json:"source"`
+	Source []string `json:"source" form:"source"`
 }
 
 func (p *BasicSearchParams) Validate() error {
