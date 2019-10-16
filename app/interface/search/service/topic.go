@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/url"
 	"strconv"
 
@@ -32,6 +33,7 @@ func (p *Service) TopicSearch(c context.Context, arg *model.TopicSearchParams) (
 		resp.Data = append(resp.Data, acc)
 	}
 
+	fmt.Printf("%+v\n", data)
 	resp.Paging.Total = data.Page.Total
 
 	if resp.Paging.Prev, err = genURL("/api/v1/search/topics", url.Values{
