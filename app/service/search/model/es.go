@@ -23,7 +23,7 @@ type SearchResult struct {
 	Order  string            `json:"order"`
 	Sort   string            `json:"sort"`
 	Result []json.RawMessage `json:"data"`
-	Page   *Paging           `json:"page"`
+	Page   *Page             `json:"page"`
 	Debug  string            `json:"debug"`
 }
 
