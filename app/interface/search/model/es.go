@@ -6,7 +6,7 @@ type ES struct {
 
 type ESAccount struct {
 	// ID
-	ID int64 `json:"id,omitempty" swaggertype:"string"`
+	ID int64 `json:"id,string,omitempty" swaggertype:"string"`
 
 	// 手机
 	Mobile *string `json:"mobile,omitempty"`
@@ -65,7 +65,7 @@ type ESAccount struct {
 
 type ESCreator struct {
 	// ID ID
-	ID int64 `json:"id,omitempty"  swaggertype:"string"`
+	ID int64 `json:"id,string,omitempty"  swaggertype:"string"`
 	// 用户名
 	UserName *string `json:"user_name,omitempty"`
 	// 头像
@@ -76,7 +76,7 @@ type ESCreator struct {
 
 type ESTopic struct {
 	// ID ID
-	ID int64 `json:"id,omitempty"  swaggertype:"string"`
+	ID int64 `json:"id,string,omitempty"  swaggertype:"string"`
 	// Name 话题名
 	Name *string `json:"name,omitempty" `
 	// Avatar 话题头像
@@ -108,7 +108,7 @@ type ESTopic struct {
 }
 
 type ESArticle struct {
-	ID int64 `json:"id" swaggertype:"string"`
+	ID int64 `json:"id,string" swaggertype:"string"`
 
 	// 标题
 	Title *string `json:"title"`
@@ -135,7 +135,7 @@ type ESArticle struct {
 }
 
 type ESDiscussionTopic struct {
-	ID int64 `json:"id" swaggertype:"string"`
+	ID int64 `json:"id,string" swaggertype:"string"`
 
 	// Name 话题名
 	Name *string `json:"name,omitempty" `
@@ -148,7 +148,7 @@ type ESDiscussionTopic struct {
 }
 
 type ESDiscussion struct {
-	ID int64 `json:"id" swaggertype:"string"`
+	ID int64 `json:"id,string" swaggertype:"string"`
 
 	// 标题
 	Title *string `json:"title"`
@@ -173,7 +173,7 @@ type ESDiscussion struct {
 }
 
 type ESDiscussionCategory struct {
-	ID int64 `json:"id" swaggertype:"string"`
+	ID int64 `json:"id,string" swaggertype:"string"`
 
 	// Name
 	Name *string `json:"name,omitempty" `
