@@ -215,6 +215,7 @@ func (p *Service) UpdateProfile(c context.Context, aid int64, arg *model.ArgUpda
 
 	p.addCache(func() {
 		p.d.DelAccountCache(context.TODO(), aid)
+		p.onAccountUpdated(context.TODO(), aid, time.Now().Unix())
 	})
 
 	return

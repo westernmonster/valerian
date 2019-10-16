@@ -17,12 +17,14 @@ import (
 	"valerian/library/conf/env"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
+	"valerian/library/mq"
 )
 
 // Service struct of service
 type Service struct {
-	c *conf.Config
-	d interface {
+	c  *conf.Config
+	mq *mq.MessageQueue
+	d  interface {
 		GetArea(ctx context.Context, node sqalx.Node, id int64) (item *model.Area, err error)
 		GetAccountByID(c context.Context, node sqalx.Node, id int64) (item *model.Account, err error)
 		GetAccountByEmail(c context.Context, node sqalx.Node, email string) (item *model.Account, err error)
@@ -80,6 +82,7 @@ func New(c *conf.Config) (s *Service) {
 	s = &Service{
 		c:      c,
 		d:      dao.New(c),
+		mq:     mq.New(env.Hostname, c.Nats),
 		missch: make(chan func(), 1024),
 	}
 	go s.cacheproc()
