@@ -4,6 +4,7 @@ import (
 	"context"
 	"strings"
 
+	"valerian/app/service/feed/def"
 	"valerian/app/service/recent/conf"
 	"valerian/app/service/recent/dao"
 	"valerian/library/conf/env"
@@ -27,6 +28,42 @@ func New(c *conf.Config) (s *Service) {
 		missch: make(chan func(), 1024),
 		mq:     mq.New(env.Hostname, c.Nats),
 	}
+
+	if err := s.mq.QueueSubscribe(def.BusArticleAdded, "recent", s.onArticleAdded); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusArticleAdded, "recent")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusArticleDeleted, "recent", s.onArticleDeleted); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusArticleDeleted, "recent")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusReviseAdded, "recent", s.onReviseAdded); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusReviseAdded, "recent")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusReviseDeleted, "recent", s.onReviseDeleted); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusReviseDeleted, "recent")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusDiscussionAdded, "recent", s.onDiscussionAdded); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusDiscussionAdded, "recent")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusDiscussionDeleted, "recent", s.onDiscussionDeleted); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusDiscussionDeleted, "recent")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusTopicDeleted, "recent", s.onTopicDeleted); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusTopicDeleted, "recent")
+		panic(err)
+	}
+
 	go s.cacheproc()
 	return
 }

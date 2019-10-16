@@ -48,28 +48,64 @@ func (p *Service) onArticleAdded(m *stan.Msg) {
 	m.Ack()
 }
 
-func (p *Service) onTopicAdded(m *stan.Msg) {
+func (p *Service) onArticleDeleted(m *stan.Msg) {
 	var err error
 	c := context.Background()
-	info := new(def.MsgTopicAdded)
+	info := new(def.MsgArticleDeleted)
 	if err = info.Unmarshal(m.Data); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onTopicAdded Unmarshal failed %#v", err))
+		log.For(c).Error(fmt.Sprintf("service.onArticleDeleted Unmarshal failed %#v", err))
 		return
 	}
 
-	if _, err = p.d.GetTopic(c, info.TopicID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onTopicAdded GetTopic failed %#v", err))
+	if err = p.d.DelRecentPubByCond(c, p.d.DB(), model.TargetTypeArticle, info.ArticleID); err != nil {
+		return
+	}
+
+	if err = p.d.DelRecentViewByCond(c, p.d.DB(), model.TargetTypeArticle, info.ArticleID); err != nil {
+		return
+	}
+
+	m.Ack()
+}
+
+func (p *Service) onReviseAdded(m *stan.Msg) {
+	var err error
+	c := context.Background()
+	info := new(def.MsgReviseAdded)
+	if err = info.Unmarshal(m.Data); err != nil {
+		log.For(c).Error(fmt.Sprintf("service.onReviseAdded Unmarshal failed %#v", err))
+		return
+	}
+
+	if _, err = p.d.GetRevise(c, info.ReviseID); err != nil {
+		log.For(c).Error(fmt.Sprintf("service.onReviseAdded GetRevise failed %#v", err))
 		return
 	}
 
 	if err = p.d.AddRecentPub(c, p.d.DB(), &model.RecentPub{
 		ID:         gid.NewID(),
 		AccountID:  info.ActorID,
-		TargetID:   info.TopicID,
-		TargetType: model.TargetTypeTopic,
+		TargetID:   info.ReviseID,
+		TargetType: model.TargetTypeRevise,
 		CreatedAt:  info.ActionTime,
 		UpdatedAt:  info.ActionTime,
 	}); err != nil {
+		return
+	}
+
+	m.Ack()
+}
+
+func (p *Service) onReviseDeleted(m *stan.Msg) {
+	var err error
+	c := context.Background()
+	info := new(def.MsgReviseDeleted)
+	if err = info.Unmarshal(m.Data); err != nil {
+		log.For(c).Error(fmt.Sprintf("service.onReviseDeleted Unmarshal failed %#v", err))
+		return
+	}
+
+	if err = p.d.DelRecentPubByCond(c, p.d.DB(), model.TargetTypeRevise, info.ReviseID); err != nil {
 		return
 	}
 
@@ -98,6 +134,38 @@ func (p *Service) onDiscussionAdded(m *stan.Msg) {
 		CreatedAt:  info.ActionTime,
 		UpdatedAt:  info.ActionTime,
 	}); err != nil {
+		return
+	}
+
+	m.Ack()
+}
+
+func (p *Service) onDiscussionDeleted(m *stan.Msg) {
+	var err error
+	c := context.Background()
+	info := new(def.MsgDiscussionDeleted)
+	if err = info.Unmarshal(m.Data); err != nil {
+		log.For(c).Error(fmt.Sprintf("service.onDiscussionDeleted Unmarshal failed %#v", err))
+		return
+	}
+
+	if err = p.d.DelRecentPubByCond(c, p.d.DB(), model.TargetTypeDiscussion, info.DiscussionID); err != nil {
+		return
+	}
+
+	m.Ack()
+}
+
+func (p *Service) onTopicDeleted(m *stan.Msg) {
+	var err error
+	c := context.Background()
+	info := new(def.MsgTopicDeleted)
+	if err = info.Unmarshal(m.Data); err != nil {
+		log.For(c).Error(fmt.Sprintf("service.onTopicDeleted Unmarshal failed %#v", err))
+		return
+	}
+
+	if err = p.d.DelRecentPubByCond(c, p.d.DB(), model.TargetTypeTopic, info.TopicID); err != nil {
 		return
 	}
 

@@ -19,6 +19,7 @@ type IDao interface {
 	AddRecentView(c context.Context, node sqalx.Node, item *model.RecentView) (err error)
 	UpdateRecentView(c context.Context, node sqalx.Node, item *model.RecentView) (err error)
 	DelRecentView(c context.Context, node sqalx.Node, id int64) (err error)
+	DelRecentViewByCond(c context.Context, node sqalx.Node, targetType string, targetID int64) (err error)
 
 	GetUserRecentPubsPaged(c context.Context, node sqalx.Node, aid int64, limit, offset int) (items []*model.RecentPub, err error)
 	GetRecentPubsByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.RecentPub, err error)
@@ -28,6 +29,7 @@ type IDao interface {
 	AddRecentPub(c context.Context, node sqalx.Node, item *model.RecentPub) (err error)
 	UpdateRecentPub(c context.Context, node sqalx.Node, item *model.RecentPub) (err error)
 	DelRecentPub(c context.Context, node sqalx.Node, id int64) (err error)
+	DelRecentPubByCond(c context.Context, node sqalx.Node, targetType string, targetID int64) (err error)
 
 	GetDiscussion(c context.Context, id int64) (info *discuss.DiscussionInfo, err error)
 	GetTopic(c context.Context, id int64) (info *topic.TopicInfo, err error)
