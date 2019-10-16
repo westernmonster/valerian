@@ -137,6 +137,22 @@ func (p *Dao) PutDiscussion2ES(c context.Context, item *model.ESDiscussion) (err
 	return
 }
 
+func (p *Dao) DelESDiscussion(c context.Context, id int64) (err error) {
+	indexName := fmt.Sprintf("%s_discussions", env.DeployEnv)
+	var ret *elastic.DeleteResponse
+	if ret, err = p.esClient.Delete().Index(indexName).Type("topic").Id(strconv.FormatInt(id, 10)).Do(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("delete doc failed, error(%+v)", err))
+		return
+	}
+	if ret == nil {
+		msg := fmt.Sprintf("expected delete response to be != nil, index_name(%s),id(%d) ", indexName, id)
+		log.For(c).Error(msg)
+		err = errors.New(msg)
+		return
+	}
+	return
+}
+
 func (p *Dao) GetDiscussions(c context.Context, node sqalx.Node) (items []*model.Discussion, err error) {
 	items = make([]*model.Discussion, 0)
 	sqlSelect := "SELECT a.* FROM discussions a WHERE a.deleted=0 ORDER BY a.id DESC "
@@ -159,6 +175,22 @@ func (p *Dao) GetDiscussCategoryByID(c context.Context, node sqalx.Node, id int6
 			return
 		}
 		log.For(c).Error(fmt.Sprintf("dao.GetDiscussCategoryByID err(%+v), id(%+v)", err, id))
+	}
+
+	return
+}
+
+func (p *Dao) GetDiscussionByID(c context.Context, node sqalx.Node, id int64) (item *model.Discussion, err error) {
+	item = new(model.Discussion)
+	sqlSelect := "SELECT a.* FROM discussions a WHERE a.id=? AND a.deleted=0"
+
+	if err = node.GetContext(c, item, sqlSelect, id); err != nil {
+		if err == sql.ErrNoRows {
+			item = nil
+			err = nil
+			return
+		}
+		log.For(c).Error(fmt.Sprintf("dao.GetDiscussionByID err(%+v), id(%+v)", err, id))
 	}
 
 	return

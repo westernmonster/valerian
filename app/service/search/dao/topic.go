@@ -114,6 +114,22 @@ func (p *Dao) PutTopic2ES(c context.Context, item *model.ESTopic) (err error) {
 	return
 }
 
+func (p *Dao) DelESTopic(c context.Context, id int64) (err error) {
+	indexName := fmt.Sprintf("%s_topics", env.DeployEnv)
+	var ret *elastic.DeleteResponse
+	if ret, err = p.esClient.Delete().Index(indexName).Type("topic").Id(strconv.FormatInt(id, 10)).Do(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("delete doc failed, error(%+v)", err))
+		return
+	}
+	if ret == nil {
+		msg := fmt.Sprintf("expected delete response to be != nil, index_name(%s),id(%d) ", indexName, id)
+		log.For(c).Error(msg)
+		err = errors.New(msg)
+		return
+	}
+	return
+}
+
 func (p *Dao) GetTopics(c context.Context, node sqalx.Node) (items []*model.Topic, err error) {
 	items = make([]*model.Topic, 0)
 	sqlSelect := "SELECT a.* FROM topics a WHERE a.deleted=0 ORDER BY a.id DESC "

@@ -17,6 +17,11 @@ type IDao interface {
 	PutDiscussion2ES(c context.Context, item *model.ESDiscussion) (err error)
 	PutTopic2ES(c context.Context, item *model.ESTopic) (err error)
 
+	DelESDiscussion(c context.Context, id int64) (err error)
+	DelESTopic(c context.Context, id int64) (err error)
+	DelESArticle(c context.Context, id int64) (err error)
+	DelESAccount(c context.Context, id int64) (err error)
+
 	GetAccounts(c context.Context, node sqalx.Node) (items []*model.Account, err error)
 	GetArticles(c context.Context, node sqalx.Node) (items []*model.Article, err error)
 	GetTopics(c context.Context, node sqalx.Node) (items []*model.Topic, err error)
@@ -24,6 +29,8 @@ type IDao interface {
 	GetDiscussCategoryByID(c context.Context, node sqalx.Node, id int64) (item *model.DiscussCategory, err error)
 	GetAccountByID(c context.Context, node sqalx.Node, id int64) (item *model.Account, err error)
 	GetTopicByID(c context.Context, node sqalx.Node, id int64) (item *model.Topic, err error)
+	GetArticleByID(c context.Context, node sqalx.Node, id int64) (item *model.Article, err error)
+	GetDiscussionByID(c context.Context, node sqalx.Node, id int64) (item *model.Discussion, err error)
 
 	Ping(c context.Context) (err error)
 	Close()

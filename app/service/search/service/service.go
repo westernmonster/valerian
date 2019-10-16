@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"strings"
 
+	"valerian/app/service/feed/def"
 	"valerian/app/service/search/conf"
 	"valerian/app/service/search/dao"
 	"valerian/library/conf/env"
@@ -27,6 +28,67 @@ func New(c *conf.Config) (s *Service) {
 		mq:     mq.New(env.Hostname, c.Nats),
 		missch: make(chan func(), 1024),
 	}
+
+	if err := s.mq.QueueSubscribe(def.BusAccountAdded, "search", s.onAccountAdded); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusAccountAdded, "search")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusAccountUpdated, "search", s.onAccountUpdated); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusAccountUpdated, "search")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusAccountDeleted, "search", s.onAccountDeleted); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusAccountDeleted, "search")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusArticleAdded, "search", s.onArticleAdded); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusArticleAdded, "search")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusArticleUpdated, "search", s.onArticleUpdated); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusArticleUpdated, "search")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusArticleDeleted, "search", s.onArticleDeleted); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusArticleDeleted, "search")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusTopicAdded, "search", s.onTopicAdded); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusTopicAdded, "search")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusTopicUpdated, "search", s.onTopicUpdated); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusTopicUpdated, "search")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusTopicDeleted, "search", s.onTopicDeleted); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusTopicDeleted, "search")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusDiscussionAdded, "search", s.onDiscussionAdded); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusDiscussionAdded, "search")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusDiscussionUpdated, "search", s.onDiscussionUpdated); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusDiscussionUpdated, "search")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusDiscussionDeleted, "search", s.onDiscussionDeleted); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusDiscussionDeleted, "search")
+		panic(err)
+	}
+
 	go s.cacheproc()
 	return
 }

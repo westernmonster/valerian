@@ -107,6 +107,22 @@ func (p *Dao) PutAccount2ES(c context.Context, item *model.ESAccount) (err error
 	return
 }
 
+func (p *Dao) DelESAccount(c context.Context, id int64) (err error) {
+	indexName := fmt.Sprintf("%s_accounts", env.DeployEnv)
+	var ret *elastic.DeleteResponse
+	if ret, err = p.esClient.Delete().Index(indexName).Type("account").Id(strconv.FormatInt(id, 10)).Do(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("delete doc failed, error(%+v)", err))
+		return
+	}
+	if ret == nil {
+		msg := fmt.Sprintf("expected delete response to be != nil, index_name(%s),id(%d) ", indexName, id)
+		log.For(c).Error(msg)
+		err = errors.New(msg)
+		return
+	}
+	return
+}
+
 func (p *Dao) GetAccounts(c context.Context, node sqalx.Node) (items []*model.Account, err error) {
 	items = make([]*model.Account, 0)
 	sqlSelect := "SELECT a.* FROM accounts a WHERE a.deleted=0 ORDER BY a.id DESC "
