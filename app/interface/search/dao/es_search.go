@@ -54,7 +54,7 @@ func (d *Dao) searchResult(c context.Context, indexName string, query elastic.Qu
 		Do(c)
 	if err != nil {
 		PromError(c, fmt.Sprintf("es:执行查询失败"), "%v", err)
-		res = &model.SearchResult{Debug: res.Debug + "es:执行查询失败"}
+		res = &model.SearchResult{Debug: res.Debug + "es:执行查询失败", Page: &model.Page{}}
 		return
 	}
 	var data []json.RawMessage
