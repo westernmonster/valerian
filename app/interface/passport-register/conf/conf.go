@@ -9,6 +9,7 @@ import (
 	"valerian/library/conf"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
+	"valerian/library/mq"
 	"valerian/library/naming/discovery"
 	"valerian/library/net/http/mars"
 	xtime "valerian/library/time"
@@ -31,6 +32,8 @@ type Config struct {
 	DB        *DB
 	Memcache  *Memcache
 	Discovery *discovery.Config
+
+	Nats *mq.Config
 }
 
 // DB db config.

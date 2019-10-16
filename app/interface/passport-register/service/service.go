@@ -5,14 +5,18 @@ import (
 	"valerian/app/interface/passport-register/conf"
 	"valerian/app/interface/passport-register/dao"
 	"valerian/app/interface/passport-register/model"
+	"valerian/library/conf/env"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
+	"valerian/library/mq"
 )
 
 // Service struct of service
 type Service struct {
 	c *conf.Config
-	d interface {
+
+	mq *mq.MessageQueue
+	d  interface {
 		GetClient(c context.Context, node sqalx.Node, clientID string) (item *model.Client, err error)
 		GetArea(ctx context.Context, node sqalx.Node, id int64) (item *model.Area, err error)
 
@@ -57,6 +61,7 @@ func New(c *conf.Config) (s *Service) {
 	s = &Service{
 		c:      c,
 		d:      dao.New(c),
+		mq:     mq.New(env.Hostname, c.Nats),
 		missch: make(chan func(), 1024),
 	}
 	go s.cacheproc()

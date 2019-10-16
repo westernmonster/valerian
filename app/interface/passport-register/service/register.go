@@ -99,6 +99,7 @@ func (p *Service) MobileRegister(c context.Context, arg *model.ArgMobile) (resp 
 
 	p.addCache(func() {
 		p.d.DelMobileValcodeCache(context.TODO(), model.ValcodeRegister, mobile)
+		p.onAccountAdded(context.TODO(), item.ID, time.Now().Unix())
 	})
 
 	return p.loginAccount(c, item.ID, arg.ClientID)
@@ -189,6 +190,7 @@ func (p *Service) EmailRegister(c context.Context, arg *model.ArgEmail) (resp *m
 
 	p.addCache(func() {
 		p.d.DelEmailValcodeCache(context.TODO(), model.ValcodeRegister, arg.Email)
+		p.onAccountAdded(context.TODO(), item.ID, time.Now().Unix())
 	})
 
 	return p.loginAccount(c, item.ID, arg.ClientID)
