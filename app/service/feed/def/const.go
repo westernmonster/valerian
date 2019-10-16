@@ -63,6 +63,10 @@ const (
 	BusDiscussionLiked   = "discussion.liked"
 	BusDiscussionFaved   = "discussion.faved"
 	// BusDiscussionViewed  = "discussion.viewed"
+	//
+	BusAccountAdded   = "account.added"
+	BusAccountUpdated = "account.updated"
+	BusAccountDeleted = "account.deleted"
 
 	BusArticleAdded   = "article.added"
 	BusArticleUpdated = "article.updated"
@@ -81,6 +85,7 @@ const (
 	BusReviseFaved   = "revise.faved"
 
 	BusTopicAdded           = "topic.added"
+	BusTopicUpdated         = "topic.updated"
 	BusTopicFollowed        = "topic.followed"
 	BusTopicDeleted         = "topic.deleted"
 	BusTopicLeaved          = "topic.leaved"
