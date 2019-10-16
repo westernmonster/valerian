@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strconv"
 	"valerian/app/service/search/model"
 	"valerian/library/conf/env"
 	"valerian/library/database/sqalx"
@@ -91,6 +92,22 @@ func (p *Dao) CreateArticleIndices(c context.Context) (err error) {
 		return
 	}
 
+	return
+}
+
+func (p *Dao) PutArticle2ES(c context.Context, item *model.ESArticle) (err error) {
+	indexName := fmt.Sprintf("%s_articles", env.DeployEnv)
+	var ret *elastic.IndexResponse
+	if ret, err = p.esClient.Index().Index(indexName).Type("article").Id(strconv.FormatInt(item.ID, 10)).BodyJson(item).Do(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("index doc failed, error(%+v)", err))
+		return
+	}
+	if ret == nil {
+		msg := fmt.Sprintf("expected index response to be != nil, index_name(%s),doc(%+v) ", indexName, item)
+		log.For(c).Error(msg)
+		err = errors.New(msg)
+		return
+	}
 	return
 }
 

@@ -2,8 +2,10 @@ package dao
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"fmt"
+	"strconv"
 	"valerian/app/service/search/model"
 	"valerian/library/conf/env"
 	"valerian/library/database/sqalx"
@@ -96,6 +98,22 @@ func (p *Dao) CreateTopicIndices(c context.Context) (err error) {
 	return
 }
 
+func (p *Dao) PutTopic2ES(c context.Context, item *model.ESTopic) (err error) {
+	indexName := fmt.Sprintf("%s_topics", env.DeployEnv)
+	var ret *elastic.IndexResponse
+	if ret, err = p.esClient.Index().Index(indexName).Type("topic").Id(strconv.FormatInt(item.ID, 10)).BodyJson(item).Do(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("index doc failed, error(%+v)", err))
+		return
+	}
+	if ret == nil {
+		msg := fmt.Sprintf("expected index response to be != nil, index_name(%s),doc(%+v) ", indexName, item)
+		log.For(c).Error(msg)
+		err = errors.New(msg)
+		return
+	}
+	return
+}
+
 func (p *Dao) GetTopics(c context.Context, node sqalx.Node) (items []*model.Topic, err error) {
 	items = make([]*model.Topic, 0)
 	sqlSelect := "SELECT a.* FROM topics a WHERE a.deleted=0 ORDER BY a.id DESC "
@@ -104,5 +122,21 @@ func (p *Dao) GetTopics(c context.Context, node sqalx.Node) (items []*model.Topi
 		log.For(c).Error(fmt.Sprintf("dao.GetTopics err(%+v)", err))
 		return
 	}
+	return
+}
+
+func (p *Dao) GetTopicByID(c context.Context, node sqalx.Node, id int64) (item *model.Topic, err error) {
+	item = new(model.Topic)
+	sqlSelect := "SELECT a.* FROM topics a WHERE a.id=? AND a.deleted=0"
+
+	if err = node.GetContext(c, item, sqlSelect, id); err != nil {
+		if err == sql.ErrNoRows {
+			item = nil
+			err = nil
+			return
+		}
+		log.For(c).Error(fmt.Sprintf("dao.GetTopicByID err(%+v), id(%+v)", err, id))
+	}
+
 	return
 }

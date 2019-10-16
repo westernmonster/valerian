@@ -2,7 +2,6 @@ package model
 
 import (
 	"encoding/json"
-	"valerian/library/database/sqlx/types"
 
 	validation "github.com/go-ozzo/ozzo-validation"
 )
@@ -97,7 +96,7 @@ type DiscussSearchParams struct {
 
 type ESAccount struct {
 	// ID
-	ID *int64 `json:"id,string,omitempty" swaggertype:"string"`
+	ID int64 `json:"id,string,omitempty" swaggertype:"string"`
 
 	// 手机
 	Mobile *string `json:"mobile,omitempty"`
@@ -136,25 +135,22 @@ type ESAccount struct {
 	Source *int `json:"source,omitempty"`
 
 	// 是否身份认证
-	IDCert *types.BitBool `json:"id_cert,omitempty"`
+	IDCert *bool `json:"id_cert,omitempty"`
 
 	// 是否工作认证
-	WorkCert *types.BitBool `json:"work_cert,omitempty"`
+	WorkCert *bool `json:"work_cert,omitempty"`
 
 	// 是否机构用户
-	IsOrg *types.BitBool `json:"is_org,omitempty"`
+	IsOrg *bool `json:"is_org,omitempty"`
 
 	// 是否VIP用户
-	IsVIP *types.BitBool `json:"is_vip,omitempty"`
+	IsVIP *bool `json:"is_vip,omitempty"`
 
 	// 创建时间
 	CreatedAt *int64 `json:"created_at,string,omitempty" swaggertype:"string"`
 
 	// 更新时间
 	UpdatedAt *int64 `json:"updated_at,string,omitempty"  swaggertype:"string"`
-
-	// 是否话题成员
-	IsTopicMember bool `json:"is_topic_member"`
 }
 
 type AccountSearchResult struct {
@@ -166,9 +162,9 @@ type AccountSearchResult struct {
 	Debug string `json:"debug"`
 }
 
-type ESTopicMember struct {
+type ESCreator struct {
 	// ID ID
-	ID *int64 `json:"id,string,omitempty"  swaggertype:"string"`
+	ID int64 `json:"id,string,omitempty"  swaggertype:"string"`
 	// 用户名
 	UserName *string `json:"user_name,omitempty"`
 	// 头像
@@ -179,7 +175,7 @@ type ESTopicMember struct {
 
 type ESTopic struct {
 	// ID ID
-	ID *int64 `json:"id,string,omitempty"  swaggertype:"string"`
+	ID int64 `json:"id,string,omitempty"  swaggertype:"string"`
 	// Name 话题名
 	Name *string `json:"name,omitempty" `
 	// Avatar 话题头像
@@ -203,17 +199,11 @@ type ESTopic struct {
 	// CatalogViewType 分类视图
 	CatalogViewType *string `json:"catalog_view_type,omitempty"`
 	// CreatedBy 创建人
-	CreatedBy *ESTopicMember `json:"created_by,omitempty"`
+	Creator *ESCreator `json:"creator,omitempty"`
 	// CreatedAt 创建时间
 	CreatedAt *int64 `json:"created_at,string"  swaggertype:"string"`
 	// UpdatedAt 更新时间
 	UpdatedAt *int64 `json:"updated_at,string"  swaggertype:"string"`
-
-	// 成员数
-	MemberCount int `json:"member_count"`
-
-	// 成员数
-	ResourceCount int `json:"resource_count"`
 }
 
 type TopicSearchResult struct {
@@ -231,11 +221,11 @@ type ESArticle struct {
 	// 标题
 	Title *string `json:"title"`
 
-	// 摘选
-	Excerpt *string `json:"excerpt"`
-
 	// 内容
 	Content *string `json:"content"`
+
+	// 内容
+	ContentText *string `json:"content_text"`
 
 	//  禁止补充
 	DisableRevise *bool `json:"disable_revise"`
@@ -243,17 +233,13 @@ type ESArticle struct {
 	//  禁止评论
 	DisableComment *bool `json:"disable_comment"`
 
+	Creator *ESCreator `json:"creator"`
+
 	// 创建时间
-	CreatedAt *int64 `json:"created_at"`
+	CreatedAt *int64 `json:"created_at,string,omitempty" swaggertype:"string"`
 
-	CreatedBy int64 `json:"-"`
-
-	// 喜欢数
-	LikeCount *int `json:"like_count"`
-	// 补充个数
-	ReviseCount *int `json:"revise_count"`
-	// 评论数
-	CommentCount *int `json:"comment_count"`
+	// 更新时间
+	UpdatedAt *int64 `json:"updated_at,string,omitempty"  swaggertype:"string"`
 }
 
 type ArticleSearchResult struct {
@@ -265,28 +251,51 @@ type ArticleSearchResult struct {
 	Debug string `json:"debug"`
 }
 
+type ESDiscussionTopic struct {
+	ID int64 `json:"id,string" swaggertype:"string"`
+
+	// Name 话题名
+	Name *string `json:"name,omitempty" `
+
+	// 头像
+	Avatar *string `json:"avatar,omitempty"`
+
+	// 自我介绍
+	Introduction *string `json:"introduction,omitempty"`
+}
+
 type ESDiscussion struct {
 	ID int64 `json:"id,string" swaggertype:"string"`
 
 	// 标题
 	Title *string `json:"title"`
 
-	// 摘选
-	Excerpt *string `json:"excerpt"`
-
 	// 内容
 	Content *string `json:"content"`
 
+	// 内容
+	ContentText *string `json:"content_text"`
+
 	// 创建时间
-	CreatedAt *int64 `json:"created_at"`
+	CreatedAt *int64 `json:"created_at,string,omitempty" swaggertype:"string"`
 
-	CreatedBy int64 `json:"-"`
+	// 更新时间
+	UpdatedAt *int64 `json:"updated_at,string,omitempty"  swaggertype:"string"`
 
-	// 喜欢数
-	LikeCount *int `json:"like_count"`
+	Creator *ESCreator `json:"creator"`
 
-	// 评论数
-	CommentCount *int `json:"comment_count"`
+	Topic *ESDiscussionTopic `json:"topic"`
+
+	Category *ESDiscussionCategory `json:"category,omitempty"`
+}
+
+type ESDiscussionCategory struct {
+	ID int64 `json:"id,string" swaggertype:"string"`
+
+	// Name
+	Name *string `json:"name,omitempty" `
+
+	Seq *int `json:"seq"`
 }
 
 type DiscussSearchResult struct {

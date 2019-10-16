@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"strconv"
 	"valerian/app/service/search/model"
 	"valerian/library/conf/env"
 	"valerian/library/database/sqalx"
@@ -117,6 +118,22 @@ func (p *Dao) CreateDiscussionIndices(c context.Context) (err error) {
 		return
 	}
 
+	return
+}
+
+func (p *Dao) PutDiscussion2ES(c context.Context, item *model.ESDiscussion) (err error) {
+	indexName := fmt.Sprintf("%s_discussions", env.DeployEnv)
+	var ret *elastic.IndexResponse
+	if ret, err = p.esClient.Index().Index(indexName).Type("discussion").Id(strconv.FormatInt(item.ID, 10)).BodyJson(item).Do(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("index doc failed, error(%+v)", err))
+		return
+	}
+	if ret == nil {
+		msg := fmt.Sprintf("expected index response to be != nil, index_name(%s),doc(%+v) ", indexName, item)
+		log.For(c).Error(msg)
+		err = errors.New(msg)
+		return
+	}
 	return
 }
 
