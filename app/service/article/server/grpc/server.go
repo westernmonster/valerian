@@ -188,9 +188,6 @@ func (s *server) GetUserArticlesPaged(c context.Context, req *api.UserArticlesRe
 			info.Creator.Introduction = &api.Creator_IntroductionValue{m.GetIntroductionValue()}
 		}
 
-		fmt.Printf("%#v\n", info)
-		fmt.Printf("urls: %#v\n", urls)
-
 		resp.Items[i] = info
 
 	}
