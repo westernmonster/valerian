@@ -19,7 +19,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
-func (p *Service) GetArticleRevisesPaged(c context.Context, articleID int64, sort string, offset, limit int) (resp *model.ReviseListResp, err error) {
+func (p *Service) GetArticleRevisesPaged(c context.Context, articleID int64, sort string, limit, offset int) (resp *model.ReviseListResp, err error) {
 	var data []*model.Revise
 	if data, err = p.d.GetArticleRevisesPaged(c, p.d.DB(), articleID, sort, offset, limit); err != nil {
 		return
