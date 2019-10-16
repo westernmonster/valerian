@@ -73,8 +73,6 @@ func (p *Service) GetArticleRevisesPaged(c context.Context, articleID int64, sor
 		return
 	}
 
-	fmt.Println(limit)
-	fmt.Println(resp.Items)
 	if len(resp.Items) < limit {
 		resp.Paging.IsEnd = true
 		resp.Paging.Next = ""
