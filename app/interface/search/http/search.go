@@ -31,7 +31,7 @@ import (
 // @Router /search/topics [get]
 func searchTopics(c *mars.Context) {
 	arg := new(model.BasicSearchParams)
-	if e := c.BindWith(arg, binding.Query); e != nil {
+	if e := c.BindWith(arg, binding.Form); e != nil {
 		return
 	}
 
