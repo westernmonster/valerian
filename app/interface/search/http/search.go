@@ -4,6 +4,7 @@ import (
 	"valerian/app/interface/search/model"
 	"valerian/library/ecode"
 	"valerian/library/net/http/mars"
+	"valerian/library/net/http/mars/binding"
 )
 
 // @Summary 搜索话题
@@ -29,7 +30,7 @@ import (
 // @Router /search/topics [get]
 func searchTopics(c *mars.Context) {
 	arg := new(model.TopicSearchParams)
-	if e := c.Bind(arg); e != nil {
+	if e := c.BindWith(arg, binding.Query); e != nil {
 		return
 	}
 
@@ -64,7 +65,7 @@ func searchTopics(c *mars.Context) {
 // @Router /search/accounts [get]
 func searchAccounts(c *mars.Context) {
 	arg := new(model.AccountSearchParams)
-	if e := c.Bind(arg); e != nil {
+	if e := c.BindWith(arg, binding.Query); e != nil {
 		return
 	}
 
@@ -99,7 +100,7 @@ func searchAccounts(c *mars.Context) {
 // @Router /search/articles [get]
 func searchArticles(c *mars.Context) {
 	arg := new(model.ArticleSearchParams)
-	if e := c.Bind(arg); e != nil {
+	if e := c.BindWith(arg, binding.Query); e != nil {
 		return
 	}
 
@@ -134,7 +135,7 @@ func searchArticles(c *mars.Context) {
 // @Router /search/discussions [get]
 func searchDiscusstions(c *mars.Context) {
 	arg := new(model.DiscussionSearchParams)
-	if e := c.Bind(arg); e != nil {
+	if e := c.BindWith(arg, binding.Query); e != nil {
 		return
 	}
 
