@@ -147,10 +147,10 @@ type ESAccount struct {
 	IsVIP *bool `json:"is_vip,omitempty"`
 
 	// 创建时间
-	CreatedAt *int64 `json:"created_at,string,omitempty" swaggertype:"string"`
+	CreatedAt *int64 `json:"created_at,omitempty"`
 
 	// 更新时间
-	UpdatedAt *int64 `json:"updated_at,string,omitempty"  swaggertype:"string"`
+	UpdatedAt *int64 `json:"updated_at,omitempty"`
 }
 
 type AccountSearchResult struct {
@@ -201,9 +201,9 @@ type ESTopic struct {
 	// CreatedBy 创建人
 	Creator *ESCreator `json:"creator,omitempty"`
 	// CreatedAt 创建时间
-	CreatedAt *int64 `json:"created_at,string"  swaggertype:"string"`
+	CreatedAt *int64 `json:"created_at"`
 	// UpdatedAt 更新时间
-	UpdatedAt *int64 `json:"updated_at,string"  swaggertype:"string"`
+	UpdatedAt *int64 `json:"updated_at"`
 }
 
 type TopicSearchResult struct {
@@ -236,10 +236,10 @@ type ESArticle struct {
 	Creator *ESCreator `json:"creator"`
 
 	// 创建时间
-	CreatedAt *int64 `json:"created_at,string,omitempty" swaggertype:"string"`
+	CreatedAt *int64 `json:"created_at,omitempty"`
 
 	// 更新时间
-	UpdatedAt *int64 `json:"updated_at,string,omitempty"  swaggertype:"string"`
+	UpdatedAt *int64 `json:"updated_at,omitempty"`
 }
 
 type ArticleSearchResult struct {
@@ -277,10 +277,10 @@ type ESDiscussion struct {
 	ContentText *string `json:"content_text"`
 
 	// 创建时间
-	CreatedAt *int64 `json:"created_at,string,omitempty" swaggertype:"string"`
+	CreatedAt *int64 `json:"created_at,omitempty"`
 
 	// 更新时间
-	UpdatedAt *int64 `json:"updated_at,string,omitempty"  swaggertype:"string"`
+	UpdatedAt *int64 `json:"updated_at,omitempty"  swaggertype:"string"`
 
 	Creator *ESCreator `json:"creator"`
 

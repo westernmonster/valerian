@@ -6,7 +6,7 @@ type ES struct {
 
 type ESAccount struct {
 	// ID
-	ID int64 `json:"id,string,omitempty" swaggertype:"string"`
+	ID int64 `json:"id,omitempty" swaggertype:"string"`
 
 	// 手机
 	Mobile *string `json:"mobile,omitempty"`
@@ -33,7 +33,7 @@ type ESAccount struct {
 	BirthDay *int `json:"birth_day,omitempty"`
 
 	// 地区
-	Location *int64 `json:"location,omitempty,string" swaggertype:"string"`
+	Location *int64 `json:"location,omitempty" swaggertype:"string"`
 
 	// 自我介绍
 	Introduction *string `json:"introduction,omitempty"`
@@ -57,15 +57,15 @@ type ESAccount struct {
 	IsVIP *bool `json:"is_vip,omitempty"`
 
 	// 创建时间
-	CreatedAt *int64 `json:"created_at,string,omitempty" swaggertype:"string"`
+	CreatedAt *int64 `json:"created_at,omitempty" swaggertype:"string"`
 
 	// 更新时间
-	UpdatedAt *int64 `json:"updated_at,string,omitempty"  swaggertype:"string"`
+	UpdatedAt *int64 `json:"updated_at,omitempty"  swaggertype:"string"`
 }
 
 type ESCreator struct {
 	// ID ID
-	ID int64 `json:"id,string,omitempty"  swaggertype:"string"`
+	ID int64 `json:"id,omitempty"  swaggertype:"string"`
 	// 用户名
 	UserName *string `json:"user_name,omitempty"`
 	// 头像
@@ -76,7 +76,7 @@ type ESCreator struct {
 
 type ESTopic struct {
 	// ID ID
-	ID int64 `json:"id,string,omitempty"  swaggertype:"string"`
+	ID int64 `json:"id,omitempty"  swaggertype:"string"`
 	// Name 话题名
 	Name *string `json:"name,omitempty" `
 	// Avatar 话题头像
@@ -102,13 +102,13 @@ type ESTopic struct {
 	// CreatedBy 创建人
 	Creator *ESCreator `json:"creator,omitempty"`
 	// CreatedAt 创建时间
-	CreatedAt *int64 `json:"created_at,string"  swaggertype:"string"`
+	CreatedAt *int64 `json:"created_at"`
 	// UpdatedAt 更新时间
-	UpdatedAt *int64 `json:"updated_at,string"  swaggertype:"string"`
+	UpdatedAt *int64 `json:"updated_at"`
 }
 
 type ESArticle struct {
-	ID int64 `json:"id,string" swaggertype:"string"`
+	ID int64 `json:"id" swaggertype:"string"`
 
 	// 标题
 	Title *string `json:"title"`
@@ -128,14 +128,14 @@ type ESArticle struct {
 	Creator *ESCreator `json:"creator"`
 
 	// 创建时间
-	CreatedAt *int64 `json:"created_at,string,omitempty" swaggertype:"string"`
+	CreatedAt *int64 `json:"created_at,omitempty"`
 
 	// 更新时间
-	UpdatedAt *int64 `json:"updated_at,string,omitempty"  swaggertype:"string"`
+	UpdatedAt *int64 `json:"updated_at,omitempty"`
 }
 
 type ESDiscussionTopic struct {
-	ID int64 `json:"id,string" swaggertype:"string"`
+	ID int64 `json:"id" swaggertype:"string"`
 
 	// Name 话题名
 	Name *string `json:"name,omitempty" `
@@ -148,7 +148,7 @@ type ESDiscussionTopic struct {
 }
 
 type ESDiscussion struct {
-	ID int64 `json:"id,string" swaggertype:"string"`
+	ID int64 `json:"id" swaggertype:"string"`
 
 	// 标题
 	Title *string `json:"title"`
@@ -160,10 +160,10 @@ type ESDiscussion struct {
 	ContentText *string `json:"content_text"`
 
 	// 创建时间
-	CreatedAt *int64 `json:"created_at,string,omitempty" swaggertype:"string"`
+	CreatedAt *int64 `json:"created_at,omitempty"`
 
 	// 更新时间
-	UpdatedAt *int64 `json:"updated_at,string,omitempty"  swaggertype:"string"`
+	UpdatedAt *int64 `json:"updated_at,omitempty"  swaggertype:"string"`
 
 	Creator *ESCreator `json:"creator"`
 
@@ -173,7 +173,7 @@ type ESDiscussion struct {
 }
 
 type ESDiscussionCategory struct {
-	ID int64 `json:"id,string" swaggertype:"string"`
+	ID int64 `json:"id" swaggertype:"string"`
 
 	// Name
 	Name *string `json:"name,omitempty" `
