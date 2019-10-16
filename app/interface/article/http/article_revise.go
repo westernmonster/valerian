@@ -58,12 +58,13 @@ func getRevises(c *mars.Context) {
 		s = sortStr
 	}
 
-	sorts := []string{"hot", "recent"}
-	for _, v := range sorts {
-		if v != s {
-			c.JSON(nil, ecode.RequestErr)
-			return
-		}
+	switch s {
+	case "recent":
+	case "hot":
+		break
+	default:
+		c.JSON(nil, ecode.RequestErr)
+		return
 	}
 
 	c.JSON(srv.GetArticleRevisesPaged(c, id, s, limit, offset))
