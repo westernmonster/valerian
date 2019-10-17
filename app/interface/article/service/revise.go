@@ -276,6 +276,10 @@ func (p *Service) GetRevise(c context.Context, reviseID int64) (resp *model.Revi
 		return
 	}
 
+	if aid == data.CreatedBy {
+		resp.CanEdit = true
+	}
+
 	return
 }
 

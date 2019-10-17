@@ -284,7 +284,7 @@ func (p *Service) GetArticle(c context.Context, id int64, include string) (item 
 	}
 
 	if inc["meta"] {
-		if item.ArticleMeta, err = p.getArticleMeta(c, p.d.DB(), id); err != nil {
+		if item.ArticleMeta, err = p.getArticleMeta(c, p.d.DB(), data); err != nil {
 			return
 		}
 	}
@@ -319,29 +319,33 @@ func (p *Service) getArticle(c context.Context, node sqalx.Node, articleID int64
 	return
 }
 
-func (p *Service) getArticleMeta(c context.Context, node sqalx.Node, articleID int64) (item *model.ArticleMeta, err error) {
+func (p *Service) getArticleMeta(c context.Context, node sqalx.Node, article *model.Article) (item *model.ArticleMeta, err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed
 		return
 	}
 
+	if aid == article.CreatedBy {
+		item.CanEdit = true
+	}
+
 	item = new(model.ArticleMeta)
 
-	if item.Like, err = p.d.IsLike(c, aid, articleID, model.TargetTypeArticle); err != nil {
+	if item.Like, err = p.d.IsLike(c, aid, article.ID, model.TargetTypeArticle); err != nil {
 		return
 	}
 
-	if item.Fav, err = p.d.IsFav(c, aid, articleID, model.TargetTypeArticle); err != nil {
+	if item.Fav, err = p.d.IsFav(c, aid, article.ID, model.TargetTypeArticle); err != nil {
 		return
 	}
 
-	if item.Dislike, err = p.d.IsDislike(c, aid, articleID, model.TargetTypeArticle); err != nil {
+	if item.Dislike, err = p.d.IsDislike(c, aid, article.ID, model.TargetTypeArticle); err != nil {
 		return
 	}
 
 	var stat *model.ArticleStat
-	if stat, err = p.d.GetArticleStatByID(c, node, articleID); err != nil {
+	if stat, err = p.d.GetArticleStatByID(c, node, article.ID); err != nil {
 		return
 	}
 
