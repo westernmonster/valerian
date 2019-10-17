@@ -22,6 +22,16 @@ type IDao interface {
 	GetArticle(c context.Context, id int64) (info *article.ArticleInfo, err error)
 	GetRevise(c context.Context, id int64) (info *article.ReviseInfo, err error)
 
+	GetTopicCatalogChildrenCount(c context.Context, node sqalx.Node, topicID, parentID int64) (count int, err error)
+	GetTopicCatalogsByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.TopicCatalog, err error)
+	GetTopicCatalogs(c context.Context, node sqalx.Node) (items []*model.TopicCatalog, err error)
+	GetTopicCatalogByID(c context.Context, node sqalx.Node, id int64) (item *model.TopicCatalog, err error)
+	GetTopicCatalogByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (item *model.TopicCatalog, err error)
+	AddTopicCatalog(c context.Context, node sqalx.Node, item *model.TopicCatalog) (err error)
+	UpdateTopicCatalog(c context.Context, node sqalx.Node, item *model.TopicCatalog) (err error)
+	DelTopicCatalog(c context.Context, node sqalx.Node, id int64) (err error)
+	GetTopicCatalogMaxChildrenSeq(c context.Context, node sqalx.Node, topicID, parentID int64) (seq int, err error)
+
 	Ping(c context.Context) (err error)
 	Close()
 	DB() sqalx.Node

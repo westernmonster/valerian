@@ -40,6 +40,11 @@ func New(c *conf.Config) (s *Service) {
 		panic(err)
 	}
 
+	if err := s.mq.QueueSubscribe(def.BusArticleUpdated, "topic-feed", s.onArticleUpdated); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusArticleUpdated, "topic-feed")
+		panic(err)
+	}
+
 	if err := s.mq.QueueSubscribe(def.BusReviseAdded, "topic-feed", s.onReviseAdded); err != nil {
 		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusReviseAdded, "topic-feed")
 		panic(err)
