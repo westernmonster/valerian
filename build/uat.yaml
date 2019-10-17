@@ -101,3 +101,7 @@ spec:
         backend:
           serviceName: interface-feedback
           servicePort: 8000
+      - path: /api/v1/list/recent
+        backend:
+          serviceName: interface-recent
+          servicePort: 8000
