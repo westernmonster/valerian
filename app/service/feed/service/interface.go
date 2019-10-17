@@ -17,6 +17,8 @@ type IDao interface {
 	AddFeed(c context.Context, node sqalx.Node, item *model.Feed) (err error)
 	UpdateFeed(c context.Context, node sqalx.Node, item *model.Feed) (err error)
 	DelFeedByCond(c context.Context, node sqalx.Node, targetType string, targetID int64) (err error)
+	GetFeedsByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.Feed, err error)
+	GetFeedByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (item *model.Feed, err error)
 
 	GetDiscussion(c context.Context, id int64) (info *discuss.DiscussionInfo, err error)
 	GetTopic(c context.Context, id int64) (info *topic.TopicInfo, err error)

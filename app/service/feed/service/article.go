@@ -54,6 +54,17 @@ func (p *Service) onCatalogArticleAdded(m *stan.Msg) {
 	}()
 
 	for _, v := range membersResp.IDs {
+		var data *model.Feed
+		if data, err = p.d.GetFeedByCond(c, tx, map[string]interface{}{
+			"account_id":  v,
+			"action_type": def.ActionTypeCreateArticle,
+			"target_id":   article.ID,
+		}); err != nil {
+			return
+		} else if data != nil {
+			continue
+		}
+
 		feed := &model.Feed{
 			ID:         gid.NewID(),
 			AccountID:  v,
