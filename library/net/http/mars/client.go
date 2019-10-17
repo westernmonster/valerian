@@ -302,6 +302,10 @@ func (client *Client) Raw(c context.Context, req *xhttp.Request, v ...string) (b
 		err = pkgerr.Wrapf(err, "host:%s, url:%s", req.URL.Host, realURL(req))
 		return
 	}
+
+	fmt.Println("============================")
+	fmt.Println(resp.Status)
+	fmt.Println("============================")
 	return
 }
 
