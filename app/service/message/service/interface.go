@@ -32,6 +32,11 @@ type IDao interface {
 	GetTopicMemberIDs(c context.Context, topicID int64) (resp *topic.IDsResp, err error)
 	GetComment(c context.Context, id int64) (info *comment.CommentInfo, err error)
 
+	IncrMessageStat(c context.Context, node sqalx.Node, item *model.MessageStat) (err error)
+	UpdateMessageStat(c context.Context, node sqalx.Node, item *model.MessageStat) (err error)
+	AddMessageStat(c context.Context, node sqalx.Node, item *model.MessageStat) (err error)
+	GetMessageStatByID(c context.Context, node sqalx.Node, aid int64) (item *model.MessageStat, err error)
+
 	Ping(c context.Context) (err error)
 	Close()
 	DB() sqalx.Node

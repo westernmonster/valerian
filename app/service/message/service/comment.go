@@ -1,1 +1,175 @@
 package service
+
+import (
+	"context"
+	"fmt"
+	"strconv"
+	"time"
+
+	article "valerian/app/service/article/api"
+	comment "valerian/app/service/comment/api"
+	discuss "valerian/app/service/discuss/api"
+	"valerian/app/service/feed/def"
+	"valerian/app/service/message/model"
+	"valerian/library/database/sqalx"
+	"valerian/library/gid"
+	"valerian/library/log"
+
+	"github.com/nats-io/stan.go"
+)
+
+func (p *Service) onArticleCommented(m *stan.Msg) {
+	var err error
+	c := context.Background()
+	info := new(def.MsgArticleCommented)
+	if err = info.Unmarshal(m.Data); err != nil {
+		log.For(c).Error(fmt.Sprintf("service.onArticleCommented Unmarshal failed %#v", err))
+		return
+	}
+
+	var comment *comment.CommentInfo
+	if comment, err = p.d.GetComment(c, info.CommentID); err != nil {
+		log.For(c).Error(fmt.Sprintf("service.onArticleCommented GetComment failed %#v", err))
+		return
+	}
+
+	var article *article.ArticleInfo
+	if article, err = p.d.GetArticle(c, comment.OwnerID); err != nil {
+		log.For(c).Error(fmt.Sprintf("service.onCommentAdded GetArticle failed %#v", err))
+		return
+	}
+
+	msg := &model.Message{
+		ID:         gid.NewID(),
+		AccountID:  article.Creator.ID,
+		ActionType: model.MsgArticleCommented,
+		ActionTime: time.Now().Unix(),
+		ActionText: model.MsgTextArticleCommented,
+		Actors:     strconv.FormatInt(info.ActorID, 10),
+		MergeCount: 1,
+		ActorType:  model.ActorTypeUser,
+		TargetID:   comment.ID,
+		TargetType: model.TargetTypeComment,
+		CreatedAt:  time.Now().Unix(),
+		UpdatedAt:  time.Now().Unix(),
+	}
+
+	if err = p.d.AddMessage(c, p.d.DB(), msg); err != nil {
+		log.For(c).Error(fmt.Sprintf("service.onCommentAdded AddMessage failed %#v", err))
+		return
+	}
+
+	m.Ack()
+}
+
+func (p *Service) onReviseCommented(m *stan.Msg) {
+	var err error
+	c := context.Background()
+	info := new(def.MsgReviseCommented)
+	if err = info.Unmarshal(m.Data); err != nil {
+		log.For(c).Error(fmt.Sprintf("service.onReviseCommented Unmarshal failed %#v", err))
+		return
+	}
+
+	var comment *comment.CommentInfo
+	if comment, err = p.d.GetComment(c, info.CommentID); err != nil {
+		log.For(c).Error(fmt.Sprintf("service.onReviseCommented GetComment failed %#v", err))
+		return
+	}
+
+	var revise *article.ReviseInfo
+	if revise, err = p.d.GetRevise(c, comment.OwnerID); err != nil {
+		log.For(c).Error(fmt.Sprintf("service.onCommentAdded GetRevise failed %#v", err))
+		return
+	}
+
+	msg := &model.Message{
+		ID:         gid.NewID(),
+		AccountID:  revise.Creator.ID,
+		ActionType: model.MsgReviseCommented,
+		ActionTime: time.Now().Unix(),
+		ActionText: model.MsgTextReviseCommented,
+		Actors:     strconv.FormatInt(info.ActorID, 10),
+		MergeCount: 1,
+		ActorType:  model.ActorTypeUser,
+		TargetID:   comment.ID,
+		TargetType: model.TargetTypeComment,
+		CreatedAt:  time.Now().Unix(),
+		UpdatedAt:  time.Now().Unix(),
+	}
+
+	if err = p.d.AddMessage(c, p.d.DB(), msg); err != nil {
+		log.For(c).Error(fmt.Sprintf("service.onCommentAdded AddMessage failed %#v", err))
+		return
+	}
+
+	m.Ack()
+}
+
+func (p *Service) onDiscussionCommented(m *stan.Msg) {
+	var err error
+	c := context.Background()
+	info := new(def.MsgDiscussionCommented)
+	if err = info.Unmarshal(m.Data); err != nil {
+		log.For(c).Error(fmt.Sprintf("service.onDiscussionCommented Unmarshal failed %#v", err))
+		return
+	}
+
+	var comment *comment.CommentInfo
+	if comment, err = p.d.GetComment(c, info.CommentID); err != nil {
+		log.For(c).Error(fmt.Sprintf("service.onDiscussionCommented GetComment failed %#v", err))
+		return
+	}
+
+	var discussion *discuss.DiscussionInfo
+	if discussion, err = p.d.GetDiscussion(c, comment.OwnerID); err != nil {
+		log.For(c).Error(fmt.Sprintf("service.onCommentAdded GetDiscussion failed %#v", err))
+		return
+	}
+
+	var tx sqalx.Node
+	if tx, err = p.d.DB().Beginx(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		return
+	}
+
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+			}
+			return
+		}
+	}()
+
+	msg := &model.Message{
+		ID:         gid.NewID(),
+		AccountID:  discussion.Creator.ID,
+		ActionType: model.MsgDiscussionCommented,
+		ActionTime: time.Now().Unix(),
+		ActionText: model.MsgTextDiscussionCommented,
+		Actors:     strconv.FormatInt(info.ActorID, 10),
+		MergeCount: 1,
+		ActorType:  model.ActorTypeUser,
+		TargetID:   comment.ID,
+		TargetType: model.TargetTypeComment,
+		CreatedAt:  time.Now().Unix(),
+		UpdatedAt:  time.Now().Unix(),
+	}
+
+	if err = p.d.AddMessage(c, tx, msg); err != nil {
+		log.For(c).Error(fmt.Sprintf("service.onCommentAdded AddMessage failed %#v", err))
+		return
+	}
+
+	if err = p.d.IncrMessageStat(c, tx, &model.MessageStat{AccountID: msg.AccountID, UnreadCount: 1}); err != nil {
+		return
+	}
+
+	if err = tx.Commit(); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		return
+	}
+
+	m.Ack()
+}

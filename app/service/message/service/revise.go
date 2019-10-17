@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"strconv"
 	"time"
-	account "valerian/app/service/account/api"
 	article "valerian/app/service/article/api"
 	"valerian/app/service/feed/def"
 	"valerian/app/service/message/model"
@@ -32,7 +31,7 @@ func (p *Service) onReviseAdded(m *stan.Msg) {
 
 	var article *article.ArticleInfo
 	if article, err = p.d.GetArticle(c, revise.ArticleID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onArticleLiked GetArticle failed %#v", err))
+		log.For(c).Error(fmt.Sprintf("service.onReviseAdded GetArticle failed %#v", err))
 		return
 	}
 
@@ -46,7 +45,7 @@ func (p *Service) onReviseAdded(m *stan.Msg) {
 		MergeCount: 1,
 		ActorType:  model.ActorTypeUser,
 		TargetID:   revise.ID,
-		TargetType: model.TargetTypeArticle,
+		TargetType: model.TargetTypeRevise,
 		CreatedAt:  time.Now().Unix(),
 		UpdatedAt:  time.Now().Unix(),
 	}
@@ -57,18 +56,5 @@ func (p *Service) onReviseAdded(m *stan.Msg) {
 	}
 
 	m.Ack()
-
-	var account *account.BaseInfoReply
-	if account, err = p.d.GetAccountBaseInfo(c, info.ActorID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onReviseAdded GetAccountBaseInfo failed %#v", err))
-		return
-	}
-
-	var msgID string
-	message := fmt.Sprintf("%s%s", account.UserName, model.MsgTextLikeArticle)
-	if msgID, err = p.pushSingleUser(c, msg.AccountID, message); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onReviseAdded pushSingleUser failed %#v, msg_id(%s)", err, msgID))
-		return
-	}
 
 }

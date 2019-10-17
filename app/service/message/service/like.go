@@ -6,7 +6,6 @@ import (
 	"strconv"
 	"time"
 
-	account "valerian/app/service/account/api"
 	article "valerian/app/service/article/api"
 	comment "valerian/app/service/comment/api"
 	discuss "valerian/app/service/discuss/api"
@@ -55,19 +54,6 @@ func (p *Service) onArticleLiked(m *stan.Msg) {
 
 	m.Ack()
 
-	var account *account.BaseInfoReply
-	if account, err = p.d.GetAccountBaseInfo(c, info.ActorID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onArticleLiked GetAccountBaseInfo failed %#v", err))
-		return
-	}
-
-	var msgID string
-	message := fmt.Sprintf("%s%s", account.UserName, model.MsgTextLikeArticle)
-	if msgID, err = p.pushSingleUser(c, msg.AccountID, message); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onArticleLiked pushSingleUser failed %#v, msg_id(%s)", err, msgID))
-		return
-	}
-
 }
 
 func (p *Service) onReviseLiked(m *stan.Msg) {
@@ -106,19 +92,6 @@ func (p *Service) onReviseLiked(m *stan.Msg) {
 	}
 
 	m.Ack()
-
-	var account *account.BaseInfoReply
-	if account, err = p.d.GetAccountBaseInfo(c, info.ActorID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onReviseLiked GetAccountBaseInfo failed %#v", err))
-		return
-	}
-
-	var msgID string
-	message := fmt.Sprintf("%s%s", account.UserName, model.MsgTextLikeRevise)
-	if msgID, err = p.pushSingleUser(c, msg.AccountID, message); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onReviseLiked pushSingleUser failed %#v, msg_id(%s)", err, msgID))
-		return
-	}
 
 }
 
@@ -159,18 +132,6 @@ func (p *Service) onDiscussionLiked(m *stan.Msg) {
 
 	m.Ack()
 
-	var account *account.BaseInfoReply
-	if account, err = p.d.GetAccountBaseInfo(c, info.ActorID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onDiscussionLiked GetAccountBaseInfo failed %#v", err))
-		return
-	}
-
-	var msgID string
-	message := fmt.Sprintf("%s%s", account.UserName, model.MsgTextLikeDiscussion)
-	if msgID, err = p.pushSingleUser(c, msg.AccountID, message); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onDiscussionLiked pushSingleUser failed %#v, msg_id(%s)", err, msgID))
-		return
-	}
 }
 
 func (p *Service) onCommentLiked(m *stan.Msg) {
@@ -210,16 +171,4 @@ func (p *Service) onCommentLiked(m *stan.Msg) {
 
 	m.Ack()
 
-	var account *account.BaseInfoReply
-	if account, err = p.d.GetAccountBaseInfo(c, info.ActorID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onCommentLiked GetAccountBaseInfo failed %#v", err))
-		return
-	}
-
-	var msgID string
-	message := fmt.Sprintf("%s%s", account.UserName, model.MsgTextLikeComment)
-	if msgID, err = p.pushSingleUser(c, msg.AccountID, message); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onCommentLiked pushSingleUser failed %#v, msg_id(%s)", err, msgID))
-		return
-	}
 }
