@@ -124,10 +124,6 @@ func (p *Service) UpdateTopic(c context.Context, arg *model.ArgUpdateTopic) (err
 		return
 	}
 
-	if err = p.checkTopicMemberAdmin(c, p.d.DB(), arg.ID, aid); err != nil {
-		return
-	}
-
 	if err = p.updateTopic(c, p.d.DB(), aid, arg); err != nil {
 		return
 	}
@@ -155,6 +151,11 @@ func (p *Service) updateTopic(c context.Context, node sqalx.Node, aid int64, arg
 		}
 	}()
 
+	var isAdmin bool
+	if isAdmin, err = p.isTopicMemberAdmin(c, tx, arg.ID, aid); err != nil {
+		return
+	}
+
 	var t *model.Topic
 	if t, err = p.d.GetTopicByID(c, tx, arg.ID); err != nil {
 		return
@@ -162,88 +163,94 @@ func (p *Service) updateTopic(c context.Context, node sqalx.Node, aid int64, arg
 		return ecode.TopicNotExist
 	}
 
-	if arg.Avatar != nil && *arg.Avatar != "" {
-		t.Avatar = arg.Avatar
-	}
-
-	if arg.Bg != nil && *arg.Bg != "" {
-		t.Bg = arg.Bg
-	}
-
-	if arg.Name != nil && *arg.Name != "" {
-		t.Name = *arg.Name
-	}
-
-	if arg.Introduction != nil && *arg.Introduction != "" {
-		t.Introduction = *arg.Introduction
-	}
-
-	if arg.JoinPermission != nil && *arg.JoinPermission != "" {
-		t.JoinPermission = *arg.JoinPermission
-	}
-
-	if arg.EditPermission != nil && *arg.EditPermission != "" {
-		t.EditPermission = *arg.EditPermission
-	}
-
-	if arg.ViewPermission != nil && *arg.ViewPermission != "" {
-		t.ViewPermission = *arg.ViewPermission
-	}
-
-	if arg.CatalogViewType != nil && *arg.CatalogViewType != "" {
-		t.CatalogViewType = *arg.CatalogViewType
-	}
-
-	if arg.IsPrivate != nil {
-		t.IsPrivate = types.BitBool(*arg.IsPrivate)
-	}
-
-	if arg.AllowChat != nil {
-		t.AllowChat = types.BitBool(*arg.AllowChat)
-	}
-
-	if arg.AllowDiscuss != nil {
-		t.AllowDiscuss = types.BitBool(*arg.AllowDiscuss)
-	}
-
-	important := false
-	muteNotification := false
-	if arg.Important != nil {
-		important = *arg.Important
-	}
-
-	if arg.MuteNotification != nil {
-		muteNotification = *arg.MuteNotification
-	}
-
-	var s *model.AccountTopicSetting
-	if s, err = p.d.GetAccountTopicSettingByCond(c, tx, map[string]interface{}{"account_id": aid, "topic_id": t.ID}); err != nil {
-		return
-	} else if s == nil {
-		setting := &model.AccountTopicSetting{
-			ID:               gid.NewID(),
-			AccountID:        aid,
-			TopicID:          t.ID,
-			Important:        types.BitBool(important),
-			Fav:              types.BitBool(false),
-			MuteNotification: types.BitBool(muteNotification),
-			CreatedAt:        time.Now().Unix(),
-			UpdatedAt:        time.Now().Unix(),
+	if isAdmin {
+		if arg.Avatar != nil && *arg.Avatar != "" {
+			t.Avatar = arg.Avatar
 		}
 
-		if err = p.d.AddAccountTopicSetting(c, tx, setting); err != nil {
+		if arg.Bg != nil && *arg.Bg != "" {
+			t.Bg = arg.Bg
+		}
+
+		if arg.Name != nil && *arg.Name != "" {
+			t.Name = *arg.Name
+		}
+
+		if arg.Introduction != nil && *arg.Introduction != "" {
+			t.Introduction = *arg.Introduction
+		}
+
+		if arg.JoinPermission != nil && *arg.JoinPermission != "" {
+			t.JoinPermission = *arg.JoinPermission
+		}
+
+		if arg.EditPermission != nil && *arg.EditPermission != "" {
+			t.EditPermission = *arg.EditPermission
+		}
+
+		if arg.ViewPermission != nil && *arg.ViewPermission != "" {
+			t.ViewPermission = *arg.ViewPermission
+		}
+
+		if arg.CatalogViewType != nil && *arg.CatalogViewType != "" {
+			t.CatalogViewType = *arg.CatalogViewType
+		}
+
+		if arg.IsPrivate != nil {
+			t.IsPrivate = types.BitBool(*arg.IsPrivate)
+		}
+
+		if arg.AllowChat != nil {
+			t.AllowChat = types.BitBool(*arg.AllowChat)
+		}
+
+		if arg.AllowDiscuss != nil {
+			t.AllowDiscuss = types.BitBool(*arg.AllowDiscuss)
+		}
+
+		var s *model.AccountTopicSetting
+		if s, err = p.d.GetAccountTopicSettingByCond(c, tx, map[string]interface{}{"account_id": aid, "topic_id": t.ID}); err != nil {
+			return
+		} else if s == nil {
+			err = ecode.AccountTopicSettingNotExist
 			return
 		}
-	} else {
-		s.Important = types.BitBool(important)
-		s.MuteNotification = types.BitBool(muteNotification)
+
+		if arg.Important != nil {
+			s.Important = types.BitBool(*arg.Important)
+		}
+
+		if arg.MuteNotification != nil {
+			s.MuteNotification = types.BitBool(*arg.MuteNotification)
+		}
+
 		if err = p.d.UpdateAccountTopicSetting(c, tx, s); err != nil {
 			return
 		}
-	}
 
-	if err = p.d.UpdateTopic(c, tx, t); err != nil {
-		return
+		if err = p.d.UpdateTopic(c, tx, t); err != nil {
+			return
+		}
+	} else {
+		var s *model.AccountTopicSetting
+		if s, err = p.d.GetAccountTopicSettingByCond(c, tx, map[string]interface{}{"account_id": aid, "topic_id": t.ID}); err != nil {
+			return
+		} else if s == nil {
+			err = ecode.AccountTopicSettingNotExist
+			return
+		}
+
+		if arg.Important != nil {
+			s.Important = types.BitBool(*arg.Important)
+		}
+
+		if arg.MuteNotification != nil {
+			s.MuteNotification = types.BitBool(*arg.MuteNotification)
+		}
+
+		if err = p.d.UpdateAccountTopicSetting(c, tx, s); err != nil {
+			return
+		}
 	}
 
 	if err = tx.Commit(); err != nil {

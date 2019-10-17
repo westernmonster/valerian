@@ -207,6 +207,23 @@ func (p *Service) createTopicMemberOwner(c context.Context, node sqalx.Node, aid
 	return
 }
 
+func (p *Service) isTopicMemberAdmin(c context.Context, node sqalx.Node, topicID, aid int64) (isAdmin bool, err error) {
+	var member *model.TopicMember
+	if member, err = p.d.GetTopicMemberByCond(c, node, map[string]interface{}{"account_id": aid, "topic_id": topicID}); err != nil {
+		return
+	} else if member == nil {
+		err = ecode.NotTopicMember
+		return
+	} else if member.Role == model.MemberRoleUser {
+		isAdmin = false
+		return
+	}
+
+	isAdmin = true
+
+	return
+}
+
 func (p *Service) checkTopicMemberAdmin(c context.Context, node sqalx.Node, topicID, aid int64) (err error) {
 	var member *model.TopicMember
 	if member, err = p.d.GetTopicMemberByCond(c, node, map[string]interface{}{"account_id": aid, "topic_id": topicID}); err != nil {
