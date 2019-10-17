@@ -28,7 +28,7 @@ func (p *Dao) GetAccountStatByID(c context.Context, node sqalx.Node, aid int64) 
 }
 
 func (p *Dao) IncrAccountStat(c context.Context, node sqalx.Node, item *model.AccountStat) (err error) {
-	sqlUpdate := "UPDATE account_stats SET following=following + ?,fans=fans+?,article_count=article_count+?,discussion_count=discussion_count+?,topic_count=topic_count+?,black=black+?,updated_at=? WHERE account_id=?"
+	sqlUpdate := "UPDATE account_stats SET following=following+?,fans=fans+?,article_count=article_count+?,discussion_count=discussion_count+?,topic_count=topic_count+?,black=black+?,updated_at=? WHERE account_id=?"
 
 	_, err = node.ExecContext(c, sqlUpdate, item.Following, item.Fans, item.ArticleCount, item.DiscussionCount, item.TopicCount, item.Black, item.UpdatedAt, item.AccountID)
 	if err != nil {
