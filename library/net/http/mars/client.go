@@ -312,9 +312,10 @@ func (client *Client) Do(c context.Context, req *xhttp.Request, res interface{},
 		return
 	}
 	if res != nil {
-		fmt.Println("============================")
-		fmt.Println(string(bs))
 		if err = json.Unmarshal(bs, res); err != nil {
+			fmt.Println("============================")
+			fmt.Println(string(bs))
+			fmt.Println("============================")
 			err = pkgerr.Wrapf(err, "host:%s, url:%s", req.URL.Host, realURL(req))
 		}
 	}
