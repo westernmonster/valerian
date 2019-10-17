@@ -303,9 +303,6 @@ func (client *Client) Raw(c context.Context, req *xhttp.Request, v ...string) (b
 		return
 	}
 
-	fmt.Println("============================")
-	fmt.Println(resp.Status)
-	fmt.Println("============================")
 	return
 }
 
