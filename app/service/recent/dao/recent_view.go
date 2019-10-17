@@ -26,6 +26,8 @@ func (p *Dao) GetUserRecentViewsPaged(c context.Context, node sqalx.Node, aid in
 
 	sqlSelect = fmt.Sprintf(sqlSelect, clause)
 
+	fmt.Printf("dao.GetUserRecentViewsPaged err(%+v) aid(%d) limit(%d) offset(%d)\n", err, aid, limit, offset)
+
 	if err = node.SelectContext(c, &items, sqlSelect, aid, offset, limit); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetUserRecentViewsPaged err(%+v) aid(%d) limit(%d) offset(%d)", err, aid, limit, offset))
 		return
