@@ -44,7 +44,9 @@ func (s *server) GetRecentPubsPaged(c context.Context, req *api.RecentPubsReq) (
 		return nil, err
 	}
 
-	resp := &api.RecentPubsResp{}
+	resp := &api.RecentPubsResp{
+		Items: make([]*api.RecentPubInfo, len(items)),
+	}
 
 	for i, v := range items {
 		info := &api.RecentPubInfo{
@@ -69,7 +71,9 @@ func (s *server) GetRecentViewsPaged(c context.Context, req *api.RecentViewsReq)
 		return nil, err
 	}
 
-	resp := &api.RecentViewsResp{}
+	resp := &api.RecentViewsResp{
+		Items: make([]*api.RecentViewInfo, len(items)),
+	}
 
 	for i, v := range items {
 		info := &api.RecentViewInfo{
