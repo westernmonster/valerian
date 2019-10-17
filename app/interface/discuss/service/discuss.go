@@ -576,6 +576,7 @@ func (p *Service) GetDiscussion(c context.Context, discussionID int64) (resp *mo
 	}
 
 	if aid == data.CreatedBy {
+		resp.CanEdit = true
 		return
 	}
 
