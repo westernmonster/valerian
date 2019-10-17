@@ -53,6 +53,8 @@ type ReviseDetailResp struct {
 	// 内容
 	Content string `json:"content"`
 
+	CanEdit bool `json:"can_edit"`
+
 	// 是否收藏
 	Fav bool `json:"fav"`
 

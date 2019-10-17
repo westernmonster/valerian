@@ -51,6 +51,8 @@ type ArticleMeta struct {
 
 	Read bool `json:"read"`
 
+	CanEdit bool `json:"can_edit"`
+
 	Fav bool `json:"fav"`
 
 	Dislike bool `json:"dislike"`
