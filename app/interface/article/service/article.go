@@ -325,12 +325,11 @@ func (p *Service) getArticleMeta(c context.Context, node sqalx.Node, article *mo
 		err = ecode.AcquireAccountIDFailed
 		return
 	}
+	item = new(model.ArticleMeta)
 
 	if aid == article.CreatedBy {
 		item.CanEdit = true
 	}
-
-	item = new(model.ArticleMeta)
 
 	if item.Like, err = p.d.IsLike(c, aid, article.ID, model.TargetTypeArticle); err != nil {
 		return
