@@ -8,6 +8,7 @@ import (
 	article "valerian/app/service/article/api"
 	"valerian/app/service/feed/def"
 	"valerian/app/service/message/model"
+	"valerian/library/database/sqalx"
 	"valerian/library/gid"
 	"valerian/library/log"
 
@@ -35,6 +36,21 @@ func (p *Service) onReviseAdded(m *stan.Msg) {
 		return
 	}
 
+	var tx sqalx.Node
+	if tx, err = p.d.DB().Beginx(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		return
+	}
+
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+			}
+			return
+		}
+	}()
+
 	msg := &model.Message{
 		ID:         gid.NewID(),
 		AccountID:  article.Creator.ID,
@@ -50,8 +66,17 @@ func (p *Service) onReviseAdded(m *stan.Msg) {
 		UpdatedAt:  time.Now().Unix(),
 	}
 
-	if err = p.d.AddMessage(c, p.d.DB(), msg); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onReviseAdded AddMessage failed %#v", err))
+	if err = p.d.AddMessage(c, tx, msg); err != nil {
+		log.For(c).Error(fmt.Sprintf("service.onCommentAdded AddMessage failed %#v", err))
+		return
+	}
+
+	if err = p.d.IncrMessageStat(c, tx, &model.MessageStat{AccountID: msg.AccountID, UnreadCount: 1}); err != nil {
+		return
+	}
+
+	if err = tx.Commit(); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 		return
 	}
 

@@ -11,6 +11,7 @@ import (
 	discuss "valerian/app/service/discuss/api"
 	"valerian/app/service/feed/def"
 	"valerian/app/service/message/model"
+	"valerian/library/database/sqalx"
 	"valerian/library/gid"
 	"valerian/library/log"
 
@@ -32,6 +33,21 @@ func (p *Service) onArticleLiked(m *stan.Msg) {
 		return
 	}
 
+	var tx sqalx.Node
+	if tx, err = p.d.DB().Beginx(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		return
+	}
+
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+			}
+			return
+		}
+	}()
+
 	msg := &model.Message{
 		ID:         gid.NewID(),
 		AccountID:  article.Creator.ID,
@@ -47,8 +63,17 @@ func (p *Service) onArticleLiked(m *stan.Msg) {
 		UpdatedAt:  time.Now().Unix(),
 	}
 
-	if err = p.d.AddMessage(c, p.d.DB(), msg); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onArticleLiked AddMessage failed %#v", err))
+	if err = p.d.AddMessage(c, tx, msg); err != nil {
+		log.For(c).Error(fmt.Sprintf("service.onCommentAdded AddMessage failed %#v", err))
+		return
+	}
+
+	if err = p.d.IncrMessageStat(c, tx, &model.MessageStat{AccountID: msg.AccountID, UnreadCount: 1}); err != nil {
+		return
+	}
+
+	if err = tx.Commit(); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 		return
 	}
 
@@ -71,6 +96,21 @@ func (p *Service) onReviseLiked(m *stan.Msg) {
 		return
 	}
 
+	var tx sqalx.Node
+	if tx, err = p.d.DB().Beginx(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		return
+	}
+
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+			}
+			return
+		}
+	}()
+
 	msg := &model.Message{
 		ID:         gid.NewID(),
 		AccountID:  article.Creator.ID,
@@ -86,8 +126,17 @@ func (p *Service) onReviseLiked(m *stan.Msg) {
 		UpdatedAt:  time.Now().Unix(),
 	}
 
-	if err = p.d.AddMessage(c, p.d.DB(), msg); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onReviseLiked AddMessage failed %#v", err))
+	if err = p.d.AddMessage(c, tx, msg); err != nil {
+		log.For(c).Error(fmt.Sprintf("service.onCommentAdded AddMessage failed %#v", err))
+		return
+	}
+
+	if err = p.d.IncrMessageStat(c, tx, &model.MessageStat{AccountID: msg.AccountID, UnreadCount: 1}); err != nil {
+		return
+	}
+
+	if err = tx.Commit(); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 		return
 	}
 
@@ -110,6 +159,20 @@ func (p *Service) onDiscussionLiked(m *stan.Msg) {
 		return
 	}
 
+	var tx sqalx.Node
+	if tx, err = p.d.DB().Beginx(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		return
+	}
+
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+			}
+			return
+		}
+	}()
 	msg := &model.Message{
 		ID:         gid.NewID(),
 		AccountID:  discuss.Creator.ID,
@@ -125,8 +188,17 @@ func (p *Service) onDiscussionLiked(m *stan.Msg) {
 		UpdatedAt:  time.Now().Unix(),
 	}
 
-	if err = p.d.AddMessage(c, p.d.DB(), msg); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onDiscussionLiked AddMessage failed %#v", err))
+	if err = p.d.AddMessage(c, tx, msg); err != nil {
+		log.For(c).Error(fmt.Sprintf("service.onCommentAdded AddMessage failed %#v", err))
+		return
+	}
+
+	if err = p.d.IncrMessageStat(c, tx, &model.MessageStat{AccountID: msg.AccountID, UnreadCount: 1}); err != nil {
+		return
+	}
+
+	if err = tx.Commit(); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 		return
 	}
 
@@ -149,6 +221,21 @@ func (p *Service) onCommentLiked(m *stan.Msg) {
 		return
 	}
 
+	var tx sqalx.Node
+	if tx, err = p.d.DB().Beginx(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		return
+	}
+
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+			}
+			return
+		}
+	}()
+
 	msg := &model.Message{
 		ID:         gid.NewID(),
 		AccountID:  comment.Creator.ID,
@@ -164,8 +251,17 @@ func (p *Service) onCommentLiked(m *stan.Msg) {
 		UpdatedAt:  time.Now().Unix(),
 	}
 
-	if err = p.d.AddMessage(c, p.d.DB(), msg); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onCommentLiked AddMessage failed %#v", err))
+	if err = p.d.AddMessage(c, tx, msg); err != nil {
+		log.For(c).Error(fmt.Sprintf("service.onCommentAdded AddMessage failed %#v", err))
+		return
+	}
+
+	if err = p.d.IncrMessageStat(c, tx, &model.MessageStat{AccountID: msg.AccountID, UnreadCount: 1}); err != nil {
+		return
+	}
+
+	if err = tx.Commit(); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 		return
 	}
 
