@@ -24,7 +24,6 @@ import (
 // @Router /list/recent [get]
 func recent(c *mars.Context) {
 	var (
-		id     int64
 		err    error
 		offset int
 		limit  int
@@ -55,5 +54,5 @@ func recent(c *mars.Context) {
 		return
 	}
 
-	c.JSON(srv.GetMemberRecentViewsPaged(c, id, aType, limit, offset))
+	c.JSON(srv.GetMemberRecentViewsPaged(c, aType, limit, offset))
 }

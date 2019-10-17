@@ -8,6 +8,8 @@ import (
 	article "valerian/app/service/article/api"
 	recent "valerian/app/service/recent/api"
 	topic "valerian/app/service/topic/api"
+	"valerian/library/ecode"
+	"valerian/library/net/metadata"
 )
 
 func (p *Service) FromArticle(v *article.ArticleInfo) (item *model.ItemArticle) {
@@ -63,7 +65,12 @@ func (p *Service) FromTopic(v *topic.TopicInfo) (item *model.ItemTopic) {
 	return
 }
 
-func (p *Service) GetMemberRecentViewsPaged(c context.Context, aid int64, atype string, limit, offset int) (resp *model.RecentListResp, err error) {
+func (p *Service) GetMemberRecentViewsPaged(c context.Context, atype string, limit, offset int) (resp *model.RecentListResp, err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
 	var data *recent.RecentViewsResp
 	if data, err = p.d.GetRecentViewsPaged(c, aid, atype, limit, offset); err != nil {
 		return
