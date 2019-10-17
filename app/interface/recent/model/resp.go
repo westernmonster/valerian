@@ -1,16 +1,25 @@
 package model
 
+type Creator struct {
+	// 用户ID
+	ID int64 `json:"id,string" swaggertype:"string"`
+	// 用户名
+	UserName string `json:"user_name"`
+	// 头像
+	Avatar string `json:"avatar"`
+
+	// 自我介绍
+	Introduction *string `json:"introduction,omitempty"`
+}
+
 type ItemTopic struct {
 	// ID
 	ID int64 `json:"id,string" swaggertype:"string"`
 	// 话题名
 	Name string `json:"name"`
-
-	// 简介
-	Introduction string `json:"introduction"`
-
-	// 封面
-	Avatar *string `json:"avatar,omitempty"`
+	// 头像
+	// 必须为URL
+	Avatar *string `json:"avatar"`
 
 	// 成员数
 	MemberCount int `json:"member_count"`
@@ -21,10 +30,13 @@ type ItemTopic struct {
 	// 讨论数
 	DiscussionCount int `json:"discussion_count"`
 
-	// 发布日期
+	// 简介
+	Introduction string `json:"introduction"`
+
+	Creator *Creator `json:"creator,omitempty"`
+
 	CreatedAt int64 `json:"created_at"`
 
-	// 更新日期
 	UpdatedAt int64 `json:"updated_at"`
 }
 
@@ -33,24 +45,28 @@ type ItemArticle struct {
 	ID int64 `json:"id,string" swaggertype:"string"`
 	// 文章标题
 	Title string `json:"title"`
-	// 封面
-	Avatar *string `json:"avatar,omitempty"`
 	// 内容
 	Excerpt string `json:"excerpt"`
-	// 喜欢数
-	LikeCount int `json:"like_count"`
-	// 补充个数
-	ReviseCount int `json:"revise_count"`
-	// 评论数
-	CommentCount int `json:"comment_count"`
 
 	// 图片
 	ImageUrls []string `json:"images"`
 
-	// 发布日期
+	// 补充个数
+	ReviseCount int `json:"revise_count"`
+
+	// 喜欢数
+	LikeCount int `json:"like_count"`
+
+	// 反对数
+	DislikeCount int `json:"dislike_count"`
+
+	// 评论数
+	CommentCount int `json:"comment_count"`
+
+	Creator *Creator `json:"creator,omitempty"`
+
 	CreatedAt int64 `json:"created_at"`
 
-	// 更新日期
 	UpdatedAt int64 `json:"updated_at"`
 }
 
