@@ -20,6 +20,12 @@ type ItemTopic struct {
 
 	// 讨论数
 	DiscussionCount int `json:"discussion_count"`
+
+	// 发布日期
+	CreatedAt int64 `json:"created_at"`
+
+	// 更新日期
+	UpdatedAt int64 `json:"updated_at"`
 }
 
 type ItemArticle struct {

@@ -64,7 +64,7 @@ func (s *server) GetRecentPubsPaged(c context.Context, req *api.RecentPubsReq) (
 }
 
 func (s *server) GetRecentViewsPaged(c context.Context, req *api.RecentViewsReq) (*api.RecentViewsResp, error) {
-	items, err := s.svr.GetUserRecentViewsPaged(c, req.AccountID, int(req.Limit), int(req.Offset))
+	items, err := s.svr.GetUserRecentViewsPaged(c, req.AccountID, req.TargetType, int(req.Limit), int(req.Offset))
 	if err != nil {
 		return nil, err
 	}

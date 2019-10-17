@@ -12,8 +12,8 @@ import (
 	"github.com/nats-io/stan.go"
 )
 
-func (p *Service) GetUserRecentViewsPaged(c context.Context, aid int64, limit, offset int) (items []*model.RecentView, err error) {
-	if items, err = p.d.GetUserRecentViewsPaged(c, p.d.DB(), aid, limit, offset); err != nil {
+func (p *Service) GetUserRecentViewsPaged(c context.Context, aid int64, targetType string, limit, offset int) (items []*model.RecentView, err error) {
+	if items, err = p.d.GetUserRecentViewsPaged(c, p.d.DB(), aid, targetType, limit, offset); err != nil {
 		return
 	}
 

@@ -11,7 +11,7 @@ import (
 )
 
 type IDao interface {
-	GetUserRecentViewsPaged(c context.Context, node sqalx.Node, aid int64, limit, offset int) (items []*model.RecentView, err error)
+	GetUserRecentViewsPaged(c context.Context, node sqalx.Node, aid int64, targetType string, limit, offset int) (items []*model.RecentView, err error)
 	GetRecentViewsByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.RecentView, err error)
 	GetRecentViews(c context.Context, node sqalx.Node) (items []*model.RecentView, err error)
 	GetRecentViewByID(c context.Context, node sqalx.Node, id int64) (item *model.RecentView, err error)
