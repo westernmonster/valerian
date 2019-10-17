@@ -177,6 +177,7 @@ func (p *Service) addArticleRelation(c context.Context, node sqalx.Node, article
 			err = ecode.OnlyAllowOnePrimaryTopic
 			return
 		}
+
 	}
 
 	var maxSeq int
@@ -319,6 +320,11 @@ func (p *Service) SetPrimary(c context.Context, arg *model.ArgSetPrimaryArticleR
 	} else if catalog == nil {
 		err = ecode.TopicCatalogNotExist
 		return
+	}
+
+	if *catalog.Permission == model.AuthPermissionView {
+		editPermission := model.AuthPermissionEdit
+		catalog.Permission = &editPermission
 	}
 
 	catalog.IsPrimary = true
