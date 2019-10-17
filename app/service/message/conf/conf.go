@@ -46,6 +46,7 @@ type Config struct {
 	TopicRPC   *warden.ClientConfig
 	ArticleRPC *warden.ClientConfig
 	DiscussRPC *warden.ClientConfig
+	CommentRPC *warden.ClientConfig
 }
 
 // DB db config.

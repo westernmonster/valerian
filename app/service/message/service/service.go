@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"strings"
 
+	"valerian/app/service/feed/def"
 	"valerian/app/service/message/conf"
 	"valerian/app/service/message/dao"
 	"valerian/library/conf/env"
@@ -30,6 +31,26 @@ func New(c *conf.Config) (s *Service) {
 		mq:     mq.New(env.Hostname, c.Nats),
 		missch: make(chan func(), 1024),
 		jp:     jpush.NewJpushClient(c.JPush),
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusArticleLiked, "message", s.onArticleLiked); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusArticleLiked, "message")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusReviseLiked, "message", s.onReviseLiked); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusReviseLiked, "message")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusDiscussionLiked, "message", s.onDiscussionLiked); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusDiscussionLiked, "message")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusCommentLiked, "message", s.onCommentLiked); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusCommentLiked, "message")
+		panic(err)
 	}
 
 	go s.cacheproc()

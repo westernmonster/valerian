@@ -8,7 +8,8 @@ const (
 	MsgLike          = "like"
 	MsgFollowed      = "followed"
 	MsgJoined        = "joined"
-	MsgApplyRejected = "joined"
+	MsgApplyRejected = "apply_rejected"
+	MsgReviseAdded   = "revise_added"
 )
 
 const (
@@ -22,6 +23,7 @@ const (
 	TargetTypeRevise     = "revise"
 	TargetTypeArticle    = "article"
 	TargetTypeMember     = "member"
+	TargetTypeComment    = "comment"
 )
 
 const (
@@ -29,4 +31,5 @@ const (
 	MsgTextLikeRevise     = "赞了补充"
 	MsgTextLikeComment    = "赞了评论"
 	MsgTextLikeDiscussion = "赞了讨论"
+	MsgTextReviseAdded    = "补充了文章"
 )

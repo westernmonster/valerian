@@ -129,6 +129,7 @@ func (s *server) GetReviseInfo(ctx context.Context, req *api.IDReq) (*api.Revise
 			UserName: m.UserName,
 			Avatar:   m.Avatar,
 		},
+		ArticleID: revise.ArticleID,
 	}
 
 	if m.Introduction != nil {

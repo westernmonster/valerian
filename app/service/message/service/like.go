@@ -8,6 +8,7 @@ import (
 
 	account "valerian/app/service/account/api"
 	article "valerian/app/service/article/api"
+	comment "valerian/app/service/comment/api"
 	discuss "valerian/app/service/discuss/api"
 	"valerian/app/service/feed/def"
 	"valerian/app/service/message/model"
@@ -168,6 +169,57 @@ func (p *Service) onDiscussionLiked(m *stan.Msg) {
 	message := fmt.Sprintf("%s%s", account.UserName, model.MsgTextLikeDiscussion)
 	if msgID, err = p.pushSingleUser(c, msg.AccountID, message); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onDiscussionLiked pushSingleUser failed %#v, msg_id(%s)", err, msgID))
+		return
+	}
+}
+
+func (p *Service) onCommentLiked(m *stan.Msg) {
+	var err error
+	c := context.Background()
+	info := new(def.MsgCommentLiked)
+	if err = info.Unmarshal(m.Data); err != nil {
+		log.For(c).Error(fmt.Sprintf("service.onCommentLiked Unmarshal failed %#v", err))
+		return
+	}
+
+	var comment *comment.CommentInfo
+	if comment, err = p.d.GetComment(c, info.CommentID); err != nil {
+		log.For(c).Error(fmt.Sprintf("service.onCommentLiked GetComment failed %#v", err))
+		return
+	}
+
+	msg := &model.Message{
+		ID:         gid.NewID(),
+		AccountID:  comment.Creator.ID,
+		ActionType: model.MsgLike,
+		ActionTime: time.Now().Unix(),
+		ActionText: model.MsgTextLikeComment,
+		Actors:     strconv.FormatInt(info.ActorID, 10),
+		MergeCount: 1,
+		ActorType:  model.ActorTypeUser,
+		TargetID:   comment.ID,
+		TargetType: model.TargetTypeComment,
+		CreatedAt:  time.Now().Unix(),
+		UpdatedAt:  time.Now().Unix(),
+	}
+
+	if err = p.d.AddMessage(c, p.d.DB(), msg); err != nil {
+		log.For(c).Error(fmt.Sprintf("service.onCommentLiked AddMessage failed %#v", err))
+		return
+	}
+
+	m.Ack()
+
+	var account *account.BaseInfoReply
+	if account, err = p.d.GetAccountBaseInfo(c, info.ActorID); err != nil {
+		log.For(c).Error(fmt.Sprintf("service.onCommentLiked GetAccountBaseInfo failed %#v", err))
+		return
+	}
+
+	var msgID string
+	message := fmt.Sprintf("%s%s", account.UserName, model.MsgTextLikeComment)
+	if msgID, err = p.pushSingleUser(c, msg.AccountID, message); err != nil {
+		log.For(c).Error(fmt.Sprintf("service.onCommentLiked pushSingleUser failed %#v, msg_id(%s)", err, msgID))
 		return
 	}
 }

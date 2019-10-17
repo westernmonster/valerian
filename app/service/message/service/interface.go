@@ -5,6 +5,7 @@ import (
 
 	account "valerian/app/service/account/api"
 	article "valerian/app/service/article/api"
+	comment "valerian/app/service/comment/api"
 	discuss "valerian/app/service/discuss/api"
 	"valerian/app/service/message/model"
 	relation "valerian/app/service/relation/api"
@@ -29,6 +30,7 @@ type IDao interface {
 	GetAccountBaseInfo(c context.Context, aid int64) (info *account.BaseInfoReply, err error)
 	GetBelongsTopicIDs(c context.Context, aid int64) (resp *topic.IDsResp, err error)
 	GetTopicMemberIDs(c context.Context, topicID int64) (resp *topic.IDsResp, err error)
+	GetComment(c context.Context, id int64) (info *comment.CommentInfo, err error)
 
 	Ping(c context.Context) (err error)
 	Close()

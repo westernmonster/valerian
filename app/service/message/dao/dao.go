@@ -7,6 +7,7 @@ import (
 
 	account "valerian/app/service/account/api"
 	article "valerian/app/service/article/api"
+	comment "valerian/app/service/comment/api"
 	discuss "valerian/app/service/discuss/api"
 	"valerian/app/service/message/conf"
 	relation "valerian/app/service/relation/api"
@@ -30,6 +31,7 @@ type Dao struct {
 	discussRPC  discuss.DiscussionClient
 	articleRPC  article.ArticleClient
 	relationRPC relation.RelationClient
+	commentRPC  comment.CommentClient
 }
 
 func New(c *conf.Config) (dao *Dao) {
@@ -68,6 +70,12 @@ func New(c *conf.Config) (dao *Dao) {
 		panic(errors.WithMessage(err, "Failed to dial relation service"))
 	} else {
 		dao.relationRPC = relationRPC
+	}
+
+	if commentRPC, err := comment.NewClient(c.TopicRPC); err != nil {
+		panic(errors.WithMessage(err, "Failed to dial comment service"))
+	} else {
+		dao.commentRPC = commentRPC
 	}
 
 	return

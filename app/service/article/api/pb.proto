@@ -64,6 +64,8 @@ message ReviseInfo {
     int64 UpdatedAt = 7 [(gogoproto.jsontag) = "updated_at"];
 
     ReviseStat  Stat = 8 [(gogoproto.jsontag) = "stat"];
+
+    int64 ArticleID = 9 [(gogoproto.jsontag) = "article_id"];
 }
 
 
