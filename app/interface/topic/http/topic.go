@@ -200,9 +200,9 @@ func followedTopics(c *mars.Context) {
 	params := c.Request.Form
 
 	if pn, err = strconv.Atoi(params.Get("pn")); err != nil {
-		pn = 0
+		pn = 1
 	} else if pn < 0 {
-		pn = 0
+		pn = 1
 	}
 
 	if ps, err = strconv.Atoi(params.Get("ps")); err != nil {
