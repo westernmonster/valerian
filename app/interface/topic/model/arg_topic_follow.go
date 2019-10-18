@@ -15,6 +15,8 @@ type ArgAuditFollow struct {
 	ID int64 `json:"id,string" swaggertype:"string"`
 
 	Approve bool `json:"approve"`
+
+	Reason string `json:"reason"`
 }
 
 func (p *ArgAuditFollow) Validate() (err error) {

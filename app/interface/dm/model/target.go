@@ -47,6 +47,8 @@ type TargetComment struct {
 	// 内容
 	Excerpt string `json:"excerpt"`
 
+	Creator *Creator `json:"creator,omitempty"`
+
 	// 发布日期
 	CreatedAt int64 `json:"created_at"`
 }

@@ -80,5 +80,9 @@ func (s *server) GetCommentInfo(ctx context.Context, req *api.IDReq) (*api.Comme
 		resp.Creator.Introduction = &api.Creator_IntroductionValue{m.GetIntroductionValue()}
 	}
 
+	if comment.ReplyTo != nil {
+		resp.ReplyTo = &api.CommentInfo_ReplyToValue{*comment.ReplyTo}
+	}
+
 	return resp, nil
 }
