@@ -2,6 +2,8 @@ package service
 
 import (
 	"context"
+	"strconv"
+	"strings"
 	"valerian/app/interface/dm/model"
 	account "valerian/app/service/account/api"
 	article "valerian/app/service/article/api"
@@ -121,6 +123,36 @@ func (p *Service) FromTopic(v *topic.TopicInfo) (item *model.TargetTopic) {
 	return
 }
 
+func (p *Service) FromAccount(v *account.BaseInfoReply) (item *model.Actor) {
+	item = &model.Actor{
+		ID:     v.ID,
+		Avatar: v.Avatar,
+		Name:   v.UserName,
+	}
+
+	return
+}
+
+func (p *Service) GetActors(c context.Context, actorsFields string) (items []*model.Actor, err error) {
+	actorsIds := strings.Split(actorsFields, ",")
+	items = make([]*model.Actor, 0)
+	for _, v := range actorsIds {
+		var id int64
+		if id, err = strconv.ParseInt(v, 10, 64); err != nil {
+			return
+		}
+
+		var acc *account.BaseInfoReply
+		if acc, err = p.d.GetAccountBaseInfo(c, id); err != nil {
+			return
+		}
+
+		items = append(items, p.FromAccount(acc))
+	}
+
+	return
+}
+
 func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, offset int) (resp *model.NotificationResp, err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
@@ -157,6 +189,13 @@ func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, o
 		item.Content.Actors = make([]*model.Actor, 0)
 		item.Content.Target.ID = v.TargetID
 		item.Content.Target.Type = v.TargetType
+
+		var actors []*model.Actor
+		if actors, err = p.GetActors(c, v.Actors); err != nil {
+			return
+		}
+
+		item.Content.Actors = actors
 
 		switch v.TargetType {
 		case model.TargetTypeArticle:
