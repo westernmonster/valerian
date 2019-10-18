@@ -12,6 +12,7 @@ import (
 
 // searchResult get result from ES.
 func (d *Dao) searchResult(c context.Context, indexName string, query elastic.Query, bsp *model.BasicSearchParams) (res *model.SearchResult, err error) {
+	fmt.Printf("%+v\n", bsp)
 	res = &model.SearchResult{Debug: ""}
 	if bsp.Debug {
 		var src interface{}
