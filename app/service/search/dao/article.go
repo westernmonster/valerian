@@ -77,7 +77,18 @@ func (p *Dao) CreateArticleIndices(c context.Context) (err error) {
 		return
 	}
 	if indexExist {
-		return
+		var deleteRet *elastic.IndicesDeleteResponse
+		if deleteRet, err = p.esClient.DeleteIndex(indexName).Do(c); err != nil {
+			log.For(c).Error(fmt.Sprintf("delete index failed, error(%+v)", err))
+			return
+		}
+
+		if !deleteRet.Acknowledged {
+			msg := fmt.Sprintf("expected DeleteIndex.Acknowledged %v; got %v", true, deleteRet.Acknowledged)
+			log.For(c).Error(msg)
+			err = errors.New(msg)
+			return
+		}
 	}
 
 	var createRet *elastic.IndicesCreateResult
