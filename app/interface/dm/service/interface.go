@@ -31,9 +31,10 @@ type IDao interface {
 	UpdateTopicInviteRequest(c context.Context, node sqalx.Node, item *model.TopicInviteRequest) (err error)
 	DelTopicInviteRequest(c context.Context, node sqalx.Node, id int64) (err error)
 
+	GetTopicFollowRequestsByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.TopicFollowRequest, err error)
+	GetTopicFollowRequests(c context.Context, node sqalx.Node) (items []*model.TopicFollowRequest, err error)
 	GetTopicFollowRequestByID(c context.Context, node sqalx.Node, id int64) (item *model.TopicFollowRequest, err error)
-	GetTopicFollowRequests(c context.Context, node sqalx.Node, topicID int64, status int) (items []*model.TopicFollowRequest, err error)
-	GetTopicFollowRequest(c context.Context, node sqalx.Node, topicID, aid int64) (item *model.TopicFollowRequest, err error)
+	GetTopicFollowRequestByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (item *model.TopicFollowRequest, err error)
 	AddTopicFollowRequest(c context.Context, node sqalx.Node, item *model.TopicFollowRequest) (err error)
 	UpdateTopicFollowRequest(c context.Context, node sqalx.Node, item *model.TopicFollowRequest) (err error)
 	DelTopicFollowRequest(c context.Context, node sqalx.Node, id int64) (err error)

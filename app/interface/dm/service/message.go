@@ -2,15 +2,18 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 	"strings"
 	"valerian/app/interface/dm/model"
 	account "valerian/app/service/account/api"
 	article "valerian/app/service/article/api"
+	comment "valerian/app/service/comment/api"
 	discuss "valerian/app/service/discuss/api"
 	topic "valerian/app/service/topic/api"
 	"valerian/library/ecode"
 	"valerian/library/net/metadata"
+	"valerian/library/xstr"
 )
 
 func (p *Service) FromDiscussion(v *discuss.DiscussionInfo) (item *model.TargetDiscuss) {
@@ -204,6 +207,9 @@ func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, o
 				return
 			}
 
+			item.Content.Target.Link = fmt.Sprintf("pronote://article/%d", article.ID)
+			item.Content.Target.Text = article.Title
+
 			item.Target = p.FromArticle(article)
 			break
 		case model.TargetTypeRevise:
@@ -212,6 +218,8 @@ func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, o
 				return
 			}
 
+			item.Content.Target.Link = fmt.Sprintf("pronote://revise/%d", revise.ID)
+			item.Content.Target.Text = revise.Title
 			item.Target = p.FromRevise(revise)
 			break
 		case model.TargetTypeDiscussion:
@@ -220,6 +228,10 @@ func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, o
 				return
 			}
 
+			item.Content.Target.Link = fmt.Sprintf("pronote://discuss/%d", discuss.ID)
+			if discuss.Title != nil {
+				item.Content.Target.Text = discuss.GetTitleValue()
+			}
 			item.Target = p.FromDiscussion(discuss)
 			break
 
@@ -229,6 +241,8 @@ func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, o
 				return
 			}
 
+			item.Content.Target.Link = fmt.Sprintf("pronote://topic/%d", topic.ID)
+			item.Content.Target.Text = topic.Name
 			item.Target = p.FromTopic(topic)
 			break
 
@@ -238,11 +252,219 @@ func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, o
 				return
 			}
 
+			item.Content.Target.Link = fmt.Sprintf("pronote://user/%d", info.ID)
+			item.Content.Target.Text = info.UserName
 			item.Target = info
 			break
+
+		case model.TargetTypeComment:
+			var ct *comment.CommentInfo
+			if ct, err = p.d.GetComment(c, v.TargetID); err != nil {
+				return
+			}
+
+			switch ct.TargetType {
+			case model.TargetTypeArticle:
+				if item.Target, err = p.GetCommentTarget(c, ct); err != nil {
+					return
+				}
+
+				item.Content.Target.Link = fmt.Sprintf("pronote://{%s}/comment/%d", model.TargetTypeArticle, ct.ID)
+				item.Content.Target.Text = xstr.Excerpt(ct.Content)
+				break
+			case model.TargetTypeRevise:
+				if item.Target, err = p.GetCommentTarget(c, ct); err != nil {
+					return
+				}
+				item.Content.Target.Link = fmt.Sprintf("pronote://{%s}/comment/%d", model.TargetTypeRevise, ct.ID)
+				item.Content.Target.Text = xstr.Excerpt(ct.Content)
+				break
+			case model.TargetTypeDiscussion:
+				if item.Target, err = p.GetCommentTarget(c, ct); err != nil {
+					return
+				}
+				item.Content.Target.Link = fmt.Sprintf("pronote://{%s}/comment/%d", model.TargetTypeDiscussion, ct.ID)
+				item.Content.Target.Text = xstr.Excerpt(ct.Content)
+				break
+			case model.TargetTypeComment:
+				var tg *model.TargetComment
+				if tg, err = p.GetCommentTarget(c, ct); err != nil {
+					return
+				}
+				item.Target = tg
+
+				item.Content.Target.Link = fmt.Sprintf("pronote://{%s}/comment/%d/sub/%d",
+					tg.ReplyComment.TargetType,
+					tg.ReplyComment.ID,
+					ct.ID)
+				item.Content.Target.Text = xstr.Excerpt(ct.Content)
+				break
+			}
+			break
+
+		case model.TargetTypeTopicFollowRequest:
+			var req *model.TopicFollowRequest
+			if req, err = p.d.GetTopicFollowRequestByID(c, p.d.DB(), v.TargetID); err != nil {
+				return
+			} else if req == nil {
+				err = ecode.TopicFollowRequestNotExist
+				return
+			}
+
+			tg := &model.TargetTopicFollowRequest{
+				ID:        req.ID,
+				Status:    req.Status,
+				Reason:    req.Reason,
+				CreatedAt: req.CreatedAt,
+			}
+
+			var acc *account.BaseInfoReply
+			if acc, err = p.d.GetAccountBaseInfo(c, req.AccountID); err != nil {
+				return
+			}
+
+			tg.Member = &model.Creator{
+				ID:       acc.ID,
+				Avatar:   acc.Avatar,
+				UserName: acc.UserName,
+			}
+
+			intro := acc.GetIntroductionValue()
+			tg.Member.Introduction = &intro
+
+			var topic *topic.TopicInfo
+			if topic, err = p.d.GetTopic(c, req.TopicID); err != nil {
+				return
+			}
+
+			tg.Topic = p.FromTopic(topic)
+
+			item.Target = tg
+			break
+		case model.TargetTypeTopicInviteRequest:
+			var req *model.TopicInviteRequest
+			if req, err = p.d.GetTopicInviteRequestByID(c, p.d.DB(), v.TargetID); err != nil {
+				return
+			} else if req == nil {
+				err = ecode.TopicInviteRequestNotExist
+				return
+			}
+
+			tg := &model.TargetTopicInviteRequest{
+				ID:        req.ID,
+				Status:    req.Status,
+				CreatedAt: req.CreatedAt,
+			}
+
+			var acc *account.BaseInfoReply
+			if acc, err = p.d.GetAccountBaseInfo(c, req.FromAccountID); err != nil {
+				return
+			}
+
+			tg.Creator = &model.Creator{
+				ID:       acc.ID,
+				Avatar:   acc.Avatar,
+				UserName: acc.UserName,
+			}
+
+			intro := acc.GetIntroductionValue()
+			tg.Creator.Introduction = &intro
+
+			var topic *topic.TopicInfo
+			if topic, err = p.d.GetTopic(c, req.TopicID); err != nil {
+				return
+			}
+
+			tg.Topic = p.FromTopic(topic)
+
+			item.Target = tg
+			break
+
 		}
 
 		resp.Items[i] = item
+	}
+
+	return
+}
+
+func (p *Service) GetCommentTarget(c context.Context, v *comment.CommentInfo) (resp *model.TargetComment, err error) {
+	resp = &model.TargetComment{
+		ID:         v.ID,
+		Excerpt:    xstr.Excerpt(v.Content),
+		TargetType: v.TargetType,
+		Creator: &model.Creator{
+			ID:       v.Creator.ID,
+			Avatar:   v.Creator.Avatar,
+			UserName: v.Creator.UserName,
+		},
+		CreatedAt: v.CreatedAt,
+	}
+
+	intro := v.Creator.GetIntroductionValue()
+	resp.Creator.Introduction = &intro
+
+	switch v.TargetType {
+	case model.TargetTypeArticle:
+		var article *article.ArticleInfo
+		if article, err = p.d.GetArticle(c, v.OwnerID); err != nil {
+			return
+		}
+		resp.Target = p.FromArticle(article)
+		break
+	case model.TargetTypeRevise:
+		var item *article.ReviseInfo
+		if item, err = p.d.GetRevise(c, v.OwnerID); err != nil {
+			return
+		}
+		resp.Target = p.FromRevise(item)
+		break
+	case model.TargetTypeDiscussion:
+		var item *discuss.DiscussionInfo
+		if item, err = p.d.GetDiscussion(c, v.OwnerID); err != nil {
+			return
+		}
+		resp.Target = p.FromDiscussion(item)
+		break
+	case model.TargetTypeComment:
+		var replyComment *comment.CommentInfo
+		if replyComment, err = p.d.GetComment(c, v.ResourceID); err != nil {
+			return
+		}
+
+		resp.ReplyComment = &model.TargetReplyComment{
+			ID:      replyComment.ID,
+			Excerpt: xstr.Excerpt(replyComment.Content),
+			Creator: &model.Creator{
+				ID:       replyComment.Creator.ID,
+				Avatar:   replyComment.Creator.Avatar,
+				UserName: replyComment.Creator.UserName,
+			},
+			CreatedAt:  replyComment.CreatedAt,
+			TargetType: replyComment.TargetType,
+		}
+
+		intro := replyComment.Creator.GetIntroductionValue()
+		resp.ReplyComment.Creator.Introduction = &intro
+
+		if v.ReplyTo != nil {
+			var acc *account.BaseInfoReply
+			if acc, err = p.d.GetAccountBaseInfo(c, v.GetReplyToValue()); err != nil {
+				return
+			}
+
+			resp.ReplyTo = &model.Creator{
+				ID:       acc.ID,
+				Avatar:   acc.Avatar,
+				UserName: acc.UserName,
+			}
+
+			intro := acc.GetIntroductionValue()
+			resp.ReplyTo.Introduction = &intro
+
+		}
+
+		break
 	}
 
 	return

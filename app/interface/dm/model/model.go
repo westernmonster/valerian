@@ -38,13 +38,14 @@ type TopicMember struct {
 }
 
 type TopicInviteRequest struct {
-	ID        int64         `db:"id" json:"id,string"`                 // ID ID
-	AccountID int64         `db:"account_id" json:"account_id,string"` // AccountID 用户ID
-	TopicID   int64         `db:"topic_id" json:"topic_id,string"`     // TopicID 话题ID
-	Status    int           `db:"status" json:"status"`                // Status 状态
-	Deleted   types.BitBool `db:"deleted" json:"deleted"`              // Deleted 是否删除
-	CreatedAt int64         `db:"created_at" json:"created_at"`        // CreatedAt 创建时间
-	UpdatedAt int64         `db:"updated_at" json:"updated_at"`        // UpdatedAt 更新时间
+	ID            int64         `db:"id" json:"id,string"`                           // ID ID
+	AccountID     int64         `db:"account_id" json:"account_id,string"`           // AccountID 用户ID
+	TopicID       int64         `db:"topic_id" json:"topic_id,string"`               // TopicID 话题ID
+	Status        int           `db:"status" json:"status"`                          // Status 状态
+	Deleted       types.BitBool `db:"deleted" json:"deleted"`                        // Deleted 是否删除
+	CreatedAt     int64         `db:"created_at" json:"created_at"`                  // CreatedAt 创建时间
+	UpdatedAt     int64         `db:"updated_at" json:"updated_at"`                  // UpdatedAt 更新时间
+	FromAccountID int64         `db:"from_account_id" json:"from_account_id,string"` // FromAccountID 邀请人
 }
 
 type TopicFollowRequest struct {
@@ -55,4 +56,5 @@ type TopicFollowRequest struct {
 	Deleted   types.BitBool `db:"deleted" json:"deleted"`              // Deleted 是否删除
 	CreatedAt int64         `db:"created_at" json:"created_at"`        // CreatedAt 创建时间
 	UpdatedAt int64         `db:"updated_at" json:"updated_at"`        // UpdatedAt 更新时间
+	Reason    string        `db:"reason" json:"reason"`                // Reason 原因
 }
