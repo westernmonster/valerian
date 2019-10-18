@@ -76,7 +76,7 @@ func (p *Service) Init(c context.Context) (err error) {
 			ViewPermission:  &v.ViewPermission,
 			EditPermission:  &v.EditPermission,
 			JoinPermission:  &v.JoinPermission,
-			CatalogViewType: &v.Introduction,
+			CatalogViewType: &v.CatalogViewType,
 			CreatedAt:       &v.CreatedAt,
 			UpdatedAt:       &v.UpdatedAt,
 		}

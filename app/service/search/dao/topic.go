@@ -12,7 +12,6 @@ import (
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
 
-	"github.com/davecgh/go-spew/spew"
 	"gopkg.in/olivere/elastic.v6"
 )
 
@@ -103,7 +102,6 @@ func (p *Dao) CreateTopicIndices(c context.Context) (err error) {
 func (p *Dao) PutTopic2ES(c context.Context, item *model.ESTopic) (err error) {
 	indexName := fmt.Sprintf("%s_topics", env.DeployEnv)
 	var ret *elastic.IndexResponse
-	spew.Dump(item)
 	if ret, err = p.esClient.Index().Index(indexName).Type("topic").Id(strconv.FormatInt(item.ID, 10)).BodyJson(item).Do(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("index doc failed, error(%+v)", err))
 		return

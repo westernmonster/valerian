@@ -37,7 +37,7 @@ func (p *Service) onTopicAdded(m *stan.Msg) {
 		ViewPermission:  &v.ViewPermission,
 		EditPermission:  &v.EditPermission,
 		JoinPermission:  &v.JoinPermission,
-		CatalogViewType: &v.Introduction,
+		CatalogViewType: &v.CatalogViewType,
 		CreatedAt:       &v.CreatedAt,
 		UpdatedAt:       &v.UpdatedAt,
 	}

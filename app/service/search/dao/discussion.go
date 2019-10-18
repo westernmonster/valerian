@@ -140,7 +140,7 @@ func (p *Dao) PutDiscussion2ES(c context.Context, item *model.ESDiscussion) (err
 func (p *Dao) DelESDiscussion(c context.Context, id int64) (err error) {
 	indexName := fmt.Sprintf("%s_discussions", env.DeployEnv)
 	var ret *elastic.DeleteResponse
-	if ret, err = p.esClient.Delete().Index(indexName).Type("topic").Id(strconv.FormatInt(id, 10)).Do(c); err != nil {
+	if ret, err = p.esClient.Delete().Index(indexName).Type("discussion").Id(strconv.FormatInt(id, 10)).Do(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("delete doc failed, error(%+v)", err))
 		return
 	}
