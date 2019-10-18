@@ -40,7 +40,7 @@ type TargetTopic struct {
 	UpdatedAt int64 `json:"updated_at"`
 }
 
-type TargetComment struct {
+type TargetReplyComment struct {
 	// ID
 	ID int64 `json:"id,string" swaggertype:"string"`
 
@@ -48,6 +48,30 @@ type TargetComment struct {
 	Excerpt string `json:"excerpt"`
 
 	Creator *Creator `json:"creator,omitempty"`
+
+	// 发布日期
+	CreatedAt int64 `json:"created_at"`
+}
+type TargetComment struct {
+	// ID
+	ID int64 `json:"id,string" swaggertype:"string"`
+
+	// 内容
+	Excerpt string `json:"excerpt"`
+
+	// 评论目标类型 article,revise,discussion,comment
+	TargetType string `json:"target_type"`
+
+	Creator *Creator `json:"creator,omitempty"`
+
+	// 所属资源信息 文章/补充/评论
+	Target interface{} `json:"target"`
+
+	// 被回复的人
+	ReplyTo *Creator `json:"reply_to,omitempty"`
+
+	// 被回复的评论
+	ReplyComment *TargetReplyComment `json:"reply_comment,omitempty"`
 
 	// 发布日期
 	CreatedAt int64 `json:"created_at"`
@@ -189,6 +213,85 @@ type TargetDiscuss struct {
 	Creator *Creator `json:"creator,omitempty"`
 
 	CreatedAt int64 `json:"created_at"`
+
+	UpdatedAt int64 `json:"updated_at"`
+}
+
+type TargetTopicInviteRequest struct {
+	// ID
+	ID int64 `json:"id,string" swaggertype:"string"`
+
+	// 邀请人
+	Creator *Creator `json:"creator,omitempty"`
+
+	// 邀请加入的话题
+	Topic *TargetTopic `json:"topic,omitempty"`
+
+	// 状态
+	// 1 请求已经发送
+	// 2 已经加入
+	// 3 已经拒绝
+	Status int `json:"status"`
+
+	// 发布日期
+	CreatedAt int64 `json:"created_at"`
+}
+
+type TargetTopicFollowRequest struct {
+	// ID
+	ID int64 `json:"id,string" swaggertype:"string"`
+
+	// 申请加入的话题
+	Topic *TargetTopic `json:"topic,omitempty"`
+
+	// 申请人
+	Member *MemberInfo `json:"member"`
+
+	// 身份认证信息
+	IDCert *TargetIDCertification `json:"id_cert"`
+
+	// 工作认证信息
+	WorkCert *TargetWorkCertification `json:"work_cert"`
+
+	// 申请理由
+	Reason string `json:"reason"`
+
+	// 发布日期
+	CreatedAt int64 `json:"created_at"`
+}
+
+type TargetIDCertification struct {
+	// 账户ID
+	ID int64 `json:"id,string" swaggertype:"string"`
+	// 姓名
+	Name *string `json:"name,omitempty"`
+
+	// 证件号
+	IdentificationNumber *string `json:"identification_number,omitempty"`
+	// 证件类型, identityCard代表身份证
+	IDCardType *string `json:"id_card_type,omitempty"`
+
+	// Status 状态：-1 未认证, 0 认证中,  1 认证成功, 2 认证失败
+	Status int `json:"status"`
+
+	UpdatedAt int64 `json:"updated_at"`
+}
+
+type TargetWorkCertification struct {
+	// 账户ID
+	ID int64 `json:"id,string" swaggertype:"string"`
+
+	// 公司
+	Company *string `json:"company,omitempty"`
+
+	// 部门
+	Department *string `json:"department,omitempty"`
+
+	// 职位
+	Position *string `json:"position,omitempty"`
+
+	// Status 状态：-1 未认证, 0 认证中,  1 认证成功, 2 认证失败
+	Status int `json:"status"`
 
 	UpdatedAt int64 `json:"updated_at"`
 }

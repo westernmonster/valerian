@@ -39,7 +39,6 @@ message CommentInfo {
     Creator  Creator  = 8 [(gogoproto.jsontag) = "creator"];
 
 
-
     // unix timestamp
     int64 CreatedAt = 9 [(gogoproto.jsontag) = "created_at"];
     // unix timestamp

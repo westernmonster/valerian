@@ -53,7 +53,9 @@ const (
 )
 
 const (
-	InviteStatusSent = 1
+	InviteStatusSent     = 1
+	InviteStatusJoined   = 2
+	InviteStatusRejected = 3
 )
 
 const (
