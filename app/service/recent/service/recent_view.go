@@ -34,6 +34,16 @@ func (p *Service) onArticleViewed(m *stan.Msg) {
 		return
 	}
 
+	var data *model.RecentView
+	if data, err = p.d.GetRecentViewByCond(c, p.d.DB(), map[string]interface{}{
+		"target_type": model.TargetTypeArticle,
+		"target_id":   info.ArticleID,
+	}); err != nil {
+		return
+	} else if data != nil {
+		return
+	}
+
 	if err = p.d.AddRecentView(c, p.d.DB(), &model.RecentView{
 		ID:         gid.NewID(),
 		AccountID:  info.ActorID,
@@ -59,6 +69,16 @@ func (p *Service) onTopicViewed(m *stan.Msg) {
 
 	if _, err = p.d.GetTopic(c, info.TopicID); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onTopicViewed GetTopic failed %#v", err))
+		return
+	}
+
+	var data *model.RecentView
+	if data, err = p.d.GetRecentViewByCond(c, p.d.DB(), map[string]interface{}{
+		"target_type": model.TargetTypeTopic,
+		"target_id":   info.TopicID,
+	}); err != nil {
+		return
+	} else if data != nil {
 		return
 	}
 

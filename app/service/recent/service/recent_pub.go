@@ -34,6 +34,16 @@ func (p *Service) onArticleAdded(m *stan.Msg) {
 		return
 	}
 
+	var data *model.RecentPub
+	if data, err = p.d.GetRecentPubByCond(c, p.d.DB(), map[string]interface{}{
+		"target_type": model.TargetTypeArticle,
+		"target_id":   info.ArticleID,
+	}); err != nil {
+		return
+	} else if data != nil {
+		return
+	}
+
 	if err = p.d.AddRecentPub(c, p.d.DB(), &model.RecentPub{
 		ID:         gid.NewID(),
 		AccountID:  info.ActorID,
@@ -82,6 +92,16 @@ func (p *Service) onReviseAdded(m *stan.Msg) {
 		return
 	}
 
+	var data *model.RecentPub
+	if data, err = p.d.GetRecentPubByCond(c, p.d.DB(), map[string]interface{}{
+		"target_type": model.TargetTypeRevise,
+		"target_id":   info.ReviseID,
+	}); err != nil {
+		return
+	} else if data != nil {
+		return
+	}
+
 	if err = p.d.AddRecentPub(c, p.d.DB(), &model.RecentPub{
 		ID:         gid.NewID(),
 		AccountID:  info.ActorID,
@@ -123,6 +143,16 @@ func (p *Service) onDiscussionAdded(m *stan.Msg) {
 
 	if _, err = p.d.GetDiscussion(c, info.DiscussionID); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onDiscussionAdded GetDiscussion failed %#v", err))
+		return
+	}
+
+	var data *model.RecentPub
+	if data, err = p.d.GetRecentPubByCond(c, p.d.DB(), map[string]interface{}{
+		"target_type": model.TargetTypeDiscussion,
+		"target_id":   info.DiscussionID,
+	}); err != nil {
+		return
+	} else if data != nil {
 		return
 	}
 
