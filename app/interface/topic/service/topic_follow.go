@@ -177,7 +177,7 @@ func (p *Service) FollowedTopics(c context.Context, query string, pn, ps int) (r
 
 	if resp.Paging.Prev, err = genURL("/api/v1/topic/list/followed", url.Values{
 		"query": []string{query},
-		"pn":    []string{strconv.Itoa(pn)},
+		"pn":    []string{strconv.Itoa(pn - 1)},
 		"ps":    []string{strconv.Itoa(ps)},
 	}); err != nil {
 		return
@@ -185,7 +185,7 @@ func (p *Service) FollowedTopics(c context.Context, query string, pn, ps int) (r
 
 	if resp.Paging.Next, err = genURL("/api/v1/topic/list/followed", url.Values{
 		"query": []string{query},
-		"pn":    []string{strconv.Itoa(pn)},
+		"pn":    []string{strconv.Itoa(pn + 1)},
 		"ps":    []string{strconv.Itoa(ps)},
 	}); err != nil {
 		return
