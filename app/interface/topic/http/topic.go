@@ -163,15 +163,35 @@ func changeOwner(c *mars.Context) {
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param query query string true "查询条件"
-// @Param limit query integer false "每页大小"
-// @Param offset query integer false "offset"
+// @Param pn query integer false "页码 1开始"
+// @Param ps query integer false "每页大小"
 // @Success 200 {object} model.CanEditTopicsResp "成员"
 // @Failure 400 "请求验证失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /topic/list/has_edit_permission [get]
 func topicsWithEditPermission(c *mars.Context) {
-	c.JSON(srv.GetUserCanEditTopics(c))
+	var (
+		err error
+		pn  int
+		ps  int
+	)
+
+	params := c.Request.Form
+
+	if pn, err = strconv.Atoi(params.Get("pn")); err != nil {
+		pn = 1
+	} else if pn < 0 {
+		pn = 1
+	}
+
+	if ps, err = strconv.Atoi(params.Get("ps")); err != nil {
+		ps = 10
+	} else if ps < 0 {
+		ps = 10
+	}
+
+	c.JSON(srv.GetUserCanEditTopics(c, params.Get("query"), pn, ps))
 }
 
 // @Summary 已经加入话题列表

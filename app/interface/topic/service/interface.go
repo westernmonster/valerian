@@ -35,7 +35,7 @@ type IDao interface {
 	AddAuthTopic(c context.Context, node sqalx.Node, item *model.AuthTopic) (err error)
 	UpdateAuthTopic(c context.Context, node sqalx.Node, item *model.AuthTopic) (err error)
 	DelAuthTopic(c context.Context, node sqalx.Node, id int64) (err error)
-	GetUserCanEditTopicIDs(c context.Context, node sqalx.Node, aid int64) (items []*model.TopicIDItem, err error)
+	GetUserCanEditTopicIDs(c context.Context, node sqalx.Node, aid int64) (items []int64, err error)
 
 	GetTopicsByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.Topic, err error)
 	GetTopics(c context.Context, node sqalx.Node) (items []*model.Topic, err error)
@@ -99,8 +99,10 @@ type IDao interface {
 	GetAccountStatByID(c context.Context, node sqalx.Node, aid int64) (item *model.AccountStat, err error)
 
 	TopicSearch(c context.Context, arg *model.TopicSearchParams, ids []int64) (res *model.SearchResult, err error)
+	AccountSearch(c context.Context, arg *model.AccountSearchParams, ids []int64) (res *model.SearchResult, err error)
 
 	GetFans(c context.Context, accountID int64, limit, offset int) (resp *relation.FansResp, err error)
+	GetFansIDs(c context.Context, aid int64) (resp *relation.IDsResp, err error)
 
 	GetTopicMeta(c context.Context, aid, topicID int64) (info *stopic.TopicMetaInfo, err error)
 	GetTopicFeedPaged(c context.Context, topicID int64, limit, offset int) (info *topicFeed.TopicFeedResp, err error)

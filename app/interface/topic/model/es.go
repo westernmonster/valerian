@@ -50,6 +50,65 @@ type ESTopic struct {
 	UpdatedAt *int64 `json:"updated_at,omitempty"`
 }
 
+type ESAccount struct {
+	// ID
+	ID int64 `json:"id,string,omitempty" swaggertype:"string"`
+
+	// 手机
+	Mobile *string `json:"mobile,omitempty"`
+
+	// 邮件地址
+	Email *string `json:"email,omitempty"`
+
+	// 用户名
+	UserName *string `json:"user_name,omitempty"`
+
+	// 角色
+	Role string `json:"role,omitempty"`
+
+	// 性别
+	Gender *int `json:"gender,omitempty"`
+
+	// 出生年
+	BirthYear *int `json:"birth_year,omitempty"`
+
+	// 出生月
+	BirthMonth *int `json:"birth_month,omitempty"`
+
+	// 出生日
+	BirthDay *int `json:"birth_day,omitempty"`
+
+	// 地区
+	Location *int64 `json:"location,omitempty" swaggertype:"string"`
+
+	// 自我介绍
+	Introduction *string `json:"introduction,omitempty"`
+
+	// 头像
+	Avatar *string `json:"avatar,omitempty"`
+
+	// 注册来源
+	Source *int `json:"source,omitempty"`
+
+	// 是否身份认证
+	IDCert *bool `json:"id_cert,omitempty"`
+
+	// 是否工作认证
+	WorkCert *bool `json:"work_cert,omitempty"`
+
+	// 是否机构用户
+	IsOrg *bool `json:"is_org,omitempty"`
+
+	// 是否VIP用户
+	IsVIP *bool `json:"is_vip,omitempty"`
+
+	// 创建时间
+	CreatedAt *int64 `json:"created_at,omitempty" swaggertype:"string"`
+
+	// 更新时间
+	UpdatedAt *int64 `json:"updated_at,omitempty"  swaggertype:"string"`
+}
+
 type TopicSearchParams struct {
 	*BasicSearchParams
 	// Query string `json:"query"`
@@ -70,6 +129,18 @@ type TopicSearchResult struct {
 	Paging *Paging `json:"paging"`
 	// 调试
 	Debug string `json:"debug"`
+}
+
+type AccountSearchParams struct {
+	*BasicSearchParams
+}
+
+func (p *AccountSearchParams) Validate() error {
+	return validation.ValidateStruct(
+		p,
+		validation.Field(&p.Pn, validation.Required),
+		validation.Field(&p.Ps, validation.Required),
+	)
 }
 
 type Page struct {

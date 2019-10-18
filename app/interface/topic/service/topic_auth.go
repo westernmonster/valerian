@@ -2,7 +2,10 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"net/url"
+	"strconv"
 	"time"
 
 	"valerian/app/interface/topic/model"
@@ -200,38 +203,45 @@ func (p *Service) getAuthTopics(c context.Context, node sqalx.Node, topicID int6
 	return
 }
 
-func (p *Service) GetUserCanEditTopics(c context.Context) (resp *model.CanEditTopicsResp, err error) {
+func (p *Service) GetUserCanEditTopics(c context.Context, query string, pn, ps int) (resp *model.CanEditTopicsResp, err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed
 		return
 	}
 
-	var data []*model.TopicIDItem
-	if data, err = p.d.GetUserCanEditTopicIDs(c, p.d.DB(), aid); err != nil {
+	var ids []int64
+	if ids, err = p.d.GetUserCanEditTopicIDs(c, p.d.DB(), aid); err != nil {
+		return
+	}
+
+	var data *model.SearchResult
+	if data, err = p.d.TopicSearch(c, &model.TopicSearchParams{&model.BasicSearchParams{KW: query, Pn: pn, Ps: ps}}, ids); err != nil {
+		err = ecode.SearchTopicFailed
 		return
 	}
 
 	resp = &model.CanEditTopicsResp{
-		Items:  make([]*model.CanEditTopicItem, len(data)),
+		Items:  make([]*model.CanEditTopicItem, len(data.Result)),
 		Paging: &model.Paging{},
 	}
 
-	for i, v := range data {
-		var t *model.Topic
-		if t, err = p.getTopic(c, p.d.DB(), v.TopicID); err != nil {
+	for i, v := range data.Result {
+		t := new(model.ESTopic)
+		err = json.Unmarshal(v, t)
+		if err != nil {
 			return
 		}
 		item := &model.CanEditTopicItem{
-			ID:             v.TopicID,
-			Name:           t.Name,
-			Introduction:   t.Introduction,
-			EditPermission: t.EditPermission,
+			ID:             t.ID,
+			Name:           *t.Name,
+			Introduction:   *t.Introduction,
+			EditPermission: *t.EditPermission,
 			Avatar:         t.Avatar,
 		}
 
 		var stat *model.TopicStat
-		if stat, err = p.GetTopicStat(c, v.TopicID); err != nil {
+		if stat, err = p.GetTopicStat(c, t.ID); err != nil {
 			return
 		}
 
@@ -239,14 +249,37 @@ func (p *Service) GetUserCanEditTopics(c context.Context) (resp *model.CanEditTo
 		item.ArticleCount = stat.ArticleCount
 		item.DiscussionCount = stat.DiscussionCount
 
-		if item.HasCatalogTaxonomy, err = p.d.HasTaxonomy(c, p.d.DB(), v.TopicID); err != nil {
+		if item.HasCatalogTaxonomy, err = p.d.HasTaxonomy(c, p.d.DB(), t.ID); err != nil {
 			return
 		}
 
 		resp.Items[i] = item
 	}
 
-	resp.Paging.IsEnd = true
+	if resp.Paging.Prev, err = genURL("/api/v1/topic/list/has_edit_permission", url.Values{
+		"query": []string{query},
+		"pn":    []string{strconv.Itoa(pn - 1)},
+		"ps":    []string{strconv.Itoa(ps)},
+	}); err != nil {
+		return
+	}
+
+	if resp.Paging.Next, err = genURL("/api/v1/topic/list/has_edit_permission", url.Values{
+		"query": []string{query},
+		"pn":    []string{strconv.Itoa(pn + 1)},
+		"ps":    []string{strconv.Itoa(ps)},
+	}); err != nil {
+		return
+	}
+
+	if len(resp.Items) < ps {
+		resp.Paging.IsEnd = true
+		resp.Paging.Next = ""
+	}
+
+	if pn == 1 {
+		resp.Paging.Prev = ""
+	}
 
 	return
 }

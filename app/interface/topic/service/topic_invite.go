@@ -2,13 +2,13 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/url"
 	"strconv"
 	"time"
 
 	"valerian/app/interface/topic/model"
-	account "valerian/app/service/account/api"
 	relation "valerian/app/service/relation/api"
 	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
@@ -17,86 +17,91 @@ import (
 	"valerian/library/net/metadata"
 )
 
-func (p *Service) GetMemberFansList(c context.Context, topicID int64, query string, limit, offset int) (resp *model.TopicMemberFansResp, err error) {
+func (p *Service) GetMemberFansList(c context.Context, topicID int64, query string, pn, ps int) (resp *model.TopicMemberFansResp, err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed
 		return
 	}
-	var data *relation.FansResp
-	if data, err = p.d.GetFans(c, aid, limit, offset); err != nil {
+	var idsResp *relation.IDsResp
+	if idsResp, err = p.d.GetFansIDs(c, aid); err != nil {
+		return
+	}
+
+	var data *model.SearchResult
+	if data, err = p.d.AccountSearch(c, &model.AccountSearchParams{&model.BasicSearchParams{KW: query, Pn: pn, Ps: ps}}, idsResp.IDs); err != nil {
+		err = ecode.SearchAccountFailed
 		return
 	}
 
 	resp = &model.TopicMemberFansResp{
-		Items:  make([]*model.FollowItem, len(data.Items)),
+		Items:  make([]*model.FollowItem, len(data.Result)),
 		Paging: &model.Paging{},
 	}
 
-	for i, v := range data.Items {
-		var acc *account.BaseInfoReply
-		if acc, err = p.d.GetAccountBaseInfo(c, v.AccountID); err != nil {
+	for i, v := range data.Result {
+		t := new(model.ESAccount)
+		err = json.Unmarshal(v, t)
+		if err != nil {
 			return
 		}
+
 		member := &model.FollowItem{
-			ID:       v.AccountID,
-			Avatar:   acc.Avatar,
-			UserName: acc.UserName,
-			IDCert:   acc.IDCert,
-			WorkCert: acc.WorkCert,
-			IsOrg:    acc.IsOrg,
-			IsVIP:    acc.IsVIP,
-		}
-
-		intro := acc.GetIntroductionValue()
-		member.Introduction = &intro
-
-		if acc.Gender != nil {
-			gender := int(acc.GetGenderValue())
-			member.Gender = &gender
+			ID:           t.ID,
+			Avatar:       *t.Avatar,
+			UserName:     *t.UserName,
+			IDCert:       *t.IDCert,
+			WorkCert:     *t.WorkCert,
+			IsOrg:        *t.IsOrg,
+			IsVIP:        *t.IsVIP,
+			Introduction: t.Introduction,
+			Gender:       t.Gender,
 		}
 
 		var stat *model.AccountStat
-		if stat, err = p.d.GetAccountStatByID(c, p.d.DB(), v.AccountID); err != nil {
+		if stat, err = p.d.GetAccountStatByID(c, p.d.DB(), t.ID); err != nil {
 			return
 		}
 
 		member.FansCount = int(stat.Fans)
 		member.FollowingCount = int(stat.Following)
 
-		if member.IsMember, err = p.isTopicMember(c, p.d.DB(), v.AccountID, topicID); err != nil {
+		if member.IsMember, err = p.isTopicMember(c, p.d.DB(), t.ID, topicID); err != nil {
 			return
 		}
 
-		if member.Invited, err = p.hasInvited(c, p.d.DB(), v.AccountID, topicID); err != nil {
+		if member.Invited, err = p.hasInvited(c, p.d.DB(), t.ID, topicID); err != nil {
 			return
 		}
 		resp.Items[i] = member
 	}
 
-	param := url.Values{}
-	param.Set("account_id", strconv.FormatInt(aid, 10))
-	param.Set("query", query)
-	param.Set("limit", strconv.Itoa(limit))
-	param.Set("offset", strconv.Itoa(offset-limit))
-
-	if resp.Paging.Prev, err = genURL("/api/v1/account/list/fans", param); err != nil {
-		return
-	}
-	param.Set("offset", strconv.Itoa(offset+limit))
-	if resp.Paging.Next, err = genURL("/api/v1/account/list/fans", param); err != nil {
+	if resp.Paging.Prev, err = genURL("/api/v1/topic/list/member_fans", url.Values{
+		"topic_id": []string{strconv.FormatInt(topicID, 10)},
+		"query":    []string{query},
+		"pn":       []string{strconv.Itoa(pn - 1)},
+		"ps":       []string{strconv.Itoa(ps)},
+	}); err != nil {
 		return
 	}
 
-	if len(resp.Items) < limit {
+	if resp.Paging.Next, err = genURL("/api/v1/topic/list/member_fans", url.Values{
+		"topic_id": []string{strconv.FormatInt(topicID, 10)},
+		"query":    []string{query},
+		"pn":       []string{strconv.Itoa(pn + 1)},
+		"ps":       []string{strconv.Itoa(ps)},
+	}); err != nil {
+		return
+	}
+
+	if len(resp.Items) < ps {
 		resp.Paging.IsEnd = true
 		resp.Paging.Next = ""
 	}
 
-	if offset == 0 {
+	if pn == 1 {
 		resp.Paging.Prev = ""
 	}
-
 	return
 }
 
