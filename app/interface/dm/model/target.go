@@ -24,7 +24,7 @@ type TargetTopic struct {
 	// 成员数
 	MemberCount int `json:"member_count"`
 
-	// 成员数
+	// 文章数
 	ArticleCount int `json:"article_count"`
 
 	// 讨论数
@@ -34,6 +34,10 @@ type TargetTopic struct {
 	Introduction string `json:"introduction"`
 
 	Creator *Creator `json:"creator,omitempty"`
+
+	CreatedAt int64 `json:"created_at"`
+
+	UpdatedAt int64 `json:"updated_at"`
 }
 
 type TargetComment struct {
@@ -127,15 +131,20 @@ type TargetArticle struct {
 	CommentCount int `json:"comment_count"`
 
 	Creator *Creator `json:"creator,omitempty"`
+
+	CreatedAt int64 `json:"created_at"`
+
+	UpdatedAt int64 `json:"updated_at"`
 }
 
 type TargetRevise struct {
 	// ID
 	ID int64 `json:"id,string" swaggertype:"string"`
-	// 标题
+	// 文章标题
 	Title string `json:"title,omitempty"`
 	// 评论内容
 	Excerpt string `json:"excerpt"`
+
 	// 喜欢数
 	LikeCount int `json:"like_count"`
 
@@ -149,6 +158,10 @@ type TargetRevise struct {
 	ImageUrls []string `json:"images"`
 
 	Creator *Creator `json:"creator,omitempty"`
+
+	CreatedAt int64 `json:"created_at"`
+
+	UpdatedAt int64 `json:"updated_at"`
 }
 
 type TargetDiscuss struct {
@@ -156,7 +169,6 @@ type TargetDiscuss struct {
 	ID int64 `json:"id,string" swaggertype:"string"`
 	// 标题
 	Title *string `json:"title,omitempty"`
-
 	// 评论内容
 	Excerpt string `json:"excerpt"`
 
@@ -173,4 +185,8 @@ type TargetDiscuss struct {
 	ImageUrls []string `json:"images"`
 
 	Creator *Creator `json:"creator,omitempty"`
+
+	CreatedAt int64 `json:"created_at"`
+
+	UpdatedAt int64 `json:"updated_at"`
 }

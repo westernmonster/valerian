@@ -105,3 +105,7 @@ spec:
         backend:
           serviceName: interface-recent
           servicePort: 8000
+      - path: /api/v1/list/country_codes
+        backend:
+          serviceName: interface-location
+          servicePort: 8000
