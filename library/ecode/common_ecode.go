@@ -113,6 +113,8 @@ var (
 	ReviseNotExist                 = New(10082) // 补充不存在
 	ReviseFileNotExist             = New(10083) // 补充文件不存在
 	CommentNotExist                = New(10084) // 评论不存在
+	TopicInviteRequestNotExist     = New(10085) // 邀请不存在
+	TopicFollowRequestNotExist     = New(10086) // 关注请求不存在
 
 	TagNotExist      = add(20000) // Tag 不存在
 	ConfigIdsIsEmpty = add(20001) // ConfigIds 不存在

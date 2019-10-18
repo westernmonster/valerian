@@ -122,8 +122,8 @@ func (p *Service) onTopicLeaved(c context.Context, topicID, aid, actionTime int6
 	return
 }
 
-func (p *Service) onTopicFollowRequested(c context.Context, topicID, aid, actionTime int64) {
-	msg := &def.MsgTopicFollowRequested{TopicID: topicID, ActorID: aid, ActionTime: actionTime}
+func (p *Service) onTopicFollowRequested(c context.Context, id, topicID, aid, actionTime int64) {
+	msg := &def.MsgTopicFollowRequested{RequestID: id, TopicID: topicID, ActorID: aid, ActionTime: actionTime}
 
 	var data []byte
 	var err error
@@ -141,8 +141,8 @@ func (p *Service) onTopicFollowRequested(c context.Context, topicID, aid, action
 	return
 }
 
-func (p *Service) onTopicFollowRejected(c context.Context, topicID, aid, actionTime int64) {
-	msg := &def.MsgTopicFollowRejected{TopicID: topicID, ActorID: aid, ActionTime: actionTime}
+func (p *Service) onTopicFollowRejected(c context.Context, id, topicID, aid, actionTime int64) {
+	msg := &def.MsgTopicFollowRejected{RequestID: id, TopicID: topicID, ActorID: aid, ActionTime: actionTime}
 
 	var data []byte
 	var err error
@@ -160,8 +160,8 @@ func (p *Service) onTopicFollowRejected(c context.Context, topicID, aid, actionT
 	return
 }
 
-func (p *Service) onTopicFollowApproved(c context.Context, topicID, aid, actionTime int64) {
-	msg := &def.MsgTopicFollowApproved{TopicID: topicID, ActorID: aid, ActionTime: actionTime}
+func (p *Service) onTopicFollowApproved(c context.Context, id, topicID, aid, actionTime int64) {
+	msg := &def.MsgTopicFollowApproved{RequestID: id, TopicID: topicID, ActorID: aid, ActionTime: actionTime}
 
 	var data []byte
 	var err error

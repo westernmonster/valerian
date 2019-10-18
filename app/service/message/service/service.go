@@ -53,6 +53,61 @@ func New(c *conf.Config) (s *Service) {
 		panic(err)
 	}
 
+	if err := s.mq.QueueSubscribe(def.BusArticleCommented, "message", s.onArticleCommented); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusArticleCommented, "message")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusReviseCommented, "message", s.onReviseCommented); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusReviseCommented, "message")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusDiscussionCommented, "message", s.onDiscussionCommented); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusDiscussionCommented, "message")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusCommentReplied, "message", s.onCommentReplied); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusCommentReplied, "message")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusReviseAdded, "message", s.onReviseAdded); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusReviseAdded, "message")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusMemberFollowed, "message", s.onMemberFollowed); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusMemberFollowed, "message")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusTopicFollowed, "message", s.onTopicFollowed); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusTopicFollowed, "message")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusTopicInviteSent, "message", s.onTopicInvite); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusTopicInviteSent, "message")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusTopicFollowRequested, "message", s.onTopicFollowRequested); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusTopicFollowRequested, "message")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusTopicFollowApproved, "message", s.onTopicFollowApproved); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusTopicFollowApproved, "message")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusTopicFollowRejected, "message", s.onTopicFollowRejected); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusTopicFollowRejected, "message")
+		panic(err)
+	}
+
 	go s.cacheproc()
 	return
 }

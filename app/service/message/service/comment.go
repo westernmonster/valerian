@@ -173,3 +173,41 @@ func (p *Service) onDiscussionCommented(m *stan.Msg) {
 
 	m.Ack()
 }
+
+func (p *Service) onCommentReplied(m *stan.Msg) {
+	var err error
+	c := context.Background()
+	info := new(def.MsgCommentReplied)
+	if err = info.Unmarshal(m.Data); err != nil {
+		log.For(c).Error(fmt.Sprintf("service.onCommentReplied Unmarshal failed %#v", err))
+		return
+	}
+
+	var comment *comment.CommentInfo
+	if comment, err = p.d.GetComment(c, info.CommentID); err != nil {
+		log.For(c).Error(fmt.Sprintf("service.onCommentReplied GetComment failed %#v", err))
+		return
+	}
+
+	msg := &model.Message{
+		ID:         gid.NewID(),
+		AccountID:  comment.Creator.ID,
+		ActionType: model.MsgCommentReplied,
+		ActionTime: time.Now().Unix(),
+		ActionText: model.MsgTextCommentReplied,
+		Actors:     strconv.FormatInt(info.ActorID, 10),
+		MergeCount: 1,
+		ActorType:  model.ActorTypeUser,
+		TargetID:   comment.ID,
+		TargetType: model.TargetTypeComment,
+		CreatedAt:  time.Now().Unix(),
+		UpdatedAt:  time.Now().Unix(),
+	}
+
+	if err = p.d.AddMessage(c, p.d.DB(), msg); err != nil {
+		log.For(c).Error(fmt.Sprintf("service.onCommentReplied AddMessage failed %#v", err))
+		return
+	}
+
+	m.Ack()
+}

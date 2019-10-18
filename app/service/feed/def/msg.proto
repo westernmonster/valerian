@@ -168,22 +168,25 @@ message MsgTopicViewed {
 
 
 message MsgTopicFollowRequested {
-    int64 TopicID = 1 [(gogoproto.jsontag) = "topic_id"] ;
+    int64 RequestID = 1 [(gogoproto.jsontag) = "request_id"] ;
     int64 ActorID = 2 [(gogoproto.jsontag) = "actor_id"] ;
+    int64 TopicID = 3 [(gogoproto.jsontag) = "topic_id"] ;
     int64 ActionTime = 4 [(gogoproto.jsontag) = "action_time"] ;
 }
 
 
 message MsgTopicFollowRejected {
-    int64 TopicID = 1 [(gogoproto.jsontag) = "topic_id"] ;
+    int64 RequestID = 1 [(gogoproto.jsontag) = "request_id"] ;
     int64 ActorID = 2 [(gogoproto.jsontag) = "actor_id"] ;
+    int64 TopicID = 3 [(gogoproto.jsontag) = "topic_id"] ;
     int64 ActionTime = 4 [(gogoproto.jsontag) = "action_time"] ;
 }
 
 
 message MsgTopicFollowApproved {
-    int64 TopicID = 1 [(gogoproto.jsontag) = "topic_id"] ;
+    int64 RequestID = 1 [(gogoproto.jsontag) = "request_id"] ;
     int64 ActorID = 2 [(gogoproto.jsontag) = "actor_id"] ;
+    int64 TopicID = 3 [(gogoproto.jsontag) = "topic_id"] ;
     int64 ActionTime = 4 [(gogoproto.jsontag) = "action_time"] ;
 }
 

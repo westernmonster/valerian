@@ -22,6 +22,23 @@ type IDao interface {
 	UpdateMessage(c context.Context, node sqalx.Node, item *model.Message) (err error)
 	DelMessage(c context.Context, node sqalx.Node, id int64) (err error)
 
+	GetAdminTopicMembers(c context.Context, node sqalx.Node, topicID int64) (items []*model.TopicMember, err error)
+
+	GetTopicInviteRequestsByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.TopicInviteRequest, err error)
+	GetTopicInviteRequests(c context.Context, node sqalx.Node) (items []*model.TopicInviteRequest, err error)
+	GetTopicInviteRequestByID(c context.Context, node sqalx.Node, id int64) (item *model.TopicInviteRequest, err error)
+	GetTopicInviteRequestByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (item *model.TopicInviteRequest, err error)
+	AddTopicInviteRequest(c context.Context, node sqalx.Node, item *model.TopicInviteRequest) (err error)
+	UpdateTopicInviteRequest(c context.Context, node sqalx.Node, item *model.TopicInviteRequest) (err error)
+	DelTopicInviteRequest(c context.Context, node sqalx.Node, id int64) (err error)
+
+	GetTopicFollowRequestByID(c context.Context, node sqalx.Node, id int64) (item *model.TopicFollowRequest, err error)
+	GetTopicFollowRequests(c context.Context, node sqalx.Node, topicID int64, status int) (items []*model.TopicFollowRequest, err error)
+	GetTopicFollowRequest(c context.Context, node sqalx.Node, topicID, aid int64) (item *model.TopicFollowRequest, err error)
+	AddTopicFollowRequest(c context.Context, node sqalx.Node, item *model.TopicFollowRequest) (err error)
+	UpdateTopicFollowRequest(c context.Context, node sqalx.Node, item *model.TopicFollowRequest) (err error)
+	DelTopicFollowRequest(c context.Context, node sqalx.Node, id int64) (err error)
+
 	GetDiscussion(c context.Context, id int64) (info *discuss.DiscussionInfo, err error)
 	GetTopic(c context.Context, id int64) (info *topic.TopicInfo, err error)
 	GetFansIDs(c context.Context, aid int64) (resp *relation.IDsResp, err error)
