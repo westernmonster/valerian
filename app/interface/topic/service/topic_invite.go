@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"net/url"
 	"strconv"
 	"time"
@@ -12,6 +13,7 @@ import (
 	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
 	"valerian/library/gid"
+	"valerian/library/log"
 	"valerian/library/net/metadata"
 )
 
@@ -135,12 +137,13 @@ func (p *Service) Invite(c context.Context, arg *model.ArgTopicInvite) (err erro
 
 	if req == nil {
 		item := &model.TopicInviteRequest{
-			ID:        gid.NewID(),
-			TopicID:   arg.TopicID,
-			AccountID: arg.AccountID,
-			Status:    model.InviteStatusSent,
-			CreatedAt: time.Now().Unix(),
-			UpdatedAt: time.Now().Unix(),
+			ID:            gid.NewID(),
+			TopicID:       arg.TopicID,
+			AccountID:     arg.AccountID,
+			FromAccountID: aid,
+			Status:        model.InviteStatusSent,
+			CreatedAt:     time.Now().Unix(),
+			UpdatedAt:     time.Now().Unix(),
 		}
 
 		if err = p.d.AddTopicInviteRequest(c, p.d.DB(), item); err != nil {
@@ -153,4 +156,75 @@ func (p *Service) Invite(c context.Context, arg *model.ArgTopicInvite) (err erro
 	}
 
 	return
+}
+
+func (p *Service) ProcessInvite(c context.Context, arg *model.ArgProcessInvite) (err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+	var tx sqalx.Node
+	if tx, err = p.d.DB().Beginx(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		return
+	}
+
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+			}
+			return
+		}
+	}()
+
+	var req *model.TopicInviteRequest
+	if req, err = p.d.GetTopicInviteRequestByID(c, tx, arg.ID); err != nil {
+		return
+	} else if req == nil {
+		err = ecode.TopicInviteRequestNotExist
+		return
+	}
+
+	if req.AccountID != aid {
+		return
+	}
+
+	var member *model.TopicMember
+	if member, err = p.d.GetTopicMemberByCond(c, tx, map[string]interface{}{"account_id": aid, "topic_id": req.TopicID}); err != nil {
+		return
+	} else if member != nil {
+		return
+	}
+
+	switch req.Status {
+	case model.InviteStatusJoined:
+	case model.InviteStatusRejected:
+		return
+	}
+
+	if arg.Result {
+		req.Status = model.InviteStatusJoined
+		req.UpdatedAt = time.Now().Unix()
+
+		if err = p.addMember(c, tx, req.TopicID, req.AccountID, model.MemberRoleUser); err != nil {
+			return
+		}
+	} else {
+		req.Status = model.InviteStatusRejected
+		req.UpdatedAt = time.Now().Unix()
+	}
+
+	if err = p.d.UpdateTopicInviteRequest(c, tx, req); err != nil {
+		return
+	}
+
+	if err = tx.Commit(); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		return
+	}
+
+	return
+
 }

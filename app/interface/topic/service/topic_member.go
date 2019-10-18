@@ -440,7 +440,7 @@ func (p *Service) addMember(c context.Context, node sqalx.Node, topicID, aid int
 
 	p.addCache(func() {
 		p.d.DelTopicMembersCache(context.TODO(), topicID)
-		p.onTopicFollowed(c, topicID, aid, time.Now().Unix())
+		p.onTopicFollowed(context.TODO(), topicID, aid, time.Now().Unix())
 	})
 
 	return

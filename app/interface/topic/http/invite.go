@@ -50,6 +50,17 @@ func inviteFans(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /topic/process_invite [post]
 func processInvite(c *mars.Context) {
+	arg := new(model.ArgProcessInvite)
+	if e := c.Bind(arg); e != nil {
+		return
+	}
+
+	if e := arg.Validate(); e != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+
+	c.JSON(nil, srv.ProcessInvite(c, arg))
 }
 
 // @Summary 成员粉丝列表

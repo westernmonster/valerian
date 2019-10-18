@@ -47,4 +47,15 @@ func followTopic(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /topic/audit_follow [post]
 func auditFollow(c *mars.Context) {
+	arg := new(model.ArgAuditFollow)
+	if e := c.Bind(arg); e != nil {
+		return
+	}
+
+	if e := arg.Validate(); e != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+
+	c.JSON(nil, srv.AuditFollow(c, arg))
 }

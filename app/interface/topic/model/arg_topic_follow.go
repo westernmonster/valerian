@@ -1,5 +1,7 @@
 package model
 
+import validation "github.com/go-ozzo/ozzo-validation"
+
 type ArgTopicFollow struct {
 	TopicID       int64  `json:"topic_id,string" swaggertype:"string"`
 	Reason        string `json:"reason"`
@@ -7,7 +9,10 @@ type ArgTopicFollow struct {
 }
 
 func (p *ArgTopicFollow) Validate() (err error) {
-	return
+	return validation.ValidateStruct(
+		p,
+		validation.Field(&p.TopicID, validation.Required),
+	)
 }
 
 type ArgAuditFollow struct {
@@ -20,5 +25,8 @@ type ArgAuditFollow struct {
 }
 
 func (p *ArgAuditFollow) Validate() (err error) {
-	return
+	return validation.ValidateStruct(
+		p,
+		validation.Field(&p.ID, validation.Required),
+	)
 }

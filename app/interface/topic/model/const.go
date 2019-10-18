@@ -47,9 +47,9 @@ const (
 )
 
 const (
-	FollowStatusUnfollowed = 0
-	FollowStatusApproving  = 1
-	FollowStatusFollowed   = 2
+	FollowStatusUnfollowed = 1
+	FollowStatusApproving  = 2
+	FollowStatusFollowed   = 3
 )
 
 const (

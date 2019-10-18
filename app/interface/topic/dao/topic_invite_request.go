@@ -43,6 +43,10 @@ func (p *Dao) GetTopicInviteRequestsByCond(c context.Context, node sqalx.Node, c
 		clause += " AND a.status =?"
 		condition = append(condition, val)
 	}
+	if val, ok := cond["from_account_id"]; ok {
+		clause += " AND a.from_account_id =?"
+		condition = append(condition, val)
+	}
 
 	sqlSelect := fmt.Sprintf("SELECT a.* FROM topic_invite_requests a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
 
@@ -92,6 +96,10 @@ func (p *Dao) GetTopicInviteRequestByCond(c context.Context, node sqalx.Node, co
 		clause += " AND a.status =?"
 		condition = append(condition, val)
 	}
+	if val, ok := cond["from_account_id"]; ok {
+		clause += " AND a.from_account_id =?"
+		condition = append(condition, val)
+	}
 
 	sqlSelect := fmt.Sprintf("SELECT a.* FROM topic_invite_requests a WHERE a.deleted=0 %s", clause)
 
@@ -110,9 +118,9 @@ func (p *Dao) GetTopicInviteRequestByCond(c context.Context, node sqalx.Node, co
 
 // Insert insert a new record
 func (p *Dao) AddTopicInviteRequest(c context.Context, node sqalx.Node, item *model.TopicInviteRequest) (err error) {
-	sqlInsert := "INSERT INTO topic_invite_requests( id,account_id,topic_id,status,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?)"
+	sqlInsert := "INSERT INTO topic_invite_requests( id,account_id,topic_id,status,deleted,created_at,updated_at,from_account_id) VALUES ( ?,?,?,?,?,?,?,?)"
 
-	if _, err = node.ExecContext(c, sqlInsert, item.ID, item.AccountID, item.TopicID, item.Status, item.Deleted, item.CreatedAt, item.UpdatedAt); err != nil {
+	if _, err = node.ExecContext(c, sqlInsert, item.ID, item.AccountID, item.TopicID, item.Status, item.Deleted, item.CreatedAt, item.UpdatedAt, item.FromAccountID); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.AddTopicInviteRequests err(%+v), item(%+v)", err, item))
 		return
 	}
@@ -122,9 +130,9 @@ func (p *Dao) AddTopicInviteRequest(c context.Context, node sqalx.Node, item *mo
 
 // Update update a exist record
 func (p *Dao) UpdateTopicInviteRequest(c context.Context, node sqalx.Node, item *model.TopicInviteRequest) (err error) {
-	sqlUpdate := "UPDATE topic_invite_requests SET account_id=?,topic_id=?,status=?,updated_at=? WHERE id=?"
+	sqlUpdate := "UPDATE topic_invite_requests SET account_id=?,topic_id=?,status=?,updated_at=?,from_account_id=? WHERE id=?"
 
-	_, err = node.ExecContext(c, sqlUpdate, item.AccountID, item.TopicID, item.Status, item.UpdatedAt, item.ID)
+	_, err = node.ExecContext(c, sqlUpdate, item.AccountID, item.TopicID, item.Status, item.UpdatedAt, item.FromAccountID, item.ID)
 	if err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.UpdateTopicInviteRequests err(%+v), item(%+v)", err, item))
 		return
