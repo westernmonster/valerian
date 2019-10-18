@@ -21,6 +21,7 @@ type IDao interface {
 	AddMessage(c context.Context, node sqalx.Node, item *model.Message) (err error)
 	UpdateMessage(c context.Context, node sqalx.Node, item *model.Message) (err error)
 	DelMessage(c context.Context, node sqalx.Node, id int64) (err error)
+	MarkAllRead(c context.Context, node sqalx.Node, aid int64) (err error)
 
 	GetTopicInviteRequestsByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.TopicInviteRequest, err error)
 	GetTopicInviteRequests(c context.Context, node sqalx.Node) (items []*model.TopicInviteRequest, err error)
@@ -48,6 +49,7 @@ type IDao interface {
 	GetAccountProfile(c context.Context, aid int64) (info *account.ProfileReply, err error)
 	IsFollowing(c context.Context, aid, targetAccountID int64) (IsFollowing bool, err error)
 
+	GetMessageStatForUpdate(c context.Context, node sqalx.Node, aid int64) (item *model.MessageStat, err error)
 	IncrMessageStat(c context.Context, node sqalx.Node, item *model.MessageStat) (err error)
 	UpdateMessageStat(c context.Context, node sqalx.Node, item *model.MessageStat) (err error)
 	AddMessageStat(c context.Context, node sqalx.Node, item *model.MessageStat) (err error)

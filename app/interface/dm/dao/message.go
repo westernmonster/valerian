@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"time"
 
 	"valerian/app/interface/dm/model"
 	"valerian/library/database/sqalx"
@@ -177,6 +178,18 @@ func (p *Dao) GetMessageByCond(c context.Context, node sqalx.Node, cond map[stri
 			return
 		}
 		log.For(c).Error(fmt.Sprintf("dao.GetMessagesByCond err(%+v), condition(%+v)", err, cond))
+		return
+	}
+
+	return
+}
+
+func (p *Dao) MarkAllRead(c context.Context, node sqalx.Node, aid int64) (err error) {
+	sqlUpdate := "UPDATE messages SET is_read=1,updated_at=? WHERE account_id=?"
+
+	_, err = node.ExecContext(c, sqlUpdate, time.Now().Unix(), aid)
+	if err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.MarkAllRead err(%+v), aid(%+v)", err, aid))
 		return
 	}
 

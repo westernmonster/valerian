@@ -118,6 +118,7 @@ var (
 	SearchTopicFailed              = add(11087) // 搜索话题失败
 	SearchArticleFailed            = add(11088) // 搜索文章失败
 	SearchDiscussionFailed         = add(11089) // 搜索讨论失败
+	MessageNotExist                = add(11090) // 未到找该消息
 
 	TagNotExist      = add(20000) // Tag 不存在
 	ConfigIdsIsEmpty = add(20001) // ConfigIds 不存在
