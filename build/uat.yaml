@@ -109,3 +109,7 @@ spec:
         backend:
           serviceName: interface-location
           servicePort: 8000
+      - path: /api/v1/dm
+        backend:
+          serviceName: interface-dm
+          servicePort: 8000
