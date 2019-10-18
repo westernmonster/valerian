@@ -33,6 +33,7 @@ func route(e *mars.Engine) {
 	e.Register(register)
 	g := e.Group("/api/v1/search")
 	{
+		g.GET("/all", authSvc.User, searchAll)
 		g.GET("/topics", authSvc.User, searchTopics)
 		g.GET("/articles", authSvc.User, searchArticles)
 		g.GET("/accounts", authSvc.User, searchAccounts)
