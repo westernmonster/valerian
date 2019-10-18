@@ -1,11 +1,16 @@
 package http
 
 import (
+	"strconv"
+	"strings"
 	"valerian/app/interface/search/model"
 	"valerian/library/ecode"
 	"valerian/library/net/http/mars"
-	"valerian/library/net/http/mars/binding"
 )
+
+func strArr(val string) []string {
+	return strings.Split(strings.TrimSpace(val), ",")
+}
 
 // @Summary 搜索话题
 // @Description 搜索话题
@@ -29,9 +34,36 @@ import (
 // @Failure 500 "服务器端错误"
 // @Router /search/topics [get]
 func searchTopics(c *mars.Context) {
-	arg := new(model.BasicSearchParams)
-	if e := c.BindWith(arg, binding.Query); e != nil {
+	param := c.Request.Form
+
+	arg := &model.BasicSearchParams{
+		KW:       param.Get("kw"),
+		KwFields: strArr(param.Get("kw_fields")),
+		Order:    strArr(param.Get("order")),
+		Sort:     strArr(param.Get("sort")),
+		Source:   strArr(param.Get("source")),
+	}
+
+	debug := strings.TrimSpace(param.Get("debug"))
+	if debug != "" {
+		arg.Debug, _ = strconv.ParseBool(debug)
+	}
+
+	pn := strings.TrimSpace(param.Get("pn"))
+	ps := strings.TrimSpace(param.Get("ps"))
+
+	if v, e := strconv.Atoi(pn); e != nil {
+		c.JSON(nil, ecode.RequestErr)
 		return
+	} else {
+		arg.Pn = v
+	}
+
+	if v, e := strconv.Atoi(ps); e != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	} else {
+		arg.Ps = v
 	}
 
 	if e := arg.Validate(); e != nil {
@@ -64,9 +96,36 @@ func searchTopics(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /search/accounts [get]
 func searchAccounts(c *mars.Context) {
-	arg := new(model.BasicSearchParams)
-	if e := c.BindWith(arg, binding.Query); e != nil {
+	param := c.Request.Form
+
+	arg := &model.BasicSearchParams{
+		KW:       param.Get("kw"),
+		KwFields: strArr(param.Get("kw_fields")),
+		Order:    strArr(param.Get("order")),
+		Sort:     strArr(param.Get("sort")),
+		Source:   strArr(param.Get("source")),
+	}
+
+	debug := strings.TrimSpace(param.Get("debug"))
+	if debug != "" {
+		arg.Debug, _ = strconv.ParseBool(debug)
+	}
+
+	pn := strings.TrimSpace(param.Get("pn"))
+	ps := strings.TrimSpace(param.Get("ps"))
+
+	if v, e := strconv.Atoi(pn); e != nil {
+		c.JSON(nil, ecode.RequestErr)
 		return
+	} else {
+		arg.Pn = v
+	}
+
+	if v, e := strconv.Atoi(ps); e != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	} else {
+		arg.Ps = v
 	}
 
 	if e := arg.Validate(); e != nil {
@@ -99,9 +158,36 @@ func searchAccounts(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /search/articles [get]
 func searchArticles(c *mars.Context) {
-	arg := new(model.BasicSearchParams)
-	if e := c.BindWith(arg, binding.Query); e != nil {
+	param := c.Request.Form
+
+	arg := &model.BasicSearchParams{
+		KW:       param.Get("kw"),
+		KwFields: strArr(param.Get("kw_fields")),
+		Order:    strArr(param.Get("order")),
+		Sort:     strArr(param.Get("sort")),
+		Source:   strArr(param.Get("source")),
+	}
+
+	debug := strings.TrimSpace(param.Get("debug"))
+	if debug != "" {
+		arg.Debug, _ = strconv.ParseBool(debug)
+	}
+
+	pn := strings.TrimSpace(param.Get("pn"))
+	ps := strings.TrimSpace(param.Get("ps"))
+
+	if v, e := strconv.Atoi(pn); e != nil {
+		c.JSON(nil, ecode.RequestErr)
 		return
+	} else {
+		arg.Pn = v
+	}
+
+	if v, e := strconv.Atoi(ps); e != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	} else {
+		arg.Ps = v
 	}
 
 	if e := arg.Validate(); e != nil {
@@ -134,11 +220,37 @@ func searchArticles(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /search/discussions [get]
 func searchDiscusstions(c *mars.Context) {
-	arg := new(model.BasicSearchParams)
-	if e := c.BindWith(arg, binding.Query); e != nil {
-		return
+	param := c.Request.Form
+
+	arg := &model.BasicSearchParams{
+		KW:       param.Get("kw"),
+		KwFields: strArr(param.Get("kw_fields")),
+		Order:    strArr(param.Get("order")),
+		Sort:     strArr(param.Get("sort")),
+		Source:   strArr(param.Get("source")),
 	}
 
+	debug := strings.TrimSpace(param.Get("debug"))
+	if debug != "" {
+		arg.Debug, _ = strconv.ParseBool(debug)
+	}
+
+	pn := strings.TrimSpace(param.Get("pn"))
+	ps := strings.TrimSpace(param.Get("ps"))
+
+	if v, e := strconv.Atoi(pn); e != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	} else {
+		arg.Pn = v
+	}
+
+	if v, e := strconv.Atoi(ps); e != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	} else {
+		arg.Ps = v
+	}
 	if e := arg.Validate(); e != nil {
 		c.JSON(nil, ecode.RequestErr)
 		return
