@@ -1,6 +1,10 @@
 package http
 
-import "valerian/library/net/http/mars"
+import (
+	"strconv"
+	"valerian/library/ecode"
+	"valerian/library/net/http/mars"
+)
 
 // @Summary 获取消息列表
 // @Description 获取消息列表
@@ -19,6 +23,38 @@ import "valerian/library/net/http/mars"
 // @Failure 500 "服务器端错误"
 // @Router /dm/list [get]
 func getActivites(c *mars.Context) {
+	var (
+		err    error
+		offset int
+		limit  int
+	)
+
+	params := c.Request.Form
+
+	if offset, err = strconv.Atoi(params.Get("offset")); err != nil {
+		offset = 0
+	} else if offset < 0 {
+		offset = 0
+	}
+
+	if limit, err = strconv.Atoi(params.Get("limit")); err != nil {
+		limit = 10
+	} else if limit < 0 {
+		limit = 10
+	}
+
+	aType := params.Get("type")
+	switch aType {
+	case "all":
+	case "topic":
+	case "article":
+		break
+	default:
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+
+	c.JSON(srv.GetUserMessagesPaged(c, aType, limit, offset))
 }
 
 // @Summary 设置为所有已读

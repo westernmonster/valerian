@@ -121,7 +121,7 @@ func (p *Service) FromTopic(v *topic.TopicInfo) (item *model.TargetTopic) {
 	return
 }
 
-func (p *Service) GetUserMessagesPaged(c context.Context, limit, offset int) (resp *model.NotificationResp, err error) {
+func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, offset int) (resp *model.NotificationResp, err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed
