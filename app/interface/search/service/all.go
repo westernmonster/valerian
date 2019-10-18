@@ -17,7 +17,7 @@ func (p *Service) AllSearch(c context.Context, kw string) (resp *model.AllSearch
 	}
 
 	var accData *model.SearchResult
-	if accData, err = p.d.AccountSearch(c, &model.AccountSearchParams{&model.BasicSearchParams{Pn: 1, Ps: 2}}); err != nil {
+	if accData, err = p.d.AccountSearch(c, &model.AccountSearchParams{&model.BasicSearchParams{KW: kw, Pn: 1, Ps: 2}}); err != nil {
 		err = ecode.SearchAccountFailed
 		return
 	}
@@ -37,7 +37,7 @@ func (p *Service) AllSearch(c context.Context, kw string) (resp *model.AllSearch
 	resp.AccountsCount = accData.Page.Total
 
 	var topicData *model.SearchResult
-	if topicData, err = p.d.TopicSearch(c, &model.TopicSearchParams{&model.BasicSearchParams{Pn: 1, Ps: 2}}); err != nil {
+	if topicData, err = p.d.TopicSearch(c, &model.TopicSearchParams{&model.BasicSearchParams{KW: kw, Pn: 1, Ps: 2}}); err != nil {
 		err = ecode.SearchTopicFailed
 		return
 	}
@@ -57,7 +57,7 @@ func (p *Service) AllSearch(c context.Context, kw string) (resp *model.AllSearch
 	resp.TopicsCount = topicData.Page.Total
 
 	var articleData *model.SearchResult
-	if articleData, err = p.d.ArticleSearch(c, &model.ArticleSearchParams{&model.BasicSearchParams{Pn: 1, Ps: 2}}); err != nil {
+	if articleData, err = p.d.ArticleSearch(c, &model.ArticleSearchParams{&model.BasicSearchParams{KW: kw, Pn: 1, Ps: 2}}); err != nil {
 		err = ecode.SearchArticleFailed
 		return
 	}
@@ -83,7 +83,7 @@ func (p *Service) AllSearch(c context.Context, kw string) (resp *model.AllSearch
 	resp.ArticlesCount = articleData.Page.Total
 
 	var discussionData *model.SearchResult
-	if discussionData, err = p.d.DiscussionSearch(c, &model.DiscussionSearchParams{&model.BasicSearchParams{Pn: 1, Ps: 2}}); err != nil {
+	if discussionData, err = p.d.DiscussionSearch(c, &model.DiscussionSearchParams{&model.BasicSearchParams{KW: kw, Pn: 1, Ps: 2}}); err != nil {
 		err = ecode.SearchDiscussionFailed
 		return
 	}
