@@ -34,7 +34,7 @@ func getActivites(c *mars.Context) {
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /dm/mark_all_read [post]
-func markRead(c *mars.Context) {
+func markAllRead(c *mars.Context) {
 }
 
 // @Summary 设置单条消息已读
