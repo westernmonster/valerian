@@ -274,4 +274,8 @@ func searchDiscusstions(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /search/all [get]
 func searchAll(c *mars.Context) {
+	param := c.Request.Form
+	kw := strings.TrimSpace(param.Get("kw"))
+
+	c.JSON(srv.AllSearch(c, kw))
 }

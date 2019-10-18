@@ -106,15 +106,18 @@ var (
 	AuthTopicExist                 = add(11073) // 授权话题已经存在
 	ArticleHistoryNotExist         = add(11074) // 未找到该记录
 	MemberOverLimit                = New(11075) // 批量请求超过限制
-	TopicMemberStatNotExist        = New(10078) // 话题成员统计信息出错
-	DiscussionNotExist             = New(10079) // 未找到该讨论记录
-	ModifyDiscussionNotAllowed     = New(10080) // 不能编辑该讨论
-	DiscussionFileNotExist         = New(10081) // 未找到该文件
-	ReviseNotExist                 = New(10082) // 补充不存在
-	ReviseFileNotExist             = New(10083) // 补充文件不存在
-	CommentNotExist                = New(10084) // 评论不存在
-	TopicInviteRequestNotExist     = New(10085) // 邀请不存在
-	TopicFollowRequestNotExist     = New(10086) // 关注请求不存在
+	TopicMemberStatNotExist        = New(11078) // 话题成员统计信息出错
+	DiscussionNotExist             = New(11079) // 未找到该讨论记录
+	ModifyDiscussionNotAllowed     = New(11080) // 不能编辑该讨论
+	DiscussionFileNotExist         = New(11081) // 未找到该文件
+	ReviseNotExist                 = New(11082) // 补充不存在
+	ReviseFileNotExist             = New(11083) // 补充文件不存在
+	CommentNotExist                = New(11084) // 评论不存在
+	TopicInviteRequestNotExist     = New(11085) // 邀请不存在
+	TopicFollowRequestNotExist     = New(11086) // 关注请求不存在
+	SearchTopicFailed              = add(11087) // 搜索话题失败
+	SearchArticleFailed            = add(11088) // 搜索文章失败
+	SearchDiscussionFailed         = add(11089) // 搜索讨论失败
 
 	TagNotExist      = add(20000) // Tag 不存在
 	ConfigIdsIsEmpty = add(20001) // ConfigIds 不存在

@@ -40,13 +40,16 @@ type AllSearchParams struct {
 
 type AllSearchResult struct {
 	Topics      []*ESTopic `json:"topics"`
-	TopicsCount int        `json:"topics_count"`
+	TopicsCount int64      `json:"topics_count"`
 
 	Articles      []*ESArticle `json:"articles"`
-	ArticlesCount int          `json:"articles_count"`
+	ArticlesCount int64        `json:"articles_count"`
 
 	Accounts      []*ESAccount `json:"accounts"`
-	AccountsCount int          `json:"accounts_count"`
+	AccountsCount int64        `json:"accounts_count"`
+
+	Discussions      []*ESDiscussion `json:"discussions"`
+	DiscussionsCount int64           `json:"discussions_count"`
 }
 
 type AccountSearchResult struct {

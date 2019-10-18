@@ -14,6 +14,7 @@ func (p *Service) AccountSearch(c context.Context, arg *model.AccountSearchParam
 	var data *model.SearchResult
 	if data, err = p.d.AccountSearch(c, arg); err != nil {
 		err = ecode.SearchAccountFailed
+		return
 	}
 
 	resp = &model.AccountSearchResult{
