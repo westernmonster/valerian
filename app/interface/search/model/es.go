@@ -114,10 +114,10 @@ type ESArticle struct {
 	Title *string `json:"title,omitempty"`
 
 	// 内容
-	Content *string `json:"content,omitempty"`
+	ContentText *string `json:"content_text,omitempty"`
 
 	// 内容
-	ContentText *string `json:"content_text,omitempty"`
+	Excerpt *string `json:"excerpt,omitempty"`
 
 	//  禁止补充
 	DisableRevise *bool `json:"disable_revise,omitempty"`
@@ -154,10 +154,10 @@ type ESDiscussion struct {
 	Title *string `json:"title,omitempty"`
 
 	// 内容
-	Content *string `json:"content,omitempty"`
+	ContentText *string `json:"content_text,omitempty"`
 
 	// 内容
-	ContentText *string `json:"content_text,omitempty"`
+	Excerpt *string `json:"excerpt,omitempty"`
 
 	// 创建时间
 	CreatedAt *int64 `json:"created_at,omitempty"`

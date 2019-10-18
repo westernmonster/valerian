@@ -9,9 +9,11 @@ import (
 
 	"valerian/app/interface/search/model"
 	"valerian/library/ecode"
+	"valerian/library/xstr"
 )
 
 func (p *Service) DiscussionSearch(c context.Context, arg *model.DiscussionSearchParams) (resp *model.DiscussionSearchResult, err error) {
+	arg.BasicSearchParams = p.addContextTextSource(arg.BasicSearchParams)
 	var data *model.SearchResult
 	if data, err = p.d.DiscussionSearch(c, arg); err != nil {
 		err = ecode.SearchAccountFailed
@@ -29,6 +31,12 @@ func (p *Service) DiscussionSearch(c context.Context, arg *model.DiscussionSearc
 		err = json.Unmarshal(v, acc)
 		if err != nil {
 			return
+		}
+
+		if acc.ContentText != nil {
+			excerpt := xstr.Excerpt(*acc.ContentText)
+			acc.Excerpt = &excerpt
+			acc.ContentText = nil
 		}
 
 		resp.Data = append(resp.Data, acc)

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"valerian/app/interface/search/model"
 	"valerian/library/ecode"
+	"valerian/library/xstr"
 )
 
 func (p *Service) AllSearch(c context.Context, kw string) (resp *model.AllSearchResult, err error) {
@@ -69,6 +70,12 @@ func (p *Service) AllSearch(c context.Context, kw string) (resp *model.AllSearch
 			return
 		}
 
+		if acc.ContentText != nil {
+			excerpt := xstr.Excerpt(*acc.ContentText)
+			acc.Excerpt = &excerpt
+			acc.ContentText = nil
+		}
+
 		articles = append(articles, acc)
 	}
 
@@ -87,6 +94,12 @@ func (p *Service) AllSearch(c context.Context, kw string) (resp *model.AllSearch
 		err = json.Unmarshal(v, acc)
 		if err != nil {
 			return
+		}
+
+		if acc.ContentText != nil {
+			excerpt := xstr.Excerpt(*acc.ContentText)
+			acc.Excerpt = &excerpt
+			acc.ContentText = nil
 		}
 
 		discussions = append(discussions, acc)

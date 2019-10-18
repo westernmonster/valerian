@@ -8,12 +8,34 @@ import (
 
 	"valerian/app/interface/search/model"
 	"valerian/library/ecode"
+	"valerian/library/xstr"
 )
 
+func (p *Service) addContextTextSource(arg *model.BasicSearchParams) (resp *model.BasicSearchParams) {
+	if arg.Source == nil {
+		return arg
+	}
+
+	hasContentText := false
+	for _, v := range arg.Source {
+		if v == "content_text" {
+			hasContentText = true
+		}
+	}
+
+	if !hasContentText {
+		arg.Source = append(arg.Source, "content_text")
+	}
+	return arg
+}
+
 func (p *Service) ArticleSearch(c context.Context, arg *model.ArticleSearchParams) (resp *model.ArticleSearchResult, err error) {
+	arg.BasicSearchParams = p.addContextTextSource(arg.BasicSearchParams)
+
 	var data *model.SearchResult
 	if data, err = p.d.ArticleSearch(c, arg); err != nil {
 		err = ecode.SearchAccountFailed
+		return
 	}
 
 	resp = &model.ArticleSearchResult{
@@ -27,6 +49,12 @@ func (p *Service) ArticleSearch(c context.Context, arg *model.ArticleSearchParam
 		err = json.Unmarshal(v, acc)
 		if err != nil {
 			return
+		}
+
+		if acc.ContentText != nil {
+			excerpt := xstr.Excerpt(*acc.ContentText)
+			acc.Excerpt = &excerpt
+			acc.ContentText = nil
 		}
 
 		resp.Data = append(resp.Data, acc)
