@@ -46,6 +46,7 @@ type IDao interface {
 	DelTopic(c context.Context, node sqalx.Node, id int64) (err error)
 
 	GetFollowedTopicsPaged(c context.Context, node sqalx.Node, aid int64, query string, limit, offset int) (items []*model.Topic, err error)
+	GetFollowedTopicsIDs(c context.Context, node sqalx.Node, aid int64) (items []int64, err error)
 	GetTopicMembersCount(c context.Context, node sqalx.Node, topicID int64) (count int, err error)
 	GetTopicMembersPaged(c context.Context, node sqalx.Node, topicID int64, page, pageSize int) (count int, items []*model.TopicMember, err error)
 	GetTopicMembersByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.TopicMember, err error)
@@ -96,6 +97,8 @@ type IDao interface {
 
 	IncrAccountStat(c context.Context, node sqalx.Node, item *model.AccountStat) (err error)
 	GetAccountStatByID(c context.Context, node sqalx.Node, aid int64) (item *model.AccountStat, err error)
+
+	TopicSearch(c context.Context, arg *model.TopicSearchParams, ids []int64) (res *model.SearchResult, err error)
 
 	GetFans(c context.Context, accountID int64, limit, offset int) (resp *relation.FansResp, err error)
 

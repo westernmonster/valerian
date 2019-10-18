@@ -41,11 +41,17 @@ type Config struct {
 	RelationRPC  *warden.ClientConfig
 	ArticleRPC   *warden.ClientConfig
 
+	Es *EsInfo
+
 	// Auth
 	Auth      *auth.Config
 	Memcache  *Memcache
 	Discovery *discovery.Config
 	Nats      *mq.Config
+}
+
+type EsInfo struct {
+	Addr []string
 }
 
 // DB db config.

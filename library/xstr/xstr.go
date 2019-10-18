@@ -61,3 +61,28 @@ func Excerpt(s string) string {
 
 	return s
 }
+
+func Int64Array2StringArray(req []int64) (resp []string) {
+	resp = make([]string, 0)
+
+	for _, v := range req {
+		resp = append(resp, strconv.FormatInt(v, 10))
+	}
+
+	return
+}
+
+func StringArray2Int64Array(req []string) (resp []int64, err error) {
+	resp = make([]int64, 0)
+
+	for _, v := range req {
+		if x, e := strconv.ParseInt(v, 10, 64); e != nil {
+			err = e
+			return
+		} else {
+			resp = append(resp, x)
+		}
+	}
+
+	return
+}

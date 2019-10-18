@@ -18,6 +18,7 @@ import (
 	"valerian/library/stat/prom"
 
 	"github.com/pkg/errors"
+	"gopkg.in/olivere/elastic.v6"
 )
 
 // Dao dao struct
@@ -32,6 +33,8 @@ type Dao struct {
 	articleRPC   article.ArticleClient
 	topicRPC     stopic.TopicClient
 	relationRPC  relation.RelationClient
+
+	esClient *elastic.Client
 }
 
 func New(c *conf.Config) (dao *Dao) {
@@ -77,6 +80,17 @@ func New(c *conf.Config) (dao *Dao) {
 		dao.topicRPC = topicRPC
 	}
 
+	if client, err := elastic.NewClient(
+		elastic.SetSniff(false),
+		elastic.SetHealthcheck(false),
+		elastic.SetBasicAuth("elastic", "^EIj7UIjd"),
+		elastic.SetURL(c.Es.Addr...),
+	); err == nil {
+		dao.esClient = client
+	} else {
+		PromError(context.TODO(), "es:集群连接失败", "cluster:  %v", err)
+	}
+
 	return
 }
 
@@ -93,6 +107,7 @@ func (d *Dao) Ping(c context.Context) (err error) {
 		log.Info(fmt.Sprintf("dao.mc.Ping() error(%v)", err))
 		return
 	}
+
 	return
 }
 
@@ -110,4 +125,14 @@ func (d *Dao) Close() {
 func PromError(c context.Context, name, format string, args ...interface{}) {
 	prom.BusinessErrCount.Incr(name)
 	log.For(c).Error(fmt.Sprintf(format, args...))
+}
+
+// pingESCluster ping es cluster
+func (d *Dao) pingESCluster(ctx context.Context) (err error) {
+	_, _, err = d.esClient.Ping(d.c.Es.Addr[0]).Do(ctx)
+	if err != nil {
+		PromError(ctx, "archiveESClient:Ping", "dao.pingESCluster error(%v) ", err)
+		return
+	}
+	return
 }

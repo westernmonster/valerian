@@ -1,9 +1,5 @@
 package model
 
-type ES struct {
-	Addr string
-}
-
 type ESAccount struct {
 	// ID
 	ID int64 `json:"id,string,omitempty" swaggertype:"string"`

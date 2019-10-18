@@ -183,8 +183,8 @@ func topicsWithEditPermission(c *mars.Context) {
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param query query string true "查询条件"
-// @Param limit query integer false "每页大小"
-// @Param offset query integer false "offset"
+// @Param ps query integer false "每页大小"
+// @Param pn query integer false "页码 1开始"
 // @Success 200 {object} model.JoinedTopicsResp "成员"
 // @Failure 400 "请求验证失败"
 // @Failure 401 "登录验证失败"
@@ -192,26 +192,26 @@ func topicsWithEditPermission(c *mars.Context) {
 // @Router /topic/list/followed [get]
 func followedTopics(c *mars.Context) {
 	var (
-		err    error
-		offset int
-		limit  int
+		err error
+		pn  int
+		ps  int
 	)
 
 	params := c.Request.Form
 
-	if offset, err = strconv.Atoi(params.Get("offset")); err != nil {
-		offset = 0
-	} else if offset < 0 {
-		offset = 0
+	if pn, err = strconv.Atoi(params.Get("pn")); err != nil {
+		pn = 0
+	} else if pn < 0 {
+		pn = 0
 	}
 
-	if limit, err = strconv.Atoi(params.Get("limit")); err != nil {
-		limit = 10
-	} else if limit < 0 {
-		limit = 10
+	if ps, err = strconv.Atoi(params.Get("ps")); err != nil {
+		ps = 10
+	} else if ps < 0 {
+		ps = 10
 	}
 
-	c.JSON(srv.FollowedTopics(c, params.Get("query"), limit, offset))
+	c.JSON(srv.FollowedTopics(c, params.Get("query"), pn, ps))
 }
 
 // @Summary 获取话题Meta信息

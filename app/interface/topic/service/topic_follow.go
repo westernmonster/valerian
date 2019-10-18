@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/url"
 	"strconv"
@@ -124,33 +125,45 @@ func (p *Service) Follow(c context.Context, arg *model.ArgTopicFollow) (status i
 
 }
 
-func (p *Service) FollowedTopics(c context.Context, query string, limit, offset int) (resp *model.JoinedTopicsResp, err error) {
+func (p *Service) FollowedTopics(c context.Context, query string, pn, ps int) (resp *model.JoinedTopicsResp, err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed
 		return
 	}
-	var data []*model.Topic
-	if data, err = p.d.GetFollowedTopicsPaged(c, p.d.DB(), aid, query, limit, offset); err != nil {
+	var ids []int64
+	if ids, err = p.d.GetFollowedTopicsIDs(c, p.d.DB(), aid); err != nil {
+		return
+	}
+
+	var data *model.SearchResult
+	if data, err = p.d.TopicSearch(c, &model.TopicSearchParams{&model.BasicSearchParams{KW: query, Pn: pn, Ps: ps}}, ids); err != nil {
+		err = ecode.SearchTopicFailed
 		return
 	}
 
 	resp = &model.JoinedTopicsResp{
-		Items:  make([]*model.JoinedTopicItem, len(data)),
+		Items:  make([]*model.JoinedTopicItem, len(data.Result)),
 		Paging: &model.Paging{},
 	}
 
-	for i, v := range data {
+	for i, v := range data.Result {
+		t := new(model.ESTopic)
+		err = json.Unmarshal(v, t)
+		if err != nil {
+			return
+		}
+
 		item := &model.JoinedTopicItem{
-			ID:             v.ID,
-			Name:           v.Name,
-			Introduction:   v.Introduction,
-			EditPermission: v.EditPermission,
-			Avatar:         v.Avatar,
+			ID:             t.ID,
+			Name:           *t.Name,
+			Introduction:   *t.Introduction,
+			EditPermission: *t.EditPermission,
+			Avatar:         t.Avatar,
 		}
 
 		var stat *model.TopicStat
-		if stat, err = p.GetTopicStat(c, v.ID); err != nil {
+		if stat, err = p.GetTopicStat(c, t.ID); err != nil {
 			return
 		}
 
@@ -163,27 +176,27 @@ func (p *Service) FollowedTopics(c context.Context, query string, limit, offset 
 	}
 
 	if resp.Paging.Prev, err = genURL("/api/v1/topic/list/followed", url.Values{
-		"query":  []string{query},
-		"limit":  []string{strconv.Itoa(limit)},
-		"offset": []string{strconv.Itoa(offset - limit)},
+		"query": []string{query},
+		"pn":    []string{strconv.Itoa(pn)},
+		"ps":    []string{strconv.Itoa(ps)},
 	}); err != nil {
 		return
 	}
 
 	if resp.Paging.Next, err = genURL("/api/v1/topic/list/followed", url.Values{
-		"query":  []string{query},
-		"limit":  []string{strconv.Itoa(limit)},
-		"offset": []string{strconv.Itoa(offset + limit)},
+		"query": []string{query},
+		"pn":    []string{strconv.Itoa(pn)},
+		"ps":    []string{strconv.Itoa(ps)},
 	}); err != nil {
 		return
 	}
 
-	if len(resp.Items) < limit {
+	if len(resp.Items) < ps {
 		resp.Paging.IsEnd = true
 		resp.Paging.Next = ""
 	}
 
-	if offset == 0 {
+	if pn == 1 {
 		resp.Paging.Prev = ""
 	}
 

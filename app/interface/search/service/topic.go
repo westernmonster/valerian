@@ -13,7 +13,8 @@ import (
 func (p *Service) TopicSearch(c context.Context, arg *model.TopicSearchParams) (resp *model.TopicSearchResult, err error) {
 	var data *model.SearchResult
 	if data, err = p.d.TopicSearch(c, arg); err != nil {
-		err = ecode.SearchAccountFailed
+		err = ecode.SearchTopicFailed
+		return
 	}
 
 	resp = &model.TopicSearchResult{
