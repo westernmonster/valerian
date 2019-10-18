@@ -31,7 +31,7 @@ WHERE a.account_id = ? AND a.role IN ( 'owner', 'admin' ) AND b.permission = 'ad
 `
 
 	var rows *sqlx.Rows
-	if rows, err = node.QueryxContext(c, sqlSelect, aid); err != nil {
+	if rows, err = node.QueryxContext(c, sqlSelect, aid, aid, aid); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetUserCanEditTopicIDs err(%+v)", err))
 		return
 	}
