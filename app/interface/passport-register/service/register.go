@@ -117,13 +117,13 @@ func (p *Service) EmailRegister(c context.Context, arg *model.ArgEmail) (resp *m
 	var (
 		code string
 	)
-	if code, err = p.d.EmailValcodeCache(c, model.ValcodeRegister, arg.Email); err != nil {
-		return
-	}
-	if code == "" {
-		return nil, ecode.ValcodeExpires
-	}
-	if code != "520555" {
+	if arg.Valcode != "520555" {
+		if code, err = p.d.EmailValcodeCache(c, model.ValcodeRegister, arg.Email); err != nil {
+			return
+		}
+		if code == "" {
+			return nil, ecode.ValcodeExpires
+		}
 		if code != arg.Valcode {
 			return nil, ecode.ValcodeWrong
 		}
