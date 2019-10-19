@@ -32,6 +32,8 @@ type IDao interface {
 	GetFansIDs(c context.Context, node sqalx.Node, aid int64) (items []int64, err error)
 	GetFollowingIDs(c context.Context, node sqalx.Node, aid int64) (items []int64, err error)
 
+	GetAccountByID(c context.Context, node sqalx.Node, id int64) (item *model.Account, err error)
+
 	GetAccountStatByID(c context.Context, node sqalx.Node, aid int64) (item *model.AccountStat, err error)
 	IncrAccountStat(c context.Context, node sqalx.Node, item *model.AccountStat) (err error)
 	AddAccountStat(c context.Context, node sqalx.Node, item *model.AccountStat) (err error)

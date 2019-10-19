@@ -14,7 +14,6 @@ import (
 
 // Unfollow 取关
 func (p *Service) Unfollow(c context.Context, aid int64, fid int64) (err error) {
-	fmt.Printf("aid(%d) unfollow fid(%d)\n", aid, fid)
 	if aid <= 0 || fid <= 0 {
 		return
 	}
@@ -37,6 +36,22 @@ func (p *Service) Unfollow(c context.Context, aid int64, fid int64) (err error) 
 			return
 		}
 	}()
+
+	var accA *model.Account
+	if accA, err = p.d.GetAccountByID(c, tx, aid); err != nil {
+		return
+	} else if accA == nil {
+		err = ecode.UserNotExist
+		return
+	}
+
+	var accB *model.Account
+	if accB, err = p.d.GetAccountByID(c, tx, fid); err != nil {
+		return
+	} else if accB == nil {
+		err = ecode.UserNotExist
+		return
+	}
 
 	var followingAttr uint32
 	var friend bool
@@ -125,7 +140,6 @@ func (p *Service) Unfollow(c context.Context, aid int64, fid int64) (err error) 
 
 // Follow 关注
 func (p *Service) Follow(c context.Context, aid int64, fid int64) (err error) {
-	fmt.Printf("aid(%d) follow fid(%d)", aid, fid)
 	if aid <= 0 || fid <= 0 {
 		return
 	}
@@ -148,6 +162,22 @@ func (p *Service) Follow(c context.Context, aid int64, fid int64) (err error) {
 			return
 		}
 	}()
+
+	var accA *model.Account
+	if accA, err = p.d.GetAccountByID(c, tx, aid); err != nil {
+		return
+	} else if accA == nil {
+		err = ecode.UserNotExist
+		return
+	}
+
+	var accB *model.Account
+	if accB, err = p.d.GetAccountByID(c, tx, fid); err != nil {
+		return
+	} else if accB == nil {
+		err = ecode.UserNotExist
+		return
+	}
 
 	log.For(c).Info(fmt.Sprintf("aid(%d) Follow fid(%d)", aid, fid))
 
