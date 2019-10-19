@@ -112,7 +112,7 @@ func (p *Service) Unfollow(c context.Context, aid int64, fid int64) (err error) 
 	}
 
 	p.addCache(func() {
-		p.onFollow(context.Background(), aid, fid)
+		p.onUnfollow(context.Background(), aid, fid)
 		p.d.DelFansCache(context.Background(), aid)
 		p.d.DelFansCache(context.Background(), fid)
 		p.d.DelFollowingsCache(context.Background(), aid)
@@ -152,6 +152,9 @@ func (p *Service) Follow(c context.Context, aid int64, fid int64) (err error) {
 	var followingAttr uint32
 	var fansAttr uint32
 	var friend bool
+
+	fmt.Printf("aid(%d) following fid(%d)", aid, fid)
+
 	var statCurrent = &model.AccountStat{AccountID: aid}
 	var statTarget = &model.AccountStat{AccountID: fid}
 
@@ -289,7 +292,7 @@ func (p *Service) Follow(c context.Context, aid int64, fid int64) (err error) {
 	}
 
 	p.addCache(func() {
-		p.onUnfollow(context.Background(), aid, fid)
+		p.onFollow(context.Background(), aid, fid)
 		p.d.DelFansCache(context.Background(), aid)
 		p.d.DelFansCache(context.Background(), fid)
 		p.d.DelFollowingsCache(context.Background(), aid)
