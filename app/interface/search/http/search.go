@@ -54,7 +54,13 @@ func searchTopics(c *mars.Context) {
 	}
 
 	pn := strings.TrimSpace(param.Get("pn"))
+	if pn == "" {
+		pn = "1"
+	}
 	ps := strings.TrimSpace(param.Get("ps"))
+	if ps == "" {
+		ps = "10"
+	}
 
 	if v, e := strconv.Atoi(pn); e != nil {
 		c.JSON(nil, ecode.RequestErr)
@@ -120,7 +126,13 @@ func searchAccounts(c *mars.Context) {
 	}
 
 	pn := strings.TrimSpace(param.Get("pn"))
+	if pn == "" {
+		pn = "1"
+	}
 	ps := strings.TrimSpace(param.Get("ps"))
+	if ps == "" {
+		ps = "10"
+	}
 
 	if v, e := strconv.Atoi(pn); e != nil {
 		c.JSON(nil, ecode.RequestErr)
@@ -186,7 +198,13 @@ func searchArticles(c *mars.Context) {
 	}
 
 	pn := strings.TrimSpace(param.Get("pn"))
+	if pn == "" {
+		pn = "1"
+	}
 	ps := strings.TrimSpace(param.Get("ps"))
+	if ps == "" {
+		ps = "10"
+	}
 
 	if v, e := strconv.Atoi(pn); e != nil {
 		c.JSON(nil, ecode.RequestErr)
@@ -252,7 +270,13 @@ func searchDiscusstions(c *mars.Context) {
 	}
 
 	pn := strings.TrimSpace(param.Get("pn"))
+	if pn == "" {
+		pn = "1"
+	}
 	ps := strings.TrimSpace(param.Get("ps"))
+	if ps == "" {
+		ps = "10"
+	}
 
 	if v, e := strconv.Atoi(pn); e != nil {
 		c.JSON(nil, ecode.RequestErr)
