@@ -30,6 +30,14 @@ func (p *Service) AllSearch(c context.Context, kw string) (resp *model.AllSearch
 			return
 		}
 
+		var stat *model.AccountStat
+		if stat, err = p.d.GetAccountStatByID(c, p.d.DB(), acc.ID); err != nil {
+			return
+		}
+
+		acc.FansCount = int(stat.Fans)
+		acc.FollowingCount = int(stat.Following)
+
 		accounts = append(accounts, acc)
 	}
 
@@ -49,6 +57,15 @@ func (p *Service) AllSearch(c context.Context, kw string) (resp *model.AllSearch
 		if err != nil {
 			return
 		}
+
+		var stat *model.TopicStat
+		if stat, err = p.d.GetTopicStatByID(c, p.d.DB(), acc.ID); err != nil {
+			return
+		}
+
+		acc.MemberCount = stat.MemberCount
+		acc.ArticleCount = stat.ArticleCount
+		acc.DiscussionCount = stat.DiscussionCount
 
 		topics = append(topics, acc)
 	}
@@ -76,6 +93,16 @@ func (p *Service) AllSearch(c context.Context, kw string) (resp *model.AllSearch
 			acc.ContentText = nil
 		}
 
+		var stat *model.ArticleStat
+		if stat, err = p.d.GetArticleStatByID(c, p.d.DB(), acc.ID); err != nil {
+			return
+		}
+
+		acc.LikeCount = stat.LikeCount
+		acc.DislikeCount = stat.DislikeCount
+		acc.ReviseCount = stat.ReviseCount
+		acc.CommentCount = stat.CommentCount
+
 		articles = append(articles, acc)
 	}
 
@@ -101,6 +128,15 @@ func (p *Service) AllSearch(c context.Context, kw string) (resp *model.AllSearch
 			acc.Excerpt = &excerpt
 			acc.ContentText = nil
 		}
+
+		var stat *model.DiscussionStat
+		if stat, err = p.d.GetDiscussionStatByID(c, p.d.DB(), acc.ID); err != nil {
+			return
+		}
+
+		acc.LikeCount = stat.LikeCount
+		acc.DislikeCount = stat.DislikeCount
+		acc.CommentCount = stat.CommentCount
 
 		discussions = append(discussions, acc)
 	}
