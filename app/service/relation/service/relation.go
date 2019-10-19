@@ -153,7 +153,7 @@ func (p *Service) Follow(c context.Context, aid int64, fid int64) (err error) {
 	var fansAttr uint32
 	var friend bool
 
-	fmt.Printf("aid(%d) following fid(%d)", aid, fid)
+	fmt.Printf("aid(%d) follow fid(%d)", aid, fid)
 
 	var statCurrent = &model.AccountStat{AccountID: aid}
 	var statTarget = &model.AccountStat{AccountID: fid}
