@@ -14,6 +14,7 @@ import (
 
 // Unfollow 取关
 func (p *Service) Unfollow(c context.Context, aid int64, fid int64) (err error) {
+	fmt.Printf("aid(%d) unfollow fid(%d)\n", aid, fid)
 	if aid <= 0 || fid <= 0 {
 		return
 	}
@@ -21,8 +22,6 @@ func (p *Service) Unfollow(c context.Context, aid int64, fid int64) (err error) 
 		err = ecode.RelFollowSelfBanned
 		return
 	}
-
-	fmt.Printf("aid(%d) unfollow fid(%d)", aid, fid)
 
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
@@ -126,6 +125,7 @@ func (p *Service) Unfollow(c context.Context, aid int64, fid int64) (err error) 
 
 // Follow 关注
 func (p *Service) Follow(c context.Context, aid int64, fid int64) (err error) {
+	fmt.Printf("aid(%d) follow fid(%d)", aid, fid)
 	if aid <= 0 || fid <= 0 {
 		return
 	}
@@ -133,7 +133,6 @@ func (p *Service) Follow(c context.Context, aid int64, fid int64) (err error) {
 		err = ecode.RelFollowSelfBanned
 		return
 	}
-	fmt.Printf("aid(%d) follow fid(%d)", aid, fid)
 
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
