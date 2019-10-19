@@ -59,6 +59,8 @@ func searchTopics(c *mars.Context) {
 	if v, e := strconv.Atoi(pn); e != nil {
 		c.JSON(nil, ecode.RequestErr)
 		return
+	} else if v == 0 {
+		arg.Pn = 1
 	} else {
 		arg.Pn = v
 	}
@@ -66,6 +68,8 @@ func searchTopics(c *mars.Context) {
 	if v, e := strconv.Atoi(ps); e != nil {
 		c.JSON(nil, ecode.RequestErr)
 		return
+	} else if v == 0 {
+		arg.Ps = 10
 	} else {
 		arg.Ps = v
 	}
@@ -121,6 +125,8 @@ func searchAccounts(c *mars.Context) {
 	if v, e := strconv.Atoi(pn); e != nil {
 		c.JSON(nil, ecode.RequestErr)
 		return
+	} else if v == 0 {
+		arg.Pn = 1
 	} else {
 		arg.Pn = v
 	}
@@ -128,6 +134,8 @@ func searchAccounts(c *mars.Context) {
 	if v, e := strconv.Atoi(ps); e != nil {
 		c.JSON(nil, ecode.RequestErr)
 		return
+	} else if v == 0 {
+		arg.Ps = 10
 	} else {
 		arg.Ps = v
 	}
@@ -183,6 +191,8 @@ func searchArticles(c *mars.Context) {
 	if v, e := strconv.Atoi(pn); e != nil {
 		c.JSON(nil, ecode.RequestErr)
 		return
+	} else if v == 0 {
+		arg.Pn = 1
 	} else {
 		arg.Pn = v
 	}
@@ -190,6 +200,8 @@ func searchArticles(c *mars.Context) {
 	if v, e := strconv.Atoi(ps); e != nil {
 		c.JSON(nil, ecode.RequestErr)
 		return
+	} else if v == 0 {
+		arg.Ps = 10
 	} else {
 		arg.Ps = v
 	}
@@ -245,6 +257,8 @@ func searchDiscusstions(c *mars.Context) {
 	if v, e := strconv.Atoi(pn); e != nil {
 		c.JSON(nil, ecode.RequestErr)
 		return
+	} else if v == 0 {
+		arg.Pn = 1
 	} else {
 		arg.Pn = v
 	}
@@ -252,9 +266,12 @@ func searchDiscusstions(c *mars.Context) {
 	if v, e := strconv.Atoi(ps); e != nil {
 		c.JSON(nil, ecode.RequestErr)
 		return
+	} else if v == 0 {
+		arg.Ps = 10
 	} else {
 		arg.Ps = v
 	}
+
 	if e := arg.Validate(); e != nil {
 		c.JSON(nil, ecode.RequestErr)
 		return
