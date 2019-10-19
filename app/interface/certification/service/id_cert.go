@@ -121,10 +121,71 @@ func (p *Service) GetIDCertificationStatus(c context.Context) (status int, err e
 
 	}
 
-	if err = p.d.UpdateIDCertification(c, p.d.DB(), item); err != nil {
+	var tx sqalx.Node
+	if tx, err = p.d.DB().Beginx(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		return
+	}
+
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+			}
+			return
+		}
+	}()
+
+	if err = p.d.UpdateIDCertification(c, tx, item); err != nil {
+		return
+	}
+
+	if item.Status == model.IDCertificationSuccess {
+		var acc *model.Account
+		if acc, err = p.getAccountByID(c, tx, item.AccountID); err != nil {
+			return
+		}
+
+		acc.IDCert = true
+
+		if err = p.d.UpdateAccount(c, tx, acc); err != nil {
+			return
+		}
+	}
+
+	if err = tx.Commit(); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 		return
 	}
 
 	status = item.Status
+
+	p.addCache(func() {
+		p.d.DelAccountCache(context.TODO(), item.AccountID)
+	})
+	return
+}
+
+func (p *Service) getAccountByID(c context.Context, node sqalx.Node, aid int64) (account *model.Account, err error) {
+	var needCache = true
+
+	if account, err = p.d.AccountCache(c, aid); err != nil {
+		needCache = false
+	} else if account != nil {
+		return
+	}
+
+	if account, err = p.d.GetAccountByID(c, node, aid); err != nil {
+		return
+	} else if account == nil {
+		err = ecode.UserNotExist
+		return
+	}
+
+	if needCache {
+		p.addCache(func() {
+			p.d.SetAccountCache(context.TODO(), account)
+		})
+	}
 	return
 }
