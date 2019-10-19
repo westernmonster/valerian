@@ -152,7 +152,7 @@ type TargetMember struct {
 	// ID
 	ID int64 `json:"id,string" swaggertype:"string"`
 	// 关注数
-	FollowCount int `json:"follow_count"`
+	FollowingCount int `json:"following_count"`
 	// 粉丝数
 	FansCount int `json:"fans_count"`
 	// 话题数

@@ -30,6 +30,15 @@ func (p *Service) TopicSearch(c context.Context, arg *model.TopicSearchParams) (
 			return
 		}
 
+		var stat *model.TopicStat
+		if stat, err = p.d.GetTopicStatByID(c, p.d.DB(), acc.ID); err != nil {
+			return
+		}
+
+		acc.MemberCount = stat.MemberCount
+		acc.ArticleCount = stat.ArticleCount
+		acc.DiscussionCount = stat.DiscussionCount
+
 		resp.Data = append(resp.Data, acc)
 	}
 

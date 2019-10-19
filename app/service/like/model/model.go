@@ -59,15 +59,6 @@ type DiscussionStat struct {
 	UpdatedAt    int64 `db:"updated_at" json:"updated_at"`              // UpdatedAt 更新时间
 }
 
-type AccountResStat struct {
-	AccountID       int64 `db:"account_id" json:"account_id,string"`      // AccountID 用户ID
-	TopicCount      int   `db:"topic_count" json:"topic_count"`           // TopicCount 话题数
-	ArticleCount    int   `db:"article_count" json:"article_count"`       // ArticleCount 文章数
-	DiscussionCount int   `db:"discussion_count" json:"discussion_count"` // DiscussionCount 讨论数
-	CreatedAt       int64 `db:"created_at" json:"created_at"`             // CreatedAt 创建时间
-	UpdatedAt       int64 `db:"updated_at" json:"updated_at"`             // UpdatedAt 更新时间
-}
-
 type CommentStat struct {
 	CommentID     int64 `db:"comment_id" json:"comment_id,string"`  // CommentID 账户ID
 	LikeCount     int   `db:"like_count" json:"like_count"`         // LikeCount 喜欢数

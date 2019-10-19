@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/url"
 	"strconv"
 
@@ -26,7 +25,6 @@ func (p *Service) DiscussionSearch(c context.Context, arg *model.DiscussionSearc
 	}
 
 	for _, v := range data.Result {
-		fmt.Println(string(v))
 		acc := new(model.ESDiscussion)
 		err = json.Unmarshal(v, acc)
 		if err != nil {
@@ -38,6 +36,15 @@ func (p *Service) DiscussionSearch(c context.Context, arg *model.DiscussionSearc
 			acc.Excerpt = &excerpt
 			acc.ContentText = nil
 		}
+
+		var stat *model.DiscussionStat
+		if stat, err = p.d.GetDiscussionStatByID(c, p.d.DB(), acc.ID); err != nil {
+			return
+		}
+
+		acc.LikeCount = stat.LikeCount
+		acc.DislikeCount = stat.DislikeCount
+		acc.CommentCount = stat.CommentCount
 
 		resp.Data = append(resp.Data, acc)
 	}

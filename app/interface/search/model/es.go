@@ -57,6 +57,11 @@ type ESAccount struct {
 
 	// 更新时间
 	UpdatedAt *int64 `json:"updated_at,omitempty"  swaggertype:"string"`
+
+	// 关注数
+	FollowingCount int `json:"following_count"`
+	// 粉丝数
+	FansCount int `json:"fans_count"`
 }
 
 type ESCreator struct {
@@ -101,6 +106,15 @@ type ESTopic struct {
 	CreatedAt *int64 `json:"created_at,omitempty"`
 	// UpdatedAt 更新时间
 	UpdatedAt *int64 `json:"updated_at,omitempty"`
+
+	// 成员数
+	MemberCount int `json:"member_count"`
+
+	// 成员数
+	ArticleCount int `json:"article_count"`
+
+	// 讨论数
+	DiscussionCount int `json:"discussion_count"`
 }
 
 type ESArticle struct {
@@ -128,6 +142,15 @@ type ESArticle struct {
 
 	// 更新时间
 	UpdatedAt *int64 `json:"updated_at,omitempty"`
+
+	// 喜欢数
+	LikeCount int `json:"like_count"`
+	// 反对数
+	DislikeCount int `json:"dislike_count"`
+	// 补充个数
+	ReviseCount int `json:"revise_count"`
+	// 评论数
+	CommentCount int `json:"comment_count"`
 }
 
 type ESDiscussionTopic struct {
@@ -141,6 +164,15 @@ type ESDiscussionTopic struct {
 
 	// 自我介绍
 	Introduction *string `json:"introduction,omitempty"`
+
+	// 喜欢数
+	LikeCount int `json:"like_count"`
+
+	// 反对数
+	DislikeCount int `json:"dislike_count"`
+
+	// 评论数
+	CommentCount int `json:"comment_count"`
 }
 
 type ESDiscussion struct {
@@ -166,6 +198,15 @@ type ESDiscussion struct {
 	Topic *ESDiscussionTopic `json:"topic,omitempty"`
 
 	Category *ESDiscussionCategory `json:"category,omitempty"`
+
+	// 喜欢数
+	LikeCount int `json:"like_count"`
+
+	// 反对数
+	DislikeCount int `json:"dislike_count"`
+
+	// 评论数
+	CommentCount int `json:"comment_count"`
 }
 
 type ESDiscussionCategory struct {

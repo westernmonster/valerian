@@ -57,6 +57,16 @@ func (p *Service) ArticleSearch(c context.Context, arg *model.ArticleSearchParam
 			acc.ContentText = nil
 		}
 
+		var stat *model.ArticleStat
+		if stat, err = p.d.GetArticleStatByID(c, p.d.DB(), acc.ID); err != nil {
+			return
+		}
+
+		acc.LikeCount = stat.LikeCount
+		acc.DislikeCount = stat.DislikeCount
+		acc.ReviseCount = stat.ReviseCount
+		acc.CommentCount = stat.CommentCount
+
 		resp.Data = append(resp.Data, acc)
 	}
 

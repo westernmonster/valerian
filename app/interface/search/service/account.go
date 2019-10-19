@@ -30,6 +30,14 @@ func (p *Service) AccountSearch(c context.Context, arg *model.AccountSearchParam
 			return
 		}
 
+		var stat *model.AccountStat
+		if stat, err = p.d.GetAccountStatByID(c, p.d.DB(), acc.ID); err != nil {
+			return
+		}
+
+		acc.FansCount = int(stat.Fans)
+		acc.FollowingCount = int(stat.Following)
+
 		resp.Data = append(resp.Data, acc)
 	}
 
