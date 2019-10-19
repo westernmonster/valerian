@@ -61,8 +61,8 @@ func (p *Service) Unfollow(c context.Context, aid int64, fid int64) (err error) 
 	// 如果没有关注对方，则设置为AttrNoRelation
 	var followingItem *model.AccountFollowing
 	if followingItem, err = p.d.GetFollowingByCond(c, tx, map[string]interface{}{
-		"account_id":   aid,
-		"following_id": fid,
+		"account_id":        aid,
+		"target_account_id": fid,
 	}); err != nil {
 		return
 	} else if followingItem == nil {
@@ -191,8 +191,8 @@ func (p *Service) Follow(c context.Context, aid int64, fid int64) (err error) {
 	// 如果没有关注对方，则设置为AttrNoRelation
 	var followingItem *model.AccountFollowing
 	if followingItem, err = p.d.GetFollowingByCond(c, tx, map[string]interface{}{
-		"account_id":   aid,
-		"following_id": fid,
+		"account_id":        aid,
+		"target_account_id": fid,
 	}); err != nil {
 		return
 	} else if followingItem == nil {
@@ -204,8 +204,8 @@ func (p *Service) Follow(c context.Context, aid int64, fid int64) (err error) {
 	// 如果对方没有关注你，则设置为AttrNoRelation
 	var fansItem *model.AccountFans
 	if fansItem, err = p.d.GetFansByCond(c, tx, map[string]interface{}{
-		"account_id":   fid,
-		"following_id": aid,
+		"account_id":        fid,
+		"target_account_id": aid,
 	}); err != nil {
 		return
 	} else if fansItem == nil {

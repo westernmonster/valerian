@@ -53,7 +53,7 @@ func (p *Dao) GetFollowingIDs(c context.Context, node sqalx.Node, aid int64) (it
 }
 
 func (p *Dao) SetFollowing(c context.Context, node sqalx.Node, attr uint32, aid, fid int64) (err error) {
-	sqlUpdate := "UPDATE account_followings SET attribute=?,updated_at=? WHERE account_id=? and following_id=? AND deleted=0"
+	sqlUpdate := "UPDATE account_followings SET attribute=?,updated_at=? WHERE account_id=? and target_account_id=? AND deleted=0"
 
 	_, err = node.ExecContext(c, sqlUpdate, attr, time.Now().Unix(), aid, fid)
 	if err != nil {
