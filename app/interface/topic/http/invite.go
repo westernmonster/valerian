@@ -91,16 +91,16 @@ func memberFansList(c *mars.Context) {
 
 	params := c.Request.Form
 
-	if offset, err = strconv.Atoi(params.Get("offset")); err != nil {
-		offset = 0
-	} else if offset < 0 {
-		offset = 0
+	if pn, err = strconv.Atoi(params.Get("pn")); err != nil {
+		pn = 1
+	} else if pn < 0 {
+		pn = 1
 	}
 
-	if limit, err = strconv.Atoi(params.Get("limit")); err != nil {
-		limit = 10
-	} else if limit < 0 {
-		limit = 10
+	if ps, err = strconv.Atoi(params.Get("ps")); err != nil {
+		ps = 10
+	} else if ps < 0 {
+		ps = 10
 	}
 
 	if id, err = strconv.ParseInt(params.Get("topic_id"), 10, 64); err != nil {
@@ -110,5 +110,5 @@ func memberFansList(c *mars.Context) {
 
 	query = params.Get("query")
 
-	c.JSON(srv.GetMemberFansList(c, id, query, limit, offset))
+	c.JSON(srv.GetMemberFansList(c, id, query, pn, ps))
 }
