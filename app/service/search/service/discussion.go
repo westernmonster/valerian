@@ -177,10 +177,10 @@ func (p *Service) onDiscussionDeleted(m *stan.Msg) {
 		log.For(c).Error(fmt.Sprintf("service.onDiscussionDeleted Unmarshal failed %#v", err))
 		return
 	}
+	m.Ack()
 
 	if err = p.d.DelESDiscussion(c, info.DiscussionID); err != nil {
 		return
 	}
 
-	m.Ack()
 }
