@@ -23,6 +23,7 @@ func (p *Dao) GetFans(c context.Context, accountID int64, limit, offset int) (re
 }
 
 func (p *Dao) Follow(c context.Context, accountID, targetAccountID int64) (err error) {
+	log.For(c).Error(fmt.Sprintf("dao.Unfollow, error(%+v), aid(%d), target_aid(%d)", err, accountID, targetAccountID))
 	if _, err = p.relationRPC.Follow(c, &relation.FollowReq{AccountID: accountID, TargetAccountID: targetAccountID}); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.Follow, error(%+v), aid(%d), target_aid(%d)", err, accountID, targetAccountID))
 	}
@@ -30,6 +31,7 @@ func (p *Dao) Follow(c context.Context, accountID, targetAccountID int64) (err e
 }
 
 func (p *Dao) Unfollow(c context.Context, accountID, targetAccountID int64) (err error) {
+	log.For(c).Error(fmt.Sprintf("dao.Unfollow, error(%+v), aid(%d), target_aid(%d)", err, accountID, targetAccountID))
 	if _, err = p.relationRPC.Unfollow(c, &relation.FollowReq{AccountID: accountID, TargetAccountID: targetAccountID}); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.Unfollow, error(%+v), aid(%d), target_aid(%d)", err, accountID, targetAccountID))
 	}
