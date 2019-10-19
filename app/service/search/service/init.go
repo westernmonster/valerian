@@ -2,11 +2,14 @@ package service
 
 import (
 	"context"
+	"time"
 	"valerian/app/service/search/model"
 	"valerian/library/ecode"
 )
 
 func (p *Service) Init(c context.Context) (err error) {
+	c, cancelFunc := context.WithTimeout(c, 3*60*time.Second)
+	defer cancelFunc()
 	if err = p.d.CreateAccountIndices(c); err != nil {
 		return
 	}
