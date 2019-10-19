@@ -31,7 +31,8 @@ func (p *Service) Init(c context.Context) (err error) {
 		return
 	}
 
-	for _, v := range accounts {
+	iAcc := make([]*model.ESAccount, len(accounts))
+	for i, v := range accounts {
 		item := &model.ESAccount{
 			ID:           v.ID,
 			Mobile:       &v.Mobile,
@@ -59,9 +60,11 @@ func (p *Service) Init(c context.Context) (err error) {
 		item.IsVIP = &isVIP
 		item.IsOrg = &isOrg
 
-		if err = p.d.PutAccount2ES(c, item); err != nil {
-			return
-		}
+		iAcc[i] = item
+	}
+
+	if err = p.d.BulkAccount2ES(c, iAcc); err != nil {
+		return
 	}
 
 	var topics []*model.Topic

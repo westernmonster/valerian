@@ -12,6 +12,7 @@ type IDao interface {
 	CreateDiscussionIndices(c context.Context) (err error)
 	CreateTopicIndices(c context.Context) (err error)
 
+	BulkAccount2ES(c context.Context, items []*model.ESAccount) (err error)
 	PutAccount2ES(c context.Context, item *model.ESAccount) (err error)
 	PutArticle2ES(c context.Context, item *model.ESArticle) (err error)
 	PutDiscussion2ES(c context.Context, item *model.ESDiscussion) (err error)
