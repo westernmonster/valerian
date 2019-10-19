@@ -45,6 +45,8 @@ func route(e *mars.Engine) {
 		g.POST("/members", authSvc.User, editTopicMembers)
 		g.POST("/auth_topics", authSvc.User, editAuthTopics)
 		g.POST("/catalogs", authSvc.User, editTopicCatalogs)
+		g.POST("/audit_follow", authSvc.User, auditFollow)
+		g.POST("/process_invite", authSvc.User, processInvite)
 
 		g.GET("/list/followed", authSvc.User, followedTopics)
 		g.GET("/list/has_edit_permission", authSvc.User, topicsWithEditPermission)
