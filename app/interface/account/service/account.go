@@ -266,7 +266,9 @@ func (p *Service) GetProfile(c context.Context, aid int64) (profile *model.Profi
 	}
 
 	var idCert *model.IDCertification
-	if idCert, err = p.d.GetIDCertificationByCond(c, p.d.DB(), map[string]interface{}{}); err != nil {
+	if idCert, err = p.d.GetIDCertificationByCond(c, p.d.DB(), map[string]interface{}{
+		"account_id": aid,
+	}); err != nil {
 		return
 	} else if idCert == nil {
 		profile.IDCertStatus = model.IDCertificationUncommitted
