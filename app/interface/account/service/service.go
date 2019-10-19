@@ -8,7 +8,6 @@ import (
 	"valerian/app/interface/account/dao"
 	"valerian/app/interface/account/model"
 	feed "valerian/app/service/account-feed/api"
-	account "valerian/app/service/account/api"
 	article "valerian/app/service/article/api"
 	discuss "valerian/app/service/discuss/api"
 	recent "valerian/app/service/recent/api"
@@ -42,7 +41,7 @@ type Service struct {
 		Unfollow(c context.Context, accountID, targetAccountID int64) (err error)
 		IsFollowing(c context.Context, aid, targetAccountID int64) (IsFollowing bool, err error)
 
-		GetAccountStat(c context.Context, aid int64) (stat *account.AccountStatInfo, err error)
+		GetAccountStatByID(c context.Context, node sqalx.Node, aid int64) (item *model.AccountStat, err error)
 
 		GetAccountFeedPaged(c context.Context, accountID int64, limit, offset int) (info *feed.AccountFeedResp, err error)
 		GetUserDiscussionsPaged(c context.Context, aid int64, limit, offset int) (resp *discuss.UserDiscussionsResp, err error)

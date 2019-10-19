@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"valerian/app/interface/account/model"
-	account "valerian/app/service/account/api"
 	"valerian/library/ecode"
 
 	"github.com/asaskevich/govalidator"
@@ -252,8 +251,8 @@ func (p *Service) GetProfile(c context.Context, aid int64) (profile *model.Profi
 		return
 	}
 
-	var stat *account.AccountStatInfo
-	if stat, err = p.d.GetAccountStat(c, aid); err != nil {
+	var stat *model.AccountStat
+	if stat, err = p.d.GetAccountStatByID(c, p.d.DB(), aid); err != nil {
 		return
 	}
 

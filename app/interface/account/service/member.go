@@ -7,7 +7,6 @@ import (
 
 	"valerian/app/interface/account/model"
 	feed "valerian/app/service/account-feed/api"
-	account "valerian/app/service/account/api"
 	article "valerian/app/service/article/api"
 	discuss "valerian/app/service/discuss/api"
 	recent "valerian/app/service/recent/api"
@@ -232,8 +231,8 @@ func (p *Service) GetMemberInfo(c context.Context, targetID int64) (resp *model.
 		return
 	}
 
-	var stat *account.AccountStatInfo
-	if stat, err = p.d.GetAccountStat(c, targetID); err != nil {
+	var stat *model.AccountStat
+	if stat, err = p.d.GetAccountStatByID(c, p.d.DB(), targetID); err != nil {
 		return
 	}
 
