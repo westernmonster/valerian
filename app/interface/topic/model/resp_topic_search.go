@@ -24,11 +24,9 @@ type CanEditTopicItem struct {
 	// EditPermission 编辑权限
 	EditPermission string `json:"edit_permission,omitempty"`
 
-	// 是否有二级目录
 	HasCatalogTaxonomy bool `json:"has_catalog_taxonomy"`
+	// 是否有二级目录
 
-	// 是否已经授权
-	IsAuthed bool `json:"is_authed"`
 }
 
 type CanEditTopicsResp struct {
