@@ -233,7 +233,7 @@ func (p *Service) ChangePassword(c context.Context, aid int64, arg *model.ArgCha
 	}
 
 	fmt.Println(salt)
-	fmt.Println(password)
+	fmt.Println(arg.Password)
 	fmt.Println(passwordHash)
 	if err = p.d.SetPassword(c, p.d.DB(), salt, passwordHash, aid); err != nil {
 		return
