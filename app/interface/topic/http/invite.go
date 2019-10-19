@@ -82,11 +82,11 @@ func processInvite(c *mars.Context) {
 // @Router /topic/list/member_fans [get]
 func memberFansList(c *mars.Context) {
 	var (
-		id     int64
-		err    error
-		offset int
-		limit  int
-		query  string
+		id    int64
+		err   error
+		pn    int
+		ps    int
+		query string
 	)
 
 	params := c.Request.Form
