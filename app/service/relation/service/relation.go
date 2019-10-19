@@ -22,6 +22,8 @@ func (p *Service) Unfollow(c context.Context, aid int64, fid int64) (err error) 
 		return
 	}
 
+	fmt.Printf("aid(%d) unfollow fid(%d)", aid, fid)
+
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
@@ -131,6 +133,7 @@ func (p *Service) Follow(c context.Context, aid int64, fid int64) (err error) {
 		err = ecode.RelFollowSelfBanned
 		return
 	}
+	fmt.Printf("aid(%d) follow fid(%d)", aid, fid)
 
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
@@ -152,8 +155,6 @@ func (p *Service) Follow(c context.Context, aid int64, fid int64) (err error) {
 	var followingAttr uint32
 	var fansAttr uint32
 	var friend bool
-
-	fmt.Printf("aid(%d) follow fid(%d)", aid, fid)
 
 	var statCurrent = &model.AccountStat{AccountID: aid}
 	var statTarget = &model.AccountStat{AccountID: fid}
