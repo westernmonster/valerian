@@ -118,6 +118,7 @@ func (p *Service) GetIDCertificationStatus(c context.Context) (status int, err e
 		item.IDCardBackPic = &material.Data.IdCardBackPic
 		item.FacePic = &material.Data.FacePic
 		item.EthnicGroup = &material.Data.EthnicGroup
+		item.UpdatedAt = time.Now().Unix()
 
 	}
 

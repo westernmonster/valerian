@@ -265,6 +265,15 @@ func (p *Service) GetProfile(c context.Context, aid int64) (profile *model.Profi
 		IsFollow:        isFollowing,
 	}
 
+	var idCert *model.IDCertification
+	if idCert, err = p.d.GetIDCertificationByCond(c, p.d.DB(), map[string]interface{}{}); err != nil {
+		return
+	} else if idCert == nil {
+		profile.IDCertStatus = model.IDCertificationUncommitted
+	} else {
+		profile.IDCertStatus = idCert.Status
+	}
+
 	var setting *model.SettingResp
 	if setting, err = p.getAccountSetting(c, p.d.DB(), aid); err != nil {
 		return

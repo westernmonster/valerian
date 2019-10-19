@@ -54,6 +54,14 @@ type Service struct {
 		GetDiscussion(c context.Context, id int64) (info *discuss.DiscussionInfo, err error)
 		GetRevise(c context.Context, id int64) (info *article.ReviseInfo, err error)
 
+		GetIDCertificationsByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.IDCertification, err error)
+		GetIDCertifications(c context.Context, node sqalx.Node) (items []*model.IDCertification, err error)
+		GetIDCertificationByID(c context.Context, node sqalx.Node, id int64) (item *model.IDCertification, err error)
+		GetIDCertificationByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (item *model.IDCertification, err error)
+		AddIDCertification(c context.Context, node sqalx.Node, item *model.IDCertification) (err error)
+		UpdateIDCertification(c context.Context, node sqalx.Node, item *model.IDCertification) (err error)
+		DelIDCertification(c context.Context, node sqalx.Node, id int64) (err error)
+
 		GetRecentViewsPaged(c context.Context, accountID int64, limit, offset int) (info *recent.RecentViewsResp, err error)
 
 		SetAccountCache(c context.Context, m *model.Account) (err error)

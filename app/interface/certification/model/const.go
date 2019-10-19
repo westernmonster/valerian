@@ -8,7 +8,8 @@ const (
 )
 
 const (
-	WorkCertificationInProgress = 0
-	WorkCertificationSuccess    = 1
-	WorkCertificationFailed     = 2
+	WorkCertificationUncommitted = -1
+	WorkCertificationInProgress  = 0
+	WorkCertificationSuccess     = 1
+	WorkCertificationFailed      = 2
 )
