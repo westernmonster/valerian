@@ -2,7 +2,6 @@ package http
 
 import (
 	"strconv"
-	"valerian/library/ecode"
 	"valerian/library/net/http/mars"
 )
 
@@ -50,8 +49,9 @@ func getActivites(c *mars.Context) {
 	case "article":
 		break
 	default:
-		c.JSON(nil, ecode.RequestErr)
-		return
+		aType = "all"
+		// c.JSON(nil, ecode.RequestErr)
+		// return
 	}
 
 	c.JSON(srv.GetUserMessagesPaged(c, aType, limit, offset))
