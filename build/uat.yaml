@@ -97,7 +97,7 @@ spec:
         backend:
           serviceName: interface-feedback
           servicePort: 8000
-      - path: /api/v1/feedbacks
+      - path: /api/v1/feedback
         backend:
           serviceName: interface-feedback
           servicePort: 8000

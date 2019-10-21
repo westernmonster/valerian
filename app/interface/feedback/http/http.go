@@ -34,7 +34,7 @@ func route(e *mars.Engine) {
 	g := e.Group("/api/v1")
 	{
 		g.GET("/list/feedback_types", feedbackTypes)
-		g.POST("/feedbacks", authSvc.User, addFeedback)
+		g.POST("/feedback", authSvc.User, addFeedback)
 	}
 }
 
