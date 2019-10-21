@@ -68,7 +68,7 @@ func (p *Service) GetDiscussion(c context.Context, discussionID int64) (item *mo
 	if item, err = p.d.GetDiscussionByID(c, p.d.DB(), discussionID); err != nil {
 		return
 	} else if item == nil {
-		log.For(c).Error(fmt.Sprintf("service.GetDiscussion, not exist. id(%+v)", id))
+		log.For(c).Error(fmt.Sprintf("service.GetDiscussion, not exist. id(%+v)", discussionID))
 		err = ecode.DiscussionNotExist
 		return
 	}
