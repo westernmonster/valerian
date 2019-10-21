@@ -41,6 +41,10 @@ type Service struct {
 		Unfollow(c context.Context, accountID, targetAccountID int64) (err error)
 		IsFollowing(c context.Context, aid, targetAccountID int64) (IsFollowing bool, err error)
 
+		AddImageURL(c context.Context, node sqalx.Node, item *model.ImageURL) (err error)
+		DelImageURLByCond(c context.Context, node sqalx.Node, targetType string, targetID int64) (err error)
+		GetImageUrlsByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.ImageURL, err error)
+
 		GetAccountStatByID(c context.Context, node sqalx.Node, aid int64) (item *model.AccountStat, err error)
 
 		GetAccountFeedPaged(c context.Context, accountID int64, limit, offset int) (info *feed.AccountFeedResp, err error)
