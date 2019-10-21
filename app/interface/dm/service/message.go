@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
+	"net/url"
 	"strconv"
 	"strings"
 	"valerian/app/interface/dm/model"
@@ -383,6 +384,31 @@ func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, o
 		}
 
 		resp.Items[i] = item
+	}
+
+	if resp.Paging.Prev, err = genURL("/api/v1/dm/list", url.Values{
+		"type":   []string{atype},
+		"limit":  []string{strconv.Itoa(limit)},
+		"offset": []string{strconv.Itoa(offset - limit)},
+	}); err != nil {
+		return
+	}
+
+	if resp.Paging.Next, err = genURL("/api/v1/dm/list", url.Values{
+		"type":   []string{atype},
+		"limit":  []string{strconv.Itoa(limit)},
+		"offset": []string{strconv.Itoa(offset + limit)},
+	}); err != nil {
+		return
+	}
+
+	if len(resp.Items) < limit {
+		resp.Paging.IsEnd = true
+		resp.Paging.Next = ""
+	}
+
+	if offset == 0 {
+		resp.Paging.Prev = ""
 	}
 
 	return
