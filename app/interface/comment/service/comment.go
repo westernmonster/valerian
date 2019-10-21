@@ -51,7 +51,7 @@ func (p *Service) GetCommentsPaged(c context.Context, resourceID int64, targetTy
 
 		if item.ChildCommentsCount > 0 {
 			children := make([]*model.Comment, 0)
-			if children, err = p.d.GetChildrenComments(c, p.d.DB(), v.ID, 2); err != nil {
+			if children, err = p.d.GetChildrenComments(c, p.d.DB(), v.ID, 3); err != nil {
 				return
 			}
 
