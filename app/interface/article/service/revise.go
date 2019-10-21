@@ -285,6 +285,8 @@ func (p *Service) GetRevise(c context.Context, reviseID int64) (resp *model.Revi
 		Title:     article.Title,
 		ArticleID: data.ArticleID,
 		Content:   data.Content,
+		CreatedAt: data.CreatedAt,
+		UpdatedAt: data.UpdatedAt,
 	}
 
 	resp.Creator = &model.Creator{
