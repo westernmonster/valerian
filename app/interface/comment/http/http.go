@@ -34,6 +34,7 @@ func route(e *mars.Engine) {
 	g := e.Group("/api/v1/comment")
 	{
 		g.POST("/add", authSvc.User, addComment)
+		g.GET("/get", authSvc.User, getComment)
 		g.POST("/del", authSvc.User, delComment)
 
 		g.GET("/list/comments", authSvc.User, commentList)
