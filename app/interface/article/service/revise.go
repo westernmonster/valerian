@@ -128,6 +128,22 @@ func (p *Service) AddRevise(c context.Context, arg *model.ArgAddRevise) (id int6
 	}
 	item.ContentText = doc.Text()
 
+	doc.Find("img").Each(func(i int, s *goquery.Selection) {
+		if url, exist := s.Attr("src"); exist {
+			u := &model.ImageURL{
+				ID:         gid.NewID(),
+				TargetType: model.TargetTypeRevise,
+				TargetID:   item.ID,
+				URL:        url,
+				CreatedAt:  time.Now().Unix(),
+				UpdatedAt:  time.Now().Unix(),
+			}
+			if err = p.d.AddImageURL(c, tx, u); err != nil {
+				return
+			}
+		}
+	})
+
 	if err = p.d.AddRevise(c, tx, item); err != nil {
 		return
 	}
@@ -190,6 +206,34 @@ func (p *Service) UpdateRevise(c context.Context, arg *model.ArgUpdateRevise) (e
 	}
 
 	item.Content = arg.Content
+
+	var doc *goquery.Document
+	doc, err = goquery.NewDocumentFromReader(strings.NewReader(item.Content))
+	if err != nil {
+		err = ecode.ParseHTMLFailed
+		return
+	}
+	item.ContentText = doc.Text()
+
+	if err = p.d.DelImageURLByCond(c, tx, model.TargetTypeArticle, item.ID); err != nil {
+		return
+	}
+
+	doc.Find("img").Each(func(i int, s *goquery.Selection) {
+		if url, exist := s.Attr("src"); exist {
+			u := &model.ImageURL{
+				ID:         gid.NewID(),
+				TargetType: model.TargetTypeArticle,
+				TargetID:   item.ID,
+				URL:        url,
+				CreatedAt:  time.Now().Unix(),
+				UpdatedAt:  time.Now().Unix(),
+			}
+			if err = p.d.AddImageURL(c, tx, u); err != nil {
+				return
+			}
+		}
+	})
 
 	if err = p.d.UpdateRevise(c, tx, item); err != nil {
 		return

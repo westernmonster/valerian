@@ -17,6 +17,9 @@ type IDao interface {
 	UpdateArticle(c context.Context, node sqalx.Node, item *model.Article) (err error)
 	DelArticle(c context.Context, node sqalx.Node, id int64) (err error)
 
+	AddImageURL(c context.Context, node sqalx.Node, item *model.ImageURL) (err error)
+	DelImageURLByCond(c context.Context, node sqalx.Node, targetType string, targetID int64) (err error)
+
 	GetArticleFilesByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.ArticleFile, err error)
 	GetArticleFiles(c context.Context, node sqalx.Node) (items []*model.ArticleFile, err error)
 	GetArticleFileByID(c context.Context, node sqalx.Node, id int64) (item *model.ArticleFile, err error)

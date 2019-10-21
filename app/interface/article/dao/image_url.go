@@ -145,3 +145,15 @@ func (p *Dao) DelImageURL(c context.Context, node sqalx.Node, id int64) (err err
 
 	return
 }
+
+// Delete logic delete a exist record
+func (p *Dao) DelImageURLByCond(c context.Context, node sqalx.Node, targetType string, targetID int64) (err error) {
+	sqlDelete := "UPDATE image_urls SET deleted=1 WHERE target_id=? AND target_type =?"
+
+	if _, err = node.ExecContext(c, sqlDelete, targetID, targetType); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.DelImageUrls err(%+v), target_id(%d) target_type(%s)", err, targetID, targetType))
+		return
+	}
+
+	return
+}
