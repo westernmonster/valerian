@@ -47,9 +47,12 @@ const (
 )
 
 const (
+	// 未关注
 	FollowStatusUnfollowed = 1
-	FollowStatusApproving  = 2
-	FollowStatusFollowed   = 3
+	// 审核中
+	FollowStatusApproving = 2
+	// 已关注
+	FollowStatusFollowed = 3
 )
 
 const (
@@ -59,8 +62,11 @@ const (
 )
 
 const (
+	// 审核请求已经提交
 	FollowRequestStatusCommited = 0
+	// 审核请求通过
 	FollowRequestStatusApproved = 1
+	// 审核请求拒绝
 	FollowRequestStatusRejected = 2
 )
 

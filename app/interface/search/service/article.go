@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/url"
 	"strconv"
 
@@ -51,9 +50,6 @@ func (p *Service) ArticleSearch(c context.Context, arg *model.ArticleSearchParam
 		if err != nil {
 			return
 		}
-		fmt.Println(acc)
-
-		fmt.Println(v)
 
 		if acc.ContentText != nil {
 			excerpt := xstr.Excerpt(*acc.ContentText)
