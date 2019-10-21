@@ -44,6 +44,7 @@ type IDao interface {
 	AddImageURL(c context.Context, node sqalx.Node, item *model.ImageURL) (err error)
 	UpdateImageURL(c context.Context, node sqalx.Node, item *model.ImageURL) (err error)
 	DelImageURL(c context.Context, node sqalx.Node, id int64) (err error)
+	DelImageURLByCond(c context.Context, node sqalx.Node, targetType string, targetID int64) (err error)
 
 	IncrAccountStat(c context.Context, node sqalx.Node, item *model.AccountStat) (err error)
 	IncrTopicStat(c context.Context, node sqalx.Node, item *model.TopicStat) (err error)

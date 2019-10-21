@@ -304,6 +304,22 @@ func (p *Service) AddDiscussion(c context.Context, arg *model.ArgAddDiscuss) (id
 
 	item.ContentText = doc.Text()
 
+	doc.Find("img").Each(func(i int, s *goquery.Selection) {
+		if url, exist := s.Attr("src"); exist {
+			u := &model.ImageURL{
+				ID:         gid.NewID(),
+				TargetType: model.TargetTypeDiscussion,
+				TargetID:   item.ID,
+				URL:        url,
+				CreatedAt:  time.Now().Unix(),
+				UpdatedAt:  time.Now().Unix(),
+			}
+			if err = p.d.AddImageURL(c, tx, u); err != nil {
+				return
+			}
+		}
+	})
+
 	if err = p.d.AddDiscussion(c, tx, item); err != nil {
 		return
 	}
@@ -414,6 +430,26 @@ func (p *Service) UpdateDiscussion(c context.Context, arg *model.ArgUpdateDiscus
 	}
 
 	item.ContentText = doc.Text()
+
+	if err = p.d.DelImageURLByCond(c, tx, model.TargetTypeDiscussion, item.ID); err != nil {
+		return
+	}
+
+	doc.Find("img").Each(func(i int, s *goquery.Selection) {
+		if url, exist := s.Attr("src"); exist {
+			u := &model.ImageURL{
+				ID:         gid.NewID(),
+				TargetType: model.TargetTypeDiscussion,
+				TargetID:   item.ID,
+				URL:        url,
+				CreatedAt:  time.Now().Unix(),
+				UpdatedAt:  time.Now().Unix(),
+			}
+			if err = p.d.AddImageURL(c, tx, u); err != nil {
+				return
+			}
+		}
+	})
 
 	if err = p.d.UpdateDiscussion(c, tx, item); err != nil {
 		return
