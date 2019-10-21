@@ -2,11 +2,13 @@ package service
 
 import (
 	"context"
+	"fmt"
 
 	account "valerian/app/service/account/api"
 	"valerian/app/service/discuss/api"
 	"valerian/app/service/discuss/model"
 	"valerian/library/ecode"
+	"valerian/library/log"
 )
 
 func (p *Service) GetAccountBaseInfo(c context.Context, aid int64) (info *account.BaseInfoReply, err error) {
@@ -66,6 +68,7 @@ func (p *Service) GetDiscussion(c context.Context, discussionID int64) (item *mo
 	if item, err = p.d.GetDiscussionByID(c, p.d.DB(), discussionID); err != nil {
 		return
 	} else if item == nil {
+		log.For(c).Error(fmt.Sprintf("service.GetDiscussion, not exist. id(%+v)", id))
 		err = ecode.DiscussionNotExist
 		return
 	}
