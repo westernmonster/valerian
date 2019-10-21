@@ -19,6 +19,23 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
+func (p *Service) GetReviseImageUrls(c context.Context, reviseID int64) (urls []string, err error) {
+	urls = make([]string, 0)
+	var imgs []*model.ImageURL
+	if imgs, err = p.d.GetImageUrlsByCond(c, p.d.DB(), map[string]interface{}{
+		"target_type": model.TargetTypeRevise,
+		"target_id":   reviseID,
+	}); err != nil {
+		return
+	}
+
+	for _, v := range imgs {
+		urls = append(urls, v.URL)
+	}
+
+	return
+}
+
 func (p *Service) GetArticleRevisesPaged(c context.Context, articleID int64, sort string, limit, offset int) (resp *model.ReviseListResp, err error) {
 	var data []*model.Revise
 	if data, err = p.d.GetArticleRevisesPaged(c, p.d.DB(), articleID, sort, limit, offset); err != nil {
@@ -48,6 +65,10 @@ func (p *Service) GetArticleRevisesPaged(c context.Context, articleID int64, sor
 		}
 		intro := account.GetIntroductionValue()
 		item.Creator.Introduction = &intro
+
+		if item.ImageUrls, err = p.GetReviseImageUrls(c, item.ID); err != nil {
+			return
+		}
 
 		item.CreatedAt = v.CreatedAt
 		item.UpdatedAt = v.UpdatedAt
