@@ -215,7 +215,7 @@ func (p *Service) UpdateRevise(c context.Context, arg *model.ArgUpdateRevise) (e
 	}
 	item.ContentText = doc.Text()
 
-	if err = p.d.DelImageURLByCond(c, tx, model.TargetTypeArticle, item.ID); err != nil {
+	if err = p.d.DelImageURLByCond(c, tx, model.TargetTypeRevise, item.ID); err != nil {
 		return
 	}
 
