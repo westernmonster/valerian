@@ -77,22 +77,22 @@ func (p *Service) Like(c context.Context, aid, targetID int64, targetType string
 
 	switch targetType {
 	case model.TargetTypeArticle:
-		if err = p.d.IncrArticleStat(c, tx, &model.ArticleStat{LikeCount: 1}); err != nil {
+		if err = p.d.IncrArticleStat(c, tx, &model.ArticleStat{ArticleID: targetID, LikeCount: 1}); err != nil {
 			return
 		}
 		break
 	case model.TargetTypeDiscussion:
-		if err = p.d.IncrDiscussionStat(c, tx, &model.DiscussionStat{LikeCount: 1}); err != nil {
+		if err = p.d.IncrDiscussionStat(c, tx, &model.DiscussionStat{DiscussionID: targetID, LikeCount: 1}); err != nil {
 			return
 		}
 		break
 	case model.TargetTypeRevise:
-		if err = p.d.IncrReviseStat(c, tx, &model.ReviseStat{LikeCount: 1}); err != nil {
+		if err = p.d.IncrReviseStat(c, tx, &model.ReviseStat{ReviseID: targetID, LikeCount: 1}); err != nil {
 			return
 		}
 		break
 	case model.TargetTypeComment:
-		if err = p.d.IncrCommentStat(c, tx, &model.CommentStat{LikeCount: 1}); err != nil {
+		if err = p.d.IncrCommentStat(c, tx, &model.CommentStat{CommentID: targetID, LikeCount: 1}); err != nil {
 			return
 		}
 		break
@@ -142,22 +142,22 @@ func (p *Service) cancelLike(c context.Context, node sqalx.Node, aid, targetID i
 
 	switch targetType {
 	case model.TargetTypeArticle:
-		if err = p.d.IncrArticleStat(c, tx, &model.ArticleStat{LikeCount: -1}); err != nil {
+		if err = p.d.IncrArticleStat(c, tx, &model.ArticleStat{ArticleID: targetID, LikeCount: -1}); err != nil {
 			return
 		}
 		break
 	case model.TargetTypeDiscussion:
-		if err = p.d.IncrDiscussionStat(c, tx, &model.DiscussionStat{LikeCount: -1}); err != nil {
+		if err = p.d.IncrDiscussionStat(c, tx, &model.DiscussionStat{DiscussionID: targetID, LikeCount: -1}); err != nil {
 			return
 		}
 		break
 	case model.TargetTypeRevise:
-		if err = p.d.IncrReviseStat(c, tx, &model.ReviseStat{LikeCount: -1}); err != nil {
+		if err = p.d.IncrReviseStat(c, tx, &model.ReviseStat{ReviseID: targetID, LikeCount: -1}); err != nil {
 			return
 		}
 		break
 	case model.TargetTypeComment:
-		if err = p.d.IncrCommentStat(c, tx, &model.CommentStat{LikeCount: -1}); err != nil {
+		if err = p.d.IncrCommentStat(c, tx, &model.CommentStat{CommentID: targetID, LikeCount: -1}); err != nil {
 			return
 		}
 		break
