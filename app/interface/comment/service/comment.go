@@ -183,6 +183,7 @@ func (p *Service) AddComment(c context.Context, arg *model.ArgAddComment) (id in
 		Content:    arg.Content,
 		TargetType: arg.TargetType,
 		ResourceID: arg.TargetID,
+		OwnerID:    arg.TargetID,
 		CreatedBy:  aid,
 		CreatedAt:  time.Now().Unix(),
 		UpdatedAt:  time.Now().Unix(),

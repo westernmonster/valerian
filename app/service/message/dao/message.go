@@ -209,3 +209,14 @@ func (p *Dao) DelMessage(c context.Context, node sqalx.Node, id int64) (err erro
 
 	return
 }
+
+func (p *Dao) DelMessageByCond(c context.Context, node sqalx.Node, targetType string, targetID int64) (err error) {
+	sqlDelete := "UPDATE messages SET deleted=1 WHERE target_type=? AND target_id=?"
+
+	if _, err = node.ExecContext(c, sqlDelete, targetType, targetID); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.DelMessages err(%+v), target_type(%s) traget_id(%d)", err, targetType, targetID))
+		return
+	}
+
+	return
+}
