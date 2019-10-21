@@ -7,14 +7,17 @@ import (
 
 	"valerian/app/service/fav/conf"
 	"valerian/app/service/fav/dao"
+	"valerian/app/service/feed/def"
 	"valerian/library/conf/env"
 	"valerian/library/log"
+	"valerian/library/mq"
 )
 
 // Service struct of service
 type Service struct {
 	c      *conf.Config
 	d      IDao
+	mq     *mq.MessageQueue
 	missch chan func()
 }
 
@@ -23,8 +26,30 @@ func New(c *conf.Config) (s *Service) {
 	s = &Service{
 		c:      c,
 		d:      dao.New(c),
+		mq:     mq.New(env.Hostname, c.Nats),
 		missch: make(chan func(), 1024),
 	}
+
+	if err := s.mq.QueueSubscribe(def.BusArticleFaved, "fav", s.onArticleFaved); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusArticleFaved, "fav")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusTopicFaved, "fav", s.onTopicFaved); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusTopicFaved, "fav")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusDiscussionFaved, "fav", s.onDiscussionFaved); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusDiscussionFaved, "fav")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusReviseFaved, "fav", s.onReviseFaved); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusReviseFaved, "fav")
+		panic(err)
+	}
+
 	go s.cacheproc()
 	return
 }
