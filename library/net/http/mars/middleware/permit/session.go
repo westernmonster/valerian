@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/hex"
+	"fmt"
 	"net/http"
 	"net/url"
 	"sync"
@@ -12,6 +13,10 @@ import (
 	"valerian/library/log"
 	"valerian/library/net/http/mars"
 )
+
+func sessionKey(sid string) string {
+	return fmt.Sprintf("sess_%d", sid)
+}
 
 // Session http session.
 type Session struct {
@@ -62,7 +67,7 @@ func (s *SessionManager) SessionRelease(ctx *mars.Context, sv *Session) {
 	// set mc
 	conn := s.mc.Get(ctx)
 	defer conn.Close()
-	key := sv.Sid
+	key := sessionKey(sv.Sid)
 	item := &memcache.Item{
 		Key:        key,
 		Object:     sv,
@@ -70,7 +75,7 @@ func (s *SessionManager) SessionRelease(ctx *mars.Context, sv *Session) {
 		Expiration: int32(s.c.CookieLifeTime),
 	}
 	if err := conn.Set(item); err != nil {
-		log.Error("SessionManager set error(%s,%v)", key, err)
+		log.For(ctx).Error(fmt.Sprintf("SessionManager set error(%s,%v)", key, err))
 	}
 }
 
@@ -78,8 +83,8 @@ func (s *SessionManager) SessionRelease(ctx *mars.Context, sv *Session) {
 func (s *SessionManager) SessionDestroy(ctx *mars.Context, sv *Session) {
 	conn := s.mc.Get(ctx)
 	defer conn.Close()
-	if err := conn.Delete(sv.Sid); err != nil {
-		log.Error("SessionManager delete error(%s,%v)", sv.Sid, err)
+	if err := conn.Delete(sessionKey(sv.Sid)); err != nil {
+		log.For(ctx).Error(fmt.Sprintf("SessionManager delete error(%s,%v)", sv.Sid, err))
 	}
 }
 
@@ -89,21 +94,22 @@ func (s *SessionManager) cache(ctx *mars.Context) (res *Session, err error) {
 		return
 	}
 	sid := ck.Value
+	key := sessionKey(sid)
 	// get from cache
 	conn := s.mc.Get(ctx)
 	defer conn.Close()
-	r, err := conn.Get(sid)
+	r, err := conn.Get(key)
 	if err != nil {
 		if err == memcache.ErrNotFound {
 			err = nil
 			return
 		}
-		log.Error("conn.Get(%s) error(%v)", sid, err)
+		log.For(ctx).Error(fmt.Sprintf("conn.Get(%s) error(%v)", sid, err))
 		return
 	}
 	res = &Session{}
 	if err = conn.Scan(r, res); err != nil {
-		log.Error("conn.Scan(%v) error(%v)", string(r.Value), err)
+		log.For(ctx).Error(fmt.Sprintf("conn.Scan(%v) error(%v)", string(r.Value), err))
 	}
 	return
 }
@@ -127,10 +133,10 @@ func (s *SessionManager) setHTTPCookie(ctx *mars.Context, name, value string) {
 		Value:    url.QueryEscape(value),
 		Path:     "/",
 		HttpOnly: true,
-		Domain:   _defaultDomain,
+		Domain:   s.c.Domain,
 	}
-	cookie.MaxAge = _defaultCookieLifeTime
-	cookie.Expires = time.Now().Add(time.Duration(_defaultCookieLifeTime) * time.Second)
+	cookie.MaxAge = s.c.CookieLifeTime
+	cookie.Expires = time.Now().Add(time.Duration(s.c.CookieLifeTime) * time.Second)
 	http.SetCookie(ctx.Writer, cookie)
 }
 

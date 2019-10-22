@@ -38,10 +38,10 @@ const (
 
 	Aid = "aid"
 
-	// Uid
-	// 内网manager平台的用户id user_id
+	Username = "username"
 
-	Mid = "mid"
+	// 内网manager平台的用户id
+	Uid = "uid"
 
 	// Device
 	Device = "device"

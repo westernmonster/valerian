@@ -130,5 +130,6 @@ var (
 	DraftCategoryNotExist         = add(90029) // 草稿分类不存在
 	DraftNotExist                 = add(90030) // 草稿不存在
 	ArticleHistoryNotExist        = add(90031) // 未找到该记录
+	AdminNotExist                 = add(90032) // 管理员不存在
 
 )
