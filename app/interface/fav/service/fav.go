@@ -19,7 +19,7 @@ func (p *Service) FromDiscussion(v *discuss.DiscussionInfo) (item *model.TargetD
 	item = &model.TargetDiscuss{
 		ID:           v.ID,
 		Excerpt:      v.Excerpt,
-		ImageUrls:    v.ImageUrls,
+		ImageUrls:    make([]string, 0),
 		CommentCount: int(v.Stat.CommentCount),
 		LikeCount:    int(v.Stat.LikeCount),
 		DislikeCount: int(v.Stat.DislikeCount),
@@ -30,11 +30,13 @@ func (p *Service) FromDiscussion(v *discuss.DiscussionInfo) (item *model.TargetD
 		},
 	}
 
-	title := v.GetTitleValue()
-	item.Title = &title
+	item.Title = v.GetTitleValue()
 
-	intro := v.Creator.GetIntroductionValue()
-	item.Creator.Introduction = &intro
+	if v.ImageUrls != nil {
+		item.ImageUrls = v.ImageUrls
+	}
+
+	item.Creator.Introduction = v.Creator.GetIntroductionValue()
 	return
 }
 
@@ -43,7 +45,7 @@ func (p *Service) FromRevise(v *article.ReviseInfo) (item *model.TargetRevise) {
 		ID:           v.ID,
 		Title:        v.Title,
 		Excerpt:      v.Excerpt,
-		ImageUrls:    v.ImageUrls,
+		ImageUrls:    make([]string, 0),
 		CommentCount: int(v.Stat.CommentCount),
 		LikeCount:    int(v.Stat.LikeCount),
 		DislikeCount: int(v.Stat.DislikeCount),
@@ -53,9 +55,11 @@ func (p *Service) FromRevise(v *article.ReviseInfo) (item *model.TargetRevise) {
 			UserName: v.Creator.UserName,
 		},
 	}
+	if v.ImageUrls != nil {
+		item.ImageUrls = v.ImageUrls
+	}
 
-	intro := v.Creator.GetIntroductionValue()
-	item.Creator.Introduction = &intro
+	item.Creator.Introduction = v.Creator.GetIntroductionValue()
 	return
 }
 
@@ -64,7 +68,7 @@ func (p *Service) FromArticle(v *article.ArticleInfo) (item *model.TargetArticle
 		ID:           v.ID,
 		Title:        v.Title,
 		Excerpt:      v.Excerpt,
-		ImageUrls:    v.ImageUrls,
+		ImageUrls:    make([]string, 0),
 		ReviseCount:  int(v.Stat.ReviseCount),
 		CommentCount: int(v.Stat.CommentCount),
 		LikeCount:    int(v.Stat.LikeCount),
@@ -75,9 +79,11 @@ func (p *Service) FromArticle(v *article.ArticleInfo) (item *model.TargetArticle
 			UserName: v.Creator.UserName,
 		},
 	}
+	if v.ImageUrls != nil {
+		item.ImageUrls = v.ImageUrls
+	}
 
-	intro := v.Creator.GetIntroductionValue()
-	item.Creator.Introduction = &intro
+	item.Creator.Introduction = v.Creator.GetIntroductionValue()
 	return
 }
 
@@ -96,11 +102,9 @@ func (p *Service) FromTopic(v *topic.TopicInfo) (item *model.TargetTopic) {
 		},
 	}
 
-	intro := v.Creator.GetIntroductionValue()
-	item.Creator.Introduction = &intro
+	item.Creator.Introduction = v.Creator.GetIntroductionValue()
 
-	avatar := v.GetAvatarValue()
-	item.Avatar = &avatar
+	item.Avatar = v.GetAvatarValue()
 	return
 }
 
