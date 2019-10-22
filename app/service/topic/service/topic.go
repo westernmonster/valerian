@@ -2,12 +2,14 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"time"
 	account "valerian/app/service/account/api"
 	"valerian/app/service/topic/model"
 	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
 	"valerian/library/gid"
+	"valerian/library/log"
 )
 
 func (p *Service) GetBelongsTopicIDs(c context.Context, aid int64) (ids []int64, err error) {
@@ -52,6 +54,7 @@ func (p *Service) getTopic(c context.Context, node sqalx.Node, topicID int64) (i
 	if item, err = p.d.GetTopicByID(c, node, topicID); err != nil {
 		return
 	} else if item == nil {
+		log.For(c).Error(fmt.Sprintf("service.getTopic not exist. id(%d)", topicID))
 		return nil, ecode.TopicNotExist
 	}
 
