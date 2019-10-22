@@ -50,7 +50,19 @@ func recent(c *mars.Context) {
 		return
 	}
 
-	c.JSON(srv.GetMemberRecentPubsPaged(c, id, params.Get("query"), limit, offset))
+	aType := params.Get("type")
+	switch aType {
+	case "all":
+	case "revise":
+	case "article":
+	case "discussion":
+		break
+	default:
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+
+	c.JSON(srv.GetMemberRecentPubsPaged(c, id, aType, limit, offset))
 }
 
 // @Summary 获取用户资料

@@ -127,7 +127,7 @@ func (p *Service) FromTopic(v *topic.TopicInfo) (item *model.TargetTopic) {
 
 func (p *Service) GetMemberRecentPubsPaged(c context.Context, aid int64, atype string, limit, offset int) (resp *model.RecentPublishResp, err error) {
 	var data *recent.RecentPubsResp
-	if data, err = p.d.GetRecentPubsPaged(c, aid, limit, offset); err != nil {
+	if data, err = p.d.GetRecentPubsPaged(c, aid, atype, limit, offset); err != nil {
 		return
 	}
 

@@ -51,7 +51,7 @@ type Service struct {
 		GetUserDiscussionsPaged(c context.Context, aid int64, limit, offset int) (resp *discuss.UserDiscussionsResp, err error)
 		GetUserTopicsPaged(c context.Context, aid int64, limit, offset int) (resp *topic.UserTopicsResp, err error)
 		GetUserArticlesPaged(c context.Context, aid int64, limit, offset int) (resp *article.UserArticlesResp, err error)
-		GetRecentPubsPaged(c context.Context, accountID int64, limit, offset int) (info *recent.RecentPubsResp, err error)
+		GetRecentPubsPaged(c context.Context, aid int64, targetType string, limit, offset int) (info *recent.RecentPubsResp, err error)
 
 		GetArticle(c context.Context, id int64) (info *article.ArticleInfo, err error)
 		GetTopic(c context.Context, id int64) (resp *topic.TopicInfo, err error)
@@ -65,8 +65,6 @@ type Service struct {
 		AddIDCertification(c context.Context, node sqalx.Node, item *model.IDCertification) (err error)
 		UpdateIDCertification(c context.Context, node sqalx.Node, item *model.IDCertification) (err error)
 		DelIDCertification(c context.Context, node sqalx.Node, id int64) (err error)
-
-		GetRecentViewsPaged(c context.Context, accountID int64, limit, offset int) (info *recent.RecentViewsResp, err error)
 
 		SetAccountCache(c context.Context, m *model.Account) (err error)
 		AccountCache(c context.Context, accountID int64) (m *model.Account, err error)
