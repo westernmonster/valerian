@@ -39,6 +39,7 @@ message RecentPubsReq {
     int64 AccountID = 1 [(gogoproto.jsontag) = "aid"];
     int32 Limit = 2 [(gogoproto.jsontag) = "limit"];
     int32 Offset = 3 [(gogoproto.jsontag) = "offset"];
+    string TargetType = 4 [(gogoproto.jsontag) = "target_type"];
 }
 
 message RecentPubsResp {

@@ -21,7 +21,7 @@ type IDao interface {
 	DelRecentView(c context.Context, node sqalx.Node, id int64) (err error)
 	DelRecentViewByCond(c context.Context, node sqalx.Node, targetType string, targetID int64) (err error)
 
-	GetUserRecentPubsPaged(c context.Context, node sqalx.Node, aid int64, limit, offset int) (items []*model.RecentPub, err error)
+	GetUserRecentPubsPaged(c context.Context, node sqalx.Node, aid int64, targetType string, limit, offset int) (items []*model.RecentPub, err error)
 	GetRecentPubsByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.RecentPub, err error)
 	GetRecentPubs(c context.Context, node sqalx.Node) (items []*model.RecentPub, err error)
 	GetRecentPubByID(c context.Context, node sqalx.Node, id int64) (item *model.RecentPub, err error)

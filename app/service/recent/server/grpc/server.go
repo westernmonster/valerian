@@ -39,7 +39,7 @@ type server struct {
 }
 
 func (s *server) GetRecentPubsPaged(c context.Context, req *api.RecentPubsReq) (*api.RecentPubsResp, error) {
-	items, err := s.svr.GetUserRecentPubsPaged(c, req.AccountID, int(req.Limit), int(req.Offset))
+	items, err := s.svr.GetUserRecentPubsPaged(c, req.AccountID, req.TargetType, int(req.Limit), int(req.Offset))
 	if err != nil {
 		return nil, err
 	}
