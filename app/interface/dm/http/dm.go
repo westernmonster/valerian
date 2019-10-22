@@ -2,6 +2,8 @@ package http
 
 import (
 	"strconv"
+	"valerian/app/interface/dm/model"
+	"valerian/library/ecode"
 	"valerian/library/net/http/mars"
 )
 
@@ -71,6 +73,7 @@ func getActivites(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /dm/mark_all_read [post]
 func markAllRead(c *mars.Context) {
+	c.JSON(nil, srv.MarkAllRead(c))
 }
 
 // @Summary 设置单条消息已读
@@ -88,4 +91,15 @@ func markAllRead(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /dm/mark_read [post]
 func markRead(c *mars.Context) {
+	arg := new(model.ArgMarkRead)
+	if e := c.Bind(arg); e != nil {
+		return
+	}
+
+	if e := arg.Validate(); e != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+
+	c.JSON(nil, srv.MarkRead(c, arg.ID))
 }
