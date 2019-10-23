@@ -20,11 +20,11 @@ type TopicResp struct {
 
 	// 头像
 	// 必须为URL
-	Avatar *string `json:"avatar,omitempty" extensions:"x-nullable,x-abc=def"`
+	Avatar string `json:"avatar,omitempty" extensions:"x-nullable,x-abc=def"`
 
 	// 背景图
 	// 必须为URL
-	Bg *string `json:"bg"`
+	Bg string `json:"bg"`
 
 	// 名称
 	Name string `json:"name"`
@@ -113,7 +113,7 @@ type TopicItem struct {
 	Introduction string `json:"introduction"`
 
 	// 封面
-	Avatar *string `json:"avatar,omitempty" extensions:"x-nullable,x-abc=def"`
+	Avatar string `json:"avatar,omitempty" extensions:"x-nullable,x-abc=def"`
 
 	// 成员数
 	MemberCount int `json:"member_count"`

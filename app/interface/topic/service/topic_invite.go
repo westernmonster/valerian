@@ -54,8 +54,8 @@ func (p *Service) GetMemberFansList(c context.Context, topicID int64, query stri
 			WorkCert:     *t.WorkCert,
 			IsOrg:        *t.IsOrg,
 			IsVIP:        *t.IsVIP,
-			Introduction: t.Introduction,
-			Gender:       t.Gender,
+			Introduction: *t.Introduction,
+			Gender:       *t.Gender,
 		}
 
 		var stat *model.AccountStat

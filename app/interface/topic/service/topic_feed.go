@@ -22,14 +22,13 @@ func (p *Service) FromArticle(v *article.ArticleInfo) (item *model.TargetArticle
 		LikeCount:    int(v.Stat.LikeCount),
 		DislikeCount: int(v.Stat.DislikeCount),
 		Creator: &model.Creator{
-			ID:       v.Creator.ID,
-			Avatar:   v.Creator.Avatar,
-			UserName: v.Creator.UserName,
+			ID:           v.Creator.ID,
+			Avatar:       v.Creator.Avatar,
+			UserName:     v.Creator.UserName,
+			Introduction: v.Creator.Introduction,
 		},
 	}
 
-	intro := v.Creator.GetIntroductionValue()
-	item.Creator.Introduction = &intro
 	return
 }
 
@@ -66,13 +65,11 @@ func (p *Service) GetTopicFeedPaged(c context.Context, topicID int64, limit, off
 		}
 
 		item.Source.Actor = &model.Actor{
-			ID:     account.ID,
-			Avatar: account.Avatar,
-			Name:   account.UserName,
+			ID:           account.ID,
+			Avatar:       account.Avatar,
+			Name:         account.UserName,
+			Introduction: account.Introduction,
 		}
-
-		intro := account.GetIntroductionValue()
-		item.Source.Actor.Introduction = &intro
 
 		if v.TargetType == model.TargetTypeArticle {
 			var article *article.ArticleInfo

@@ -43,7 +43,7 @@ type Actor struct {
 	// 用户名
 	Name string `json:"name"`
 
-	Introduction *string `json:"introduction"`
+	Introduction string `json:"introduction"`
 }
 
 type FeedTarget struct {
@@ -93,7 +93,7 @@ type TargetDiscussion struct {
 	// ID
 	ID int64 `json:"id,string" swaggertype:"string"`
 	// 标题
-	Title *string `json:"title"`
+	Title string `json:"title"`
 	// 内容
 	Excerpt string `json:"excerpt"`
 

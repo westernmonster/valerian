@@ -238,7 +238,7 @@ func (p *Service) GetUserCanEditTopics(c context.Context, query string, pn, ps i
 			Name:           *t.Name,
 			Introduction:   *t.Introduction,
 			EditPermission: *t.EditPermission,
-			Avatar:         t.Avatar,
+			Avatar:         *t.Avatar,
 		}
 
 		var stat *model.TopicStat

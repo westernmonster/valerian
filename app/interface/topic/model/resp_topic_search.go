@@ -10,7 +10,7 @@ type CanEditTopicItem struct {
 	Introduction string `json:"introduction"`
 
 	// 封面
-	Avatar *string `json:"avatar,omitempty"`
+	Avatar string `json:"avatar,omitempty"`
 
 	// 成员数
 	MemberCount int `json:"member_count"`
@@ -43,7 +43,7 @@ type Creator struct {
 	Avatar string `json:"avatar"`
 
 	// 自我介绍
-	Introduction *string `json:"introduction,omitempty"`
+	Introduction string `json:"introduction,omitempty"`
 }
 
 type JoinedTopicItem struct {
@@ -56,7 +56,7 @@ type JoinedTopicItem struct {
 	Introduction string `json:"introduction"`
 
 	// 封面
-	Avatar *string `json:"avatar,omitempty"`
+	Avatar string `json:"avatar,omitempty"`
 
 	// 成员数
 	MemberCount int `json:"member_count"`

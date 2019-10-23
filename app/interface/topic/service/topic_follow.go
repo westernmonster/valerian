@@ -159,7 +159,7 @@ func (p *Service) FollowedTopics(c context.Context, query string, pn, ps int) (r
 			Name:           *t.Name,
 			Introduction:   *t.Introduction,
 			EditPermission: *t.EditPermission,
-			Avatar:         t.Avatar,
+			Avatar:         *t.Avatar,
 		}
 
 		var stat *model.TopicStat

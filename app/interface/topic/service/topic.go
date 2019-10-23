@@ -49,8 +49,6 @@ func (p *Service) CreateTopic(c context.Context, arg *model.ArgCreateTopic) (top
 	item := &model.Topic{
 		ID:              gid.NewID(),
 		Name:            arg.Name,
-		Avatar:          arg.Avatar,
-		Bg:              arg.Bg,
 		Introduction:    arg.Introduction,
 		TopicHome:       model.TopicHomeFeed,
 		IsPrivate:       false,
@@ -63,6 +61,14 @@ func (p *Service) CreateTopic(c context.Context, arg *model.ArgCreateTopic) (top
 		CreatedBy:       aid,
 		CreatedAt:       time.Now().Unix(),
 		UpdatedAt:       time.Now().Unix(),
+	}
+
+	if arg.Avatar != nil {
+		item.Avatar = *arg.Avatar
+	}
+
+	if arg.Bg != nil {
+		item.Bg = *arg.Bg
 	}
 
 	if err = p.d.AddTopic(c, tx, item); err != nil {
@@ -165,11 +171,11 @@ func (p *Service) updateTopic(c context.Context, node sqalx.Node, aid int64, arg
 
 	if isAdmin {
 		if arg.Avatar != nil && *arg.Avatar != "" {
-			t.Avatar = arg.Avatar
+			t.Avatar = *arg.Avatar
 		}
 
 		if arg.Bg != nil && *arg.Bg != "" {
-			t.Bg = arg.Bg
+			t.Bg = *arg.Bg
 		}
 
 		if arg.Name != nil && *arg.Name != "" {

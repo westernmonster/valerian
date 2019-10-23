@@ -39,8 +39,8 @@ type TopicStat struct {
 type Topic struct {
 	ID              int64         `db:"id" json:"id,string"`                        // ID ID
 	Name            string        `db:"name" json:"name"`                           // Name 话题名
-	Avatar          *string       `db:"avatar" json:"avatar,omitempty"`             // Avatar 话题头像
-	Bg              *string       `db:"bg" json:"bg,omitempty"`                     // Bg 背景图
+	Avatar          string        `db:"avatar" json:"avatar,omitempty"`             // Avatar 话题头像
+	Bg              string        `db:"bg" json:"bg,omitempty"`                     // Bg 背景图
 	Introduction    string        `db:"introduction" json:"introduction"`           // Introduction 话题简介
 	AllowDiscuss    types.BitBool `db:"allow_discuss" json:"allow_discuss"`         // AllowDiscuss 允许讨论
 	AllowChat       types.BitBool `db:"allow_chat" json:"allow_chat"`               // AllowChat 开启群聊

@@ -12,7 +12,7 @@ type AuthTopicResp struct {
 
 	// 封面图
 	// 必须为URL
-	Avatar *string `json:"avatar"`
+	Avatar string `json:"avatar"`
 
 	// 名称
 	Name string `json:"name"`
