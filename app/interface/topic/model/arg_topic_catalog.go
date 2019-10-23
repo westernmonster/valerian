@@ -263,7 +263,7 @@ type ArgTopicCatalog struct {
 	Type string `json:"type"`
 
 	// 引用ID
-	RefID *int64 `json:"ref_id,string,omitempty" swaggertype:"string"`
+	RefID int64 `json:"ref_id,string,omitempty" swaggertype:"string"`
 }
 
 func (p *ArgTopicCatalog) Validate() error {

@@ -78,7 +78,7 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 		switch lvl1.Type {
 		case model.TopicCatalogArticle:
 			var article *article.ArticleInfo
-			if article, err = p.d.GetArticle(c, *lvl1.RefID); err != nil {
+			if article, err = p.d.GetArticle(c, lvl1.RefID); err != nil {
 				return
 			}
 			parent.Article = p.FromArticle(article)
@@ -107,7 +107,7 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 			switch lvl2.Type {
 			case model.TopicCatalogArticle:
 				var article *article.ArticleInfo
-				if article, err = p.d.GetArticle(c, *lvl2.RefID); err != nil {
+				if article, err = p.d.GetArticle(c, lvl2.RefID); err != nil {
 					return
 				}
 				child.Article = p.FromArticle(article)
@@ -135,7 +135,7 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 				switch lvl3.Type {
 				case model.TopicCatalogArticle:
 					var article *article.ArticleInfo
-					if article, err = p.d.GetArticle(c, *lvl3.RefID); err != nil {
+					if article, err = p.d.GetArticle(c, lvl3.RefID); err != nil {
 						return
 					}
 					subItem.Article = p.FromArticle(article)
@@ -305,7 +305,7 @@ func (p *Service) SaveCatalogs(c context.Context, req *model.ArgSaveTopicCatalog
 
 			if v.Type == model.TopicCatalogArticle {
 				p.addCache(func() {
-					p.onCatalogArticleAdded(c, *v.RefID, req.TopicID, aid, time.Now().Unix())
+					p.onCatalogArticleAdded(c, v.RefID, req.TopicID, aid, time.Now().Unix())
 				})
 			}
 			continue
@@ -372,7 +372,7 @@ func (p *Service) SaveCatalogs(c context.Context, req *model.ArgSaveTopicCatalog
 
 		if v.Item.Type == model.TopicCatalogArticle {
 			p.addCache(func() {
-				p.onCatalogArticleDeleted(c, *v.Item.RefID, req.TopicID, aid, time.Now().Unix())
+				p.onCatalogArticleDeleted(c, v.Item.RefID, req.TopicID, aid, time.Now().Unix())
 			})
 		}
 	}
