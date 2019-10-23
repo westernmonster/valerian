@@ -17,6 +17,10 @@ func (p *Service) GetArticle(c context.Context, articleID int64) (item *model.Ar
 	return p.getArticle(c, p.d.DB(), articleID)
 }
 
+func (p *Service) GetAllArticles(c context.Context) (items []*model.Article, err error) {
+	return p.d.GetArticles(c, p.d.DB())
+}
+
 func (p *Service) getArticle(c context.Context, node sqalx.Node, articleID int64) (item *model.Article, err error) {
 	var addCache = true
 	if item, err = p.d.ArticleCache(c, articleID); err != nil {

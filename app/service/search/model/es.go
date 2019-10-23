@@ -1,99 +1,5 @@
 package model
 
-import (
-	"encoding/json"
-
-	validation "github.com/go-ozzo/ozzo-validation"
-)
-
-type ES struct {
-	Addr string
-}
-
-type Page struct {
-	// 页码
-	Pn int `json:"num"`
-	// 页大小
-	Ps int `json:"size"`
-	// 统计数量
-	Total int64 `json:"total"`
-}
-
-type SearchResult struct {
-	Order  string            `json:"order"`
-	Sort   string            `json:"sort"`
-	Result []json.RawMessage `json:"data"`
-	Page   *Page             `json:"page"`
-	Debug  string            `json:"debug"`
-}
-
-type BasicSearchParams struct {
-	// 搜索关键词
-	KW string `json:"kw"`
-	// 搜索关键词所用的字段
-	KwFields []string `json:"kw_fields"`
-	// 排序的顺序
-	// desc, asc
-	Order []string `json:"order"`
-	// 排序的字段
-	Sort []string `json:"sort"`
-	// 页码
-	Pn int `json:"pn"`
-	// 每页大小
-	Ps int `json:"ps"`
-	// 是否输出Debug信息
-	Debug bool `json:"debug"`
-	// 输出的字段
-	Source []string `json:"source"`
-}
-
-func (p *BasicSearchParams) Validate() error {
-	return validation.ValidateStruct(
-		p,
-		validation.Field(&p.Pn, validation.Required),
-		validation.Field(&p.Ps, validation.Required),
-	)
-}
-
-type ArticleSearchParams struct {
-	Bsp *BasicSearchParams
-}
-
-func (p *ArticleSearchParams) Validate() error {
-	return validation.ValidateStruct(
-		p,
-		validation.Field(&p.Bsp),
-	)
-}
-
-type AccountSearchParams struct {
-	Bsp *BasicSearchParams
-}
-
-func (p *AccountSearchParams) Validate() error {
-	return validation.ValidateStruct(
-		p,
-		validation.Field(&p.Bsp),
-	)
-}
-
-type TopicSearchParams struct {
-	Bsp *BasicSearchParams
-	// Query string `json:"query"`
-}
-
-func (p *TopicSearchParams) Validate() error {
-	return validation.ValidateStruct(
-		p,
-		validation.Field(&p.Bsp),
-	)
-}
-
-type DiscussSearchParams struct {
-	Bsp *BasicSearchParams
-	// Query string `json:"query"`
-}
-
 type ESAccount struct {
 	// ID
 	ID int64 `json:"id,string,omitempty" swaggertype:"string"`
@@ -123,7 +29,7 @@ type ESAccount struct {
 	BirthDay *int `json:"birth_day,omitempty"`
 
 	// 地区
-	Location *int64 `json:"location,omitempty,string" swaggertype:"string"`
+	Location *int64 `json:"location,omitempty" swaggertype:"string"`
 
 	// 自我介绍
 	Introduction *string `json:"introduction,omitempty"`
@@ -147,19 +53,15 @@ type ESAccount struct {
 	IsVIP *bool `json:"is_vip,omitempty"`
 
 	// 创建时间
-	CreatedAt *int64 `json:"created_at,omitempty"`
+	CreatedAt *int64 `json:"created_at,omitempty" swaggertype:"string"`
 
 	// 更新时间
-	UpdatedAt *int64 `json:"updated_at,omitempty"`
-}
+	UpdatedAt *int64 `json:"updated_at,omitempty"  swaggertype:"string"`
 
-type AccountSearchResult struct {
-	// 会员数据
-	Data []*ESAccount `json:"data"`
-	// 分页
-	Page *Paging `json:"paging"`
-	// 调试
-	Debug string `json:"debug"`
+	// 关注数
+	FollowingCount int `json:"following_count"`
+	// 粉丝数
+	FansCount int `json:"fans_count"`
 }
 
 type ESCreator struct {
@@ -201,54 +103,54 @@ type ESTopic struct {
 	// CreatedBy 创建人
 	Creator *ESCreator `json:"creator,omitempty"`
 	// CreatedAt 创建时间
-	CreatedAt *int64 `json:"created_at"`
+	CreatedAt *int64 `json:"created_at,omitempty"`
 	// UpdatedAt 更新时间
-	UpdatedAt *int64 `json:"updated_at"`
-}
+	UpdatedAt *int64 `json:"updated_at,omitempty"`
 
-type TopicSearchResult struct {
-	// 会员数据
-	Data []*ESTopic `json:"data"`
-	// 分页
-	Page *Paging `json:"paging"`
-	// 调试
-	Debug string `json:"debug"`
+	// 成员数
+	MemberCount int `json:"member_count"`
+
+	// 成员数
+	ArticleCount int `json:"article_count"`
+
+	// 讨论数
+	DiscussionCount int `json:"discussion_count"`
 }
 
 type ESArticle struct {
 	ID int64 `json:"id,string" swaggertype:"string"`
 
 	// 标题
-	Title *string `json:"title"`
+	Title *string `json:"title,omitempty"`
 
 	// 内容
-	Content *string `json:"content"`
+	ContentText *string `json:"content_text,omitempty"`
 
 	// 内容
-	ContentText *string `json:"content_text"`
+	Excerpt *string `json:"excerpt,omitempty"`
 
 	//  禁止补充
-	DisableRevise *bool `json:"disable_revise"`
+	DisableRevise *bool `json:"disable_revise,omitempty"`
 
 	//  禁止评论
-	DisableComment *bool `json:"disable_comment"`
+	DisableComment *bool `json:"disable_comment,omitempty"`
 
-	Creator *ESCreator `json:"creator"`
+	Creator *ESCreator `json:"creator,omitempty"`
 
 	// 创建时间
 	CreatedAt *int64 `json:"created_at,omitempty"`
 
 	// 更新时间
 	UpdatedAt *int64 `json:"updated_at,omitempty"`
-}
 
-type ArticleSearchResult struct {
-	// 会员数据
-	Data []*ESArticle `json:"data"`
-	// 分页
-	Page *Page `json:"paging"`
-	// 调试
-	Debug string `json:"debug"`
+	// 喜欢数
+	LikeCount int `json:"like_count"`
+	// 反对数
+	DislikeCount int `json:"dislike_count"`
+	// 补充个数
+	ReviseCount int `json:"revise_count"`
+	// 评论数
+	CommentCount int `json:"comment_count"`
 }
 
 type ESDiscussionTopic struct {
@@ -268,13 +170,13 @@ type ESDiscussion struct {
 	ID int64 `json:"id,string" swaggertype:"string"`
 
 	// 标题
-	Title *string `json:"title"`
+	Title *string `json:"title,omitempty"`
 
 	// 内容
-	Content *string `json:"content"`
+	ContentText *string `json:"content_text,omitempty"`
 
 	// 内容
-	ContentText *string `json:"content_text"`
+	Excerpt *string `json:"excerpt,omitempty"`
 
 	// 创建时间
 	CreatedAt *int64 `json:"created_at,omitempty"`
@@ -282,11 +184,20 @@ type ESDiscussion struct {
 	// 更新时间
 	UpdatedAt *int64 `json:"updated_at,omitempty"  swaggertype:"string"`
 
-	Creator *ESCreator `json:"creator"`
+	Creator *ESCreator `json:"creator,omitempty"`
 
-	Topic *ESDiscussionTopic `json:"topic"`
+	Topic *ESDiscussionTopic `json:"topic,omitempty"`
 
 	Category *ESDiscussionCategory `json:"category,omitempty"`
+
+	// 喜欢数
+	LikeCount int `json:"like_count"`
+
+	// 反对数
+	DislikeCount int `json:"dislike_count"`
+
+	// 评论数
+	CommentCount int `json:"comment_count"`
 }
 
 type ESDiscussionCategory struct {
@@ -296,29 +207,4 @@ type ESDiscussionCategory struct {
 	Name *string `json:"name,omitempty" `
 
 	Seq *int `json:"seq"`
-}
-
-type DiscussSearchResult struct {
-	// 会员数据
-	Data []*ESDiscussion `json:"data"`
-	// 分页
-	Page *Paging `json:"paging"`
-	// 调试
-	Debug string `json:"debug"`
-}
-
-type AllSearchParams struct {
-	// 搜索关键词
-	KW string `json:"kw"`
-}
-
-type AllSearchResult struct {
-	Topics      []*ESTopic `json:"topics"`
-	TopicsCount int        `json:"topics_count"`
-
-	Articles      []*ESArticle `json:"articles"`
-	ArticlesCount int          `json:"articles_count"`
-
-	Accounts      []*ESAccount `json:"accounts"`
-	AccountsCount int          `json:"accounts_count"`
 }

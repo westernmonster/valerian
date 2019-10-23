@@ -87,6 +87,35 @@ func (s *server) GetArticleInfo(ctx context.Context, req *api.IDReq) (*api.Artic
 	return resp, nil
 }
 
+func (s *server) GetAllArticles(ctx context.Context, req *api.EmptyStruct) (*api.ArticlesResp, error) {
+	resp := &api.ArticlesResp{
+		Items: make([]*api.DBArticle, 0),
+	}
+
+	items, err := s.svr.GetAllArticles(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, v := range items {
+		item := &api.DBArticle{
+			ID:             v.ID,
+			Title:          v.Title,
+			Content:        v.Content,
+			ContentText:    v.ContentText,
+			DisableRevise:  bool(v.DisableRevise),
+			DisableComment: bool(v.DisableComment),
+			CreatedBy:      v.CreatedBy,
+			CreatedAt:      v.CreatedAt,
+			UpdatedAt:      v.UpdatedAt,
+		}
+
+		resp.Items = append(resp.Items, item)
+	}
+
+	return resp, nil
+}
+
 func (s *server) GetReviseStat(ctx context.Context, req *api.IDReq) (*api.ReviseStat, error) {
 	stat, err := s.svr.GetReviseStat(ctx, req.ID)
 	if err != nil {

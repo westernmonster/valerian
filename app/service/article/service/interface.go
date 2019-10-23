@@ -11,6 +11,7 @@ import (
 type IDao interface {
 	GetUserArticlesPaged(c context.Context, node sqalx.Node, aid int64, limit, offset int) (items []*model.Article, err error)
 	AddArticle(c context.Context, node sqalx.Node, item *model.Article) (err error)
+	GetArticles(c context.Context, node sqalx.Node) (items []*model.Article, err error)
 	GetArticleByID(c context.Context, node sqalx.Node, id int64) (item *model.Article, err error)
 	UpdateArticle(c context.Context, node sqalx.Node, item *model.Article) (err error)
 	DelArticle(c context.Context, node sqalx.Node, id int64) (err error)
