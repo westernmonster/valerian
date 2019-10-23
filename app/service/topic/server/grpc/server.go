@@ -57,6 +57,21 @@ func (s *server) GetTopicInfo(ctx context.Context, req *api.TopicReq) (*api.Topi
 	return api.FromTopic(resp, stat, acc), nil
 }
 
+func (s *server) GetTopicStat(ctx context.Context, req *api.TopicReq) (*api.TopicStat, error) {
+
+	stat, err := s.svr.GetTopicStat(ctx, req.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &api.TopicStat{
+		MemberCount:     int32(stat.MemberCount),
+		ArticleCount:    int32(stat.ArticleCount),
+		DiscussionCount: int32(stat.DiscussionCount),
+	}
+	return resp, err
+}
+
 func (s *server) GetTopicMemberRole(ctx context.Context, req *api.TopicMemberRoleReq) (resp *api.MemberRoleReply, err error) {
 	resp = &api.MemberRoleReply{}
 	isMember, role, err := s.svr.GetTopicManagerRole(ctx, req.TopicID, req.AccountID)

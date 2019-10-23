@@ -142,6 +142,8 @@ message IDsResp {
 service Topic {
     rpc  GetTopicInfo(TopicReq) returns (TopicInfo);
 
+    rpc  GetTopicStat(TopicReq) returns (TopicStat);
+
     rpc  GetTopicPermission(TopicPermissionReq) returns (TopicPermissionInfo);
 
     rpc  GetTopicMemberRole(TopicMemberRoleReq) returns (MemberRoleReply);
