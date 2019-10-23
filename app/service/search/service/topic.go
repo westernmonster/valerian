@@ -61,7 +61,7 @@ func (p *Service) onTopicAdded(m *stan.Msg) {
 		ID:           acc.ID,
 		UserName:     &acc.UserName,
 		Avatar:       &acc.Avatar,
-		Introduction: acc.Introduction,
+		Introduction: &acc.Introduction,
 	}
 
 	if err = p.d.PutTopic2ES(c, item); err != nil {
@@ -121,7 +121,7 @@ func (p *Service) onTopicUpdated(m *stan.Msg) {
 		ID:           acc.ID,
 		UserName:     &acc.UserName,
 		Avatar:       &acc.Avatar,
-		Introduction: acc.Introduction,
+		Introduction: &acc.Introduction,
 	}
 
 	if err = p.d.PutTopic2ES(c, item); err != nil {

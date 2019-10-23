@@ -39,12 +39,12 @@ func (p *Service) Init(c context.Context) (err error) {
 			Email:        &v.Email,
 			UserName:     &v.UserName,
 			Role:         v.Role,
-			Gender:       v.Gender,
-			BirthYear:    v.BirthYear,
-			BirthMonth:   v.BirthMonth,
-			BirthDay:     v.BirthDay,
-			Location:     v.Location,
-			Introduction: v.Introduction,
+			Gender:       &v.Gender,
+			BirthYear:    &v.BirthYear,
+			BirthMonth:   &v.BirthMonth,
+			BirthDay:     &v.BirthDay,
+			Location:     &v.Location,
+			Introduction: &v.Introduction,
 			Avatar:       &v.Avatar,
 			Source:       &v.Source,
 			CreatedAt:    &v.CreatedAt,
@@ -106,7 +106,7 @@ func (p *Service) Init(c context.Context) (err error) {
 			ID:           acc.ID,
 			UserName:     &acc.UserName,
 			Avatar:       &acc.Avatar,
-			Introduction: acc.Introduction,
+			Introduction: &acc.Introduction,
 		}
 
 		if err = p.d.PutTopic2ES(c, item); err != nil {
@@ -146,7 +146,7 @@ func (p *Service) Init(c context.Context) (err error) {
 			ID:           acc.ID,
 			UserName:     &acc.UserName,
 			Avatar:       &acc.Avatar,
-			Introduction: acc.Introduction,
+			Introduction: &acc.Introduction,
 		}
 
 		if err = p.d.PutArticle2ES(c, item); err != nil {
@@ -181,7 +181,7 @@ func (p *Service) Init(c context.Context) (err error) {
 			ID:           acc.ID,
 			UserName:     &acc.UserName,
 			Avatar:       &acc.Avatar,
-			Introduction: acc.Introduction,
+			Introduction: &acc.Introduction,
 		}
 
 		var t *model.Topic

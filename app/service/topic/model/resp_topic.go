@@ -20,11 +20,11 @@ type TopicResp struct {
 
 	// 头像
 	// 必须为URL
-	Avatar *string `json:"avatar"`
+	Avatar string `json:"avatar"`
 
 	// 背景图
 	// 必须为URL
-	Bg *string `json:"bg"`
+	Bg string `json:"bg"`
 
 	// 名称
 	Name string `json:"name"`

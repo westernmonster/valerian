@@ -19,7 +19,7 @@ type AuthorizationCode struct {
 	ClientID    string        `db:"client_id" json:"client_id"`                 // ClientID Client ID
 	AccountID   int64         `db:"account_id" json:"account_id,string"`        // AccountID Account ID
 	Code        string        `db:"code" json:"code"`                           // Code Code
-	RedirectURI *string       `db:"redirect_uri" json:"redirect_uri,omitempty"` // RedirectURI Redirect URI
+	RedirectURI string        `db:"redirect_uri" json:"redirect_uri,omitempty"` // RedirectURI Redirect URI
 	ExpiresAt   int64         `db:"expires_at" json:"expires_at"`               // ExpiresAt 过期时间
 	Scope       string        `db:"scope" json:"scope"`                         // Scope Scope
 	Deleted     types.BitBool `db:"deleted" json:"deleted"`                     // Deleted 是否删除
@@ -32,7 +32,7 @@ type Client struct {
 	ClientID     string        `db:"client_id" json:"client_id"`                 // ClientID Client ID
 	ClientSecret string        `db:"client_secret" json:"client_secret"`         // ClientSecret Client Secret
 	Extra        string        `db:"extra" json:"extra"`                         // Extra Extra
-	RedirectURI  *string       `db:"redirect_uri" json:"redirect_uri,omitempty"` // RedirectURI Redirect URI
+	RedirectURI  string        `db:"redirect_uri" json:"redirect_uri,omitempty"` // RedirectURI Redirect URI
 	Deleted      types.BitBool `db:"deleted" json:"deleted"`                     // Deleted 是否删除
 	CreatedAt    int64         `db:"created_at" json:"created_at"`               // CreatedAt 创建时间
 	UpdatedAt    int64         `db:"updated_at" json:"updated_at"`               // UpdatedAt 更新时间

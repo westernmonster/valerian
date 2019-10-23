@@ -54,7 +54,7 @@ func (p *Service) onArticleAdded(m *stan.Msg) {
 		ID:           acc.ID,
 		UserName:     &acc.UserName,
 		Avatar:       &acc.Avatar,
-		Introduction: acc.Introduction,
+		Introduction: &acc.Introduction,
 	}
 
 	if err = p.d.PutArticle2ES(c, item); err != nil {
@@ -107,7 +107,7 @@ func (p *Service) onArticleUpdated(m *stan.Msg) {
 		ID:           acc.ID,
 		UserName:     &acc.UserName,
 		Avatar:       &acc.Avatar,
-		Introduction: acc.Introduction,
+		Introduction: &acc.Introduction,
 	}
 
 	if err = p.d.PutArticle2ES(c, item); err != nil {

@@ -49,7 +49,7 @@ func (p *Service) onDiscussionAdded(m *stan.Msg) {
 		ID:           acc.ID,
 		UserName:     &acc.UserName,
 		Avatar:       &acc.Avatar,
-		Introduction: acc.Introduction,
+		Introduction: &acc.Introduction,
 	}
 
 	var t *model.Topic
@@ -128,7 +128,7 @@ func (p *Service) onDiscussionUpdated(m *stan.Msg) {
 		ID:           acc.ID,
 		UserName:     &acc.UserName,
 		Avatar:       &acc.Avatar,
-		Introduction: acc.Introduction,
+		Introduction: &acc.Introduction,
 	}
 
 	var t *model.Topic

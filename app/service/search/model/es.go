@@ -129,6 +129,9 @@ type ESArticle struct {
 	// 内容
 	Excerpt *string `json:"excerpt,omitempty"`
 
+	// 内容
+	Content *string `json:"content,omitempty"`
+
 	//  禁止补充
 	DisableRevise *bool `json:"disable_revise,omitempty"`
 
@@ -171,6 +174,9 @@ type ESDiscussion struct {
 
 	// 标题
 	Title *string `json:"title,omitempty"`
+
+	// 内容
+	Content *string `json:"content,omitempty"`
 
 	// 内容
 	ContentText *string `json:"content_text,omitempty"`

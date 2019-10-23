@@ -27,7 +27,7 @@ type FollowItem struct {
 	// 账户ID
 	ID int64 `json:"id,string" swaggertype:"string" format:"int64" db:"id"`
 	// 自我介绍
-	Introduction *string `json:"introduction,omitempty" db:"introduction"`
+	Introduction string `json:"introduction,omitempty" db:"introduction"`
 	// 头像
 	Avatar string `json:"avatar" db:"avatar"`
 
