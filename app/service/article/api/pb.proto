@@ -87,6 +87,8 @@ message UserArticlesResp {
 service Article {
     rpc GetArticleInfo(IDReq) returns (ArticleInfo);
     rpc GetReviseInfo(IDReq) returns (ReviseInfo);
+    rpc GetReviseStat(IDReq) returns (ReviseStat);
+    rpc GetArticleStat(IDReq) returns (ArticleStat);
     rpc GetUserArticlesPaged(UserArticlesReq) returns (UserArticlesResp);
 }
 

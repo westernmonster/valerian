@@ -87,6 +87,37 @@ func (s *server) GetArticleInfo(ctx context.Context, req *api.IDReq) (*api.Artic
 	return resp, nil
 }
 
+func (s *server) GetReviseStat(ctx context.Context, req *api.IDReq) (*api.ReviseStat, error) {
+	stat, err := s.svr.GetReviseStat(ctx, req.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &api.ReviseStat{
+		CommentCount: int32(stat.CommentCount),
+		LikeCount:    int32(stat.LikeCount),
+		DislikeCount: int32(stat.DislikeCount),
+	}
+
+	return resp, nil
+}
+
+func (s *server) GetArticleStat(ctx context.Context, req *api.IDReq) (*api.ArticleStat, error) {
+	stat, err := s.svr.GetArticleStat(ctx, req.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &api.ArticleStat{
+		CommentCount: int32(stat.CommentCount),
+		ReviseCount:  int32(stat.ReviseCount),
+		LikeCount:    int32(stat.LikeCount),
+		DislikeCount: int32(stat.DislikeCount),
+	}
+
+	return resp, nil
+}
+
 func (s *server) GetReviseInfo(ctx context.Context, req *api.IDReq) (*api.ReviseInfo, error) {
 	revise, err := s.svr.GetRevise(ctx, req.ID)
 	if err != nil {
