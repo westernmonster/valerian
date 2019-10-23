@@ -71,13 +71,10 @@ func (s *server) GetDiscussionInfo(ctx context.Context, req *api.IDReq) (*api.Di
 
 	resp := api.FromDiscussion(v, stat, imgs)
 	resp.Creator = &api.Creator{
-		ID:       m.ID,
-		UserName: m.UserName,
-		Avatar:   m.Avatar,
-	}
-
-	if m.Introduction != nil {
-		resp.Creator.Introduction = &api.Creator_IntroductionValue{m.GetIntroductionValue()}
+		ID:           m.ID,
+		UserName:     m.UserName,
+		Avatar:       m.Avatar,
+		Introduction: m.Introduction,
 	}
 
 	return resp, err
