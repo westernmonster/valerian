@@ -51,14 +51,12 @@ func (p *Service) GetUserDiscussionsPaged(c context.Context, aid int64, limit, o
 		}
 
 		items[i].Creator = &api.Creator{
-			ID:       acc.ID,
-			UserName: acc.UserName,
-			Avatar:   acc.Avatar,
+			ID:           acc.ID,
+			UserName:     acc.UserName,
+			Avatar:       acc.Avatar,
+			Introduction: acc.Introduction,
 		}
 
-		if acc.Introduction != nil {
-			items[i].Creator.Introduction = &api.Creator_IntroductionValue{acc.GetIntroductionValue()}
-		}
 	}
 
 	return
