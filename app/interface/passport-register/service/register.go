@@ -283,14 +283,13 @@ func (p *Service) GetProfile(c context.Context, accountID int64) (profile *model
 		UpdatedAt:    item.UpdatedAt,
 	}
 
-	ipStr := InetNtoA(item.IP)
-	profile.IP = &ipStr
+	profile.IP = InetNtoA(item.IP)
 
-	if item.Location != nil {
-		if v, e := p.GetLocationString(c, *item.Location); e != nil {
+	if item.Location != 0 {
+		if v, e := p.GetLocationString(c, item.Location); e != nil {
 			return nil, e
 		} else {
-			profile.LocationString = &v
+			profile.LocationString = v
 		}
 	}
 

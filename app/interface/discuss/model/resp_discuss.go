@@ -9,7 +9,7 @@ type Creator struct {
 	Avatar string `json:"avatar"`
 
 	// 自我介绍
-	Introduction *string `json:"introduction,omitempty"`
+	Introduction string `json:"introduction,omitempty"`
 }
 
 type Paging struct {
@@ -29,7 +29,7 @@ type DiscussItem struct {
 	// 讨论分类
 	Category *DiscussItemCategory `json:"category,omitempty"`
 	// 标题
-	Title *string `json:"title"`
+	Title string `json:"title"`
 	// 摘录
 	Excerpt string `json:"excerpt"`
 	// 喜欢数
@@ -78,7 +78,7 @@ type DiscussDetailResp struct {
 	// 讨论分类
 	Category *DiscussItemCategory `json:"category,omitempty"`
 	// 标题
-	Title *string `json:"title"`
+	Title string `json:"title"`
 	// 内容
 	Content string `json:"content"`
 

@@ -4,7 +4,7 @@ type ArticleHistoryResp struct {
 	ID         int64    `json:"id,string" swaggertype:"string"`         // ID ID
 	ArticleID  int64    `json:"article_id,string" swaggertype:"string"` // ArticleID 文章ID
 	Updator    *Creator `json:"updator,omitempty"`                      // Updator 更新人
-	Diff       *string  `json:"diff,omitempty"`                         // Diff 更改内容
+	Diff       string   `json:"diff,omitempty"`                         // Diff 更改内容
 	ChangeDesc string   `json:"change_desc"`                            // ChangeDesc 修订说明
 	Seq        int      `json:"seq"`                                    // Seq 版本顺序
 	UpdatedAt  int64    `json:"updated_at"`                             // UpdatedAt 创建时间

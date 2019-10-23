@@ -23,17 +23,14 @@ func (p *Service) FromDiscussion(v *discuss.DiscussionInfo) (item *model.TargetD
 		LikeCount:    int(v.Stat.LikeCount),
 		DislikeCount: int(v.Stat.DislikeCount),
 		Creator: &model.Creator{
-			ID:       v.Creator.ID,
-			Avatar:   v.Creator.Avatar,
-			UserName: v.Creator.UserName,
+			ID:           v.Creator.ID,
+			Avatar:       v.Creator.Avatar,
+			UserName:     v.Creator.UserName,
+			Introduction: v.Creator.Introduction,
 		},
+		Title: v.Title,
 	}
 
-	title := v.GetTitleValue()
-	item.Title = &title
-
-	intro := v.Creator.GetIntroductionValue()
-	item.Creator.Introduction = &intro
 	return
 }
 
@@ -47,14 +44,13 @@ func (p *Service) FromRevise(v *article.ReviseInfo) (item *model.TargetRevise) {
 		LikeCount:    int(v.Stat.LikeCount),
 		DislikeCount: int(v.Stat.DislikeCount),
 		Creator: &model.Creator{
-			ID:       v.Creator.ID,
-			Avatar:   v.Creator.Avatar,
-			UserName: v.Creator.UserName,
+			ID:           v.Creator.ID,
+			Avatar:       v.Creator.Avatar,
+			UserName:     v.Creator.UserName,
+			Introduction: v.Creator.Introduction,
 		},
 	}
 
-	intro := v.Creator.GetIntroductionValue()
-	item.Creator.Introduction = &intro
 	return
 }
 
@@ -69,14 +65,13 @@ func (p *Service) FromArticle(v *article.ArticleInfo) (item *model.TargetArticle
 		LikeCount:    int(v.Stat.LikeCount),
 		DislikeCount: int(v.Stat.DislikeCount),
 		Creator: &model.Creator{
-			ID:       v.Creator.ID,
-			Avatar:   v.Creator.Avatar,
-			UserName: v.Creator.UserName,
+			ID:           v.Creator.ID,
+			Avatar:       v.Creator.Avatar,
+			UserName:     v.Creator.UserName,
+			Introduction: v.Creator.Introduction,
 		},
 	}
 
-	intro := v.Creator.GetIntroductionValue()
-	item.Creator.Introduction = &intro
 	return
 }
 
@@ -89,17 +84,14 @@ func (p *Service) FromTopic(v *topic.TopicInfo) (item *model.TargetTopic) {
 		DiscussionCount: int(v.Stat.DiscussionCount),
 		ArticleCount:    int(v.Stat.ArticleCount),
 		Creator: &model.Creator{
-			ID:       v.Creator.ID,
-			Avatar:   v.Creator.Avatar,
-			UserName: v.Creator.UserName,
+			ID:           v.Creator.ID,
+			Avatar:       v.Creator.Avatar,
+			UserName:     v.Creator.UserName,
+			Introduction: v.Creator.Introduction,
 		},
+		Avatar: v.Avatar,
 	}
 
-	intro := v.Creator.GetIntroductionValue()
-	item.Creator.Introduction = &intro
-
-	avatar := v.GetAvatarValue()
-	item.Avatar = &avatar
 	return
 }
 
@@ -133,21 +125,19 @@ func (p *Service) GetFeedPaged(c context.Context, limit, offset int) (resp *mode
 			},
 		}
 
-		var account *account.BaseInfoReply
-		if account, err = p.d.GetAccountBaseInfo(c, v.ActorID); err != nil {
+		var acc *account.BaseInfoReply
+		if acc, err = p.d.GetAccountBaseInfo(c, v.ActorID); err != nil {
 			return
-		} else if account == nil {
+		} else if acc == nil {
 			return nil, ecode.UserNotExist
 		}
 
 		item.Source.Actor = &model.Actor{
-			ID:     account.ID,
-			Avatar: account.Avatar,
-			Name:   account.UserName,
+			ID:           acc.ID,
+			Avatar:       acc.Avatar,
+			Name:         acc.UserName,
+			Introduction: acc.Introduction,
 		}
-
-		intro := account.GetIntroductionValue()
-		item.Source.Actor.Introduction = &intro
 
 		switch v.TargetType {
 
@@ -237,33 +227,17 @@ func (p *Service) GetMemberInfo(c context.Context, targetID int64) (resp *model.
 	}
 
 	resp = &model.MemberInfo{
-		ID:       f.ID,
-		UserName: f.UserName,
-		Avatar:   f.Avatar,
-		IDCert:   f.IDCert,
-		WorkCert: f.WorkCert,
-		IsOrg:    f.IsOrg,
-		IsVIP:    f.IsVIP,
-	}
-
-	if f.Gender != nil {
-		g := int(f.GetGenderValue())
-		resp.Gender = &g
-	}
-
-	if f.Location != nil {
-		loc := f.GetLocationValue()
-		resp.Location = &loc
-
-		if f.LocationString != nil {
-			locString := f.GetLocationStringValue()
-			resp.LocationString = &locString
-		}
-	}
-
-	if f.Introduction != nil {
-		intro := f.GetIntroductionValue()
-		resp.Introduction = &intro
+		ID:             f.ID,
+		UserName:       f.UserName,
+		Avatar:         f.Avatar,
+		IDCert:         f.IDCert,
+		WorkCert:       f.WorkCert,
+		IsOrg:          f.IsOrg,
+		IsVIP:          f.IsVIP,
+		Gender:         int(f.Gender),
+		Introduction:   f.Introduction,
+		Location:       f.Location,
+		LocationString: f.LocationString,
 	}
 
 	var isFollowing bool

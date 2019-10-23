@@ -134,7 +134,7 @@ type TargetTopic struct {
 	Introduction string `json:"introduction"`
 
 	// 封面
-	Avatar *string `json:"avatar,omitempty"`
+	Avatar string `json:"avatar,omitempty"`
 
 	// 成员数
 	MemberCount int `json:"member_count"`

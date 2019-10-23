@@ -16,9 +16,7 @@ message Creator {
 
     string Avatar   = 3 [(gogoproto.jsontag) = "avatar"];
 
-    oneof Introduction {
-        string  IntroductionValue = 4 [(gogoproto.jsontag) = "introduction"] ;
-    }
+    string  Introduction = 4 [(gogoproto.jsontag) = "introduction"] ;
 }
 
 message CommentInfo {
@@ -46,9 +44,7 @@ message CommentInfo {
 
     CommentStat  Stat = 11 [(gogoproto.jsontag) = "stat"];
 
-    oneof ReplyTo {
-        int64  ReplyToValue = 12 [(gogoproto.jsontag) = "reply_to"] ;
-    }
+    int64  ReplyTo = 12 [(gogoproto.jsontag) = "reply_to"] ;
 }
 
 message CommentStat {

@@ -41,7 +41,7 @@ type TopicLevel1Catalog struct {
 	Type string `json:"type"`
 
 	// 引用ID
-	RefID *int64 `json:"ref_id,string,omitempty" swaggertype:"string"`
+	RefID int64 `json:"ref_id,string,omitempty" swaggertype:"string"`
 
 	Children []*TopicLevel2Catalog `json:"children,omitempty"`
 
@@ -74,20 +74,20 @@ type ValidateTypeRule struct {
 }
 
 func (p *ValidateTypeRule) Validate(v interface{}) error {
-	refID := v.(*int64)
+	refID := v.(int64)
 	switch p.Type {
 	case TopicCatalogTaxonomy:
-		if refID != nil {
+		if refID != 0 {
 			return ecode.ShouldNotSetRefID
 		}
 		break
 	case TopicCatalogArticle:
-		if refID == nil {
+		if refID == 0 {
 			return ecode.RefIDRequired
 		}
 		break
 	case TopicCatalogTestSet:
-		if refID == nil {
+		if refID == 0 {
 			return ecode.RefIDRequired
 		}
 		break
@@ -175,7 +175,7 @@ type TopicLevel2Catalog struct {
 	Type string `json:"type"`
 
 	// 引用ID
-	RefID *int64 `json:"ref_id,string,omitempty" swaggertype:"string"`
+	RefID int64 `json:"ref_id,string,omitempty" swaggertype:"string"`
 
 	Children []*TopicChildCatalog `json:"children,omitempty"`
 
@@ -211,7 +211,7 @@ type TopicChildCatalog struct {
 	Type string `json:"type"`
 
 	// 引用ID
-	RefID *int64 `json:"ref_id,string,omitempty" swaggertype:"string"`
+	RefID int64 `json:"ref_id,string,omitempty" swaggertype:"string"`
 
 	Article *TargetArticle `json:"article,omitempty"`
 }

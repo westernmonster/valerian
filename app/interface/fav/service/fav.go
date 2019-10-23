@@ -24,19 +24,18 @@ func (p *Service) FromDiscussion(v *discuss.DiscussionInfo) (item *model.TargetD
 		LikeCount:    int(v.Stat.LikeCount),
 		DislikeCount: int(v.Stat.DislikeCount),
 		Creator: &model.Creator{
-			ID:       v.Creator.ID,
-			Avatar:   v.Creator.Avatar,
-			UserName: v.Creator.UserName,
+			ID:           v.Creator.ID,
+			Avatar:       v.Creator.Avatar,
+			UserName:     v.Creator.UserName,
+			Introduction: v.Creator.Introduction,
 		},
+		Title: v.Title,
 	}
-
-	item.Title = v.GetTitleValue()
 
 	if v.ImageUrls != nil {
 		item.ImageUrls = v.ImageUrls
 	}
 
-	item.Creator.Introduction = v.Creator.GetIntroductionValue()
 	return
 }
 
@@ -50,16 +49,16 @@ func (p *Service) FromRevise(v *article.ReviseInfo) (item *model.TargetRevise) {
 		LikeCount:    int(v.Stat.LikeCount),
 		DislikeCount: int(v.Stat.DislikeCount),
 		Creator: &model.Creator{
-			ID:       v.Creator.ID,
-			Avatar:   v.Creator.Avatar,
-			UserName: v.Creator.UserName,
+			ID:           v.Creator.ID,
+			Avatar:       v.Creator.Avatar,
+			UserName:     v.Creator.UserName,
+			Introduction: v.Creator.Introduction,
 		},
 	}
 	if v.ImageUrls != nil {
 		item.ImageUrls = v.ImageUrls
 	}
 
-	item.Creator.Introduction = v.Creator.GetIntroductionValue()
 	return
 }
 
@@ -74,16 +73,16 @@ func (p *Service) FromArticle(v *article.ArticleInfo) (item *model.TargetArticle
 		LikeCount:    int(v.Stat.LikeCount),
 		DislikeCount: int(v.Stat.DislikeCount),
 		Creator: &model.Creator{
-			ID:       v.Creator.ID,
-			Avatar:   v.Creator.Avatar,
-			UserName: v.Creator.UserName,
+			ID:           v.Creator.ID,
+			Avatar:       v.Creator.Avatar,
+			UserName:     v.Creator.UserName,
+			Introduction: v.Creator.Introduction,
 		},
 	}
 	if v.ImageUrls != nil {
 		item.ImageUrls = v.ImageUrls
 	}
 
-	item.Creator.Introduction = v.Creator.GetIntroductionValue()
 	return
 }
 
@@ -96,15 +95,14 @@ func (p *Service) FromTopic(v *topic.TopicInfo) (item *model.TargetTopic) {
 		DiscussionCount: int(v.Stat.DiscussionCount),
 		ArticleCount:    int(v.Stat.ArticleCount),
 		Creator: &model.Creator{
-			ID:       v.Creator.ID,
-			Avatar:   v.Creator.Avatar,
-			UserName: v.Creator.UserName,
+			ID:           v.Creator.ID,
+			Avatar:       v.Creator.Avatar,
+			UserName:     v.Creator.UserName,
+			Introduction: v.Creator.Introduction,
 		},
+		Avatar: v.Avatar,
 	}
 
-	item.Creator.Introduction = v.Creator.GetIntroductionValue()
-
-	item.Avatar = v.GetAvatarValue()
 	return
 }
 

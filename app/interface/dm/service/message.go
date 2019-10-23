@@ -25,12 +25,14 @@ func (p *Service) FromDiscussion(v *discuss.DiscussionInfo) (item *model.TargetD
 		LikeCount:    int(v.Stat.LikeCount),
 		DislikeCount: int(v.Stat.DislikeCount),
 		Creator: &model.Creator{
-			ID:       v.Creator.ID,
-			Avatar:   v.Creator.Avatar,
-			UserName: v.Creator.UserName,
+			ID:           v.Creator.ID,
+			Avatar:       v.Creator.Avatar,
+			UserName:     v.Creator.UserName,
+			Introduction: v.Creator.Introduction,
 		},
 		CreatedAt: v.CreatedAt,
 		UpdatedAt: v.UpdatedAt,
+		Title:     v.Title,
 	}
 
 	if v.ImageUrls == nil {
@@ -39,11 +41,6 @@ func (p *Service) FromDiscussion(v *discuss.DiscussionInfo) (item *model.TargetD
 		item.ImageUrls = v.ImageUrls
 	}
 
-	title := v.GetTitleValue()
-	item.Title = &title
-
-	intro := v.Creator.GetIntroductionValue()
-	item.Creator.Introduction = &intro
 	return
 }
 
@@ -56,9 +53,10 @@ func (p *Service) FromRevise(v *article.ReviseInfo) (item *model.TargetRevise) {
 		LikeCount:    int(v.Stat.LikeCount),
 		DislikeCount: int(v.Stat.DislikeCount),
 		Creator: &model.Creator{
-			ID:       v.Creator.ID,
-			Avatar:   v.Creator.Avatar,
-			UserName: v.Creator.UserName,
+			ID:           v.Creator.ID,
+			Avatar:       v.Creator.Avatar,
+			UserName:     v.Creator.UserName,
+			Introduction: v.Creator.Introduction,
 		},
 		CreatedAt: v.CreatedAt,
 		UpdatedAt: v.UpdatedAt,
@@ -69,8 +67,6 @@ func (p *Service) FromRevise(v *article.ReviseInfo) (item *model.TargetRevise) {
 		item.ImageUrls = v.ImageUrls
 	}
 
-	intro := v.Creator.GetIntroductionValue()
-	item.Creator.Introduction = &intro
 	return
 }
 
@@ -84,9 +80,10 @@ func (p *Service) FromArticle(v *article.ArticleInfo) (item *model.TargetArticle
 		LikeCount:    int(v.Stat.LikeCount),
 		DislikeCount: int(v.Stat.DislikeCount),
 		Creator: &model.Creator{
-			ID:       v.Creator.ID,
-			Avatar:   v.Creator.Avatar,
-			UserName: v.Creator.UserName,
+			ID:           v.Creator.ID,
+			Avatar:       v.Creator.Avatar,
+			UserName:     v.Creator.UserName,
+			Introduction: v.Creator.Introduction,
 		},
 		CreatedAt: v.CreatedAt,
 		UpdatedAt: v.UpdatedAt,
@@ -97,8 +94,6 @@ func (p *Service) FromArticle(v *article.ArticleInfo) (item *model.TargetArticle
 		item.ImageUrls = v.ImageUrls
 	}
 
-	intro := v.Creator.GetIntroductionValue()
-	item.Creator.Introduction = &intro
 	return
 }
 
@@ -111,19 +106,16 @@ func (p *Service) FromTopic(v *topic.TopicInfo) (item *model.TargetTopic) {
 		DiscussionCount: int(v.Stat.DiscussionCount),
 		ArticleCount:    int(v.Stat.ArticleCount),
 		Creator: &model.Creator{
-			ID:       v.Creator.ID,
-			Avatar:   v.Creator.Avatar,
-			UserName: v.Creator.UserName,
+			ID:           v.Creator.ID,
+			Avatar:       v.Creator.Avatar,
+			UserName:     v.Creator.UserName,
+			Introduction: v.Creator.Introduction,
 		},
 		CreatedAt: v.CreatedAt,
 		UpdatedAt: v.UpdatedAt,
+		Avatar:    v.Avatar,
 	}
 
-	intro := v.Creator.GetIntroductionValue()
-	item.Creator.Introduction = &intro
-
-	avatar := v.GetAvatarValue()
-	item.Avatar = &avatar
 	return
 }
 
@@ -230,9 +222,7 @@ func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, o
 			}
 
 			item.Content.Target.Link = fmt.Sprintf("pronote://discuss/%d", discuss.ID)
-			if discuss.Title != nil {
-				item.Content.Target.Text = discuss.GetTitleValue()
-			}
+			item.Content.Target.Text = discuss.Title
 			item.Target = p.FromDiscussion(discuss)
 			break
 
@@ -325,13 +315,11 @@ func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, o
 			}
 
 			tg.Member = &model.Creator{
-				ID:       acc.ID,
-				Avatar:   acc.Avatar,
-				UserName: acc.UserName,
+				ID:           acc.ID,
+				Avatar:       acc.Avatar,
+				UserName:     acc.UserName,
+				Introduction: acc.Introduction,
 			}
-
-			intro := acc.GetIntroductionValue()
-			tg.Member.Introduction = &intro
 
 			var topic *topic.TopicInfo
 			if topic, err = p.d.GetTopic(c, req.TopicID); err != nil {
@@ -363,13 +351,11 @@ func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, o
 			}
 
 			tg.Creator = &model.Creator{
-				ID:       acc.ID,
-				Avatar:   acc.Avatar,
-				UserName: acc.UserName,
+				ID:           acc.ID,
+				Avatar:       acc.Avatar,
+				UserName:     acc.UserName,
+				Introduction: acc.Introduction,
 			}
-
-			intro := acc.GetIntroductionValue()
-			tg.Creator.Introduction = &intro
 
 			var topic *topic.TopicInfo
 			if topic, err = p.d.GetTopic(c, req.TopicID); err != nil {
@@ -420,15 +406,13 @@ func (p *Service) GetCommentTarget(c context.Context, v *comment.CommentInfo) (r
 		Excerpt:    xstr.Excerpt(v.Content),
 		TargetType: v.TargetType,
 		Creator: &model.Creator{
-			ID:       v.Creator.ID,
-			Avatar:   v.Creator.Avatar,
-			UserName: v.Creator.UserName,
+			ID:           v.Creator.ID,
+			Avatar:       v.Creator.Avatar,
+			UserName:     v.Creator.UserName,
+			Introduction: v.Creator.Introduction,
 		},
 		CreatedAt: v.CreatedAt,
 	}
-
-	intro := v.Creator.GetIntroductionValue()
-	resp.Creator.Introduction = &intro
 
 	switch v.TargetType {
 	case model.TargetTypeArticle:
@@ -462,31 +446,27 @@ func (p *Service) GetCommentTarget(c context.Context, v *comment.CommentInfo) (r
 			ID:      replyComment.ID,
 			Excerpt: xstr.Excerpt(replyComment.Content),
 			Creator: &model.Creator{
-				ID:       replyComment.Creator.ID,
-				Avatar:   replyComment.Creator.Avatar,
-				UserName: replyComment.Creator.UserName,
+				ID:           replyComment.Creator.ID,
+				Avatar:       replyComment.Creator.Avatar,
+				UserName:     replyComment.Creator.UserName,
+				Introduction: replyComment.Creator.Introduction,
 			},
 			CreatedAt:  replyComment.CreatedAt,
 			TargetType: replyComment.TargetType,
 		}
 
-		intro := replyComment.Creator.GetIntroductionValue()
-		resp.ReplyComment.Creator.Introduction = &intro
-
-		if v.ReplyTo != nil {
+		if v.ReplyTo != 0 {
 			var acc *account.BaseInfoReply
-			if acc, err = p.d.GetAccountBaseInfo(c, v.GetReplyToValue()); err != nil {
+			if acc, err = p.d.GetAccountBaseInfo(c, v.ReplyTo); err != nil {
 				return
 			}
 
 			resp.ReplyTo = &model.Creator{
-				ID:       acc.ID,
-				Avatar:   acc.Avatar,
-				UserName: acc.UserName,
+				ID:           acc.ID,
+				Avatar:       acc.Avatar,
+				UserName:     acc.UserName,
+				Introduction: acc.Introduction,
 			}
-
-			intro := acc.GetIntroductionValue()
-			resp.ReplyTo.Introduction = &intro
 
 		}
 
@@ -509,33 +489,24 @@ func (p *Service) GetMemberInfo(c context.Context, targetID int64) (resp *model.
 	}
 
 	resp = &model.MemberInfo{
-		ID:       f.ID,
-		UserName: f.UserName,
-		Avatar:   f.Avatar,
-		IDCert:   f.IDCert,
-		WorkCert: f.WorkCert,
-		IsOrg:    f.IsOrg,
-		IsVIP:    f.IsVIP,
+		ID:           f.ID,
+		UserName:     f.UserName,
+		Avatar:       f.Avatar,
+		IDCert:       f.IDCert,
+		WorkCert:     f.WorkCert,
+		IsOrg:        f.IsOrg,
+		IsVIP:        f.IsVIP,
+		Introduction: f.Introduction,
+		Gender:       int(f.Gender),
 	}
 
-	if f.Gender != nil {
-		g := int(f.GetGenderValue())
-		resp.Gender = &g
-	}
+	if f.Location != 0 {
+		resp.Location = f.Location
 
-	if f.Location != nil {
-		loc := f.GetLocationValue()
-		resp.Location = &loc
-
-		if f.LocationString != nil {
-			locString := f.GetLocationStringValue()
-			resp.LocationString = &locString
+		if f.LocationString != "" {
+			locString := f.LocationString
+			resp.LocationString = locString
 		}
-	}
-
-	if f.Introduction != nil {
-		intro := f.GetIntroductionValue()
-		resp.Introduction = &intro
 	}
 
 	var isFollowing bool

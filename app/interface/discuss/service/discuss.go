@@ -68,12 +68,11 @@ func (p *Service) GetUserDiscussionsPaged(c context.Context, aid int64, limit, o
 			return
 		}
 		item.Creator = &model.Creator{
-			ID:       acc.ID,
-			UserName: acc.UserName,
-			Avatar:   acc.Avatar,
+			ID:           acc.ID,
+			UserName:     acc.UserName,
+			Avatar:       acc.Avatar,
+			Introduction: acc.Introduction,
 		}
-		intro := acc.GetIntroductionValue()
-		item.Creator.Introduction = &intro
 
 		if v.CategoryID == -1 {
 			item.Category = &model.DiscussItemCategory{
@@ -166,12 +165,11 @@ func (p *Service) GetTopicDiscussionsPaged(c context.Context, topicID, categoryI
 			return
 		}
 		item.Creator = &model.Creator{
-			ID:       acc.ID,
-			UserName: acc.UserName,
-			Avatar:   acc.Avatar,
+			ID:           acc.ID,
+			UserName:     acc.UserName,
+			Avatar:       acc.Avatar,
+			Introduction: acc.Introduction,
 		}
-		intro := acc.GetIntroductionValue()
-		item.Creator.Introduction = &intro
 
 		if v.CategoryID == -1 {
 			item.Category = &model.DiscussItemCategory{
@@ -289,10 +287,13 @@ func (p *Service) AddDiscussion(c context.Context, arg *model.ArgAddDiscuss) (id
 		TopicID:    arg.TopicID,
 		CategoryID: arg.CategoryID,
 		CreatedBy:  aid,
-		Title:      arg.Title,
 		Content:    arg.Content,
 		CreatedAt:  time.Now().Unix(),
 		UpdatedAt:  time.Now().Unix(),
+	}
+
+	if arg.Title != nil {
+		item.Title = *arg.Title
 	}
 
 	var doc *goquery.Document
@@ -418,7 +419,9 @@ func (p *Service) UpdateDiscussion(c context.Context, arg *model.ArgUpdateDiscus
 		}
 	}
 
-	item.Title = arg.Title
+	if arg.Title != nil {
+		item.Title = *arg.Title
+	}
 	item.Content = arg.Content
 	item.UpdatedAt = time.Now().Unix()
 
@@ -576,18 +579,16 @@ func (p *Service) GetDiscussion(c context.Context, discussionID int64) (resp *mo
 		}
 
 	}
-	if account, e := p.d.GetAccountBaseInfo(c, data.CreatedBy); e != nil {
+	if acc, e := p.d.GetAccountBaseInfo(c, data.CreatedBy); e != nil {
 		err = e
 		return
 	} else {
 		resp.Creator = &model.Creator{
-			ID:       account.ID,
-			UserName: account.UserName,
-			Avatar:   account.Avatar,
+			ID:           acc.ID,
+			UserName:     acc.UserName,
+			Avatar:       acc.Avatar,
+			Introduction: acc.Introduction,
 		}
-
-		intro := account.GetIntroductionValue()
-		resp.Creator.Introduction = &intro
 	}
 
 	var stat *model.DiscussionStat

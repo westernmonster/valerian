@@ -98,7 +98,7 @@ func (p *Service) GetIDCertificationStatus(c context.Context) (status int, err e
 	}
 
 	item.Status = resp.Data.StatusCode
-	item.AuditConclusions = &resp.Data.AuditConclusions
+	item.AuditConclusions = resp.Data.AuditConclusions
 
 	if item.Status == model.IDCertificationSuccess {
 		var material *cloudauth.GetMaterialsResponse
@@ -106,18 +106,18 @@ func (p *Service) GetIDCertificationStatus(c context.Context) (status int, err e
 			return
 		}
 
-		item.Name = &material.Data.Name
-		item.IdentificationNumber = &material.Data.IdentificationNumber
-		item.IDCardType = &material.Data.IdCardType
-		item.IDCardStartDate = &material.Data.IdCardStartDate
-		item.IDCardExpiry = &material.Data.IdCardExpiry
-		item.Address = &material.Data.Address
-		item.Sex = &material.Data.Sex
+		item.Name = material.Data.Name
+		item.IdentificationNumber = material.Data.IdentificationNumber
+		item.IDCardType = material.Data.IdCardType
+		item.IDCardStartDate = material.Data.IdCardStartDate
+		item.IDCardExpiry = material.Data.IdCardExpiry
+		item.Address = material.Data.Address
+		item.Sex = material.Data.Sex
 		// TODO: 图片下载
-		item.IDCardFrontPic = &material.Data.IdCardFrontPic
-		item.IDCardBackPic = &material.Data.IdCardBackPic
-		item.FacePic = &material.Data.FacePic
-		item.EthnicGroup = &material.Data.EthnicGroup
+		item.IDCardFrontPic = material.Data.IdCardFrontPic
+		item.IDCardBackPic = material.Data.IdCardBackPic
+		item.FacePic = material.Data.FacePic
+		item.EthnicGroup = material.Data.EthnicGroup
 		item.UpdatedAt = time.Now().Unix()
 
 	}

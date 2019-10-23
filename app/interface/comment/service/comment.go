@@ -79,25 +79,23 @@ func (p *Service) GetCommentsPaged(c context.Context, resourceID int64, targetTy
 					return
 				}
 				child.Creator = &model.CommentCreator{
-					ID:       acc.ID,
-					UserName: acc.UserName,
-					Avatar:   acc.Avatar,
+					ID:           acc.ID,
+					UserName:     acc.UserName,
+					Avatar:       acc.Avatar,
+					Introduction: acc.Introduction,
 				}
-				intro := acc.GetIntroductionValue()
-				child.Creator.Introduction = &intro
 
-				if x.ReplyTo != nil {
+				if x.ReplyTo != 0 {
 					var rto *account.BaseInfoReply
-					if rto, err = p.d.GetAccountBaseInfo(c, *x.ReplyTo); err != nil {
+					if rto, err = p.d.GetAccountBaseInfo(c, x.ReplyTo); err != nil {
 						return
 					}
 					child.ReplyTo = &model.CommentCreator{
-						ID:       rto.ID,
-						UserName: rto.UserName,
-						Avatar:   rto.Avatar,
+						ID:           rto.ID,
+						UserName:     rto.UserName,
+						Avatar:       rto.Avatar,
+						Introduction: rto.Introduction,
 					}
-					intro := rto.GetIntroductionValue()
-					child.ReplyTo.Introduction = &intro
 				}
 
 				item.ChildComments[j] = child
@@ -112,17 +110,16 @@ func (p *Service) GetCommentsPaged(c context.Context, resourceID int64, targetTy
 			return
 		}
 
-		var account *account.BaseInfoReply
-		if account, err = p.d.GetAccountBaseInfo(c, v.CreatedBy); err != nil {
+		var acc *account.BaseInfoReply
+		if acc, err = p.d.GetAccountBaseInfo(c, v.CreatedBy); err != nil {
 			return
 		}
 		item.Creator = &model.CommentCreator{
-			ID:       account.ID,
-			UserName: account.UserName,
-			Avatar:   account.Avatar,
+			ID:           acc.ID,
+			UserName:     acc.UserName,
+			Avatar:       acc.Avatar,
+			Introduction: acc.Introduction,
 		}
-		intro := account.GetIntroductionValue()
-		item.Creator.Introduction = &intro
 
 		resp.Items[i] = item
 	}
@@ -199,7 +196,7 @@ func (p *Service) AddComment(c context.Context, arg *model.ArgAddComment) (id in
 
 		// 如果对象是子回复，则添加被回复人
 		if comment.TargetType == model.TargetTypeComment {
-			item.ReplyTo = &comment.CreatedBy
+			item.ReplyTo = comment.CreatedBy
 			item.ResourceID = comment.ResourceID
 		} else {
 			// 如果被回复对象是回复  则直接设置当前的资源ID为被回复的ID
@@ -365,25 +362,23 @@ func (p *Service) GetComment(c context.Context, commentID int64) (resp *model.Co
 				return
 			}
 			child.Creator = &model.CommentCreator{
-				ID:       acc.ID,
-				UserName: acc.UserName,
-				Avatar:   acc.Avatar,
+				ID:           acc.ID,
+				UserName:     acc.UserName,
+				Avatar:       acc.Avatar,
+				Introduction: acc.Introduction,
 			}
-			intro := acc.GetIntroductionValue()
-			child.Creator.Introduction = &intro
 
-			if x.ReplyTo != nil {
+			if x.ReplyTo != 0 {
 				var rto *account.BaseInfoReply
-				if rto, err = p.d.GetAccountBaseInfo(c, *x.ReplyTo); err != nil {
+				if rto, err = p.d.GetAccountBaseInfo(c, x.ReplyTo); err != nil {
 					return
 				}
 				child.ReplyTo = &model.CommentCreator{
-					ID:       rto.ID,
-					UserName: rto.UserName,
-					Avatar:   rto.Avatar,
+					ID:           rto.ID,
+					UserName:     rto.UserName,
+					Avatar:       rto.Avatar,
+					Introduction: rto.Introduction,
 				}
-				intro := rto.GetIntroductionValue()
-				child.ReplyTo.Introduction = &intro
 			}
 
 			resp.ChildComments[j] = child
@@ -399,17 +394,16 @@ func (p *Service) GetComment(c context.Context, commentID int64) (resp *model.Co
 		return
 	}
 
-	var account *account.BaseInfoReply
-	if account, err = p.d.GetAccountBaseInfo(c, data.CreatedBy); err != nil {
+	var acc *account.BaseInfoReply
+	if acc, err = p.d.GetAccountBaseInfo(c, data.CreatedBy); err != nil {
 		return
 	}
 	resp.Creator = &model.CommentCreator{
-		ID:       account.ID,
-		UserName: account.UserName,
-		Avatar:   account.Avatar,
+		ID:           acc.ID,
+		UserName:     acc.UserName,
+		Avatar:       acc.Avatar,
+		Introduction: acc.Introduction,
 	}
-	intro := account.GetIntroductionValue()
-	resp.Creator.Introduction = &intro
 
 	return
 

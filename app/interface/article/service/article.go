@@ -290,12 +290,11 @@ func (p *Service) GetArticle(c context.Context, id int64, include string) (item 
 	}
 
 	item.Creator = &model.Creator{
-		ID:       acc.ID,
-		UserName: acc.UserName,
-		Avatar:   acc.Avatar,
+		ID:           acc.ID,
+		UserName:     acc.UserName,
+		Avatar:       acc.Avatar,
+		Introduction: acc.Introduction,
 	}
-	intro := acc.GetIntroductionValue()
-	item.Creator.Introduction = &intro
 
 	var history *model.ArticleHistory
 	if history, err = p.d.GetLastArticleHistory(c, p.d.DB(), id); err != nil {
@@ -307,12 +306,11 @@ func (p *Service) GetArticle(c context.Context, id int64, include string) (item 
 		}
 
 		item.Updator = &model.Creator{
-			ID:       acc.ID,
-			UserName: acc.UserName,
-			Avatar:   acc.Avatar,
+			ID:           acc.ID,
+			UserName:     acc.UserName,
+			Avatar:       acc.Avatar,
+			Introduction: acc.Introduction,
 		}
-		intro := acc.GetIntroductionValue()
-		item.Updator.Introduction = &intro
 
 		item.ChangeDesc = history.ChangeDesc
 	}

@@ -54,17 +54,16 @@ func (p *Service) GetArticleRevisesPaged(c context.Context, articleID int64, sor
 			ImageUrls: make([]string, 0),
 		}
 
-		var account *account.BaseInfoReply
-		if account, err = p.d.GetAccountBaseInfo(c, v.CreatedBy); err != nil {
+		var acc *account.BaseInfoReply
+		if acc, err = p.d.GetAccountBaseInfo(c, v.CreatedBy); err != nil {
 			return
 		}
 		item.Creator = &model.Creator{
-			ID:       account.ID,
-			UserName: account.UserName,
-			Avatar:   account.Avatar,
+			ID:           acc.ID,
+			UserName:     acc.UserName,
+			Avatar:       acc.Avatar,
+			Introduction: acc.Introduction,
 		}
-		intro := account.GetIntroductionValue()
-		item.Creator.Introduction = &intro
 
 		if item.ImageUrls, err = p.GetReviseImageUrls(c, item.ID); err != nil {
 			return
@@ -297,8 +296,8 @@ func (p *Service) GetRevise(c context.Context, reviseID int64) (resp *model.Revi
 		return
 	}
 
-	var account *account.BaseInfoReply
-	if account, err = p.d.GetAccountBaseInfo(c, data.CreatedBy); err != nil {
+	var acc *account.BaseInfoReply
+	if acc, err = p.d.GetAccountBaseInfo(c, data.CreatedBy); err != nil {
 		return
 	}
 	resp = &model.ReviseDetailResp{
@@ -311,12 +310,11 @@ func (p *Service) GetRevise(c context.Context, reviseID int64) (resp *model.Revi
 	}
 
 	resp.Creator = &model.Creator{
-		ID:       account.ID,
-		UserName: account.UserName,
-		Avatar:   account.Avatar,
+		ID:           acc.ID,
+		UserName:     acc.UserName,
+		Avatar:       acc.Avatar,
+		Introduction: acc.Introduction,
 	}
-	intro := account.GetIntroductionValue()
-	resp.Creator.Introduction = &intro
 
 	if resp.Files, err = p.GetReviseFiles(c, reviseID); err != nil {
 		return

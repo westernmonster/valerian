@@ -34,7 +34,7 @@ func (p *Service) getArticleRelations(c context.Context, node sqalx.Node, articl
 			ID:         v.ID,
 			ToTopicID:  v.TopicID,
 			Primary:    bool(v.IsPrimary),
-			Permission: *v.Permission,
+			Permission: v.Permission,
 		}
 
 		var t *topic.TopicInfo
@@ -43,8 +43,7 @@ func (p *Service) getArticleRelations(c context.Context, node sqalx.Node, articl
 		}
 
 		item.Name = t.Name
-		avatar := t.GetAvatarValue()
-		item.Avatar = &avatar
+		item.Avatar = t.Avatar
 
 		if item.CatalogFullPath, err = p.getCatalogFullPath(c, node, v); err != nil {
 			return
@@ -191,10 +190,10 @@ func (p *Service) addArticleRelation(c context.Context, node sqalx.Node, article
 		Seq:        maxSeq + 1,
 		Type:       model.TopicCatalogArticle,
 		ParentID:   item.ParentID,
-		RefID:      &articleID,
+		RefID:      articleID,
 		TopicID:    item.TopicID,
 		IsPrimary:  types.BitBool(item.Primary),
-		Permission: &item.Permission,
+		Permission: item.Permission,
 		CreatedAt:  time.Now().Unix(),
 		UpdatedAt:  time.Now().Unix(),
 	}
@@ -251,7 +250,7 @@ func (p *Service) UpdateArticleRelation(c context.Context, arg *model.ArgUpdateA
 
 	}
 
-	catalog.Permission = &arg.Permission
+	catalog.Permission = arg.Permission
 	catalog.IsPrimary = types.BitBool(arg.Primary)
 
 	if err = p.d.UpdateTopicCatalog(c, tx, catalog); err != nil {
@@ -322,9 +321,9 @@ func (p *Service) SetPrimary(c context.Context, arg *model.ArgSetPrimaryArticleR
 		return
 	}
 
-	if *catalog.Permission == model.AuthPermissionView {
+	if catalog.Permission == model.AuthPermissionView {
 		editPermission := model.AuthPermissionEdit
-		catalog.Permission = &editPermission
+		catalog.Permission = editPermission
 	}
 
 	catalog.IsPrimary = true

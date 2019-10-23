@@ -10,7 +10,7 @@ type Comment struct {
 	ResourceID int64         `db:"resource_id" json:"resource_id,string"`     // ResourceID 所属对象ID (discussion, article, revise, comment)
 	Featured   types.BitBool `db:"featured" json:"featured"`                  // Featured 是否精选
 	Deleted    types.BitBool `db:"deleted" json:"deleted"`                    // Deleted 是否删除
-	ReplyTo    *int64        `db:"reply_to" json:"reply_to,omitempty,string"` // ReplyTo 被回复人
+	ReplyTo    int64         `db:"reply_to" json:"reply_to,omitempty,string"` // ReplyTo 被回复人
 	CreatedBy  int64         `db:"created_by" json:"created_by,string"`       // CreatedBy 创建人
 	CreatedAt  int64         `db:"created_at" json:"created_at"`              // CreatedAt 创建时间
 	UpdatedAt  int64         `db:"updated_at" json:"updated_at"`              // UpdatedAt 更新时间

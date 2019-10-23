@@ -9,7 +9,7 @@ type Creator struct {
 	Avatar string `json:"avatar"`
 
 	// 自我介绍
-	Introduction *string `json:"introduction,omitempty"`
+	Introduction string `json:"introduction,omitempty"`
 }
 
 type TargetTopic struct {
@@ -19,7 +19,7 @@ type TargetTopic struct {
 	Name string `json:"name"`
 	// 头像
 	// 必须为URL
-	Avatar *string `json:"avatar"`
+	Avatar string `json:"avatar"`
 
 	// 成员数
 	MemberCount int `json:"member_count"`
@@ -86,16 +86,16 @@ type MemberInfo struct {
 	// 用户名
 	UserName string `json:"user_name" format:"user_name"`
 	// 性别 1为男， 2为女
-	Gender *int `json:"gender,omitempty"`
+	Gender int `json:"gender,omitempty"`
 
 	// 所在地区值
-	Location *int64 `json:"location,string,omitempty"`
+	Location int64 `json:"location,string,omitempty"`
 
 	// 所在地区名，地区是层级结构，这里将国家、州/省、市、区全部获取出来
-	LocationString *string `json:"location_string,omitempty"`
+	LocationString string `json:"location_string,omitempty"`
 
 	// 自我介绍
-	Introduction *string `json:"introduction,omitempty"`
+	Introduction string `json:"introduction,omitempty"`
 
 	// 头像
 	Avatar string `json:"avatar"`
@@ -197,7 +197,7 @@ type TargetDiscuss struct {
 	// ID
 	ID int64 `json:"id,string" swaggertype:"string"`
 	// 标题
-	Title *string `json:"title,omitempty"`
+	Title string `json:"title,omitempty"`
 	// 评论内容
 	Excerpt string `json:"excerpt"`
 

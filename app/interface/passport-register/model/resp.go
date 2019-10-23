@@ -34,25 +34,25 @@ type Profile struct {
 	// 用户名
 	UserName string `json:"user_name" format:"user_name"`
 	// 性别 1为男， 2为女
-	Gender *int `json:"gender,omitempty"`
+	Gender int `json:"gender,omitempty"`
 	// 出生年
-	BirthYear *int `json:"birth_year,omitempty"`
+	BirthYear int `json:"birth_year,omitempty"`
 	// 出生月
-	BirthMonth *int `json:"birth_month,omitempty"`
+	BirthMonth int `json:"birth_month,omitempty"`
 	// 出生日
-	BirthDay *int `json:"birth_day,omitempty"`
+	BirthDay int `json:"birth_day,omitempty"`
 	// 所在地区值
-	Location *int64 `json:"location,string,omitempty"`
+	Location int64 `json:"location,string,omitempty"`
 	// 所在地区名，地区是层级结构，这里将国家、州/省、市、区全部获取出来
-	LocationString *string `json:"location_string,omitempty"`
+	LocationString string `json:"location_string,omitempty"`
 	// 自我介绍
-	Introduction *string `json:"introduction,omitempty"`
+	Introduction string `json:"introduction,omitempty"`
 	// 头像
 	Avatar string `json:"avatar"`
 	// 来源，1:Web, 2:iOS; 3:Android
 	Source int `json:"source"`
 	// IP 注册IP
-	IP *string `json:"ip,omitempty"`
+	IP string `json:"ip,omitempty"`
 
 	// 是否身份认证
 	IDCert bool `json:"id_cert"`

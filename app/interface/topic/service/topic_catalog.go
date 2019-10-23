@@ -207,7 +207,7 @@ func (p *Service) getCatalogTaxonomyHierarchyOfAll(c context.Context, node sqalx
 	return
 }
 
-func (p *Service) createCatalog(c context.Context, node sqalx.Node, topicID int64, name string, seq int, rtype string, refID *int64, parentID int64) (id int64, err error) {
+func (p *Service) createCatalog(c context.Context, node sqalx.Node, topicID int64, name string, seq int, rtype string, refID int64, parentID int64) (id int64, err error) {
 	// // 当前为分类，则不允许处于第三级
 	if parentID != 0 && rtype == model.TopicCatalogTaxonomy {
 		var parent *model.TopicCatalog

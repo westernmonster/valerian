@@ -19,7 +19,7 @@ type AuthorizationCode struct {
 	ClientID    string        `db:"client_id" json:"client_id"`                 // ClientID Client ID
 	AccountID   int64         `db:"account_id" json:"account_id,string"`        // AccountID Account ID
 	Code        string        `db:"code" json:"code"`                           // Code Code
-	RedirectURI *string       `db:"redirect_uri" json:"redirect_uri,omitempty"` // RedirectURI Redirect URI
+	RedirectURI string        `db:"redirect_uri" json:"redirect_uri,omitempty"` // RedirectURI Redirect URI
 	ExpiresAt   int64         `db:"expires_at" json:"expires_at"`               // ExpiresAt 过期时间
 	Scope       string        `db:"scope" json:"scope"`                         // Scope Scope
 	Deleted     types.BitBool `db:"deleted" json:"deleted"`                     // Deleted 是否删除
@@ -32,7 +32,7 @@ type Client struct {
 	ClientID     string        `db:"client_id" json:"client_id"`                 // ClientID Client ID
 	ClientSecret string        `db:"client_secret" json:"client_secret"`         // ClientSecret Client Secret
 	Extra        string        `db:"extra" json:"extra"`                         // Extra Extra
-	RedirectURI  *string       `db:"redirect_uri" json:"redirect_uri,omitempty"` // RedirectURI Redirect URI
+	RedirectURI  string        `db:"redirect_uri" json:"redirect_uri,omitempty"` // RedirectURI Redirect URI
 	Deleted      types.BitBool `db:"deleted" json:"deleted"`                     // Deleted 是否删除
 	CreatedAt    int64         `db:"created_at" json:"created_at"`               // CreatedAt 创建时间
 	UpdatedAt    int64         `db:"updated_at" json:"updated_at"`               // UpdatedAt 更新时间
@@ -76,12 +76,12 @@ type Account struct {
 	Password     string        `db:"password" json:"password"`                   // Password 密码hash
 	Role         string        `db:"role" json:"role"`                           // Role 角色
 	Salt         string        `db:"salt" json:"salt"`                           // Salt 盐
-	Gender       *int          `db:"gender" json:"gender,omitempty"`             // Gender 性别
-	BirthYear    *int          `db:"birth_year" json:"birth_year,omitempty"`     // BirthYear 出生年
-	BirthMonth   *int          `db:"birth_month" json:"birth_month,omitempty"`   // BirthMonth 出生月
-	BirthDay     *int          `db:"birth_day" json:"birth_day,omitempty"`       // BirthDay 出生日
-	Location     *int64        `db:"location" json:"location,omitempty,string"`  // Location 地区
-	Introduction *string       `db:"introduction" json:"introduction,omitempty"` // Introduction 自我介绍
+	Gender       int           `db:"gender" json:"gender,omitempty"`             // Gender 性别
+	BirthYear    int           `db:"birth_year" json:"birth_year,omitempty"`     // BirthYear 出生年
+	BirthMonth   int           `db:"birth_month" json:"birth_month,omitempty"`   // BirthMonth 出生月
+	BirthDay     int           `db:"birth_day" json:"birth_day,omitempty"`       // BirthDay 出生日
+	Location     int64         `db:"location" json:"location,omitempty,string"`  // Location 地区
+	Introduction string        `db:"introduction" json:"introduction,omitempty"` // Introduction 自我介绍
 	Avatar       string        `db:"avatar" json:"avatar"`                       // Avatar 头像
 	Source       int           `db:"source" json:"source"`                       // Source 注册来源
 	IP           int64         `db:"ip" json:"ip,string"`                        // IP 注册IP

@@ -103,7 +103,7 @@ type CommentCreator struct {
 	Avatar string `json:"avatar"`
 
 	// 自我介绍
-	Introduction *string `json:"introduction,omitempty"`
+	Introduction string `json:"introduction,omitempty"`
 
 	// 是否该文章/补充/讨论的作者
 	IsAuthor bool `json:"is_author"`

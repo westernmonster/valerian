@@ -30,17 +30,16 @@ func (p *Service) GetArticleHistoriesResp(c context.Context, articleID int64, li
 			CreatedAt:  v.CreatedAt,
 		}
 
-		var account *account.BaseInfoReply
-		if account, err = p.d.GetAccountBaseInfo(c, v.UpdatedBy); err != nil {
+		var acc *account.BaseInfoReply
+		if acc, err = p.d.GetAccountBaseInfo(c, v.UpdatedBy); err != nil {
 			return
 		}
 		item.Updator = &model.Creator{
-			ID:       account.ID,
-			UserName: account.UserName,
-			Avatar:   account.Avatar,
+			ID:           acc.ID,
+			UserName:     acc.UserName,
+			Avatar:       acc.Avatar,
+			Introduction: acc.Introduction,
 		}
-		intro := account.GetIntroductionValue()
-		item.Updator.Introduction = &intro
 
 		resp.Items[i] = item
 	}
@@ -84,22 +83,21 @@ func (p *Service) GetArticleHistoryResp(c context.Context, articleHistoryID int6
 		ArticleID:  v.ArticleID,
 		Seq:        v.Seq,
 		ChangeDesc: v.ChangeDesc,
-		Diff:       &v.Diff,
+		Diff:       v.Diff,
 		UpdatedAt:  v.UpdatedAt,
 		CreatedAt:  v.CreatedAt,
 	}
 
-	var account *account.BaseInfoReply
-	if account, err = p.d.GetAccountBaseInfo(c, v.UpdatedBy); err != nil {
+	var acc *account.BaseInfoReply
+	if acc, err = p.d.GetAccountBaseInfo(c, v.UpdatedBy); err != nil {
 		return
 	}
 	item.Updator = &model.Creator{
-		ID:       account.ID,
-		UserName: account.UserName,
-		Avatar:   account.Avatar,
+		ID:           acc.ID,
+		UserName:     acc.UserName,
+		Avatar:       acc.Avatar,
+		Introduction: acc.Introduction,
 	}
-	intro := account.GetIntroductionValue()
-	item.Updator.Introduction = &intro
 
 	return
 }

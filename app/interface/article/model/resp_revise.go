@@ -79,8 +79,8 @@ type ReviseDetailResp struct {
 }
 
 type Paging struct {
-	// 统计数量
-	Total *int `json:"total,omitempty"`
+	// // 统计数量
+	// Total int `json:"total,omitempty"`
 	// 是否结束
 	IsEnd bool `json:"is_end"`
 	// 下一页

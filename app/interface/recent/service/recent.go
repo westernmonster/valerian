@@ -22,9 +22,10 @@ func (p *Service) FromArticle(v *article.ArticleInfo) (item *model.ItemArticle) 
 		LikeCount:    int(v.Stat.LikeCount),
 		DislikeCount: int(v.Stat.DislikeCount),
 		Creator: &model.Creator{
-			ID:       v.Creator.ID,
-			Avatar:   v.Creator.Avatar,
-			UserName: v.Creator.UserName,
+			ID:           v.Creator.ID,
+			Avatar:       v.Creator.Avatar,
+			UserName:     v.Creator.UserName,
+			Introduction: v.Creator.Introduction,
 		},
 		CreatedAt: v.CreatedAt,
 		UpdatedAt: v.UpdatedAt,
@@ -35,8 +36,6 @@ func (p *Service) FromArticle(v *article.ArticleInfo) (item *model.ItemArticle) 
 		item.ImageUrls = v.ImageUrls
 	}
 
-	intro := v.Creator.GetIntroductionValue()
-	item.Creator.Introduction = &intro
 	return
 }
 
@@ -49,19 +48,16 @@ func (p *Service) FromTopic(v *topic.TopicInfo) (item *model.ItemTopic) {
 		DiscussionCount: int(v.Stat.DiscussionCount),
 		ArticleCount:    int(v.Stat.ArticleCount),
 		Creator: &model.Creator{
-			ID:       v.Creator.ID,
-			Avatar:   v.Creator.Avatar,
-			UserName: v.Creator.UserName,
+			ID:           v.Creator.ID,
+			Avatar:       v.Creator.Avatar,
+			UserName:     v.Creator.UserName,
+			Introduction: v.Creator.Introduction,
 		},
 		CreatedAt: v.CreatedAt,
 		UpdatedAt: v.UpdatedAt,
+		Avatar:    v.Avatar,
 	}
 
-	intro := v.Creator.GetIntroductionValue()
-	item.Creator.Introduction = &intro
-
-	avatar := v.GetAvatarValue()
-	item.Avatar = &avatar
 	return
 }
 

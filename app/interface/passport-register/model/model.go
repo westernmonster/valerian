@@ -54,12 +54,12 @@ type Account struct {
 	Password     string        `db:"password" json:"password"`                   // Password 密码hash
 	Role         string        `db:"role" json:"role"`                           // Role 角色
 	Salt         string        `db:"salt" json:"salt"`                           // Salt 盐
-	Gender       *int          `db:"gender" json:"gender,omitempty"`             // Gender 性别
-	BirthYear    *int          `db:"birth_year" json:"birth_year,omitempty"`     // BirthYear 出生年
-	BirthMonth   *int          `db:"birth_month" json:"birth_month,omitempty"`   // BirthMonth 出生月
-	BirthDay     *int          `db:"birth_day" json:"birth_day,omitempty"`       // BirthDay 出生日
-	Location     *int64        `db:"location" json:"location,omitempty,string"`  // Location 地区
-	Introduction *string       `db:"introduction" json:"introduction,omitempty"` // Introduction 自我介绍
+	Gender       int           `db:"gender" json:"gender,omitempty"`             // Gender 性别
+	BirthYear    int           `db:"birth_year" json:"birth_year,omitempty"`     // BirthYear 出生年
+	BirthMonth   int           `db:"birth_month" json:"birth_month,omitempty"`   // BirthMonth 出生月
+	BirthDay     int           `db:"birth_day" json:"birth_day,omitempty"`       // BirthDay 出生日
+	Location     int64         `db:"location" json:"location,omitempty,string"`  // Location 地区
+	Introduction string        `db:"introduction" json:"introduction,omitempty"` // Introduction 自我介绍
 	Avatar       string        `db:"avatar" json:"avatar"`                       // Avatar 头像
 	Source       int           `db:"source" json:"source"`                       // Source 注册来源
 	IP           int64         `db:"ip" json:"ip,string"`                        // IP 注册IP

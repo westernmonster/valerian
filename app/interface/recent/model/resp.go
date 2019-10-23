@@ -9,7 +9,7 @@ type Creator struct {
 	Avatar string `json:"avatar"`
 
 	// 自我介绍
-	Introduction *string `json:"introduction,omitempty"`
+	Introduction string `json:"introduction,omitempty"`
 }
 
 type ItemTopic struct {
@@ -19,7 +19,7 @@ type ItemTopic struct {
 	Name string `json:"name"`
 	// 头像
 	// 必须为URL
-	Avatar *string `json:"avatar"`
+	Avatar string `json:"avatar"`
 
 	// 成员数
 	MemberCount int `json:"member_count"`

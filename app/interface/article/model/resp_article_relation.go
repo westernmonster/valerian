@@ -14,7 +14,7 @@ type ArticleRelationResp struct {
 	// 话题名称
 	Name string `json:"name"`
 	// 话题头像
-	Avatar *string `json:"avatar,omitempty"`
+	Avatar string `json:"avatar,omitempty"`
 	// 权限
 	Permission string `json:"permission"`
 
