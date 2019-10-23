@@ -74,14 +74,11 @@ func (s *server) GetArticleInfo(ctx context.Context, req *api.IDReq) (*api.Artic
 			DislikeCount: int32(stat.DislikeCount),
 		},
 		Creator: &api.Creator{
-			ID:       m.ID,
-			UserName: m.UserName,
-			Avatar:   m.Avatar,
+			ID:           m.ID,
+			UserName:     m.UserName,
+			Avatar:       m.Avatar,
+			Introduction: m.Introduction,
 		},
-	}
-
-	if m.Introduction != nil {
-		resp.Creator.Introduction = &api.Creator_IntroductionValue{m.GetIntroductionValue()}
 	}
 
 	return resp, nil
@@ -185,15 +182,12 @@ func (s *server) GetReviseInfo(ctx context.Context, req *api.IDReq) (*api.Revise
 			DislikeCount: int32(stat.DislikeCount),
 		},
 		Creator: &api.Creator{
-			ID:       m.ID,
-			UserName: m.UserName,
-			Avatar:   m.Avatar,
+			ID:           m.ID,
+			UserName:     m.UserName,
+			Avatar:       m.Avatar,
+			Introduction: m.Introduction,
 		},
 		ArticleID: revise.ArticleID,
-	}
-
-	if m.Introduction != nil {
-		resp.Creator.Introduction = &api.Creator_IntroductionValue{m.GetIntroductionValue()}
 	}
 
 	return resp, nil
@@ -239,14 +233,11 @@ func (s *server) GetUserArticlesPaged(c context.Context, req *api.UserArticlesRe
 				DislikeCount: int32(stat.DislikeCount),
 			},
 			Creator: &api.Creator{
-				ID:       m.ID,
-				UserName: m.UserName,
-				Avatar:   m.Avatar,
+				ID:           m.ID,
+				UserName:     m.UserName,
+				Avatar:       m.Avatar,
+				Introduction: m.Introduction,
 			},
-		}
-
-		if m.Introduction != nil {
-			info.Creator.Introduction = &api.Creator_IntroductionValue{m.GetIntroductionValue()}
 		}
 
 		resp.Items[i] = info
