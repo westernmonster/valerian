@@ -4,21 +4,15 @@ import "valerian/app/service/account/model"
 
 func FromBaseInfo(model *model.BaseInfo) *BaseInfoReply {
 	reply := &BaseInfoReply{
-		ID:       model.ID,
-		UserName: model.UserName,
-		Avatar:   model.Avatar,
-		IDCert:   model.IDCert,
-		WorkCert: model.WorkCert,
-		IsOrg:    model.IsOrg,
-		IsVIP:    model.IsVIP,
-	}
-
-	if model.Gender != nil {
-		reply.Gender = &BaseInfoReply_GenderValue{int32(*model.Gender)}
-	}
-
-	if model.Introduction != nil {
-		reply.Introduction = &BaseInfoReply_IntroductionValue{*model.Introduction}
+		ID:           model.ID,
+		UserName:     model.UserName,
+		Avatar:       model.Avatar,
+		IDCert:       model.IDCert,
+		WorkCert:     model.WorkCert,
+		IsOrg:        model.IsOrg,
+		IsVIP:        model.IsVIP,
+		Gender:       int32(model.Gender),
+		Introduction: model.Introduction,
 	}
 
 	return reply
@@ -39,29 +33,18 @@ func FromStat(model *model.AccountStat) *AccountStatInfo {
 
 func FromProfileInfo(model *model.ProfileInfo) *ProfileReply {
 	reply := &ProfileReply{
-		ID:        model.ID,
-		UserName:  model.UserName,
-		Avatar:    model.Avatar,
-		IDCert:    model.IDCert,
-		WorkCert:  model.WorkCert,
-		IsOrg:     model.IsOrg,
-		IsVIP:     model.IsVIP,
-		CreatedAt: model.CreatedAt,
-	}
-
-	if model.Gender != nil {
-		reply.Gender = &ProfileReply_GenderValue{int32(*model.Gender)}
-	}
-
-	if model.Introduction != nil {
-		reply.Introduction = &ProfileReply_IntroductionValue{*model.Introduction}
-	}
-
-	if model.Location != nil {
-		reply.Location = &ProfileReply_LocationValue{*model.Location}
-		if model.LocationString != nil {
-			reply.LocationString = &ProfileReply_LocationStringValue{*model.LocationString}
-		}
+		ID:             model.ID,
+		UserName:       model.UserName,
+		Avatar:         model.Avatar,
+		IDCert:         model.IDCert,
+		WorkCert:       model.WorkCert,
+		IsOrg:          model.IsOrg,
+		IsVIP:          model.IsVIP,
+		CreatedAt:      model.CreatedAt,
+		Gender:         int32(model.Gender),
+		Introduction:   model.Introduction,
+		Location:       model.Location,
+		LocationString: model.LocationString,
 	}
 
 	return reply

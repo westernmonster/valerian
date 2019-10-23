@@ -36,9 +36,7 @@ message Creator {
 
     string Avatar   = 3 [(gogoproto.jsontag) = "avatar"];
 
-    oneof Introduction {
-        string  IntroductionValue = 4 [(gogoproto.jsontag) = "introduction"] ;
-    }
+        string  Introduction = 4 [(gogoproto.jsontag) = "introduction"] ;
 }
 
 
@@ -52,9 +50,7 @@ message DiscussionInfo {
 
     Creator Creator = 4 [(gogoproto.jsontag) = "creator"];
 
-    oneof Title {
-        string  TitleValue = 5 [(gogoproto.jsontag) = "title"] ;
-    }
+    string  Title = 5 [(gogoproto.jsontag) = "title"] ;
 
     string  Excerpt = 6 [(gogoproto.jsontag) = "excerpt"];
 

@@ -23,12 +23,14 @@ func (p *Service) FromDiscussion(v *discuss.DiscussionInfo) (item *model.TargetD
 		LikeCount:    int(v.Stat.LikeCount),
 		DislikeCount: int(v.Stat.DislikeCount),
 		Creator: &model.Creator{
-			ID:       v.Creator.ID,
-			Avatar:   v.Creator.Avatar,
-			UserName: v.Creator.UserName,
+			ID:           v.Creator.ID,
+			Avatar:       v.Creator.Avatar,
+			UserName:     v.Creator.UserName,
+			Introduction: v.Creator.Introduction,
 		},
 		CreatedAt: v.CreatedAt,
 		UpdatedAt: v.UpdatedAt,
+		Title:     v.Title,
 	}
 
 	if v.ImageUrls == nil {
@@ -37,11 +39,6 @@ func (p *Service) FromDiscussion(v *discuss.DiscussionInfo) (item *model.TargetD
 		item.ImageUrls = v.ImageUrls
 	}
 
-	title := v.GetTitleValue()
-	item.Title = &title
-
-	intro := v.Creator.GetIntroductionValue()
-	item.Creator.Introduction = &intro
 	return
 }
 
@@ -54,9 +51,10 @@ func (p *Service) FromRevise(v *article.ReviseInfo) (item *model.TargetRevise) {
 		LikeCount:    int(v.Stat.LikeCount),
 		DislikeCount: int(v.Stat.DislikeCount),
 		Creator: &model.Creator{
-			ID:       v.Creator.ID,
-			Avatar:   v.Creator.Avatar,
-			UserName: v.Creator.UserName,
+			ID:           v.Creator.ID,
+			Avatar:       v.Creator.Avatar,
+			UserName:     v.Creator.UserName,
+			Introduction: v.Creator.Introduction,
 		},
 		CreatedAt: v.CreatedAt,
 		UpdatedAt: v.UpdatedAt,
@@ -67,8 +65,6 @@ func (p *Service) FromRevise(v *article.ReviseInfo) (item *model.TargetRevise) {
 		item.ImageUrls = v.ImageUrls
 	}
 
-	intro := v.Creator.GetIntroductionValue()
-	item.Creator.Introduction = &intro
 	return
 }
 
@@ -82,9 +78,10 @@ func (p *Service) FromArticle(v *article.ArticleInfo) (item *model.TargetArticle
 		LikeCount:    int(v.Stat.LikeCount),
 		DislikeCount: int(v.Stat.DislikeCount),
 		Creator: &model.Creator{
-			ID:       v.Creator.ID,
-			Avatar:   v.Creator.Avatar,
-			UserName: v.Creator.UserName,
+			ID:           v.Creator.ID,
+			Avatar:       v.Creator.Avatar,
+			UserName:     v.Creator.UserName,
+			Introduction: v.Creator.Introduction,
 		},
 		CreatedAt: v.CreatedAt,
 		UpdatedAt: v.UpdatedAt,
@@ -95,8 +92,6 @@ func (p *Service) FromArticle(v *article.ArticleInfo) (item *model.TargetArticle
 		item.ImageUrls = v.ImageUrls
 	}
 
-	intro := v.Creator.GetIntroductionValue()
-	item.Creator.Introduction = &intro
 	return
 }
 
@@ -109,19 +104,16 @@ func (p *Service) FromTopic(v *topic.TopicInfo) (item *model.TargetTopic) {
 		DiscussionCount: int(v.Stat.DiscussionCount),
 		ArticleCount:    int(v.Stat.ArticleCount),
 		Creator: &model.Creator{
-			ID:       v.Creator.ID,
-			Avatar:   v.Creator.Avatar,
-			UserName: v.Creator.UserName,
+			ID:           v.Creator.ID,
+			Avatar:       v.Creator.Avatar,
+			UserName:     v.Creator.UserName,
+			Introduction: v.Creator.Introduction,
 		},
 		CreatedAt: v.CreatedAt,
 		UpdatedAt: v.UpdatedAt,
+		Avatar:    v.Avatar,
 	}
 
-	intro := v.Creator.GetIntroductionValue()
-	item.Creator.Introduction = &intro
-
-	avatar := v.GetAvatarValue()
-	item.Avatar = &avatar
 	return
 }
 
@@ -440,6 +432,7 @@ func (p *Service) GetMemberDiscussionsPaged(c context.Context, aid int64, limit,
 			CommentCount: int(v.Stat.CommentCount),
 			CreatedAt:    v.CreatedAt,
 			UpdatedAt:    v.UpdatedAt,
+			Title:        v.Title,
 		}
 
 		if v.ImageUrls == nil {
@@ -447,9 +440,6 @@ func (p *Service) GetMemberDiscussionsPaged(c context.Context, aid int64, limit,
 		} else {
 			item.ImageUrls = v.ImageUrls
 		}
-
-		title := v.GetTitleValue()
-		item.Title = &title
 
 		resp.Items[i] = item
 	}
@@ -500,10 +490,9 @@ func (p *Service) GetMemberTopicsPaged(c context.Context, aid int64, limit, offs
 			Introduction: v.Introduction,
 			CreatedAt:    v.CreatedAt,
 			UpdatedAt:    v.UpdatedAt,
+			Avatar:       v.Avatar,
 		}
 
-		avatar := v.GetAvatarValue()
-		item.Avatar = &avatar
 		resp.Items[i] = item
 	}
 

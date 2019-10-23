@@ -9,13 +9,9 @@ message BaseInfoReply {
 
     string UserName  = 2 [(gogoproto.jsontag) = "user_name"] ;
 
-    oneof Gender {
-        int32  GenderValue = 3 [(gogoproto.jsontag) = "gender"] ;
-    }
+    int32  Gender = 3 [(gogoproto.jsontag) = "gender"] ;
 
-    oneof Introduction {
-        string  IntroductionValue = 4 [(gogoproto.jsontag) = "introduction"] ;
-    }
+    string  Introduction = 4 [(gogoproto.jsontag) = "introduction"] ;
 
     string Avatar  = 5 [(gogoproto.jsontag) = "avatar"] ;
 
@@ -38,21 +34,13 @@ message ProfileReply {
 
     string UserName  = 2 [(gogoproto.jsontag) = "user_name"] ;
 
-    oneof Gender {
-        int32  GenderValue = 3 [(gogoproto.jsontag) = "gender"] ;
-    }
+    int32  Gender = 3 [(gogoproto.jsontag) = "gender"] ;
 
-    oneof Introduction {
-        string  IntroductionValue = 4 [(gogoproto.jsontag) = "introduction"] ;
-    }
+    string  Introduction = 4 [(gogoproto.jsontag) = "introduction"] ;
 
-    oneof Location {
-        int64  LocationValue = 5 [(gogoproto.jsontag) = "location"] ;
-    }
+    int64  Location = 5 [(gogoproto.jsontag) = "location"] ;
 
-    oneof LocationString {
-        string  LocationStringValue = 6 [(gogoproto.jsontag) = "location_string"] ;
-    }
+    string  LocationString = 6 [(gogoproto.jsontag) = "location_string"] ;
 
     string Avatar  = 7 [(gogoproto.jsontag) = "avatar"] ;
 

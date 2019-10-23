@@ -5,7 +5,7 @@ import "valerian/library/database/sqlx/types"
 type MemberItem struct {
 	ID int64 `json:"id,string" swaggertype:"string" format:"int64" db:"id"`
 	// 自我介绍
-	Introduction *string `json:"introduction,omitempty" db:"introduction"`
+	Introduction string `json:"introduction,omitempty" db:"introduction"`
 	// 头像
 	Avatar string `json:"avatar" db:"avatar"`
 
@@ -19,7 +19,7 @@ type MemberItem struct {
 	UserName string `json:"user_name" db:"user_name"`
 
 	// 性别 1为男， 2为女
-	Gender *int `json:"gender,omitempty" db:"gender"`
+	Gender int `json:"gender,omitempty" db:"gender"`
 
 	// 是否身份认证
 	IDCert types.BitBool `json:"id_cert" db:"id_cert"`

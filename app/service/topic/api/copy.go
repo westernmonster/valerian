@@ -18,6 +18,8 @@ func FromTopic(v *model.Topic, stat *model.TopicStat, acc *account.BaseInfoReply
 		EditPermission:  v.EditPermission,
 		JoinPermission:  v.JoinPermission,
 		CatalogViewType: v.CatalogViewType,
+		Avatar:          v.Avatar,
+		Bg:              v.Bg,
 		TopicHome:       v.TopicHome,
 		CreatedAt:       v.CreatedAt,
 		UpdatedAt:       v.UpdatedAt,
@@ -29,22 +31,11 @@ func FromTopic(v *model.Topic, stat *model.TopicStat, acc *account.BaseInfoReply
 		ArticleCount:    int32(stat.ArticleCount),
 	}
 
-	if v.Avatar != nil {
-		reply.Avatar = &TopicInfo_AvatarValue{*v.Avatar}
-	}
-
-	if v.Bg != nil {
-		reply.Bg = &TopicInfo_BgValue{*v.Bg}
-	}
-
 	reply.Creator = &Creator{
-		ID:       acc.ID,
-		UserName: acc.UserName,
-		Avatar:   acc.Avatar,
-	}
-
-	if acc.Introduction != nil {
-		reply.Creator.Introduction = &Creator_IntroductionValue{acc.GetIntroductionValue()}
+		ID:           acc.ID,
+		UserName:     acc.UserName,
+		Avatar:       acc.Avatar,
+		Introduction: acc.Introduction,
 	}
 
 	return reply

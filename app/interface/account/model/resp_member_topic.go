@@ -7,7 +7,7 @@ type MemberTopic struct {
 	Name string `json:"name"`
 	// 头像
 	// 必须为URL
-	Avatar *string `json:"avatar"`
+	Avatar string `json:"avatar"`
 	// 成员数
 	MemberCount int `json:"member_count"`
 

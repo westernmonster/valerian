@@ -16,16 +16,13 @@ func FromDiscussion(v *model.Discussion, x *model.DiscussionStat, imgs []string)
 		UpdatedAt: v.UpdatedAt,
 		Deleted:   bool(v.Deleted),
 		ImageUrls: imgs,
+		Title:     v.Title,
 	}
 
 	reply.Stat = &DiscussionStat{
 		DislikeCount: int32(x.DislikeCount),
 		LikeCount:    int32(x.LikeCount),
 		CommentCount: int32(x.CommentCount),
-	}
-
-	if v.Title != nil {
-		reply.Title = &DiscussionInfo_TitleValue{*v.Title}
 	}
 
 	return reply

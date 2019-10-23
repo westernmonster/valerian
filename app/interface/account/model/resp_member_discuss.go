@@ -5,7 +5,7 @@ type MemberDiscuss struct {
 	ID int64 `json:"id,string" swaggertype:"string"`
 
 	// 标题
-	Title *string `json:"title,omitempty"`
+	Title string `json:"title,omitempty"`
 
 	// 评论内容
 	Excerpt string `json:"excerpt"`

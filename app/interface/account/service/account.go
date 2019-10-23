@@ -154,7 +154,7 @@ func (p *Service) UpdateProfile(c context.Context, aid int64, arg *model.ArgUpda
 		if *arg.Gender != model.GenderMale && *arg.Gender != model.GenderFemale {
 			return ecode.InvalidGender
 		}
-		account.Gender = arg.Gender
+		account.Gender = *arg.Gender
 	}
 
 	if arg.Avatar != nil {
@@ -165,19 +165,19 @@ func (p *Service) UpdateProfile(c context.Context, aid int64, arg *model.ArgUpda
 	}
 
 	if arg.Introduction != nil {
-		account.Introduction = arg.Introduction
+		account.Introduction = *arg.Introduction
 	}
 
 	if arg.BirthYear != nil {
-		account.BirthYear = arg.BirthYear
+		account.BirthYear = *arg.BirthYear
 	}
 
 	if arg.BirthMonth != nil {
-		account.BirthMonth = arg.BirthMonth
+		account.BirthMonth = *arg.BirthMonth
 	}
 
 	if arg.BirthDay != nil {
-		account.BirthDay = arg.BirthDay
+		account.BirthDay = *arg.BirthDay
 	}
 
 	if err = validateBirthDay(arg); err != nil {
@@ -206,7 +206,7 @@ func (p *Service) UpdateProfile(c context.Context, aid int64, arg *model.ArgUpda
 			return ecode.AreaNotExist
 		}
 
-		account.Location = arg.Location
+		account.Location = *arg.Location
 	}
 
 	if err = p.d.UpdateAccount(c, p.d.DB(), account); err != nil {
@@ -315,13 +315,13 @@ func (p *Service) getProfile(c context.Context, accountID int64) (profile *model
 	}
 
 	ipStr := InetNtoA(item.IP)
-	profile.IP = &ipStr
+	profile.IP = ipStr
 
-	if item.Location != nil {
-		if v, e := p.getLocationString(c, *item.Location); e != nil {
+	if item.Location != 0 {
+		if v, e := p.getLocationString(c, item.Location); e != nil {
 			return nil, e
 		} else {
-			profile.LocationString = &v
+			profile.LocationString = v
 		}
 	}
 

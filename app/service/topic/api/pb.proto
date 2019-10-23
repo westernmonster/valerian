@@ -20,9 +20,7 @@ message Creator {
 
     string Avatar   = 3 [(gogoproto.jsontag) = "avatar"];
 
-    oneof Introduction {
-        string  IntroductionValue = 4 [(gogoproto.jsontag) = "introduction"] ;
-    }
+    string  Introduction = 4 [(gogoproto.jsontag) = "introduction"] ;
 }
 
 message TopicInfo {
@@ -30,13 +28,9 @@ message TopicInfo {
 
     string Name = 2 [(gogoproto.jsontag) = "name"];
 
-    oneof Avatar {
-        string  AvatarValue = 3 [(gogoproto.jsontag) = "avatar"] ;
-    }
+    string  Avatar = 3 [(gogoproto.jsontag) = "avatar"] ;
 
-    oneof Bg {
-        string  BgValue = 4 [(gogoproto.jsontag) = "bg"] ;
-    }
+    string  Bg = 4 [(gogoproto.jsontag) = "bg"] ;
 
     string  Introduction = 5 [(gogoproto.jsontag) = "introduction"];
 

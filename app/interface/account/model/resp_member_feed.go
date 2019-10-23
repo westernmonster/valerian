@@ -9,7 +9,7 @@ type Creator struct {
 	Avatar string `json:"avatar"`
 
 	// 自我介绍
-	Introduction *string `json:"introduction,omitempty"`
+	Introduction string `json:"introduction,omitempty"`
 }
 
 type FeedItem struct {
@@ -56,7 +56,7 @@ type Actor struct {
 	Name string `json:"name"`
 
 	// 自我介绍
-	Introduction *string `json:"introduction,omitempty"`
+	Introduction string `json:"introduction,omitempty"`
 }
 
 type FeedTarget struct {
@@ -137,7 +137,7 @@ type TargetDiscuss struct {
 	// ID
 	ID int64 `json:"id,string" swaggertype:"string"`
 	// 标题
-	Title *string `json:"title,omitempty"`
+	Title string `json:"title,omitempty"`
 	// 评论内容
 	Excerpt string `json:"excerpt"`
 
@@ -167,7 +167,7 @@ type TargetTopic struct {
 	Name string `json:"name"`
 	// 头像
 	// 必须为URL
-	Avatar *string `json:"avatar"`
+	Avatar string `json:"avatar"`
 
 	// 成员数
 	MemberCount int `json:"member_count"`
