@@ -70,18 +70,12 @@ func (s *server) GetCommentInfo(ctx context.Context, req *api.IDReq) (*api.Comme
 			DislikeCount:  int32(stat.DislikeCount),
 		},
 		Creator: &api.Creator{
-			ID:       m.ID,
-			UserName: m.UserName,
-			Avatar:   m.Avatar,
+			ID:           m.ID,
+			UserName:     m.UserName,
+			Avatar:       m.Avatar,
+			Introduction: m.Introduction,
 		},
-	}
-
-	if m.Introduction != nil {
-		resp.Creator.Introduction = &api.Creator_IntroductionValue{m.GetIntroductionValue()}
-	}
-
-	if comment.ReplyTo != nil {
-		resp.ReplyTo = &api.CommentInfo_ReplyToValue{*comment.ReplyTo}
+		ReplyTo: comment.ReplyTo,
 	}
 
 	return resp, nil
