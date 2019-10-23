@@ -26,8 +26,10 @@ const (
 )
 
 const (
-	AccountRoleUser = "user"
-	AccountRoleOrg  = "org"
+	AccountRoleUser       = "user"
+	AccountRoleAdmin      = "admin"
+	AccountRoleSuperAdmin = "superadmin"
+	AccountRoleOrg        = "org"
 )
 
 const (

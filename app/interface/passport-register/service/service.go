@@ -20,6 +20,14 @@ type Service struct {
 		GetClient(c context.Context, node sqalx.Node, clientID string) (item *model.Client, err error)
 		GetArea(ctx context.Context, node sqalx.Node, id int64) (item *model.Area, err error)
 
+		GetAccountRolesByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.AccountRole, err error)
+		GetAccountRoles(c context.Context, node sqalx.Node) (items []*model.AccountRole, err error)
+		GetAccountRoleByID(c context.Context, node sqalx.Node, id string) (item *model.AccountRole, err error)
+		GetAccountRoleByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (item *model.AccountRole, err error)
+		AddAccountRole(c context.Context, node sqalx.Node, item *model.AccountRole) (err error)
+		UpdateAccountRole(c context.Context, node sqalx.Node, item *model.AccountRole) (err error)
+		DelAccountRole(c context.Context, node sqalx.Node, id string) (err error)
+
 		GetAccessToken(c context.Context, node sqalx.Node, token string) (item *model.AccessToken, err error)
 		AddAccessToken(c context.Context, node sqalx.Node, t *model.AccessToken) (affected int64, err error)
 		DelExpiredAccessToken(c context.Context, node sqalx.Node, clientID string, accountID int64) (affected int64, err error)

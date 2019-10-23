@@ -131,5 +131,6 @@ var (
 	DraftNotExist                 = add(90030) // 草稿不存在
 	ArticleHistoryNotExist        = add(90031) // 未找到该记录
 	AdminNotExist                 = add(90032) // 管理员不存在
+	AccountRoleNotExist           = add(90033) // 用户角色不存在
 
 )

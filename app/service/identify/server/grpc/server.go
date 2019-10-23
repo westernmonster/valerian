@@ -41,3 +41,11 @@ type server struct {
 func (s *server) GetTokenInfo(ctx context.Context, req *api.TokenReq) (*api.AuthReply, error) {
 	return s.svr.GetTokenInfo(ctx, req.Token)
 }
+
+func (s *server) AdminAuth(ctx context.Context, req *api.AdminAuthReq) (*api.AdminAuthResp, error) {
+	return nil, nil
+}
+
+func (s *server) Permissions(ctx context.Context, req *api.AdminPermissionReq) (*api.AdminPermissionResp, error) {
+	return nil, nil
+}

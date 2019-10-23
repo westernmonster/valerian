@@ -102,3 +102,16 @@ func (p *Service) checkClient(ctx context.Context, clientID string) (err error) 
 	}
 	return
 }
+
+func (p *Service) checkRole(ctx context.Context, roleID string) (err error) {
+	client, err := p.d.GetAccountRoleByID(ctx, p.d.AuthDB(), roleID)
+	if err != nil {
+		return
+	}
+
+	if client == nil {
+		err = ecode.AccountRoleNotExist
+		return
+	}
+	return
+}
