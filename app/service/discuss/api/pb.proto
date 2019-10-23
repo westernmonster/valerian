@@ -93,6 +93,7 @@ message CategoriesReq {
 
 service Discussion {
     rpc GetDiscussionInfo(IDReq) returns (DiscussionInfo);
+    rpc GetDiscussionStat(IDReq) returns (DiscussionStat);
     rpc GetDiscussionCategories(CategoriesReq) returns (CategoriesResp);
     rpc GetUserDiscussionsPaged(UserDiscussionsReq) returns (UserDiscussionsResp);
 }

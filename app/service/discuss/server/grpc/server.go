@@ -39,6 +39,20 @@ type server struct {
 	svr *service.Service
 }
 
+func (s *server) GetDiscussionStat(ctx context.Context, req *api.IDReq) (*api.DiscussionStat, error) {
+	stat, err := s.svr.GetDiscussionStat(ctx, req.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &api.DiscussionStat{
+		LikeCount:    int32(stat.LikeCount),
+		DislikeCount: int32(stat.DislikeCount),
+		CommentCount: int32(stat.CommentCount),
+	}
+	return resp, err
+}
+
 func (s *server) GetDiscussionInfo(ctx context.Context, req *api.IDReq) (*api.DiscussionInfo, error) {
 	v, imgs, err := s.svr.GetDiscussion(ctx, req.ID)
 	if err != nil {
