@@ -119,7 +119,8 @@ func (p *Service) Init(c context.Context) (err error) {
 		return
 	}
 
-	for _, v := range articles {
+	iArticles := make([]*model.ESArticle, len(articles))
+	for i, v := range articles {
 		item := &model.ESArticle{
 			ID:          v.ID,
 			Title:       &v.Title,
@@ -149,9 +150,12 @@ func (p *Service) Init(c context.Context) (err error) {
 			Introduction: &acc.Introduction,
 		}
 
-		if err = p.d.PutArticle2ES(c, item); err != nil {
-			return
-		}
+		iArticles[i] = item
+
+	}
+
+	if err = p.d.BulkArticle2ES(c, iArticles); err != nil {
+		return
 	}
 
 	var discussions []*model.Discussion

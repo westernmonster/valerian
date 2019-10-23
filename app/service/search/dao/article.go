@@ -10,6 +10,7 @@ import (
 	"valerian/library/conf/env"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
+	"valerian/library/sync/errgroup"
 
 	"gopkg.in/olivere/elastic.v6"
 )
@@ -101,6 +102,64 @@ func (p *Dao) CreateArticleIndices(c context.Context) (err error) {
 		msg := fmt.Sprintf("expected IndicesCreateResult.Acknowledged %v; got %v", true, createRet.Acknowledged)
 		log.For(c).Error(msg)
 		err = errors.New(msg)
+		return
+	}
+
+	return
+}
+
+func (p *Dao) BulkArticle2ES(c context.Context, items []*model.ESArticle) (err error) {
+	indexName := fmt.Sprintf("%s_articles", env.DeployEnv)
+	docsc := make(chan *model.ESArticle)
+	g, ctx := errgroup.WithContext(c)
+	g.Go(func() error {
+		defer close(docsc)
+		for _, v := range items {
+			select {
+			case docsc <- v:
+			case <-c.Done():
+				return ctx.Err()
+			}
+		}
+		return nil
+	})
+	g.Go(func() error {
+		bulk := p.esClient.Bulk().Index(indexName).Type("article")
+		for d := range docsc {
+			// Enqueue the document
+			bulk.Add(elastic.NewBulkIndexRequest().Id(strconv.FormatInt(d.ID, 10)).Doc(d))
+			if bulk.NumberOfActions() >= 20 {
+				// Commit
+				res, err := bulk.Do(ctx)
+				if err != nil {
+					return err
+				}
+				if res.Errors {
+					// Look up the failed documents with res.Failed(), and e.g. recommit
+					return errors.New("bulk commit failed")
+				}
+				// "bulk" is reset after Do, so you can reuse it
+			}
+
+			select {
+			default:
+			case <-ctx.Done():
+				return ctx.Err()
+			}
+		}
+
+		// Commit the final batch before exiting
+		if bulk.NumberOfActions() > 0 {
+			_, err = bulk.Do(ctx)
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+
+	// Wait until all goroutines are finished
+	if err = g.Wait(); err != nil {
 		return
 	}
 
