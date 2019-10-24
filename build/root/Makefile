@@ -321,6 +321,18 @@ deploy-admin-login:
 	helm upgrade --install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/admin-login:${DOCKER_TAG} --set global.name=admin-login --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=admin.login --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=cc557481f60111e98cde0a58ac140094  --set env.treeId=1102 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc admin-login-uat ./build/k8s
 
 
+admin-account: build-admin-account docker-admin-account push-admin-account deploy-admin-account
+
+build-admin-account:
+	go env -w GOPROXY=https://goproxy.cn,direct
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/admin/account/cmd/cmd"   app/admin/account/cmd/main.go
+docker-admin-account:
+	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/admin-account:${DOCKER_TAG} ./app/admin/account/cmd/
+push-admin-account:
+	docker push registry.cn-hangzhou.aliyuncs.com/valerian/admin-account:${DOCKER_TAG}
+deploy-admin-account:
+	helm upgrade --install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/admin-account:${DOCKER_TAG} --set global.name=admin-account --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=admin.account --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=7c06ad6df60411e98cde0a58ac140094  --set env.treeId=1106 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc admin-account-uat ./build/k8s
+
 
 service-msm: build-service-msm docker-service-msm push-service-msm deploy-service-msm
 
