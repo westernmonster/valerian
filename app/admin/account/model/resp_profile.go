@@ -1,6 +1,6 @@
 package model
 
-type Profile struct {
+type SelfProfile struct {
 	// ID
 	ID int64 `json:"id,string" swaggertype:"string" format:"int64"`
 	// 手机
@@ -44,8 +44,54 @@ type Profile struct {
 	IsVIP bool `json:"is_vip"`
 
 	Role string `json:"role"`
+
+	// 状态
+	Stat *AccountStatInfo `json:"stat"`
+
+	// 设置
+	Settings *SettingInfo `json:"settings"`
+
 	// 注册时间
 	CreatedAt int64 `json:"created_at"`
 	// 更新时间
 	UpdatedAt int64 `json:"updated_at"`
+}
+
+type AccountStatInfo struct {
+
+	// 关注数
+	FollowingCount int `json:"following_count"`
+
+	// 粉丝数
+	FansCount int `json:"fans_count"`
+
+	// 话题数
+	TopicCount int `json:"topic_count"`
+
+	// 文章数
+	ArticleCount int `json:"article_count"`
+
+	// 讨论数
+	DiscussionCount int `json:"discussion_count"`
+}
+
+type SettingInfo struct {
+	// 动态-赞
+	ActivityLike bool `json:"activity_like"`
+	// 动态-评论
+	ActivityComment bool `json:"activity_comment"`
+	// 动态-关注话题
+	ActivityFollowTopic bool `json:"activity_follow_topic"`
+	// 动态-关注成员
+	ActivityFollowMember bool `json:"activity_follow_member"`
+	// 通知-赞
+	NotifyLike bool `json:"notify_like"`
+	// 通知-评论
+	NotifyComment bool `json:"notify_comment"`
+	// 通知-新粉丝
+	NotifyNewFans bool `json:"notify_new_fans"`
+	// 通知-新成员
+	NotifyNewMember bool `json:"notify_new_member"`
+	// Language 语言
+	Language string `json:"language"`
 }

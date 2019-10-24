@@ -27,11 +27,9 @@ func Init(c *conf.Config, s *service.Service) {
 func route(e *mars.Engine) {
 	e.Ping(ping)
 	e.Register(register)
-	// g := e.Group("/api/v1/admin/account")
+	g := e.Group("/api/v1/admin/me")
 	{
-		// g.POST("/mobile", mobileLogin)
-		// g.POST("/digit", digitLogin)
-		// g.POST("/email", emailLogin)
+		g.POST("/profile", getProfile)
 	}
 }
 

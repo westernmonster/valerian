@@ -2,64 +2,65 @@ package service
 
 import (
 	"context"
+
 	"valerian/app/admin/account/model"
+	account "valerian/app/service/account/api"
 	"valerian/library/ecode"
+	"valerian/library/net/metadata"
 )
 
-func (p *Service) GetProfile(c context.Context, accountID int64) (profile *model.Profile, err error) {
-	var item *model.Account
-	if item, err = p.getAccountByID(c, accountID); err != nil {
-		return
-	} else if item == nil {
-		err = ecode.UserNotExist
+func (p *Service) GetSelfProfile(c context.Context) (profile *model.SelfProfile, err error) {
+	uid, ok := metadata.Value(c, metadata.Uid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
 		return
 	}
 
-	profile = &model.Profile{
+	var item *account.SelfProfile
+	if item, err = p.d.GetSelfProfileInfo(c, uid); err != nil {
+		return
+	}
+
+	profile = &model.SelfProfile{
 		ID:           item.ID,
 		Mobile:       item.Mobile,
 		Email:        item.Email,
-		Gender:       item.Gender,
-		BirthYear:    item.BirthYear,
-		BirthMonth:   item.BirthMonth,
-		BirthDay:     item.BirthDay,
+		Gender:       int(item.Gender),
+		BirthYear:    int(item.BirthYear),
+		BirthMonth:   int(item.BirthMonth),
+		BirthDay:     int(item.BirthDay),
 		Location:     item.Location,
 		Introduction: item.Introduction,
 		Avatar:       item.Avatar,
-		Source:       item.Source,
+		Source:       int(item.Source),
 		IDCert:       bool(item.IDCert),
 		WorkCert:     bool(item.WorkCert),
 		IsOrg:        bool(item.IsOrg),
 		IsVIP:        bool(item.IsVIP),
-		Role:         item.Role, UserName: item.UserName,
-		CreatedAt: item.CreatedAt,
-		UpdatedAt: item.UpdatedAt,
+		IP:           item.IP,
+		Role:         item.Role,
+		UserName:     item.UserName,
+		CreatedAt:    item.CreatedAt,
+		UpdatedAt:    item.UpdatedAt,
+		Stat: &model.AccountStatInfo{
+			FollowingCount:  int(item.Stat.FollowingCount),
+			FansCount:       int(item.Stat.FansCount),
+			TopicCount:      int(item.Stat.TopicCount),
+			ArticleCount:    int(item.Stat.ArticleCount),
+			DiscussionCount: int(item.Stat.DiscussionCount),
+		},
+		Settings: &model.SettingInfo{
+			ActivityLike:         item.Setting.ActivityLike,
+			ActivityComment:      item.Setting.ActivityComment,
+			ActivityFollowTopic:  item.Setting.ActivityFollowTopic,
+			ActivityFollowMember: item.Setting.ActivityFollowMember,
+			NotifyLike:           item.Setting.NotifyLike,
+			NotifyComment:        item.Setting.NotifyComment,
+			NotifyNewFans:        item.Setting.NotifyNewFans,
+			NotifyNewMember:      item.Setting.NotifyNewMember,
+			Language:             item.Setting.Language,
+		},
 	}
 
-	profile.IP = InetNtoA(item.IP)
-	return
-}
-
-func (p *Service) getAccountByID(c context.Context, aid int64) (account *model.Account, err error) {
-	var needCache = true
-
-	if account, err = p.d.AccountCache(c, aid); err != nil {
-		needCache = false
-	} else if account != nil {
-		return
-	}
-
-	if account, err = p.d.GetAccountByID(c, p.d.DB(), aid); err != nil {
-		return
-	} else if account == nil {
-		err = ecode.UserNotExist
-		return
-	}
-
-	if needCache {
-		p.addCache(func() {
-			p.d.SetAccountCache(context.TODO(), account)
-		})
-	}
 	return
 }

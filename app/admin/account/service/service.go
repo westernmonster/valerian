@@ -7,6 +7,7 @@ import (
 	"valerian/app/admin/account/conf"
 	"valerian/app/admin/account/dao"
 	"valerian/app/admin/account/model"
+	account "valerian/app/service/account/api"
 	"valerian/library/conf/env"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
@@ -21,6 +22,10 @@ type Service struct {
 		GetAccountByMobile(c context.Context, node sqalx.Node, mobile string) (item *model.Account, err error)
 		SetPassword(c context.Context, node sqalx.Node, password, salt string, aid int64) (err error)
 		UpdateAccount(c context.Context, node sqalx.Node, item *model.Account) (err error)
+
+		GetAccountBaseInfo(c context.Context, aid int64) (info *account.BaseInfoReply, err error)
+		GetMemberInfo(c context.Context, aid int64) (info *account.MemberInfoReply, err error)
+		GetSelfProfileInfo(c context.Context, aid int64) (info *account.SelfProfile, err error)
 
 		SetAccountCache(c context.Context, m *model.Account) (err error)
 		AccountCache(c context.Context, accountID int64) (m *model.Account, err error)
