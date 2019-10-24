@@ -113,3 +113,27 @@ spec:
         backend:
           serviceName: interface-dm
           servicePort: 8000
+      - path: /api/v1/admin/login
+        backend:
+          serviceName: admin-login
+          servicePort: 8000
+      - path: /api/v1/admin/search
+        backend:
+          serviceName: admin-search
+          servicePort: 8000
+      - path: /api/v1/admin/topic
+        backend:
+          serviceName: admin-topic
+          servicePort: 8000
+      - path: /api/v1/admin/article
+        backend:
+          serviceName: admin-article
+          servicePort: 8000
+      - path: /api/v1/admin/discuss
+        backend:
+          serviceName: admin-discuss
+          servicePort: 8000
+      - path: /api/v1/admin/account
+        backend:
+          serviceName: admin-account
+          servicePort: 8000
