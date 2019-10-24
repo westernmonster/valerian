@@ -52,6 +52,18 @@ func (p *Service) CreateApp(c context.Context, arg *model.ArgCreateApp) (err err
 		bytes := [16]byte(uuid.NewV1())
 		token := hex.EncodeToString(bytes[:])
 
+		var app *model.App
+		if app, err = p.d.GetAppByCond(c, tx, map[string]interface{}{
+			"env":     v,
+			"zone":    model.DefaultZone,
+			"tree_id": arg.TreeID,
+		}); err != nil {
+			return
+		} else if app != nil {
+			err = ecode.AppExist
+			return
+		}
+
 		item := &model.App{
 			ID:        gid.NewID(),
 			Name:      arg.AppName,

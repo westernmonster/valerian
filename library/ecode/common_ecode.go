@@ -99,6 +99,7 @@ var (
 	RelFollowAlreadyBlack          = add(10051) // 已经拉黑用户，无法关注
 	RelFollowAttrAlreadySet        = add(10052) // 已经设置该属性了
 	RelFollowAttrNotSet            = add(10053) // 未设置该属性，不能取消
+	AppExist                       = add(10054) // App 已经存在
 
 	UserNotExist                  = add(90001) // 用户不存在
 	TagNotExist                   = add(90002) // Tag 不存在

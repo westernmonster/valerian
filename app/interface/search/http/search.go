@@ -248,7 +248,7 @@ func searchArticles(c *mars.Context) {
 // @Param ps query integer true "每页大小"
 // @Param debug query bool false "debug"
 // @Param source query bool false "所需要展示的字段，逗号分隔"
-// @Success 200 {object} model.DiscussSearchResult "话题"
+// @Success 200 {object} model.DiscussionSearchResult "话题"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
