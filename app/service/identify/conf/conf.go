@@ -35,9 +35,17 @@ type Config struct {
 	// grpc server
 	WardenServer *warden.ServerConfig
 
+	Memcache *Memcache
+
 	Session *permit.SessionConfig
 
 	Discovery *discovery.Config
+}
+
+// Memcache memcache config.
+type Memcache struct {
+	Auth *MC
+	Main *MC
 }
 
 // MC .

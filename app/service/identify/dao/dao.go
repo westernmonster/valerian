@@ -34,22 +34,20 @@ type Dao struct {
 	db     sqalx.Node
 	authDB sqalx.Node
 
+	mc           *memcache.Pool
+	mcExpire     int32
 	authMC       *memcache.Pool
 	authMCExpire int32
-
-	mc       *memcache.Pool
-	mcExpire int32
-
-	// mcLogin *memcache.Pool
-	// client  *mars.Client
 }
 
 // New new a Dao and return.
 func New(c *conf.Config) (d *Dao) {
 	d = &Dao{
 		c:            c,
-		authMC:       memcache.NewPool(c.AuthMC.Config),
-		authMCExpire: int32(time.Duration(c.AuthMC.Expire) / time.Second),
+		authMC:       memcache.NewPool(c.Memcache.Auth.Config),
+		authMCExpire: int32(time.Duration(c.Memcache.Auth.Expire) / time.Second),
+		mc:           memcache.NewPool(c.Memcache.Main.Config),
+		mcExpire:     int32(time.Duration(c.Memcache.Main.Expire) / time.Second),
 		db:           sqalx.NewMySQL(c.DB.Main),
 		authDB:       sqalx.NewMySQL(c.DB.Auth),
 	}
