@@ -4,8 +4,9 @@ import (
 	"context"
 	"net/url"
 
-	"valerian/app/admin/login/conf"
-	"valerian/app/admin/login/dao"
+	"valerian/app/admin/account/conf"
+	"valerian/app/admin/account/dao"
+	"valerian/app/admin/account/model"
 	"valerian/library/conf/env"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
@@ -15,6 +16,16 @@ import (
 type Service struct {
 	c *conf.Config
 	d interface {
+		GetAccountByID(c context.Context, node sqalx.Node, id int64) (item *model.Account, err error)
+		GetAccountByEmail(c context.Context, node sqalx.Node, email string) (item *model.Account, err error)
+		GetAccountByMobile(c context.Context, node sqalx.Node, mobile string) (item *model.Account, err error)
+		SetPassword(c context.Context, node sqalx.Node, password, salt string, aid int64) (err error)
+		UpdateAccount(c context.Context, node sqalx.Node, item *model.Account) (err error)
+
+		SetAccountCache(c context.Context, m *model.Account) (err error)
+		AccountCache(c context.Context, accountID int64) (m *model.Account, err error)
+		DelAccountCache(c context.Context, accountID int64) (err error)
+
 		Ping(c context.Context) (err error)
 		Close()
 		DB() sqalx.Node

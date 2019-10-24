@@ -79,7 +79,46 @@ func (p *Service) BatchBaseInfo(c context.Context, aids []int64) (data map[int64
 	return
 }
 
-func (p *Service) GetProfile(c context.Context, accountID int64) (profile *model.ProfileInfo, err error) {
+func (p *Service) GetSelfProfile(c context.Context, accountID int64) (profile *model.SelfProfile, err error) {
+	var item *model.Account
+	if item, err = p.getAccountByID(c, accountID); err != nil {
+		return
+	}
+
+	profile = &model.SelfProfile{
+		ID:           item.ID,
+		Mobile:       item.Mobile,
+		Email:        item.Email,
+		UserName:     item.UserName,
+		Gender:       item.Gender,
+		BirthYear:    item.BirthYear,
+		BirthMonth:   item.BirthMonth,
+		BirthDay:     item.BirthDay,
+		Location:     item.Location,
+		Introduction: item.Introduction,
+		Avatar:       item.Avatar,
+		Source:       item.Source,
+		IDCert:       bool(item.IDCert),
+		WorkCert:     bool(item.WorkCert),
+		IsOrg:        bool(item.IsOrg),
+		IsVIP:        bool(item.IsVIP),
+		Role:         item.Role,
+		CreatedAt:    item.CreatedAt,
+		UpdatedAt:    item.UpdatedAt,
+	}
+
+	if item.Location != 0 {
+		if v, e := p.getLocationString(c, item.Location); e != nil {
+			return nil, e
+		} else {
+			profile.LocationString = v
+		}
+	}
+
+	return
+}
+
+func (p *Service) GetMemberProfile(c context.Context, accountID int64) (profile *model.ProfileInfo, err error) {
 	var item *model.Account
 	if item, err = p.getAccountByID(c, accountID); err != nil {
 		return

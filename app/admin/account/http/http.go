@@ -1,8 +1,8 @@
 package http
 
 import (
-	"valerian/app/admin/search/conf"
-	"valerian/app/admin/search/service"
+	"valerian/app/admin/account/conf"
+	"valerian/app/admin/account/service"
 	"valerian/library/ecode"
 	"valerian/library/log"
 	"valerian/library/net/http/mars"
@@ -27,7 +27,7 @@ func Init(c *conf.Config, s *service.Service) {
 func route(e *mars.Engine) {
 	e.Ping(ping)
 	e.Register(register)
-	// g := e.Group("/api/v1/admin/search")
+	// g := e.Group("/api/v1/admin/account")
 	{
 		// g.POST("/mobile", mobileLogin)
 		// g.POST("/digit", digitLogin)

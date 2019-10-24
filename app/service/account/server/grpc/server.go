@@ -40,7 +40,7 @@ type server struct {
 }
 
 func (s *server) Profile(ctx context.Context, req *api.AidReq) (*api.ProfileReply, error) {
-	resp, err := s.svr.GetProfile(ctx, req.Aid)
+	resp, err := s.svr.GetMemberProfile(ctx, req.Aid)
 	if err != nil {
 		return nil, err
 	}
