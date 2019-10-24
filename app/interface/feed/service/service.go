@@ -21,7 +21,7 @@ type Service struct {
 	c *conf.Config
 	d interface {
 		GetAccountBaseInfo(c context.Context, aid int64) (info *account.BaseInfoReply, err error)
-		GetAccountProfile(c context.Context, aid int64) (info *account.ProfileReply, err error)
+		GetMemberInfo(c context.Context, aid int64) (info *account.MemberInfoReply, err error)
 		GetArticle(c context.Context, id int64) (info *article.ArticleInfo, err error)
 		GetRevise(c context.Context, id int64) (info *article.ReviseInfo, err error)
 		GetDiscussion(c context.Context, id int64) (info *discuss.DiscussionInfo, err error)

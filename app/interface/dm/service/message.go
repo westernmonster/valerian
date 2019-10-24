@@ -483,8 +483,8 @@ func (p *Service) GetMemberInfo(c context.Context, targetID int64) (resp *model.
 		return
 	}
 
-	var f *account.ProfileReply
-	if f, err = p.d.GetAccountProfile(c, targetID); err != nil {
+	var f *account.MemberInfoReply
+	if f, err = p.d.GetMemberInfo(c, targetID); err != nil {
 		return
 	}
 

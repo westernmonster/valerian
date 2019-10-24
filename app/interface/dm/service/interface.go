@@ -47,7 +47,7 @@ type IDao interface {
 	GetBelongsTopicIDs(c context.Context, aid int64) (resp *topic.IDsResp, err error)
 	GetTopicMemberIDs(c context.Context, topicID int64) (resp *topic.IDsResp, err error)
 	GetComment(c context.Context, id int64) (info *comment.CommentInfo, err error)
-	GetAccountProfile(c context.Context, aid int64) (info *account.ProfileReply, err error)
+	GetMemberInfo(c context.Context, aid int64) (info *account.MemberInfoReply, err error)
 	IsFollowing(c context.Context, aid, targetAccountID int64) (IsFollowing bool, err error)
 
 	GetMessageStatForUpdate(c context.Context, node sqalx.Node, aid int64) (item *model.MessageStat, err error)
