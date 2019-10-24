@@ -10,11 +10,14 @@ import (
 
 var (
 	srv *service.Service
+	cfg *conf.Config
 )
 
 // Init init
 func Init(c *conf.Config, s *service.Service) {
 	srv = s
+	cfg = c
+
 	engine := mars.DefaultServer(c.Mars)
 	route(engine)
 

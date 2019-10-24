@@ -2,6 +2,8 @@ package http
 
 import (
 	"net/http"
+	"net/url"
+	"time"
 	"valerian/app/admin/login/model"
 	"valerian/library/ecode"
 	"valerian/library/net/http/mars"
@@ -30,12 +32,13 @@ func emailLogin(c *mars.Context) {
 		return
 	}
 
-	resp, err := srv.EmailLogin(c, arg)
+	resp, sid, err := srv.EmailLogin(c, arg)
 	if err != nil {
 		c.JSON(nil, err)
 		return
 	}
 
+	setHTTPCookie(c, cfg.Session.CookieName, sid)
 	c.JSON(resp, nil)
 
 }
@@ -63,12 +66,13 @@ func mobileLogin(c *mars.Context) {
 		return
 	}
 
-	resp, err := srv.MobileLogin(c, arg)
+	resp, sid, err := srv.MobileLogin(c, arg)
 	if err != nil {
 		c.JSON(nil, err)
 		return
 	}
 
+	setHTTPCookie(c, cfg.Session.CookieName, sid)
 	c.JSON(resp, nil)
 
 }
@@ -96,12 +100,13 @@ func digitLogin(c *mars.Context) {
 		return
 	}
 
-	resp, err := srv.DigitLogin(c, arg)
+	resp, sid, err := srv.DigitLogin(c, arg)
 	if err != nil {
 		c.JSON(nil, err)
 		return
 	}
 
+	setHTTPCookie(c, cfg.Session.CookieName, sid)
 	c.JSON(resp, nil)
 }
 
@@ -114,4 +119,17 @@ func createCookie(token string) (cookie *http.Cookie) {
 	cookie.Path = "/"
 	cookie.Value = token
 	return
+}
+
+func setHTTPCookie(ctx *mars.Context, name, value string) {
+	cookie := &http.Cookie{
+		Name:     name,
+		Value:    url.QueryEscape(value),
+		Path:     "/",
+		HttpOnly: true,
+		Domain:   cfg.Session.Domain,
+	}
+	cookie.MaxAge = cfg.Session.CookieLifeTime
+	cookie.Expires = time.Now().Add(time.Duration(cfg.Session.CookieLifeTime) * time.Second)
+	http.SetCookie(ctx.Writer, cookie)
 }

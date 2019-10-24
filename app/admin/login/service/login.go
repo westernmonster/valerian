@@ -10,7 +10,7 @@ import (
 	"valerian/library/log"
 )
 
-func (p *Service) EmailLogin(ctx context.Context, req *model.ArgEmailLogin) (resp *model.LoginResp, err error) {
+func (p *Service) EmailLogin(ctx context.Context, req *model.ArgEmailLogin) (resp *model.LoginResp, sid string, err error) {
 	if err = p.checkClient(ctx, req.ClientID); err != nil {
 		return
 	} // Check Client
@@ -36,19 +36,14 @@ func (p *Service) EmailLogin(ctx context.Context, req *model.ArgEmailLogin) (res
 		return
 	}
 
-	si := p.newSession(ctx)
-	si.Set(_sessUIDKey, strconv.FormatInt(account.ID, 10))
-	si.Set(_sessUnameKey, account.UserName)
-
-	if err = p.d.SetSession(ctx, si); err != nil {
-		log.For(ctx).Error(fmt.Sprintf("p.SetSession(%v) error(%v)", si, err))
-		err = nil
+	if sid, err = p.setSession(ctx, resp.AccountID, account.UserName); err != nil {
+		return
 	}
 
 	return
 }
 
-func (p *Service) MobileLogin(ctx context.Context, req *model.ArgMobileLogin) (resp *model.LoginResp, err error) {
+func (p *Service) MobileLogin(ctx context.Context, req *model.ArgMobileLogin) (resp *model.LoginResp, sid string, err error) {
 	if err = p.checkClient(ctx, req.ClientID); err != nil {
 		return
 	} // Check Client
@@ -75,18 +70,14 @@ func (p *Service) MobileLogin(ctx context.Context, req *model.ArgMobileLogin) (r
 		return
 	}
 
-	si := p.newSession(ctx)
-	si.Set(_sessUIDKey, strconv.FormatInt(account.ID, 10))
-	si.Set(_sessUnameKey, account.UserName)
-
-	if err = p.d.SetSession(ctx, si); err != nil {
-		log.For(ctx).Error(fmt.Sprintf("p.SetSession(%v) error(%v)", si, err))
-		err = nil
+	if sid, err = p.setSession(ctx, resp.AccountID, account.UserName); err != nil {
+		return
 	}
+
 	return
 }
 
-func (p *Service) DigitLogin(ctx context.Context, req *model.ArgDigitLogin) (resp *model.LoginResp, err error) {
+func (p *Service) DigitLogin(ctx context.Context, req *model.ArgDigitLogin) (resp *model.LoginResp, sid string, err error) {
 	mobile := req.Prefix + req.Mobile
 
 	var code string
@@ -120,13 +111,8 @@ func (p *Service) DigitLogin(ctx context.Context, req *model.ArgDigitLogin) (res
 		p.d.DelMobileValcodeCache(context.TODO(), model.ValcodeLogin, mobile)
 	})
 
-	si := p.newSession(ctx)
-	si.Set(_sessUIDKey, strconv.FormatInt(account.ID, 10))
-	si.Set(_sessUnameKey, account.UserName)
-
-	if err = p.d.SetSession(ctx, si); err != nil {
-		log.For(ctx).Error(fmt.Sprintf("p.SetSession(%v) error(%v)", si, err))
-		err = nil
+	if sid, err = p.setSession(ctx, resp.AccountID, account.UserName); err != nil {
+		return
 	}
 
 	return
@@ -213,5 +199,20 @@ func (p *Service) getAccountByID(c context.Context, aid int64) (account *model.A
 			p.d.SetAccountCache(context.TODO(), account)
 		})
 	}
+	return
+}
+
+func (p *Service) setSession(c context.Context, aid int64, uname string) (sid string, err error) {
+	si := p.newSession(c)
+	si.Set(_sessUIDKey, strconv.FormatInt(aid, 10))
+	si.Set(_sessUnameKey, uname)
+
+	if err = p.d.SetSession(c, si); err != nil {
+		log.For(c).Error(fmt.Sprintf("p.setSession(%v) error(%v)", si, err))
+		return
+	}
+
+	sid = si.Sid
+
 	return
 }
