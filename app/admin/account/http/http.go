@@ -35,7 +35,7 @@ func route(e *mars.Engine) {
 	e.Register(register)
 	g := e.Group("/api/v1/admin/me", permitSvc.Verify())
 	{
-		g.POST("/profile", getProfile)
+		g.GET("/profile", getProfile)
 	}
 }
 
