@@ -55,6 +55,14 @@ func (s *server) SelfProfileInfo(ctx context.Context, req *api.AidReq) (*api.Sel
 	statInfo := api.FromStat(stat)
 	reply.Stat = statInfo
 
+	setting, err := s.svr.GetAccountSetting(ctx, req.Aid)
+	if err != nil {
+		return nil, err
+	}
+
+	settingInfo := api.FromSetting(setting)
+	reply.Setting = settingInfo
+
 	return reply, nil
 }
 

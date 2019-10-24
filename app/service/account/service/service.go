@@ -19,6 +19,10 @@ type Service struct {
 
 		GetArea(ctx context.Context, node sqalx.Node, id int64) (item *model.Area, err error)
 
+		GetAccountSettingByID(c context.Context, node sqalx.Node, id int64) (item *model.AccountSetting, err error)
+		AddAccountSetting(c context.Context, node sqalx.Node, item *model.AccountSetting) (err error)
+		UpdateAccountSetting(c context.Context, node sqalx.Node, item *model.AccountSetting) (err error)
+
 		SetAccountCache(c context.Context, m *model.Account) (err error)
 		AccountCache(c context.Context, accountID int64) (m *model.Account, err error)
 		DelAccountCache(c context.Context, accountID int64) (err error)

@@ -81,23 +81,17 @@ message SelfProfile {
     Setting Setting = 26;
 }
 
-message ActivitySetting {
-    bool Like = 1;
-    bool Comment = 2;
-    bool FollowTopic= 3;
-    bool FollowMember= 4;
-}
-
-message NotifySetting {
-    bool Like = 1;
-    bool Comment = 2;
-    bool NewFans= 3;
-    bool NewMember= 4;
-}
 
 message Setting {
-    ActivitySetting Activity = 1;
-    NotifySetting Notify = 2;
+    bool ActivityLike = 1;
+    bool ActivityComment = 2;
+    bool ActivityFollowTopic= 3;
+    bool ActivityFollowMember= 4;
+    bool NotifyLike = 5;
+    bool NotifyComment = 6;
+    bool NotifyNewFans= 7;
+    bool NotifyNewMember= 8;
+    string Language = 9;
 }
 
 

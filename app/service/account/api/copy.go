@@ -31,6 +31,21 @@ func FromStat(model *model.AccountStat) *AccountStatInfo {
 	return reply
 }
 
+func FromSetting(model *model.SettingResp) *Setting {
+	reply := &Setting{
+		ActivityLike:         model.ActivityLike,
+		ActivityComment:      model.ActivityComment,
+		ActivityFollowTopic:  model.ActivityFollowTopic,
+		ActivityFollowMember: model.ActivityFollowMember,
+		NotifyLike:           model.NotifyLike,
+		NotifyComment:        model.NotifyComment,
+		NotifyNewFans:        model.NotifyNewFans,
+		NotifyNewMember:      model.NotifyNewMember,
+	}
+
+	return reply
+}
+
 func FromProfileInfo(model *model.ProfileInfo) *MemberInfoReply {
 	reply := &MemberInfoReply{
 		ID:             model.ID,
