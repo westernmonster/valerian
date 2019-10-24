@@ -317,7 +317,7 @@ docker-admin-login:
 push-admin-login:
 	docker push registry.cn-hangzhou.aliyuncs.com/valerian/admin-login:${DOCKER_TAG}
 deploy-admin-login:
-	helm upgrade --install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/admin-login:${DOCKER_TAG} --set global.name=admin-login --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=admin.login --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=cc557481f60111e98cde0a58ac140094  --set env.treeId=1102 --set env.confVersion=0.1 --set env.confHost=login.pronote.loc admin-login-uat ./build/k8s
+	helm upgrade --install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/admin-login:${DOCKER_TAG} --set global.name=admin-login --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=admin.login --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=cc557481f60111e98cde0a58ac140094  --set env.treeId=1102 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc admin-login-uat ./build/k8s
 
 
 
