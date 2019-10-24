@@ -137,6 +137,7 @@ func (s *SessionManager) setHTTPCookie(ctx *mars.Context, name, value string) {
 	}
 	cookie.MaxAge = s.c.CookieLifeTime
 	cookie.Expires = time.Now().Add(time.Duration(s.c.CookieLifeTime) * time.Second)
+	fmt.Printf("%+v\n", cookie)
 	http.SetCookie(ctx.Writer, cookie)
 }
 
