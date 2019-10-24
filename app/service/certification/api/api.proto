@@ -1,0 +1,63 @@
+syntax = "proto3";
+package service.certification;
+option go_package = "api";
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+// EmptyStruct 空的message，对应真实service只返回error，没有具体返回值
+message EmptyStruct {
+}
+
+message AidReq {
+    int64 Aid = 1 [(gogoproto.jsontag) = "aid"];
+}
+
+message IDCertStatus {
+    int32 Status = 1;
+}
+
+message WorkCertStatus {
+    int32 Status = 1;
+}
+
+message IDCertInfo {
+    int64 AccountID = 1;
+    int32 Status = 2;
+    string AuditConclusions =  4;
+    string Name = 5;
+    string IdentificationNumber  =  6;
+    string IDCardType =  7;
+    string IDCardStartDate =  8;
+    string IDCardExpiry =  9;
+    string Address =  10;
+    string Sex = 11;
+    string IDCardFrontPic =  12;
+    string IDCardBackPic = 13;
+    string FacePic = 14;
+    string EthnicGroup = 15;
+    int64 CreatedAt = 16;
+    int64 UpdatedAt = 17;
+}
+
+message WorkCertInfo {
+    int64 AccountID = 1;
+    int32 Status = 2;
+    string WorkPic =  4;
+    string OtherPic = 5;
+    string Company  =  6;
+    string Department =  7;
+    string Position =  8;
+    string ExpiresAt =  9;
+    string AuditResult =  10;
+    int64 CreatedAt = 16;
+    int64 UpdatedAt = 17;
+}
+
+
+
+service Certification {
+    rpc GetIDCertStatus(AidReq) returns (IDCertStatus);
+    rpc GetWorkCertStatus(AidReq) returns (WorkCertStatus);
+}
+
+
