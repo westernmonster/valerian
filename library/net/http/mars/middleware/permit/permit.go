@@ -9,7 +9,7 @@ import (
 	"valerian/library/net/metadata"
 	"valerian/library/net/rpc/warden"
 
-	mng "valerian/app/admin/manager/api"
+	mng "valerian/app/service/identify/api/grpc"
 
 	"github.com/pkg/errors"
 )
@@ -32,12 +32,12 @@ type permissions struct {
 type Permit struct {
 	sm *SessionManager // user Session
 
-	mng.PermitClient // mng grpc client
+	mng.IdentifyClient // mng grpc client
 }
 
 type Config struct {
-	Session    *SessionConfig
-	ManagerRPC *warden.ClientConfig
+	Session     *SessionConfig
+	IdentifyRPC *warden.ClientConfig
 }
 
 //Verify only export Verify function because of less configure
@@ -47,13 +47,13 @@ type Verify interface {
 
 // New .
 func New(c *Config) *Permit {
-	permitClient, err := mng.NewClient(c.ManagerRPC)
+	identifyClient, err := mng.NewClient(c.IdentifyRPC)
 	if err != nil {
 		panic(errors.WithMessage(err, "Failed to dial mng rpc server"))
 	}
 	return &Permit{
-		PermitClient: permitClient,
-		sm:           newSessionManager(c.Session),
+		IdentifyClient: identifyClient,
+		sm:             newSessionManager(c.Session),
 	}
 }
 
@@ -91,7 +91,7 @@ func (p *Permit) Permit(permit string) mars.HandlerFunc {
 			md[metadata.Uid] = uid
 		}
 
-		reply, err := p.Permissions(ctx, &mng.PermissionReq{Username: username})
+		reply, err := p.Permissions(ctx, &mng.AdminPermissionReq{Sid: sid})
 		if err != nil {
 			if ecode.NothingFound.Equal(err) && permit != "" {
 				ctx.JSON(nil, ecode.AccessDenied)
@@ -111,7 +111,7 @@ func (p *Permit) Permit(permit string) mars.HandlerFunc {
 	}
 }
 
-func (p *Permit) auth(ctx *mars.Context) (sid string, uid int64, username string, err error) {
+func (p *Permit) auth(ctx *mars.Context) (sid string, aid int64, username string, err error) {
 	var cookieSid string
 	sidVal, err := ctx.Request.Cookie(p.sm.c.CookieName)
 	if err == nil {
@@ -122,14 +122,14 @@ func (p *Permit) auth(ctx *mars.Context) (sid string, uid int64, username string
 		return
 	}
 
-	reply, err := p.Login(ctx, &mng.LoginReq{Sid: cookieSid})
+	reply, err := p.AdminAuth(ctx, &mng.AdminAuthReq{Sid: cookieSid})
 	if err != nil {
-		log.For(ctx).Error(fmt.Sprintf("mng rpc Login error(%v)", err))
+		log.For(ctx).Error(fmt.Sprintf("mng rpc AdminAuth error(%v)", err))
 		return
 	}
 
 	sid = reply.Sid
-	uid = reply.Uid
+	aid = reply.Aid
 	username = reply.Username
 
 	return
