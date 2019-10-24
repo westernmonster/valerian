@@ -4,6 +4,9 @@ option go_package = "api";
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
+message EmptyStruct {
+}
+
 message AuthReply {
     // if cookie or token in life time, login is true
     // else login is false and mid csrf expires is empty
@@ -21,6 +24,25 @@ message TokenReq {
 }
 
 
+message RenewTokenReq {
+    string refresh_token = 1;
+    string client_id = 2;
+}
+
+
+message LogoutReq {
+    int64 aid = 1;
+    string client_id = 2;
+}
+
+message RenewTokenResp {
+    int64 aid = 1;
+    string access_token = 2;
+    int32 expires_in = 3;
+    string token_type = 4;
+    string refresh_token = 5;
+}
+
 
 message AdminAuthReq {
     string sid = 1;
@@ -29,6 +51,7 @@ message AdminAuthReq {
 message AdminAuthResp {
     string sid = 1;
     string username = 2;
+    int64 aid = 3;
 }
 
 message AdminPermissionReq {
@@ -42,7 +65,11 @@ message AdminPermissionResp {
 
 
 service Identify {
-    rpc  GetTokenInfo(TokenReq) returns (AuthReply);
+    rpc GetTokenInfo(TokenReq) returns (AuthReply);
+
+    rpc RenewToken(RenewTokenReq) returns (RenewTokenResp);
+
+    rpc Logout(LogoutReq) returns (EmptyStruct);
 
     rpc AdminAuth(AdminAuthReq) returns(AdminAuthResp);
 

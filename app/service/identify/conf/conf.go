@@ -9,6 +9,7 @@ import (
 	"valerian/library/log"
 	"valerian/library/naming/discovery"
 	"valerian/library/net/http/mars"
+	"valerian/library/net/http/mars/middleware/permit"
 	"valerian/library/net/rpc/warden"
 	xtime "valerian/library/time"
 	"valerian/library/tracing"
@@ -24,6 +25,7 @@ var (
 )
 
 type Config struct {
+	DC     *DC
 	Log    *log.Config
 	Mars   *mars.ServerConfig
 	Tracer *tracing.Config
@@ -33,6 +35,8 @@ type Config struct {
 	// grpc server
 	WardenServer *warden.ServerConfig
 
+	Session *permit.SessionConfig
+
 	Discovery *discovery.Config
 }
 
@@ -40,6 +44,12 @@ type Config struct {
 type MC struct {
 	*memcache.Config
 	Expire xtime.Duration
+}
+
+// DC data center.
+type DC struct {
+	Num  int
+	Desc string
 }
 
 // DB db config.

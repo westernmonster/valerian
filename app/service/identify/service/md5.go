@@ -9,7 +9,7 @@ import (
 	"math/big"
 	"math/rand"
 
-	"valerian/app/interface/passport-auth/model"
+	"valerian/app/service/identify/model"
 )
 
 func md5Hex(s string) string {

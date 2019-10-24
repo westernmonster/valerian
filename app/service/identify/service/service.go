@@ -8,6 +8,7 @@ import (
 	"valerian/app/service/identify/model"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
+	"valerian/library/net/http/mars/middleware/permit"
 )
 
 var (
@@ -32,6 +33,17 @@ type Service struct {
 		DelRefreshToken(c context.Context, node sqalx.Node, token string) (affected int64, err error)
 		DelExpiredRefreshToken(c context.Context, node sqalx.Node, clientID string, accountID int64) (affected int64, err error)
 		GetClientRefreshTokens(c context.Context, node sqalx.Node, aid int64, clientID string) (tokens []string, err error)
+
+		SetSession(ctx context.Context, p *permit.Session) (err error)
+		Session(ctx context.Context, sid string) (res *permit.Session, err error)
+
+		GetAccountByEmail(c context.Context, node sqalx.Node, email string) (item *model.Account, err error)
+		GetAccountByMobile(c context.Context, node sqalx.Node, mobile string) (item *model.Account, err error)
+		GetAccountByID(c context.Context, node sqalx.Node, id int64) (item *model.Account, err error)
+
+		SetAccountCache(c context.Context, m *model.Account) (err error)
+		AccountCache(c context.Context, accountID int64) (m *model.Account, err error)
+		DelAccountCache(c context.Context, accountID int64) (err error)
 
 		AccessTokenCache(c context.Context, token string) (res *model.AccessToken, err error)
 		SetAccessTokenCache(c context.Context, m *model.AccessToken) (err error)

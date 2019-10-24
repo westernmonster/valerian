@@ -27,6 +27,45 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
+type EmptyStruct struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *EmptyStruct) Reset()         { *m = EmptyStruct{} }
+func (m *EmptyStruct) String() string { return proto.CompactTextString(m) }
+func (*EmptyStruct) ProtoMessage()    {}
+func (*EmptyStruct) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f80abaa17e25ccc8, []int{0}
+}
+func (m *EmptyStruct) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *EmptyStruct) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_EmptyStruct.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *EmptyStruct) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EmptyStruct.Merge(m, src)
+}
+func (m *EmptyStruct) XXX_Size() int {
+	return m.Size()
+}
+func (m *EmptyStruct) XXX_DiscardUnknown() {
+	xxx_messageInfo_EmptyStruct.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_EmptyStruct proto.InternalMessageInfo
+
 type AuthReply struct {
 	// if cookie or token in life time, login is true
 	// else login is false and mid csrf expires is empty
@@ -45,7 +84,7 @@ func (m *AuthReply) Reset()         { *m = AuthReply{} }
 func (m *AuthReply) String() string { return proto.CompactTextString(m) }
 func (*AuthReply) ProtoMessage()    {}
 func (*AuthReply) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f80abaa17e25ccc8, []int{0}
+	return fileDescriptor_f80abaa17e25ccc8, []int{1}
 }
 func (m *AuthReply) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -107,7 +146,7 @@ func (m *TokenReq) Reset()         { *m = TokenReq{} }
 func (m *TokenReq) String() string { return proto.CompactTextString(m) }
 func (*TokenReq) ProtoMessage()    {}
 func (*TokenReq) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f80abaa17e25ccc8, []int{1}
+	return fileDescriptor_f80abaa17e25ccc8, []int{2}
 }
 func (m *TokenReq) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -143,6 +182,195 @@ func (m *TokenReq) GetToken() string {
 	return ""
 }
 
+type RenewTokenReq struct {
+	RefreshToken         string   `protobuf:"bytes,1,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
+	ClientId             string   `protobuf:"bytes,2,opt,name=client_id,json=clientId,proto3" json:"client_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *RenewTokenReq) Reset()         { *m = RenewTokenReq{} }
+func (m *RenewTokenReq) String() string { return proto.CompactTextString(m) }
+func (*RenewTokenReq) ProtoMessage()    {}
+func (*RenewTokenReq) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f80abaa17e25ccc8, []int{3}
+}
+func (m *RenewTokenReq) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *RenewTokenReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_RenewTokenReq.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *RenewTokenReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RenewTokenReq.Merge(m, src)
+}
+func (m *RenewTokenReq) XXX_Size() int {
+	return m.Size()
+}
+func (m *RenewTokenReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_RenewTokenReq.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RenewTokenReq proto.InternalMessageInfo
+
+func (m *RenewTokenReq) GetRefreshToken() string {
+	if m != nil {
+		return m.RefreshToken
+	}
+	return ""
+}
+
+func (m *RenewTokenReq) GetClientId() string {
+	if m != nil {
+		return m.ClientId
+	}
+	return ""
+}
+
+type LogoutReq struct {
+	Aid                  int64    `protobuf:"varint,1,opt,name=aid,proto3" json:"aid,omitempty"`
+	ClientId             string   `protobuf:"bytes,2,opt,name=client_id,json=clientId,proto3" json:"client_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *LogoutReq) Reset()         { *m = LogoutReq{} }
+func (m *LogoutReq) String() string { return proto.CompactTextString(m) }
+func (*LogoutReq) ProtoMessage()    {}
+func (*LogoutReq) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f80abaa17e25ccc8, []int{4}
+}
+func (m *LogoutReq) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *LogoutReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_LogoutReq.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *LogoutReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_LogoutReq.Merge(m, src)
+}
+func (m *LogoutReq) XXX_Size() int {
+	return m.Size()
+}
+func (m *LogoutReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_LogoutReq.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_LogoutReq proto.InternalMessageInfo
+
+func (m *LogoutReq) GetAid() int64 {
+	if m != nil {
+		return m.Aid
+	}
+	return 0
+}
+
+func (m *LogoutReq) GetClientId() string {
+	if m != nil {
+		return m.ClientId
+	}
+	return ""
+}
+
+type RenewTokenResp struct {
+	Aid                  int64    `protobuf:"varint,1,opt,name=aid,proto3" json:"aid,omitempty"`
+	AccessToken          string   `protobuf:"bytes,2,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
+	ExpiresIn            int32    `protobuf:"varint,3,opt,name=expires_in,json=expiresIn,proto3" json:"expires_in,omitempty"`
+	TokenType            string   `protobuf:"bytes,4,opt,name=token_type,json=tokenType,proto3" json:"token_type,omitempty"`
+	RefreshToken         string   `protobuf:"bytes,5,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *RenewTokenResp) Reset()         { *m = RenewTokenResp{} }
+func (m *RenewTokenResp) String() string { return proto.CompactTextString(m) }
+func (*RenewTokenResp) ProtoMessage()    {}
+func (*RenewTokenResp) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f80abaa17e25ccc8, []int{5}
+}
+func (m *RenewTokenResp) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *RenewTokenResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_RenewTokenResp.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *RenewTokenResp) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RenewTokenResp.Merge(m, src)
+}
+func (m *RenewTokenResp) XXX_Size() int {
+	return m.Size()
+}
+func (m *RenewTokenResp) XXX_DiscardUnknown() {
+	xxx_messageInfo_RenewTokenResp.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RenewTokenResp proto.InternalMessageInfo
+
+func (m *RenewTokenResp) GetAid() int64 {
+	if m != nil {
+		return m.Aid
+	}
+	return 0
+}
+
+func (m *RenewTokenResp) GetAccessToken() string {
+	if m != nil {
+		return m.AccessToken
+	}
+	return ""
+}
+
+func (m *RenewTokenResp) GetExpiresIn() int32 {
+	if m != nil {
+		return m.ExpiresIn
+	}
+	return 0
+}
+
+func (m *RenewTokenResp) GetTokenType() string {
+	if m != nil {
+		return m.TokenType
+	}
+	return ""
+}
+
+func (m *RenewTokenResp) GetRefreshToken() string {
+	if m != nil {
+		return m.RefreshToken
+	}
+	return ""
+}
+
 type AdminAuthReq struct {
 	Sid                  string   `protobuf:"bytes,1,opt,name=sid,proto3" json:"sid,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -154,7 +382,7 @@ func (m *AdminAuthReq) Reset()         { *m = AdminAuthReq{} }
 func (m *AdminAuthReq) String() string { return proto.CompactTextString(m) }
 func (*AdminAuthReq) ProtoMessage()    {}
 func (*AdminAuthReq) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f80abaa17e25ccc8, []int{2}
+	return fileDescriptor_f80abaa17e25ccc8, []int{6}
 }
 func (m *AdminAuthReq) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -193,6 +421,7 @@ func (m *AdminAuthReq) GetSid() string {
 type AdminAuthResp struct {
 	Sid                  string   `protobuf:"bytes,1,opt,name=sid,proto3" json:"sid,omitempty"`
 	Username             string   `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
+	Aid                  int64    `protobuf:"varint,3,opt,name=aid,proto3" json:"aid,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -202,7 +431,7 @@ func (m *AdminAuthResp) Reset()         { *m = AdminAuthResp{} }
 func (m *AdminAuthResp) String() string { return proto.CompactTextString(m) }
 func (*AdminAuthResp) ProtoMessage()    {}
 func (*AdminAuthResp) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f80abaa17e25ccc8, []int{3}
+	return fileDescriptor_f80abaa17e25ccc8, []int{7}
 }
 func (m *AdminAuthResp) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -245,6 +474,13 @@ func (m *AdminAuthResp) GetUsername() string {
 	return ""
 }
 
+func (m *AdminAuthResp) GetAid() int64 {
+	if m != nil {
+		return m.Aid
+	}
+	return 0
+}
+
 type AdminPermissionReq struct {
 	Sid                  string   `protobuf:"bytes,1,opt,name=sid,proto3" json:"sid,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -256,7 +492,7 @@ func (m *AdminPermissionReq) Reset()         { *m = AdminPermissionReq{} }
 func (m *AdminPermissionReq) String() string { return proto.CompactTextString(m) }
 func (*AdminPermissionReq) ProtoMessage()    {}
 func (*AdminPermissionReq) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f80abaa17e25ccc8, []int{4}
+	return fileDescriptor_f80abaa17e25ccc8, []int{8}
 }
 func (m *AdminPermissionReq) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -304,7 +540,7 @@ func (m *AdminPermissionResp) Reset()         { *m = AdminPermissionResp{} }
 func (m *AdminPermissionResp) String() string { return proto.CompactTextString(m) }
 func (*AdminPermissionResp) ProtoMessage()    {}
 func (*AdminPermissionResp) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f80abaa17e25ccc8, []int{5}
+	return fileDescriptor_f80abaa17e25ccc8, []int{9}
 }
 func (m *AdminPermissionResp) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -348,8 +584,12 @@ func (m *AdminPermissionResp) GetPerms() []string {
 }
 
 func init() {
+	proto.RegisterType((*EmptyStruct)(nil), "passport.service.identity.EmptyStruct")
 	proto.RegisterType((*AuthReply)(nil), "passport.service.identity.AuthReply")
 	proto.RegisterType((*TokenReq)(nil), "passport.service.identity.TokenReq")
+	proto.RegisterType((*RenewTokenReq)(nil), "passport.service.identity.RenewTokenReq")
+	proto.RegisterType((*LogoutReq)(nil), "passport.service.identity.LogoutReq")
+	proto.RegisterType((*RenewTokenResp)(nil), "passport.service.identity.RenewTokenResp")
 	proto.RegisterType((*AdminAuthReq)(nil), "passport.service.identity.AdminAuthReq")
 	proto.RegisterType((*AdminAuthResp)(nil), "passport.service.identity.AdminAuthResp")
 	proto.RegisterType((*AdminPermissionReq)(nil), "passport.service.identity.AdminPermissionReq")
@@ -359,32 +599,43 @@ func init() {
 func init() { proto.RegisterFile("pb.proto", fileDescriptor_f80abaa17e25ccc8) }
 
 var fileDescriptor_f80abaa17e25ccc8 = []byte{
-	// 392 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x92, 0xcf, 0xae, 0xd2, 0x40,
-	0x14, 0xc6, 0x53, 0x2a, 0xd2, 0x1e, 0x30, 0xd1, 0xd1, 0x45, 0xe9, 0x82, 0x36, 0xf5, 0x5f, 0x13,
-	0x43, 0x49, 0x74, 0xed, 0x02, 0x36, 0x86, 0x9d, 0x99, 0xb8, 0xd1, 0x85, 0x49, 0x4b, 0x87, 0x32,
-	0x91, 0xce, 0x0c, 0x9d, 0xa9, 0x91, 0xe7, 0xf2, 0x25, 0x5c, 0xfa, 0x04, 0xc4, 0xb0, 0xe4, 0x29,
-	0x4c, 0x67, 0x2e, 0x7f, 0x6e, 0x08, 0xdc, 0x7b, 0x37, 0x9d, 0xf3, 0x9d, 0xfe, 0x4e, 0xbf, 0xc9,
-	0x77, 0x0a, 0x8e, 0xc8, 0x12, 0x51, 0x71, 0xc5, 0x51, 0x5f, 0xa4, 0x52, 0x0a, 0x5e, 0xa9, 0x44,
-	0x92, 0xea, 0x27, 0x9d, 0x91, 0x84, 0xe6, 0x84, 0x29, 0xaa, 0xd6, 0xfe, 0xb0, 0xa0, 0x6a, 0x51,
-	0x67, 0xc9, 0x8c, 0x97, 0xa3, 0x82, 0x17, 0x7c, 0xa4, 0x27, 0xb2, 0x7a, 0xae, 0x95, 0x16, 0xba,
-	0x32, 0x5f, 0x8a, 0x18, 0xb8, 0xe3, 0x5a, 0x2d, 0x30, 0x11, 0xcb, 0x35, 0x0a, 0xa0, 0xbd, 0xe4,
-	0x05, 0x65, 0x9e, 0x15, 0x5a, 0xb1, 0x33, 0x71, 0x77, 0x9b, 0xc0, 0x34, 0xb0, 0x39, 0x50, 0x1f,
-	0xec, 0x94, 0xe6, 0x5e, 0x2b, 0xb4, 0x62, 0x7b, 0xd2, 0xd9, 0x6d, 0x82, 0x46, 0xe2, 0xe6, 0x81,
-	0x5e, 0x43, 0x87, 0xfc, 0x12, 0xb4, 0x22, 0xd2, 0x7b, 0xa4, 0x5f, 0x77, 0x77, 0x9b, 0x60, 0xdf,
-	0xc2, 0xfb, 0x22, 0x7a, 0x07, 0xce, 0x17, 0xfe, 0x83, 0x30, 0x4c, 0x56, 0x8d, 0x9d, 0x6a, 0x6a,
-	0x6d, 0xe7, 0x1a, 0x3b, 0xdd, 0xc0, 0xe6, 0x88, 0x42, 0xe8, 0x8d, 0xf3, 0x92, 0x32, 0x73, 0xc3,
-	0x15, 0x7a, 0x0a, 0xb6, 0xa4, 0xb9, 0xc1, 0x71, 0x53, 0x46, 0x1f, 0xe1, 0xc9, 0x09, 0x21, 0xc5,
-	0x39, 0x82, 0x7c, 0x70, 0x6a, 0x49, 0x2a, 0x96, 0x96, 0x44, 0x5f, 0xdc, 0xc5, 0x07, 0x1d, 0xbd,
-	0x01, 0xa4, 0xc7, 0x3f, 0x93, 0xaa, 0xa4, 0x52, 0x52, 0xce, 0x2e, 0xd9, 0x3c, 0x3f, 0xe3, 0x8c,
-	0x59, 0x7a, 0x03, 0xda, 0x26, 0x85, 0x17, 0xd0, 0x16, 0xa4, 0x2a, 0xa5, 0xd7, 0x0a, 0xed, 0xd8,
-	0xc5, 0x46, 0xbc, 0xff, 0xdd, 0x02, 0x67, 0xaa, 0x17, 0x34, 0x5f, 0xa3, 0xaf, 0xd0, 0xfb, 0x44,
-	0x94, 0x0e, 0x61, 0xca, 0xe6, 0x1c, 0xbd, 0x4c, 0x2e, 0x2e, 0x33, 0xd9, 0x47, 0xe5, 0xbf, 0xba,
-	0x02, 0x1d, 0xf7, 0xf7, 0x1d, 0xdc, 0x43, 0x1a, 0xe8, 0xed, 0xb5, 0x91, 0x93, 0x54, 0xfd, 0xf8,
-	0x7e, 0xa0, 0x14, 0x68, 0x09, 0xdd, 0x63, 0x02, 0x12, 0x0d, 0xef, 0x1a, 0xbc, 0x15, 0xab, 0x9f,
-	0x3c, 0x04, 0x97, 0x62, 0xf2, 0xec, 0xcf, 0x76, 0x60, 0xfd, 0xdd, 0x0e, 0xac, 0x7f, 0xdb, 0x81,
-	0xf5, 0xcd, 0x4e, 0x05, 0xcd, 0x1e, 0xeb, 0x9f, 0xf6, 0xc3, 0xff, 0x00, 0x00, 0x00, 0xff, 0xff,
-	0xe3, 0x28, 0x07, 0xda, 0x0a, 0x03, 0x00, 0x00,
+	// 566 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x54, 0xcd, 0x6e, 0xd3, 0x4c,
+	0x14, 0x95, 0xeb, 0x2f, 0xad, 0xe7, 0x26, 0xf9, 0x04, 0x03, 0x8b, 0xd4, 0x88, 0x26, 0xb8, 0x50,
+	0x8c, 0x50, 0x5d, 0x09, 0x76, 0x48, 0x2c, 0x5a, 0x09, 0xa1, 0x48, 0x48, 0xc0, 0x50, 0x21, 0xc1,
+	0x82, 0xc8, 0x71, 0x26, 0xe9, 0x88, 0xd8, 0x33, 0x78, 0xc6, 0x80, 0xdf, 0x88, 0x47, 0x61, 0xc9,
+	0x13, 0x54, 0x28, 0xcb, 0x2c, 0x78, 0x06, 0xe4, 0x19, 0x3b, 0x3f, 0x4a, 0x30, 0x65, 0x13, 0xcf,
+	0x3d, 0x73, 0xee, 0xcf, 0xb9, 0xf7, 0x4e, 0xc0, 0x11, 0xc3, 0x40, 0xa4, 0x5c, 0x71, 0xbc, 0x2f,
+	0x42, 0x29, 0x05, 0x4f, 0x55, 0x20, 0x69, 0xfa, 0x99, 0x45, 0x34, 0x60, 0x23, 0x9a, 0x28, 0xa6,
+	0x72, 0xf7, 0x78, 0xc2, 0xd4, 0x45, 0x36, 0x0c, 0x22, 0x1e, 0x9f, 0x4c, 0xf8, 0x84, 0x9f, 0x68,
+	0x8f, 0x61, 0x36, 0xd6, 0x96, 0x36, 0xf4, 0xc9, 0x44, 0xf2, 0xda, 0xd0, 0x7c, 0x16, 0x0b, 0x95,
+	0xbf, 0x51, 0x69, 0x16, 0x29, 0x2f, 0x01, 0x74, 0x9a, 0xa9, 0x0b, 0x42, 0xc5, 0x34, 0xc7, 0x5d,
+	0x68, 0x4c, 0xf9, 0x84, 0x25, 0x1d, 0xab, 0x67, 0xf9, 0xce, 0x19, 0x9a, 0x5f, 0x76, 0x0d, 0x40,
+	0xcc, 0x07, 0xef, 0x83, 0x1d, 0xb2, 0x51, 0x67, 0xa7, 0x67, 0xf9, 0xf6, 0xd9, 0xde, 0xfc, 0xb2,
+	0x5b, 0x98, 0xa4, 0xf8, 0xc1, 0xf7, 0x60, 0x8f, 0x7e, 0x15, 0x2c, 0xa5, 0xb2, 0xf3, 0x9f, 0xbe,
+	0x6e, 0xce, 0x2f, 0xbb, 0x15, 0x44, 0xaa, 0x83, 0xf7, 0x10, 0x9c, 0x73, 0xfe, 0x91, 0x26, 0x84,
+	0x7e, 0x2a, 0xd2, 0xa9, 0xe2, 0xac, 0xd3, 0x21, 0x93, 0x4e, 0x03, 0xc4, 0x7c, 0xbc, 0xd7, 0xd0,
+	0x26, 0x34, 0xa1, 0x5f, 0x16, 0x1e, 0x87, 0xd0, 0x4e, 0xe9, 0x38, 0xa5, 0xf2, 0x62, 0xb0, 0xe2,
+	0x49, 0x5a, 0x25, 0xa8, 0x79, 0xf8, 0x16, 0xa0, 0x68, 0xca, 0x68, 0xa2, 0x06, 0x65, 0xa9, 0x88,
+	0x38, 0x06, 0xe8, 0x8f, 0xbc, 0x27, 0x80, 0x5e, 0xf0, 0x09, 0xcf, 0x54, 0x11, 0xee, 0x9a, 0x91,
+	0x53, 0x04, 0xb1, 0x8d, 0x8a, 0x5a, 0xdf, 0x6f, 0x16, 0xfc, 0xbf, 0x5a, 0x8f, 0x14, 0x5b, 0x22,
+	0xdc, 0x81, 0x56, 0x18, 0x45, 0x54, 0xca, 0xb2, 0x42, 0x13, 0xa4, 0x69, 0x30, 0x53, 0xe0, 0x6d,
+	0x80, 0xb2, 0x1d, 0x03, 0x96, 0x74, 0xec, 0x9e, 0xe5, 0x37, 0x08, 0x2a, 0x91, 0xbe, 0xbe, 0xd6,
+	0xae, 0x03, 0x95, 0x0b, 0xaa, 0x9b, 0x89, 0x08, 0xd2, 0xc8, 0x79, 0x2e, 0xe8, 0x66, 0x0f, 0x1a,
+	0x9b, 0x3d, 0xf0, 0x7a, 0xd0, 0x3a, 0x1d, 0xc5, 0x2c, 0x31, 0xb3, 0xd5, 0x4a, 0x65, 0x59, 0x27,
+	0x22, 0xc5, 0xd1, 0x7b, 0x09, 0xed, 0x15, 0x86, 0x91, 0xb2, 0x4e, 0xc1, 0x2e, 0x38, 0x99, 0xa4,
+	0x69, 0x12, 0xc6, 0xb4, 0xea, 0x45, 0x65, 0x57, 0xc2, 0xed, 0x85, 0x70, 0xef, 0x08, 0xb0, 0x0e,
+	0xf8, 0x8a, 0xa6, 0x31, 0x93, 0x92, 0xf1, 0x64, 0x7b, 0xe2, 0xa7, 0x70, 0x63, 0x83, 0xb7, 0xb5,
+	0x93, 0x37, 0xa1, 0x21, 0x68, 0x1a, 0xcb, 0xce, 0x4e, 0xcf, 0xf6, 0x11, 0x31, 0xc6, 0xa3, 0x5f,
+	0x36, 0x38, 0x7d, 0xbd, 0xfb, 0xe3, 0x1c, 0xbf, 0x83, 0xd6, 0x73, 0xaa, 0xb4, 0xe4, 0x7e, 0x32,
+	0xe6, 0xf8, 0x30, 0xf8, 0xe3, 0x3b, 0x09, 0xaa, 0x25, 0x72, 0xef, 0xd6, 0x90, 0x96, 0x6f, 0x21,
+	0x04, 0x58, 0xce, 0x1a, 0xfb, 0x35, 0x3e, 0x6b, 0x2b, 0xea, 0x3e, 0xb8, 0x22, 0x53, 0x0a, 0xfc,
+	0x16, 0x76, 0xcd, 0x2e, 0xe2, 0xba, 0x92, 0x16, 0xeb, 0xea, 0x1e, 0xd5, 0xb0, 0x56, 0xde, 0x34,
+	0xfe, 0x00, 0x68, 0x31, 0x5a, 0x7c, 0xbf, 0x4e, 0xed, 0xca, 0x8a, 0xb8, 0xfe, 0xd5, 0x88, 0x52,
+	0xe0, 0x29, 0x34, 0x97, 0xc3, 0x93, 0xf8, 0xf8, 0x6f, 0x8e, 0x6b, 0x1b, 0xe1, 0x06, 0xff, 0x42,
+	0x97, 0xe2, 0xec, 0xfa, 0xf7, 0xd9, 0x81, 0xf5, 0x63, 0x76, 0x60, 0xfd, 0x9c, 0x1d, 0x58, 0xef,
+	0xed, 0x50, 0xb0, 0xe1, 0xae, 0xfe, 0x2b, 0x7b, 0xfc, 0x3b, 0x00, 0x00, 0xff, 0xff, 0x8b, 0x9c,
+	0x10, 0xfe, 0x20, 0x05, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -400,6 +651,8 @@ const _ = grpc.SupportPackageIsVersion4
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type IdentifyClient interface {
 	GetTokenInfo(ctx context.Context, in *TokenReq, opts ...grpc.CallOption) (*AuthReply, error)
+	RenewToken(ctx context.Context, in *RenewTokenReq, opts ...grpc.CallOption) (*RenewTokenResp, error)
+	Logout(ctx context.Context, in *LogoutReq, opts ...grpc.CallOption) (*EmptyStruct, error)
 	AdminAuth(ctx context.Context, in *AdminAuthReq, opts ...grpc.CallOption) (*AdminAuthResp, error)
 	Permissions(ctx context.Context, in *AdminPermissionReq, opts ...grpc.CallOption) (*AdminPermissionResp, error)
 }
@@ -415,6 +668,24 @@ func NewIdentifyClient(cc *grpc.ClientConn) IdentifyClient {
 func (c *identifyClient) GetTokenInfo(ctx context.Context, in *TokenReq, opts ...grpc.CallOption) (*AuthReply, error) {
 	out := new(AuthReply)
 	err := c.cc.Invoke(ctx, "/passport.service.identity.Identify/GetTokenInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *identifyClient) RenewToken(ctx context.Context, in *RenewTokenReq, opts ...grpc.CallOption) (*RenewTokenResp, error) {
+	out := new(RenewTokenResp)
+	err := c.cc.Invoke(ctx, "/passport.service.identity.Identify/RenewToken", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *identifyClient) Logout(ctx context.Context, in *LogoutReq, opts ...grpc.CallOption) (*EmptyStruct, error) {
+	out := new(EmptyStruct)
+	err := c.cc.Invoke(ctx, "/passport.service.identity.Identify/Logout", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -442,6 +713,8 @@ func (c *identifyClient) Permissions(ctx context.Context, in *AdminPermissionReq
 // IdentifyServer is the server API for Identify service.
 type IdentifyServer interface {
 	GetTokenInfo(context.Context, *TokenReq) (*AuthReply, error)
+	RenewToken(context.Context, *RenewTokenReq) (*RenewTokenResp, error)
+	Logout(context.Context, *LogoutReq) (*EmptyStruct, error)
 	AdminAuth(context.Context, *AdminAuthReq) (*AdminAuthResp, error)
 	Permissions(context.Context, *AdminPermissionReq) (*AdminPermissionResp, error)
 }
@@ -452,6 +725,12 @@ type UnimplementedIdentifyServer struct {
 
 func (*UnimplementedIdentifyServer) GetTokenInfo(ctx context.Context, req *TokenReq) (*AuthReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTokenInfo not implemented")
+}
+func (*UnimplementedIdentifyServer) RenewToken(ctx context.Context, req *RenewTokenReq) (*RenewTokenResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RenewToken not implemented")
+}
+func (*UnimplementedIdentifyServer) Logout(ctx context.Context, req *LogoutReq) (*EmptyStruct, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
 }
 func (*UnimplementedIdentifyServer) AdminAuth(ctx context.Context, req *AdminAuthReq) (*AdminAuthResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AdminAuth not implemented")
@@ -478,6 +757,42 @@ func _Identify_GetTokenInfo_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(IdentifyServer).GetTokenInfo(ctx, req.(*TokenReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Identify_RenewToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RenewTokenReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IdentifyServer).RenewToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/passport.service.identity.Identify/RenewToken",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IdentifyServer).RenewToken(ctx, req.(*RenewTokenReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Identify_Logout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LogoutReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IdentifyServer).Logout(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/passport.service.identity.Identify/Logout",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IdentifyServer).Logout(ctx, req.(*LogoutReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -527,6 +842,14 @@ var _Identify_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Identify_GetTokenInfo_Handler,
 		},
 		{
+			MethodName: "RenewToken",
+			Handler:    _Identify_RenewToken_Handler,
+		},
+		{
+			MethodName: "Logout",
+			Handler:    _Identify_Logout_Handler,
+		},
+		{
 			MethodName: "AdminAuth",
 			Handler:    _Identify_AdminAuth_Handler,
 		},
@@ -537,6 +860,33 @@ var _Identify_serviceDesc = grpc.ServiceDesc{
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "pb.proto",
+}
+
+func (m *EmptyStruct) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *EmptyStruct) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *EmptyStruct) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *AuthReply) Marshal() (dAtA []byte, err error) {
@@ -620,6 +970,144 @@ func (m *TokenReq) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *RenewTokenReq) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *RenewTokenReq) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *RenewTokenReq) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.ClientId) > 0 {
+		i -= len(m.ClientId)
+		copy(dAtA[i:], m.ClientId)
+		i = encodeVarintPb(dAtA, i, uint64(len(m.ClientId)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.RefreshToken) > 0 {
+		i -= len(m.RefreshToken)
+		copy(dAtA[i:], m.RefreshToken)
+		i = encodeVarintPb(dAtA, i, uint64(len(m.RefreshToken)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *LogoutReq) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *LogoutReq) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *LogoutReq) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.ClientId) > 0 {
+		i -= len(m.ClientId)
+		copy(dAtA[i:], m.ClientId)
+		i = encodeVarintPb(dAtA, i, uint64(len(m.ClientId)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.Aid != 0 {
+		i = encodeVarintPb(dAtA, i, uint64(m.Aid))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *RenewTokenResp) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *RenewTokenResp) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *RenewTokenResp) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.RefreshToken) > 0 {
+		i -= len(m.RefreshToken)
+		copy(dAtA[i:], m.RefreshToken)
+		i = encodeVarintPb(dAtA, i, uint64(len(m.RefreshToken)))
+		i--
+		dAtA[i] = 0x2a
+	}
+	if len(m.TokenType) > 0 {
+		i -= len(m.TokenType)
+		copy(dAtA[i:], m.TokenType)
+		i = encodeVarintPb(dAtA, i, uint64(len(m.TokenType)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if m.ExpiresIn != 0 {
+		i = encodeVarintPb(dAtA, i, uint64(m.ExpiresIn))
+		i--
+		dAtA[i] = 0x18
+	}
+	if len(m.AccessToken) > 0 {
+		i -= len(m.AccessToken)
+		copy(dAtA[i:], m.AccessToken)
+		i = encodeVarintPb(dAtA, i, uint64(len(m.AccessToken)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.Aid != 0 {
+		i = encodeVarintPb(dAtA, i, uint64(m.Aid))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
 func (m *AdminAuthReq) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -677,6 +1165,11 @@ func (m *AdminAuthResp) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	if m.XXX_unrecognized != nil {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Aid != 0 {
+		i = encodeVarintPb(dAtA, i, uint64(m.Aid))
+		i--
+		dAtA[i] = 0x18
 	}
 	if len(m.Username) > 0 {
 		i -= len(m.Username)
@@ -781,6 +1274,18 @@ func encodeVarintPb(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
+func (m *EmptyStruct) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
 func (m *AuthReply) Size() (n int) {
 	if m == nil {
 		return 0
@@ -809,6 +1314,75 @@ func (m *TokenReq) Size() (n int) {
 	var l int
 	_ = l
 	l = len(m.Token)
+	if l > 0 {
+		n += 1 + l + sovPb(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *RenewTokenReq) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.RefreshToken)
+	if l > 0 {
+		n += 1 + l + sovPb(uint64(l))
+	}
+	l = len(m.ClientId)
+	if l > 0 {
+		n += 1 + l + sovPb(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *LogoutReq) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Aid != 0 {
+		n += 1 + sovPb(uint64(m.Aid))
+	}
+	l = len(m.ClientId)
+	if l > 0 {
+		n += 1 + l + sovPb(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *RenewTokenResp) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Aid != 0 {
+		n += 1 + sovPb(uint64(m.Aid))
+	}
+	l = len(m.AccessToken)
+	if l > 0 {
+		n += 1 + l + sovPb(uint64(l))
+	}
+	if m.ExpiresIn != 0 {
+		n += 1 + sovPb(uint64(m.ExpiresIn))
+	}
+	l = len(m.TokenType)
+	if l > 0 {
+		n += 1 + l + sovPb(uint64(l))
+	}
+	l = len(m.RefreshToken)
 	if l > 0 {
 		n += 1 + l + sovPb(uint64(l))
 	}
@@ -847,6 +1421,9 @@ func (m *AdminAuthResp) Size() (n int) {
 	l = len(m.Username)
 	if l > 0 {
 		n += 1 + l + sovPb(uint64(l))
+	}
+	if m.Aid != 0 {
+		n += 1 + sovPb(uint64(m.Aid))
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
@@ -896,6 +1473,60 @@ func sovPb(x uint64) (n int) {
 }
 func sozPb(x uint64) (n int) {
 	return sovPb(uint64((x << 1) ^ uint64((int64(x) >> 63))))
+}
+func (m *EmptyStruct) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowPb
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: EmptyStruct: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: EmptyStruct: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipPb(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
 }
 func (m *AuthReply) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
@@ -1069,6 +1700,417 @@ func (m *TokenReq) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.Token = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipPb(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *RenewTokenReq) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowPb
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: RenewTokenReq: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: RenewTokenReq: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RefreshToken", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPb
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPb
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.RefreshToken = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ClientId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPb
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPb
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ClientId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipPb(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *LogoutReq) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowPb
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: LogoutReq: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: LogoutReq: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Aid", wireType)
+			}
+			m.Aid = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Aid |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ClientId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPb
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPb
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ClientId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipPb(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *RenewTokenResp) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowPb
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: RenewTokenResp: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: RenewTokenResp: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Aid", wireType)
+			}
+			m.Aid = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Aid |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AccessToken", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPb
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPb
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.AccessToken = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ExpiresIn", wireType)
+			}
+			m.ExpiresIn = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ExpiresIn |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TokenType", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPb
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPb
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.TokenType = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RefreshToken", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPb
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPb
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.RefreshToken = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -1274,6 +2316,25 @@ func (m *AdminAuthResp) Unmarshal(dAtA []byte) error {
 			}
 			m.Username = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Aid", wireType)
+			}
+			m.Aid = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Aid |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipPb(dAtA[iNdEx:])

@@ -37,6 +37,9 @@ type Dao struct {
 	authMC       *memcache.Pool
 	authMCExpire int32
 
+	mc       *memcache.Pool
+	mcExpire int32
+
 	// mcLogin *memcache.Pool
 	// client  *mars.Client
 }
@@ -85,7 +88,11 @@ func (d *Dao) Ping(c context.Context) (err error) {
 	}
 
 	if err = d.pingMC(c); err != nil {
-		PromError("mc:Ping")
+		log.Info(fmt.Sprintf("dao.db.Ping() error(%v)", err))
+	}
+
+	if err = d.pingAuthMC(c); err != nil {
+		log.Info(fmt.Sprintf("dao.db.Ping() error(%v)", err))
 	}
 	return
 }

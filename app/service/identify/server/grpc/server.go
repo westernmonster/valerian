@@ -42,10 +42,46 @@ func (s *server) GetTokenInfo(ctx context.Context, req *api.TokenReq) (*api.Auth
 	return s.svr.GetTokenInfo(ctx, req.Token)
 }
 
-func (s *server) AdminAuth(ctx context.Context, req *api.AdminAuthReq) (*api.AdminAuthResp, error) {
-	return nil, nil
+func (s *server) AdminAuth(c context.Context, req *api.AdminAuthReq) (*api.AdminAuthResp, error) {
+	sid, aid, uname, err := s.svr.AuthAdmin(c, req.Sid)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &api.AdminAuthResp{
+		Aid:      aid,
+		Sid:      sid,
+		Username: uname,
+	}
+	return resp, nil
 }
 
 func (s *server) Permissions(ctx context.Context, req *api.AdminPermissionReq) (*api.AdminPermissionResp, error) {
 	return nil, nil
+}
+
+func (s *server) RenewToken(ctx context.Context, req *api.RenewTokenReq) (*api.RenewTokenResp, error) {
+	data, err := s.svr.RenewToken(ctx, req.RefreshToken, req.ClientId)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &api.RenewTokenResp{
+		Aid:          data.AccountID,
+		AccessToken:  data.AccessToken,
+		ExpiresIn:    int32(data.ExpiresIn),
+		TokenType:    data.TokenType,
+		RefreshToken: data.RefreshToken,
+	}
+
+	return resp, nil
+}
+
+func (s *server) Logout(ctx context.Context, req *api.LogoutReq) (*api.EmptyStruct, error) {
+	err := s.svr.Logout(ctx, req.Aid, req.ClientId)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.EmptyStruct{}, nil
 }

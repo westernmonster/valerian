@@ -13,7 +13,7 @@ func akKey(token string) string {
 }
 
 // pingMC ping memcache.
-func (p *Dao) pingMC(c context.Context) (err error) {
+func (p *Dao) pingAuthMC(c context.Context) (err error) {
 	conn := p.authMC.Get(c)
 	defer conn.Close()
 	if err = conn.Set(&memcache.Item{

@@ -3,8 +3,10 @@ package service
 import (
 	"context"
 	"time"
+
 	api "valerian/app/service/identify/api/grpc"
 	"valerian/app/service/identify/model"
+	"valerian/library/ecode"
 )
 
 func (p *Service) GetTokenInfo(c context.Context, token string) (r *api.AuthReply, err error) {
@@ -24,6 +26,41 @@ func (p *Service) GetTokenInfo(c context.Context, token string) (r *api.AuthRepl
 		Aid:     t.AccountID,
 		Expires: t.ExpiresAt,
 	}
+	return
+}
+
+func (p *Service) Logout(c context.Context, aid int64, clientID string) (err error) {
+	p.deleteToken(c, clientID, aid)
+	return
+}
+
+func (p *Service) RenewToken(c context.Context, refreshToken, clientID string) (r *model.TokenResp, err error) {
+	var t *model.RefreshToken
+	if t, err = p.d.GetRefreshToken(c, p.d.AuthDB(), refreshToken); err != nil {
+		return
+	} else if t == nil {
+		err = ecode.RefreshTokenNotExistOrExpired
+		return
+	} else if t.ClientID != clientID {
+		err = ecode.RefreshTokenNotExistOrExpired
+		return
+	} else if time.Now().Unix() > t.ExpiresAt {
+		err = ecode.RefreshTokenNotExistOrExpired
+		return
+	}
+
+	accToken, refToken, err := p.grantToken(c, clientID, t.AccountID)
+	if err != nil {
+		return
+	}
+
+	r = &model.TokenResp{
+		AccountID:    t.AccountID,
+		AccessToken:  accToken.Token,
+		RefreshToken: refToken.Token,
+		ExpiresIn:    _accessExpireSeconds,
+	}
+
 	return
 }
 
