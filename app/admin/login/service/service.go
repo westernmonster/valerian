@@ -10,6 +10,7 @@ import (
 	"valerian/library/conf/env"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
+	"valerian/library/net/http/mars/middleware/permit"
 )
 
 // Service struct of service
@@ -32,6 +33,9 @@ type Service struct {
 		DelMobileValcodeCache(c context.Context, vtype int, mobile string) (err error)
 		EmailValcodeCache(c context.Context, vtype int, mobile string) (code string, err error)
 		DelEmailValcideCache(c context.Context, vtype int, mobile string) (err error)
+
+		SetSession(ctx context.Context, p *permit.Session) (err error)
+		Session(ctx context.Context, sid string) (res *permit.Session, err error)
 
 		Ping(c context.Context) (err error)
 		Close()

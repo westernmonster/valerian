@@ -2,9 +2,12 @@ package service
 
 import (
 	"context"
+	"fmt"
+	"strconv"
 	"strings"
 	"valerian/app/admin/login/model"
 	"valerian/library/ecode"
+	"valerian/library/log"
 )
 
 func (p *Service) EmailLogin(ctx context.Context, req *model.ArgEmailLogin) (resp *model.LoginResp, err error) {
@@ -31,6 +34,15 @@ func (p *Service) EmailLogin(ctx context.Context, req *model.ArgEmailLogin) (res
 
 	if resp.Profile, err = p.GetProfile(ctx, account.ID); err != nil {
 		return
+	}
+
+	si := p.newSession(ctx)
+	si.Set(_sessUIDKey, strconv.FormatInt(account.ID, 10))
+	si.Set(_sessUnameKey, account.UserName)
+
+	if err = p.d.SetSession(ctx, si); err != nil {
+		log.For(ctx).Error(fmt.Sprintf("p.SetSession(%v) error(%v)", si, err))
+		err = nil
 	}
 
 	return
@@ -63,6 +75,14 @@ func (p *Service) MobileLogin(ctx context.Context, req *model.ArgMobileLogin) (r
 		return
 	}
 
+	si := p.newSession(ctx)
+	si.Set(_sessUIDKey, strconv.FormatInt(account.ID, 10))
+	si.Set(_sessUnameKey, account.UserName)
+
+	if err = p.d.SetSession(ctx, si); err != nil {
+		log.For(ctx).Error(fmt.Sprintf("p.SetSession(%v) error(%v)", si, err))
+		err = nil
+	}
 	return
 }
 
@@ -99,6 +119,15 @@ func (p *Service) DigitLogin(ctx context.Context, req *model.ArgDigitLogin) (res
 	p.addCache(func() {
 		p.d.DelMobileValcodeCache(context.TODO(), model.ValcodeLogin, mobile)
 	})
+
+	si := p.newSession(ctx)
+	si.Set(_sessUIDKey, strconv.FormatInt(account.ID, 10))
+	si.Set(_sessUnameKey, account.UserName)
+
+	if err = p.d.SetSession(ctx, si); err != nil {
+		log.For(ctx).Error(fmt.Sprintf("p.SetSession(%v) error(%v)", si, err))
+		err = nil
+	}
 
 	return
 }
