@@ -60,8 +60,10 @@ func New(c *Config) *Permit {
 // Verify 验证管理员用户是否登录
 func (p *Permit) Verify() mars.HandlerFunc {
 	return func(ctx *mars.Context) {
+		fmt.Println("permit.Verify()")
 		sid, uid, username, err := p.auth(ctx)
 		if err != nil {
+			fmt.Printf("permit.Verify() err(%+v)\n", err)
 			ctx.JSON(nil, ecode.Unauthorized)
 			ctx.Abort()
 			return
@@ -71,6 +73,8 @@ func (p *Permit) Verify() mars.HandlerFunc {
 		if md, ok := metadata.FromContext(ctx); ok {
 			md[metadata.Uid] = uid
 		}
+
+		fmt.Println("permit.Verify() set cookie")
 		p.sm.setHTTPCookie(ctx, p.sm.c.CookieName, sid)
 	}
 }
