@@ -198,7 +198,7 @@ type SelfProfile struct {
 	BirthDay             int32            `protobuf:"varint,9,opt,name=BirthDay,proto3" json:"BirthDay,omitempty"`
 	Introduction         string           `protobuf:"bytes,10,opt,name=Introduction,proto3" json:"Introduction,omitempty"`
 	Avatar               string           `protobuf:"bytes,11,opt,name=Avatar,proto3" json:"Avatar,omitempty"`
-	Source               string           `protobuf:"bytes,12,opt,name=Source,proto3" json:"Source,omitempty"`
+	Source               int32            `protobuf:"varint,12,opt,name=Source,proto3" json:"Source,omitempty"`
 	Location             int64            `protobuf:"varint,13,opt,name=Location,proto3" json:"Location,omitempty"`
 	LocationString       string           `protobuf:"bytes,14,opt,name=LocationString,proto3" json:"LocationString,omitempty"`
 	IDCert               bool             `protobuf:"varint,15,opt,name=IDCert,proto3" json:"IDCert,omitempty"`
@@ -212,6 +212,7 @@ type SelfProfile struct {
 	CreatedAt            int64            `protobuf:"varint,23,opt,name=CreatedAt,proto3" json:"CreatedAt,omitempty"`
 	UpdatedAt            int64            `protobuf:"varint,24,opt,name=UpdatedAt,proto3" json:"UpdatedAt,omitempty"`
 	Stat                 *AccountStatInfo `protobuf:"bytes,25,opt,name=Stat,proto3" json:"Stat,omitempty"`
+	Setting              *Setting         `protobuf:"bytes,26,opt,name=Setting,proto3" json:"Setting,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
 	XXX_unrecognized     []byte           `json:"-"`
 	XXX_sizecache        int32            `json:"-"`
@@ -327,11 +328,11 @@ func (m *SelfProfile) GetAvatar() string {
 	return ""
 }
 
-func (m *SelfProfile) GetSource() string {
+func (m *SelfProfile) GetSource() int32 {
 	if m != nil {
 		return m.Source
 	}
-	return ""
+	return 0
 }
 
 func (m *SelfProfile) GetLocation() int64 {
@@ -425,30 +426,35 @@ func (m *SelfProfile) GetStat() *AccountStatInfo {
 	return nil
 }
 
-type SelfStatInfo struct {
-	FollowingCount       int32    `protobuf:"varint,1,opt,name=FollowingCount,proto3" json:"FollowingCount,omitempty"`
-	FansCount            int32    `protobuf:"varint,2,opt,name=FansCount,proto3" json:"FansCount,omitempty"`
-	BlackCount           int32    `protobuf:"varint,3,opt,name=BlackCount,proto3" json:"BlackCount,omitempty"`
-	TopicCount           int32    `protobuf:"varint,4,opt,name=TopicCount,proto3" json:"TopicCount,omitempty"`
-	ArticleCount         int32    `protobuf:"varint,5,opt,name=ArticleCount,proto3" json:"ArticleCount,omitempty"`
-	DiscussionCount      int32    `protobuf:"varint,6,opt,name=DiscussionCount,proto3" json:"DiscussionCount,omitempty"`
+func (m *SelfProfile) GetSetting() *Setting {
+	if m != nil {
+		return m.Setting
+	}
+	return nil
+}
+
+type ActivitySetting struct {
+	Like                 bool     `protobuf:"varint,1,opt,name=Like,proto3" json:"Like,omitempty"`
+	Comment              bool     `protobuf:"varint,2,opt,name=Comment,proto3" json:"Comment,omitempty"`
+	FollowTopic          bool     `protobuf:"varint,3,opt,name=FollowTopic,proto3" json:"FollowTopic,omitempty"`
+	FollowMember         bool     `protobuf:"varint,4,opt,name=FollowMember,proto3" json:"FollowMember,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *SelfStatInfo) Reset()         { *m = SelfStatInfo{} }
-func (m *SelfStatInfo) String() string { return proto.CompactTextString(m) }
-func (*SelfStatInfo) ProtoMessage()    {}
-func (*SelfStatInfo) Descriptor() ([]byte, []int) {
+func (m *ActivitySetting) Reset()         { *m = ActivitySetting{} }
+func (m *ActivitySetting) String() string { return proto.CompactTextString(m) }
+func (*ActivitySetting) ProtoMessage()    {}
+func (*ActivitySetting) Descriptor() ([]byte, []int) {
 	return fileDescriptor_f80abaa17e25ccc8, []int{3}
 }
-func (m *SelfStatInfo) XXX_Unmarshal(b []byte) error {
+func (m *ActivitySetting) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *SelfStatInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *ActivitySetting) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_SelfStatInfo.Marshal(b, m, deterministic)
+		return xxx_messageInfo_ActivitySetting.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -458,91 +464,137 @@ func (m *SelfStatInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error)
 		return b[:n], nil
 	}
 }
-func (m *SelfStatInfo) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SelfStatInfo.Merge(m, src)
+func (m *ActivitySetting) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ActivitySetting.Merge(m, src)
 }
-func (m *SelfStatInfo) XXX_Size() int {
+func (m *ActivitySetting) XXX_Size() int {
 	return m.Size()
 }
-func (m *SelfStatInfo) XXX_DiscardUnknown() {
-	xxx_messageInfo_SelfStatInfo.DiscardUnknown(m)
+func (m *ActivitySetting) XXX_DiscardUnknown() {
+	xxx_messageInfo_ActivitySetting.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_SelfStatInfo proto.InternalMessageInfo
+var xxx_messageInfo_ActivitySetting proto.InternalMessageInfo
 
-func (m *SelfStatInfo) GetFollowingCount() int32 {
+func (m *ActivitySetting) GetLike() bool {
 	if m != nil {
-		return m.FollowingCount
+		return m.Like
 	}
-	return 0
+	return false
 }
 
-func (m *SelfStatInfo) GetFansCount() int32 {
+func (m *ActivitySetting) GetComment() bool {
 	if m != nil {
-		return m.FansCount
+		return m.Comment
 	}
-	return 0
+	return false
 }
 
-func (m *SelfStatInfo) GetBlackCount() int32 {
+func (m *ActivitySetting) GetFollowTopic() bool {
 	if m != nil {
-		return m.BlackCount
+		return m.FollowTopic
 	}
-	return 0
+	return false
 }
 
-func (m *SelfStatInfo) GetTopicCount() int32 {
+func (m *ActivitySetting) GetFollowMember() bool {
 	if m != nil {
-		return m.TopicCount
+		return m.FollowMember
 	}
-	return 0
+	return false
 }
 
-func (m *SelfStatInfo) GetArticleCount() int32 {
+type NotifySetting struct {
+	Like                 bool     `protobuf:"varint,1,opt,name=Like,proto3" json:"Like,omitempty"`
+	Comment              bool     `protobuf:"varint,2,opt,name=Comment,proto3" json:"Comment,omitempty"`
+	NewFans              bool     `protobuf:"varint,3,opt,name=NewFans,proto3" json:"NewFans,omitempty"`
+	NewMember            bool     `protobuf:"varint,4,opt,name=NewMember,proto3" json:"NewMember,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *NotifySetting) Reset()         { *m = NotifySetting{} }
+func (m *NotifySetting) String() string { return proto.CompactTextString(m) }
+func (*NotifySetting) ProtoMessage()    {}
+func (*NotifySetting) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f80abaa17e25ccc8, []int{4}
+}
+func (m *NotifySetting) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *NotifySetting) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_NotifySetting.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *NotifySetting) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_NotifySetting.Merge(m, src)
+}
+func (m *NotifySetting) XXX_Size() int {
+	return m.Size()
+}
+func (m *NotifySetting) XXX_DiscardUnknown() {
+	xxx_messageInfo_NotifySetting.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_NotifySetting proto.InternalMessageInfo
+
+func (m *NotifySetting) GetLike() bool {
 	if m != nil {
-		return m.ArticleCount
+		return m.Like
 	}
-	return 0
+	return false
 }
 
-func (m *SelfStatInfo) GetDiscussionCount() int32 {
+func (m *NotifySetting) GetComment() bool {
 	if m != nil {
-		return m.DiscussionCount
+		return m.Comment
 	}
-	return 0
+	return false
 }
 
-type ProfileReply struct {
-	ID                   int64            `protobuf:"varint,1,opt,name=ID,proto3" json:"ID,omitempty"`
-	UserName             string           `protobuf:"bytes,2,opt,name=UserName,proto3" json:"UserName,omitempty"`
-	Gender               int32            `protobuf:"varint,3,opt,name=Gender,proto3" json:"Gender,omitempty"`
-	Introduction         string           `protobuf:"bytes,4,opt,name=Introduction,proto3" json:"Introduction,omitempty"`
-	Location             int64            `protobuf:"varint,5,opt,name=Location,proto3" json:"Location,omitempty"`
-	LocationString       string           `protobuf:"bytes,6,opt,name=LocationString,proto3" json:"LocationString,omitempty"`
-	Avatar               string           `protobuf:"bytes,7,opt,name=Avatar,proto3" json:"Avatar,omitempty"`
-	IDCert               bool             `protobuf:"varint,8,opt,name=IDCert,proto3" json:"IDCert,omitempty"`
-	WorkCert             bool             `protobuf:"varint,9,opt,name=WorkCert,proto3" json:"WorkCert,omitempty"`
-	IsOrg                bool             `protobuf:"varint,10,opt,name=IsOrg,proto3" json:"IsOrg,omitempty"`
-	IsVIP                bool             `protobuf:"varint,11,opt,name=IsVIP,proto3" json:"IsVIP,omitempty"`
-	CreatedAt            int64            `protobuf:"varint,12,opt,name=CreatedAt,proto3" json:"CreatedAt,omitempty"`
-	Stat                 *AccountStatInfo `protobuf:"bytes,13,opt,name=Stat,proto3" json:"Stat,omitempty"`
+func (m *NotifySetting) GetNewFans() bool {
+	if m != nil {
+		return m.NewFans
+	}
+	return false
+}
+
+func (m *NotifySetting) GetNewMember() bool {
+	if m != nil {
+		return m.NewMember
+	}
+	return false
+}
+
+type Setting struct {
+	Activity             *ActivitySetting `protobuf:"bytes,1,opt,name=Activity,proto3" json:"Activity,omitempty"`
+	Notify               *NotifySetting   `protobuf:"bytes,2,opt,name=Notify,proto3" json:"Notify,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
 	XXX_unrecognized     []byte           `json:"-"`
 	XXX_sizecache        int32            `json:"-"`
 }
 
-func (m *ProfileReply) Reset()         { *m = ProfileReply{} }
-func (m *ProfileReply) String() string { return proto.CompactTextString(m) }
-func (*ProfileReply) ProtoMessage()    {}
-func (*ProfileReply) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f80abaa17e25ccc8, []int{4}
+func (m *Setting) Reset()         { *m = Setting{} }
+func (m *Setting) String() string { return proto.CompactTextString(m) }
+func (*Setting) ProtoMessage()    {}
+func (*Setting) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f80abaa17e25ccc8, []int{5}
 }
-func (m *ProfileReply) XXX_Unmarshal(b []byte) error {
+func (m *Setting) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *ProfileReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *Setting) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_ProfileReply.Marshal(b, m, deterministic)
+		return xxx_messageInfo_Setting.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -552,105 +604,28 @@ func (m *ProfileReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error)
 		return b[:n], nil
 	}
 }
-func (m *ProfileReply) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ProfileReply.Merge(m, src)
+func (m *Setting) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Setting.Merge(m, src)
 }
-func (m *ProfileReply) XXX_Size() int {
+func (m *Setting) XXX_Size() int {
 	return m.Size()
 }
-func (m *ProfileReply) XXX_DiscardUnknown() {
-	xxx_messageInfo_ProfileReply.DiscardUnknown(m)
+func (m *Setting) XXX_DiscardUnknown() {
+	xxx_messageInfo_Setting.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_ProfileReply proto.InternalMessageInfo
+var xxx_messageInfo_Setting proto.InternalMessageInfo
 
-func (m *ProfileReply) GetID() int64 {
+func (m *Setting) GetActivity() *ActivitySetting {
 	if m != nil {
-		return m.ID
+		return m.Activity
 	}
-	return 0
+	return nil
 }
 
-func (m *ProfileReply) GetUserName() string {
+func (m *Setting) GetNotify() *NotifySetting {
 	if m != nil {
-		return m.UserName
-	}
-	return ""
-}
-
-func (m *ProfileReply) GetGender() int32 {
-	if m != nil {
-		return m.Gender
-	}
-	return 0
-}
-
-func (m *ProfileReply) GetIntroduction() string {
-	if m != nil {
-		return m.Introduction
-	}
-	return ""
-}
-
-func (m *ProfileReply) GetLocation() int64 {
-	if m != nil {
-		return m.Location
-	}
-	return 0
-}
-
-func (m *ProfileReply) GetLocationString() string {
-	if m != nil {
-		return m.LocationString
-	}
-	return ""
-}
-
-func (m *ProfileReply) GetAvatar() string {
-	if m != nil {
-		return m.Avatar
-	}
-	return ""
-}
-
-func (m *ProfileReply) GetIDCert() bool {
-	if m != nil {
-		return m.IDCert
-	}
-	return false
-}
-
-func (m *ProfileReply) GetWorkCert() bool {
-	if m != nil {
-		return m.WorkCert
-	}
-	return false
-}
-
-func (m *ProfileReply) GetIsOrg() bool {
-	if m != nil {
-		return m.IsOrg
-	}
-	return false
-}
-
-func (m *ProfileReply) GetIsVIP() bool {
-	if m != nil {
-		return m.IsVIP
-	}
-	return false
-}
-
-func (m *ProfileReply) GetCreatedAt() int64 {
-	if m != nil {
-		return m.CreatedAt
-	}
-	return 0
-}
-
-func (m *ProfileReply) GetStat() *AccountStatInfo {
-	if m != nil {
-		return m.Stat
+		return m.Notify
 	}
 	return nil
 }
@@ -671,7 +646,7 @@ func (m *AccountStatInfo) Reset()         { *m = AccountStatInfo{} }
 func (m *AccountStatInfo) String() string { return proto.CompactTextString(m) }
 func (*AccountStatInfo) ProtoMessage()    {}
 func (*AccountStatInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f80abaa17e25ccc8, []int{5}
+	return fileDescriptor_f80abaa17e25ccc8, []int{6}
 }
 func (m *AccountStatInfo) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -742,6 +717,149 @@ func (m *AccountStatInfo) GetDiscussionCount() int32 {
 	return 0
 }
 
+type MemberInfoReply struct {
+	ID                   int64            `protobuf:"varint,1,opt,name=ID,proto3" json:"ID,omitempty"`
+	UserName             string           `protobuf:"bytes,2,opt,name=UserName,proto3" json:"UserName,omitempty"`
+	Gender               int32            `protobuf:"varint,3,opt,name=Gender,proto3" json:"Gender,omitempty"`
+	Introduction         string           `protobuf:"bytes,4,opt,name=Introduction,proto3" json:"Introduction,omitempty"`
+	Location             int64            `protobuf:"varint,5,opt,name=Location,proto3" json:"Location,omitempty"`
+	LocationString       string           `protobuf:"bytes,6,opt,name=LocationString,proto3" json:"LocationString,omitempty"`
+	Avatar               string           `protobuf:"bytes,7,opt,name=Avatar,proto3" json:"Avatar,omitempty"`
+	IDCert               bool             `protobuf:"varint,8,opt,name=IDCert,proto3" json:"IDCert,omitempty"`
+	WorkCert             bool             `protobuf:"varint,9,opt,name=WorkCert,proto3" json:"WorkCert,omitempty"`
+	IsOrg                bool             `protobuf:"varint,10,opt,name=IsOrg,proto3" json:"IsOrg,omitempty"`
+	IsVIP                bool             `protobuf:"varint,11,opt,name=IsVIP,proto3" json:"IsVIP,omitempty"`
+	CreatedAt            int64            `protobuf:"varint,12,opt,name=CreatedAt,proto3" json:"CreatedAt,omitempty"`
+	Stat                 *AccountStatInfo `protobuf:"bytes,13,opt,name=Stat,proto3" json:"Stat,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
+	XXX_unrecognized     []byte           `json:"-"`
+	XXX_sizecache        int32            `json:"-"`
+}
+
+func (m *MemberInfoReply) Reset()         { *m = MemberInfoReply{} }
+func (m *MemberInfoReply) String() string { return proto.CompactTextString(m) }
+func (*MemberInfoReply) ProtoMessage()    {}
+func (*MemberInfoReply) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f80abaa17e25ccc8, []int{7}
+}
+func (m *MemberInfoReply) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MemberInfoReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MemberInfoReply.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MemberInfoReply) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MemberInfoReply.Merge(m, src)
+}
+func (m *MemberInfoReply) XXX_Size() int {
+	return m.Size()
+}
+func (m *MemberInfoReply) XXX_DiscardUnknown() {
+	xxx_messageInfo_MemberInfoReply.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MemberInfoReply proto.InternalMessageInfo
+
+func (m *MemberInfoReply) GetID() int64 {
+	if m != nil {
+		return m.ID
+	}
+	return 0
+}
+
+func (m *MemberInfoReply) GetUserName() string {
+	if m != nil {
+		return m.UserName
+	}
+	return ""
+}
+
+func (m *MemberInfoReply) GetGender() int32 {
+	if m != nil {
+		return m.Gender
+	}
+	return 0
+}
+
+func (m *MemberInfoReply) GetIntroduction() string {
+	if m != nil {
+		return m.Introduction
+	}
+	return ""
+}
+
+func (m *MemberInfoReply) GetLocation() int64 {
+	if m != nil {
+		return m.Location
+	}
+	return 0
+}
+
+func (m *MemberInfoReply) GetLocationString() string {
+	if m != nil {
+		return m.LocationString
+	}
+	return ""
+}
+
+func (m *MemberInfoReply) GetAvatar() string {
+	if m != nil {
+		return m.Avatar
+	}
+	return ""
+}
+
+func (m *MemberInfoReply) GetIDCert() bool {
+	if m != nil {
+		return m.IDCert
+	}
+	return false
+}
+
+func (m *MemberInfoReply) GetWorkCert() bool {
+	if m != nil {
+		return m.WorkCert
+	}
+	return false
+}
+
+func (m *MemberInfoReply) GetIsOrg() bool {
+	if m != nil {
+		return m.IsOrg
+	}
+	return false
+}
+
+func (m *MemberInfoReply) GetIsVIP() bool {
+	if m != nil {
+		return m.IsVIP
+	}
+	return false
+}
+
+func (m *MemberInfoReply) GetCreatedAt() int64 {
+	if m != nil {
+		return m.CreatedAt
+	}
+	return 0
+}
+
+func (m *MemberInfoReply) GetStat() *AccountStatInfo {
+	if m != nil {
+		return m.Stat
+	}
+	return nil
+}
+
 type AidReq struct {
 	Aid                  int64    `protobuf:"varint,1,opt,name=aid,proto3" json:"aid,omitempty"`
 	RemoteIP             string   `protobuf:"bytes,2,opt,name=remoteIP,proto3" json:"remoteIP,omitempty"`
@@ -754,7 +872,7 @@ func (m *AidReq) Reset()         { *m = AidReq{} }
 func (m *AidReq) String() string { return proto.CompactTextString(m) }
 func (*AidReq) ProtoMessage()    {}
 func (*AidReq) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f80abaa17e25ccc8, []int{6}
+	return fileDescriptor_f80abaa17e25ccc8, []int{8}
 }
 func (m *AidReq) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -810,7 +928,7 @@ func (m *AidsReq) Reset()         { *m = AidsReq{} }
 func (m *AidsReq) String() string { return proto.CompactTextString(m) }
 func (*AidsReq) ProtoMessage()    {}
 func (*AidsReq) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f80abaa17e25ccc8, []int{7}
+	return fileDescriptor_f80abaa17e25ccc8, []int{9}
 }
 func (m *AidsReq) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -858,9 +976,11 @@ func init() {
 	proto.RegisterType((*BaseInfosReply)(nil), "service.account.BaseInfosReply")
 	proto.RegisterMapType((map[int64]*BaseInfoReply)(nil), "service.account.BaseInfosReply.BaseInfosEntry")
 	proto.RegisterType((*SelfProfile)(nil), "service.account.SelfProfile")
-	proto.RegisterType((*SelfStatInfo)(nil), "service.account.SelfStatInfo")
-	proto.RegisterType((*ProfileReply)(nil), "service.account.ProfileReply")
+	proto.RegisterType((*ActivitySetting)(nil), "service.account.ActivitySetting")
+	proto.RegisterType((*NotifySetting)(nil), "service.account.NotifySetting")
+	proto.RegisterType((*Setting)(nil), "service.account.Setting")
 	proto.RegisterType((*AccountStatInfo)(nil), "service.account.AccountStatInfo")
+	proto.RegisterType((*MemberInfoReply)(nil), "service.account.MemberInfoReply")
 	proto.RegisterType((*AidReq)(nil), "service.account.AidReq")
 	proto.RegisterType((*AidsReq)(nil), "service.account.AidsReq")
 }
@@ -868,62 +988,72 @@ func init() {
 func init() { proto.RegisterFile("pb.proto", fileDescriptor_f80abaa17e25ccc8) }
 
 var fileDescriptor_f80abaa17e25ccc8 = []byte{
-	// 880 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xdc, 0x56, 0xdd, 0x6e, 0x23, 0x35,
-	0x14, 0xd6, 0x24, 0x99, 0xfc, 0x9c, 0xa4, 0xe9, 0xae, 0x59, 0xba, 0x26, 0x82, 0x10, 0xe5, 0x62,
-	0x95, 0x1b, 0xb2, 0x52, 0x59, 0x21, 0xe0, 0x2e, 0x6d, 0xb6, 0x30, 0x12, 0x85, 0x68, 0xca, 0x2e,
-	0x02, 0x21, 0x21, 0x67, 0xc6, 0x49, 0xad, 0x4e, 0xc7, 0xc1, 0xe3, 0x14, 0xfa, 0x02, 0x3c, 0x09,
-	0xaf, 0xc1, 0x3d, 0x12, 0x37, 0x3c, 0x02, 0xaa, 0xc4, 0x35, 0xaf, 0x80, 0x7c, 0x3c, 0x93, 0x64,
-	0x26, 0x4d, 0x23, 0x6e, 0xb8, 0xd8, 0xab, 0xf8, 0xfb, 0xce, 0x39, 0xb6, 0xe7, 0x7c, 0x9f, 0xed,
-	0x40, 0x7d, 0x31, 0x1d, 0x2e, 0x94, 0xd4, 0x92, 0x1c, 0x26, 0x5c, 0xdd, 0x88, 0x80, 0x0f, 0x59,
-	0x10, 0xc8, 0x65, 0xac, 0x3b, 0x1f, 0xcc, 0x85, 0xbe, 0x5c, 0x4e, 0x87, 0x81, 0xbc, 0x7e, 0x3e,
-	0x97, 0x73, 0xf9, 0x1c, 0xf3, 0xa6, 0xcb, 0x19, 0x22, 0x04, 0x38, 0xb2, 0xf5, 0xfd, 0x7f, 0x1c,
-	0x38, 0x38, 0x61, 0x09, 0xf7, 0xe2, 0x99, 0xf4, 0xf9, 0x22, 0xba, 0x25, 0x6d, 0x28, 0x79, 0x63,
-	0xea, 0xf4, 0x9c, 0x41, 0xd9, 0x2f, 0x79, 0x63, 0xd2, 0x81, 0xfa, 0xab, 0x84, 0xab, 0x2f, 0xd9,
-	0x35, 0xa7, 0xa5, 0x9e, 0x33, 0x68, 0xf8, 0x2b, 0x4c, 0x8e, 0xa0, 0xfa, 0x19, 0x8f, 0x43, 0xae,
-	0x68, 0xb9, 0xe7, 0x0c, 0x5c, 0x3f, 0x45, 0xa4, 0x0f, 0x2d, 0x2f, 0xd6, 0x4a, 0x86, 0xcb, 0x40,
-	0x0b, 0x19, 0xd3, 0x0a, 0xd6, 0xe5, 0x38, 0x53, 0x3b, 0xba, 0x61, 0x9a, 0x29, 0xea, 0x62, 0x34,
-	0x45, 0x86, 0xf7, 0xc6, 0xa7, 0x5c, 0x69, 0x5a, 0xed, 0x39, 0x83, 0xba, 0x9f, 0x22, 0xb3, 0x8f,
-	0x6f, 0xa4, 0xba, 0xc2, 0x48, 0x0d, 0x23, 0x2b, 0x4c, 0x9e, 0x80, 0xeb, 0x25, 0x5f, 0xa9, 0x39,
-	0xad, 0x63, 0xc0, 0x02, 0xcb, 0xbe, 0xf6, 0x26, 0xb4, 0x91, 0xb1, 0xaf, 0xbd, 0x49, 0xff, 0x37,
-	0x07, 0xda, 0xd9, 0x17, 0x27, 0xf6, 0x93, 0xcf, 0x01, 0xa6, 0x2c, 0xe1, 0x3f, 0x08, 0x43, 0x51,
-	0xa7, 0x57, 0x1e, 0x34, 0x8f, 0x87, 0xc3, 0x42, 0x67, 0x87, 0xf9, 0xa2, 0x35, 0x7c, 0x19, 0x6b,
-	0x75, 0xeb, 0x37, 0xa6, 0x19, 0xee, 0x7c, 0xbf, 0xb1, 0x00, 0x06, 0xc9, 0x23, 0x28, 0x5f, 0xf1,
-	0xdb, 0xb4, 0xa9, 0x66, 0x48, 0x5e, 0x80, 0x7b, 0xc3, 0xa2, 0xa5, 0x6d, 0x69, 0xf3, 0xb8, 0xbb,
-	0x73, 0x35, 0x5c, 0xcc, 0xb7, 0xc9, 0x9f, 0x96, 0x3e, 0x76, 0xfa, 0x7f, 0xb8, 0xd0, 0xbc, 0xe0,
-	0xd1, 0x6c, 0xa2, 0xe4, 0x4c, 0x44, 0x7c, 0x4b, 0xaf, 0x23, 0xa8, 0x9e, 0xcb, 0xa9, 0x88, 0x32,
-	0xb5, 0x52, 0x64, 0xba, 0xf1, 0xf2, 0x9a, 0x89, 0x08, 0xa5, 0x6a, 0xf8, 0x16, 0x98, 0xec, 0x89,
-	0xe2, 0x33, 0xf1, 0x73, 0xaa, 0x51, 0x8a, 0x72, 0xaa, 0xbb, 0x3b, 0x55, 0xaf, 0xe6, 0x54, 0x7f,
-	0x17, 0x1a, 0x27, 0x42, 0xe9, 0xcb, 0x6f, 0x39, 0x53, 0x28, 0x91, 0xeb, 0xaf, 0x09, 0xd2, 0x05,
-	0x40, 0x70, 0x2e, 0x63, 0x7d, 0x89, 0x42, 0xb9, 0xfe, 0x06, 0x63, 0x56, 0x44, 0x34, 0x66, 0xb7,
-	0x28, 0x98, 0xeb, 0xaf, 0xf0, 0x96, 0x9f, 0xe0, 0x41, 0x3f, 0x35, 0x8b, 0x7e, 0xba, 0x90, 0x4b,
-	0x15, 0x70, 0xda, 0xb2, 0xbc, 0x45, 0x66, 0xbd, 0x2f, 0x64, 0xc0, 0x70, 0xbe, 0x03, 0xec, 0xde,
-	0x0a, 0x93, 0x67, 0xd0, 0xce, 0xc6, 0x17, 0x5a, 0x89, 0x78, 0x4e, 0xdb, 0x58, 0x5b, 0x60, 0x37,
-	0xbc, 0x7a, 0x98, 0xf3, 0xaa, 0xd9, 0x2f, 0x8e, 0x2e, 0x34, 0xd3, 0xcb, 0x84, 0x3e, 0xc2, 0xef,
-	0xc9, 0x71, 0x39, 0x3f, 0x3f, 0x2e, 0xf8, 0xf9, 0x19, 0xb4, 0xb3, 0x71, 0x3a, 0x03, 0xc1, 0x19,
-	0x0a, 0x2c, 0x6a, 0x3f, 0xa1, 0x6f, 0xe1, 0xde, 0x4a, 0xde, 0x64, 0x7d, 0x0e, 0x9e, 0xdc, 0x7b,
-	0x0e, 0xde, 0xde, 0x38, 0x07, 0x84, 0x40, 0xc5, 0x97, 0x11, 0xa7, 0x47, 0x58, 0x8d, 0x63, 0xa3,
-	0xe0, 0xa9, 0xe2, 0x4c, 0xf3, 0x70, 0xa4, 0xe9, 0x53, 0x6c, 0xca, 0x9a, 0x30, 0xd1, 0x57, 0x8b,
-	0x30, 0x8d, 0x52, 0x1b, 0x5d, 0x11, 0xe4, 0x05, 0x54, 0xcc, 0xae, 0xe8, 0x3b, 0x68, 0xe8, 0xde,
-	0x96, 0xa1, 0x47, 0xf6, 0xd7, 0xe4, 0xa0, 0xaf, 0x31, 0xbb, 0x7f, 0xe7, 0x40, 0xcb, 0xb8, 0x39,
-	0xa3, 0xcd, 0xa7, 0x9f, 0xc9, 0x28, 0x92, 0x3f, 0x89, 0x78, 0x7e, 0x6a, 0x0a, 0xd0, 0xda, 0xae,
-	0x5f, 0x60, 0xcd, 0x66, 0xce, 0x58, 0x9c, 0xd8, 0x94, 0x92, 0x35, 0xdb, 0x8a, 0x40, 0xb3, 0x45,
-	0x2c, 0xb8, 0xb2, 0xe1, 0x72, 0x6a, 0xb6, 0x15, 0x63, 0xe2, 0x5f, 0xcb, 0x85, 0x08, 0x6c, 0xbc,
-	0x62, 0xe3, 0x6b, 0xc6, 0x08, 0x38, 0x52, 0x5a, 0x04, 0x11, 0xb7, 0x19, 0xae, 0x15, 0x70, 0x93,
-	0x23, 0x03, 0x38, 0x1c, 0x8b, 0x24, 0x58, 0x26, 0x89, 0x90, 0xb1, 0x4d, 0xb3, 0xe7, 0xa1, 0x48,
-	0xf7, 0x7f, 0x29, 0x43, 0x2b, 0x3d, 0xae, 0xff, 0xef, 0x1d, 0xbb, 0xe9, 0x71, 0x77, 0xaf, 0xc7,
-	0xab, 0xbb, 0x3c, 0x9e, 0x9e, 0xab, 0xda, 0x8e, 0x7b, 0xba, 0xbe, 0xf3, 0x9e, 0x6e, 0xec, 0xba,
-	0xa7, 0xe1, 0x5e, 0x7f, 0x36, 0x37, 0xfd, 0x99, 0xf3, 0x62, 0xab, 0xe8, 0xc5, 0xcc, 0x6d, 0x07,
-	0xff, 0xc9, 0x6d, 0x7f, 0x3b, 0x70, 0x58, 0x88, 0xbc, 0x91, 0x86, 0xfb, 0x08, 0xaa, 0x23, 0x11,
-	0xfa, 0xfc, 0x47, 0xf3, 0xf2, 0x30, 0x11, 0x66, 0x2f, 0x0f, 0x13, 0xa1, 0xd1, 0x47, 0xf1, 0x6b,
-	0xa9, 0xb9, 0x37, 0xc9, 0xbc, 0x96, 0xe1, 0xfe, 0x27, 0x50, 0x1b, 0x89, 0x30, 0x31, 0x85, 0x04,
-	0x2a, 0x4c, 0x84, 0xf6, 0x35, 0x2c, 0xfb, 0x38, 0x7e, 0xa8, 0xf4, 0xf8, 0xd7, 0x12, 0xd4, 0xd2,
-	0xd6, 0x92, 0x11, 0xd4, 0xb2, 0xd7, 0xe9, 0xe9, 0xb6, 0x32, 0xb8, 0xb1, 0xce, 0x7b, 0x5b, 0x81,
-	0xdc, 0x09, 0x19, 0x43, 0xe3, 0x84, 0x25, 0x22, 0x40, 0x89, 0x76, 0x4e, 0xb2, 0xe7, 0xd9, 0x24,
-	0x9f, 0x43, 0x73, 0x43, 0xee, 0xdd, 0xf3, 0xec, 0xf5, 0x0f, 0x39, 0xc3, 0xfd, 0xd8, 0x37, 0x9d,
-	0xd0, 0xfb, 0xe6, 0x31, 0x5d, 0xeb, 0xbc, 0xbf, 0xe7, 0x5f, 0xc3, 0xc9, 0xe3, 0xdf, 0xef, 0xba,
-	0xce, 0x9f, 0x77, 0x5d, 0xe7, 0xaf, 0xbb, 0xae, 0xf3, 0x5d, 0x99, 0x2d, 0xc4, 0xb4, 0x8a, 0xff,
-	0xc4, 0x3e, 0xfc, 0x37, 0x00, 0x00, 0xff, 0xff, 0x33, 0x4b, 0x4e, 0x65, 0xd5, 0x09, 0x00, 0x00,
+	// 1026 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xbc, 0x56, 0x4f, 0x6f, 0x1b, 0x45,
+	0x14, 0xd7, 0xda, 0x59, 0xff, 0x79, 0x4e, 0xe2, 0x76, 0x28, 0xe9, 0x60, 0x55, 0xc1, 0xda, 0x43,
+	0xe5, 0x0b, 0xae, 0x14, 0xaa, 0x0a, 0x10, 0x17, 0x27, 0x6e, 0x5a, 0x4b, 0x4d, 0xb0, 0x26, 0xb4,
+	0x08, 0x84, 0x84, 0xc6, 0xeb, 0xb1, 0x33, 0xca, 0x7a, 0xc7, 0xcc, 0x8e, 0x53, 0x72, 0xe2, 0xc4,
+	0x81, 0x0f, 0xc5, 0x9d, 0x23, 0x1f, 0x01, 0x45, 0xe2, 0xcc, 0x85, 0x3b, 0x68, 0xde, 0xec, 0xda,
+	0x5e, 0x3b, 0x4e, 0x54, 0x0e, 0x3d, 0xed, 0xfc, 0x7e, 0xef, 0xbd, 0x99, 0x37, 0xef, 0xbd, 0x79,
+	0x6f, 0xa1, 0x32, 0x1d, 0xb4, 0xa7, 0x5a, 0x19, 0x45, 0xea, 0x89, 0xd0, 0x97, 0x32, 0x14, 0x6d,
+	0x1e, 0x86, 0x6a, 0x16, 0x9b, 0xc6, 0x27, 0x63, 0x69, 0xce, 0x67, 0x83, 0x76, 0xa8, 0x26, 0x4f,
+	0xc6, 0x6a, 0xac, 0x9e, 0xa0, 0xde, 0x60, 0x36, 0x42, 0x84, 0x00, 0x57, 0xce, 0x3e, 0xf8, 0xdb,
+	0x83, 0x9d, 0x43, 0x9e, 0x88, 0x5e, 0x3c, 0x52, 0x4c, 0x4c, 0xa3, 0x2b, 0xb2, 0x0b, 0x85, 0x5e,
+	0x97, 0x7a, 0x4d, 0xaf, 0x55, 0x64, 0x85, 0x5e, 0x97, 0x34, 0xa0, 0xf2, 0x3a, 0x11, 0xfa, 0x94,
+	0x4f, 0x04, 0x2d, 0x34, 0xbd, 0x56, 0x95, 0xcd, 0x31, 0xd9, 0x83, 0xd2, 0x0b, 0x11, 0x0f, 0x85,
+	0xa6, 0xc5, 0xa6, 0xd7, 0xf2, 0x59, 0x8a, 0x48, 0x00, 0xdb, 0xbd, 0xd8, 0x68, 0x35, 0x9c, 0x85,
+	0x46, 0xaa, 0x98, 0x6e, 0xa1, 0x5d, 0x8e, 0xb3, 0xb6, 0x9d, 0x4b, 0x6e, 0xb8, 0xa6, 0x3e, 0x4a,
+	0x53, 0x64, 0xf9, 0x5e, 0xf7, 0x48, 0x68, 0x43, 0x4b, 0x4d, 0xaf, 0x55, 0x61, 0x29, 0xb2, 0x7e,
+	0x7c, 0xa3, 0xf4, 0x05, 0x4a, 0xca, 0x28, 0x99, 0x63, 0xf2, 0x00, 0xfc, 0x5e, 0xf2, 0x95, 0x1e,
+	0xd3, 0x0a, 0x0a, 0x1c, 0x70, 0xec, 0x9b, 0x5e, 0x9f, 0x56, 0x33, 0xf6, 0x4d, 0xaf, 0x1f, 0xfc,
+	0xe6, 0xc1, 0x6e, 0x76, 0xe3, 0xc4, 0x5d, 0xf9, 0x04, 0x60, 0xc0, 0x13, 0xf1, 0x83, 0xb4, 0x14,
+	0xf5, 0x9a, 0xc5, 0x56, 0xed, 0xa0, 0xdd, 0x5e, 0x89, 0x6c, 0x3b, 0x6f, 0xb4, 0x80, 0xcf, 0x63,
+	0xa3, 0xaf, 0x58, 0x75, 0x90, 0xe1, 0xc6, 0xf7, 0x4b, 0x07, 0xa0, 0x90, 0xdc, 0x83, 0xe2, 0x85,
+	0xb8, 0x4a, 0x83, 0x6a, 0x97, 0xe4, 0x29, 0xf8, 0x97, 0x3c, 0x9a, 0xb9, 0x90, 0xd6, 0x0e, 0xf6,
+	0x37, 0x9e, 0x86, 0x87, 0x31, 0xa7, 0xfc, 0x45, 0xe1, 0x33, 0x2f, 0xf8, 0xd7, 0x87, 0xda, 0x99,
+	0x88, 0x46, 0x7d, 0xad, 0x46, 0x32, 0x12, 0x6b, 0xf9, 0xda, 0x83, 0xd2, 0x89, 0x1a, 0xc8, 0x28,
+	0xcb, 0x56, 0x8a, 0x6c, 0x34, 0x9e, 0x4f, 0xb8, 0x8c, 0x30, 0x55, 0x55, 0xe6, 0x80, 0xd5, 0xee,
+	0x6b, 0x31, 0x92, 0x3f, 0xa5, 0x39, 0x4a, 0x51, 0x2e, 0xeb, 0xfe, 0xc6, 0xac, 0x97, 0x72, 0x59,
+	0x7f, 0x04, 0xd5, 0x43, 0xa9, 0xcd, 0xf9, 0xb7, 0x82, 0x6b, 0x4c, 0x91, 0xcf, 0x16, 0x04, 0xd9,
+	0x07, 0x40, 0x70, 0xa2, 0x62, 0x73, 0x8e, 0x89, 0xf2, 0xd9, 0x12, 0x63, 0x4f, 0x44, 0xd4, 0xe5,
+	0x57, 0x98, 0x30, 0x9f, 0xcd, 0xf1, 0x5a, 0x3d, 0xc1, 0xad, 0xf5, 0x54, 0x5b, 0xad, 0xa7, 0x33,
+	0x35, 0xd3, 0xa1, 0xa0, 0xdb, 0xce, 0x5b, 0x87, 0xec, 0x79, 0xaf, 0x54, 0xc8, 0x71, 0xbf, 0x1d,
+	0x8c, 0xde, 0x1c, 0x93, 0xc7, 0xb0, 0x9b, 0xad, 0xcf, 0x8c, 0x96, 0xf1, 0x98, 0xee, 0xe2, 0x9e,
+	0x2b, 0xec, 0x52, 0xad, 0xd6, 0x73, 0xb5, 0x6a, 0xfd, 0xc5, 0xd5, 0x99, 0xe1, 0x66, 0x96, 0xd0,
+	0x7b, 0x78, 0x72, 0x8e, 0xcb, 0xd5, 0xf3, 0xfd, 0x95, 0x7a, 0x7e, 0x0c, 0xbb, 0xd9, 0x3a, 0xdd,
+	0x81, 0xe0, 0x0e, 0x2b, 0x2c, 0xe6, 0xbe, 0x4f, 0x3f, 0x40, 0xdf, 0x0a, 0xbd, 0xfe, 0xe2, 0x1d,
+	0x3c, 0xb8, 0xf1, 0x1d, 0x7c, 0xb8, 0xf4, 0x0e, 0x08, 0x81, 0x2d, 0xa6, 0x22, 0x41, 0xf7, 0xd0,
+	0x1a, 0xd7, 0x36, 0x83, 0x47, 0x5a, 0x70, 0x23, 0x86, 0x1d, 0x43, 0x1f, 0x62, 0x50, 0x16, 0x84,
+	0x95, 0xbe, 0x9e, 0x0e, 0x53, 0x29, 0x75, 0xd2, 0x39, 0x41, 0x9e, 0xc2, 0x96, 0xf5, 0x8a, 0x7e,
+	0x84, 0x05, 0xdd, 0x5c, 0x2b, 0xe8, 0x8e, 0xfb, 0x5a, 0x1d, 0xac, 0x6b, 0xd4, 0x26, 0x07, 0x50,
+	0x3e, 0x13, 0xc6, 0xd8, 0x10, 0x37, 0xd0, 0x90, 0xae, 0x19, 0xa6, 0x72, 0x96, 0x29, 0x06, 0xbf,
+	0x78, 0x50, 0xef, 0x84, 0x46, 0x5e, 0x4a, 0x73, 0x95, 0x72, 0xf6, 0x36, 0xaf, 0xe4, 0x85, 0xc0,
+	0x77, 0x50, 0x61, 0xb8, 0x26, 0x14, 0xca, 0x47, 0x6a, 0x32, 0x11, 0xb1, 0xc1, 0xa7, 0x50, 0x61,
+	0x19, 0x24, 0x4d, 0xa8, 0x1d, 0xab, 0x28, 0x52, 0x6f, 0xbf, 0x56, 0x53, 0x19, 0xe2, 0x8b, 0xa8,
+	0xb0, 0x65, 0xca, 0x66, 0xd0, 0xc1, 0x13, 0x31, 0x19, 0x08, 0x8d, 0xaf, 0xa3, 0xc2, 0x72, 0x5c,
+	0x30, 0x83, 0x9d, 0x53, 0x65, 0xe4, 0xe8, 0x7f, 0x3a, 0x41, 0xa1, 0x7c, 0x2a, 0xde, 0x1e, 0xf3,
+	0x38, 0x49, 0x1d, 0xc8, 0xa0, 0x0d, 0xf4, 0xa9, 0xc8, 0x9f, 0xbc, 0x20, 0x82, 0x9f, 0xe7, 0x21,
+	0x23, 0x5f, 0x42, 0x25, 0x0b, 0x04, 0x1e, 0x7a, 0x73, 0xdc, 0x73, 0x91, 0x62, 0x73, 0x0b, 0xf2,
+	0x0c, 0x4a, 0xce, 0xff, 0x8d, 0x4d, 0x28, 0x77, 0x3d, 0x96, 0x6a, 0x07, 0x7f, 0x61, 0xfc, 0x73,
+	0xd9, 0xb4, 0x15, 0xeb, 0x62, 0x23, 0xe3, 0xf1, 0x91, 0x95, 0xa0, 0x3f, 0x3e, 0x5b, 0x61, 0xed,
+	0xd5, 0xec, 0x15, 0x9d, 0x4a, 0xc1, 0xf5, 0x88, 0x39, 0x81, 0x3d, 0x22, 0xe2, 0xe1, 0x85, 0x13,
+	0x17, 0xd3, 0x1e, 0x31, 0x67, 0xac, 0x1c, 0xd3, 0xe3, 0xe4, 0x5b, 0x4e, 0xbe, 0x60, 0x6c, 0xd6,
+	0x3a, 0xda, 0xc8, 0x30, 0x12, 0x4e, 0xc3, 0x77, 0xef, 0x6e, 0x99, 0x23, 0x2d, 0xa8, 0x77, 0x65,
+	0x12, 0xce, 0x92, 0x44, 0xaa, 0xd8, 0xa9, 0xb9, 0x36, 0xb6, 0x4a, 0x07, 0xbf, 0x16, 0xa1, 0xee,
+	0x62, 0xfe, 0xfe, 0xa7, 0xe3, 0x72, 0x77, 0xf2, 0xef, 0xec, 0x4e, 0xa5, 0x4d, 0xdd, 0x29, 0xed,
+	0x88, 0xe5, 0x0d, 0x13, 0xb6, 0xb2, 0x71, 0xc2, 0x56, 0x37, 0x4d, 0x58, 0xb8, 0xb1, 0xb3, 0xd4,
+	0x96, 0x3b, 0x4b, 0xae, 0x8b, 0x6c, 0xaf, 0x76, 0x91, 0xac, 0x4f, 0xec, 0xbc, 0x4b, 0x9f, 0x08,
+	0x9e, 0x41, 0xa9, 0x23, 0x87, 0x4c, 0xfc, 0x68, 0x67, 0x29, 0x97, 0xc3, 0x6c, 0x96, 0x72, 0x39,
+	0xb4, 0x7e, 0x6b, 0x31, 0x51, 0x46, 0xf4, 0xfa, 0x59, 0x0e, 0x32, 0x1c, 0x7c, 0x0e, 0xe5, 0x8e,
+	0x1c, 0x26, 0xd6, 0x90, 0xc0, 0x16, 0x97, 0x43, 0x37, 0xdf, 0x8b, 0x0c, 0xd7, 0xb7, 0x99, 0x1e,
+	0xfc, 0x53, 0x80, 0x72, 0xea, 0x0c, 0x79, 0x01, 0xb0, 0xa8, 0x04, 0xf2, 0x70, 0xdd, 0x69, 0xf4,
+	0xad, 0xb1, 0x7e, 0x9b, 0xd5, 0xfa, 0x79, 0x09, 0xf5, 0xa5, 0xe1, 0x7d, 0xfb, 0x6e, 0x8f, 0x6e,
+	0x68, 0x85, 0x8b, 0xb9, 0xdf, 0x85, 0xea, 0x21, 0x4f, 0x64, 0x78, 0xfb, 0x1e, 0x77, 0xfc, 0x58,
+	0x90, 0x97, 0x50, 0x5b, 0x0a, 0xf8, 0xbb, 0xdc, 0x6c, 0xb5, 0x03, 0x1c, 0xa3, 0x3f, 0xee, 0xaf,
+	0x87, 0xd0, 0x9b, 0xf6, 0xb1, 0x59, 0x68, 0x7c, 0x7c, 0xc7, 0x7f, 0xd5, 0xe1, 0xfd, 0xdf, 0xaf,
+	0xf7, 0xbd, 0x3f, 0xae, 0xf7, 0xbd, 0x3f, 0xaf, 0xf7, 0xbd, 0xef, 0x8a, 0x7c, 0x2a, 0x07, 0x25,
+	0xfc, 0x57, 0xfd, 0xf4, 0xbf, 0x00, 0x00, 0x00, 0xff, 0xff, 0x3f, 0x0c, 0x26, 0x71, 0xf7, 0x0a,
+	0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -938,7 +1068,8 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type AccountClient interface {
-	Profile(ctx context.Context, in *AidReq, opts ...grpc.CallOption) (*ProfileReply, error)
+	MemberInfo(ctx context.Context, in *AidReq, opts ...grpc.CallOption) (*MemberInfoReply, error)
+	SelfProfileInfo(ctx context.Context, in *AidReq, opts ...grpc.CallOption) (*SelfProfile, error)
 	BasicInfo(ctx context.Context, in *AidReq, opts ...grpc.CallOption) (*BaseInfoReply, error)
 	AccountStat(ctx context.Context, in *AidReq, opts ...grpc.CallOption) (*AccountStatInfo, error)
 	BaseInfos(ctx context.Context, in *AidsReq, opts ...grpc.CallOption) (*BaseInfosReply, error)
@@ -952,9 +1083,18 @@ func NewAccountClient(cc *grpc.ClientConn) AccountClient {
 	return &accountClient{cc}
 }
 
-func (c *accountClient) Profile(ctx context.Context, in *AidReq, opts ...grpc.CallOption) (*ProfileReply, error) {
-	out := new(ProfileReply)
-	err := c.cc.Invoke(ctx, "/service.account.Account/Profile", in, out, opts...)
+func (c *accountClient) MemberInfo(ctx context.Context, in *AidReq, opts ...grpc.CallOption) (*MemberInfoReply, error) {
+	out := new(MemberInfoReply)
+	err := c.cc.Invoke(ctx, "/service.account.Account/MemberInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *accountClient) SelfProfileInfo(ctx context.Context, in *AidReq, opts ...grpc.CallOption) (*SelfProfile, error) {
+	out := new(SelfProfile)
+	err := c.cc.Invoke(ctx, "/service.account.Account/SelfProfileInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -990,7 +1130,8 @@ func (c *accountClient) BaseInfos(ctx context.Context, in *AidsReq, opts ...grpc
 
 // AccountServer is the server API for Account service.
 type AccountServer interface {
-	Profile(context.Context, *AidReq) (*ProfileReply, error)
+	MemberInfo(context.Context, *AidReq) (*MemberInfoReply, error)
+	SelfProfileInfo(context.Context, *AidReq) (*SelfProfile, error)
 	BasicInfo(context.Context, *AidReq) (*BaseInfoReply, error)
 	AccountStat(context.Context, *AidReq) (*AccountStatInfo, error)
 	BaseInfos(context.Context, *AidsReq) (*BaseInfosReply, error)
@@ -1000,8 +1141,11 @@ type AccountServer interface {
 type UnimplementedAccountServer struct {
 }
 
-func (*UnimplementedAccountServer) Profile(ctx context.Context, req *AidReq) (*ProfileReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Profile not implemented")
+func (*UnimplementedAccountServer) MemberInfo(ctx context.Context, req *AidReq) (*MemberInfoReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MemberInfo not implemented")
+}
+func (*UnimplementedAccountServer) SelfProfileInfo(ctx context.Context, req *AidReq) (*SelfProfile, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SelfProfileInfo not implemented")
 }
 func (*UnimplementedAccountServer) BasicInfo(ctx context.Context, req *AidReq) (*BaseInfoReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BasicInfo not implemented")
@@ -1017,20 +1161,38 @@ func RegisterAccountServer(s *grpc.Server, srv AccountServer) {
 	s.RegisterService(&_Account_serviceDesc, srv)
 }
 
-func _Account_Profile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Account_MemberInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AidReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AccountServer).Profile(ctx, in)
+		return srv.(AccountServer).MemberInfo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/service.account.Account/Profile",
+		FullMethod: "/service.account.Account/MemberInfo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AccountServer).Profile(ctx, req.(*AidReq))
+		return srv.(AccountServer).MemberInfo(ctx, req.(*AidReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Account_SelfProfileInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AidReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountServer).SelfProfileInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/service.account.Account/SelfProfileInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountServer).SelfProfileInfo(ctx, req.(*AidReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1094,8 +1256,12 @@ var _Account_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*AccountServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Profile",
-			Handler:    _Account_Profile_Handler,
+			MethodName: "MemberInfo",
+			Handler:    _Account_MemberInfo_Handler,
+		},
+		{
+			MethodName: "SelfProfileInfo",
+			Handler:    _Account_SelfProfileInfo_Handler,
 		},
 		{
 			MethodName: "BasicInfo",
@@ -1287,6 +1453,20 @@ func (m *SelfProfile) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
+	if m.Setting != nil {
+		{
+			size, err := m.Setting.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintPb(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0xd2
+	}
 	if m.Stat != nil {
 		{
 			size, err := m.Stat.MarshalToSizedBuffer(dAtA[:i])
@@ -1405,12 +1585,10 @@ func (m *SelfProfile) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x68
 	}
-	if len(m.Source) > 0 {
-		i -= len(m.Source)
-		copy(dAtA[i:], m.Source)
-		i = encodeVarintPb(dAtA, i, uint64(len(m.Source)))
+	if m.Source != 0 {
+		i = encodeVarintPb(dAtA, i, uint64(m.Source))
 		i--
-		dAtA[i] = 0x62
+		dAtA[i] = 0x60
 	}
 	if len(m.Avatar) > 0 {
 		i -= len(m.Avatar)
@@ -1482,7 +1660,7 @@ func (m *SelfProfile) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *SelfStatInfo) Marshal() (dAtA []byte, err error) {
+func (m *ActivitySetting) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1492,12 +1670,197 @@ func (m *SelfStatInfo) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *SelfStatInfo) MarshalTo(dAtA []byte) (int, error) {
+func (m *ActivitySetting) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *SelfStatInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *ActivitySetting) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.FollowMember {
+		i--
+		if m.FollowMember {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.FollowTopic {
+		i--
+		if m.FollowTopic {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.Comment {
+		i--
+		if m.Comment {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.Like {
+		i--
+		if m.Like {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *NotifySetting) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *NotifySetting) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *NotifySetting) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.NewMember {
+		i--
+		if m.NewMember {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.NewFans {
+		i--
+		if m.NewFans {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.Comment {
+		i--
+		if m.Comment {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.Like {
+		i--
+		if m.Like {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *Setting) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *Setting) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Setting) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Notify != nil {
+		{
+			size, err := m.Notify.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintPb(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.Activity != nil {
+		{
+			size, err := m.Activity.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintPb(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *AccountStatInfo) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *AccountStatInfo) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *AccountStatInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1539,7 +1902,7 @@ func (m *SelfStatInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *ProfileReply) Marshal() (dAtA []byte, err error) {
+func (m *MemberInfoReply) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1549,12 +1912,12 @@ func (m *ProfileReply) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *ProfileReply) MarshalTo(dAtA []byte) (int, error) {
+func (m *MemberInfoReply) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *ProfileReply) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MemberInfoReply) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1666,63 +2029,6 @@ func (m *ProfileReply) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *AccountStatInfo) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *AccountStatInfo) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *AccountStatInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if m.DiscussionCount != 0 {
-		i = encodeVarintPb(dAtA, i, uint64(m.DiscussionCount))
-		i--
-		dAtA[i] = 0x30
-	}
-	if m.ArticleCount != 0 {
-		i = encodeVarintPb(dAtA, i, uint64(m.ArticleCount))
-		i--
-		dAtA[i] = 0x28
-	}
-	if m.TopicCount != 0 {
-		i = encodeVarintPb(dAtA, i, uint64(m.TopicCount))
-		i--
-		dAtA[i] = 0x20
-	}
-	if m.BlackCount != 0 {
-		i = encodeVarintPb(dAtA, i, uint64(m.BlackCount))
-		i--
-		dAtA[i] = 0x18
-	}
-	if m.FansCount != 0 {
-		i = encodeVarintPb(dAtA, i, uint64(m.FansCount))
-		i--
-		dAtA[i] = 0x10
-	}
-	if m.FollowingCount != 0 {
-		i = encodeVarintPb(dAtA, i, uint64(m.FollowingCount))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
 func (m *AidReq) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -1794,21 +2100,21 @@ func (m *AidsReq) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		dAtA[i] = 0x12
 	}
 	if len(m.Aids) > 0 {
-		dAtA5 := make([]byte, len(m.Aids)*10)
-		var j4 int
+		dAtA8 := make([]byte, len(m.Aids)*10)
+		var j7 int
 		for _, num1 := range m.Aids {
 			num := uint64(num1)
 			for num >= 1<<7 {
-				dAtA5[j4] = uint8(uint64(num)&0x7f | 0x80)
+				dAtA8[j7] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
-				j4++
+				j7++
 			}
-			dAtA5[j4] = uint8(num)
-			j4++
+			dAtA8[j7] = uint8(num)
+			j7++
 		}
-		i -= j4
-		copy(dAtA[i:], dAtA5[:j4])
-		i = encodeVarintPb(dAtA, i, uint64(j4))
+		i -= j7
+		copy(dAtA[i:], dAtA8[:j7])
+		i = encodeVarintPb(dAtA, i, uint64(j7))
 		i--
 		dAtA[i] = 0xa
 	}
@@ -1938,9 +2244,8 @@ func (m *SelfProfile) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovPb(uint64(l))
 	}
-	l = len(m.Source)
-	if l > 0 {
-		n += 1 + l + sovPb(uint64(l))
+	if m.Source != 0 {
+		n += 1 + sovPb(uint64(m.Source))
 	}
 	if m.Location != 0 {
 		n += 1 + sovPb(uint64(m.Location))
@@ -1985,13 +2290,85 @@ func (m *SelfProfile) Size() (n int) {
 		l = m.Stat.Size()
 		n += 2 + l + sovPb(uint64(l))
 	}
+	if m.Setting != nil {
+		l = m.Setting.Size()
+		n += 2 + l + sovPb(uint64(l))
+	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
 
-func (m *SelfStatInfo) Size() (n int) {
+func (m *ActivitySetting) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Like {
+		n += 2
+	}
+	if m.Comment {
+		n += 2
+	}
+	if m.FollowTopic {
+		n += 2
+	}
+	if m.FollowMember {
+		n += 2
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *NotifySetting) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Like {
+		n += 2
+	}
+	if m.Comment {
+		n += 2
+	}
+	if m.NewFans {
+		n += 2
+	}
+	if m.NewMember {
+		n += 2
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *Setting) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Activity != nil {
+		l = m.Activity.Size()
+		n += 1 + l + sovPb(uint64(l))
+	}
+	if m.Notify != nil {
+		l = m.Notify.Size()
+		n += 1 + l + sovPb(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *AccountStatInfo) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -2021,7 +2398,7 @@ func (m *SelfStatInfo) Size() (n int) {
 	return n
 }
 
-func (m *ProfileReply) Size() (n int) {
+func (m *MemberInfoReply) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -2070,36 +2447,6 @@ func (m *ProfileReply) Size() (n int) {
 	if m.Stat != nil {
 		l = m.Stat.Size()
 		n += 1 + l + sovPb(uint64(l))
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
-	return n
-}
-
-func (m *AccountStatInfo) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.FollowingCount != 0 {
-		n += 1 + sovPb(uint64(m.FollowingCount))
-	}
-	if m.FansCount != 0 {
-		n += 1 + sovPb(uint64(m.FansCount))
-	}
-	if m.BlackCount != 0 {
-		n += 1 + sovPb(uint64(m.BlackCount))
-	}
-	if m.TopicCount != 0 {
-		n += 1 + sovPb(uint64(m.TopicCount))
-	}
-	if m.ArticleCount != 0 {
-		n += 1 + sovPb(uint64(m.ArticleCount))
-	}
-	if m.DiscussionCount != 0 {
-		n += 1 + sovPb(uint64(m.DiscussionCount))
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
@@ -2909,10 +3256,10 @@ func (m *SelfProfile) Unmarshal(dAtA []byte) error {
 			m.Avatar = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 12:
-			if wireType != 2 {
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Source", wireType)
 			}
-			var stringLen uint64
+			m.Source = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowPb
@@ -2922,24 +3269,11 @@ func (m *SelfProfile) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				m.Source |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthPb
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthPb
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Source = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
 		case 13:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Location", wireType)
@@ -3247,6 +3581,42 @@ func (m *SelfProfile) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
+		case 26:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Setting", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthPb
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthPb
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Setting == nil {
+				m.Setting = &Setting{}
+			}
+			if err := m.Setting.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipPb(dAtA[iNdEx:])
@@ -3272,7 +3642,7 @@ func (m *SelfProfile) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *SelfStatInfo) Unmarshal(dAtA []byte) error {
+func (m *ActivitySetting) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -3295,10 +3665,404 @@ func (m *SelfStatInfo) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: SelfStatInfo: wiretype end group for non-group")
+			return fmt.Errorf("proto: ActivitySetting: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: SelfStatInfo: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: ActivitySetting: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Like", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.Like = bool(v != 0)
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Comment", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.Comment = bool(v != 0)
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field FollowTopic", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.FollowTopic = bool(v != 0)
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field FollowMember", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.FollowMember = bool(v != 0)
+		default:
+			iNdEx = preIndex
+			skippy, err := skipPb(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *NotifySetting) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowPb
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: NotifySetting: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: NotifySetting: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Like", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.Like = bool(v != 0)
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Comment", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.Comment = bool(v != 0)
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field NewFans", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.NewFans = bool(v != 0)
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field NewMember", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.NewMember = bool(v != 0)
+		default:
+			iNdEx = preIndex
+			skippy, err := skipPb(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *Setting) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowPb
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Setting: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Setting: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Activity", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthPb
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthPb
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Activity == nil {
+				m.Activity = &ActivitySetting{}
+			}
+			if err := m.Activity.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Notify", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthPb
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthPb
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Notify == nil {
+				m.Notify = &NotifySetting{}
+			}
+			if err := m.Notify.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipPb(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *AccountStatInfo) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowPb
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: AccountStatInfo: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: AccountStatInfo: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -3440,7 +4204,7 @@ func (m *SelfStatInfo) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *ProfileReply) Unmarshal(dAtA []byte) error {
+func (m *MemberInfoReply) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -3463,10 +4227,10 @@ func (m *ProfileReply) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: ProfileReply: wiretype end group for non-group")
+			return fmt.Errorf("proto: MemberInfoReply: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: ProfileReply: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MemberInfoReply: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -3789,174 +4553,6 @@ func (m *ProfileReply) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipPb(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthPb
-			}
-			if (iNdEx + skippy) < 0 {
-				return ErrInvalidLengthPb
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *AccountStatInfo) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowPb
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: AccountStatInfo: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: AccountStatInfo: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field FollowingCount", wireType)
-			}
-			m.FollowingCount = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowPb
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.FollowingCount |= int32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field FansCount", wireType)
-			}
-			m.FansCount = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowPb
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.FansCount |= int32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field BlackCount", wireType)
-			}
-			m.BlackCount = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowPb
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.BlackCount |= int32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 4:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field TopicCount", wireType)
-			}
-			m.TopicCount = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowPb
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.TopicCount |= int32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 5:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ArticleCount", wireType)
-			}
-			m.ArticleCount = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowPb
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.ArticleCount |= int32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 6:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field DiscussionCount", wireType)
-			}
-			m.DiscussionCount = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowPb
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.DiscussionCount |= int32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipPb(dAtA[iNdEx:])

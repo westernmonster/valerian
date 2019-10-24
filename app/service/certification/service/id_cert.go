@@ -12,10 +12,9 @@ import (
 	"valerian/library/ecode"
 	"valerian/library/gid"
 	"valerian/library/log"
-	"valerian/library/net/metadata"
 )
 
-func (p *Service) RequestIDCertification(c context.Context, aid int64) (token cloudauth.VerifyTokenData, err error) {
+func (p *Service) RequestIDCert(c context.Context, aid int64) (token cloudauth.VerifyTokenData, err error) {
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
@@ -32,20 +31,21 @@ func (p *Service) RequestIDCertification(c context.Context, aid int64) (token cl
 	}()
 
 	var item *model.IDCertification
-	if item, err = p.d.GetIDCertificationByCond(c, tx, map[string]interface{}{"account_id": aid}); err != nil {
-		return
-	}
+	if item, err = p.getIDCertByID(c, tx, aid); err != nil {
+		if ecode.Cause(err) == ecode.IDCertificationNotExist {
+			err = nil
+			item = &model.IDCertification{
+				ID:        gid.NewID(),
+				AccountID: aid,
+				Status:    model.IDCertificationUncommitted,
+				CreatedAt: time.Now().Unix(),
+				UpdatedAt: time.Now().Unix(),
+			}
 
-	if item == nil {
-		item = &model.IDCertification{
-			ID:        gid.NewID(),
-			AccountID: aid,
-			Status:    model.IDCertificationUncommitted,
-			CreatedAt: time.Now().Unix(),
-			UpdatedAt: time.Now().Unix(),
-		}
-
-		if err = p.d.AddIDCertification(c, tx, item); err != nil {
+			if err = p.d.AddIDCertification(c, tx, item); err != nil {
+				return
+			}
+		} else {
 			return
 		}
 	}
@@ -67,30 +67,22 @@ func (p *Service) RequestIDCertification(c context.Context, aid int64) (token cl
 
 }
 
-func (p *Service) GetCertificationStatus(c context.Context, aid int64) (status int, err error) {
+func (p *Service) GetIDCertStatus(c context.Context, aid int64) (status int, err error) {
 	var item *model.IDCertification
-	if item, err = p.d.GetIDCertificationByCond(c, p.d.DB(), map[string]interface{}{"account_id": aid}); err != nil {
+	if item, err = p.getIDCertByID(c, p.d.DB(), aid); err != nil {
+		if ecode.Cause(err) == ecode.IDCertificationNotExist {
+			return model.IDCertificationUncommitted, nil
+		}
 		return
-	} else if item != nil {
-		return item.Status, nil
 	} else {
-		return model.IDCertificationUncommitted, nil
+		return item.Status, nil
 	}
 }
 
 // 刷新认证状态
-func (p *Service) RefreshCertificationStatus(c context.Context) (status int, err error) {
-	aid, ok := metadata.Value(c, metadata.Aid).(int64)
-	if !ok {
-		err = ecode.AcquireAccountIDFailed
-		return
-	}
-
+func (p *Service) RefreshIDCertStatus(c context.Context, aid int64) (status int, err error) {
 	var item *model.IDCertification
-	if item, err = p.d.GetIDCertificationByCond(c, p.d.DB(), map[string]interface{}{"account_id": aid}); err != nil {
-		return
-	} else if item == nil {
-		err = ecode.IDCertificationNotExist
+	if item, err = p.getIDCertByID(c, p.d.DB(), aid); err != nil {
 		return
 	}
 
@@ -168,6 +160,34 @@ func (p *Service) RefreshCertificationStatus(c context.Context) (status int, err
 	p.addCache(func() {
 		p.d.DelAccountCache(context.TODO(), item.AccountID)
 	})
+	return
+}
+
+func (p *Service) GetIDCert(c context.Context, aid int64) (item *model.IDCertification, err error) {
+	return p.getIDCertByID(c, p.d.DB(), aid)
+}
+
+func (p *Service) getIDCertByID(c context.Context, node sqalx.Node, aid int64) (item *model.IDCertification, err error) {
+	var needCache = true
+
+	if item, err = p.d.IDCertCache(c, aid); err != nil {
+		needCache = false
+	} else if item != nil {
+		return
+	}
+
+	if item, err = p.d.GetIDCertificationByCond(c, node, map[string]interface{}{"account_id": aid}); err != nil {
+		return
+	} else if item == nil {
+		err = ecode.IDCertificationNotExist
+		return
+	}
+
+	if needCache {
+		p.addCache(func() {
+			p.d.SetIDCertCache(context.TODO(), item)
+		})
+	}
 	return
 }
 

@@ -512,3 +512,14 @@ push-service-search:
 	docker push registry.cn-hangzhou.aliyuncs.com/valerian/service-search:${DOCKER_TAG}
 deploy-service-search:
 	helm upgrade --install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/service-search:${DOCKER_TAG} --set global.name=service-search --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=service.search --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=17e3ee7fefff11e986590a58ac140094  --set env.treeId=1316 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc service-search-uat ./build/k8s
+
+service-certification: build-service-certification docker-service-certification push-service-certification deploy-service-certification
+build-service-certification:
+	go env -w GOPROXY=https://goproxy.cn,direct
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/service/certification/cmd/cmd"   app/service/certification/cmd/main.go
+docker-service-certification:
+	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/service-certification:${DOCKER_TAG} ./app/service/certification/cmd/
+push-service-certification:
+	docker push registry.cn-hangzhou.aliyuncs.com/valerian/service-certification:${DOCKER_TAG}
+deploy-service-certification:
+	helm upgrade --install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/service-certification:${DOCKER_TAG} --set global.name=service-certification --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=service.certification --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=c23a51c9f69e11e9a3610a58ac140155  --set env.treeId=1317 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc service-certification-uat ./build/k8s

@@ -114,100 +114,6 @@ func (m *AidReq) GetAid() int64 {
 	return 0
 }
 
-type IDCertStatus struct {
-	Status               int32    `protobuf:"varint,1,opt,name=Status,proto3" json:"Status,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *IDCertStatus) Reset()         { *m = IDCertStatus{} }
-func (m *IDCertStatus) String() string { return proto.CompactTextString(m) }
-func (*IDCertStatus) ProtoMessage()    {}
-func (*IDCertStatus) Descriptor() ([]byte, []int) {
-	return fileDescriptor_00212fb1f9d3bf1c, []int{2}
-}
-func (m *IDCertStatus) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *IDCertStatus) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_IDCertStatus.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *IDCertStatus) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_IDCertStatus.Merge(m, src)
-}
-func (m *IDCertStatus) XXX_Size() int {
-	return m.Size()
-}
-func (m *IDCertStatus) XXX_DiscardUnknown() {
-	xxx_messageInfo_IDCertStatus.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_IDCertStatus proto.InternalMessageInfo
-
-func (m *IDCertStatus) GetStatus() int32 {
-	if m != nil {
-		return m.Status
-	}
-	return 0
-}
-
-type WorkCertStatus struct {
-	Status               int32    `protobuf:"varint,1,opt,name=Status,proto3" json:"Status,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *WorkCertStatus) Reset()         { *m = WorkCertStatus{} }
-func (m *WorkCertStatus) String() string { return proto.CompactTextString(m) }
-func (*WorkCertStatus) ProtoMessage()    {}
-func (*WorkCertStatus) Descriptor() ([]byte, []int) {
-	return fileDescriptor_00212fb1f9d3bf1c, []int{3}
-}
-func (m *WorkCertStatus) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *WorkCertStatus) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_WorkCertStatus.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *WorkCertStatus) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_WorkCertStatus.Merge(m, src)
-}
-func (m *WorkCertStatus) XXX_Size() int {
-	return m.Size()
-}
-func (m *WorkCertStatus) XXX_DiscardUnknown() {
-	xxx_messageInfo_WorkCertStatus.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_WorkCertStatus proto.InternalMessageInfo
-
-func (m *WorkCertStatus) GetStatus() int32 {
-	if m != nil {
-		return m.Status
-	}
-	return 0
-}
-
 type IDCertInfo struct {
 	AccountID            int64    `protobuf:"varint,1,opt,name=AccountID,proto3" json:"AccountID,omitempty"`
 	Status               int32    `protobuf:"varint,2,opt,name=Status,proto3" json:"Status,omitempty"`
@@ -234,7 +140,7 @@ func (m *IDCertInfo) Reset()         { *m = IDCertInfo{} }
 func (m *IDCertInfo) String() string { return proto.CompactTextString(m) }
 func (*IDCertInfo) ProtoMessage()    {}
 func (*IDCertInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_00212fb1f9d3bf1c, []int{4}
+	return fileDescriptor_00212fb1f9d3bf1c, []int{2}
 }
 func (m *IDCertInfo) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -383,7 +289,7 @@ type WorkCertInfo struct {
 	Company              string   `protobuf:"bytes,6,opt,name=Company,proto3" json:"Company,omitempty"`
 	Department           string   `protobuf:"bytes,7,opt,name=Department,proto3" json:"Department,omitempty"`
 	Position             string   `protobuf:"bytes,8,opt,name=Position,proto3" json:"Position,omitempty"`
-	ExpiresAt            string   `protobuf:"bytes,9,opt,name=ExpiresAt,proto3" json:"ExpiresAt,omitempty"`
+	ExpiresAt            int64    `protobuf:"varint,9,opt,name=ExpiresAt,proto3" json:"ExpiresAt,omitempty"`
 	AuditResult          string   `protobuf:"bytes,10,opt,name=AuditResult,proto3" json:"AuditResult,omitempty"`
 	CreatedAt            int64    `protobuf:"varint,16,opt,name=CreatedAt,proto3" json:"CreatedAt,omitempty"`
 	UpdatedAt            int64    `protobuf:"varint,17,opt,name=UpdatedAt,proto3" json:"UpdatedAt,omitempty"`
@@ -396,7 +302,7 @@ func (m *WorkCertInfo) Reset()         { *m = WorkCertInfo{} }
 func (m *WorkCertInfo) String() string { return proto.CompactTextString(m) }
 func (*WorkCertInfo) ProtoMessage()    {}
 func (*WorkCertInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_00212fb1f9d3bf1c, []int{5}
+	return fileDescriptor_00212fb1f9d3bf1c, []int{3}
 }
 func (m *WorkCertInfo) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -474,11 +380,11 @@ func (m *WorkCertInfo) GetPosition() string {
 	return ""
 }
 
-func (m *WorkCertInfo) GetExpiresAt() string {
+func (m *WorkCertInfo) GetExpiresAt() int64 {
 	if m != nil {
 		return m.ExpiresAt
 	}
-	return ""
+	return 0
 }
 
 func (m *WorkCertInfo) GetAuditResult() string {
@@ -502,57 +408,565 @@ func (m *WorkCertInfo) GetUpdatedAt() int64 {
 	return 0
 }
 
+type IDCertStatus struct {
+	Status               int32    `protobuf:"varint,1,opt,name=Status,proto3" json:"Status,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *IDCertStatus) Reset()         { *m = IDCertStatus{} }
+func (m *IDCertStatus) String() string { return proto.CompactTextString(m) }
+func (*IDCertStatus) ProtoMessage()    {}
+func (*IDCertStatus) Descriptor() ([]byte, []int) {
+	return fileDescriptor_00212fb1f9d3bf1c, []int{4}
+}
+func (m *IDCertStatus) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *IDCertStatus) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_IDCertStatus.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *IDCertStatus) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_IDCertStatus.Merge(m, src)
+}
+func (m *IDCertStatus) XXX_Size() int {
+	return m.Size()
+}
+func (m *IDCertStatus) XXX_DiscardUnknown() {
+	xxx_messageInfo_IDCertStatus.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_IDCertStatus proto.InternalMessageInfo
+
+func (m *IDCertStatus) GetStatus() int32 {
+	if m != nil {
+		return m.Status
+	}
+	return 0
+}
+
+type WorkCertStatus struct {
+	Status               int32    `protobuf:"varint,1,opt,name=Status,proto3" json:"Status,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *WorkCertStatus) Reset()         { *m = WorkCertStatus{} }
+func (m *WorkCertStatus) String() string { return proto.CompactTextString(m) }
+func (*WorkCertStatus) ProtoMessage()    {}
+func (*WorkCertStatus) Descriptor() ([]byte, []int) {
+	return fileDescriptor_00212fb1f9d3bf1c, []int{5}
+}
+func (m *WorkCertStatus) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *WorkCertStatus) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_WorkCertStatus.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *WorkCertStatus) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_WorkCertStatus.Merge(m, src)
+}
+func (m *WorkCertStatus) XXX_Size() int {
+	return m.Size()
+}
+func (m *WorkCertStatus) XXX_DiscardUnknown() {
+	xxx_messageInfo_WorkCertStatus.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_WorkCertStatus proto.InternalMessageInfo
+
+func (m *WorkCertStatus) GetStatus() int32 {
+	if m != nil {
+		return m.Status
+	}
+	return 0
+}
+
+type WorkCertReq struct {
+	AccountID            int64    `protobuf:"varint,1,opt,name=AccountID,proto3" json:"AccountID,omitempty"`
+	WorkPic              string   `protobuf:"bytes,4,opt,name=WorkPic,proto3" json:"WorkPic,omitempty"`
+	OtherPic             string   `protobuf:"bytes,5,opt,name=OtherPic,proto3" json:"OtherPic,omitempty"`
+	Company              string   `protobuf:"bytes,6,opt,name=Company,proto3" json:"Company,omitempty"`
+	Department           string   `protobuf:"bytes,7,opt,name=Department,proto3" json:"Department,omitempty"`
+	Position             string   `protobuf:"bytes,8,opt,name=Position,proto3" json:"Position,omitempty"`
+	ExpiresAt            int64    `protobuf:"varint,9,opt,name=ExpiresAt,proto3" json:"ExpiresAt,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *WorkCertReq) Reset()         { *m = WorkCertReq{} }
+func (m *WorkCertReq) String() string { return proto.CompactTextString(m) }
+func (*WorkCertReq) ProtoMessage()    {}
+func (*WorkCertReq) Descriptor() ([]byte, []int) {
+	return fileDescriptor_00212fb1f9d3bf1c, []int{6}
+}
+func (m *WorkCertReq) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *WorkCertReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_WorkCertReq.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *WorkCertReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_WorkCertReq.Merge(m, src)
+}
+func (m *WorkCertReq) XXX_Size() int {
+	return m.Size()
+}
+func (m *WorkCertReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_WorkCertReq.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_WorkCertReq proto.InternalMessageInfo
+
+func (m *WorkCertReq) GetAccountID() int64 {
+	if m != nil {
+		return m.AccountID
+	}
+	return 0
+}
+
+func (m *WorkCertReq) GetWorkPic() string {
+	if m != nil {
+		return m.WorkPic
+	}
+	return ""
+}
+
+func (m *WorkCertReq) GetOtherPic() string {
+	if m != nil {
+		return m.OtherPic
+	}
+	return ""
+}
+
+func (m *WorkCertReq) GetCompany() string {
+	if m != nil {
+		return m.Company
+	}
+	return ""
+}
+
+func (m *WorkCertReq) GetDepartment() string {
+	if m != nil {
+		return m.Department
+	}
+	return ""
+}
+
+func (m *WorkCertReq) GetPosition() string {
+	if m != nil {
+		return m.Position
+	}
+	return ""
+}
+
+func (m *WorkCertReq) GetExpiresAt() int64 {
+	if m != nil {
+		return m.ExpiresAt
+	}
+	return 0
+}
+
+type AuditWorkCertReq struct {
+	AccountID            int64    `protobuf:"varint,1,opt,name=AccountID,proto3" json:"AccountID,omitempty"`
+	ManagerID            int64    `protobuf:"varint,2,opt,name=ManagerID,proto3" json:"ManagerID,omitempty"`
+	AuditResult          string   `protobuf:"bytes,3,opt,name=AuditResult,proto3" json:"AuditResult,omitempty"`
+	Approve              bool     `protobuf:"varint,4,opt,name=Approve,proto3" json:"Approve,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *AuditWorkCertReq) Reset()         { *m = AuditWorkCertReq{} }
+func (m *AuditWorkCertReq) String() string { return proto.CompactTextString(m) }
+func (*AuditWorkCertReq) ProtoMessage()    {}
+func (*AuditWorkCertReq) Descriptor() ([]byte, []int) {
+	return fileDescriptor_00212fb1f9d3bf1c, []int{7}
+}
+func (m *AuditWorkCertReq) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *AuditWorkCertReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_AuditWorkCertReq.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *AuditWorkCertReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AuditWorkCertReq.Merge(m, src)
+}
+func (m *AuditWorkCertReq) XXX_Size() int {
+	return m.Size()
+}
+func (m *AuditWorkCertReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_AuditWorkCertReq.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_AuditWorkCertReq proto.InternalMessageInfo
+
+func (m *AuditWorkCertReq) GetAccountID() int64 {
+	if m != nil {
+		return m.AccountID
+	}
+	return 0
+}
+
+func (m *AuditWorkCertReq) GetManagerID() int64 {
+	if m != nil {
+		return m.ManagerID
+	}
+	return 0
+}
+
+func (m *AuditWorkCertReq) GetAuditResult() string {
+	if m != nil {
+		return m.AuditResult
+	}
+	return ""
+}
+
+func (m *AuditWorkCertReq) GetApprove() bool {
+	if m != nil {
+		return m.Approve
+	}
+	return false
+}
+
+type RequestIDCertResp struct {
+	CloudauthPageUrl     string       `protobuf:"bytes,1,opt,name=CloudauthPageUrl,proto3" json:"CloudauthPageUrl,omitempty"`
+	STSToken             *STSToken    `protobuf:"bytes,2,opt,name=STSToken,proto3" json:"STSToken,omitempty"`
+	VerifyToken          *VerifyToken `protobuf:"bytes,3,opt,name=VerifyToken,proto3" json:"VerifyToken,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
+	XXX_unrecognized     []byte       `json:"-"`
+	XXX_sizecache        int32        `json:"-"`
+}
+
+func (m *RequestIDCertResp) Reset()         { *m = RequestIDCertResp{} }
+func (m *RequestIDCertResp) String() string { return proto.CompactTextString(m) }
+func (*RequestIDCertResp) ProtoMessage()    {}
+func (*RequestIDCertResp) Descriptor() ([]byte, []int) {
+	return fileDescriptor_00212fb1f9d3bf1c, []int{8}
+}
+func (m *RequestIDCertResp) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *RequestIDCertResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_RequestIDCertResp.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *RequestIDCertResp) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RequestIDCertResp.Merge(m, src)
+}
+func (m *RequestIDCertResp) XXX_Size() int {
+	return m.Size()
+}
+func (m *RequestIDCertResp) XXX_DiscardUnknown() {
+	xxx_messageInfo_RequestIDCertResp.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RequestIDCertResp proto.InternalMessageInfo
+
+func (m *RequestIDCertResp) GetCloudauthPageUrl() string {
+	if m != nil {
+		return m.CloudauthPageUrl
+	}
+	return ""
+}
+
+func (m *RequestIDCertResp) GetSTSToken() *STSToken {
+	if m != nil {
+		return m.STSToken
+	}
+	return nil
+}
+
+func (m *RequestIDCertResp) GetVerifyToken() *VerifyToken {
+	if m != nil {
+		return m.VerifyToken
+	}
+	return nil
+}
+
+type VerifyToken struct {
+	// 一次认证会话的标识。
+	Token string `protobuf:"bytes,1,opt,name=Token,proto3" json:"Token,omitempty"`
+	// 认证会话超时时间，单位为秒。一般为1,800s。
+	DurationSeconds      int32    `protobuf:"varint,2,opt,name=DurationSeconds,proto3" json:"DurationSeconds,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *VerifyToken) Reset()         { *m = VerifyToken{} }
+func (m *VerifyToken) String() string { return proto.CompactTextString(m) }
+func (*VerifyToken) ProtoMessage()    {}
+func (*VerifyToken) Descriptor() ([]byte, []int) {
+	return fileDescriptor_00212fb1f9d3bf1c, []int{9}
+}
+func (m *VerifyToken) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *VerifyToken) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_VerifyToken.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *VerifyToken) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_VerifyToken.Merge(m, src)
+}
+func (m *VerifyToken) XXX_Size() int {
+	return m.Size()
+}
+func (m *VerifyToken) XXX_DiscardUnknown() {
+	xxx_messageInfo_VerifyToken.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_VerifyToken proto.InternalMessageInfo
+
+func (m *VerifyToken) GetToken() string {
+	if m != nil {
+		return m.Token
+	}
+	return ""
+}
+
+func (m *VerifyToken) GetDurationSeconds() int32 {
+	if m != nil {
+		return m.DurationSeconds
+	}
+	return 0
+}
+
+type STSToken struct {
+	// OSS AccessKey ID。
+	// required: true
+	AccessKeyId string `protobuf:"bytes,1,opt,name=AccessKeyId,proto3" json:"AccessKeyId,omitempty"`
+	// OSS AccessKey密钥
+	AccessKeySecret string `protobuf:"bytes,2,opt,name=AccessKeySecret,proto3" json:"AccessKeySecret,omitempty"`
+	// STS token过期时间。
+	Expiration string `protobuf:"bytes,3,opt,name=Expiration,proto3" json:"Expiration,omitempty"`
+	// OSS endpoint
+	EndPoint string `protobuf:"bytes,4,opt,name=EndPoint,proto3" json:"EndPoint,omitempty"`
+	// OSS bucket，认证服务指定的文件上传 Bucket。
+	BucketName string `protobuf:"bytes,5,opt,name=BucketName,proto3" json:"BucketName,omitempty"`
+	//  一个认证请求生成的用来上传的目录，业务方需要将文件上传到这个目录。
+	Path string `protobuf:"bytes,6,opt,name=Path,proto3" json:"Path,omitempty"`
+	// STS 访问Token。
+	Token                string   `protobuf:"bytes,7,opt,name=Token,proto3" json:"Token,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *STSToken) Reset()         { *m = STSToken{} }
+func (m *STSToken) String() string { return proto.CompactTextString(m) }
+func (*STSToken) ProtoMessage()    {}
+func (*STSToken) Descriptor() ([]byte, []int) {
+	return fileDescriptor_00212fb1f9d3bf1c, []int{10}
+}
+func (m *STSToken) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *STSToken) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_STSToken.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *STSToken) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_STSToken.Merge(m, src)
+}
+func (m *STSToken) XXX_Size() int {
+	return m.Size()
+}
+func (m *STSToken) XXX_DiscardUnknown() {
+	xxx_messageInfo_STSToken.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_STSToken proto.InternalMessageInfo
+
+func (m *STSToken) GetAccessKeyId() string {
+	if m != nil {
+		return m.AccessKeyId
+	}
+	return ""
+}
+
+func (m *STSToken) GetAccessKeySecret() string {
+	if m != nil {
+		return m.AccessKeySecret
+	}
+	return ""
+}
+
+func (m *STSToken) GetExpiration() string {
+	if m != nil {
+		return m.Expiration
+	}
+	return ""
+}
+
+func (m *STSToken) GetEndPoint() string {
+	if m != nil {
+		return m.EndPoint
+	}
+	return ""
+}
+
+func (m *STSToken) GetBucketName() string {
+	if m != nil {
+		return m.BucketName
+	}
+	return ""
+}
+
+func (m *STSToken) GetPath() string {
+	if m != nil {
+		return m.Path
+	}
+	return ""
+}
+
+func (m *STSToken) GetToken() string {
+	if m != nil {
+		return m.Token
+	}
+	return ""
+}
+
 func init() {
 	proto.RegisterType((*EmptyStruct)(nil), "service.certification.EmptyStruct")
 	proto.RegisterType((*AidReq)(nil), "service.certification.AidReq")
-	proto.RegisterType((*IDCertStatus)(nil), "service.certification.IDCertStatus")
-	proto.RegisterType((*WorkCertStatus)(nil), "service.certification.WorkCertStatus")
 	proto.RegisterType((*IDCertInfo)(nil), "service.certification.IDCertInfo")
 	proto.RegisterType((*WorkCertInfo)(nil), "service.certification.WorkCertInfo")
+	proto.RegisterType((*IDCertStatus)(nil), "service.certification.IDCertStatus")
+	proto.RegisterType((*WorkCertStatus)(nil), "service.certification.WorkCertStatus")
+	proto.RegisterType((*WorkCertReq)(nil), "service.certification.WorkCertReq")
+	proto.RegisterType((*AuditWorkCertReq)(nil), "service.certification.AuditWorkCertReq")
+	proto.RegisterType((*RequestIDCertResp)(nil), "service.certification.RequestIDCertResp")
+	proto.RegisterType((*VerifyToken)(nil), "service.certification.VerifyToken")
+	proto.RegisterType((*STSToken)(nil), "service.certification.STSToken")
 }
 
 func init() { proto.RegisterFile("api.proto", fileDescriptor_00212fb1f9d3bf1c) }
 
 var fileDescriptor_00212fb1f9d3bf1c = []byte{
-	// 594 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x54, 0xdd, 0x6e, 0xd3, 0x3c,
-	0x18, 0x56, 0xd6, 0xad, 0x5d, 0xdf, 0xad, 0xfb, 0xb1, 0xbe, 0x0f, 0x99, 0x09, 0xca, 0x94, 0xc1,
-	0x54, 0x21, 0xd1, 0x49, 0xe3, 0x0a, 0xb2, 0x76, 0x9b, 0x7a, 0x32, 0xa6, 0x94, 0x09, 0xc1, 0x99,
-	0xeb, 0x78, 0xab, 0xb5, 0x25, 0x0e, 0xce, 0x1b, 0xb4, 0xde, 0x08, 0xf7, 0xc3, 0x19, 0x07, 0x1c,
-	0x70, 0x05, 0x08, 0xf5, 0x90, 0xab, 0x40, 0xb6, 0xd3, 0x36, 0x2d, 0x9b, 0x40, 0xda, 0x99, 0x9f,
-	0x9f, 0x3c, 0x71, 0xfc, 0xbc, 0x31, 0xd4, 0x59, 0x2a, 0xdb, 0xa9, 0x56, 0xa8, 0xc8, 0xff, 0x99,
-	0xd0, 0x9f, 0x24, 0x17, 0x6d, 0x2e, 0x34, 0xca, 0x4b, 0xc9, 0x19, 0x4a, 0x95, 0xec, 0xbc, 0xba,
-	0x92, 0x38, 0xcc, 0x07, 0x6d, 0xae, 0xe2, 0x83, 0x2b, 0x75, 0xa5, 0x0e, 0xac, 0x7b, 0x90, 0x5f,
-	0x5a, 0x64, 0x81, 0x5d, 0xb9, 0x14, 0xbf, 0x01, 0x6b, 0xc7, 0x71, 0x8a, 0xa3, 0x3e, 0xea, 0x9c,
-	0xa3, 0xbf, 0x07, 0xd5, 0x40, 0x46, 0xa1, 0xf8, 0x48, 0x1e, 0x43, 0x25, 0x90, 0x11, 0xf5, 0x76,
-	0xbd, 0x56, 0xe5, 0xa8, 0xf6, 0xeb, 0xc7, 0xb3, 0x0a, 0x93, 0x51, 0x68, 0x38, 0x7f, 0x1f, 0xd6,
-	0x7b, 0xdd, 0x8e, 0xd0, 0xd8, 0x47, 0x86, 0x79, 0x46, 0x1e, 0x41, 0xd5, 0xad, 0xac, 0x7b, 0x25,
-	0x2c, 0x90, 0xdf, 0x82, 0x8d, 0x77, 0x4a, 0x5f, 0xff, 0x83, 0xf3, 0xf3, 0x32, 0x80, 0x8b, 0xec,
-	0x25, 0x97, 0x8a, 0x3c, 0x81, 0x7a, 0xc0, 0xb9, 0xca, 0x13, 0xec, 0x75, 0xdd, 0x0e, 0xc2, 0x19,
-	0x51, 0x0a, 0x59, 0x2a, 0x87, 0x90, 0x97, 0xb0, 0x15, 0xe4, 0x91, 0xc4, 0x8e, 0x4a, 0xf8, 0x4d,
-	0x9e, 0x49, 0x95, 0x64, 0x74, 0x79, 0xd7, 0x6b, 0xd5, 0xc3, 0x3f, 0x78, 0x42, 0x60, 0xf9, 0x8c,
-	0xc5, 0x82, 0xae, 0x58, 0xdd, 0xae, 0xc9, 0x21, 0xfc, 0xd7, 0x8b, 0x44, 0x32, 0x3b, 0xcb, 0xb3,
-	0x3c, 0x1e, 0x08, 0x4d, 0xab, 0xd6, 0x73, 0xa7, 0x46, 0x9a, 0x76, 0xdf, 0x4c, 0x47, 0x6f, 0x47,
-	0xa9, 0xa0, 0x35, 0xeb, 0x2c, 0x31, 0xa4, 0x05, 0x9b, 0x0e, 0xf5, 0x91, 0x69, 0xec, 0x32, 0x14,
-	0x74, 0xd5, 0x9a, 0x16, 0x69, 0xe2, 0xdb, 0x43, 0x65, 0x3a, 0x3a, 0xbe, 0x4d, 0xa5, 0x1e, 0xd1,
-	0xba, 0xb5, 0xcd, 0x71, 0x84, 0x42, 0x2d, 0x88, 0x22, 0x2d, 0xb2, 0x8c, 0x82, 0x95, 0x27, 0x90,
-	0x6c, 0x41, 0xa5, 0x2f, 0x6e, 0xe9, 0x9a, 0x65, 0xcd, 0x92, 0xec, 0xc3, 0x86, 0x7b, 0xf6, 0x44,
-	0xab, 0x04, 0xcf, 0x25, 0xa7, 0xeb, 0x56, 0x5c, 0x60, 0xc9, 0x73, 0x68, 0x38, 0xe6, 0x88, 0xf1,
-	0x6b, 0x63, 0x6b, 0x58, 0xdb, 0x3c, 0x69, 0xde, 0x7c, 0xc2, 0xb8, 0x30, 0xfa, 0x86, 0x7b, 0x73,
-	0x01, 0xc9, 0x2e, 0xac, 0x1d, 0xe3, 0x30, 0x91, 0xfc, 0x54, 0xab, 0x3c, 0xa5, 0x9b, 0x56, 0x2d,
-	0x53, 0xa6, 0xcd, 0x8e, 0x16, 0x0c, 0x45, 0x14, 0x20, 0xdd, 0x72, 0x6d, 0x4e, 0x09, 0xa3, 0x5e,
-	0xa4, 0x51, 0xa1, 0x6e, 0x3b, 0x75, 0x4a, 0xf8, 0xdf, 0x96, 0x60, 0x7d, 0x32, 0x43, 0x0f, 0x18,
-	0x0d, 0x0a, 0x35, 0x93, 0x62, 0xb6, 0xef, 0x26, 0x62, 0x02, 0xc9, 0x0e, 0xac, 0xbe, 0xc1, 0xa1,
-	0xd0, 0x46, 0x72, 0xc3, 0x30, 0xc5, 0xe6, 0xa9, 0x8e, 0x8a, 0x53, 0x96, 0x8c, 0x8a, 0x19, 0x98,
-	0x40, 0x53, 0x7b, 0x57, 0xa4, 0x4c, 0x63, 0x2c, 0x12, 0x9c, 0xd4, 0x3e, 0x63, 0x4c, 0xea, 0xb9,
-	0xca, 0xa4, 0x19, 0x94, 0xa2, 0xef, 0x29, 0x36, 0x5f, 0x60, 0xeb, 0x14, 0x59, 0x80, 0x45, 0xcb,
-	0x33, 0xc2, 0x1c, 0xa7, 0x1d, 0xd6, 0x50, 0x64, 0xf9, 0x0d, 0x16, 0x35, 0x97, 0xa9, 0x87, 0x1c,
-	0xe7, 0xe1, 0x17, 0x0f, 0x1a, 0x9d, 0xf2, 0x75, 0x41, 0x2e, 0x60, 0xf3, 0x54, 0xe0, 0xdc, 0xef,
-	0xfc, 0xb4, 0x7d, 0xe7, 0xcd, 0xd2, 0x76, 0x17, 0xc3, 0xce, 0xde, 0x3d, 0xf2, 0x5c, 0xc6, 0x7b,
-	0xd8, 0x3e, 0x15, 0xb8, 0xf0, 0xf7, 0xff, 0x25, 0xf8, 0xc5, 0x3d, 0xf2, 0x7c, 0xca, 0xd1, 0xf6,
-	0xd7, 0x71, 0xd3, 0xfb, 0x3e, 0x6e, 0x7a, 0x3f, 0xc7, 0x4d, 0xef, 0x43, 0x85, 0xa5, 0x72, 0x50,
-	0xb5, 0x77, 0xd9, 0xeb, 0xdf, 0x01, 0x00, 0x00, 0xff, 0xff, 0x34, 0xa2, 0x08, 0x95, 0x1e, 0x05,
-	0x00, 0x00,
+	// 927 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x56, 0x4f, 0x6f, 0xe3, 0x44,
+	0x14, 0x97, 0xd7, 0x6d, 0xd3, 0xbc, 0x34, 0xfd, 0x33, 0x2c, 0xc8, 0x54, 0x4b, 0xb7, 0x78, 0x61,
+	0x89, 0x90, 0xc8, 0x4a, 0xe5, 0xc8, 0x29, 0x4d, 0xba, 0x55, 0x84, 0xba, 0x04, 0xa7, 0x05, 0x8a,
+	0xb8, 0x4c, 0xc7, 0x2f, 0xc9, 0xa8, 0x8d, 0xc7, 0x3b, 0x1e, 0xaf, 0x36, 0x5f, 0x81, 0x0f, 0xc0,
+	0x07, 0xe2, 0xc4, 0x81, 0x03, 0x1c, 0xb8, 0x21, 0x84, 0x7a, 0xe4, 0x53, 0xa0, 0x99, 0xb1, 0x63,
+	0x3b, 0xdd, 0x6c, 0x2b, 0x96, 0xcb, 0xde, 0xfc, 0x7e, 0xef, 0xbd, 0x9f, 0x9f, 0xdf, 0xfb, 0xcd,
+	0x1b, 0x43, 0x9d, 0xc6, 0xbc, 0x1d, 0x4b, 0xa1, 0x04, 0x79, 0x37, 0x41, 0xf9, 0x82, 0x33, 0x6c,
+	0x33, 0x94, 0x8a, 0x8f, 0x38, 0xa3, 0x8a, 0x8b, 0x68, 0xf7, 0xb3, 0x31, 0x57, 0x93, 0xf4, 0xa2,
+	0xcd, 0xc4, 0xf4, 0xc9, 0x58, 0x8c, 0xc5, 0x13, 0x13, 0x7d, 0x91, 0x8e, 0x8c, 0x65, 0x0c, 0xf3,
+	0x64, 0x59, 0xfc, 0x26, 0x34, 0x8e, 0xa6, 0xb1, 0x9a, 0x0d, 0x95, 0x4c, 0x99, 0xf2, 0x1f, 0xc1,
+	0x5a, 0x87, 0x87, 0x01, 0x3e, 0x27, 0xef, 0x83, 0xdb, 0xe1, 0xa1, 0xe7, 0xec, 0x3b, 0x2d, 0xf7,
+	0xb0, 0xf6, 0xcf, 0x5f, 0x0f, 0x5d, 0xca, 0xc3, 0x40, 0x63, 0xfe, 0x4f, 0x2b, 0x00, 0xfd, 0x5e,
+	0x17, 0xa5, 0xea, 0x47, 0x23, 0x41, 0x1e, 0x40, 0xbd, 0xc3, 0x98, 0x48, 0x23, 0xd5, 0xef, 0xd9,
+	0xf8, 0xa0, 0x00, 0xc8, 0x7b, 0xb0, 0x36, 0x54, 0x54, 0xa5, 0x89, 0x77, 0x6f, 0xdf, 0x69, 0xad,
+	0x06, 0x99, 0x45, 0x3e, 0x85, 0xed, 0x4e, 0x1a, 0x72, 0xd5, 0x15, 0x11, 0xbb, 0x4a, 0x13, 0x2e,
+	0xa2, 0xc4, 0x5b, 0xd9, 0x77, 0x5a, 0xf5, 0xe0, 0x06, 0x4e, 0x08, 0xac, 0x3c, 0xa3, 0x53, 0xf4,
+	0x56, 0x8d, 0xdf, 0x3c, 0x93, 0x03, 0xb8, 0xdf, 0x0f, 0x31, 0x2a, 0xbe, 0xfc, 0x59, 0x3a, 0xbd,
+	0x40, 0xe9, 0xad, 0x99, 0x98, 0x57, 0xfa, 0xc8, 0x9e, 0xa9, 0x9b, 0xca, 0xf0, 0x74, 0x16, 0xa3,
+	0x57, 0x33, 0x91, 0x25, 0x84, 0xb4, 0x60, 0xcb, 0x5a, 0x43, 0x45, 0xa5, 0xea, 0x51, 0x85, 0xde,
+	0xba, 0x09, 0x5a, 0x84, 0x89, 0x0f, 0x1b, 0x16, 0x3a, 0x7a, 0x19, 0x73, 0x39, 0xf3, 0xea, 0x26,
+	0xac, 0x82, 0x11, 0x0f, 0x6a, 0x9d, 0x30, 0x94, 0x98, 0x24, 0x1e, 0x18, 0x77, 0x6e, 0x92, 0x6d,
+	0x70, 0x87, 0xf8, 0xd2, 0x6b, 0x18, 0x54, 0x3f, 0x92, 0xc7, 0xb0, 0x69, 0x73, 0x9f, 0x4a, 0x11,
+	0xa9, 0x01, 0x67, 0xde, 0x86, 0x71, 0x2e, 0xa0, 0xe4, 0x23, 0x68, 0x5a, 0xe4, 0x90, 0xb2, 0x4b,
+	0x1d, 0xd6, 0x34, 0x61, 0x55, 0x50, 0xbf, 0xf9, 0x29, 0x65, 0xa8, 0xfd, 0x9b, 0xf6, 0xcd, 0x99,
+	0x49, 0xf6, 0xa1, 0x71, 0xa4, 0x26, 0x11, 0x67, 0xc7, 0x52, 0xa4, 0xb1, 0xb7, 0x65, 0xbc, 0x65,
+	0x48, 0x4f, 0xb3, 0x2b, 0x91, 0x2a, 0x0c, 0x3b, 0xca, 0xdb, 0xb6, 0xd3, 0x9c, 0x03, 0xda, 0x7b,
+	0x16, 0x87, 0x99, 0x77, 0xc7, 0x7a, 0xe7, 0x80, 0xff, 0xeb, 0x3d, 0xd8, 0xf8, 0x56, 0xc8, 0xcb,
+	0x37, 0x94, 0x86, 0x07, 0x35, 0xcd, 0xa2, 0xcb, 0xb7, 0x8a, 0xc8, 0x4d, 0xb2, 0x0b, 0xeb, 0x5f,
+	0xa9, 0x09, 0x4a, 0xed, 0xb2, 0x62, 0x98, 0xdb, 0x3a, 0xab, 0x2b, 0xa6, 0x31, 0x8d, 0x66, 0x99,
+	0x06, 0x72, 0x53, 0x8f, 0xbd, 0x87, 0x31, 0x95, 0x6a, 0x8a, 0x91, 0xca, 0xc7, 0x5e, 0x20, 0x9a,
+	0x75, 0x20, 0x12, 0xae, 0x85, 0x92, 0xcd, 0x7b, 0x6e, 0xeb, 0x2f, 0x30, 0xe3, 0xc4, 0xa4, 0xa3,
+	0xcc, 0x94, 0xdd, 0xa0, 0x00, 0x74, 0x3b, 0x8d, 0x58, 0x03, 0x4c, 0xd2, 0x2b, 0x95, 0x8d, 0xb9,
+	0x0c, 0xbd, 0x51, 0x3b, 0x1f, 0x1b, 0x91, 0xa1, 0x54, 0x59, 0x5f, 0x8a, 0x7e, 0x39, 0xe5, 0x7e,
+	0xf9, 0x2d, 0xd8, 0xcc, 0xbb, 0x7e, 0x4b, 0xe4, 0x1f, 0x0e, 0x34, 0xf2, 0x50, 0x7d, 0xc8, 0x5f,
+	0x3f, 0x9f, 0xb7, 0x66, 0x0e, 0xfe, 0x8f, 0x4e, 0xb6, 0x4d, 0xee, 0xfe, 0x71, 0x0f, 0xa0, 0x7e,
+	0x42, 0x23, 0x3a, 0x46, 0xd9, 0xef, 0x19, 0xfd, 0xb9, 0x41, 0x01, 0x2c, 0x0e, 0xd6, 0xbd, 0x39,
+	0x58, 0x7d, 0xba, 0xe3, 0x58, 0x8a, 0x17, 0x68, 0x9a, 0xb3, 0x1e, 0xe4, 0xa6, 0xff, 0xb3, 0x03,
+	0x3b, 0x01, 0x3e, 0x4f, 0x31, 0x51, 0x76, 0x7c, 0x01, 0x26, 0xb1, 0xde, 0x77, 0xdd, 0x2b, 0x91,
+	0x86, 0x34, 0x55, 0x93, 0x01, 0x1d, 0xe3, 0x99, 0xbc, 0x32, 0x45, 0xd5, 0x83, 0x1b, 0x38, 0xf9,
+	0x02, 0xd6, 0x87, 0xa7, 0xc3, 0x53, 0x71, 0x89, 0x91, 0x29, 0xad, 0x71, 0xf0, 0xb0, 0xfd, 0xca,
+	0x6d, 0xdf, 0xce, 0xc3, 0x82, 0x79, 0x02, 0xe9, 0x41, 0xe3, 0x1b, 0x94, 0x7c, 0x34, 0xb3, 0xf9,
+	0xae, 0xc9, 0xf7, 0x97, 0xe4, 0x97, 0x22, 0x83, 0x72, 0x9a, 0x7f, 0x52, 0x61, 0x21, 0xf7, 0x61,
+	0xd5, 0xd2, 0xd9, 0x92, 0xad, 0xa1, 0xf7, 0x65, 0x2f, 0x95, 0x86, 0x69, 0x88, 0x4c, 0x44, 0x61,
+	0x7e, 0x92, 0x17, 0x61, 0xff, 0x4f, 0xa7, 0xf8, 0x24, 0xd3, 0x5c, 0xc6, 0x30, 0x49, 0xbe, 0xc4,
+	0x59, 0x3f, 0xcc, 0x28, 0xcb, 0x90, 0x26, 0x9e, 0x9b, 0x43, 0x64, 0x12, 0x95, 0x21, 0xae, 0x07,
+	0x8b, 0xb0, 0xd6, 0x94, 0x91, 0x81, 0x79, 0x5b, 0x36, 0xa7, 0x12, 0xa2, 0x35, 0x75, 0x14, 0x85,
+	0x03, 0xc1, 0x23, 0x95, 0x89, 0x78, 0x6e, 0xeb, 0xdc, 0xc3, 0x94, 0x5d, 0xa2, 0x2a, 0x5d, 0x2e,
+	0x25, 0x44, 0x5f, 0x3b, 0x03, 0xaa, 0x26, 0x99, 0x8c, 0xcd, 0x73, 0xd1, 0x88, 0x5a, 0xa9, 0x11,
+	0x07, 0xbf, 0xaf, 0x42, 0xb3, 0x5b, 0x6e, 0x2c, 0xf9, 0x0e, 0x9a, 0x15, 0x0d, 0x90, 0x0f, 0x96,
+	0x4c, 0xc0, 0x5e, 0xb7, 0xbb, 0xad, 0x25, 0xee, 0x9b, 0x42, 0x3a, 0x87, 0x77, 0x02, 0x1c, 0x49,
+	0x4c, 0x26, 0x95, 0xe5, 0x70, 0x0b, 0xff, 0xa3, 0x25, 0xee, 0x0a, 0xc7, 0x09, 0xd4, 0x8f, 0xf1,
+	0x8e, 0x05, 0x7f, 0xf8, 0x5a, 0x42, 0xb3, 0xfd, 0xcf, 0x60, 0x6b, 0x4e, 0xf7, 0x3f, 0x56, 0x79,
+	0x0e, 0x5b, 0x59, 0x57, 0xf2, 0xd3, 0x4e, 0x96, 0xc9, 0xbb, 0xb4, 0x0e, 0x76, 0x97, 0xc5, 0x94,
+	0x7e, 0x7f, 0xc8, 0x0f, 0xd0, 0xac, 0xac, 0x11, 0xf2, 0xc9, 0xb2, 0x7a, 0x17, 0x96, 0xcd, 0x9d,
+	0xd8, 0xbf, 0x86, 0xc6, 0x31, 0x16, 0xdc, 0xff, 0xb1, 0x17, 0x95, 0x0b, 0xf6, 0x1c, 0x76, 0x4a,
+	0x94, 0x77, 0x6b, 0xf2, 0xc7, 0xb7, 0x10, 0x5b, 0x96, 0xc3, 0x9d, 0x5f, 0xae, 0xf7, 0x9c, 0xdf,
+	0xae, 0xf7, 0x9c, 0xbf, 0xaf, 0xf7, 0x9c, 0xef, 0x5d, 0x1a, 0xf3, 0x8b, 0x35, 0xf3, 0xcf, 0xf8,
+	0xf9, 0xbf, 0x01, 0x00, 0x00, 0xff, 0xff, 0xf5, 0x2b, 0x4e, 0xae, 0x86, 0x0a, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -567,7 +981,13 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type CertificationClient interface {
+	RequestIDCert(ctx context.Context, in *AidReq, opts ...grpc.CallOption) (*RequestIDCertResp, error)
+	RefreshIDCertStatus(ctx context.Context, in *AidReq, opts ...grpc.CallOption) (*IDCertStatus, error)
+	GetIDCert(ctx context.Context, in *AidReq, opts ...grpc.CallOption) (*IDCertInfo, error)
 	GetIDCertStatus(ctx context.Context, in *AidReq, opts ...grpc.CallOption) (*IDCertStatus, error)
+	RequestWorkCert(ctx context.Context, in *WorkCertReq, opts ...grpc.CallOption) (*EmptyStruct, error)
+	AuditWorkCert(ctx context.Context, in *AuditWorkCertReq, opts ...grpc.CallOption) (*EmptyStruct, error)
+	GetWorkCert(ctx context.Context, in *AidReq, opts ...grpc.CallOption) (*WorkCertInfo, error)
 	GetWorkCertStatus(ctx context.Context, in *AidReq, opts ...grpc.CallOption) (*WorkCertStatus, error)
 }
 
@@ -579,9 +999,63 @@ func NewCertificationClient(cc *grpc.ClientConn) CertificationClient {
 	return &certificationClient{cc}
 }
 
+func (c *certificationClient) RequestIDCert(ctx context.Context, in *AidReq, opts ...grpc.CallOption) (*RequestIDCertResp, error) {
+	out := new(RequestIDCertResp)
+	err := c.cc.Invoke(ctx, "/service.certification.Certification/RequestIDCert", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *certificationClient) RefreshIDCertStatus(ctx context.Context, in *AidReq, opts ...grpc.CallOption) (*IDCertStatus, error) {
+	out := new(IDCertStatus)
+	err := c.cc.Invoke(ctx, "/service.certification.Certification/RefreshIDCertStatus", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *certificationClient) GetIDCert(ctx context.Context, in *AidReq, opts ...grpc.CallOption) (*IDCertInfo, error) {
+	out := new(IDCertInfo)
+	err := c.cc.Invoke(ctx, "/service.certification.Certification/GetIDCert", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *certificationClient) GetIDCertStatus(ctx context.Context, in *AidReq, opts ...grpc.CallOption) (*IDCertStatus, error) {
 	out := new(IDCertStatus)
 	err := c.cc.Invoke(ctx, "/service.certification.Certification/GetIDCertStatus", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *certificationClient) RequestWorkCert(ctx context.Context, in *WorkCertReq, opts ...grpc.CallOption) (*EmptyStruct, error) {
+	out := new(EmptyStruct)
+	err := c.cc.Invoke(ctx, "/service.certification.Certification/RequestWorkCert", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *certificationClient) AuditWorkCert(ctx context.Context, in *AuditWorkCertReq, opts ...grpc.CallOption) (*EmptyStruct, error) {
+	out := new(EmptyStruct)
+	err := c.cc.Invoke(ctx, "/service.certification.Certification/AuditWorkCert", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *certificationClient) GetWorkCert(ctx context.Context, in *AidReq, opts ...grpc.CallOption) (*WorkCertInfo, error) {
+	out := new(WorkCertInfo)
+	err := c.cc.Invoke(ctx, "/service.certification.Certification/GetWorkCert", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -599,7 +1073,13 @@ func (c *certificationClient) GetWorkCertStatus(ctx context.Context, in *AidReq,
 
 // CertificationServer is the server API for Certification service.
 type CertificationServer interface {
+	RequestIDCert(context.Context, *AidReq) (*RequestIDCertResp, error)
+	RefreshIDCertStatus(context.Context, *AidReq) (*IDCertStatus, error)
+	GetIDCert(context.Context, *AidReq) (*IDCertInfo, error)
 	GetIDCertStatus(context.Context, *AidReq) (*IDCertStatus, error)
+	RequestWorkCert(context.Context, *WorkCertReq) (*EmptyStruct, error)
+	AuditWorkCert(context.Context, *AuditWorkCertReq) (*EmptyStruct, error)
+	GetWorkCert(context.Context, *AidReq) (*WorkCertInfo, error)
 	GetWorkCertStatus(context.Context, *AidReq) (*WorkCertStatus, error)
 }
 
@@ -607,8 +1087,26 @@ type CertificationServer interface {
 type UnimplementedCertificationServer struct {
 }
 
+func (*UnimplementedCertificationServer) RequestIDCert(ctx context.Context, req *AidReq) (*RequestIDCertResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RequestIDCert not implemented")
+}
+func (*UnimplementedCertificationServer) RefreshIDCertStatus(ctx context.Context, req *AidReq) (*IDCertStatus, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RefreshIDCertStatus not implemented")
+}
+func (*UnimplementedCertificationServer) GetIDCert(ctx context.Context, req *AidReq) (*IDCertInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetIDCert not implemented")
+}
 func (*UnimplementedCertificationServer) GetIDCertStatus(ctx context.Context, req *AidReq) (*IDCertStatus, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetIDCertStatus not implemented")
+}
+func (*UnimplementedCertificationServer) RequestWorkCert(ctx context.Context, req *WorkCertReq) (*EmptyStruct, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RequestWorkCert not implemented")
+}
+func (*UnimplementedCertificationServer) AuditWorkCert(ctx context.Context, req *AuditWorkCertReq) (*EmptyStruct, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AuditWorkCert not implemented")
+}
+func (*UnimplementedCertificationServer) GetWorkCert(ctx context.Context, req *AidReq) (*WorkCertInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetWorkCert not implemented")
 }
 func (*UnimplementedCertificationServer) GetWorkCertStatus(ctx context.Context, req *AidReq) (*WorkCertStatus, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetWorkCertStatus not implemented")
@@ -616,6 +1114,60 @@ func (*UnimplementedCertificationServer) GetWorkCertStatus(ctx context.Context, 
 
 func RegisterCertificationServer(s *grpc.Server, srv CertificationServer) {
 	s.RegisterService(&_Certification_serviceDesc, srv)
+}
+
+func _Certification_RequestIDCert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AidReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CertificationServer).RequestIDCert(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/service.certification.Certification/RequestIDCert",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CertificationServer).RequestIDCert(ctx, req.(*AidReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Certification_RefreshIDCertStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AidReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CertificationServer).RefreshIDCertStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/service.certification.Certification/RefreshIDCertStatus",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CertificationServer).RefreshIDCertStatus(ctx, req.(*AidReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Certification_GetIDCert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AidReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CertificationServer).GetIDCert(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/service.certification.Certification/GetIDCert",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CertificationServer).GetIDCert(ctx, req.(*AidReq))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _Certification_GetIDCertStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -632,6 +1184,60 @@ func _Certification_GetIDCertStatus_Handler(srv interface{}, ctx context.Context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CertificationServer).GetIDCertStatus(ctx, req.(*AidReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Certification_RequestWorkCert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WorkCertReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CertificationServer).RequestWorkCert(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/service.certification.Certification/RequestWorkCert",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CertificationServer).RequestWorkCert(ctx, req.(*WorkCertReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Certification_AuditWorkCert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AuditWorkCertReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CertificationServer).AuditWorkCert(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/service.certification.Certification/AuditWorkCert",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CertificationServer).AuditWorkCert(ctx, req.(*AuditWorkCertReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Certification_GetWorkCert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AidReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CertificationServer).GetWorkCert(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/service.certification.Certification/GetWorkCert",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CertificationServer).GetWorkCert(ctx, req.(*AidReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -659,8 +1265,32 @@ var _Certification_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*CertificationServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
+			MethodName: "RequestIDCert",
+			Handler:    _Certification_RequestIDCert_Handler,
+		},
+		{
+			MethodName: "RefreshIDCertStatus",
+			Handler:    _Certification_RefreshIDCertStatus_Handler,
+		},
+		{
+			MethodName: "GetIDCert",
+			Handler:    _Certification_GetIDCert_Handler,
+		},
+		{
 			MethodName: "GetIDCertStatus",
 			Handler:    _Certification_GetIDCertStatus_Handler,
+		},
+		{
+			MethodName: "RequestWorkCert",
+			Handler:    _Certification_RequestWorkCert_Handler,
+		},
+		{
+			MethodName: "AuditWorkCert",
+			Handler:    _Certification_AuditWorkCert_Handler,
+		},
+		{
+			MethodName: "GetWorkCert",
+			Handler:    _Certification_GetWorkCert_Handler,
 		},
 		{
 			MethodName: "GetWorkCertStatus",
@@ -724,70 +1354,6 @@ func (m *AidReq) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	}
 	if m.Aid != 0 {
 		i = encodeVarintApi(dAtA, i, uint64(m.Aid))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *IDCertStatus) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *IDCertStatus) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *IDCertStatus) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if m.Status != 0 {
-		i = encodeVarintApi(dAtA, i, uint64(m.Status))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *WorkCertStatus) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *WorkCertStatus) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *WorkCertStatus) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if m.Status != 0 {
-		i = encodeVarintApi(dAtA, i, uint64(m.Status))
 		i--
 		dAtA[i] = 0x8
 	}
@@ -974,12 +1540,10 @@ func (m *WorkCertInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x52
 	}
-	if len(m.ExpiresAt) > 0 {
-		i -= len(m.ExpiresAt)
-		copy(dAtA[i:], m.ExpiresAt)
-		i = encodeVarintApi(dAtA, i, uint64(len(m.ExpiresAt)))
+	if m.ExpiresAt != 0 {
+		i = encodeVarintApi(dAtA, i, uint64(m.ExpiresAt))
 		i--
-		dAtA[i] = 0x4a
+		dAtA[i] = 0x48
 	}
 	if len(m.Position) > 0 {
 		i -= len(m.Position)
@@ -1029,6 +1593,369 @@ func (m *WorkCertInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *IDCertStatus) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *IDCertStatus) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *IDCertStatus) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Status != 0 {
+		i = encodeVarintApi(dAtA, i, uint64(m.Status))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *WorkCertStatus) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *WorkCertStatus) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *WorkCertStatus) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Status != 0 {
+		i = encodeVarintApi(dAtA, i, uint64(m.Status))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *WorkCertReq) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *WorkCertReq) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *WorkCertReq) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.ExpiresAt != 0 {
+		i = encodeVarintApi(dAtA, i, uint64(m.ExpiresAt))
+		i--
+		dAtA[i] = 0x48
+	}
+	if len(m.Position) > 0 {
+		i -= len(m.Position)
+		copy(dAtA[i:], m.Position)
+		i = encodeVarintApi(dAtA, i, uint64(len(m.Position)))
+		i--
+		dAtA[i] = 0x42
+	}
+	if len(m.Department) > 0 {
+		i -= len(m.Department)
+		copy(dAtA[i:], m.Department)
+		i = encodeVarintApi(dAtA, i, uint64(len(m.Department)))
+		i--
+		dAtA[i] = 0x3a
+	}
+	if len(m.Company) > 0 {
+		i -= len(m.Company)
+		copy(dAtA[i:], m.Company)
+		i = encodeVarintApi(dAtA, i, uint64(len(m.Company)))
+		i--
+		dAtA[i] = 0x32
+	}
+	if len(m.OtherPic) > 0 {
+		i -= len(m.OtherPic)
+		copy(dAtA[i:], m.OtherPic)
+		i = encodeVarintApi(dAtA, i, uint64(len(m.OtherPic)))
+		i--
+		dAtA[i] = 0x2a
+	}
+	if len(m.WorkPic) > 0 {
+		i -= len(m.WorkPic)
+		copy(dAtA[i:], m.WorkPic)
+		i = encodeVarintApi(dAtA, i, uint64(len(m.WorkPic)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if m.AccountID != 0 {
+		i = encodeVarintApi(dAtA, i, uint64(m.AccountID))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *AuditWorkCertReq) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *AuditWorkCertReq) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *AuditWorkCertReq) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Approve {
+		i--
+		if m.Approve {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x20
+	}
+	if len(m.AuditResult) > 0 {
+		i -= len(m.AuditResult)
+		copy(dAtA[i:], m.AuditResult)
+		i = encodeVarintApi(dAtA, i, uint64(len(m.AuditResult)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.ManagerID != 0 {
+		i = encodeVarintApi(dAtA, i, uint64(m.ManagerID))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.AccountID != 0 {
+		i = encodeVarintApi(dAtA, i, uint64(m.AccountID))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *RequestIDCertResp) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *RequestIDCertResp) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *RequestIDCertResp) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.VerifyToken != nil {
+		{
+			size, err := m.VerifyToken.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintApi(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.STSToken != nil {
+		{
+			size, err := m.STSToken.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintApi(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.CloudauthPageUrl) > 0 {
+		i -= len(m.CloudauthPageUrl)
+		copy(dAtA[i:], m.CloudauthPageUrl)
+		i = encodeVarintApi(dAtA, i, uint64(len(m.CloudauthPageUrl)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *VerifyToken) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *VerifyToken) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *VerifyToken) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.DurationSeconds != 0 {
+		i = encodeVarintApi(dAtA, i, uint64(m.DurationSeconds))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Token) > 0 {
+		i -= len(m.Token)
+		copy(dAtA[i:], m.Token)
+		i = encodeVarintApi(dAtA, i, uint64(len(m.Token)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *STSToken) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *STSToken) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *STSToken) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.Token) > 0 {
+		i -= len(m.Token)
+		copy(dAtA[i:], m.Token)
+		i = encodeVarintApi(dAtA, i, uint64(len(m.Token)))
+		i--
+		dAtA[i] = 0x3a
+	}
+	if len(m.Path) > 0 {
+		i -= len(m.Path)
+		copy(dAtA[i:], m.Path)
+		i = encodeVarintApi(dAtA, i, uint64(len(m.Path)))
+		i--
+		dAtA[i] = 0x32
+	}
+	if len(m.BucketName) > 0 {
+		i -= len(m.BucketName)
+		copy(dAtA[i:], m.BucketName)
+		i = encodeVarintApi(dAtA, i, uint64(len(m.BucketName)))
+		i--
+		dAtA[i] = 0x2a
+	}
+	if len(m.EndPoint) > 0 {
+		i -= len(m.EndPoint)
+		copy(dAtA[i:], m.EndPoint)
+		i = encodeVarintApi(dAtA, i, uint64(len(m.EndPoint)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if len(m.Expiration) > 0 {
+		i -= len(m.Expiration)
+		copy(dAtA[i:], m.Expiration)
+		i = encodeVarintApi(dAtA, i, uint64(len(m.Expiration)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.AccessKeySecret) > 0 {
+		i -= len(m.AccessKeySecret)
+		copy(dAtA[i:], m.AccessKeySecret)
+		i = encodeVarintApi(dAtA, i, uint64(len(m.AccessKeySecret)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.AccessKeyId) > 0 {
+		i -= len(m.AccessKeyId)
+		copy(dAtA[i:], m.AccessKeyId)
+		i = encodeVarintApi(dAtA, i, uint64(len(m.AccessKeyId)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintApi(dAtA []byte, offset int, v uint64) int {
 	offset -= sovApi(v)
 	base := offset
@@ -1060,36 +1987,6 @@ func (m *AidReq) Size() (n int) {
 	_ = l
 	if m.Aid != 0 {
 		n += 1 + sovApi(uint64(m.Aid))
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
-	return n
-}
-
-func (m *IDCertStatus) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Status != 0 {
-		n += 1 + sovApi(uint64(m.Status))
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
-	return n
-}
-
-func (m *WorkCertStatus) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Status != 0 {
-		n += 1 + sovApi(uint64(m.Status))
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
@@ -1201,9 +2098,8 @@ func (m *WorkCertInfo) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovApi(uint64(l))
 	}
-	l = len(m.ExpiresAt)
-	if l > 0 {
-		n += 1 + l + sovApi(uint64(l))
+	if m.ExpiresAt != 0 {
+		n += 1 + sovApi(uint64(m.ExpiresAt))
 	}
 	l = len(m.AuditResult)
 	if l > 0 {
@@ -1214,6 +2110,182 @@ func (m *WorkCertInfo) Size() (n int) {
 	}
 	if m.UpdatedAt != 0 {
 		n += 2 + sovApi(uint64(m.UpdatedAt))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *IDCertStatus) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Status != 0 {
+		n += 1 + sovApi(uint64(m.Status))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *WorkCertStatus) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Status != 0 {
+		n += 1 + sovApi(uint64(m.Status))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *WorkCertReq) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.AccountID != 0 {
+		n += 1 + sovApi(uint64(m.AccountID))
+	}
+	l = len(m.WorkPic)
+	if l > 0 {
+		n += 1 + l + sovApi(uint64(l))
+	}
+	l = len(m.OtherPic)
+	if l > 0 {
+		n += 1 + l + sovApi(uint64(l))
+	}
+	l = len(m.Company)
+	if l > 0 {
+		n += 1 + l + sovApi(uint64(l))
+	}
+	l = len(m.Department)
+	if l > 0 {
+		n += 1 + l + sovApi(uint64(l))
+	}
+	l = len(m.Position)
+	if l > 0 {
+		n += 1 + l + sovApi(uint64(l))
+	}
+	if m.ExpiresAt != 0 {
+		n += 1 + sovApi(uint64(m.ExpiresAt))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *AuditWorkCertReq) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.AccountID != 0 {
+		n += 1 + sovApi(uint64(m.AccountID))
+	}
+	if m.ManagerID != 0 {
+		n += 1 + sovApi(uint64(m.ManagerID))
+	}
+	l = len(m.AuditResult)
+	if l > 0 {
+		n += 1 + l + sovApi(uint64(l))
+	}
+	if m.Approve {
+		n += 2
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *RequestIDCertResp) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.CloudauthPageUrl)
+	if l > 0 {
+		n += 1 + l + sovApi(uint64(l))
+	}
+	if m.STSToken != nil {
+		l = m.STSToken.Size()
+		n += 1 + l + sovApi(uint64(l))
+	}
+	if m.VerifyToken != nil {
+		l = m.VerifyToken.Size()
+		n += 1 + l + sovApi(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *VerifyToken) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Token)
+	if l > 0 {
+		n += 1 + l + sovApi(uint64(l))
+	}
+	if m.DurationSeconds != 0 {
+		n += 1 + sovApi(uint64(m.DurationSeconds))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *STSToken) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.AccessKeyId)
+	if l > 0 {
+		n += 1 + l + sovApi(uint64(l))
+	}
+	l = len(m.AccessKeySecret)
+	if l > 0 {
+		n += 1 + l + sovApi(uint64(l))
+	}
+	l = len(m.Expiration)
+	if l > 0 {
+		n += 1 + l + sovApi(uint64(l))
+	}
+	l = len(m.EndPoint)
+	if l > 0 {
+		n += 1 + l + sovApi(uint64(l))
+	}
+	l = len(m.BucketName)
+	if l > 0 {
+		n += 1 + l + sovApi(uint64(l))
+	}
+	l = len(m.Path)
+	if l > 0 {
+		n += 1 + l + sovApi(uint64(l))
+	}
+	l = len(m.Token)
+	if l > 0 {
+		n += 1 + l + sovApi(uint64(l))
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
@@ -1325,152 +2397,6 @@ func (m *AidReq) Unmarshal(dAtA []byte) error {
 				b := dAtA[iNdEx]
 				iNdEx++
 				m.Aid |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipApi(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthApi
-			}
-			if (iNdEx + skippy) < 0 {
-				return ErrInvalidLengthApi
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *IDCertStatus) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowApi
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: IDCertStatus: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: IDCertStatus: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Status", wireType)
-			}
-			m.Status = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowApi
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Status |= int32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipApi(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthApi
-			}
-			if (iNdEx + skippy) < 0 {
-				return ErrInvalidLengthApi
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *WorkCertStatus) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowApi
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: WorkCertStatus: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: WorkCertStatus: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Status", wireType)
-			}
-			m.Status = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowApi
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Status |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2242,10 +3168,10 @@ func (m *WorkCertInfo) Unmarshal(dAtA []byte) error {
 			m.Position = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 9:
-			if wireType != 2 {
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field ExpiresAt", wireType)
 			}
-			var stringLen uint64
+			m.ExpiresAt = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowApi
@@ -2255,24 +3181,11 @@ func (m *WorkCertInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				m.ExpiresAt |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthApi
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthApi
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.ExpiresAt = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
 		case 10:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field AuditResult", wireType)
@@ -2343,6 +3256,1089 @@ func (m *WorkCertInfo) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipApi(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthApi
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthApi
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *IDCertStatus) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowApi
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: IDCertStatus: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: IDCertStatus: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Status", wireType)
+			}
+			m.Status = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Status |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipApi(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthApi
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthApi
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *WorkCertStatus) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowApi
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: WorkCertStatus: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: WorkCertStatus: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Status", wireType)
+			}
+			m.Status = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Status |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipApi(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthApi
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthApi
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *WorkCertReq) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowApi
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: WorkCertReq: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: WorkCertReq: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AccountID", wireType)
+			}
+			m.AccountID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.AccountID |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field WorkPic", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthApi
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthApi
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.WorkPic = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field OtherPic", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthApi
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthApi
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.OtherPic = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Company", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthApi
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthApi
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Company = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 7:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Department", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthApi
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthApi
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Department = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 8:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Position", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthApi
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthApi
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Position = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 9:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ExpiresAt", wireType)
+			}
+			m.ExpiresAt = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ExpiresAt |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipApi(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthApi
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthApi
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *AuditWorkCertReq) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowApi
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: AuditWorkCertReq: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: AuditWorkCertReq: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AccountID", wireType)
+			}
+			m.AccountID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.AccountID |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ManagerID", wireType)
+			}
+			m.ManagerID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ManagerID |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AuditResult", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthApi
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthApi
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.AuditResult = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Approve", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.Approve = bool(v != 0)
+		default:
+			iNdEx = preIndex
+			skippy, err := skipApi(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthApi
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthApi
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *RequestIDCertResp) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowApi
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: RequestIDCertResp: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: RequestIDCertResp: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CloudauthPageUrl", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthApi
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthApi
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.CloudauthPageUrl = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field STSToken", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthApi
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthApi
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.STSToken == nil {
+				m.STSToken = &STSToken{}
+			}
+			if err := m.STSToken.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field VerifyToken", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthApi
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthApi
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.VerifyToken == nil {
+				m.VerifyToken = &VerifyToken{}
+			}
+			if err := m.VerifyToken.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipApi(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthApi
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthApi
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *VerifyToken) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowApi
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: VerifyToken: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: VerifyToken: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Token", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthApi
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthApi
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Token = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DurationSeconds", wireType)
+			}
+			m.DurationSeconds = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.DurationSeconds |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipApi(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthApi
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthApi
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *STSToken) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowApi
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: STSToken: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: STSToken: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AccessKeyId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthApi
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthApi
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.AccessKeyId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AccessKeySecret", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthApi
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthApi
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.AccessKeySecret = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Expiration", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthApi
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthApi
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Expiration = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field EndPoint", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthApi
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthApi
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.EndPoint = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field BucketName", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthApi
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthApi
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.BucketName = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Path", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthApi
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthApi
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Path = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 7:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Token", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthApi
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthApi
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Token = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipApi(dAtA[iNdEx:])

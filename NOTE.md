@@ -37,6 +37,7 @@
     - message 1314
     - comment 1315
     - search 1316
+    - certification 1317
   * interface 4
     - account  1401
     - article 1402

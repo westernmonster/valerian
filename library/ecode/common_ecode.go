@@ -100,6 +100,8 @@ var (
 	RelFollowAttrAlreadySet        = add(10052) // 已经设置该属性了
 	RelFollowAttrNotSet            = add(10053) // 未设置该属性，不能取消
 	AppExist                       = add(10054) // App 已经存在
+	WorkCertExist                  = add(10055) // 工作认证已经提交
+	IDCertFirst                    = add(10056) // 首选需要通过身份认证
 
 	UserNotExist                  = add(90001) // 用户不存在
 	TagNotExist                   = add(90002) // Tag 不存在
@@ -133,5 +135,6 @@ var (
 	ArticleHistoryNotExist        = add(90031) // 未找到该记录
 	AdminNotExist                 = add(90032) // 管理员不存在
 	AccountRoleNotExist           = add(90033) // 用户角色不存在
+	WorkCertificationNotExist     = add(90034) // 尚未发起工作认证
 
 )

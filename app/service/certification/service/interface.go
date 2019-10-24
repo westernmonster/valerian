@@ -30,6 +30,14 @@ type IDao interface {
 	SetAccountCache(c context.Context, m *model.Account) (err error)
 	DelAccountCache(c context.Context, accountID int64) (err error)
 
+	SetIDCertCache(c context.Context, m *model.IDCertification) (err error)
+	IDCertCache(c context.Context, aid int64) (m *model.IDCertification, err error)
+	DelIDCertCache(c context.Context, aid int64) (err error)
+
+	SetWorkCertCache(c context.Context, m *model.WorkCertification) (err error)
+	WorkCertCache(c context.Context, aid int64) (m *model.WorkCertification, err error)
+	DelWorkCertCache(c context.Context, aid int64) (err error)
+
 	Ping(c context.Context) (err error)
 	Close()
 	DB() sqalx.Node

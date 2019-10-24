@@ -50,7 +50,7 @@ message SelfProfile {
 
     string Avatar  = 11;
 
-    string Source  = 12;
+    int32 Source  = 12;
 
     int64  Location = 13;
 
@@ -77,10 +77,31 @@ message SelfProfile {
     int64 UpdatedAt  = 24 ;
 
     AccountStatInfo Stat = 25 ;
+
+    Setting Setting = 26;
+}
+
+message ActivitySetting {
+    bool Like = 1;
+    bool Comment = 2;
+    bool FollowTopic= 3;
+    bool FollowMember= 4;
+}
+
+message NotifySetting {
+    bool Like = 1;
+    bool Comment = 2;
+    bool NewFans= 3;
+    bool NewMember= 4;
+}
+
+message Setting {
+    ActivitySetting Activity = 1;
+    NotifySetting Notify = 2;
 }
 
 
-message SelfStatInfo {
+message AccountStatInfo {
     int32 FollowingCount = 1 ;
 
     int32 FansCount = 2 ;
@@ -94,7 +115,7 @@ message SelfStatInfo {
     int32 DiscussionCount  = 6 ;
 }
 
-message ProfileReply {
+message MemberInfoReply {
     int64 ID = 1;
 
     string UserName  = 2 ;
@@ -122,19 +143,7 @@ message ProfileReply {
     AccountStatInfo Stat = 13 ;
 }
 
-message AccountStatInfo {
-    int32 FollowingCount = 1 ;
 
-    int32 FansCount = 2 ;
-
-    int32 BlackCount = 3 ;
-
-    int32 TopicCount  = 4 ;
-
-    int32 ArticleCount  = 5 ;
-
-    int32 DiscussionCount  = 6 ;
-}
 
 message AidReq {
     int64 aid = 1 ;
@@ -149,7 +158,9 @@ message AidsReq {
 
 
 service Account {
-    rpc Profile(AidReq) returns (ProfileReply);
+    rpc MemberInfo(AidReq) returns (MemberInfoReply);
+
+    rpc SelfProfileInfo(AidReq) returns (SelfProfile);
 
     rpc BasicInfo(AidReq) returns (BaseInfoReply);
 

@@ -31,8 +31,8 @@ func FromStat(model *model.AccountStat) *AccountStatInfo {
 	return reply
 }
 
-func FromProfileInfo(model *model.ProfileInfo) *ProfileReply {
-	reply := &ProfileReply{
+func FromProfileInfo(model *model.ProfileInfo) *MemberInfoReply {
+	reply := &MemberInfoReply{
 		ID:             model.ID,
 		UserName:       model.UserName,
 		Avatar:         model.Avatar,
@@ -45,6 +45,36 @@ func FromProfileInfo(model *model.ProfileInfo) *ProfileReply {
 		Introduction:   model.Introduction,
 		Location:       model.Location,
 		LocationString: model.LocationString,
+	}
+
+	return reply
+}
+
+func FromSelfProfile(model *model.SelfProfile) *SelfProfile {
+	reply := &SelfProfile{
+		ID:             model.ID,
+		Email:          model.Email,
+		Mobile:         model.Mobile,
+		UserName:       model.UserName,
+		Gender:         int32(model.Gender),
+		BirthYear:      int32(model.BirthYear),
+		BirthMonth:     int32(model.BirthMonth),
+		BirthDay:       int32(model.BirthDay),
+		Introduction:   model.Introduction,
+		Avatar:         model.Avatar,
+		Source:         int32(model.Source),
+		Location:       model.Location,
+		LocationString: model.LocationString,
+		IDCert:         model.IDCert,
+		IDCertStatus:   int32(model.IDCertStatus),
+		WorkCert:       model.WorkCert,
+		WorkCertStatus: int32(model.WorkCertStatus),
+		IP:             model.IP,
+		IsOrg:          model.IsOrg,
+		IsVIP:          model.IsVIP,
+		Role:           model.Role,
+		CreatedAt:      model.CreatedAt,
+		UpdatedAt:      model.UpdatedAt,
 	}
 
 	return reply

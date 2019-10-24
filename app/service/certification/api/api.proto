@@ -12,13 +12,6 @@ message AidReq {
     int64 Aid = 1 [(gogoproto.jsontag) = "aid"];
 }
 
-message IDCertStatus {
-    int32 Status = 1;
-}
-
-message WorkCertStatus {
-    int32 Status = 1;
-}
 
 message IDCertInfo {
     int64 AccountID = 1;
@@ -47,16 +40,83 @@ message WorkCertInfo {
     string Company  =  6;
     string Department =  7;
     string Position =  8;
-    string ExpiresAt =  9;
+    int64 ExpiresAt =  9;
     string AuditResult =  10;
     int64 CreatedAt = 16;
     int64 UpdatedAt = 17;
 }
 
+message IDCertStatus {
+    int32 Status = 1;
+}
+
+
+message WorkCertStatus {
+    int32 Status = 1;
+}
+
+message WorkCertReq {
+    int64 AccountID = 1;
+    string WorkPic =  4;
+    string OtherPic = 5;
+    string Company  =  6;
+    string Department =  7;
+    string Position =  8;
+    int64 ExpiresAt =  9;
+}
+
+message AuditWorkCertReq {
+    int64 AccountID = 1;
+    int64 ManagerID = 2;
+    string AuditResult = 3;
+    bool Approve = 4;
+}
+
+
+message RequestIDCertResp {
+	string CloudauthPageUrl  = 1;
+
+	STSToken STSToken  = 2;
+
+	VerifyToken VerifyToken = 3;
+}
+
+message VerifyToken {
+	// 一次认证会话的标识。
+	string Token  = 1;
+	// 认证会话超时时间，单位为秒。一般为1,800s。
+	int32 DurationSeconds = 2;
+}
+
+message STSToken {
+	// OSS AccessKey ID。
+	// required: true
+	string AccessKeyId = 1;
+	// OSS AccessKey密钥
+	string AccessKeySecret = 2;
+	// STS token过期时间。
+	string Expiration = 3;
+	// OSS endpoint
+	string EndPoint = 4;
+	// OSS bucket，认证服务指定的文件上传 Bucket。
+	string BucketName = 5;
+	//  一个认证请求生成的用来上传的目录，业务方需要将文件上传到这个目录。
+	string Path = 6;
+	// STS 访问Token。
+	string Token = 7;
+}
 
 
 service Certification {
+    rpc RequestIDCert(AidReq) returns (RequestIDCertResp);
+    rpc RefreshIDCertStatus(AidReq) returns (IDCertStatus);
+    rpc GetIDCert(AidReq) returns (IDCertInfo);
     rpc GetIDCertStatus(AidReq) returns (IDCertStatus);
+
+    rpc RequestWorkCert(WorkCertReq) returns (EmptyStruct);
+    rpc AuditWorkCert(AuditWorkCertReq) returns (EmptyStruct);
+    rpc GetWorkCert(AidReq) returns (WorkCertInfo);
+
     rpc GetWorkCertStatus(AidReq) returns (WorkCertStatus);
 }
 
