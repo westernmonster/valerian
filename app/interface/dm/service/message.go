@@ -515,8 +515,8 @@ func (p *Service) GetMemberInfo(c context.Context, targetID int64) (resp *model.
 	}
 
 	resp.Stat = &model.MemberInfoStat{
-		FansCount:       int(f.Stat.Fans),
-		FollowingCount:  int(f.Stat.Following),
+		FansCount:       int(f.Stat.FansCount),
+		FollowingCount:  int(f.Stat.FollowingCount),
 		TopicCount:      int(f.Stat.TopicCount),
 		ArticleCount:    int(f.Stat.ArticleCount),
 		DiscussionCount: int(f.Stat.DiscussionCount),

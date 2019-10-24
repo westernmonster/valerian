@@ -39,6 +39,7 @@ init:
 	echo "hello"
 
 
+build-all: build-interface-location build-interface-locale build-interface-valcode build-interface-passport-register build-interface-passport-login build-interface-passport-auth build-interface-file build-interface-feedback build-interface-editor build-interface-certification build-interface-account build-interface-topic build-interface-discuss build-interface-article build-interface-like build-interface-fav build-interface-feed build-interface-comment build-interface-search build-interface-recent build-interface-dm build-service-msm build-service-identify build-service-account build-service-discuss build-service-topic build-service-feed build-service-fav build-service-like build-service-relation build-service-article build-service-recent build-service-topic-feed build-service-account-feed build-service-message build-service-comment build-service-search
 
 interface-location: build-interface-location docker-interface-location push-interface-location deploy-interface-location
 

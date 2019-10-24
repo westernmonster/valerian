@@ -5,23 +5,23 @@ option go_package = "api";
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
 message BaseInfoReply {
-    int64 ID = 1 [(gogoproto.jsontag) = "id"] ;
+    int64 ID = 1 ;
 
-    string UserName  = 2 [(gogoproto.jsontag) = "user_name"] ;
+    string UserName  = 2 ;
 
-    int32  Gender = 3 [(gogoproto.jsontag) = "gender"] ;
+    int32  Gender = 3 ;
 
-    string  Introduction = 4 [(gogoproto.jsontag) = "introduction"] ;
+    string  Introduction = 4 ;
 
-    string Avatar  = 5 [(gogoproto.jsontag) = "avatar"] ;
+    string Avatar  = 5 ;
 
-    bool IDCert  = 6 [(gogoproto.jsontag) = "id_cert"] ;
+    bool IDCert  = 6 ;
 
-    bool WorkCert  = 7 [(gogoproto.jsontag) = "work_cert"] ;
+    bool WorkCert  = 7 ;
 
-    bool IsOrg  = 8 [(gogoproto.jsontag) = "is_org"] ;
+    bool IsOrg  = 8 ;
 
-    bool IsVIP  = 9 [(gogoproto.jsontag) = "is_vip"] ;
+    bool IsVIP  = 9 ;
 }
 
 message BaseInfosReply {
@@ -29,57 +29,122 @@ message BaseInfosReply {
     map<int64, BaseInfoReply> base_infos = 1;
 }
 
+message SelfProfile {
+    int64 ID = 1;
+
+    string Mobile = 2;
+
+    string Email = 3;
+
+    string Prefix = 4;
+
+    string UserName  = 5 ;
+
+    int32  Gender = 6 ;
+
+    int32 BirthYear = 7;
+    int32 BirthMonth = 8;
+    int32 BirthDay = 9;
+
+    string  Introduction = 10;
+
+    string Avatar  = 11;
+
+    string Source  = 12;
+
+    int64  Location = 13;
+
+    string  LocationString = 14;
+
+    bool IDCert  = 15;
+
+    int32 IDCertStatus = 16;
+
+    bool WorkCert  = 17;
+
+	int32 WorkCertStatus = 18;
+
+    string IP = 19;
+
+    bool IsOrg  = 20;
+
+    bool IsVIP  = 21;
+
+    string Role = 22;
+
+    int64 CreatedAt  = 23 ;
+
+    int64 UpdatedAt  = 24 ;
+
+    AccountStatInfo Stat = 25 ;
+}
+
+
+message SelfStatInfo {
+    int32 FollowingCount = 1 ;
+
+    int32 FansCount = 2 ;
+
+    int32 BlackCount = 3 ;
+
+    int32 TopicCount  = 4 ;
+
+    int32 ArticleCount  = 5 ;
+
+    int32 DiscussionCount  = 6 ;
+}
+
 message ProfileReply {
-    int64 ID = 1 [(gogoproto.jsontag) = "id"] ;
+    int64 ID = 1;
 
-    string UserName  = 2 [(gogoproto.jsontag) = "user_name"] ;
+    string UserName  = 2 ;
 
-    int32  Gender = 3 [(gogoproto.jsontag) = "gender"] ;
+    int32  Gender = 3 ;
 
-    string  Introduction = 4 [(gogoproto.jsontag) = "introduction"] ;
+    string  Introduction = 4 ;
 
-    int64  Location = 5 [(gogoproto.jsontag) = "location"] ;
+    int64  Location = 5 ;
 
-    string  LocationString = 6 [(gogoproto.jsontag) = "location_string"] ;
+    string  LocationString = 6 ;
 
-    string Avatar  = 7 [(gogoproto.jsontag) = "avatar"] ;
+    string Avatar  = 7 ;
 
-    bool IDCert  = 8 [(gogoproto.jsontag) = "id_cert"] ;
+    bool IDCert  = 8 ;
 
-    bool WorkCert  = 9 [(gogoproto.jsontag) = "work_cert"] ;
+    bool WorkCert  = 9 ;
 
-    bool IsOrg  = 10 [(gogoproto.jsontag) = "is_org"] ;
+    bool IsOrg  = 10 ;
 
-    bool IsVIP  = 11 [(gogoproto.jsontag) = "is_vip"] ;
+    bool IsVIP  = 11 ;
 
-    int64 CreatedAt  = 12 [(gogoproto.jsontag) = "created_at"] ;
+    int64 CreatedAt  = 12 ;
 
-    AccountStatInfo Stat = 13 [(gogoproto.jsontag) = "stat"];
+    AccountStatInfo Stat = 13 ;
 }
 
 message AccountStatInfo {
-    int32 Following = 1 [(gogoproto.jsontag) = "following"];
+    int32 FollowingCount = 1 ;
 
-    int32 Fans = 2 [(gogoproto.jsontag) = "fans"];
+    int32 FansCount = 2 ;
 
-    int32 Black = 3 [(gogoproto.jsontag) = "black"];
+    int32 BlackCount = 3 ;
 
-    int32 TopicCount  = 4 [(gogoproto.jsontag) = "topic_count"] ;
+    int32 TopicCount  = 4 ;
 
-    int32 ArticleCount  = 5 [(gogoproto.jsontag) = "article_count"] ;
+    int32 ArticleCount  = 5 ;
 
-    int32 DiscussionCount  = 6 [(gogoproto.jsontag) = "discussion_count"] ;
+    int32 DiscussionCount  = 6 ;
 }
 
 message AidReq {
-    int64 aid = 1 [(gogoproto.jsontag) = "aid"] ;
-    string remoteIP = 2 [ (gogoproto.jsontag) = "remoteIP" ];
+    int64 aid = 1 ;
+    string remoteIP = 2 ;
 }
 
 message AidsReq {
     // aid 列表
-    repeated int64 aids = 1 [ (gogoproto.jsontag) = "aids" ];
-    string remoteIP = 2 [ (gogoproto.jsontag) = "remoteIP" ];
+    repeated int64 aids = 1 ;
+    string remoteIP = 2 ;
 }
 
 

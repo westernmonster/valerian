@@ -20,9 +20,9 @@ func FromBaseInfo(model *model.BaseInfo) *BaseInfoReply {
 
 func FromStat(model *model.AccountStat) *AccountStatInfo {
 	reply := &AccountStatInfo{
-		Fans:            int32(model.Fans),
-		Following:       int32(model.Following),
-		Black:           int32(model.Black),
+		FansCount:       int32(model.Fans),
+		FollowingCount:  int32(model.Following),
+		BlackCount:      int32(model.Black),
 		TopicCount:      int32(model.TopicCount),
 		ArticleCount:    int32(model.ArticleCount),
 		DiscussionCount: int32(model.DiscussionCount),
