@@ -248,11 +248,6 @@ func (p *Service) GetProfile(c context.Context, aid int64) (item *model.Profile,
 		return
 	}
 
-	var isFollowing bool
-	if isFollowing, err = p.d.IsFollowing(c, aid, aid); err != nil {
-		return
-	}
-
 	item = &model.Profile{
 		ID:             profile.ID,
 		Mobile:         profile.Mobile,
@@ -284,7 +279,6 @@ func (p *Service) GetProfile(c context.Context, aid int64) (item *model.Profile,
 		TopicCount:      int(profile.Stat.TopicCount),
 		ArticleCount:    int(profile.Stat.ArticleCount),
 		DiscussionCount: int(profile.Stat.DiscussionCount),
-		IsFollow:        isFollowing,
 	}
 
 	item.Settings = &model.SettingResp{
