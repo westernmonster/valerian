@@ -7,6 +7,7 @@ import (
 
 	"valerian/app/interface/account/model"
 	feed "valerian/app/service/account-feed/api"
+	account "valerian/app/service/account/api"
 	article "valerian/app/service/article/api"
 	discuss "valerian/app/service/discuss/api"
 	recent "valerian/app/service/recent/api"
@@ -199,15 +200,15 @@ func (p *Service) GetMemberInfo(c context.Context, targetID int64) (resp *model.
 		return
 	}
 
-	var f *model.Profile
-	if f, err = p.getProfile(c, targetID); err != nil {
+	var f *account.MemberInfoReply
+	if f, err = p.d.GetMemberInfo(c, targetID); err != nil {
 		return
 	}
 
 	resp = &model.MemberInfo{
 		ID:             f.ID,
 		UserName:       f.UserName,
-		Gender:         f.Gender,
+		Gender:         int(f.Gender),
 		Location:       f.Location,
 		LocationString: f.LocationString,
 		Introduction:   f.Introduction,
@@ -223,17 +224,12 @@ func (p *Service) GetMemberInfo(c context.Context, targetID int64) (resp *model.
 		return
 	}
 
-	var stat *model.AccountStat
-	if stat, err = p.d.GetAccountStatByID(c, p.d.DB(), targetID); err != nil {
-		return
-	}
-
 	resp.Stat = &model.MemberInfoStat{
-		FansCount:       int(stat.Fans),
-		FollowingCount:  int(stat.Following),
-		TopicCount:      int(stat.TopicCount),
-		ArticleCount:    int(stat.ArticleCount),
-		DiscussionCount: int(stat.DiscussionCount),
+		FansCount:       int(f.Stat.FansCount),
+		FollowingCount:  int(f.Stat.FollowingCount),
+		TopicCount:      int(f.Stat.TopicCount),
+		ArticleCount:    int(f.Stat.ArticleCount),
+		DiscussionCount: int(f.Stat.DiscussionCount),
 		IsFollow:        isFollowing,
 	}
 	return

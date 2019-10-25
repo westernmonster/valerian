@@ -2,10 +2,11 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"valerian/app/interface/account/model"
+	account "valerian/app/service/account/api"
+
 	"valerian/library/ecode"
 
 	"github.com/asaskevich/govalidator"
@@ -231,18 +232,19 @@ func (p *Service) ChangePassword(c context.Context, aid int64, arg *model.ArgCha
 		return
 	}
 
-	fmt.Println(salt)
-	fmt.Println(arg.Password)
-	fmt.Println(passwordHash)
 	if err = p.d.SetPassword(c, p.d.DB(), salt, passwordHash, aid); err != nil {
 		return
 	}
 
+	p.addCache(func() {
+		p.d.DelAccountCache(context.TODO(), aid)
+	})
 	return
 }
 
-func (p *Service) GetProfile(c context.Context, aid int64) (profile *model.Profile, err error) {
-	if profile, err = p.getProfile(c, aid); err != nil {
+func (p *Service) GetProfile(c context.Context, aid int64) (item *model.Profile, err error) {
+	var profile *account.SelfProfile
+	if profile, err = p.d.GetSelfProfile(c, aid); err != nil {
 		return
 	}
 
@@ -251,109 +253,56 @@ func (p *Service) GetProfile(c context.Context, aid int64) (profile *model.Profi
 		return
 	}
 
-	var stat *model.AccountStat
-	if stat, err = p.d.GetAccountStatByID(c, p.d.DB(), aid); err != nil {
-		return
+	item = &model.Profile{
+		ID:             profile.ID,
+		Mobile:         profile.Mobile,
+		Email:          profile.Email,
+		UserName:       profile.UserName,
+		Gender:         int(profile.Gender),
+		BirthYear:      int(profile.BirthYear),
+		BirthMonth:     int(profile.BirthMonth),
+		BirthDay:       int(profile.BirthDay),
+		Location:       profile.Location,
+		LocationString: profile.LocationString,
+		Introduction:   profile.Introduction,
+		Avatar:         profile.Avatar,
+		Source:         int(profile.Source),
+		IDCert:         profile.IDCert,
+		IDCertStatus:   int(profile.IDCertStatus),
+		WorkCert:       profile.WorkCert,
+		WorkCertStatus: int(profile.WorkCertStatus),
+		IsOrg:          profile.IsOrg,
+		IsVIP:          profile.IsVIP,
+		Role:           profile.Role,
+		CreatedAt:      profile.CreatedAt,
+		UpdatedAt:      profile.UpdatedAt,
 	}
 
-	profile.Stat = &model.MemberInfoStat{
-		FansCount:       int(stat.Fans),
-		FollowingCount:  int(stat.Following),
-		TopicCount:      int(stat.TopicCount),
-		ArticleCount:    int(stat.ArticleCount),
-		DiscussionCount: int(stat.DiscussionCount),
+	item.Stat = &model.MemberInfoStat{
+		FansCount:       int(profile.Stat.FansCount),
+		FollowingCount:  int(profile.Stat.FollowingCount),
+		TopicCount:      int(profile.Stat.TopicCount),
+		ArticleCount:    int(profile.Stat.ArticleCount),
+		DiscussionCount: int(profile.Stat.DiscussionCount),
 		IsFollow:        isFollowing,
 	}
 
-	var idCert *model.IDCertification
-	if idCert, err = p.d.GetIDCertificationByCond(c, p.d.DB(), map[string]interface{}{
-		"account_id": aid,
-	}); err != nil {
-		return
-	} else if idCert == nil {
-		profile.IDCertStatus = model.IDCertificationUncommitted
-	} else {
-		profile.IDCertStatus = idCert.Status
-	}
-
-	var setting *model.SettingResp
-	if setting, err = p.getAccountSetting(c, p.d.DB(), aid); err != nil {
-		return
-	}
-
-	profile.Settings = setting
-
-	return
-}
-
-func (p *Service) getProfile(c context.Context, accountID int64) (profile *model.Profile, err error) {
-	var item *model.Account
-	if item, err = p.getAccountByID(c, accountID); err != nil {
-		return
-	}
-
-	profile = &model.Profile{
-		ID:           item.ID,
-		Mobile:       item.Mobile,
-		Email:        item.Email,
-		Gender:       item.Gender,
-		BirthYear:    item.BirthYear,
-		BirthMonth:   item.BirthMonth,
-		BirthDay:     item.BirthDay,
-		Location:     item.Location,
-		Introduction: item.Introduction,
-		Avatar:       item.Avatar,
-		Source:       item.Source,
-		IDCert:       bool(item.IDCert),
-		WorkCert:     bool(item.WorkCert),
-		IsOrg:        bool(item.IsOrg),
-		IsVIP:        bool(item.IsVIP),
-		Role:         item.Role,
-		UserName:     item.UserName,
-		CreatedAt:    item.CreatedAt,
-		UpdatedAt:    item.UpdatedAt,
-	}
-
-	ipStr := InetNtoA(item.IP)
-	profile.IP = ipStr
-
-	if item.Location != 0 {
-		if v, e := p.getLocationString(c, item.Location); e != nil {
-			return nil, e
-		} else {
-			profile.LocationString = v
-		}
-	}
-
-	return
-}
-
-func (p *Service) getLocationString(c context.Context, nodeID int64) (locationString string, err error) {
-	arr := []string{}
-
-	id := nodeID
-	var item *model.Area
-	for {
-		if item, err = p.d.GetArea(c, p.d.DB(), id); err != nil {
-			return
-		} else if item == nil {
-			err = ecode.AreaNotExist
-			return
-		}
-
-		arr = append(arr, item.Name)
-
-		if item.Parent == 0 {
-			break
-		}
-
-		id = item.Parent
-	}
-
-	locationString = ""
-
-	for i := len(arr) - 1; i >= 0; i-- {
-		locationString += arr[i] + " "
+	item.Settings = &model.SettingResp{
+		Activity: model.ActivitySettingResp{
+			Like:         profile.Setting.ActivityLike,
+			Comment:      profile.Setting.ActivityComment,
+			FollowTopic:  profile.Setting.ActivityFollowTopic,
+			FollowMember: profile.Setting.ActivityFollowMember,
+		},
+		Notify: model.NotifySettingResp{
+			Like:      profile.Setting.NotifyLike,
+			Comment:   profile.Setting.NotifyComment,
+			NewFans:   profile.Setting.NotifyNewFans,
+			NewMember: profile.Setting.NotifyNewMember,
+		},
+		Language: model.LanguageSettingResp{
+			Language: profile.Setting.Language,
+		},
 	}
 
 	return

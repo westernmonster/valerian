@@ -8,6 +8,7 @@ import (
 	"valerian/app/interface/account/dao"
 	"valerian/app/interface/account/model"
 	feed "valerian/app/service/account-feed/api"
+	account "valerian/app/service/account/api"
 	article "valerian/app/service/article/api"
 	discuss "valerian/app/service/discuss/api"
 	recent "valerian/app/service/recent/api"
@@ -58,13 +59,10 @@ type Service struct {
 		GetDiscussion(c context.Context, id int64) (info *discuss.DiscussionInfo, err error)
 		GetRevise(c context.Context, id int64) (info *article.ReviseInfo, err error)
 
-		GetIDCertificationsByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.IDCertification, err error)
-		GetIDCertifications(c context.Context, node sqalx.Node) (items []*model.IDCertification, err error)
-		GetIDCertificationByID(c context.Context, node sqalx.Node, id int64) (item *model.IDCertification, err error)
-		GetIDCertificationByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (item *model.IDCertification, err error)
-		AddIDCertification(c context.Context, node sqalx.Node, item *model.IDCertification) (err error)
-		UpdateIDCertification(c context.Context, node sqalx.Node, item *model.IDCertification) (err error)
-		DelIDCertification(c context.Context, node sqalx.Node, id int64) (err error)
+		GetAccountBaseInfo(c context.Context, aid int64) (info *account.BaseInfoReply, err error)
+		GetMemberInfo(c context.Context, aid int64) (info *account.MemberInfoReply, err error)
+		GetSelfProfile(c context.Context, aid int64) (info *account.SelfProfile, err error)
+		GetAccountStat(c context.Context, aid int64) (info *account.AccountStatInfo, err error)
 
 		SetAccountCache(c context.Context, m *model.Account) (err error)
 		AccountCache(c context.Context, accountID int64) (m *model.Account, err error)
