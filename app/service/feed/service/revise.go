@@ -10,6 +10,7 @@ import (
 	"valerian/app/service/feed/model"
 	relation "valerian/app/service/relation/api"
 	"valerian/library/database/sqalx"
+	"valerian/library/ecode"
 	"valerian/library/gid"
 	"valerian/library/log"
 
@@ -28,6 +29,9 @@ func (p *Service) onReviseAdded(m *stan.Msg) {
 	var article *article.ReviseInfo
 	if article, err = p.d.GetRevise(c, info.ReviseID); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onReviseAdded GetRevise failed %#v", err))
+		if ecode.Cause(err) == ecode.ReviseNotExist {
+			m.Ack()
+		}
 		return
 	}
 
@@ -93,6 +97,9 @@ func (p *Service) onReviseUpdated(m *stan.Msg) {
 	var article *article.ReviseInfo
 	if article, err = p.d.GetRevise(c, info.ReviseID); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onReviseUpdated GetRevise failed %#v", err))
+		if ecode.Cause(err) == ecode.ReviseNotExist {
+			m.Ack()
+		}
 		return
 	}
 
@@ -158,6 +165,9 @@ func (p *Service) onReviseLiked(m *stan.Msg) {
 	var article *article.ReviseInfo
 	if article, err = p.d.GetRevise(c, info.ReviseID); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onReviseLiked GetRevise failed %#v", err))
+		if ecode.Cause(err) == ecode.ReviseNotExist {
+			m.Ack()
+		}
 		return
 	}
 
@@ -223,6 +233,9 @@ func (p *Service) onReviseFaved(m *stan.Msg) {
 	var article *article.ReviseInfo
 	if article, err = p.d.GetRevise(c, info.ReviseID); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onReviseFaved GetRevise failed %#v", err))
+		if ecode.Cause(err) == ecode.ReviseNotExist {
+			m.Ack()
+		}
 		return
 	}
 

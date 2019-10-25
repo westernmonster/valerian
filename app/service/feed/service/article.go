@@ -11,6 +11,7 @@ import (
 	relation "valerian/app/service/relation/api"
 	topic "valerian/app/service/topic/api"
 	"valerian/library/database/sqalx"
+	"valerian/library/ecode"
 	"valerian/library/gid"
 	"valerian/library/log"
 
@@ -29,6 +30,9 @@ func (p *Service) onCatalogArticleAdded(m *stan.Msg) {
 	var article *article.ArticleInfo
 	if article, err = p.d.GetArticle(c, info.ArticleID); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onCatalogArticleAdded GetArticle failed %#v", err))
+		if ecode.Cause(err) == ecode.ArticleNotExist {
+			m.Ack()
+		}
 		return
 	}
 
@@ -105,6 +109,9 @@ func (p *Service) onArticleAdded(m *stan.Msg) {
 	var article *article.ArticleInfo
 	if article, err = p.d.GetArticle(c, info.ArticleID); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onArticleAdded GetArticle failed %#v", err))
+		if ecode.Cause(err) == ecode.ArticleNotExist {
+			m.Ack()
+		}
 		return
 	}
 
@@ -170,6 +177,9 @@ func (p *Service) onArticleUpdated(m *stan.Msg) {
 	var article *article.ArticleInfo
 	if article, err = p.d.GetArticle(c, info.ArticleID); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onArticleUpdated GetArticle failed %#v", err))
+		if ecode.Cause(err) == ecode.ArticleNotExist {
+			m.Ack()
+		}
 		return
 	}
 
@@ -235,6 +245,9 @@ func (p *Service) onArticleLiked(m *stan.Msg) {
 	var article *article.ArticleInfo
 	if article, err = p.d.GetArticle(c, info.ArticleID); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onArticleLiked GetArticle failed %#v", err))
+		if ecode.Cause(err) == ecode.ArticleNotExist {
+			m.Ack()
+		}
 		return
 	}
 
@@ -300,6 +313,9 @@ func (p *Service) onArticleFaved(m *stan.Msg) {
 	var article *article.ArticleInfo
 	if article, err = p.d.GetArticle(c, info.ArticleID); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onArticleFaved GetArticle failed %#v", err))
+		if ecode.Cause(err) == ecode.ArticleNotExist {
+			m.Ack()
+		}
 		return
 	}
 

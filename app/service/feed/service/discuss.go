@@ -10,6 +10,7 @@ import (
 	"valerian/app/service/feed/model"
 	relation "valerian/app/service/relation/api"
 	"valerian/library/database/sqalx"
+	"valerian/library/ecode"
 	"valerian/library/gid"
 	"valerian/library/log"
 
@@ -28,6 +29,9 @@ func (p *Service) onDiscussionAdded(m *stan.Msg) {
 	var discuss *discuss.DiscussionInfo
 	if discuss, err = p.d.GetDiscussion(c, info.DiscussionID); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onDiscussionAdded GetDiscussion failed %#v", err))
+		if ecode.Cause(err) == ecode.DiscussionNotExist {
+			m.Ack()
+		}
 		return
 	}
 
@@ -93,6 +97,9 @@ func (p *Service) onDiscussionUpdated(m *stan.Msg) {
 	var discuss *discuss.DiscussionInfo
 	if discuss, err = p.d.GetDiscussion(c, info.DiscussionID); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onDiscussionUpdated GetDiscussion failed %#v", err))
+		if ecode.Cause(err) == ecode.DiscussionNotExist {
+			m.Ack()
+		}
 		return
 	}
 
@@ -158,6 +165,9 @@ func (p *Service) onDiscussionLiked(m *stan.Msg) {
 	var discuss *discuss.DiscussionInfo
 	if discuss, err = p.d.GetDiscussion(c, info.DiscussionID); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onDiscussionLiked GetDiscussion failed %#v", err))
+		if ecode.Cause(err) == ecode.DiscussionNotExist {
+			m.Ack()
+		}
 		return
 	}
 
@@ -223,6 +233,9 @@ func (p *Service) onDiscussionFaved(m *stan.Msg) {
 	var discuss *discuss.DiscussionInfo
 	if discuss, err = p.d.GetDiscussion(c, info.DiscussionID); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onDiscussionFaved GetDiscussion failed %#v", err))
+		if ecode.Cause(err) == ecode.DiscussionNotExist {
+			m.Ack()
+		}
 		return
 	}
 

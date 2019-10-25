@@ -9,6 +9,7 @@ import (
 	relation "valerian/app/service/relation/api"
 	topic "valerian/app/service/topic/api"
 	"valerian/library/database/sqalx"
+	"valerian/library/ecode"
 	"valerian/library/gid"
 	"valerian/library/log"
 
@@ -27,6 +28,9 @@ func (p *Service) onTopicAdded(m *stan.Msg) {
 	var topic *topic.TopicInfo
 	if topic, err = p.d.GetTopic(c, info.TopicID); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onTopicAdded GetTopic failed %#v", err))
+		if ecode.Cause(err) == ecode.TopicNotExist {
+			m.Ack()
+		}
 		return
 	}
 
@@ -92,6 +96,9 @@ func (p *Service) onTopicFollowed(m *stan.Msg) {
 	var topic *topic.TopicInfo
 	if topic, err = p.d.GetTopic(c, info.TopicID); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onTopicFollowed GetTopic failed %#v", err))
+		if ecode.Cause(err) == ecode.TopicNotExist {
+			m.Ack()
+		}
 		return
 	}
 
