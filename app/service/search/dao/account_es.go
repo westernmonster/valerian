@@ -2,13 +2,11 @@ package dao
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"fmt"
 	"strconv"
 	"valerian/app/service/search/model"
 	"valerian/library/conf/env"
-	"valerian/library/database/sqalx"
 	"valerian/library/log"
 	"valerian/library/sync/errgroup"
 
@@ -192,32 +190,5 @@ func (p *Dao) DelESAccount(c context.Context, id int64) (err error) {
 		err = errors.New(msg)
 		return
 	}
-	return
-}
-
-func (p *Dao) GetAccounts(c context.Context, node sqalx.Node) (items []*model.Account, err error) {
-	items = make([]*model.Account, 0)
-	sqlSelect := "SELECT a.* FROM accounts a WHERE a.deleted=0 ORDER BY a.id DESC "
-
-	if err = node.SelectContext(c, &items, sqlSelect); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.GetAccounts err(%+v)", err))
-		return
-	}
-	return
-}
-
-func (p *Dao) GetAccountByID(c context.Context, node sqalx.Node, id int64) (item *model.Account, err error) {
-	item = new(model.Account)
-	sqlSelect := "SELECT a.* FROM accounts a WHERE a.id=? AND a.deleted=0"
-
-	if err = node.GetContext(c, item, sqlSelect, id); err != nil {
-		if err == sql.ErrNoRows {
-			item = nil
-			err = nil
-			return
-		}
-		log.For(c).Error(fmt.Sprintf("dao.GetAccountByID err(%+v), id(%+v)", err, id))
-	}
-
 	return
 }

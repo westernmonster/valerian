@@ -97,3 +97,14 @@ func (p *Dao) UpdateAccount(c context.Context, node sqalx.Node, item *model.Acco
 	}
 	return
 }
+
+func (p *Dao) GetAccounts(c context.Context, node sqalx.Node) (items []*model.Account, err error) {
+	items = make([]*model.Account, 0)
+	sqlSelect := "SELECT a.* FROM accounts a WHERE a.deleted=0 ORDER BY a.id DESC "
+
+	if err = node.SelectContext(c, &items, sqlSelect); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetAccounts err(%+v)", err))
+		return
+	}
+	return
+}

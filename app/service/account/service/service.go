@@ -13,6 +13,7 @@ import (
 type Service struct {
 	c *conf.Config
 	d interface {
+		GetAccounts(c context.Context, node sqalx.Node) (items []*model.Account, err error)
 		GetAccountByID(c context.Context, node sqalx.Node, id int64) (item *model.Account, err error)
 
 		GetAccountStatByID(c context.Context, node sqalx.Node, aid int64) (item *model.AccountStat, err error)

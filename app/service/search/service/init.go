@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"time"
+	account "valerian/app/service/account/api"
 	"valerian/app/service/search/model"
 	"valerian/library/ecode"
 )
@@ -26,13 +27,13 @@ func (p *Service) Init(c context.Context) (err error) {
 		return
 	}
 
-	var accounts []*model.Account
-	if accounts, err = p.d.GetAccounts(c, p.d.DB()); err != nil {
+	var accResp *account.AllAccountsResp
+	if accResp, err = p.d.GetAllAccounts(c); err != nil {
 		return
 	}
 
-	iAcc := make([]*model.ESAccount, len(accounts))
-	for i, v := range accounts {
+	iAcc := make([]*model.ESAccount, len(accResp.Items))
+	for i, v := range accResp.Items {
 		item := &model.ESAccount{
 			ID:           v.ID,
 			Mobile:       &v.Mobile,
@@ -94,11 +95,8 @@ func (p *Service) Init(c context.Context) (err error) {
 		item.AllowChat = &allowChat
 		item.IsPrivate = &isPrivate
 
-		var acc *model.Account
-		if acc, err = p.d.GetAccountByID(c, p.d.DB(), v.CreatedBy); err != nil {
-			return
-		} else if acc == nil {
-			err = ecode.UserNotExist
+		var acc *account.BaseInfoReply
+		if acc, err = p.d.GetAccountBaseInfo(c, v.CreatedBy); err != nil {
 			return
 		}
 
@@ -135,11 +133,8 @@ func (p *Service) Init(c context.Context) (err error) {
 		item.DisableRevise = &disableRevise
 		item.DisableComment = &disableComment
 
-		var acc *model.Account
-		if acc, err = p.d.GetAccountByID(c, p.d.DB(), v.CreatedBy); err != nil {
-			return
-		} else if acc == nil {
-			err = ecode.UserNotExist
+		var acc *account.BaseInfoReply
+		if acc, err = p.d.GetAccountBaseInfo(c, v.CreatedBy); err != nil {
 			return
 		}
 
@@ -173,14 +168,10 @@ func (p *Service) Init(c context.Context) (err error) {
 			UpdatedAt:   &v.UpdatedAt,
 		}
 
-		var acc *model.Account
-		if acc, err = p.d.GetAccountByID(c, p.d.DB(), v.CreatedBy); err != nil {
-			return
-		} else if acc == nil {
-			err = ecode.UserNotExist
+		var acc *account.BaseInfoReply
+		if acc, err = p.d.GetAccountBaseInfo(c, v.CreatedBy); err != nil {
 			return
 		}
-
 		item.Creator = &model.ESCreator{
 			ID:           acc.ID,
 			UserName:     &acc.UserName,

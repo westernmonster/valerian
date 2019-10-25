@@ -3,9 +3,9 @@ package service
 import (
 	"context"
 	"fmt"
+	account "valerian/app/service/account/api"
 	"valerian/app/service/feed/def"
 	"valerian/app/service/search/model"
-	"valerian/library/ecode"
 	"valerian/library/log"
 
 	"github.com/nats-io/stan.go"
@@ -42,11 +42,8 @@ func (p *Service) onArticleAdded(m *stan.Msg) {
 	item.DisableRevise = &disableRevise
 	item.DisableComment = &disableComment
 
-	var acc *model.Account
-	if acc, err = p.d.GetAccountByID(c, p.d.DB(), v.CreatedBy); err != nil {
-		return
-	} else if acc == nil {
-		err = ecode.UserNotExist
+	var acc *account.BaseInfoReply
+	if acc, err = p.d.GetAccountBaseInfo(c, v.CreatedBy); err != nil {
 		return
 	}
 
@@ -95,11 +92,8 @@ func (p *Service) onArticleUpdated(m *stan.Msg) {
 	item.DisableRevise = &disableRevise
 	item.DisableComment = &disableComment
 
-	var acc *model.Account
-	if acc, err = p.d.GetAccountByID(c, p.d.DB(), v.CreatedBy); err != nil {
-		return
-	} else if acc == nil {
-		err = ecode.UserNotExist
+	var acc *account.BaseInfoReply
+	if acc, err = p.d.GetAccountBaseInfo(c, v.CreatedBy); err != nil {
 		return
 	}
 

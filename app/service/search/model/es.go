@@ -17,16 +17,16 @@ type ESAccount struct {
 	Role string `json:"role,omitempty"`
 
 	// 性别
-	Gender *int `json:"gender,omitempty"`
+	Gender *int32 `json:"gender,omitempty"`
 
 	// 出生年
-	BirthYear *int `json:"birth_year,omitempty"`
+	BirthYear *int32 `json:"birth_year,omitempty"`
 
 	// 出生月
-	BirthMonth *int `json:"birth_month,omitempty"`
+	BirthMonth *int32 `json:"birth_month,omitempty"`
 
 	// 出生日
-	BirthDay *int `json:"birth_day,omitempty"`
+	BirthDay *int32 `json:"birth_day,omitempty"`
 
 	// 地区
 	Location *int64 `json:"location,omitempty" swaggertype:"string"`
@@ -38,7 +38,7 @@ type ESAccount struct {
 	Avatar *string `json:"avatar,omitempty"`
 
 	// 注册来源
-	Source *int `json:"source,omitempty"`
+	Source *int32 `json:"source,omitempty"`
 
 	// 是否身份认证
 	IDCert *bool `json:"id_cert,omitempty"`
@@ -59,9 +59,9 @@ type ESAccount struct {
 	UpdatedAt *int64 `json:"updated_at,omitempty"  swaggertype:"string"`
 
 	// 关注数
-	FollowingCount int `json:"following_count"`
+	FollowingCount int32 `json:"following_count"`
 	// 粉丝数
-	FansCount int `json:"fans_count"`
+	FansCount int32 `json:"fans_count"`
 }
 
 type ESCreator struct {
@@ -108,13 +108,13 @@ type ESTopic struct {
 	UpdatedAt *int64 `json:"updated_at,omitempty"`
 
 	// 成员数
-	MemberCount int `json:"member_count"`
+	MemberCount int32 `json:"member_count"`
 
 	// 成员数
-	ArticleCount int `json:"article_count"`
+	ArticleCount int32 `json:"article_count"`
 
 	// 讨论数
-	DiscussionCount int `json:"discussion_count"`
+	DiscussionCount int32 `json:"discussion_count"`
 }
 
 type ESArticle struct {
@@ -147,13 +147,13 @@ type ESArticle struct {
 	UpdatedAt *int64 `json:"updated_at,omitempty"`
 
 	// 喜欢数
-	LikeCount int `json:"like_count"`
+	LikeCount int32 `json:"like_count"`
 	// 反对数
-	DislikeCount int `json:"dislike_count"`
+	DislikeCount int32 `json:"dislike_count"`
 	// 补充个数
-	ReviseCount int `json:"revise_count"`
+	ReviseCount int32 `json:"revise_count"`
 	// 评论数
-	CommentCount int `json:"comment_count"`
+	CommentCount int32 `json:"comment_count"`
 }
 
 type ESDiscussionTopic struct {
@@ -197,13 +197,13 @@ type ESDiscussion struct {
 	Category *ESDiscussionCategory `json:"category,omitempty"`
 
 	// 喜欢数
-	LikeCount int `json:"like_count"`
+	LikeCount int32 `json:"like_count"`
 
 	// 反对数
-	DislikeCount int `json:"dislike_count"`
+	DislikeCount int32 `json:"dislike_count"`
 
 	// 评论数
-	CommentCount int `json:"comment_count"`
+	CommentCount int32 `json:"comment_count"`
 }
 
 type ESDiscussionCategory struct {
@@ -212,5 +212,5 @@ type ESDiscussionCategory struct {
 	// Name
 	Name *string `json:"name,omitempty" `
 
-	Seq *int `json:"seq"`
+	Seq *int32 `json:"seq"`
 }

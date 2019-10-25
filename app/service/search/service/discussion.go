@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
+	account "valerian/app/service/account/api"
 	"valerian/app/service/feed/def"
 	"valerian/app/service/search/model"
 	"valerian/library/ecode"
@@ -37,11 +38,8 @@ func (p *Service) onDiscussionAdded(m *stan.Msg) {
 		UpdatedAt:   &v.UpdatedAt,
 	}
 
-	var acc *model.Account
-	if acc, err = p.d.GetAccountByID(c, p.d.DB(), v.CreatedBy); err != nil {
-		return
-	} else if acc == nil {
-		err = ecode.UserNotExist
+	var acc *account.BaseInfoReply
+	if acc, err = p.d.GetAccountBaseInfo(c, v.CreatedBy); err != nil {
 		return
 	}
 
@@ -116,11 +114,8 @@ func (p *Service) onDiscussionUpdated(m *stan.Msg) {
 		UpdatedAt:   &v.UpdatedAt,
 	}
 
-	var acc *model.Account
-	if acc, err = p.d.GetAccountByID(c, p.d.DB(), v.CreatedBy); err != nil {
-		return
-	} else if acc == nil {
-		err = ecode.UserNotExist
+	var acc *account.BaseInfoReply
+	if acc, err = p.d.GetAccountBaseInfo(c, v.CreatedBy); err != nil {
 		return
 	}
 

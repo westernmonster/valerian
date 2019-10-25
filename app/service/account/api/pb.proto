@@ -4,6 +4,9 @@ option go_package = "api";
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
+message EmptyStruct {
+}
+
 message BaseInfoReply {
     int64 ID = 1 ;
 
@@ -150,8 +153,39 @@ message AidsReq {
     string remoteIP = 2 ;
 }
 
+message DBAccount {
+    int64    ID                    = 1;
+    string   Mobile                = 2;
+    string   Email                 = 3;
+    string   UserName              = 4;
+    string   Role                  = 6;
+    int32    Gender                = 8;
+    int32    BirthYear             = 9;
+    int32    BirthMonth            = 10;
+    int32    BirthDay              = 11;
+    int64    Location              = 12;
+    string   Introduction          = 13;
+    string   Avatar                = 14;
+    int32    Source                = 15;
+    int64    IP                    = 16;
+    bool     IDCert                = 17;
+    bool     WorkCert              = 18;
+    bool     IsOrg                 = 19;
+    bool     IsVIP                 = 20;
+    int64    CreatedAt             = 21;
+    int64    UpdatedAt             = 22;
+}
+
+message AllAccountsResp {
+    repeated DBAccount Items = 1;
+}
+
 
 service Account {
+    rpc AllAccounts(EmptyStruct) returns (AllAccountsResp);
+
+    rpc AccountInfo(AidReq) returns (DBAccount);
+
     rpc MemberInfo(AidReq) returns (MemberInfoReply);
 
     rpc SelfProfileInfo(AidReq) returns (SelfProfile);

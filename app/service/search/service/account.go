@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/url"
 	"strconv"
+	account "valerian/app/service/account/api"
 	"valerian/app/service/feed/def"
 	"valerian/app/service/search/model"
 	"valerian/library/ecode"
@@ -23,8 +24,8 @@ func (p *Service) onAccountAdded(m *stan.Msg) {
 		return
 	}
 
-	var v *model.Account
-	if v, err = p.d.GetAccountByID(c, p.d.DB(), info.AccountID); err != nil {
+	var v *account.DBAccount
+	if v, err = p.d.GetAccountInfo(c, info.AccountID); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onAccountAdded GetAccountByID failed %#v", err))
 		return
 	} else if v == nil {
@@ -73,9 +74,9 @@ func (p *Service) onAccountUpdated(m *stan.Msg) {
 		return
 	}
 
-	var v *model.Account
-	if v, err = p.d.GetAccountByID(c, p.d.DB(), info.AccountID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onAccountUpdated GetAccountByID failed %#v", err))
+	var v *account.DBAccount
+	if v, err = p.d.GetAccountInfo(c, info.AccountID); err != nil {
+		log.For(c).Error(fmt.Sprintf("service.onAccountAdded GetAccountByID failed %#v", err))
 		return
 	} else if v == nil {
 		return
@@ -151,13 +152,13 @@ func (p *Service) AccountSearch(c context.Context, arg *model.AccountSearchParam
 			return
 		}
 
-		var stat *model.AccountStat
-		if stat, err = p.d.GetAccountStatByID(c, p.d.DB(), acc.ID); err != nil {
+		var stat *account.AccountStatInfo
+		if stat, err = p.d.GetAccountStat(c, acc.ID); err != nil {
 			return
 		}
 
-		acc.FansCount = int(stat.Fans)
-		acc.FollowingCount = int(stat.Following)
+		acc.FansCount = (stat.FansCount)
+		acc.FollowingCount = (stat.FollowingCount)
 
 		resp.Data = append(resp.Data, acc)
 	}

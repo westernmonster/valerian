@@ -182,6 +182,10 @@ func (p *Service) getLocationString(c context.Context, nodeID int64) (locationSt
 	return
 }
 
+func (p *Service) GetAccountByID(c context.Context, aid int64) (account *model.Account, err error) {
+	return p.getAccountByID(c, aid)
+}
+
 func (p *Service) getAccountByID(c context.Context, aid int64) (account *model.Account, err error) {
 	var needCache = true
 
@@ -204,4 +208,8 @@ func (p *Service) getAccountByID(c context.Context, aid int64) (account *model.A
 		})
 	}
 	return
+}
+
+func (p *Service) GetAllAccounts(c context.Context) (items []*model.Account, err error) {
+	return p.d.GetAccounts(c, p.d.DB())
 }

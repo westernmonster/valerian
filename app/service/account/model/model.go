@@ -10,14 +10,14 @@ type Account struct {
 	Password     string        `db:"password" json:"password"`                   // Password 密码hash
 	Role         string        `db:"role" json:"role"`                           // Role 角色
 	Salt         string        `db:"salt" json:"salt"`                           // Salt 盐
-	Gender       int           `db:"gender" json:"gender,omitempty"`             // Gender 性别
-	BirthYear    int           `db:"birth_year" json:"birth_year,omitempty"`     // BirthYear 出生年
-	BirthMonth   int           `db:"birth_month" json:"birth_month,omitempty"`   // BirthMonth 出生月
-	BirthDay     int           `db:"birth_day" json:"birth_day,omitempty"`       // BirthDay 出生日
+	Gender       int32         `db:"gender" json:"gender,omitempty"`             // Gender 性别
+	BirthYear    int32         `db:"birth_year" json:"birth_year,omitempty"`     // BirthYear 出生年
+	BirthMonth   int32         `db:"birth_month" json:"birth_month,omitempty"`   // BirthMonth 出生月
+	BirthDay     int32         `db:"birth_day" json:"birth_day,omitempty"`       // BirthDay 出生日
 	Location     int64         `db:"location" json:"location,omitempty,string"`  // Location 地区
 	Introduction string        `db:"introduction" json:"introduction,omitempty"` // Introduction 自我介绍
 	Avatar       string        `db:"avatar" json:"avatar"`                       // Avatar 头像
-	Source       int           `db:"source" json:"source"`                       // Source 注册来源
+	Source       int32         `db:"source" json:"source"`                       // Source 注册来源
 	IP           int64         `db:"ip" json:"ip,string"`                        // IP 注册IP
 	IDCert       types.BitBool `db:"id_cert" json:"id_cert"`                     // IDCert 是否身份认证
 	WorkCert     types.BitBool `db:"work_cert" json:"work_cert"`                 // WorkCert 是否工作认证
@@ -30,12 +30,12 @@ type Account struct {
 
 type AccountStat struct {
 	AccountID       int64 `db:"account_id" json:"account_id,string"`      // AccountID 用户ID
-	Following       int   `db:"following" json:"following"`               // Following 关注数
-	Fans            int   `db:"fans" json:"fans"`                         // Fans 粉丝数
-	ArticleCount    int   `db:"article_count" json:"article_count"`       // ArticleCount 文章数
-	DiscussionCount int   `db:"discussion_count" json:"discussion_count"` // DiscussionCount 讨论数
-	TopicCount      int   `db:"topic_count" json:"topic_count"`           // TopicCount 讨论数
-	Black           int   `db:"black" json:"black"`                       // Black 黑名单数
+	Following       int32 `db:"following" json:"following"`               // Following 关注数
+	Fans            int32 `db:"fans" json:"fans"`                         // Fans 粉丝数
+	ArticleCount    int32 `db:"article_count" json:"article_count"`       // ArticleCount 文章数
+	DiscussionCount int32 `db:"discussion_count" json:"discussion_count"` // DiscussionCount 讨论数
+	TopicCount      int32 `db:"topic_count" json:"topic_count"`           // TopicCount 讨论数
+	Black           int32 `db:"black" json:"black"`                       // Black 黑名单数
 	CreatedAt       int64 `db:"created_at" json:"created_at"`             // CreatedAt 创建时间
 	UpdatedAt       int64 `db:"updated_at" json:"updated_at"`             // UpdatedAt 更新时间
 }

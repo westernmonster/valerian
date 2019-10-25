@@ -39,6 +39,45 @@ type server struct {
 	svr *service.Service
 }
 
+func (s *server) AllAccounts(ctx context.Context, req *api.EmptyStruct) (*api.AllAccountsResp, error) {
+	items, err := s.svr.GetAllAccounts(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &api.AllAccountsResp{
+		Items: make([]*api.DBAccount, len(items)),
+	}
+
+	for i, v := range items {
+		item := &api.DBAccount{
+			ID:           v.ID,
+			Mobile:       v.Mobile,
+			Email:        v.Email,
+			UserName:     v.UserName,
+			Role:         v.Role,
+			Gender:       v.Gender,
+			BirthYear:    v.BirthYear,
+			BirthMonth:   v.BirthMonth,
+			BirthDay:     v.BirthDay,
+			Location:     v.Location,
+			Introduction: v.Introduction,
+			Avatar:       v.Avatar,
+			Source:       int32(v.Source),
+			IP:           v.IP,
+			IDCert:       bool(v.IDCert),
+			WorkCert:     bool(v.WorkCert),
+			IsOrg:        bool(v.IsOrg),
+			IsVIP:        bool(v.IsVIP),
+			CreatedAt:    v.CreatedAt,
+			UpdatedAt:    v.UpdatedAt,
+		}
+		resp.Items[i] = item
+	}
+
+	return resp, nil
+}
+
 func (s *server) SelfProfileInfo(ctx context.Context, req *api.AidReq) (*api.SelfProfile, error) {
 	resp, err := s.svr.GetSelfProfile(ctx, req.Aid)
 	if err != nil {
@@ -83,6 +122,38 @@ func (s *server) MemberInfo(ctx context.Context, req *api.AidReq) (*api.MemberIn
 	reply.Stat = statInfo
 
 	return reply, nil
+}
+
+func (s *server) AccountInfo(ctx context.Context, req *api.AidReq) (*api.DBAccount, error) {
+	v, err := s.svr.GetAccountByID(ctx, req.Aid)
+	if err != nil {
+		return nil, err
+	}
+
+	item := &api.DBAccount{
+		ID:           v.ID,
+		Mobile:       v.Mobile,
+		Email:        v.Email,
+		UserName:     v.UserName,
+		Role:         v.Role,
+		Gender:       v.Gender,
+		BirthYear:    v.BirthYear,
+		BirthMonth:   v.BirthMonth,
+		BirthDay:     v.BirthDay,
+		Location:     v.Location,
+		Introduction: v.Introduction,
+		Avatar:       v.Avatar,
+		Source:       int32(v.Source),
+		IP:           v.IP,
+		IDCert:       bool(v.IDCert),
+		WorkCert:     bool(v.WorkCert),
+		IsOrg:        bool(v.IsOrg),
+		IsVIP:        bool(v.IsVIP),
+		CreatedAt:    v.CreatedAt,
+		UpdatedAt:    v.UpdatedAt,
+	}
+
+	return item, nil
 }
 
 func (s *server) BasicInfo(ctx context.Context, req *api.AidReq) (*api.BaseInfoReply, error) {
