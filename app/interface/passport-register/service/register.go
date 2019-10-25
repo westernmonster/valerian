@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"valerian/app/interface/passport-register/model"
+	account "valerian/app/service/account/api"
 	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
 	"valerian/library/gid"
@@ -252,45 +253,61 @@ func (p *Service) loginAccount(c context.Context, id int64, clientID string) (re
 
 }
 
-func (p *Service) GetProfile(c context.Context, accountID int64) (profile *model.Profile, err error) {
-	var item *model.Account
-	if item, err = p.d.GetAccountByID(c, p.d.DB(), accountID); err != nil {
-		return
-	} else if item == nil {
-		err = ecode.UserNotExist
+func (p *Service) GetProfile(c context.Context, aid int64) (item *model.Profile, err error) {
+	var profile *account.SelfProfile
+	if profile, err = p.d.GetSelfProfile(c, aid); err != nil {
 		return
 	}
 
-	profile = &model.Profile{
-		ID:           item.ID,
-		Mobile:       item.Mobile,
-		Email:        item.Email,
-		Gender:       item.Gender,
-		BirthYear:    item.BirthYear,
-		BirthMonth:   item.BirthMonth,
-		BirthDay:     item.BirthDay,
-		Location:     item.Location,
-		Introduction: item.Introduction,
-		Avatar:       item.Avatar,
-		Source:       item.Source,
-		IDCert:       bool(item.IDCert),
-		WorkCert:     bool(item.WorkCert),
-		IsOrg:        bool(item.IsOrg),
-		IsVIP:        bool(item.IsVIP),
-		Role:         item.Role,
-		UserName:     item.UserName,
-		CreatedAt:    item.CreatedAt,
-		UpdatedAt:    item.UpdatedAt,
+	item = &model.Profile{
+		ID:             profile.ID,
+		Mobile:         profile.Mobile,
+		Email:          profile.Email,
+		UserName:       profile.UserName,
+		Gender:         int(profile.Gender),
+		BirthYear:      int(profile.BirthYear),
+		BirthMonth:     int(profile.BirthMonth),
+		BirthDay:       int(profile.BirthDay),
+		Location:       profile.Location,
+		LocationString: profile.LocationString,
+		Introduction:   profile.Introduction,
+		Avatar:         profile.Avatar,
+		Source:         int(profile.Source),
+		IDCert:         profile.IDCert,
+		IDCertStatus:   int(profile.IDCertStatus),
+		WorkCert:       profile.WorkCert,
+		WorkCertStatus: int(profile.WorkCertStatus),
+		IsOrg:          profile.IsOrg,
+		IsVIP:          profile.IsVIP,
+		Role:           profile.Role,
+		CreatedAt:      profile.CreatedAt,
+		UpdatedAt:      profile.UpdatedAt,
 	}
 
-	profile.IP = InetNtoA(item.IP)
+	item.Stat = &model.ProfileStat{
+		FansCount:       int(profile.Stat.FansCount),
+		FollowingCount:  int(profile.Stat.FollowingCount),
+		TopicCount:      int(profile.Stat.TopicCount),
+		ArticleCount:    int(profile.Stat.ArticleCount),
+		DiscussionCount: int(profile.Stat.DiscussionCount),
+	}
 
-	if item.Location != 0 {
-		if v, e := p.GetLocationString(c, item.Location); e != nil {
-			return nil, e
-		} else {
-			profile.LocationString = v
-		}
+	item.Settings = &model.SettingResp{
+		Activity: model.ActivitySettingResp{
+			Like:         profile.Setting.ActivityLike,
+			Comment:      profile.Setting.ActivityComment,
+			FollowTopic:  profile.Setting.ActivityFollowTopic,
+			FollowMember: profile.Setting.ActivityFollowMember,
+		},
+		Notify: model.NotifySettingResp{
+			Like:      profile.Setting.NotifyLike,
+			Comment:   profile.Setting.NotifyComment,
+			NewFans:   profile.Setting.NotifyNewFans,
+			NewMember: profile.Setting.NotifyNewMember,
+		},
+		Language: model.LanguageSettingResp{
+			Language: profile.Setting.Language,
+		},
 	}
 
 	return

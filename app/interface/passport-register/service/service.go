@@ -2,9 +2,11 @@ package service
 
 import (
 	"context"
+
 	"valerian/app/interface/passport-register/conf"
 	"valerian/app/interface/passport-register/dao"
 	"valerian/app/interface/passport-register/model"
+	account "valerian/app/service/account/api"
 	"valerian/library/conf/env"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
@@ -49,6 +51,11 @@ type Service struct {
 		GetMessageStatByID(c context.Context, node sqalx.Node, aid int64) (item *model.MessageStat, err error)
 
 		AddAccountStat(c context.Context, node sqalx.Node, item *model.AccountStat) (err error)
+
+		GetAccountBaseInfo(c context.Context, aid int64) (info *account.BaseInfoReply, err error)
+		GetMemberInfo(c context.Context, aid int64) (info *account.MemberInfoReply, err error)
+		GetSelfProfile(c context.Context, aid int64) (info *account.SelfProfile, err error)
+		GetAccountStat(c context.Context, aid int64) (info *account.AccountStatInfo, err error)
 
 		MobileValcodeCache(c context.Context, vtype int, mobile string) (code string, err error)
 		DelMobileValcodeCache(c context.Context, vtype int, mobile string) (err error)

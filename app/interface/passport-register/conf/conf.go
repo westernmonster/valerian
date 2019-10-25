@@ -12,6 +12,7 @@ import (
 	"valerian/library/mq"
 	"valerian/library/naming/discovery"
 	"valerian/library/net/http/mars"
+	"valerian/library/net/rpc/warden"
 	xtime "valerian/library/time"
 	"valerian/library/tracing"
 
@@ -25,13 +26,14 @@ var (
 )
 
 type Config struct {
-	DC        *DC
-	Log       *log.Config
-	Mars      *mars.ServerConfig
-	Tracer    *tracing.Config
-	DB        *DB
-	Memcache  *Memcache
-	Discovery *discovery.Config
+	DC         *DC
+	Log        *log.Config
+	Mars       *mars.ServerConfig
+	Tracer     *tracing.Config
+	DB         *DB
+	Memcache   *Memcache
+	Discovery  *discovery.Config
+	AccountRPC *warden.ClientConfig
 
 	Nats *mq.Config
 }

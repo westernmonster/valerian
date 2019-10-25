@@ -6,9 +6,12 @@ import (
 	"time"
 
 	"valerian/app/interface/passport-register/conf"
+	account "valerian/app/service/account/api"
 	"valerian/library/cache/memcache"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
+
+	"github.com/pkg/errors"
 )
 
 // Dao dao struct
@@ -20,6 +23,7 @@ type Dao struct {
 	authMC       *memcache.Pool
 	authMCExpire int32
 	c            *conf.Config
+	accountRPC   account.AccountClient
 }
 
 func New(c *conf.Config) (dao *Dao) {
@@ -31,6 +35,12 @@ func New(c *conf.Config) (dao *Dao) {
 		authMCExpire: int32(time.Duration(c.Memcache.Auth.Expire) / time.Second),
 		mc:           memcache.NewPool(c.Memcache.Main.Config),
 		mcExpire:     int32(time.Duration(c.Memcache.Main.Expire) / time.Second),
+	}
+
+	if accountRPC, err := account.NewClient(c.AccountRPC); err != nil {
+		panic(errors.WithMessage(err, "Failed to dial account service"))
+	} else {
+		dao.accountRPC = accountRPC
 	}
 	return
 }
