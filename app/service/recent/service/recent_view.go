@@ -6,6 +6,7 @@ import (
 
 	"valerian/app/service/feed/def"
 	"valerian/app/service/recent/model"
+	"valerian/library/ecode"
 	"valerian/library/gid"
 	"valerian/library/log"
 
@@ -31,6 +32,9 @@ func (p *Service) onArticleViewed(m *stan.Msg) {
 
 	if _, err = p.d.GetArticle(c, info.ArticleID); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onArticleViewed GetArticle failed %#v", err))
+		if ecode.Cause(err) == ecode.ArticleNotExist {
+			m.Ack()
+		}
 		return
 	}
 
@@ -41,6 +45,7 @@ func (p *Service) onArticleViewed(m *stan.Msg) {
 	}); err != nil {
 		return
 	} else if data != nil {
+		m.Ack()
 		return
 	}
 
@@ -69,6 +74,9 @@ func (p *Service) onTopicViewed(m *stan.Msg) {
 
 	if _, err = p.d.GetTopic(c, info.TopicID); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onTopicViewed GetTopic failed %#v", err))
+		if ecode.Cause(err) == ecode.TopicNotExist {
+			m.Ack()
+		}
 		return
 	}
 
@@ -79,6 +87,7 @@ func (p *Service) onTopicViewed(m *stan.Msg) {
 	}); err != nil {
 		return
 	} else if data != nil {
+		m.Ack()
 		return
 	}
 
