@@ -19,7 +19,7 @@ import (
 // @Param sort query string true "hot,recent"
 // @Param limit query integer false "每页大小"
 // @Param offset query integer false "offset"
-// @Success 200 {object} model.ReviseListResp "补充列表"
+// @Success 200 {object}  app.interface.article.model.ReviseListResp "补充列表"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
@@ -78,7 +78,7 @@ func getRevises(c *mars.Context) {
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArgAddRevise true "请求"
+// @Param req body  app.interface.article.model.ArgAddRevise true "请求"
 // @Success 200 "成功,返回revise_id"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
@@ -110,7 +110,7 @@ func addRevise(c *mars.Context) {
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArgDelete true "请求"
+// @Param req body  app.interface.article.model.ArgDelete true "请求"
 // @Success 200 "成功,返回revise_id"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
@@ -138,7 +138,7 @@ func delRevise(c *mars.Context) {
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArgUpdateRevise true "请求"
+// @Param req body  app.interface.article.model.ArgUpdateRevise true "请求"
 // @Success 200 "成功,返回revise_id"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
@@ -167,7 +167,7 @@ func updateRevise(c *mars.Context) {
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param id query string true "id"
-// @Success 200 {object} model.ReviseDetailResp "补充列表"
+// @Success 200 {object}  app.interface.article.model.ReviseDetailResp "补充列表"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"

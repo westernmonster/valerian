@@ -13,7 +13,7 @@ import (
 // @Produce json
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body  app.interface.topic.model.ArgEmailValcode true "请求"
+// @Param req body  app.interface.valcode.model.ArgEmailValcode true "请求"
 // @Success 200 "成功"
 // @Failure 1  "60秒下发一次验证码"
 // @Failure 400 "验证请求失败"
@@ -40,7 +40,7 @@ func emailValcode(c *mars.Context) {
 // @Produce json
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body  app.interface.topic.model.ArgMobileValcode true "请求"
+// @Param req body  app.interface.valcode.model.ArgMobileValcode true "请求"
 // @Success 200 "成功"
 // @Failure 1  "60秒下发一次验证码"
 // @Failure 400 "验证请求失败"

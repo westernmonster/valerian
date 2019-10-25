@@ -15,7 +15,7 @@ import (
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArgAddArticleRelation true "请求"
+// @Param req body  app.interface.article.model.ArgAddArticleRelation true "请求"
 // @Success 200 "成功"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
@@ -43,7 +43,7 @@ func addArticleRelation(c *mars.Context) {
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArgUpdateArticleRelation true "请求"
+// @Param req body  app.interface.article.model.ArgUpdateArticleRelation true "请求"
 // @Success 200 "成功"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
@@ -71,7 +71,7 @@ func editArticleRelation(c *mars.Context) {
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArgDelArticleRelation true "请求"
+// @Param req body  app.interface.article.model.ArgDelArticleRelation true "请求"
 // @Success 200 "成功"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
@@ -99,7 +99,7 @@ func delArticleRelation(c *mars.Context) {
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArgSetPrimaryArticleRelation true "请求"
+// @Param req body  app.interface.article.model.ArgSetPrimaryArticleRelation true "请求"
 // @Success 200 "成功"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
@@ -128,7 +128,7 @@ func setArticleRelationPrimary(c *mars.Context) {
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param article_id query string true "文章ID"
-// @Success 200 {array} model.ArticleRelationResp "关联话题"
+// @Success 200 {array}  app.interface.article.model.ArticleRelationResp "关联话题"
 // @Failure 400 "请求验证失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
