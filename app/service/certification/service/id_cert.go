@@ -138,14 +138,7 @@ func (p *Service) RefreshIDCertStatus(c context.Context, aid int64) (status int,
 	}
 
 	if item.Status == model.IDCertificationSuccess {
-		var acc *model.Account
-		if acc, err = p.getAccountByID(c, tx, item.AccountID); err != nil {
-			return
-		}
-
-		acc.IDCert = true
-
-		if err = p.d.UpdateAccount(c, tx, acc); err != nil {
+		if err = p.d.UpdateAccountIDCert(c, tx, aid, true); err != nil {
 			return
 		}
 	}
@@ -186,30 +179,6 @@ func (p *Service) getIDCertByID(c context.Context, node sqalx.Node, aid int64) (
 	if needCache {
 		p.addCache(func() {
 			p.d.SetIDCertCache(context.TODO(), item)
-		})
-	}
-	return
-}
-
-func (p *Service) getAccountByID(c context.Context, node sqalx.Node, aid int64) (account *model.Account, err error) {
-	var needCache = true
-
-	if account, err = p.d.AccountCache(c, aid); err != nil {
-		needCache = false
-	} else if account != nil {
-		return
-	}
-
-	if account, err = p.d.GetAccountByID(c, node, aid); err != nil {
-		return
-	} else if account == nil {
-		err = ecode.UserNotExist
-		return
-	}
-
-	if needCache {
-		p.addCache(func() {
-			p.d.SetAccountCache(context.TODO(), account)
 		})
 	}
 	return

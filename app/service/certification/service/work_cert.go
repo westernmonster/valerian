@@ -110,14 +110,7 @@ func (p *Service) AuditWorkCert(c context.Context, arg *model.ArgAuditWorkCert) 
 
 	if arg.Approve {
 		item.Status = model.WorkCertificationSuccess
-		var acc *model.Account
-		if acc, err = p.getAccountByID(c, tx, arg.AccountID); err != nil {
-			return
-		}
-
-		acc.WorkCert = true
-
-		if err = p.d.UpdateAccount(c, tx, acc); err != nil {
+		if err = p.d.UpdateAccountWorkCert(c, tx, arg.AccountID, true); err != nil {
 			return
 		}
 	} else {
@@ -134,6 +127,10 @@ func (p *Service) AuditWorkCert(c context.Context, arg *model.ArgAuditWorkCert) 
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 		return
 	}
+
+	p.addCache(func() {
+		p.d.DelAccountCache(context.TODO(), item.AccountID)
+	})
 
 	return
 }

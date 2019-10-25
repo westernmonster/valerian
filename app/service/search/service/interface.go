@@ -36,6 +36,11 @@ type IDao interface {
 	GetArticleByID(c context.Context, node sqalx.Node, id int64) (item *model.Article, err error)
 	GetDiscussionByID(c context.Context, node sqalx.Node, id int64) (item *model.Discussion, err error)
 
+	AccountSearch(c context.Context, arg *model.AccountSearchParams) (res *model.SearchResult, err error)
+	TopicSearch(c context.Context, arg *model.TopicSearchParams) (res *model.SearchResult, err error)
+	ArticleSearch(c context.Context, arg *model.ArticleSearchParams) (res *model.SearchResult, err error)
+	DiscussionSearch(c context.Context, arg *model.DiscussionSearchParams) (res *model.SearchResult, err error)
+
 	Ping(c context.Context) (err error)
 	Close()
 	DB() sqalx.Node

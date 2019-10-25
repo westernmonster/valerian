@@ -23,8 +23,8 @@ type IDao interface {
 	UpdateWorkCertification(c context.Context, node sqalx.Node, item *model.WorkCertification) (err error)
 	DelWorkCertification(c context.Context, node sqalx.Node, id int64) (err error)
 
-	GetAccountByID(c context.Context, node sqalx.Node, id int64) (item *model.Account, err error)
-	UpdateAccount(c context.Context, node sqalx.Node, item *model.Account) (err error)
+	UpdateAccountIDCert(c context.Context, node sqalx.Node, aid int64, idCert bool) (err error)
+	UpdateAccountWorkCert(c context.Context, node sqalx.Node, aid int64, workCert bool) (err error)
 
 	AccountCache(c context.Context, accountID int64) (m *model.Account, err error)
 	SetAccountCache(c context.Context, m *model.Account) (err error)
