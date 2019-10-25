@@ -6,6 +6,7 @@ import (
 	"valerian/app/service/account-feed/model"
 	article "valerian/app/service/article/api"
 	"valerian/app/service/feed/def"
+	"valerian/library/ecode"
 	"valerian/library/gid"
 	"valerian/library/log"
 
@@ -22,6 +23,9 @@ func (p *Service) onReviseAdded(m *stan.Msg) {
 
 	var article *article.ReviseInfo
 	if article, err = p.d.GetRevise(context.Background(), info.ReviseID); err != nil {
+		if ecode.Cause(err) == ecode.ReviseNotExist {
+			m.Ack()
+		}
 		return
 	}
 
@@ -55,6 +59,9 @@ func (p *Service) onReviseUpdated(m *stan.Msg) {
 
 	var article *article.ReviseInfo
 	if article, err = p.d.GetRevise(context.Background(), info.ReviseID); err != nil {
+		if ecode.Cause(err) == ecode.ArticleNotExist {
+			m.Ack()
+		}
 		return
 	}
 
@@ -88,6 +95,9 @@ func (p *Service) onReviseLiked(m *stan.Msg) {
 
 	var revise *article.ReviseInfo
 	if revise, err = p.d.GetRevise(context.Background(), info.ReviseID); err != nil {
+		if ecode.Cause(err) == ecode.ArticleNotExist {
+			m.Ack()
+		}
 		return
 	}
 
@@ -121,6 +131,9 @@ func (p *Service) onReviseFaved(m *stan.Msg) {
 
 	var revise *article.ReviseInfo
 	if revise, err = p.d.GetRevise(context.Background(), info.ReviseID); err != nil {
+		if ecode.Cause(err) == ecode.ReviseNotExist {
+			m.Ack()
+		}
 		return
 	}
 

@@ -7,6 +7,7 @@ import (
 	"valerian/app/service/account-feed/model"
 	account "valerian/app/service/account/api"
 	"valerian/app/service/feed/def"
+	"valerian/library/ecode"
 	"valerian/library/gid"
 	"valerian/library/log"
 
@@ -23,7 +24,9 @@ func (p *Service) onMemberFollowed(m *stan.Msg) {
 
 	var member *account.BaseInfoReply
 	if member, err = p.d.GetAccountBaseInfo(context.Background(), info.TargetAccountID); err != nil {
-		m.Ack()
+		if ecode.Cause(err) == ecode.UserNotExist {
+			m.Ack()
+		}
 		return
 	}
 

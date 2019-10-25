@@ -6,6 +6,7 @@ import (
 	"valerian/app/service/account-feed/model"
 	article "valerian/app/service/article/api"
 	"valerian/app/service/feed/def"
+	"valerian/library/ecode"
 	"valerian/library/gid"
 	"valerian/library/log"
 
@@ -22,6 +23,9 @@ func (p *Service) onArticleAdded(m *stan.Msg) {
 
 	var article *article.ArticleInfo
 	if article, err = p.d.GetArticle(context.Background(), info.ArticleID); err != nil {
+		if ecode.Cause(err) == ecode.ArticleNotExist {
+			m.Ack()
+		}
 		return
 	}
 
@@ -55,6 +59,9 @@ func (p *Service) onArticleUpdated(m *stan.Msg) {
 
 	var article *article.ArticleInfo
 	if article, err = p.d.GetArticle(context.Background(), info.ArticleID); err != nil {
+		if ecode.Cause(err) == ecode.ArticleNotExist {
+			m.Ack()
+		}
 		return
 	}
 
@@ -88,6 +95,9 @@ func (p *Service) onArticleLiked(m *stan.Msg) {
 
 	var article *article.ArticleInfo
 	if article, err = p.d.GetArticle(context.Background(), info.ArticleID); err != nil {
+		if ecode.Cause(err) == ecode.ArticleNotExist {
+			m.Ack()
+		}
 		return
 	}
 
@@ -121,6 +131,9 @@ func (p *Service) onArticleFavd(m *stan.Msg) {
 
 	var article *article.ArticleInfo
 	if article, err = p.d.GetArticle(context.Background(), info.ArticleID); err != nil {
+		if ecode.Cause(err) == ecode.ArticleNotExist {
+			m.Ack()
+		}
 		return
 	}
 

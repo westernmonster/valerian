@@ -6,6 +6,7 @@ import (
 	"valerian/app/service/account-feed/model"
 	"valerian/app/service/feed/def"
 	topic "valerian/app/service/topic/api"
+	"valerian/library/ecode"
 	"valerian/library/gid"
 	"valerian/library/log"
 
@@ -22,6 +23,9 @@ func (p *Service) onTopicAdded(m *stan.Msg) {
 
 	var topic *topic.TopicInfo
 	if topic, err = p.d.GetTopic(context.Background(), info.TopicID); err != nil {
+		if ecode.Cause(err) == ecode.TopicNotExist {
+			m.Ack()
+		}
 		return
 	}
 
@@ -55,6 +59,9 @@ func (p *Service) onTopicFollowed(m *stan.Msg) {
 
 	var topic *topic.TopicInfo
 	if topic, err = p.d.GetTopic(context.Background(), info.TopicID); err != nil {
+		if ecode.Cause(err) == ecode.TopicNotExist {
+			m.Ack()
+		}
 		return
 	}
 

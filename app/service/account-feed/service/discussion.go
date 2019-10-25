@@ -6,6 +6,7 @@ import (
 	"valerian/app/service/account-feed/model"
 	discuss "valerian/app/service/discuss/api"
 	"valerian/app/service/feed/def"
+	"valerian/library/ecode"
 	"valerian/library/gid"
 	"valerian/library/log"
 
@@ -22,6 +23,9 @@ func (p *Service) onDiscussionAdded(m *stan.Msg) {
 
 	var discuss *discuss.DiscussionInfo
 	if discuss, err = p.d.GetDiscussion(context.Background(), info.DiscussionID); err != nil {
+		if ecode.Cause(err) == ecode.DiscussionNotExist {
+			m.Ack()
+		}
 		return
 	}
 
@@ -55,6 +59,9 @@ func (p *Service) onDiscussionUpdated(m *stan.Msg) {
 
 	var discuss *discuss.DiscussionInfo
 	if discuss, err = p.d.GetDiscussion(context.Background(), info.DiscussionID); err != nil {
+		if ecode.Cause(err) == ecode.DiscussionNotExist {
+			m.Ack()
+		}
 		return
 	}
 
@@ -88,6 +95,9 @@ func (p *Service) onDiscussionLiked(m *stan.Msg) {
 
 	var discuss *discuss.DiscussionInfo
 	if discuss, err = p.d.GetDiscussion(context.Background(), info.DiscussionID); err != nil {
+		if ecode.Cause(err) == ecode.DiscussionNotExist {
+			m.Ack()
+		}
 		return
 	}
 
@@ -121,6 +131,9 @@ func (p *Service) onDiscussionFaved(m *stan.Msg) {
 
 	var discuss *discuss.DiscussionInfo
 	if discuss, err = p.d.GetDiscussion(context.Background(), info.DiscussionID); err != nil {
+		if ecode.Cause(err) == ecode.ArticleNotExist {
+			m.Ack()
+		}
 		return
 	}
 
