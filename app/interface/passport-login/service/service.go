@@ -6,6 +6,7 @@ import (
 	"valerian/app/interface/passport-login/conf"
 	"valerian/app/interface/passport-login/dao"
 	"valerian/app/interface/passport-login/model"
+	account "valerian/app/service/account/api"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
 )
@@ -37,6 +38,11 @@ type Service struct {
 		GetAccountByID(c context.Context, node sqalx.Node, id int64) (item *model.Account, err error)
 		GetAccountByEmail(c context.Context, node sqalx.Node, email string) (item *model.Account, err error)
 		GetAccountByMobile(c context.Context, node sqalx.Node, mobile string) (item *model.Account, err error)
+
+		GetAccountBaseInfo(c context.Context, aid int64) (info *account.BaseInfoReply, err error)
+		GetMemberInfo(c context.Context, aid int64) (info *account.MemberInfoReply, err error)
+		GetSelfProfile(c context.Context, aid int64) (info *account.SelfProfile, err error)
+		GetAccountStat(c context.Context, aid int64) (info *account.AccountStatInfo, err error)
 
 		AccessTokenCache(c context.Context, token string) (res *model.AccessToken, err error)
 		SetAccessTokenCache(c context.Context, m *model.AccessToken) (err error)

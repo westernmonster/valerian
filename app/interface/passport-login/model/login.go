@@ -198,7 +198,6 @@ type LoginResp struct {
 	Profile *Profile `json:"profile"`
 }
 
-// 用户资料
 type Profile struct {
 	// ID
 	ID int64 `json:"id,string" swaggertype:"string" format:"int64"`
@@ -233,8 +232,18 @@ type Profile struct {
 	// 是否身份认证
 	IDCert bool `json:"id_cert"`
 
+	// 状态：-1 未认证, 0 认证中,  1 认证成功, 2 认证失败
+	IDCertStatus int `json:"id_cert_status"`
+
 	// 是否工作认证
 	WorkCert bool `json:"work_cert"`
+
+	// 工作认证状态
+	// -1 未认证
+	// 0 审核中
+	// 1 通过审核
+	// 2 审核失败
+	WorkCertStatus int `json:"work_cert_status"`
 
 	// 是否机构用户
 	IsOrg bool `json:"is_org"`
@@ -247,4 +256,63 @@ type Profile struct {
 	CreatedAt int64 `json:"created_at"`
 	// 更新时间
 	UpdatedAt int64 `json:"updated_at"`
+
+	// 状态
+	Stat *ProfileStat `json:"stat"`
+
+	// 设置
+	Settings *SettingResp `json:"settings"`
+}
+
+type ProfileStat struct {
+
+	// 关注数
+	FollowingCount int `json:"following_count"`
+
+	// 粉丝数
+	FansCount int `json:"fans_count"`
+
+	// 话题数
+	TopicCount int `json:"topic_count"`
+
+	// 文章数
+	ArticleCount int `json:"article_count"`
+
+	// 讨论数
+	DiscussionCount int `json:"discussion_count"`
+}
+
+type ActivitySettingResp struct {
+	// 赞
+	Like bool `json:"like"`
+	// 评论
+	Comment bool `json:"comment"`
+	// 关注话题
+	FollowTopic bool `json:"follow_topic"`
+	// 关注成员
+	FollowMember bool `json:"follow_member"`
+}
+
+type NotifySettingResp struct {
+	// 赞
+	Like bool `json:"like"`
+	// 评论
+	Comment bool `json:"comment"`
+	// 新粉丝
+	NewFans bool `json:"new_fans"`
+	// 话题新成员
+	NewMember bool `json:"new_member"`
+}
+
+type LanguageSettingResp struct {
+	Language string `json:"language"`
+}
+
+type SettingResp struct {
+	// 动态设置
+	Activity ActivitySettingResp `json:"activity"`
+	// 通知设置
+	Notify NotifySettingResp `json:"notify"`
+	// 语言设置
+	Language LanguageSettingResp `json:"language"`
 }
