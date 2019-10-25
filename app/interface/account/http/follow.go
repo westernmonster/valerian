@@ -20,7 +20,7 @@ import (
 // @Param query query string true "查询条件"
 // @Param limit query integer false "每页大小"
 // @Param offset query integer false "offset"
-// @Success 200 {object} model.MemberResp "成员"
+// @Success 200 {object}  app.interface.account.model.MemberResp "成员"
 // @Failure 400 "请求验证失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
@@ -70,7 +70,7 @@ func fans(c *mars.Context) {
 // @Param query query string true "查询条件"
 // @Param limit query integer false "每页大小"
 // @Param offset query integer false "offset"
-// @Success 200 {object} model.MemberResp "成员"
+// @Success 200 {object}  app.interface.account.model.MemberResp "成员"
 // @Failure 400 "请求验证失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
@@ -116,7 +116,7 @@ func followed(c *mars.Context) {
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArgFollow true "请求"
+// @Param req body  app.interface.account.model.ArgFollow true "请求"
 // @Success 200 "成功revise_id"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
@@ -144,7 +144,7 @@ func follow(c *mars.Context) {
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArgUnfollow true "请求"
+// @Param req body  app.interface.account.model.ArgUnfollow true "请求"
 // @Success 200 "成功revise_id"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"

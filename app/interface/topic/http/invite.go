@@ -15,7 +15,7 @@ import (
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArgTopicInvite true "请求"
+// @Param req body  app.interface.topic.model.ArgTopicInvite true "请求"
 // @Success 200 "成功"
 // @Failure 18 "话题不存在"
 // @Failure 400 "验证请求失败"
@@ -44,7 +44,7 @@ func inviteFans(c *mars.Context) {
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArgProcessInvite true "请求"
+// @Param req body  app.interface.topic.model.ArgProcessInvite true "请求"
 // @Success 200  "返回关注状态"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
@@ -75,7 +75,7 @@ func processInvite(c *mars.Context) {
 // @Param query query string false "查询条件"
 // @Param limit query integer false "每页大小"
 // @Param offset query integer false "offset"
-// @Success 200 {object} model.TopicMemberFansResp "粉丝列表"
+// @Success 200 {object}  app.interface.topic.model.TopicMemberFansResp "粉丝列表"
 // @Failure 400 "请求验证失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"

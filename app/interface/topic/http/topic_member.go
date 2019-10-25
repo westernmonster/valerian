@@ -18,7 +18,7 @@ import (
 // @Param topic_id query string true "话题ID"
 // @Param page query integer true "页码"
 // @Param page_size query integer true "每页大小"
-// @Success 200 {object} model.TopicMembersPagedResp "话题成员"
+// @Success 200 {object}  app.interface.topic.model.TopicMembersPagedResp "话题成员"
 // @Failure 400 "请求验证失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
@@ -63,7 +63,7 @@ func topicMembers(c *mars.Context) {
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArgBatchSavedTopicMember true "请求"
+// @Param req body  app.interface.topic.model.ArgBatchSavedTopicMember true "请求"
 // @Success 200 "成功"
 // @Failure 18 "话题不存在"
 // @Failure 400 "验证请求失败"
@@ -93,7 +93,7 @@ func editTopicMembers(c *mars.Context) {
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArgLeave true "请求"
+// @Param req body  app.interface.topic.model.ArgLeave true "请求"
 // @Success 200 "成功"
 // @Failure 68 "主理人不可退出，只可转让后再退出"
 // @Failure 34 "不是话题成员"

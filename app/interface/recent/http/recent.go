@@ -17,7 +17,7 @@ import (
 // @Param type query string true "类型：all,topic,article"
 // @Param limit query integer false "每页大小"
 // @Param offset query integer false "offset"
-// @Success 200 {object} model.RecentListResp "讨论列表"
+// @Success 200 {object}  app.interface.recent.model.RecentListResp "讨论列表"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"

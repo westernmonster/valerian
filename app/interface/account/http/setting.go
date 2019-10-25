@@ -13,7 +13,7 @@ import (
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArgActivitySetting true "请求"
+// @Param req body  app.interface.account.model.ArgActivitySetting true "请求"
 // @Success 200 "成功revise_id"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
@@ -36,7 +36,7 @@ func updateActivitySetting(c *mars.Context) {
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArgNotifySetting true "请求"
+// @Param req body  app.interface.account.model.ArgNotifySetting true "请求"
 // @Success 200 "成功revise_id"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
@@ -59,7 +59,7 @@ func updateNotifySetting(c *mars.Context) {
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArgLanguageSetting true "请求"
+// @Param req body  app.interface.account.model.ArgLanguageSetting true "请求"
 // @Success 200 "成功revise_id"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
@@ -83,7 +83,7 @@ func updateLanguage(c *mars.Context) {
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param article_id query string true "article_id"
-// @Success 200 {object} model.SettingResp "补充列表"
+// @Success 200 {object}  app.interface.account.model.SettingResp "补充列表"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"

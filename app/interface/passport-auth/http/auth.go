@@ -13,7 +13,7 @@ import (
 // @Produce json
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArgRenewToken true "请求"
+// @Param req body  app.interface.passport-auth.model.ArgRenewToken true "请求"
 // @Success 200 "成功"
 // @Failure 116 "Client 不存在"
 // @Failure 17 "RefreshToken 不存在或已过期"

@@ -17,7 +17,7 @@ import (
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param topic_id query string true "话题ID"
 // @Param include query string true  "ref_item"
-// @Success 200 {array} model.TopicLevel1Catalog "话题类目"
+// @Success 200 {array}  app.interface.topic.model.TopicLevel1Catalog "话题类目"
 // @Failure 400 "请求验证失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
@@ -46,7 +46,7 @@ func topicCatalogTaxonomies(c *mars.Context) {
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param topic_id query string true "话题ID"
 // @Param include query string true  "ref_item"
-// @Success 200 {array} model.TopicLevel1Catalog "话题类目"
+// @Success 200 {array}  app.interface.topic.model.TopicLevel1Catalog "话题类目"
 // @Failure 400 "请求验证失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
@@ -73,7 +73,7 @@ func topicCatalogs(c *mars.Context) {
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArgSaveTopicCatalog true "请求"
+// @Param req body  app.interface.topic.model.ArgSaveTopicCatalog true "请求"
 // @Success 200 "成功"
 // @Failure 400 "请求验证失败"
 // @Failure 401 "登录验证失败"

@@ -15,7 +15,7 @@ import (
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArgAddArticle true "请求"
+// @Param req body  app.interface.article.model.ArgAddArticle true "请求"
 // @Success 200 "成功,返回article_id"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
@@ -47,7 +47,7 @@ func addArticle(c *mars.Context) {
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArgUpdateArticle true "请求"
+// @Param req body  app.interface.article.model.ArgUpdateArticle true "请求"
 // @Success 200 "成功"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
@@ -94,7 +94,7 @@ func delArticle(c *mars.Context) {
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param id query string true "ID"
 // @Param include query string true  "目前支持：files,relations,histories,meta"
-// @Success 200 {object} model.ArticleResp "文章"
+// @Success 200 {object}  app.interface.article.model.ArticleResp "文章"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
@@ -124,7 +124,7 @@ func getArticle(c *mars.Context) {
 // @Param query query string true "查询条件"
 // @Param limit query integer false "每页大小"
 // @Param offset query integer false "offset"
-// @Success 200 {object} model.ArticleListResp "文章"
+// @Success 200 {object}  app.interface.article.model.ArticleListResp "文章"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"

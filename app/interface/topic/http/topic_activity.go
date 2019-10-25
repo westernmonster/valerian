@@ -17,7 +17,7 @@ import (
 // @Param topic_id query string true "topic_id"
 // @Param limit query integer false "每页大小"
 // @Param offset query integer false "offset"
-// @Success 200 {object} model.FeedResp "话题"
+// @Success 200 {object}  app.interface.topic.model.FeedResp "话题"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"

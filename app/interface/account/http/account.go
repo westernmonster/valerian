@@ -14,7 +14,7 @@ import (
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArgChangePassword true "请求"
+// @Param req body  app.interface.account.model.ArgChangePassword true "请求"
 // @Success 200 "成功"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
@@ -45,7 +45,7 @@ func changePassword(c *mars.Context) {
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param id query string true "ID"
 // @Param include query string true  "目前支持：settings"
-// @Success 200 {object} model.Profile "个人资料"
+// @Success 200 {object}  app.interface.account.model.Profile "个人资料"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
@@ -63,7 +63,7 @@ func getProfile(c *mars.Context) {
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArgUpdateProfile true "请求"
+// @Param req body  app.interface.account.model.ArgUpdateProfile true "请求"
 // @Success 200 "成功"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
@@ -87,7 +87,7 @@ func updateProfile(c *mars.Context) {
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArgForgetPassword true "请求"
+// @Param req body  app.interface.account.model.ArgForgetPassword true "请求"
 // @Success 200 "成功"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
@@ -115,7 +115,7 @@ func forgetPassword(c *mars.Context) {
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArgResetPassword true "请求"
+// @Param req body  app.interface.account.model.ArgResetPassword true "请求"
 // @Success 200 "成功"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"

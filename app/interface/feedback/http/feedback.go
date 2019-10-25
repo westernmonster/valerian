@@ -15,7 +15,7 @@ import (
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param type query string true "accuse_people,accuse_content,feedback"
-// @Success 200 {array} model.FeedbackTypeResp "反馈类型"
+// @Success 200 {array}  app.interface.feedback.model.FeedbackTypeResp "反馈类型"
 // @Failure 500 "服务器端错误"
 // @Router /list/feedback_types [get]
 func feedbackTypes(c *mars.Context) {
@@ -44,7 +44,7 @@ func feedbackTypes(c *mars.Context) {
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArgAddFeedback true "请求"
+// @Param req body  app.interface.feedback.model.ArgAddFeedback true "请求"
 // @Success 200 "成功"
 // @Failure 18 "话题不存在"
 // @Failure 400 "验证请求失败"

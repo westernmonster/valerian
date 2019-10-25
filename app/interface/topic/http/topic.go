@@ -16,7 +16,7 @@ import (
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArgCreateTopic true "请求"
+// @Param req body  app.interface.topic.model.ArgCreateTopic true "请求"
 // @Success 200 "成功,返回topic_id"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
@@ -49,7 +49,7 @@ func createTopic(c *mars.Context) {
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArgUpdateTopic true "请求"
+// @Param req body  app.interface.topic.model.ArgUpdateTopic true "请求"
 // @Success 200 "成功"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
@@ -77,7 +77,7 @@ func editTopic(c *mars.Context) {
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArgDelete true "请求"
+// @Param req body  app.interface.topic.model.ArgDelete true "请求"
 // @Success 200 "成功"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
@@ -107,7 +107,7 @@ func deleteTopic(c *mars.Context) {
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param id query string true "ID"
 // @Param include query string true  "目前支持：members,catalogs,auth_topics,catalogs,meta"
-// @Success 200 {object} model.TopicResp "话题"
+// @Success 200 {object}  app.interface.topic.model.TopicResp "话题"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
@@ -134,7 +134,7 @@ func getTopic(c *mars.Context) {
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArgChangeOwner true "请求"
+// @Param req body  app.interface.topic.model.ArgChangeOwner true "请求"
 // @Success 200 "成功"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
@@ -165,7 +165,7 @@ func changeOwner(c *mars.Context) {
 // @Param query query string true "查询条件"
 // @Param pn query integer false "页码 1开始"
 // @Param ps query integer false "每页大小"
-// @Success 200 {object} model.CanEditTopicsResp "成员"
+// @Success 200 {object}  app.interface.topic.model.CanEditTopicsResp "成员"
 // @Failure 400 "请求验证失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
@@ -205,7 +205,7 @@ func topicsWithEditPermission(c *mars.Context) {
 // @Param query query string true "查询条件"
 // @Param ps query integer false "每页大小"
 // @Param pn query integer false "页码 1开始"
-// @Success 200 {object} model.JoinedTopicsResp "成员"
+// @Success 200 {object}  app.interface.topic.model.JoinedTopicsResp "成员"
 // @Failure 400 "请求验证失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
@@ -243,7 +243,7 @@ func followedTopics(c *mars.Context) {
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param id query string true "ID"
-// @Success 200 {object} model.TopicMeta "Meta"
+// @Success 200 {object}  app.interface.topic.model.TopicMeta "Meta"
 // @Failure 400 "请求验证失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"

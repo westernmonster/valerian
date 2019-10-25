@@ -12,7 +12,7 @@ import "valerian/library/net/http/mars"
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param id query string true "ID"
 // @Param include query string true  "目前支持：settings"
-// @Success 200 {object} model.SelfProfile "个人资料"
+// @Success 200 {object} app.admin.account.model.SelfProfile "个人资料"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"

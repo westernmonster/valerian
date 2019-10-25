@@ -18,7 +18,7 @@ import (
 // @Param target_type query string true "类型：all,topic,article,revise,discussion"
 // @Param limit query integer false "每页大小"
 // @Param offset query integer false "offset"
-// @Success 200 {object} model.FavListResp "讨论列表"
+// @Success 200 {object}  app.interface.fav.model.FavListResp "讨论列表"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
@@ -57,7 +57,7 @@ func favList(c *mars.Context) {
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArgAddFav true "请求"
+// @Param req body  app.interface.fav.model.ArgAddFav true "请求"
 // @Success 200 "成功"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
@@ -85,7 +85,7 @@ func fav(c *mars.Context) {
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArgDelFav true "请求"
+// @Param req body  app.interface.fav.model.ArgDelFav true "请求"
 // @Success 200 "成功"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"

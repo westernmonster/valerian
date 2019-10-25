@@ -14,8 +14,8 @@ import (
 // @Produce json
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArgEmail true "请求"
-// @Success 200 {object} model.LoginResp "成功"
+// @Param req body  app.interface.passport-register.model.ArgEmail true "请求"
+// @Success 200 {object}  app.interface.passport-register.model.LoginResp "成功"
 // @Failure 626 "用户不存在"
 // @Failure 116 "Client 不存在"
 // @Failure 2 "验证码已失效"
@@ -61,8 +61,8 @@ func emailRegister(c *mars.Context) {
 // @Produce json
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body model.ArgMobile true "请求"
-// @Success 200 {object} model.LoginResp "成功"
+// @Param req body  app.interface.passport-register.model.ArgMobile true "请求"
+// @Success 200 {object}  app.interface.passport-register.model.LoginResp "成功"
 // @Failure 626 "用户不存在"
 // @Failure 116 "Client 不存在"
 // @Failure 2 "验证码已失效"
