@@ -46,9 +46,9 @@ func asteriskMobile(mobile string) string {
 	count := len(mobile)
 	for i, ch := range mobile {
 		if count-i <= 4 {
-			newUserName += "*"
-		} else {
 			newUserName += string(ch)
+		} else {
+			newUserName += "*"
 		}
 	}
 
