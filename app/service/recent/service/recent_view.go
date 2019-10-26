@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"valerian/app/service/feed/def"
 	"valerian/app/service/recent/model"
@@ -45,6 +46,10 @@ func (p *Service) onArticleViewed(m *stan.Msg) {
 	}); err != nil {
 		return
 	} else if data != nil {
+		data.UpdatedAt = time.Now().Unix()
+		if err = p.d.UpdateRecentView(c, p.d.DB(), data); err != nil {
+			return
+		}
 		m.Ack()
 		return
 	}
@@ -87,6 +92,10 @@ func (p *Service) onTopicViewed(m *stan.Msg) {
 	}); err != nil {
 		return
 	} else if data != nil {
+		data.UpdatedAt = time.Now().Unix()
+		if err = p.d.UpdateRecentView(c, p.d.DB(), data); err != nil {
+			return
+		}
 		m.Ack()
 		return
 	}

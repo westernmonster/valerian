@@ -11,7 +11,7 @@ import (
 
 func (p *Dao) GetUserRecentViewsPaged(c context.Context, node sqalx.Node, aid int64, targetType string, limit, offset int) (items []*model.RecentView, err error) {
 	items = make([]*model.RecentView, 0)
-	sqlSelect := "SELECT a.* FROM recent_views a WHERE a.deleted=0 AND a.account_id=? %s ORDER BY a.id DESC limit ?,?"
+	sqlSelect := "SELECT a.* FROM recent_views a WHERE a.deleted=0 AND a.account_id=? %s ORDER BY a.updated_at DESC limit ?,?"
 	clause := ""
 	switch targetType {
 	case "all":
