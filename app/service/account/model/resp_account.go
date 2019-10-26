@@ -14,6 +14,9 @@ type BaseInfo struct {
 
 type SelfProfile struct {
 	ID int64 `json:"id,string" swaggertype:"string"` //  ID
+
+	// 手机前缀
+	Prefix string `json:"prefix" format:"mobile"`
 	// 手机
 	Mobile string `json:"mobile" format:"mobile"`
 	// 邮件地址

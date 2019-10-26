@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"valerian/app/service/account/model"
 	"valerian/library/ecode"
@@ -87,6 +88,7 @@ func (p *Service) GetSelfProfile(c context.Context, accountID int64) (profile *m
 
 	profile = &model.SelfProfile{
 		ID:           item.ID,
+		Prefix:       item.Prefix,
 		Mobile:       item.Mobile,
 		Email:        item.Email,
 		UserName:     item.UserName,
@@ -105,6 +107,10 @@ func (p *Service) GetSelfProfile(c context.Context, accountID int64) (profile *m
 		Role:         item.Role,
 		CreatedAt:    item.CreatedAt,
 		UpdatedAt:    item.UpdatedAt,
+	}
+
+	if item.Mobile != "" {
+		profile.Mobile = strings.TrimLeft(item.Mobile, item.Prefix)
 	}
 
 	if item.Location != 0 {
