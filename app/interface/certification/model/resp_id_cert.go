@@ -16,7 +16,7 @@ type IDCertResp struct {
 	// 证件有效期截止日期
 	IDCardExpiry string `json:"id_card_expiry,omitempty"`
 	// 性别
-	Sex *string `json:"sex,omitempty"`
+	Sex string `json:"sex,omitempty"`
 	// 证件照正面图片
 	IDCardFrontPic string `json:"id_card_front_pic,omitempty"`
 	// 证件照背面图片

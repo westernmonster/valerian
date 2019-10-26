@@ -1,6 +1,7 @@
 package model
 
 type WorkCertResp struct {
+	AccountID int64 `json:"account_id"`
 	// 实名认证姓名
 	IDName string `json:"id_name"`
 
@@ -20,10 +21,7 @@ type WorkCertResp struct {
 	// Unix时间戳
 	ExpiresAt int64 `json:"expires_at"`
 
-	// 认证状态
-	// 0 审核中
-	// 1 通过审核
-	// 2 审核失败
+	//  状态：-1 未认证, 0 认证中,  1 认证成功, 2 认证失败
 	Status int `json:"status"`
 
 	// 提交时间

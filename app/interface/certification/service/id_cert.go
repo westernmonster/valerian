@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 
+	"valerian/app/interface/certification/model"
 	certification "valerian/app/service/certification/api"
 	"valerian/library/cloudauth"
 	"valerian/library/ecode"
@@ -59,4 +60,35 @@ func (p *Service) GetIDCertificationStatus(c context.Context) (status int, err e
 	status = int(resp.Status)
 
 	return
+}
+
+func (p *Service) GetIDCert(c context.Context) (resp *model.IDCertResp, err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+
+	var v *certification.IDCertInfo
+	if v, err = p.d.GetIDCert(c, aid); err != nil {
+		return
+	}
+
+	resp = &model.IDCertResp{
+		Status:               int(v.Status),
+		AuditConclusions:     v.AuditConclusions,
+		Name:                 v.Name,
+		IdentificationNumber: v.IdentificationNumber,
+		IDCardType:           v.IDCardType,
+		IDCardStartDate:      v.IDCardStartDate,
+		IDCardExpiry:         v.IDCardExpiry,
+		Sex:                  v.Sex,
+		IDCardFrontPic:       v.IDCardFrontPic,
+		IDCardBackPic:        v.IDCardBackPic,
+		CreatedAt:            v.CreatedAt,
+		UpdatedAt:            v.UpdatedAt,
+	}
+
+	return
+
 }

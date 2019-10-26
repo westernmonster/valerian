@@ -49,4 +49,5 @@ func idCertificationStatus(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /certification/id [get]
 func idCert(c *mars.Context) {
+	c.JSON(srv.GetIDCert(c))
 }
