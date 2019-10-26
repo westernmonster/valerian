@@ -27,8 +27,9 @@ type ReviseItem struct {
 }
 
 type ReviseListResp struct {
-	Items  []*ReviseItem `json:"items"`
-	Paging *Paging       `json:"paging"`
+	Items       []*ReviseItem `json:"items"`
+	Paging      *Paging       `json:"paging"`
+	ReviseCount int32         `json:"revise_count"`
 }
 
 type ReviseFileResp struct {

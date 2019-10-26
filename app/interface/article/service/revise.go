@@ -102,6 +102,13 @@ func (p *Service) GetArticleRevisesPaged(c context.Context, articleID int64, sor
 		resp.Paging.Prev = ""
 	}
 
+	var stat *model.ArticleStat
+	if stat, err = p.d.GetArticleStatByID(c, p.d.DB(), articleID); err != nil {
+		return
+	}
+
+	resp.ReviseCount = int32(stat.ReviseCount)
+
 	return
 }
 
