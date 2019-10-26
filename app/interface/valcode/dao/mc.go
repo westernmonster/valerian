@@ -13,11 +13,11 @@ const (
 	emailExpires  = 60 * 10
 )
 
-func vcMobileKey(vtype int, mobile string) string {
+func vcMobileKey(vtype int32, mobile string) string {
 	return fmt.Sprintf("rc_%d_%s", vtype, mobile)
 }
 
-func vcEmailKey(vtype int, email string) string {
+func vcEmailKey(vtype int32, email string) string {
 	return fmt.Sprintf("rc_%d_%s", vtype, email)
 }
 
@@ -35,7 +35,7 @@ func (p *Dao) pingMC(c context.Context) (err error) {
 	return
 }
 
-func (p *Dao) SetMobileValcodeCache(c context.Context, vtype int, mobile, code string) (err error) {
+func (p *Dao) SetMobileValcodeCache(c context.Context, vtype int32, mobile, code string) (err error) {
 	key := vcMobileKey(vtype, mobile)
 	conn := p.mc.Get(c)
 	defer conn.Close()
@@ -47,7 +47,7 @@ func (p *Dao) SetMobileValcodeCache(c context.Context, vtype int, mobile, code s
 	return
 }
 
-func (p *Dao) MobileValcodeCache(c context.Context, vtype int, mobile string) (code string, err error) {
+func (p *Dao) MobileValcodeCache(c context.Context, vtype int32, mobile string) (code string, err error) {
 	key := vcMobileKey(vtype, mobile)
 	conn := p.mc.Get(c)
 	defer conn.Close()
@@ -67,7 +67,7 @@ func (p *Dao) MobileValcodeCache(c context.Context, vtype int, mobile string) (c
 	return
 }
 
-func (p *Dao) DelMobileCache(c context.Context, vtype int, mobile string) (err error) {
+func (p *Dao) DelMobileCache(c context.Context, vtype int32, mobile string) (err error) {
 	key := vcMobileKey(vtype, mobile)
 	conn := p.mc.Get(c)
 	defer conn.Close()
@@ -82,7 +82,7 @@ func (p *Dao) DelMobileCache(c context.Context, vtype int, mobile string) (err e
 	return
 }
 
-func (p *Dao) SetEmailValcodeCache(c context.Context, vtype int, mobile, code string) (err error) {
+func (p *Dao) SetEmailValcodeCache(c context.Context, vtype int32, mobile, code string) (err error) {
 	key := vcEmailKey(vtype, mobile)
 	conn := p.mc.Get(c)
 	defer conn.Close()
@@ -94,7 +94,7 @@ func (p *Dao) SetEmailValcodeCache(c context.Context, vtype int, mobile, code st
 	return
 }
 
-func (p *Dao) EmailValcodeCache(c context.Context, vtype int, mobile string) (code string, err error) {
+func (p *Dao) EmailValcodeCache(c context.Context, vtype int32, mobile string) (code string, err error) {
 	key := vcEmailKey(vtype, mobile)
 	conn := p.mc.Get(c)
 	defer conn.Close()
@@ -115,7 +115,7 @@ func (p *Dao) EmailValcodeCache(c context.Context, vtype int, mobile string) (co
 	return
 }
 
-func (p *Dao) DelEmailCache(c context.Context, vtype int, mobile string) (err error) {
+func (p *Dao) DelEmailCache(c context.Context, vtype int32, mobile string) (err error) {
 	key := vcEmailKey(vtype, mobile)
 	conn := p.mc.Get(c)
 	defer conn.Close()

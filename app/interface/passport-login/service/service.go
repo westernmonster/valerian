@@ -48,10 +48,10 @@ type Service struct {
 		SetAccessTokenCache(c context.Context, m *model.AccessToken) (err error)
 		DelAccessTokenCache(c context.Context, token string) (err error)
 
-		MobileValcodeCache(c context.Context, vtype int, mobile string) (code string, err error)
-		DelMobileValcodeCache(c context.Context, vtype int, mobile string) (err error)
-		EmailValcodeCache(c context.Context, vtype int, mobile string) (code string, err error)
-		DelEmailValcideCache(c context.Context, vtype int, mobile string) (err error)
+		MobileValcodeCache(c context.Context, vtype int32, mobile string) (code string, err error)
+		DelMobileValcodeCache(c context.Context, vtype int32, mobile string) (err error)
+		EmailValcodeCache(c context.Context, vtype int32, mobile string) (code string, err error)
+		DelEmailValcideCache(c context.Context, vtype int32, mobile string) (err error)
 
 		SetProfileCache(c context.Context, m *model.Profile) (err error)
 

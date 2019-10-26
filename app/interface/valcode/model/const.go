@@ -10,12 +10,12 @@ const (
 )
 
 const (
-	IdentityMobile = 1
-	IdentityEmail  = 2
+	IdentityMobile = int32(1)
+	IdentityEmail  = int32(2)
 )
 
 const (
-	ValcodeRegister       = 1
-	ValcodeForgetPassword = 2
-	ValcodeLogin          = 3
+	ValcodeRegister       = int32(1)
+	ValcodeForgetPassword = int32(2)
+	ValcodeLogin          = int32(3)
 )

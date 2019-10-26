@@ -14,7 +14,7 @@ type ArgEmailValcode struct {
 	Email string `json:"email"`
 
 	// 验证码类型, 1为注册验证码, 2为重置密码验证码
-	CodeType int `json:"code_type"`
+	CodeType int32 `json:"code_type"`
 }
 
 func (p *ArgEmailValcode) Validate() error {
@@ -36,7 +36,7 @@ type ArgMobileValcode struct {
 	Prefix string `json:"prefix"`
 
 	// 验证码类型, 1为注册验证码, 2为重置密码验证码, 3为登录验证码
-	CodeType int `json:"code_type"`
+	CodeType int32 `json:"code_type"`
 }
 
 func (p *ArgMobileValcode) Validate() error {

@@ -12,11 +12,11 @@ func akKey(token string) string {
 	return fmt.Sprintf("ak_%s", token)
 }
 
-func vcMobileKey(vtype int, mobile string) string {
+func vcMobileKey(vtype int32, mobile string) string {
 	return fmt.Sprintf("rc_%d_%s", vtype, mobile)
 }
 
-func vcEmailKey(vtype int, email string) string {
+func vcEmailKey(vtype int32, email string) string {
 	return fmt.Sprintf("rc_%d_%s", vtype, email)
 }
 
@@ -34,7 +34,7 @@ func (p *Dao) pingAuthMC(c context.Context) (err error) {
 	return
 }
 
-func (p *Dao) MobileValcodeCache(c context.Context, vtype int, mobile string) (code string, err error) {
+func (p *Dao) MobileValcodeCache(c context.Context, vtype int32, mobile string) (code string, err error) {
 	key := vcMobileKey(vtype, mobile)
 	conn := p.authMC.Get(c)
 	defer conn.Close()
@@ -54,7 +54,7 @@ func (p *Dao) MobileValcodeCache(c context.Context, vtype int, mobile string) (c
 	return
 }
 
-func (p *Dao) DelMobileValcodeCache(c context.Context, vtype int, mobile string) (err error) {
+func (p *Dao) DelMobileValcodeCache(c context.Context, vtype int32, mobile string) (err error) {
 	key := vcMobileKey(vtype, mobile)
 	conn := p.authMC.Get(c)
 	defer conn.Close()
@@ -69,7 +69,7 @@ func (p *Dao) DelMobileValcodeCache(c context.Context, vtype int, mobile string)
 	return
 }
 
-func (p *Dao) EmailValcodeCache(c context.Context, vtype int, mobile string) (code string, err error) {
+func (p *Dao) EmailValcodeCache(c context.Context, vtype int32, mobile string) (code string, err error) {
 	key := vcEmailKey(vtype, mobile)
 	conn := p.authMC.Get(c)
 	defer conn.Close()
@@ -90,7 +90,7 @@ func (p *Dao) EmailValcodeCache(c context.Context, vtype int, mobile string) (co
 	return
 }
 
-func (p *Dao) DelEmailValcodeCache(c context.Context, vtype int, mobile string) (err error) {
+func (p *Dao) DelEmailValcodeCache(c context.Context, vtype int32, mobile string) (err error) {
 	key := vcEmailKey(vtype, mobile)
 	conn := p.authMC.Get(c)
 	defer conn.Close()

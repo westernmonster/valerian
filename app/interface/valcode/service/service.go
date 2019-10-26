@@ -17,13 +17,13 @@ import (
 type Service struct {
 	c *conf.Config
 	d interface {
-		SetMobileValcodeCache(c context.Context, vtype int, mobile, code string) (err error)
-		MobileValcodeCache(c context.Context, vtype int, mobile string) (code string, err error)
-		DelMobileCache(c context.Context, vtype int, mobile string) (err error)
+		SetMobileValcodeCache(c context.Context, vtype int32, mobile, code string) (err error)
+		MobileValcodeCache(c context.Context, vtype int32, mobile string) (code string, err error)
+		DelMobileCache(c context.Context, vtype int32, mobile string) (err error)
 
-		SetEmailValcodeCache(c context.Context, vtype int, mobile, code string) (err error)
-		EmailValcodeCache(c context.Context, vtype int, mobile string) (code string, err error)
-		DelEmailCache(c context.Context, vtype int, mobile string) (err error)
+		SetEmailValcodeCache(c context.Context, vtype int32, mobile, code string) (err error)
+		EmailValcodeCache(c context.Context, vtype int32, mobile string) (code string, err error)
+		DelEmailCache(c context.Context, vtype int32, mobile string) (err error)
 
 		IsEmailExist(c context.Context, email string) (exist bool, err error)
 		IsMobileExist(c context.Context, prefix, mobile string) (exist bool, err error)

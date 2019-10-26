@@ -57,10 +57,10 @@ type Service struct {
 		GetSelfProfile(c context.Context, aid int64) (info *account.SelfProfile, err error)
 		GetAccountStat(c context.Context, aid int64) (info *account.AccountStatInfo, err error)
 
-		MobileValcodeCache(c context.Context, vtype int, mobile string) (code string, err error)
-		DelMobileValcodeCache(c context.Context, vtype int, mobile string) (err error)
-		EmailValcodeCache(c context.Context, vtype int, mobile string) (code string, err error)
-		DelEmailValcodeCache(c context.Context, vtype int, mobile string) (err error)
+		MobileValcodeCache(c context.Context, vtype int32, mobile string) (code string, err error)
+		DelMobileValcodeCache(c context.Context, vtype int32, mobile string) (err error)
+		EmailValcodeCache(c context.Context, vtype int32, mobile string) (code string, err error)
+		DelEmailValcodeCache(c context.Context, vtype int32, mobile string) (err error)
 
 		AccessTokenCache(c context.Context, token string) (res *model.AccessToken, err error)
 		SetAccessTokenCache(c context.Context, m *model.AccessToken) (err error)
