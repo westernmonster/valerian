@@ -19,7 +19,7 @@ func baseInfoFromAccount(account *model.Account) (info *model.BaseInfo) {
 		IDCert:       bool(account.IDCert),
 		WorkCert:     bool(account.WorkCert),
 		IsOrg:        bool(account.IsOrg),
-		IsVIP:        bool(account.IsVIP),
+		IsVIP:        bool(account.IsVip),
 	}
 	return
 }
@@ -101,7 +101,7 @@ func (p *Service) GetSelfProfile(c context.Context, accountID int64) (profile *m
 		IDCert:       bool(item.IDCert),
 		WorkCert:     bool(item.WorkCert),
 		IsOrg:        bool(item.IsOrg),
-		IsVIP:        bool(item.IsVIP),
+		IsVIP:        bool(item.IsVip),
 		Role:         item.Role,
 		CreatedAt:    item.CreatedAt,
 		UpdatedAt:    item.UpdatedAt,
@@ -134,7 +134,7 @@ func (p *Service) GetMemberProfile(c context.Context, accountID int64) (profile 
 		IDCert:       bool(item.IDCert),
 		WorkCert:     bool(item.WorkCert),
 		IsOrg:        bool(item.IsOrg),
-		IsVIP:        bool(item.IsVIP),
+		IsVIP:        bool(item.IsVip),
 		Role:         item.Role,
 		CreatedAt:    item.CreatedAt,
 		UpdatedAt:    item.UpdatedAt,
