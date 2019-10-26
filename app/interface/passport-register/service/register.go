@@ -42,19 +42,22 @@ func (p *Service) MobileRegister(c context.Context, arg *model.ArgMobile) (resp 
 		return
 	}
 
-	item := &model.Account{
-		ID:        gid.NewID(),
-		Source:    arg.Source,
-		IP:        ipAddr,
-		Mobile:    mobile,
-		Password:  passwordHash,
-		Prefix:    arg.Prefix,
-		Salt:      salt,
-		Role:      model.AccountRoleUser,
-		Avatar:    "https://flywiki.oss-cn-hangzhou.aliyuncs.com/765-default-avatar.png",
-		UserName:  asteriskMobile(arg.Mobile),
-		CreatedAt: time.Now().Unix(),
-		UpdatedAt: time.Now().Unix(),
+	item := &account.AddAccountReq{
+		ID:       gid.NewID(),
+		Source:   arg.Source,
+		IP:       ipAddr,
+		Mobile:   mobile,
+		Password: passwordHash,
+		Prefix:   arg.Prefix,
+		Salt:     salt,
+		Role:     model.AccountRoleUser,
+		Avatar:   "https://flywiki.oss-cn-hangzhou.aliyuncs.com/765-default-avatar.png",
+		UserName: asteriskMobile(arg.Mobile),
+	}
+
+	var profile *account.SelfProfile
+	if profile, err = p.d.AddAccount(c, item); err != nil {
+		return
 	}
 
 	p.addCache(func() {
@@ -62,7 +65,7 @@ func (p *Service) MobileRegister(c context.Context, arg *model.ArgMobile) (resp 
 		p.onAccountAdded(context.TODO(), item.ID, time.Now().Unix())
 	})
 
-	return p.loginAccount(c, item.ID, arg.ClientID)
+	return p.loginAccount(c, profile, arg.ClientID)
 }
 
 func (p *Service) EmailRegister(c context.Context, arg *model.ArgEmail) (resp *model.LoginResp, err error) {
@@ -108,27 +111,22 @@ func (p *Service) EmailRegister(c context.Context, arg *model.ArgEmail) (resp *m
 		UserName: asteriskEmailName(arg.Email),
 	}
 
-	var id int64
-	if id, err = p.d.AddAccount(c, item); err != nil {
+	var profile *account.SelfProfile
+	if profile, err = p.d.AddAccount(c, item); err != nil {
 		return
 	}
 
 	p.addCache(func() {
 		p.d.DelEmailValcodeCache(context.TODO(), model.ValcodeRegister, arg.Email)
-		p.onAccountAdded(context.TODO(), id, time.Now().Unix())
+		p.onAccountAdded(context.TODO(), profile.ID, time.Now().Unix())
 	})
 
-	return p.loginAccount(c, id, arg.ClientID)
+	return p.loginAccount(c, profile, arg.ClientID)
 }
 
-func (p *Service) loginAccount(c context.Context, id int64, clientID string) (resp *model.LoginResp, err error) {
+func (p *Service) loginAccount(c context.Context, profile *account.SelfProfile, clientID string) (resp *model.LoginResp, err error) {
 
-	var profile *model.Profile
-	if profile, err = p.GetProfile(c, id); err != nil {
-		return
-	}
-
-	accessToken, refreshToken, err := p.grantToken(c, clientID, id)
+	accessToken, refreshToken, err := p.grantToken(c, clientID, profile.ID)
 	if err != nil {
 		return
 	}
@@ -143,7 +141,7 @@ func (p *Service) loginAccount(c context.Context, id int64, clientID string) (re
 		RefreshToken: refreshToken.Token,
 	}
 
-	resp.Profile = profile
+	resp.Profile = p.FromProfile(profile)
 
 	p.addCache(func() {
 		p.d.SetProfileCache(context.TODO(), resp.Profile)
@@ -159,6 +157,12 @@ func (p *Service) GetProfile(c context.Context, aid int64) (item *model.Profile,
 		return
 	}
 
+	item = p.FromProfile(profile)
+
+	return
+}
+
+func (p *Service) FromProfile(profile *account.SelfProfile) (item *model.Profile) {
 	item = &model.Profile{
 		ID:             profile.ID,
 		Prefix:         profile.Prefix,
@@ -210,7 +214,6 @@ func (p *Service) GetProfile(c context.Context, aid int64) (item *model.Profile,
 			Language: profile.Setting.Language,
 		},
 	}
-
 	return
 }
 
