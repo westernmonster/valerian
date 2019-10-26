@@ -199,6 +199,30 @@ message DBAccount {
     int64    UpdatedAt             = 22;
 }
 
+message AddAccountReq {
+    int64    ID                    = 1;
+    string   Mobile                = 2;
+    string   Email                 = 3;
+    string   UserName              = 4;
+    string   Role                  = 6;
+    int32    Gender                = 8;
+    int32    BirthYear             = 9;
+    int32    BirthMonth            = 10;
+    int32    BirthDay              = 11;
+    int64    Location              = 12;
+    string   Introduction          = 13;
+    string   Avatar                = 14;
+    int32    Source                = 15;
+    int64    IP                    = 16;
+    bool     IDCert                = 17;
+    bool     WorkCert              = 18;
+    bool     IsOrg                 = 19;
+    bool     IsVIP                 = 20;
+    string Password = 23;
+    string Salt = 24;
+    string Prefix = 25;
+}
+
 message AllAccountsResp {
     repeated DBAccount Items = 1;
 }
@@ -212,7 +236,7 @@ service Account {
 
     rpc UpdateSetting(SettingReq) returns (EmptyStruct);
 
-    rpc AddAccount(DBAccount) returns (AidResp);
+    rpc AddAccount(AddAccountReq) returns (AidResp);
 
     rpc AccountInfo(AidReq) returns (DBAccount);
 

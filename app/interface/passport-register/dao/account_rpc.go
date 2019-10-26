@@ -35,3 +35,13 @@ func (p *Dao) GetAccountStat(c context.Context, aid int64) (info *account.Accoun
 	}
 	return
 }
+
+func (p *Dao) AddAccount(c context.Context, v *account.DBAccount) (id int64, err error) {
+	var aidResp *account.AidResp
+	if aidResp, err = p.accountRPC.AddAccount(c, v); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.AddAccount err(%+v) item(%+v)", err, v))
+		return 0, err
+	}
+
+	return aidResp.Aid, nil
+}

@@ -43,6 +43,9 @@ func (p *Service) AddAccount(c context.Context, item *model.Account) (id int64, 
 		}
 	}
 
+	item.CreatedAt = time.Now().Unix()
+	item.UpdatedAt = time.Now().Unix()
+
 	if err = p.d.AddAccount(c, tx, item); err != nil {
 		return
 	}

@@ -238,13 +238,16 @@ func (s *server) EmailExist(ctx context.Context, req *api.EmailReq) (*api.ExistR
 	return &api.ExistResp{Exist: exist}, nil
 }
 
-func (s *server) AddAccount(ctx context.Context, req *api.DBAccount) (*api.AidResp, error) {
+func (s *server) AddAccount(ctx context.Context, req *api.AddAccountReq) (*api.AidResp, error) {
 	item := &model.Account{
 		ID:           req.ID,
 		Mobile:       req.Mobile,
 		Email:        req.Email,
 		UserName:     req.UserName,
 		Role:         req.Role,
+		Password:     req.Password,
+		Salt:         req.Salt,
+		Prefix:       req.Prefix,
 		Gender:       req.Gender,
 		BirthYear:    req.BirthYear,
 		BirthMonth:   req.BirthMonth,
@@ -258,8 +261,6 @@ func (s *server) AddAccount(ctx context.Context, req *api.DBAccount) (*api.AidRe
 		WorkCert:     types.BitBool(req.WorkCert),
 		IsOrg:        types.BitBool(req.IsOrg),
 		IsVip:        types.BitBool(req.IsVIP),
-		CreatedAt:    req.CreatedAt,
-		UpdatedAt:    req.UpdatedAt,
 	}
 
 	v, err := s.svr.AddAccount(ctx, item)

@@ -40,10 +40,7 @@ type Service struct {
 		DelExpiredRefreshToken(c context.Context, node sqalx.Node, clientID string, accountID int64) (affected int64, err error)
 		GetClientRefreshTokens(c context.Context, node sqalx.Node, aid int64, clientID string) (tokens []string, err error)
 
-		GetAccountByEmail(c context.Context, node sqalx.Node, email string) (item *model.Account, err error)
-		GetAccountByMobile(c context.Context, node sqalx.Node, mobile string) (item *model.Account, err error)
-		GetAccountByID(c context.Context, node sqalx.Node, id int64) (item *model.Account, err error)
-		AddAccount(c context.Context, node sqalx.Node, item *model.Account) (err error)
+		AddAccount(c context.Context, v *account.DBAccount) (id int64, err error)
 
 		IncrMessageStat(c context.Context, node sqalx.Node, item *model.MessageStat) (err error)
 		UpdateMessageStat(c context.Context, node sqalx.Node, item *model.MessageStat) (err error)
