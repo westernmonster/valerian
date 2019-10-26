@@ -451,6 +451,7 @@ func (p *Service) GetCommentTarget(c context.Context, v *comment.CommentInfo) (r
 				UserName:     replyComment.Creator.UserName,
 				Introduction: replyComment.Creator.Introduction,
 			},
+			OwnerID:    replyComment.OwnerID,
 			CreatedAt:  replyComment.CreatedAt,
 			TargetType: replyComment.TargetType,
 		}

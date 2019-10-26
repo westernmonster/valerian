@@ -52,6 +52,9 @@ type TargetReplyComment struct {
 	// 评论资源类型 article,revise,discussion
 	TargetType string `json:"target_type"`
 
+	// 评论资源ID article,revise,discussion
+	OwnerID int64 `json:"owner_id,string" swaggertype:"string"`
+
 	// 发布日期
 	CreatedAt int64 `json:"created_at"`
 }
