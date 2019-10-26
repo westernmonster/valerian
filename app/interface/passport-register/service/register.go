@@ -220,14 +220,9 @@ func (p *Service) EmailRegister(c context.Context, arg *model.ArgEmail) (resp *m
 }
 
 func (p *Service) loginAccount(c context.Context, id int64, clientID string) (resp *model.LoginResp, err error) {
-	var (
-		account *model.Account
-	)
 
-	if account, err = p.d.GetAccountByID(c, p.d.DB(), id); err != nil {
-		return
-	} else if account == nil {
-		err = ecode.UserNotExist
+	var profile *model.Profile
+	if profile, err = p.GetProfile(c, id); err != nil {
 		return
 	}
 
@@ -237,8 +232,8 @@ func (p *Service) loginAccount(c context.Context, id int64, clientID string) (re
 	}
 
 	resp = &model.LoginResp{
-		AccountID:    account.ID,
-		Role:         account.Role,
+		AccountID:    profile.ID,
+		Role:         profile.Role,
 		AccessToken:  accessToken.Token,
 		ExpiresIn:    _accessExpireSeconds,
 		TokenType:    "Bearer",
@@ -246,9 +241,7 @@ func (p *Service) loginAccount(c context.Context, id int64, clientID string) (re
 		RefreshToken: refreshToken.Token,
 	}
 
-	if resp.Profile, err = p.GetProfile(c, id); err != nil {
-		return
-	}
+	resp.Profile = profile
 
 	p.addCache(func() {
 		p.d.SetProfileCache(context.TODO(), resp.Profile)
