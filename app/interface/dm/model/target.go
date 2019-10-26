@@ -52,9 +52,6 @@ type TargetReplyComment struct {
 	// 评论资源类型 article,revise,discussion
 	TargetType string `json:"target_type"`
 
-	// 评论资源ID article,revise,discussion
-	OwnerID int64 `json:"owner_id,string" swaggertype:"string"`
-
 	// 发布日期
 	CreatedAt int64 `json:"created_at"`
 }
@@ -70,14 +67,17 @@ type TargetComment struct {
 
 	Creator *Creator `json:"creator,omitempty"`
 
-	// 所属资源信息 文章/补充/评论
-	Target interface{} `json:"target"`
-
 	// 被回复的人
 	ReplyTo *Creator `json:"reply_to,omitempty"`
 
-	// 被回复的评论
-	ReplyComment *TargetReplyComment `json:"reply_comment,omitempty"`
+	// 父级评论
+	ParentComment *TargetReplyComment `json:"parent_comment,omitempty"`
+
+	// 所属资源信息 文章/补充/评论
+	Owner interface{} `json:"owner"`
+
+	// 所属资源类型 article,revise,discussion
+	OwnerType string `json:"owner_type"`
 
 	// 发布日期
 	CreatedAt int64 `json:"created_at"`

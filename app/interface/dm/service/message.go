@@ -285,8 +285,8 @@ func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, o
 				item.Target = tg
 
 				item.Content.Target.Link = fmt.Sprintf("pronote://{%s}/comment/%d/sub/%d",
-					tg.ReplyComment.TargetType,
-					tg.ReplyComment.ID,
+					tg.ParentComment.TargetType,
+					tg.ParentComment.ID,
 					ct.ID)
 				item.Content.Target.Text = xstr.Excerpt(ct.Content)
 				break
@@ -420,21 +420,24 @@ func (p *Service) GetCommentTarget(c context.Context, v *comment.CommentInfo) (r
 		if article, err = p.d.GetArticle(c, v.OwnerID); err != nil {
 			return
 		}
-		resp.Target = p.FromArticle(article)
+		resp.Owner = p.FromArticle(article)
+		resp.OwnerType = model.TargetTypeArticle
 		break
 	case model.TargetTypeRevise:
 		var item *article.ReviseInfo
 		if item, err = p.d.GetRevise(c, v.OwnerID); err != nil {
 			return
 		}
-		resp.Target = p.FromRevise(item)
+		resp.Owner = p.FromRevise(item)
+		resp.OwnerType = model.TargetTypeRevise
 		break
 	case model.TargetTypeDiscussion:
 		var item *discuss.DiscussionInfo
 		if item, err = p.d.GetDiscussion(c, v.OwnerID); err != nil {
 			return
 		}
-		resp.Target = p.FromDiscussion(item)
+		resp.Owner = p.FromDiscussion(item)
+		resp.OwnerType = model.TargetTypeDiscussion
 		break
 	case model.TargetTypeComment:
 		var replyComment *comment.CommentInfo
@@ -442,7 +445,7 @@ func (p *Service) GetCommentTarget(c context.Context, v *comment.CommentInfo) (r
 			return
 		}
 
-		resp.ReplyComment = &model.TargetReplyComment{
+		resp.ParentComment = &model.TargetReplyComment{
 			ID:      replyComment.ID,
 			Excerpt: xstr.Excerpt(replyComment.Content),
 			Creator: &model.Creator{
@@ -451,7 +454,6 @@ func (p *Service) GetCommentTarget(c context.Context, v *comment.CommentInfo) (r
 				UserName:     replyComment.Creator.UserName,
 				Introduction: replyComment.Creator.Introduction,
 			},
-			OwnerID:    replyComment.OwnerID,
 			CreatedAt:  replyComment.CreatedAt,
 			TargetType: replyComment.TargetType,
 		}
@@ -469,6 +471,32 @@ func (p *Service) GetCommentTarget(c context.Context, v *comment.CommentInfo) (r
 				Introduction: acc.Introduction,
 			}
 
+		}
+		switch replyComment.TargetType {
+		case model.TargetTypeArticle:
+			var article *article.ArticleInfo
+			if article, err = p.d.GetArticle(c, replyComment.OwnerID); err != nil {
+				return
+			}
+			resp.Owner = p.FromArticle(article)
+			resp.OwnerType = model.TargetTypeArticle
+			break
+		case model.TargetTypeRevise:
+			var item *article.ReviseInfo
+			if item, err = p.d.GetRevise(c, replyComment.OwnerID); err != nil {
+				return
+			}
+			resp.Owner = p.FromRevise(item)
+			resp.OwnerType = model.TargetTypeRevise
+			break
+		case model.TargetTypeDiscussion:
+			var item *discuss.DiscussionInfo
+			if item, err = p.d.GetDiscussion(c, replyComment.OwnerID); err != nil {
+				return
+			}
+			resp.Owner = p.FromDiscussion(item)
+			resp.OwnerType = model.TargetTypeDiscussion
+			break
 		}
 
 		break
