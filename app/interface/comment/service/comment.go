@@ -357,6 +357,14 @@ func (p *Service) GetComment(c context.Context, commentID int64) (resp *model.Co
 				return
 			}
 
+			var stat *model.CommentStat
+			if stat, err = p.d.GetCommentStatByID(c, p.d.DB(), x.ID); err != nil {
+				return
+			}
+
+			child.LikeCount = stat.LikeCount
+			child.DislikeCount = stat.DislikeCount
+
 			var acc *account.BaseInfoReply
 			if acc, err = p.d.GetAccountBaseInfo(c, x.CreatedBy); err != nil {
 				return
