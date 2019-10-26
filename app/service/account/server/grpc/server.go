@@ -191,3 +191,11 @@ func (s *server) AccountStat(ctx context.Context, req *api.AidReq) (*api.Account
 
 	return api.FromStat(resp), nil
 }
+
+func (s *server) UpdateSetting(ctx context.Context, req *api.SettingReq) (*api.EmptyStruct, error) {
+	err := s.svr.UpdateAccountSetting(ctx, req.Aid, req.Settings, req.Language)
+	if err != nil {
+		return nil, err
+	}
+	return &api.EmptyStruct{}, nil
+}

@@ -32,6 +32,12 @@ message BaseInfosReply {
     map<int64, BaseInfoReply> base_infos = 1;
 }
 
+message SettingReq {
+    int64 Aid = 1;
+    map<string, bool> Settings = 2;
+    string Language = 3;
+}
+
 message SelfProfile {
     int64 ID = 1;
 
@@ -183,6 +189,8 @@ message AllAccountsResp {
 
 service Account {
     rpc AllAccounts(EmptyStruct) returns (AllAccountsResp);
+
+    rpc UpdateSetting(SettingReq) returns (EmptyStruct);
 
     rpc AccountInfo(AidReq) returns (DBAccount);
 
