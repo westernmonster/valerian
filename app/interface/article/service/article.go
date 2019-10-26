@@ -90,7 +90,7 @@ func (p *Service) AddArticle(c context.Context, arg *model.ArgAddArticle) (id in
 
 	dmp := diffmatchpatch.New()
 	diffs := dmp.DiffMain("", item.ContentText, false)
-	h.Diff = dmp.DiffPrettyText(diffs)
+	h.Diff = dmp.H
 
 	if err = p.d.AddArticle(c, tx, item); err != nil {
 		return
@@ -234,7 +234,7 @@ func (p *Service) UpdateArticle(c context.Context, arg *model.ArgUpdateArticle) 
 
 	dmp := diffmatchpatch.New()
 	diffs := dmp.DiffMain(h.ContentText, item.ContentText, false)
-	h.Diff = dmp.DiffPrettyText(diffs)
+	h.Diff = dmp.DiffPrettyHtml(diffs)
 
 	if err = p.d.UpdateArticle(c, tx, item); err != nil {
 		return
