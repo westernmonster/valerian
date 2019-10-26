@@ -5,9 +5,9 @@ const (
 )
 
 const (
-	SourceWeb     = 1
-	SourceiOS     = 2
-	SourceAndroid = 3
+	SourceWeb     = int32(1)
+	SourceiOS     = int32(2)
+	SourceAndroid = int32(3)
 )
 
 const (
@@ -20,9 +20,9 @@ const (
 )
 
 const (
-	ValcodeRegister       = 1
-	ValcodeForgetPassword = 2
-	ValcodeLogin          = 3
+	ValcodeRegister       = int32(1)
+	ValcodeForgetPassword = int32(2)
+	ValcodeLogin          = int32(3)
 )
 
 const (
