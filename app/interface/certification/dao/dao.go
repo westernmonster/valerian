@@ -6,18 +6,22 @@ import (
 	"time"
 
 	"valerian/app/interface/certification/conf"
+	certification "valerian/app/service/certification/api"
 	"valerian/library/cache/memcache"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
+
+	"github.com/pkg/errors"
 )
 
 // Dao dao struct
 type Dao struct {
-	authDB   sqalx.Node
-	db       sqalx.Node
-	mc       *memcache.Pool
-	mcExpire int32
-	c        *conf.Config
+	authDB           sqalx.Node
+	db               sqalx.Node
+	mc               *memcache.Pool
+	mcExpire         int32
+	c                *conf.Config
+	certificationRPC certification.CertificationClient
 }
 
 func New(c *conf.Config) (dao *Dao) {
@@ -26,6 +30,12 @@ func New(c *conf.Config) (dao *Dao) {
 		db:       sqalx.NewMySQL(c.DB.Main),
 		mc:       memcache.NewPool(c.Memcache.Main.Config),
 		mcExpire: int32(time.Duration(c.Memcache.Main.Expire) / time.Second),
+	}
+
+	if certificationRPC, err := certification.NewClient(c.CertificationRPC); err != nil {
+		panic(errors.WithMessage(err, "Failed to dial certification service"))
+	} else {
+		dao.certificationRPC = certificationRPC
 	}
 	return
 }

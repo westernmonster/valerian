@@ -2,43 +2,30 @@ package service
 
 import (
 	"context"
-	"fmt"
 
 	"valerian/app/interface/certification/conf"
 	"valerian/app/interface/certification/dao"
-	"valerian/app/interface/certification/model"
-	"valerian/library/cloudauth"
+	certification "valerian/app/service/certification/api"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
-
-	"github.com/aliyun/alibaba-cloud-sdk-go/sdk"
 )
 
 // Service struct of service
 type Service struct {
 	c *conf.Config
 	d interface {
-		AddIDCertification(c context.Context, node sqalx.Node, item *model.IDCertification) (err error)
-		UpdateIDCertification(c context.Context, node sqalx.Node, item *model.IDCertification) (err error)
-		DelIDCertification(c context.Context, node sqalx.Node, id int64) (err error)
-		GetUserIDCertification(c context.Context, node sqalx.Node, aid int64) (item *model.IDCertification, err error)
-
-		GetAccountByID(c context.Context, node sqalx.Node, id int64) (item *model.Account, err error)
-		UpdateAccount(c context.Context, node sqalx.Node, item *model.Account) (err error)
-
-		AccountCache(c context.Context, accountID int64) (m *model.Account, err error)
-		SetAccountCache(c context.Context, m *model.Account) (err error)
-		DelAccountCache(c context.Context, accountID int64) (err error)
+		RequestIDCert(c context.Context, aid int64) (info *certification.RequestIDCertResp, err error)
+		RefreshIDCertStatus(c context.Context, aid int64) (info *certification.IDCertStatus, err error)
+		GetIDCert(c context.Context, aid int64) (info *certification.IDCertInfo, err error)
+		GetIDCertStatus(c context.Context, aid int64) (info *certification.IDCertStatus, err error)
+		RequestWorkCert(c context.Context, req *certification.WorkCertReq) (err error)
+		AuditWorkCert(c context.Context, req *certification.AuditWorkCertReq) (err error)
+		GetWorkCert(c context.Context, aid int64) (info *certification.WorkCertInfo, err error)
+		GetWorkCertStatus(c context.Context, aid int64) (info *certification.WorkCertStatus, err error)
 
 		Ping(c context.Context) (err error)
 		Close()
 		DB() sqalx.Node
-	}
-	cloudauth interface {
-		GetVerifyToken(c context.Context, ticketID string) (resp *cloudauth.GetVerifyTokenResponse, err error)
-		GetStatus(c context.Context, ticketID string) (resp *cloudauth.GetStatusResponse, err error)
-		SubmitVerification(c context.Context, ticketID string, realName, idcardNumber, idcardFrontImage, idcardBackImage string) (resp *cloudauth.SubmitVerificationResponse, err error)
-		GetMaterials(c context.Context, ticketID string) (resp *cloudauth.GetMaterialsResponse, err error)
 	}
 	missch chan func()
 }
@@ -51,12 +38,6 @@ func New(c *conf.Config) (s *Service) {
 		missch: make(chan func(), 1024),
 	}
 
-	if aliClient, err := sdk.NewClientWithAccessKey("cn-hangzhou", c.Aliyun.AccessKeyID, c.Aliyun.AccessKeySecret); err != nil {
-		log.Error(fmt.Sprintf("init aliyun client failed(%+v)", err))
-		panic(err)
-	} else {
-		s.cloudauth = &cloudauth.CloudAuthClient{Client: aliClient}
-	}
 	go s.cacheproc()
 	return
 }

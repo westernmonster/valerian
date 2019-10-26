@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"net/url"
 	"strings"
 
@@ -10,6 +11,8 @@ import (
 	"valerian/library/cloudauth"
 	"valerian/library/conf/env"
 	"valerian/library/log"
+
+	"github.com/aliyun/alibaba-cloud-sdk-go/sdk"
 )
 
 // Service struct of service
@@ -31,6 +34,13 @@ func New(c *conf.Config) (s *Service) {
 		c:      c,
 		d:      dao.New(c),
 		missch: make(chan func(), 1024),
+	}
+
+	if aliClient, err := sdk.NewClientWithAccessKey("cn-hangzhou", c.Aliyun.AccessKeyID, c.Aliyun.AccessKeySecret); err != nil {
+		log.Error(fmt.Sprintf("init aliyun client failed(%+v)", err))
+		panic(err)
+	} else {
+		s.cloudauth = &cloudauth.CloudAuthClient{Client: aliClient}
 	}
 	go s.cacheproc()
 	return
