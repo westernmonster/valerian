@@ -90,7 +90,7 @@ func (p *Service) AddArticle(c context.Context, arg *model.ArgAddArticle) (id in
 
 	dmp := diffmatchpatch.New()
 	diffs := dmp.DiffMain("", item.ContentText, false)
-	h.Diff = dmp.H
+	h.Diff = dmp.DiffPrettyHtml(diffs)
 
 	if err = p.d.AddArticle(c, tx, item); err != nil {
 		return
