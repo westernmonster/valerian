@@ -25,6 +25,9 @@ type Service struct {
 		EmailValcodeCache(c context.Context, vtype int, mobile string) (code string, err error)
 		DelEmailCache(c context.Context, vtype int, mobile string) (err error)
 
+		IsEmailExist(c context.Context, email string) (exist bool, err error)
+		IsMobileExist(c context.Context, prefix, mobile string) (exist bool, err error)
+
 		Ping(c context.Context) (err error)
 		Close()
 	}

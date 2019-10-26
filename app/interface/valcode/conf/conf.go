@@ -11,6 +11,7 @@ import (
 	"valerian/library/log"
 	"valerian/library/naming/discovery"
 	"valerian/library/net/http/mars"
+	"valerian/library/net/rpc/warden"
 	xtime "valerian/library/time"
 	"valerian/library/tracing"
 
@@ -32,6 +33,8 @@ type Config struct {
 
 	Aliyun    *Aliyun
 	Discovery *discovery.Config
+
+	AccountRPC *warden.ClientConfig
 }
 
 type Aliyun struct {
