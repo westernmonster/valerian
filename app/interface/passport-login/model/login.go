@@ -201,6 +201,9 @@ type LoginResp struct {
 type Profile struct {
 	// ID
 	ID int64 `json:"id,string" swaggertype:"string" format:"int64"`
+
+	// 手机前缀
+	Prefix string `json:"prefix"`
 	// 手机
 	Mobile string `json:"mobile" format:"mobile"`
 	// 邮件地址

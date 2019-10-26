@@ -254,6 +254,7 @@ func (p *Service) GetProfile(c context.Context, aid int64) (item *model.Profile,
 
 	item = &model.Profile{
 		ID:             profile.ID,
+		Prefix:         profile.Prefix,
 		Mobile:         profile.Mobile,
 		Email:          profile.Email,
 		UserName:       profile.UserName,
