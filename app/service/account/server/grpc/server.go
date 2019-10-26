@@ -86,25 +86,7 @@ func (s *server) SelfProfileInfo(ctx context.Context, req *api.AidReq) (*api.Sel
 		return nil, err
 	}
 
-	reply := api.FromSelfProfile(resp)
-
-	stat, err := s.svr.GetAccountStat(ctx, req.Aid)
-	if err != nil {
-		return nil, err
-	}
-
-	statInfo := api.FromStat(stat)
-	reply.Stat = statInfo
-
-	setting, err := s.svr.GetAccountSetting(ctx, req.Aid)
-	if err != nil {
-		return nil, err
-	}
-
-	settingInfo := api.FromSetting(setting)
-	reply.Setting = settingInfo
-
-	return reply, nil
+	return resp, nil
 }
 
 func (s *server) MemberInfo(ctx context.Context, req *api.AidReq) (*api.MemberInfoReply, error) {
@@ -238,7 +220,7 @@ func (s *server) EmailExist(ctx context.Context, req *api.EmailReq) (*api.ExistR
 	return &api.ExistResp{Exist: exist}, nil
 }
 
-func (s *server) AddAccount(ctx context.Context, req *api.AddAccountReq) (*api.ProfileResp, error) {
+func (s *server) AddAccount(ctx context.Context, req *api.AddAccountReq) (*api.SelfProfile, error) {
 	item := &model.Account{
 		ID:           req.ID,
 		Mobile:       req.Mobile,
@@ -268,5 +250,5 @@ func (s *server) AddAccount(ctx context.Context, req *api.AddAccountReq) (*api.P
 		return nil, err
 	}
 
-	return &api.AidResp{Aid: v}, nil
+	return v, nil
 }
