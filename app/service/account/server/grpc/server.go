@@ -68,7 +68,7 @@ func (s *server) AllAccounts(ctx context.Context, req *api.EmptyStruct) (*api.Al
 			IDCert:       bool(v.IDCert),
 			WorkCert:     bool(v.WorkCert),
 			IsOrg:        bool(v.IsOrg),
-			IsVIP:        bool(v.IsVIP),
+			IsVIP:        bool(v.IsVip),
 			CreatedAt:    v.CreatedAt,
 			UpdatedAt:    v.UpdatedAt,
 		}
@@ -148,7 +148,7 @@ func (s *server) AccountInfo(ctx context.Context, req *api.AidReq) (*api.DBAccou
 		IDCert:       bool(v.IDCert),
 		WorkCert:     bool(v.WorkCert),
 		IsOrg:        bool(v.IsOrg),
-		IsVIP:        bool(v.IsVIP),
+		IsVIP:        bool(v.IsVip),
 		CreatedAt:    v.CreatedAt,
 		UpdatedAt:    v.UpdatedAt,
 	}
