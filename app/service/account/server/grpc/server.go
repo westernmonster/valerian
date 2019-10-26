@@ -217,3 +217,21 @@ func (s *server) SettingInfo(ctx context.Context, req *api.AidReq) (*api.Setting
 		Language:             data.Language,
 	}, nil
 }
+
+func (s *server) MobileExist(ctx context.Context, req *api.MobileReq) (*api.ExistResp, error) {
+	exist, err := s.svr.IsMobileExist(ctx, req.Prefix, req.Mobile)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.ExistResp{Exist: exist}, nil
+}
+
+func (s *server) EmailExist(ctx context.Context, req *api.EmailReq) (*api.ExistResp, error) {
+	exist, err := s.svr.IsEmailExist(ctx, req.Email)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.ExistResp{Exist: exist}, nil
+}

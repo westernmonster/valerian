@@ -153,6 +153,19 @@ message AidReq {
     string remoteIP = 2 ;
 }
 
+message EmailReq {
+    string email = 1 ;
+}
+
+message MobileReq {
+    string mobile = 1 ;
+    string prefix = 2 ;
+}
+
+message ExistResp {
+    bool Exist = 1;
+}
+
 message AidsReq {
     // aid 列表
     repeated int64 aids = 1 ;
@@ -189,6 +202,9 @@ message AllAccountsResp {
 
 service Account {
     rpc AllAccounts(EmptyStruct) returns (AllAccountsResp);
+
+    rpc EmailExist(EmailReq) returns (ExistResp);
+    rpc MobileExist(MobileReq) returns (ExistResp);
 
     rpc UpdateSetting(SettingReq) returns (EmptyStruct);
 
