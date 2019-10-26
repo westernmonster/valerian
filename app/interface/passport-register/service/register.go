@@ -96,30 +96,29 @@ func (p *Service) EmailRegister(c context.Context, arg *model.ArgEmail) (resp *m
 		return
 	}
 
-	item := &account.DBAccount{
-		ID:        gid.NewID(),
-		Source:    arg.Source,
-		IP:        ipAddr,
-		Email:     arg.Email,
-		Password:  passwordHash,
-		Salt:      salt,
-		Role:      model.AccountRoleUser,
-		Avatar:    "https://flywiki.oss-cn-hangzhou.aliyuncs.com/765-default-avatar.png",
-		UserName:  asteriskEmailName(arg.Email),
-		CreatedAt: time.Now().Unix(),
-		UpdatedAt: time.Now().Unix(),
+	item := &account.AddAccountReq{
+		ID:       gid.NewID(),
+		Source:   arg.Source,
+		IP:       ipAddr,
+		Email:    arg.Email,
+		Password: passwordHash,
+		Salt:     salt,
+		Role:     model.AccountRoleUser,
+		Avatar:   "https://flywiki.oss-cn-hangzhou.aliyuncs.com/765-default-avatar.png",
+		UserName: asteriskEmailName(arg.Email),
 	}
 
-	if err = p.d.AddAccount(c, item); err != nil {
+	var id int64
+	if id, err = p.d.AddAccount(c, item); err != nil {
 		return
 	}
 
 	p.addCache(func() {
 		p.d.DelEmailValcodeCache(context.TODO(), model.ValcodeRegister, arg.Email)
-		p.onAccountAdded(context.TODO(), item.ID, time.Now().Unix())
+		p.onAccountAdded(context.TODO(), id, time.Now().Unix())
 	})
 
-	return p.loginAccount(c, item.ID, arg.ClientID)
+	return p.loginAccount(c, id, arg.ClientID)
 }
 
 func (p *Service) loginAccount(c context.Context, id int64, clientID string) (resp *model.LoginResp, err error) {
