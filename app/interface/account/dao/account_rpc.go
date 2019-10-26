@@ -35,3 +35,17 @@ func (p *Dao) GetAccountStat(c context.Context, aid int64) (info *account.Accoun
 	}
 	return
 }
+
+func (p *Dao) GetAccountSetting(c context.Context, aid int64) (info *account.Setting, err error) {
+	if info, err = p.accountRPC.SettingInfo(c, &account.AidReq{Aid: aid}); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetAccountSetting err(%+v) aid(%d)", err, aid))
+	}
+	return
+}
+
+func (p *Dao) UpdateAccountSetting(c context.Context, aid int64, boolVals map[string]bool, language string) (err error) {
+	if _, err = p.accountRPC.UpdateSetting(c, &account.SettingReq{Aid: aid, Settings: boolVals, Language: language}); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.UpdateSetting err(%+v) aid(%d)", err, aid))
+	}
+	return
+}

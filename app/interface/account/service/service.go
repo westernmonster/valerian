@@ -32,10 +32,6 @@ type Service struct {
 		SetPassword(c context.Context, node sqalx.Node, password, salt string, aid int64) (err error)
 		UpdateAccount(c context.Context, node sqalx.Node, item *model.Account) (err error)
 
-		GetAccountSettingByID(c context.Context, node sqalx.Node, id int64) (item *model.AccountSetting, err error)
-		AddAccountSetting(c context.Context, node sqalx.Node, item *model.AccountSetting) (err error)
-		UpdateAccountSetting(c context.Context, node sqalx.Node, item *model.AccountSetting) (err error)
-
 		GetFollowings(c context.Context, accountID int64, limit, offset int) (resp *relation.FollowingResp, err error)
 		GetFans(c context.Context, accountID int64, limit, offset int) (resp *relation.FansResp, err error)
 		Follow(c context.Context, accountID, targetAccountID int64) (err error)
@@ -63,6 +59,8 @@ type Service struct {
 		GetMemberInfo(c context.Context, aid int64) (info *account.MemberInfoReply, err error)
 		GetSelfProfile(c context.Context, aid int64) (info *account.SelfProfile, err error)
 		GetAccountStat(c context.Context, aid int64) (info *account.AccountStatInfo, err error)
+		GetAccountSetting(c context.Context, aid int64) (info *account.Setting, err error)
+		UpdateAccountSetting(c context.Context, aid int64, boolVals map[string]bool, language string) (err error)
 
 		SetAccountCache(c context.Context, m *model.Account) (err error)
 		AccountCache(c context.Context, accountID int64) (m *model.Account, err error)

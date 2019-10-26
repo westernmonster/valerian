@@ -200,6 +200,8 @@ service Account {
 
     rpc BasicInfo(AidReq) returns (BaseInfoReply);
 
+    rpc SettingInfo(AidReq) returns (Setting);
+
     rpc AccountStat(AidReq) returns (AccountStatInfo);
 
     rpc BaseInfos(AidsReq) returns (BaseInfosReply);

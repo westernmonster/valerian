@@ -2,11 +2,10 @@ package service
 
 import (
 	"context"
-	"time"
 
 	"valerian/app/interface/account/model"
+	account "valerian/app/service/account/api"
 	"valerian/library/database/sqalx"
-	"valerian/library/database/sqlx/types"
 	"valerian/library/ecode"
 	"valerian/library/net/metadata"
 )
@@ -21,22 +20,9 @@ func (p *Service) GetAccountSetting(c context.Context) (resp *model.SettingResp,
 }
 
 func (p *Service) getAccountSetting(c context.Context, node sqalx.Node, accountID int64) (resp *model.SettingResp, err error) {
-	var setting *model.AccountSetting
-	if setting, err = p.d.GetAccountSettingByID(c, node, accountID); err != nil {
+	var setting *account.Setting
+	if setting, err = p.d.GetAccountSetting(c, accountID); err != nil {
 		return
-	} else if setting == nil {
-		setting = &model.AccountSetting{
-			AccountID:            accountID,
-			ActivityLike:         true,
-			ActivityComment:      true,
-			ActivityFollowTopic:  true,
-			ActivityFollowMember: true,
-			NotifyLike:           true,
-			NotifyComment:        true,
-			NotifyNewFans:        true,
-			NotifyNewMember:      true,
-			Language:             "zh-CN",
-		}
 	}
 
 	resp = &model.SettingResp{
@@ -68,22 +54,47 @@ func (p *Service) UpdateAccountSetting(c context.Context, arg *model.ArgSetting)
 		return
 	}
 
-	setting := &model.AccountSetting{
-		AccountID:            aid,
-		ActivityLike:         types.BitBool(arg.Activity.Like),
-		ActivityComment:      types.BitBool(arg.Activity.Comment),
-		ActivityFollowTopic:  types.BitBool(arg.Activity.FollowTopic),
-		ActivityFollowMember: types.BitBool(arg.Activity.FollowMember),
-		NotifyLike:           types.BitBool(arg.Notify.Like),
-		NotifyComment:        types.BitBool(arg.Notify.Comment),
-		NotifyNewFans:        types.BitBool(arg.Notify.NewFans),
-		NotifyNewMember:      types.BitBool(arg.Notify.NewMember),
-		Language:             arg.Language,
-		CreatedAt:            time.Now().Unix(),
-		UpdatedAt:            time.Now().Unix(),
+	settings := make(map[string]bool)
+	language := ""
+	if arg.Language != nil {
+		language = *arg.Language
 	}
 
-	if err = p.d.UpdateAccountSetting(c, p.d.DB(), setting); err != nil {
+	if arg.Activity != nil {
+		if arg.Activity.Like != nil {
+			settings["activity_like"] = *arg.Activity.Like
+		}
+		if arg.Activity.Comment != nil {
+			settings["activity_comment"] = *arg.Activity.Comment
+		}
+
+		if arg.Activity.FollowTopic != nil {
+			settings["activity_follow_topic"] = *arg.Activity.FollowTopic
+		}
+
+		if arg.Activity.FollowMember != nil {
+			settings["activity_follow_member"] = *arg.Activity.FollowMember
+		}
+	}
+
+	if arg.Notify != nil {
+		if arg.Notify.Like != nil {
+			settings["notify_like"] = *arg.Notify.Like
+		}
+		if arg.Notify.Comment != nil {
+			settings["notify_comment"] = *arg.Notify.Comment
+		}
+
+		if arg.Notify.NewFans != nil {
+			settings["notify_new_fans"] = *arg.Notify.NewFans
+		}
+
+		if arg.Notify.NewMember != nil {
+			settings["notify_new_member"] = *arg.Notify.NewMember
+		}
+	}
+
+	if err = p.d.UpdateAccountSetting(c, aid, settings, language); err != nil {
 		return
 	}
 
@@ -97,34 +108,24 @@ func (p *Service) UpdateActivitySetting(c context.Context, arg *model.ArgActivit
 		return
 	}
 
-	var setting *model.AccountSetting
-	if setting, err = p.d.GetAccountSettingByID(c, p.d.DB(), aid); err != nil {
-		return
-	} else if setting == nil {
-		setting = &model.AccountSetting{
-			AccountID:            aid,
-			ActivityLike:         true,
-			ActivityComment:      true,
-			ActivityFollowTopic:  true,
-			ActivityFollowMember: true,
-			NotifyLike:           true,
-			NotifyComment:        true,
-			NotifyNewFans:        true,
-			NotifyNewMember:      true,
-			Language:             "zh-CN",
-		}
+	settings := make(map[string]bool)
+	language := ""
 
-		if err = p.d.AddAccountSetting(c, p.d.DB(), setting); err != nil {
-			return
-		}
+	if arg.Like != nil {
+		settings["activity_like"] = *arg.Like
+	}
+	if arg.Comment != nil {
+		settings["activity_comment"] = *arg.Comment
 	}
 
-	setting.ActivityLike = types.BitBool(arg.Like)
-	setting.ActivityComment = types.BitBool(arg.Comment)
-	setting.ActivityFollowTopic = types.BitBool(arg.FollowTopic)
-	setting.ActivityFollowMember = types.BitBool(arg.FollowMember)
+	if arg.FollowTopic != nil {
+		settings["activity_follow_topic"] = *arg.FollowTopic
+	}
 
-	if err = p.d.UpdateAccountSetting(c, p.d.DB(), setting); err != nil {
+	if arg.FollowMember != nil {
+		settings["activity_follow_member"] = *arg.FollowMember
+	}
+	if err = p.d.UpdateAccountSetting(c, aid, settings, language); err != nil {
 		return
 	}
 
@@ -138,34 +139,25 @@ func (p *Service) UpdateNotifySetting(c context.Context, arg *model.ArgNotifySet
 		return
 	}
 
-	var setting *model.AccountSetting
-	if setting, err = p.d.GetAccountSettingByID(c, p.d.DB(), aid); err != nil {
-		return
-	} else if setting == nil {
-		setting = &model.AccountSetting{
-			AccountID:            aid,
-			ActivityLike:         true,
-			ActivityComment:      true,
-			ActivityFollowTopic:  true,
-			ActivityFollowMember: true,
-			NotifyLike:           true,
-			NotifyComment:        true,
-			NotifyNewFans:        true,
-			NotifyNewMember:      true,
-			Language:             "zh-CN",
-		}
+	settings := make(map[string]bool)
+	language := ""
 
-		if err = p.d.AddAccountSetting(c, p.d.DB(), setting); err != nil {
-			return
-		}
+	if arg.Like != nil {
+		settings["notify_like"] = *arg.Like
+	}
+	if arg.Comment != nil {
+		settings["notify_comment"] = *arg.Comment
 	}
 
-	setting.NotifyLike = types.BitBool(arg.Like)
-	setting.NotifyComment = types.BitBool(arg.Comment)
-	setting.NotifyNewFans = types.BitBool(arg.NewFans)
-	setting.NotifyNewMember = types.BitBool(arg.NewMember)
+	if arg.NewFans != nil {
+		settings["notify_new_fans"] = *arg.NewFans
+	}
 
-	if err = p.d.UpdateAccountSetting(c, p.d.DB(), setting); err != nil {
+	if arg.NewMember != nil {
+		settings["notify_new_member"] = *arg.NewMember
+	}
+
+	if err = p.d.UpdateAccountSetting(c, aid, settings, language); err != nil {
 		return
 	}
 
@@ -179,31 +171,13 @@ func (p *Service) UpdateLanguageSetting(c context.Context, arg *model.ArgLanguag
 		return
 	}
 
-	var setting *model.AccountSetting
-	if setting, err = p.d.GetAccountSettingByID(c, p.d.DB(), aid); err != nil {
-		return
-	} else if setting == nil {
-		setting = &model.AccountSetting{
-			AccountID:            aid,
-			ActivityLike:         true,
-			ActivityComment:      true,
-			ActivityFollowTopic:  true,
-			ActivityFollowMember: true,
-			NotifyLike:           true,
-			NotifyComment:        true,
-			NotifyNewFans:        true,
-			NotifyNewMember:      true,
-			Language:             "zh-CN",
-		}
-
-		if err = p.d.AddAccountSetting(c, p.d.DB(), setting); err != nil {
-			return
-		}
+	settings := make(map[string]bool)
+	language := ""
+	if arg.Language != nil {
+		language = *arg.Language
 	}
 
-	setting.Language = arg.Language
-
-	if err = p.d.UpdateAccountSetting(c, p.d.DB(), setting); err != nil {
+	if err = p.d.UpdateAccountSetting(c, aid, settings, language); err != nil {
 		return
 	}
 

@@ -199,3 +199,21 @@ func (s *server) UpdateSetting(ctx context.Context, req *api.SettingReq) (*api.E
 	}
 	return &api.EmptyStruct{}, nil
 }
+
+func (s *server) SettingInfo(ctx context.Context, req *api.AidReq) (*api.Setting, error) {
+	data, err := s.svr.GetAccountSetting(ctx, req.Aid)
+	if err != nil {
+		return nil, err
+	}
+	return &api.Setting{
+		ActivityLike:         data.ActivityLike,
+		ActivityComment:      data.ActivityComment,
+		ActivityFollowTopic:  data.ActivityFollowTopic,
+		ActivityFollowMember: data.ActivityFollowMember,
+		NotifyLike:           data.NotifyLike,
+		NotifyComment:        data.NotifyComment,
+		NotifyNewFans:        data.NotifyNewFans,
+		NotifyNewMember:      data.NotifyNewMember,
+		Language:             data.Language,
+	}, nil
+}
