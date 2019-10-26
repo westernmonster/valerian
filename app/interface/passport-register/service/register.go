@@ -146,6 +146,10 @@ func (p *Service) EmailRegister(c context.Context, arg *model.ArgEmail) (resp *m
 		return
 	}
 
+	fmt.Printf("password: (%d)", arg.Password)
+	fmt.Printf("salt: (%s)", salt)
+	fmt.Printf("pepper: (%s)", model.PasswordPepper)
+
 	item := &model.Account{
 		ID:        gid.NewID(),
 		Source:    arg.Source,
