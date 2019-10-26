@@ -40,7 +40,7 @@ func (p *Dao) GetFeedbacksByCond(c context.Context, node sqalx.Node, cond map[st
 		condition = append(condition, val)
 	}
 	if val, ok := cond["type"]; ok {
-		clause += " AND a.type =?"
+		clause += " AND a.`type` =?"
 		condition = append(condition, val)
 	}
 	if val, ok := cond["desc"]; ok {
@@ -97,7 +97,7 @@ func (p *Dao) GetFeedbackByCond(c context.Context, node sqalx.Node, cond map[str
 		condition = append(condition, val)
 	}
 	if val, ok := cond["type"]; ok {
-		clause += " AND a.type =?"
+		clause += " AND a.`type` =?"
 		condition = append(condition, val)
 	}
 	if val, ok := cond["desc"]; ok {
@@ -126,7 +126,7 @@ func (p *Dao) GetFeedbackByCond(c context.Context, node sqalx.Node, cond map[str
 
 // Insert insert a new record
 func (p *Dao) AddFeedback(c context.Context, node sqalx.Node, item *model.Feedback) (err error) {
-	sqlInsert := "INSERT INTO feedbacks( id,target_id,target_type,type,desc,created_by,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?,?,?)"
+	sqlInsert := "INSERT INTO feedbacks( id,target_id,target_type,`type`,desc,created_by,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?,?,?)"
 
 	if _, err = node.ExecContext(c, sqlInsert, item.ID, item.TargetID, item.TargetType, item.Type, item.Desc, item.CreatedBy, item.Deleted, item.CreatedAt, item.UpdatedAt); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.AddFeedbacks err(%+v), item(%+v)", err, item))
@@ -138,7 +138,7 @@ func (p *Dao) AddFeedback(c context.Context, node sqalx.Node, item *model.Feedba
 
 // Update update a exist record
 func (p *Dao) UpdateFeedback(c context.Context, node sqalx.Node, item *model.Feedback) (err error) {
-	sqlUpdate := "UPDATE feedbacks SET target_id=?,target_type=?,type=?,desc=?,created_by=?,updated_at=? WHERE id=?"
+	sqlUpdate := "UPDATE feedbacks SET target_id=?,target_type=?,`type`=?,desc=?,created_by=?,updated_at=? WHERE id=?"
 
 	_, err = node.ExecContext(c, sqlUpdate, item.TargetID, item.TargetType, item.Type, item.Desc, item.CreatedBy, item.UpdatedAt, item.ID)
 	if err != nil {
