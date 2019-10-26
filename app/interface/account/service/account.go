@@ -169,6 +169,10 @@ func (p *Service) UpdateProfile(c context.Context, aid int64, arg *model.ArgUpda
 		account.Introduction = *arg.Introduction
 	}
 
+	if arg.UserName != nil {
+		account.UserName = *arg.UserName
+	}
+
 	if arg.BirthYear != nil {
 		account.BirthYear = *arg.BirthYear
 	}

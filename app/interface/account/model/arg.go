@@ -107,6 +107,9 @@ type ArgUpdateProfile struct {
 	// 如果无需更改该字段，在提交JSON请求中请不要包含该字段
 	Avatar *string `json:"avatar,omitempty"`
 
+	// 更新用户名
+	UserName *string `json:"user_name,omitempty"`
+
 	// 用户性别， 1 为男，2 为女
 	// 如果无需更改该字段，在提交JSON请求中请不要包含该字段
 	Gender *int `json:"gender,omitempty"`
