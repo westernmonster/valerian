@@ -14,8 +14,6 @@ const (
 	_getAccountByEmailSQL  = "SELECT a.* FROM accounts a WHERE a.deleted=0 AND a.email=?"
 	_getAccountByMobileSQL = "SELECT a.* FROM accounts a WHERE a.deleted=0 AND a.mobile=?"
 	_getAccountByIDSQL     = "SELECT a.* FROM accounts a WHERE a.deleted=0 AND a.id=?"
-
-	_addAccountSQL = "INSERT INTO accounts( id,mobile,user_name,email,password,role,salt,gender,birth_year,birth_month,birth_day,location,introduction,avatar,source,ip,id_cert,work_cert,is_org,is_vip,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
 )
 
 func (p *Dao) GetAccountByEmail(c context.Context, node sqalx.Node, email string) (item *model.Account, err error) {
@@ -60,32 +58,13 @@ func (p *Dao) GetAccountByID(c context.Context, node sqalx.Node, id int64) (item
 	return
 }
 
+// Insert insert a new record
 func (p *Dao) AddAccount(c context.Context, node sqalx.Node, item *model.Account) (err error) {
-	if _, err = node.ExecContext(c, _addAccountSQL,
-		item.ID,
-		item.Mobile,
-		item.UserName,
-		item.Email,
-		item.Password,
-		item.Role,
-		item.Salt,
-		item.Gender,
-		item.BirthYear,
-		item.BirthMonth,
-		item.BirthDay,
-		item.Location,
-		item.Introduction,
-		item.Avatar,
-		item.Source,
-		item.IP,
-		item.IDCert,
-		item.WorkCert,
-		item.IsOrg,
-		item.IsVIP,
-		item.Deleted,
-		item.CreatedAt,
-		item.UpdatedAt); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.AddAccount error(%+v), item(%+v)", err, item))
+	sqlInsert := "INSERT INTO accounts( id,mobile,user_name,email,password,role,salt,gender,birth_year,birth_month,birth_day,location,introduction,avatar,source,ip,id_cert,work_cert,is_org,is_vip,deleted,created_at,updated_at,prefix) VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+
+	if _, err = node.ExecContext(c, sqlInsert, item.ID, item.Mobile, item.UserName, item.Email, item.Password, item.Role, item.Salt, item.Gender, item.BirthYear, item.BirthMonth, item.BirthDay, item.Location, item.Introduction, item.Avatar, item.Source, item.IP, item.IDCert, item.WorkCert, item.IsOrg, item.IsVip, item.Deleted, item.CreatedAt, item.UpdatedAt, item.Prefix); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.AddAccounts err(%+v), item(%+v)", err, item))
+		return
 	}
 
 	return

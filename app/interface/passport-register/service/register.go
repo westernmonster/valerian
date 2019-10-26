@@ -51,6 +51,7 @@ func (p *Service) MobileRegister(c context.Context, arg *model.ArgMobile) (resp 
 		IP:        ipAddr,
 		Mobile:    mobile,
 		Password:  passwordHash,
+		Prefix:    arg.Prefix,
 		Salt:      salt,
 		Role:      model.AccountRoleUser,
 		Avatar:    "https://flywiki.oss-cn-hangzhou.aliyuncs.com/765-default-avatar.png",

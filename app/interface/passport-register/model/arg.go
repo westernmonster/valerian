@@ -17,7 +17,7 @@ type ArgEmail struct {
 	// 密码
 	Password string `json:"password"`
 	// Source 来源，1:Web, 2:iOS; 3:Android
-	Source int `json:"source"`
+	Source int32 `json:"source"`
 	// ClientID OAUTH2 Client ID
 	ClientID string `json:"client_id"`
 }
@@ -54,7 +54,7 @@ type ArgMobile struct {
 	// 密码
 	Password string `json:"password"`
 	// Source 来源，1:Web, 2:iOS; 3:Android
-	Source int `json:"source"`
+	Source int32 `json:"source"`
 
 	// ClientID OAUTH2 Client ID
 	ClientID string `json:"client_id"`
