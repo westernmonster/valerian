@@ -174,20 +174,11 @@ func (p *Service) UpdateArticle(c context.Context, arg *model.ArgUpdateArticle) 
 		return
 	}
 
+	oldContentText := item.ContentText
+
 	var seq int
 	if seq, err = p.d.GetArticleHistoriesMaxSeq(c, tx, arg.ID); err != nil {
 		return
-	}
-	h := &model.ArticleHistory{
-		ID:          gid.NewID(),
-		ArticleID:   item.ID,
-		Seq:         seq + 1,
-		Content:     item.Content,
-		ContentText: item.ContentText,
-		UpdatedBy:   aid,
-		ChangeDesc:  arg.ChangeDesc,
-		CreatedAt:   time.Now().Unix(),
-		UpdatedAt:   time.Now().Unix(),
 	}
 
 	if arg.Title != nil {
@@ -232,8 +223,20 @@ func (p *Service) UpdateArticle(c context.Context, arg *model.ArgUpdateArticle) 
 		item.DisableComment = types.BitBool(*arg.DisableComment)
 	}
 
+	h := &model.ArticleHistory{
+		ID:          gid.NewID(),
+		ArticleID:   item.ID,
+		Seq:         seq + 1,
+		Content:     item.Content,
+		ContentText: item.ContentText,
+		UpdatedBy:   aid,
+		ChangeDesc:  arg.ChangeDesc,
+		CreatedAt:   time.Now().Unix(),
+		UpdatedAt:   time.Now().Unix(),
+	}
+
 	dmp := diffmatchpatch.New()
-	diffs := dmp.DiffMain(h.ContentText, item.ContentText, false)
+	diffs := dmp.DiffMain(h.ContentText, oldContentText, false)
 	h.Diff = dmp.DiffPrettyHtml(diffs)
 
 	if err = p.d.UpdateArticle(c, tx, item); err != nil {
