@@ -168,7 +168,7 @@ func (p *Service) GetProfile(c context.Context, accountID int64) (profile *model
 		IDCert:       bool(item.IDCert),
 		WorkCert:     bool(item.WorkCert),
 		IsOrg:        bool(item.IsOrg),
-		IsVIP:        bool(item.IsVIP),
+		IsVIP:        bool(item.IsVip),
 		Role:         item.Role, UserName: item.UserName,
 		CreatedAt: item.CreatedAt,
 		UpdatedAt: item.UpdatedAt,

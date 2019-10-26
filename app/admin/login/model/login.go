@@ -12,7 +12,7 @@ import (
 // 邮件登录请求
 type ArgEmailLogin struct {
 	// Source 来源，1:Web, 2:iOS; 3:Android
-	Source int `json:"source"`
+	Source int32 `json:"source"`
 	// Email 邮件地址
 	Email string `json:"email"`
 	// Password 密码，长度至少为6位
@@ -48,7 +48,7 @@ type ArgDigitLogin struct {
 	// 验证码 6位数字
 	Valcode string `json:"valcode"`
 	// Source 来源，1:Web, 2:iOS; 3:Android
-	Source int `json:"source"`
+	Source int32 `json:"source"`
 
 	// ClientID
 	ClientID string `json:"client_id"`
@@ -79,7 +79,7 @@ func (p *ArgDigitLogin) Validate() error {
 // swagger:model
 type ArgMobileLogin struct {
 	// Source 来源，1:Web, 2:iOS; 3:Android
-	Source int `json:"source"`
+	Source int32 `json:"source"`
 	// Mobile 手机号码
 	Mobile string `json:"mobile"`
 	// Prefix 国际区号，例如86
@@ -197,13 +197,13 @@ type Profile struct {
 	// 用户名
 	UserName string `json:"user_name" format:"user_name"`
 	// 性别 1为男， 2为女
-	Gender int `json:"gender,omitempty"`
+	Gender int32 `json:"gender,omitempty"`
 	// 出生年
-	BirthYear int `json:"birth_year,omitempty"`
+	BirthYear int32 `json:"birth_year,omitempty"`
 	// 出生月
-	BirthMonth int `json:"birth_month,omitempty"`
+	BirthMonth int32 `json:"birth_month,omitempty"`
 	// 出生日
-	BirthDay int `json:"birth_day,omitempty"`
+	BirthDay int32 `json:"birth_day,omitempty"`
 	// 所在地区值
 	Location int64 `json:"location,string,omitempty"`
 	// 所在地区名，地区是层级结构，这里将国家、州/省、市、区全部获取出来
@@ -213,7 +213,7 @@ type Profile struct {
 	// 头像
 	Avatar string `json:"avatar"`
 	// 来源，1:Web, 2:iOS; 3:Android
-	Source int `json:"source"`
+	Source int32 `json:"source"`
 	// IP 注册IP
 	IP string `json:"ip,omitempty"`
 
