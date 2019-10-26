@@ -1,9 +1,11 @@
 package http
 
 import (
+	"fmt"
 	"net/http"
 	"valerian/app/interface/passport-register/model"
 	"valerian/library/ecode"
+	"valerian/library/log"
 	"valerian/library/net/http/mars"
 )
 
@@ -32,6 +34,7 @@ func emailRegister(c *mars.Context) {
 	}
 
 	if e := arg.Validate(); e != nil {
+		log.For(c).Error(fmt.Sprintf("request error %+v", e))
 		c.JSON(nil, ecode.RequestErr)
 		return
 	}
