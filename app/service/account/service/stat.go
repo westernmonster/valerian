@@ -4,10 +4,15 @@ import (
 	"context"
 	"time"
 	"valerian/app/service/account/model"
+	"valerian/library/database/sqalx"
 )
 
 func (p *Service) GetAccountStat(c context.Context, accountID int64) (item *model.AccountStat, err error) {
-	if item, err = p.d.GetAccountStatByID(c, p.d.DB(), accountID); err != nil {
+	return p.getAccountStat(c, p.d.DB(), accountID)
+}
+
+func (p *Service) getAccountStat(c context.Context, node sqalx.Node, accountID int64) (item *model.AccountStat, err error) {
+	if item, err = p.d.GetAccountStatByID(c, node, accountID); err != nil {
 		return
 	} else if item == nil {
 		item = &model.AccountStat{

@@ -236,7 +236,7 @@ service Account {
 
     rpc UpdateSetting(SettingReq) returns (EmptyStruct);
 
-    rpc AddAccount(AddAccountReq) returns (AidResp);
+    rpc AddAccount(AddAccountReq) returns (SelfProfile);
 
     rpc AccountInfo(AidReq) returns (DBAccount);
 

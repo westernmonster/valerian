@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"strings"
 
+	"valerian/app/service/account/api"
 	"valerian/app/service/account/model"
+	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
 	"valerian/library/log"
 )
@@ -55,7 +57,7 @@ func (p *Service) IsMobileExist(c context.Context, prefix, mobile string) (exist
 
 func (p *Service) BaseInfo(c context.Context, aid int64) (info *model.BaseInfo, err error) {
 	var account *model.Account
-	if account, err = p.getAccountByID(c, aid); err != nil {
+	if account, err = p.getAccountByID(c, p.d.DB(), aid); err != nil {
 		return
 	}
 
@@ -108,13 +110,17 @@ func (p *Service) BatchBaseInfo(c context.Context, aids []int64) (data map[int64
 	return
 }
 
-func (p *Service) GetSelfProfile(c context.Context, accountID int64) (profile *model.SelfProfile, err error) {
+func (p *Service) GetSelfProfile(c context.Context, accountID int64) (profile *api.SelfProfile, err error) {
+	return p.getSelfProfile(c, p.d.DB(), accountID)
+}
+
+func (p *Service) getSelfProfile(c context.Context, node sqalx.Node, accountID int64) (profile *api.SelfProfile, err error) {
 	var item *model.Account
-	if item, err = p.getAccountByID(c, accountID); err != nil {
+	if item, err = p.getAccountByID(c, node, accountID); err != nil {
 		return
 	}
 
-	profile = &model.SelfProfile{
+	profile = &api.SelfProfile{
 		ID:           item.ID,
 		Prefix:       item.Prefix,
 		Mobile:       item.Mobile,
@@ -149,12 +155,43 @@ func (p *Service) GetSelfProfile(c context.Context, accountID int64) (profile *m
 		}
 	}
 
+	var stat *model.AccountStat
+	if stat, err = p.getAccountStat(c, node, accountID); err != nil {
+		return
+	}
+
+	profile.Stat = &api.AccountStatInfo{
+		FansCount:       int32(stat.Fans),
+		FollowingCount:  int32(stat.Following),
+		BlackCount:      int32(stat.Black),
+		TopicCount:      int32(stat.TopicCount),
+		ArticleCount:    int32(stat.ArticleCount),
+		DiscussionCount: int32(stat.DiscussionCount),
+	}
+
+	var setting *model.SettingResp
+	if setting, err = p.getAccountSetting(c, node, accountID); err != nil {
+		return
+	}
+
+	profile.Setting = &api.Setting{
+		ActivityLike:         bool(setting.ActivityLike),
+		ActivityComment:      bool(setting.ActivityComment),
+		ActivityFollowTopic:  bool(setting.ActivityFollowTopic),
+		ActivityFollowMember: bool(setting.ActivityFollowMember),
+		NotifyLike:           bool(setting.NotifyLike),
+		NotifyComment:        bool(setting.NotifyComment),
+		NotifyNewFans:        bool(setting.NotifyNewFans),
+		NotifyNewMember:      bool(setting.NotifyNewMember),
+		Language:             setting.Language,
+	}
+
 	return
 }
 
 func (p *Service) GetMemberProfile(c context.Context, accountID int64) (profile *model.ProfileInfo, err error) {
 	var item *model.Account
-	if item, err = p.getAccountByID(c, accountID); err != nil {
+	if item, err = p.getAccountByID(c, p.d.DB(), accountID); err != nil {
 		return
 	}
 
@@ -217,10 +254,10 @@ func (p *Service) getLocationString(c context.Context, nodeID int64) (locationSt
 }
 
 func (p *Service) GetAccountByID(c context.Context, aid int64) (account *model.Account, err error) {
-	return p.getAccountByID(c, aid)
+	return p.getAccountByID(c, p.d.DB(), aid)
 }
 
-func (p *Service) getAccountByID(c context.Context, aid int64) (account *model.Account, err error) {
+func (p *Service) getAccountByID(c context.Context, node sqalx.Node, aid int64) (account *model.Account, err error) {
 	var needCache = true
 
 	if account, err = p.d.AccountCache(c, aid); err != nil {
@@ -229,7 +266,7 @@ func (p *Service) getAccountByID(c context.Context, aid int64) (account *model.A
 		return
 	}
 
-	if account, err = p.d.GetAccountByID(c, p.d.DB(), aid); err != nil {
+	if account, err = p.d.GetAccountByID(c, node, aid); err != nil {
 		return
 	} else if account == nil {
 		err = ecode.UserNotExist

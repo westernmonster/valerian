@@ -238,7 +238,7 @@ func (s *server) EmailExist(ctx context.Context, req *api.EmailReq) (*api.ExistR
 	return &api.ExistResp{Exist: exist}, nil
 }
 
-func (s *server) AddAccount(ctx context.Context, req *api.AddAccountReq) (*api.AidResp, error) {
+func (s *server) AddAccount(ctx context.Context, req *api.AddAccountReq) (*api.ProfileResp, error) {
 	item := &model.Account{
 		ID:           req.ID,
 		Mobile:       req.Mobile,

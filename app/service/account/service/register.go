@@ -5,13 +5,14 @@ import (
 	"fmt"
 	"time"
 
+	"valerian/app/service/account/api"
 	"valerian/app/service/account/model"
 	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
 	"valerian/library/log"
 )
 
-func (p *Service) AddAccount(c context.Context, item *model.Account) (id int64, err error) {
+func (p *Service) AddAccount(c context.Context, item *model.Account) (resp *api.SelfProfile, err error) {
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
@@ -29,14 +30,14 @@ func (p *Service) AddAccount(c context.Context, item *model.Account) (id int64, 
 
 	if item.Mobile != "" {
 		if account, e := p.d.GetAccountByMobile(c, tx, item.Mobile); e != nil {
-			return 0, e
+			return nil, e
 		} else if account != nil {
 			err = ecode.AccountExist
 			return
 		}
 	} else {
 		if account, e := p.d.GetAccountByEmail(c, tx, item.Email); e != nil {
-			return 0, e
+			return nil, e
 		} else if account != nil {
 			err = ecode.AccountExist
 			return
@@ -66,11 +67,14 @@ func (p *Service) AddAccount(c context.Context, item *model.Account) (id int64, 
 		return
 	}
 
+	if resp, err = p.getSelfProfile(c, tx, item.ID); err != nil {
+		return
+	}
+
 	if err = tx.Commit(); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 		return
 	}
 
-	id = item.ID
 	return
 }

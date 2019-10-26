@@ -48,29 +48,6 @@ func (p *Service) getAccountSetting(c context.Context, node sqalx.Node, accountI
 	return
 }
 
-// func (p *Service) UpdateAccountSetting(c context.Context, arg *model.ArgSetting) (err error) {
-// 	setting := &model.AccountSetting{
-// 		AccountID:            arg.AccountID,
-// 		ActivityLike:         types.BitBool(arg.ActivityLike),
-// 		ActivityComment:      types.BitBool(arg.ActivityComment),
-// 		ActivityFollowTopic:  types.BitBool(arg.ActivityFollowTopic),
-// 		ActivityFollowMember: types.BitBool(arg.ActivityFollowMember),
-// 		NotifyLike:           types.BitBool(arg.NotifyLike),
-// 		NotifyComment:        types.BitBool(arg.NotifyComment),
-// 		NotifyNewFans:        types.BitBool(arg.NotifyNewFans),
-// 		NotifyNewMember:      types.BitBool(arg.NotifyNewMember),
-// 		Language:             arg.Language,
-// 		CreatedAt:            time.Now().Unix(),
-// 		UpdatedAt:            time.Now().Unix(),
-// 	}
-
-// 	if err = p.d.UpdateAccountSetting(c, p.d.DB(), setting); err != nil {
-// 		return
-// 	}
-
-// 	return
-// }
-
 func (p *Service) UpdateAccountSetting(c context.Context, aid int64, req map[string]bool, language string) (err error) {
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
