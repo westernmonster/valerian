@@ -66,3 +66,10 @@ type Area struct {
 	CreatedAt int64         `db:"created_at" json:"created_at"` // CreatedAt 创建时间
 	UpdatedAt int64         `db:"updated_at" json:"updated_at"` // UpdatedAt 更新时间
 }
+
+type MessageStat struct {
+	AccountID   int64 `db:"account_id" json:"account_id,string"` // AccountID 账户ID
+	UnreadCount int   `db:"unread_count" json:"unread_count"`    // UnreadCount 未读数
+	CreatedAt   int64 `db:"created_at" json:"created_at"`        // CreatedAt 创建时间
+	UpdatedAt   int64 `db:"updated_at" json:"updated_at"`        // UpdatedAt 更新时间
+}

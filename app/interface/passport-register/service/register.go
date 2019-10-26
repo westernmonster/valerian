@@ -60,53 +60,6 @@ func (p *Service) MobileRegister(c context.Context, arg *model.ArgMobile) (resp 
 		UpdatedAt: time.Now().Unix(),
 	}
 
-	var tx sqalx.Node
-	if tx, err = p.d.DB().Beginx(c); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
-		return
-	}
-
-	defer func() {
-		if err != nil {
-			if err1 := tx.Rollback(); err1 != nil {
-				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
-			}
-			return
-		}
-	}()
-
-	if account, e := p.d.GetAccountByMobile(c, tx, mobile); e != nil {
-		return nil, e
-	} else if account != nil {
-		err = ecode.AccountExist
-		return
-	}
-
-	if err = p.d.AddAccount(c, tx, item); err != nil {
-		return
-	}
-
-	if err = p.d.AddAccountStat(c, tx, &model.AccountStat{
-		AccountID: item.ID,
-		CreatedAt: time.Now().Unix(),
-		UpdatedAt: time.Now().Unix(),
-	}); err != nil {
-		return
-	}
-
-	if err = p.d.AddMessageStat(c, tx, &model.MessageStat{
-		AccountID: item.ID,
-		CreatedAt: time.Now().Unix(),
-		UpdatedAt: time.Now().Unix(),
-	}); err != nil {
-		return
-	}
-
-	if err = tx.Commit(); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
-		return
-	}
-
 	p.addCache(func() {
 		p.d.DelMobileValcodeCache(context.TODO(), model.ValcodeRegister, mobile)
 		p.onAccountAdded(context.TODO(), item.ID, time.Now().Unix())
@@ -145,10 +98,6 @@ func (p *Service) EmailRegister(c context.Context, arg *model.ArgEmail) (resp *m
 	if err != nil {
 		return
 	}
-
-	fmt.Printf("password: (%s)\n", arg.Password)
-	fmt.Printf("salt: (%s)\n", salt)
-	fmt.Printf("pepper: (%s)\n", model.PasswordPepper)
 
 	item := &model.Account{
 		ID:        gid.NewID(),

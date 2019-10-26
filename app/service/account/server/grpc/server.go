@@ -5,7 +5,9 @@ import (
 	"fmt"
 
 	"valerian/app/service/account/api"
+	"valerian/app/service/account/model"
 	"valerian/app/service/account/service"
+	"valerian/library/database/sqlx/types"
 	"valerian/library/log"
 	"valerian/library/net/metadata"
 	"valerian/library/net/rpc/warden"
@@ -234,4 +236,36 @@ func (s *server) EmailExist(ctx context.Context, req *api.EmailReq) (*api.ExistR
 	}
 
 	return &api.ExistResp{Exist: exist}, nil
+}
+
+func (s *server) AddAccount(ctx context.Context, req *api.DBAccount) (*api.AidResp, error) {
+	item := &model.Account{
+		ID:           req.ID,
+		Mobile:       req.Mobile,
+		Email:        req.Email,
+		UserName:     req.UserName,
+		Role:         req.Role,
+		Gender:       req.Gender,
+		BirthYear:    req.BirthYear,
+		BirthMonth:   req.BirthMonth,
+		BirthDay:     req.BirthDay,
+		Location:     req.Location,
+		Introduction: req.Introduction,
+		Avatar:       req.Avatar,
+		Source:       req.Source,
+		IP:           req.IP,
+		IDCert:       types.BitBool(req.IDCert),
+		WorkCert:     types.BitBool(req.WorkCert),
+		IsOrg:        types.BitBool(req.IsOrg),
+		IsVip:        types.BitBool(req.IsVIP),
+		CreatedAt:    req.CreatedAt,
+		UpdatedAt:    req.UpdatedAt,
+	}
+
+	v, err := s.svr.AddAccount(ctx, item)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.AidResp{Aid: v}, nil
 }

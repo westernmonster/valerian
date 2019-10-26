@@ -153,6 +153,10 @@ message AidReq {
     string remoteIP = 2 ;
 }
 
+message AidResp {
+    int64 aid = 1 ;
+}
+
 message EmailReq {
     string email = 1 ;
 }
@@ -207,6 +211,8 @@ service Account {
     rpc MobileExist(MobileReq) returns (ExistResp);
 
     rpc UpdateSetting(SettingReq) returns (EmptyStruct);
+
+    rpc AddAccount(DBAccount) returns (AidResp);
 
     rpc AccountInfo(AidReq) returns (DBAccount);
 
