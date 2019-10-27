@@ -187,17 +187,12 @@ func (p *Service) UpdateProfile(c context.Context, aid int64, arg *model.ArgUpda
 	}
 
 	if arg.Password != nil {
-		salt, e := generateSalt(16)
-		if e != nil {
-			return e
-		}
-		passwordHash, e := hashPassword(*arg.Password, salt)
+		passwordHash, e := hashPassword(*arg.Password, account.Salt)
 		if e != nil {
 			return e
 		}
 
 		account.Password = passwordHash
-		account.Salt = salt
 
 	}
 
@@ -224,10 +219,6 @@ func (p *Service) UpdateProfile(c context.Context, aid int64, arg *model.ArgUpda
 }
 
 func (p *Service) ChangePassword(c context.Context, aid int64, arg *model.ArgChangePassword) (err error) {
-	salt, err := generateSalt(16)
-	if err != nil {
-		return
-	}
 
 	var acc *model.Account
 	if acc, err = p.getAccountByID(c, p.d.DB(), aid); err != nil {
@@ -239,7 +230,7 @@ func (p *Service) ChangePassword(c context.Context, aid int64, arg *model.ArgCha
 		return
 	}
 
-	if err = p.d.SetPassword(c, p.d.DB(), salt, passwordHash, aid); err != nil {
+	if err = p.d.SetPassword(c, p.d.DB(), acc.Salt, passwordHash, aid); err != nil {
 		return
 	}
 
