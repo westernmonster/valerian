@@ -9,6 +9,7 @@ import (
 	"valerian/app/service/discuss/model"
 	"valerian/library/ecode"
 	"valerian/library/log"
+	"valerian/library/xstr"
 )
 
 func (p *Service) GetAccountBaseInfo(c context.Context, aid int64) (info *account.BaseInfoReply, err error) {
@@ -43,20 +44,52 @@ func (p *Service) GetUserDiscussionsPaged(c context.Context, aid int64, limit, o
 			return
 		}
 
-		items[i] = api.FromDiscussion(v, stat, imageUrls)
+		item := &api.DiscussionInfo{
+			ID:         v.ID,
+			TopicID:    v.TopicID,
+			CategoryID: v.CategoryID,
+			// CreatedBy:   v.CreatedBy,
+			Excerpt:   xstr.Excerpt(v.ContentText),
+			CreatedAt: v.CreatedAt,
+			UpdatedAt: v.UpdatedAt,
+			ImageUrls: imageUrls,
+			Title:     v.Title,
+		}
+
+		item.Stat = &api.DiscussionStat{
+			DislikeCount: int32(stat.DislikeCount),
+			LikeCount:    int32(stat.LikeCount),
+			CommentCount: int32(stat.CommentCount),
+		}
+
+		var cate *model.DiscussCategory
+		if cate, err = p.d.GetDiscussCategoryByID(c, p.d.DB(), v.CategoryID); err != nil {
+			return
+		} else if cate == nil {
+			err = ecode.DiscussCategoryNotExist
+			return
+		}
+
+		item.CategoryInfo = &api.CategoryInfo{
+			ID:      cate.ID,
+			TopicID: cate.TopicID,
+			Name:    cate.Name,
+			Seq:     cate.Seq,
+		}
 
 		var acc *account.BaseInfoReply
 		if acc, err = p.GetAccountBaseInfo(c, v.CreatedBy); err != nil {
 			return
 		}
 
-		items[i].Creator = &api.Creator{
+		item.Creator = &api.Creator{
 			ID:           acc.ID,
 			UserName:     acc.UserName,
 			Avatar:       acc.Avatar,
 			Introduction: acc.Introduction,
 		}
 
+		items[i] = item
 	}
 
 	return
@@ -90,19 +123,52 @@ func (p *Service) GetAllDiscussions(c context.Context) (items []*api.DiscussionI
 			return
 		}
 
-		items[i] = api.FromDiscussion(v, stat, imageUrls)
+		item := &api.DiscussionInfo{
+			ID:         v.ID,
+			TopicID:    v.TopicID,
+			CategoryID: v.CategoryID,
+			// CreatedBy:   v.CreatedBy,
+			Excerpt:   xstr.Excerpt(v.ContentText),
+			CreatedAt: v.CreatedAt,
+			UpdatedAt: v.UpdatedAt,
+			ImageUrls: imageUrls,
+			Title:     v.Title,
+		}
+
+		item.Stat = &api.DiscussionStat{
+			DislikeCount: int32(stat.DislikeCount),
+			LikeCount:    int32(stat.LikeCount),
+			CommentCount: int32(stat.CommentCount),
+		}
+
+		var cate *model.DiscussCategory
+		if cate, err = p.d.GetDiscussCategoryByID(c, p.d.DB(), v.CategoryID); err != nil {
+			return
+		} else if cate == nil {
+			err = ecode.DiscussCategoryNotExist
+			return
+		}
+
+		item.CategoryInfo = &api.CategoryInfo{
+			ID:      cate.ID,
+			TopicID: cate.TopicID,
+			Name:    cate.Name,
+			Seq:     cate.Seq,
+		}
 
 		var acc *account.BaseInfoReply
 		if acc, err = p.GetAccountBaseInfo(c, v.CreatedBy); err != nil {
 			return
 		}
 
-		items[i].Creator = &api.Creator{
+		item.Creator = &api.Creator{
 			ID:           acc.ID,
 			UserName:     acc.UserName,
 			Avatar:       acc.Avatar,
 			Introduction: acc.Introduction,
 		}
+
+		items[i] = item
 
 	}
 

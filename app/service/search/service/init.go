@@ -158,12 +158,12 @@ func (p *Service) Init(c context.Context) (err error) {
 
 	for _, v := range discussions {
 		item := &model.ESDiscussion{
-			ID:    v.ID,
-			Title: &v.Title,
-			// Content:     &v.Content,
-			// ContentText: &v.ContentText,
-			CreatedAt: &v.CreatedAt,
-			UpdatedAt: &v.UpdatedAt,
+			ID:          v.ID,
+			Title:       &v.Title,
+			Content:     &v.Content,
+			ContentText: &v.ContentText,
+			CreatedAt:   &v.CreatedAt,
+			UpdatedAt:   &v.UpdatedAt,
 		}
 
 		item.Creator = &model.ESCreator{
