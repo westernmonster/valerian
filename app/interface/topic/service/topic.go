@@ -389,6 +389,10 @@ func (p *Service) GetTopic(c context.Context, topicID int64, include string) (it
 		}
 	}
 
+	if item.HasCatalogTaxonomy, err = p.d.HasTaxonomy(c, p.d.DB(), topicID); err != nil {
+		return
+	}
+
 	p.addCache(func() {
 		p.onTopicViewed(context.Background(), topicID, aid, time.Now().Unix())
 	})

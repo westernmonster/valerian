@@ -79,6 +79,8 @@ type TopicResp struct {
 	CreatedAt int64 `json:"created_at" swaggertype:"integer"`
 
 	TopicMeta *TopicMeta `json:"meta,omitempty"`
+
+	HasCatalogTaxonomy bool `json:"has_catalog_taxonomy"`
 }
 
 type TopicMeta struct {
