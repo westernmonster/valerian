@@ -43,9 +43,17 @@ func (p *Dao) GetAccountStat(c context.Context, aid int64) (info *account.Accoun
 	return
 }
 
-func (p *Dao) GetAllAccounts(c context.Context) (info *account.AllAccountsResp, err error) {
-	if info, err = p.accountRPC.AllAccounts(c, &account.EmptyStruct{}); err != nil {
+func (p *Dao) GetAllAccounts(c context.Context) (items []*account.DBAccount, err error) {
+	var resp *account.AllAccountsResp
+	if resp, err = p.accountRPC.AllAccounts(c, &account.EmptyStruct{}); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetAllAccounts err(%+v) ", err))
+		return
 	}
+
+	items = make([]*account.DBAccount, 0)
+	if resp.Items != nil {
+		items = resp.Items
+	}
+
 	return
 }

@@ -14,7 +14,6 @@ func FromDiscussion(v *model.Discussion, x *model.DiscussionStat, imgs []string)
 		Excerpt:   xstr.Excerpt(v.ContentText),
 		CreatedAt: v.CreatedAt,
 		UpdatedAt: v.UpdatedAt,
-		Deleted:   bool(v.Deleted),
 		ImageUrls: imgs,
 		Title:     v.Title,
 	}

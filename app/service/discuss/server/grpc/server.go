@@ -3,12 +3,14 @@ package server
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"valerian/app/service/discuss/api"
 	"valerian/app/service/discuss/service"
 	"valerian/library/log"
 	"valerian/library/net/metadata"
 	"valerian/library/net/rpc/warden"
+	"valerian/library/xstr"
 
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -69,7 +71,45 @@ func (s *server) GetDiscussionInfo(ctx context.Context, req *api.IDReq) (*api.Di
 		return nil, err
 	}
 
-	resp := api.FromDiscussion(v, stat, imgs)
+	c, err := s.svr.GetDiscussCategory(ctx, v.CategoryID)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &api.DiscussionInfo{
+		ID:         v.ID,
+		TopicID:    v.TopicID,
+		CategoryID: v.CategoryID,
+		// CreatedBy:   v.CreatedBy,
+		Excerpt:   xstr.Excerpt(v.ContentText),
+		CreatedAt: v.CreatedAt,
+		UpdatedAt: v.UpdatedAt,
+		ImageUrls: imgs,
+		Title:     v.Title,
+	}
+
+	inc := includeParam(req.Include)
+	if inc["content"] {
+		resp.Content = v.Content
+	}
+
+	if inc["content_text"] {
+		resp.ContentText = v.ContentText
+	}
+
+	resp.Stat = &api.DiscussionStat{
+		DislikeCount: int32(stat.DislikeCount),
+		LikeCount:    int32(stat.LikeCount),
+		CommentCount: int32(stat.CommentCount),
+	}
+
+	resp.CategoryInfo = &api.CategoryInfo{
+		ID:      c.ID,
+		TopicID: c.TopicID,
+		Name:    c.Name,
+		Seq:     c.Seq,
+	}
+
 	resp.Creator = &api.Creator{
 		ID:           m.ID,
 		UserName:     m.UserName,
@@ -122,4 +162,14 @@ func (s *server) GetAllDiscussions(ctx context.Context, req *api.EmptyStruct) (*
 	}
 
 	return resp, nil
+}
+
+func includeParam(include string) (dic map[string]bool) {
+	arr := strings.Split(include, ",")
+	dic = make(map[string]bool)
+	for _, v := range arr {
+		dic[v] = true
+	}
+
+	return
 }

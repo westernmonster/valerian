@@ -54,6 +54,7 @@ message DiscussionInfo {
 
     string  Excerpt = 6 [(gogoproto.jsontag) = "excerpt"];
 
+
     // unix timestamp
     int64 CreatedAt = 7 [(gogoproto.jsontag) = "created_at"];
 
@@ -64,7 +65,11 @@ message DiscussionInfo {
 
     repeated string ImageUrls  = 10 [(gogoproto.jsontag) = "image_urls"];
 
-    bool Deleted = 11 [(gogoproto.jsontag) = "deleted"];
+    string  Content = 11 [(gogoproto.jsontag) = "content"];
+
+    string  ContentText = 12 [(gogoproto.jsontag) = "content_context"];
+
+    CategoryInfo CategoryInfo = 13 [(gogoproto.jsontag) = "category"];
 }
 
 
@@ -84,6 +89,7 @@ message AllDiscussionsResp {
 
 message IDReq {
     int64 ID = 1 [(gogoproto.jsontag) = "id"];
+    string include = 2 [(gogoproto.jsontag) = "include"]; ;
 }
 
 message CategoriesReq {

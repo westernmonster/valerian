@@ -3,6 +3,7 @@ package dao
 import (
 	"context"
 	"fmt"
+
 	topic "valerian/app/service/topic/api"
 	"valerian/library/log"
 )
@@ -19,5 +20,19 @@ func (p *Dao) GetTopicMemberRole(c context.Context, topicID, accountID int64) (r
 	if resp, err = p.topicRPC.GetTopicMemberRole(c, &topic.TopicMemberRoleReq{TopicID: topicID, AccountID: accountID}); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetTopicMemberRole error(%+v), topic_id(%d) aid(%d)", err, topicID, accountID))
 	}
+	return
+}
+
+func (p *Dao) GetAllTopics(c context.Context) (items []*topic.TopicInfo, err error) {
+	var resp *topic.AllTopicsResp
+	if resp, err = p.topicRPC.GetAllTopics(c, &topic.EmptyStruct{}); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetAllTopics error(%+v)", err))
+		return
+	}
+	items = make([]*topic.TopicInfo, 0)
+	if resp.Items != nil {
+		items = resp.Items
+	}
+
 	return
 }
