@@ -1,18 +1,25 @@
 package main
 
 import (
+	"context"
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	flag "github.com/spf13/pflag"
 
 	"valerian/app/service/search/conf"
-	// server "valerian/app/service/search/server/grpc"
+	server "valerian/app/service/search/server/grpc"
+
 	"valerian/app/service/search/server/http"
 	"valerian/app/service/search/service"
+	"valerian/library/conf/env"
 	ecode "valerian/library/ecode/tip"
 	"valerian/library/log"
+	"valerian/library/naming"
+	"valerian/library/naming/discovery"
+	xip "valerian/library/net/ip"
 	"valerian/library/tracing"
 )
 
@@ -35,31 +42,31 @@ func main() {
 	srv := service.New(conf.Conf)
 	http.Init(conf.Conf, srv)
 
-	// ws := server.New(conf.Conf.WardenServer, srv)
+	ws := server.New(conf.Conf.WardenServer, srv)
 
-	// var (
-	// 	err    error
-	// 	cancel context.CancelFunc
-	// )
-	// {
-	// 	ip := xip.InternalIP()
-	// 	hn, _ := os.Hostname()
-	// 	dis := discovery.New(conf.Conf.Discovery)
-	// 	ins := &naming.Instance{
-	// 		Zone:     env.Zone,
-	// 		Env:      env.DeployEnv,
-	// 		AppID:    env.AppID,
-	// 		Hostname: hn,
-	// 		Addrs: []string{
-	// 			"http://" + ip + ":" + env.HTTPPort,
-	// 			"grpc://" + ip + ":" + env.GORPCPort,
-	// 		},
-	// 	}
+	var (
+		err    error
+		cancel context.CancelFunc
+	)
+	{
+		ip := xip.InternalIP()
+		hn, _ := os.Hostname()
+		dis := discovery.New(conf.Conf.Discovery)
+		ins := &naming.Instance{
+			Zone:     env.Zone,
+			Env:      env.DeployEnv,
+			AppID:    env.AppID,
+			Hostname: hn,
+			Addrs: []string{
+				"http://" + ip + ":" + env.HTTPPort,
+				"grpc://" + ip + ":" + env.GORPCPort,
+			},
+		}
 
-	// 	if cancel, err = dis.Register(context.Background(), ins); err != nil {
-	// 		panic(err)
-	// 	}
-	// }
+		if cancel, err = dis.Register(context.Background(), ins); err != nil {
+			panic(err)
+		}
+	}
 
 	// init signal
 	c := make(chan os.Signal, 1)
@@ -69,12 +76,12 @@ func main() {
 		log.Infof("search-service get a signal %s", s.String())
 		switch s {
 		case syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT:
-			// if cancel != nil {
-			// 	cancel()
-			// }
+			if cancel != nil {
+				cancel()
+			}
 
-			// ws.Shutdown(context.Background())
-			// time.Sleep(time.Second * 2)
+			ws.Shutdown(context.Background())
+			time.Sleep(time.Second * 2)
 			srv.Close()
 			log.Info("search-service exit")
 			return

@@ -1,0 +1,13 @@
+syntax = "proto3";
+package service.discuss;
+option go_package = "api";
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+
+message EmptyStruct {
+}
+
+service Search {
+}
+

@@ -12,6 +12,8 @@ import (
 	"valerian/library/ecode"
 	"valerian/library/log"
 
+	retry "github.com/kamilsk/retry/v4"
+	strategy "github.com/kamilsk/retry/v4/strategy"
 	"github.com/nats-io/stan.go"
 )
 
@@ -25,10 +27,18 @@ func (p *Service) onAccountAdded(m *stan.Msg) {
 	}
 
 	var v *account.DBAccount
-	if v, err = p.d.GetAccountInfo(c, info.AccountID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onAccountAdded GetAccountByID failed %#v", err))
-		return
-	} else if v == nil {
+	action := func(c context.Context, _ uint) error {
+		acc, e := p.d.GetAccountInfo(c, info.AccountID)
+		if e != nil {
+			return e
+		}
+
+		v = acc
+		return nil
+	}
+
+	if err := retry.TryContext(c, action, strategy.Limit(3)); err != nil {
+		m.Ack()
 		return
 	}
 

@@ -31,6 +31,7 @@ require (
 	github.com/golang/protobuf v1.3.2
 	github.com/jinzhu/copier v0.0.0-20190625015134-976e0346caa8
 	github.com/jmoiron/sqlx v1.2.0
+	github.com/kamilsk/retry/v4 v4.3.1
 	github.com/kylelemons/godebug v1.1.0 // indirect
 	github.com/leodido/go-urn v1.1.0 // indirect
 	github.com/levigross/grequests v0.0.0-20190908174114-253788527a1a
@@ -53,6 +54,7 @@ require (
 	github.com/sergi/go-diff v1.0.0
 	github.com/sirupsen/logrus v1.4.2
 	github.com/smartystreets/goconvey v0.0.0-20190731233626-505e41936337
+	github.com/sony/gobreaker v0.4.1
 	github.com/spf13/pflag v1.0.3
 	github.com/stretchr/testify v1.4.0
 	github.com/swaggo/swag v1.6.2
