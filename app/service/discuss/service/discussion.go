@@ -62,6 +62,53 @@ func (p *Service) GetUserDiscussionsPaged(c context.Context, aid int64, limit, o
 	return
 }
 
+func (p *Service) GetAllDiscussions(c context.Context) (items []*api.DiscussionInfo, err error) {
+	var data []*model.Discussion
+	if data, err = p.d.GetDiscussions(c, p.d.DB()); err != nil {
+		return
+	}
+
+	items = make([]*api.DiscussionInfo, len(data))
+
+	for i, v := range data {
+
+		imageUrls := make([]string, 0)
+		var imgs []*model.ImageURL
+		if imgs, err = p.d.GetImageUrlsByCond(c, p.d.DB(), map[string]interface{}{
+			"target_type": model.TargetTypeDiscussion,
+			"target_id":   v.ID,
+		}); err != nil {
+			return
+		}
+
+		for _, v := range imgs {
+			imageUrls = append(imageUrls, v.URL)
+		}
+
+		var stat *model.DiscussionStat
+		if stat, err = p.d.GetDiscussionStatByID(c, p.d.DB(), v.ID); err != nil {
+			return
+		}
+
+		items[i] = api.FromDiscussion(v, stat, imageUrls)
+
+		var acc *account.BaseInfoReply
+		if acc, err = p.GetAccountBaseInfo(c, v.CreatedBy); err != nil {
+			return
+		}
+
+		items[i].Creator = &api.Creator{
+			ID:           acc.ID,
+			UserName:     acc.UserName,
+			Avatar:       acc.Avatar,
+			Introduction: acc.Introduction,
+		}
+
+	}
+
+	return
+}
+
 func (p *Service) GetDiscussion(c context.Context, discussionID int64) (item *model.Discussion, imageUrls []string, err error) {
 	if item, err = p.d.GetDiscussionByID(c, p.d.DB(), discussionID); err != nil {
 		return

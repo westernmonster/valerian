@@ -78,6 +78,10 @@ message UserDiscussionsResp {
     repeated DiscussionInfo Items = 1 [(gogoproto.jsontag) = 'items'];
 }
 
+message AllDiscussionsResp {
+    repeated DiscussionInfo Items = 1 [(gogoproto.jsontag) = 'items'];
+}
+
 message IDReq {
     int64 ID = 1 [(gogoproto.jsontag) = "id"];
 }
@@ -92,5 +96,6 @@ service Discussion {
     rpc GetDiscussionStat(IDReq) returns (DiscussionStat);
     rpc GetDiscussionCategories(CategoriesReq) returns (CategoriesResp);
     rpc GetUserDiscussionsPaged(UserDiscussionsReq) returns (UserDiscussionsResp);
+    rpc GetAllDiscussions(EmptyStruct) returns (AllDiscussionsResp);
 }
 

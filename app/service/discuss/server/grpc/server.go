@@ -110,3 +110,16 @@ func (s *server) GetUserDiscussionsPaged(ctx context.Context, req *api.UserDiscu
 
 	return resp, nil
 }
+
+func (s *server) GetAllDiscussions(ctx context.Context, req *api.EmptyStruct) (*api.AllDiscussionsResp, error) {
+	items, err := s.svr.GetAllDiscussions(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &api.AllDiscussionsResp{
+		Items: items,
+	}
+
+	return resp, nil
+}
