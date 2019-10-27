@@ -64,7 +64,7 @@ func (p *Service) FansPaged(c context.Context, aid int64, query string, limit, o
 			IDCert:       acc.IDCert,
 			WorkCert:     acc.WorkCert,
 			IsOrg:        acc.IsOrg,
-			IsVIP:        acc.IsVIP,
+			IsVIP:        acc.IsVip,
 		}
 
 		var stat *model.AccountStat
@@ -72,8 +72,8 @@ func (p *Service) FansPaged(c context.Context, aid int64, query string, limit, o
 			return
 		}
 
-		member.FansCount = int(stat.Fans)
-		member.FollowingCount = int(stat.Following)
+		member.FansCount = (stat.Fans)
+		member.FollowingCount = (stat.Following)
 
 		resp.Items[i] = member
 	}
@@ -129,7 +129,7 @@ func (p *Service) FollowPaged(c context.Context, aid int64, query string, limit,
 			IDCert:       acc.IDCert,
 			WorkCert:     acc.WorkCert,
 			IsOrg:        acc.IsOrg,
-			IsVIP:        acc.IsVIP,
+			IsVIP:        acc.IsVip,
 		}
 
 		var stat *model.AccountStat

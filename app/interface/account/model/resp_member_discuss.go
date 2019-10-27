@@ -11,13 +11,13 @@ type MemberDiscuss struct {
 	Excerpt string `json:"excerpt"`
 
 	// 喜欢数
-	LikeCount int `json:"like_count"`
+	LikeCount int32 `json:"like_count"`
 
 	// 反对数
-	DislikeCount int `json:"dislike_count"`
+	DislikeCount int32 `json:"dislike_count"`
 
 	// 评论数
-	CommentCount int `json:"comment_count"`
+	CommentCount int32 `json:"comment_count"`
 
 	// 图片
 	ImageUrls []string `json:"images"`

@@ -88,16 +88,16 @@ type TargetArticle struct {
 	ImageUrls []string `json:"images"`
 
 	// 补充个数
-	ReviseCount int `json:"revise_count"`
+	ReviseCount int32 `json:"revise_count"`
 
 	// 喜欢数
-	LikeCount int `json:"like_count"`
+	LikeCount int32 `json:"like_count"`
 
 	// 反对数
-	DislikeCount int `json:"dislike_count"`
+	DislikeCount int32 `json:"dislike_count"`
 
 	// 评论数
-	CommentCount int `json:"comment_count"`
+	CommentCount int32 `json:"comment_count"`
 
 	Creator *Creator `json:"creator,omitempty"`
 
@@ -115,13 +115,13 @@ type TargetRevise struct {
 	Excerpt string `json:"excerpt"`
 
 	// 喜欢数
-	LikeCount int `json:"like_count"`
+	LikeCount int32 `json:"like_count"`
 
 	// 反对数
-	DislikeCount int `json:"dislike_count"`
+	DislikeCount int32 `json:"dislike_count"`
 
 	// 评论数
-	CommentCount int `json:"comment_count"`
+	CommentCount int32 `json:"comment_count"`
 
 	// 图片
 	ImageUrls []string `json:"images"`
@@ -142,13 +142,13 @@ type TargetDiscuss struct {
 	Excerpt string `json:"excerpt"`
 
 	// 喜欢数
-	LikeCount int `json:"like_count"`
+	LikeCount int32 `json:"like_count"`
 
 	// 反对数
-	DislikeCount int `json:"dislike_count"`
+	DislikeCount int32 `json:"dislike_count"`
 
 	// 评论数
-	CommentCount int `json:"comment_count"`
+	CommentCount int32 `json:"comment_count"`
 
 	// 图片
 	ImageUrls []string `json:"images"`
@@ -170,13 +170,13 @@ type TargetTopic struct {
 	Avatar string `json:"avatar"`
 
 	// 成员数
-	MemberCount int `json:"member_count"`
+	MemberCount int32 `json:"member_count"`
 
 	// 文章数
-	ArticleCount int `json:"article_count"`
+	ArticleCount int32 `json:"article_count"`
 
 	// 讨论数
-	DiscussionCount int `json:"discussion_count"`
+	DiscussionCount int32 `json:"discussion_count"`
 
 	// 简介
 	Introduction string `json:"introduction"`

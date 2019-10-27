@@ -19,14 +19,14 @@ const (
 )
 
 const (
-	GenderMale   = 1
-	GenderFemale = 2
+	GenderMale   = int32(1)
+	GenderFemale = int32(2)
 )
 
 const (
-	ValcodeRegister       = 1
-	ValcodeForgetPassword = 2
-	ValcodeLogin          = 3
+	ValcodeRegister       = int32(1)
+	ValcodeForgetPassword = int32(2)
+	ValcodeLogin          = int32(3)
 )
 
 const (
@@ -35,18 +35,4 @@ const (
 	TargetTypeRevise     = "revise"
 	TargetTypeArticle    = "article"
 	TargetTypeMember     = "member"
-)
-
-const (
-	IDCertificationUncommitted = -1
-	IDCertificationInProgress  = 0
-	IDCertificationSuccess     = 1
-	IDCertificationFailed      = 2
-)
-
-const (
-	WorkCertificationUncommitted = -1
-	WorkCertificationInProgress  = 0
-	WorkCertificationSuccess     = 1
-	WorkCertificationFailed      = 2
 )

@@ -9,7 +9,7 @@ import (
 	"github.com/go-ozzo/ozzo-validation/is"
 )
 
-func ValidateIdentity(identityType int, prefix string) *ValidateIdentityRule {
+func ValidateIdentity(identityType int32, prefix string) *ValidateIdentityRule {
 	return &ValidateIdentityRule{
 		IdentityType: identityType,
 		Prefix:       prefix,
@@ -17,7 +17,7 @@ func ValidateIdentity(identityType int, prefix string) *ValidateIdentityRule {
 }
 
 type ValidateIdentityRule struct {
-	IdentityType int
+	IdentityType int32
 	Prefix       string
 }
 
@@ -53,7 +53,7 @@ type ArgForgetPassword struct {
 	Valcode  string `json:"valcode"`
 	Prefix   string `json:"prefix"`
 	// 标识类型, 1手机, 2邮件
-	IdentityType int `json:"identity_type"`
+	IdentityType int32 `json:"identity_type"`
 }
 
 func (p *ArgForgetPassword) Validate() error {
@@ -112,7 +112,7 @@ type ArgUpdateProfile struct {
 
 	// 用户性别， 1 为男，2 为女
 	// 如果无需更改该字段，在提交JSON请求中请不要包含该字段
-	Gender *int `json:"gender,omitempty"`
+	Gender *int32 `json:"gender,omitempty"`
 
 	// 地区
 	// 如果无需更改该字段，在提交JSON请求中请不要包含该字段
@@ -120,13 +120,13 @@ type ArgUpdateProfile struct {
 
 	// 出生年
 	// 如果无需更改该字段，在提交JSON请求中请不要包含该字段
-	BirthYear *int `db:"birth_year" json:"birth_year,omitempty"`
+	BirthYear *int32 `db:"birth_year" json:"birth_year,omitempty"`
 
 	// 出生月
-	BirthMonth *int `db:"birth_month" json:"birth_month,omitempty"`
+	BirthMonth *int32 `db:"birth_month" json:"birth_month,omitempty"`
 
 	// 出生日
-	BirthDay *int `db:"birth_day" json:"birth_day,omitempty"`
+	BirthDay *int32 `db:"birth_day" json:"birth_day,omitempty"`
 
 	// 个性签名
 	// 如果无需更改该字段，在提交JSON请求中请不要包含该字段

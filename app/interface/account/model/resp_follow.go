@@ -10,16 +10,16 @@ type MemberItem struct {
 	Avatar string `json:"avatar" db:"avatar"`
 
 	// 关注数
-	FollowingCount int `json:"following_count" db:"-"`
+	FollowingCount int32 `json:"following_count" db:"-"`
 
 	// 粉丝数
-	FansCount int `json:"fans_count"  db:"-"`
+	FansCount int32 `json:"fans_count"  db:"-"`
 
 	// 用户名
 	UserName string `json:"user_name" db:"user_name"`
 
 	// 性别 1为男， 2为女
-	Gender int `json:"gender,omitempty" db:"gender"`
+	Gender int32 `json:"gender,omitempty" db:"gender"`
 
 	// 是否身份认证
 	IDCert types.BitBool `json:"id_cert" db:"id_cert"`
