@@ -52,7 +52,7 @@ func (p *Service) FansPaged(c context.Context, aid int64, query string, limit, o
 
 	for i, v := range data.Items {
 		var acc *model.Account
-		if acc, err = p.getAccountByID(c, v.AccountID); err != nil {
+		if acc, err = p.getAccountByID(c, p.d.DB(), v.AccountID); err != nil {
 			return
 		}
 		member := &model.MemberItem{
@@ -117,7 +117,7 @@ func (p *Service) FollowPaged(c context.Context, aid int64, query string, limit,
 
 	for i, v := range data.Items {
 		var acc *model.Account
-		if acc, err = p.getAccountByID(c, v.AccountID); err != nil {
+		if acc, err = p.getAccountByID(c, p.d.DB(), v.AccountID); err != nil {
 			return
 		}
 		member := &model.MemberItem{

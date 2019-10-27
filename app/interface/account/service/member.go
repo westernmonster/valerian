@@ -261,7 +261,7 @@ func (p *Service) GetMemberActivitiesPaged(c context.Context, aid int64, limit, 
 		}
 
 		var account *model.Account
-		if account, err = p.getAccountByID(c, v.AccountID); err != nil {
+		if account, err = p.getAccountByID(c, p.d.DB(), v.AccountID); err != nil {
 			return
 		}
 

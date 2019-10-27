@@ -7,6 +7,7 @@ import (
 	"valerian/app/interface/account/model"
 	account "valerian/app/service/account/api"
 
+	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
 
 	"github.com/asaskevich/govalidator"
@@ -86,7 +87,7 @@ func (p *Service) ForgetPassword(c context.Context, arg *model.ArgForgetPassword
 	return
 }
 
-func (p *Service) getAccountByID(c context.Context, aid int64) (account *model.Account, err error) {
+func (p *Service) getAccountByID(c context.Context, node sqalx.Node, aid int64) (account *model.Account, err error) {
 	var needCache = true
 
 	if account, err = p.d.AccountCache(c, aid); err != nil {
@@ -95,7 +96,7 @@ func (p *Service) getAccountByID(c context.Context, aid int64) (account *model.A
 		return
 	}
 
-	if account, err = p.d.GetAccountByID(c, p.d.DB(), aid); err != nil {
+	if account, err = p.d.GetAccountByID(c, node, aid); err != nil {
 		return
 	} else if account == nil {
 		err = ecode.UserNotExist
@@ -118,21 +119,17 @@ func (p *Service) ResetPassword(c context.Context, arg *model.ArgResetPassword) 
 		return ecode.SessionExpires
 	}
 
-	if _, err = p.getAccountByID(c, aid); err != nil {
+	var acc *model.Account
+	if acc, err = p.getAccountByID(c, p.d.DB(), aid); err != nil {
 		return
 	}
 
-	salt, err := generateSalt(16)
+	passwordHash, err := hashPassword(arg.Password, acc.Salt)
 	if err != nil {
 		return
 	}
 
-	passwordHash, err := hashPassword(arg.Password, salt)
-	if err != nil {
-		return
-	}
-
-	if err = p.d.SetPassword(c, p.d.DB(), salt, passwordHash, aid); err != nil {
+	if err = p.d.SetPassword(c, p.d.DB(), acc.Salt, passwordHash, aid); err != nil {
 		return
 	}
 
@@ -147,7 +144,7 @@ func (p *Service) ResetPassword(c context.Context, arg *model.ArgResetPassword) 
 
 func (p *Service) UpdateProfile(c context.Context, aid int64, arg *model.ArgUpdateProfile) (err error) {
 	var account *model.Account
-	if account, err = p.getAccountByID(c, aid); err != nil {
+	if account, err = p.getAccountByID(c, p.d.DB(), aid); err != nil {
 		return
 	}
 
@@ -231,7 +228,13 @@ func (p *Service) ChangePassword(c context.Context, aid int64, arg *model.ArgCha
 	if err != nil {
 		return
 	}
-	passwordHash, err := hashPassword(arg.Password, salt)
+
+	var acc *model.Account
+	if acc, err = p.getAccountByID(c, p.d.DB(), aid); err != nil {
+		return
+	}
+
+	passwordHash, err := hashPassword(arg.Password, acc.Salt)
 	if err != nil {
 		return
 	}
