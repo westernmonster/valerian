@@ -54,16 +54,11 @@ func (p *Service) onAccountAdded(m *stan.Msg) {
 		Source:       &v.Source,
 		CreatedAt:    &v.CreatedAt,
 		UpdatedAt:    &v.UpdatedAt,
+		IDCert:       &v.IDCert,
+		WorkCert:     &v.WorkCert,
+		IsVIP:        &v.IsVIP,
+		IsOrg:        &v.IsOrg,
 	}
-
-	idCert := bool(v.IDCert)
-	workCert := bool(v.WorkCert)
-	isOrg := bool(v.IsOrg)
-	isVIP := bool(v.IsVIP)
-	item.IDCert = &idCert
-	item.WorkCert = &workCert
-	item.IsVIP = &isVIP
-	item.IsOrg = &isOrg
 
 	if err = p.d.PutAccount2ES(c, item); err != nil {
 		return
@@ -112,16 +107,11 @@ func (p *Service) onAccountUpdated(m *stan.Msg) {
 		Source:       &v.Source,
 		CreatedAt:    &v.CreatedAt,
 		UpdatedAt:    &v.UpdatedAt,
+		IDCert:       &v.IDCert,
+		WorkCert:     &v.WorkCert,
+		IsVIP:        &v.IsVIP,
+		IsOrg:        &v.IsOrg,
 	}
-
-	idCert := bool(v.IDCert)
-	workCert := bool(v.WorkCert)
-	isOrg := bool(v.IsOrg)
-	isVIP := bool(v.IsVIP)
-	item.IDCert = &idCert
-	item.WorkCert = &workCert
-	item.IsVIP = &isVIP
-	item.IsOrg = &isOrg
 
 	if err = p.d.PutAccount2ES(c, item); err != nil {
 		return

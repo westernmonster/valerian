@@ -2,14 +2,12 @@ package dao
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"fmt"
 	"strconv"
 
 	"valerian/app/service/search/model"
 	"valerian/library/conf/env"
-	"valerian/library/database/sqalx"
 	"valerian/library/log"
 
 	"gopkg.in/olivere/elastic.v6"
@@ -140,32 +138,5 @@ func (p *Dao) DelESTopic(c context.Context, id int64) (err error) {
 		err = errors.New(msg)
 		return
 	}
-	return
-}
-
-func (p *Dao) GetTopics(c context.Context, node sqalx.Node) (items []*model.Topic, err error) {
-	items = make([]*model.Topic, 0)
-	sqlSelect := "SELECT a.* FROM topics a WHERE a.deleted=0 ORDER BY a.id DESC "
-
-	if err = node.SelectContext(c, &items, sqlSelect); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.GetTopics err(%+v)", err))
-		return
-	}
-	return
-}
-
-func (p *Dao) GetTopicByID(c context.Context, node sqalx.Node, id int64) (item *model.Topic, err error) {
-	item = new(model.Topic)
-	sqlSelect := "SELECT a.* FROM topics a WHERE a.id=? AND a.deleted=0"
-
-	if err = node.GetContext(c, item, sqlSelect, id); err != nil {
-		if err == sql.ErrNoRows {
-			item = nil
-			err = nil
-			return
-		}
-		log.For(c).Error(fmt.Sprintf("dao.GetTopicByID err(%+v), id(%+v)", err, id))
-	}
-
 	return
 }

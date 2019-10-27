@@ -3,9 +3,10 @@ package service
 import (
 	"context"
 	"fmt"
-	account "valerian/app/service/account/api"
+	discuss "valerian/app/service/discuss/api"
 	"valerian/app/service/feed/def"
 	"valerian/app/service/search/model"
+	topic "valerian/app/service/topic/api"
 	"valerian/library/ecode"
 	"valerian/library/log"
 
@@ -21,8 +22,8 @@ func (p *Service) onDiscussionAdded(m *stan.Msg) {
 		return
 	}
 
-	var v *model.Discussion
-	if v, err = p.d.GetDiscussionByID(c, p.d.DB(), info.DiscussionID); err != nil {
+	var v *discuss.DiscussionInfo
+	if v, err = p.d.GetDiscussion(c, info.DiscussionID); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onDiscussionAdded GetDiscussionByID failed %#v", err))
 		return
 	} else if v == nil {
@@ -31,27 +32,22 @@ func (p *Service) onDiscussionAdded(m *stan.Msg) {
 
 	item := &model.ESDiscussion{
 		ID:          v.ID,
-		Title:       v.Title,
+		Title:       &v.Title,
 		Content:     &v.Content,
 		ContentText: &v.ContentText,
 		CreatedAt:   &v.CreatedAt,
 		UpdatedAt:   &v.UpdatedAt,
 	}
 
-	var acc *account.BaseInfoReply
-	if acc, err = p.d.GetAccountBaseInfo(c, v.CreatedBy); err != nil {
-		return
-	}
-
 	item.Creator = &model.ESCreator{
-		ID:           acc.ID,
-		UserName:     &acc.UserName,
-		Avatar:       &acc.Avatar,
-		Introduction: &acc.Introduction,
+		ID:           v.Creator.ID,
+		UserName:     &v.Creator.UserName,
+		Avatar:       &v.Creator.Avatar,
+		Introduction: &v.Creator.Introduction,
 	}
 
-	var t *model.Topic
-	if t, err = p.d.GetTopicByID(c, p.d.DB(), v.TopicID); err != nil {
+	var t *topic.TopicInfo
+	if t, err = p.d.GetTopic(c, v.TopicID); err != nil {
 		return
 	} else if t == nil {
 		err = ecode.TopicNotExist
@@ -61,23 +57,15 @@ func (p *Service) onDiscussionAdded(m *stan.Msg) {
 	item.Topic = &model.ESDiscussionTopic{
 		ID:           t.ID,
 		Name:         &t.Name,
-		Avatar:       t.Avatar,
+		Avatar:       &t.Avatar,
 		Introduction: &t.Introduction,
 	}
 
 	if v.CategoryID != -1 {
-		var cate *model.DiscussCategory
-		if cate, err = p.d.GetDiscussCategoryByID(c, p.d.DB(), v.CategoryID); err != nil {
-			return
-		} else if cate == nil {
-			err = ecode.DiscussCategoryNotExist
-			return
-		}
-
 		item.Category = &model.ESDiscussionCategory{
-			ID:   cate.ID,
-			Name: &cate.Name,
-			Seq:  &cate.Seq,
+			ID:   v.CategoryInfo.ID,
+			Name: &v.CategoryInfo.Name,
+			Seq:  &v.CategoryInfo.Seq,
 		}
 	}
 
@@ -97,8 +85,8 @@ func (p *Service) onDiscussionUpdated(m *stan.Msg) {
 		return
 	}
 
-	var v *model.Discussion
-	if v, err = p.d.GetDiscussionByID(c, p.d.DB(), info.DiscussionID); err != nil {
+	var v *discuss.DiscussionInfo
+	if v, err = p.d.GetDiscussion(c, info.DiscussionID); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onDiscussionUpdated GetDiscussionByID failed %#v", err))
 		return
 	} else if v == nil {
@@ -107,27 +95,22 @@ func (p *Service) onDiscussionUpdated(m *stan.Msg) {
 
 	item := &model.ESDiscussion{
 		ID:          v.ID,
-		Title:       v.Title,
+		Title:       &v.Title,
 		Content:     &v.Content,
 		ContentText: &v.ContentText,
 		CreatedAt:   &v.CreatedAt,
 		UpdatedAt:   &v.UpdatedAt,
 	}
 
-	var acc *account.BaseInfoReply
-	if acc, err = p.d.GetAccountBaseInfo(c, v.CreatedBy); err != nil {
-		return
-	}
-
 	item.Creator = &model.ESCreator{
-		ID:           acc.ID,
-		UserName:     &acc.UserName,
-		Avatar:       &acc.Avatar,
-		Introduction: &acc.Introduction,
+		ID:           v.Creator.ID,
+		UserName:     &v.Creator.UserName,
+		Avatar:       &v.Creator.Avatar,
+		Introduction: &v.Creator.Introduction,
 	}
 
-	var t *model.Topic
-	if t, err = p.d.GetTopicByID(c, p.d.DB(), v.TopicID); err != nil {
+	var t *topic.TopicInfo
+	if t, err = p.d.GetTopic(c, v.TopicID); err != nil {
 		return
 	} else if t == nil {
 		err = ecode.TopicNotExist
@@ -137,23 +120,15 @@ func (p *Service) onDiscussionUpdated(m *stan.Msg) {
 	item.Topic = &model.ESDiscussionTopic{
 		ID:           t.ID,
 		Name:         &t.Name,
-		Avatar:       t.Avatar,
+		Avatar:       &t.Avatar,
 		Introduction: &t.Introduction,
 	}
 
 	if v.CategoryID != -1 {
-		var cate *model.DiscussCategory
-		if cate, err = p.d.GetDiscussCategoryByID(c, p.d.DB(), v.CategoryID); err != nil {
-			return
-		} else if cate == nil {
-			err = ecode.DiscussCategoryNotExist
-			return
-		}
-
 		item.Category = &model.ESDiscussionCategory{
-			ID:   cate.ID,
-			Name: &cate.Name,
-			Seq:  &cate.Seq,
+			ID:   v.CategoryInfo.ID,
+			Name: &v.CategoryInfo.Name,
+			Seq:  &v.CategoryInfo.Seq,
 		}
 	}
 

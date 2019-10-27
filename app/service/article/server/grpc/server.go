@@ -62,12 +62,14 @@ func (s *server) GetArticleInfo(ctx context.Context, req *api.IDReq) (*api.Artic
 	}
 
 	resp := &api.ArticleInfo{
-		ID:        article.ID,
-		Title:     article.Title,
-		Excerpt:   xstr.Excerpt(article.ContentText),
-		CreatedAt: article.CreatedAt,
-		UpdatedAt: article.UpdatedAt,
-		ImageUrls: urls,
+		ID:             article.ID,
+		Title:          article.Title,
+		Excerpt:        xstr.Excerpt(article.ContentText),
+		CreatedAt:      article.CreatedAt,
+		UpdatedAt:      article.UpdatedAt,
+		ImageUrls:      urls,
+		DisableRevise:  bool(article.DisableRevise),
+		DisableComment: bool(article.DisableComment),
 		Stat: &api.ArticleStat{
 			ReviseCount:  int32(stat.ReviseCount),
 			CommentCount: int32(stat.CommentCount),

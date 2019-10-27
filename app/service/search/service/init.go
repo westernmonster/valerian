@@ -118,18 +118,15 @@ func (p *Service) Init(c context.Context) (err error) {
 	iArticles := make([]*model.ESArticle, len(articles))
 	for i, v := range articles {
 		item := &model.ESArticle{
-			ID:          v.ID,
-			Title:       &v.Title,
-			Content:     &v.Content,
-			ContentText: &v.ContentText,
-			CreatedAt:   &v.CreatedAt,
-			UpdatedAt:   &v.UpdatedAt,
+			ID:             v.ID,
+			Title:          &v.Title,
+			Content:        &v.Content,
+			ContentText:    &v.ContentText,
+			CreatedAt:      &v.CreatedAt,
+			UpdatedAt:      &v.UpdatedAt,
+			DisableRevise:  &v.DisableRevise,
+			DisableComment: &v.DisableComment,
 		}
-
-		disableRevise := bool(v.DisableRevise)
-		disableComment := bool(v.DisableComment)
-		item.DisableRevise = &disableRevise
-		item.DisableComment = &disableComment
 
 		var acc *account.BaseInfoReply
 		if acc, err = p.d.GetAccountBaseInfo(c, v.CreatedBy); err != nil {
@@ -173,8 +170,8 @@ func (p *Service) Init(c context.Context) (err error) {
 			Introduction: &v.Creator.Introduction,
 		}
 
-		var t *model.Topic
-		if t, err = p.d.GetTopicByID(c, p.d.DB(), v.TopicID); err != nil {
+		var t *topic.TopicInfo
+		if t, err = p.d.GetTopic(c, v.TopicID); err != nil {
 			return
 		} else if t == nil {
 			err = ecode.TopicNotExist
@@ -184,26 +181,17 @@ func (p *Service) Init(c context.Context) (err error) {
 		item.Topic = &model.ESDiscussionTopic{
 			ID:           t.ID,
 			Name:         &t.Name,
-			Avatar:       t.Avatar,
+			Avatar:       &t.Avatar,
 			Introduction: &t.Introduction,
 		}
 
 		if v.CategoryID != -1 {
-			var cate *model.DiscussCategory
-			if cate, err = p.d.GetDiscussCategoryByID(c, p.d.DB(), v.CategoryID); err != nil {
-				return
-			} else if cate == nil {
-				err = ecode.DiscussCategoryNotExist
-				return
-			}
-
 			item.Category = &model.ESDiscussionCategory{
-				ID:   cate.ID,
-				Name: &cate.Name,
-				Seq:  &cate.Seq,
+				ID:   v.CategoryInfo.ID,
+				Name: &v.CategoryInfo.Name,
+				Seq:  &v.CategoryInfo.Seq,
 			}
 		}
-
 		if err = p.d.PutDiscussion2ES(c, item); err != nil {
 			return
 		}

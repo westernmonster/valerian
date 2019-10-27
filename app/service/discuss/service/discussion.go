@@ -62,19 +62,21 @@ func (p *Service) GetUserDiscussionsPaged(c context.Context, aid int64, limit, o
 			CommentCount: int32(stat.CommentCount),
 		}
 
-		var cate *model.DiscussCategory
-		if cate, err = p.d.GetDiscussCategoryByID(c, p.d.DB(), v.CategoryID); err != nil {
-			return
-		} else if cate == nil {
-			err = ecode.DiscussCategoryNotExist
-			return
-		}
+		if v.CategoryID != -1 {
+			var cate *model.DiscussCategory
+			if cate, err = p.d.GetDiscussCategoryByID(c, p.d.DB(), v.CategoryID); err != nil {
+				return
+			} else if cate == nil {
+				err = ecode.DiscussCategoryNotExist
+				return
+			}
 
-		item.CategoryInfo = &api.CategoryInfo{
-			ID:      cate.ID,
-			TopicID: cate.TopicID,
-			Name:    cate.Name,
-			Seq:     cate.Seq,
+			item.CategoryInfo = &api.CategoryInfo{
+				ID:      cate.ID,
+				TopicID: cate.TopicID,
+				Name:    cate.Name,
+				Seq:     cate.Seq,
+			}
 		}
 
 		var acc *account.BaseInfoReply
@@ -141,19 +143,21 @@ func (p *Service) GetAllDiscussions(c context.Context) (items []*api.DiscussionI
 			CommentCount: int32(stat.CommentCount),
 		}
 
-		var cate *model.DiscussCategory
-		if cate, err = p.d.GetDiscussCategoryByID(c, p.d.DB(), v.CategoryID); err != nil {
-			return
-		} else if cate == nil {
-			err = ecode.DiscussCategoryNotExist
-			return
-		}
+		if v.CategoryID != -1 {
+			var cate *model.DiscussCategory
+			if cate, err = p.d.GetDiscussCategoryByID(c, p.d.DB(), v.CategoryID); err != nil {
+				return
+			} else if cate == nil {
+				err = ecode.DiscussCategoryNotExist
+				return
+			}
 
-		item.CategoryInfo = &api.CategoryInfo{
-			ID:      cate.ID,
-			TopicID: cate.TopicID,
-			Name:    cate.Name,
-			Seq:     cate.Seq,
+			item.CategoryInfo = &api.CategoryInfo{
+				ID:      cate.ID,
+				TopicID: cate.TopicID,
+				Name:    cate.Name,
+				Seq:     cate.Seq,
+			}
 		}
 
 		var acc *account.BaseInfoReply

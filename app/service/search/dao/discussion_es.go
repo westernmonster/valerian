@@ -2,13 +2,11 @@ package dao
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"fmt"
 	"strconv"
 	"valerian/app/service/search/model"
 	"valerian/library/conf/env"
-	"valerian/library/database/sqalx"
 	"valerian/library/log"
 
 	"gopkg.in/olivere/elastic.v6"
@@ -161,48 +159,5 @@ func (p *Dao) DelESDiscussion(c context.Context, id int64) (err error) {
 		err = errors.New(msg)
 		return
 	}
-	return
-}
-
-func (p *Dao) GetDiscussions(c context.Context, node sqalx.Node) (items []*model.Discussion, err error) {
-	items = make([]*model.Discussion, 0)
-	sqlSelect := "SELECT a.* FROM discussions a WHERE a.deleted=0 ORDER BY a.id DESC "
-
-	if err = node.SelectContext(c, &items, sqlSelect); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.GetDiscussions err(%+v)", err))
-		return
-	}
-	return
-}
-
-func (p *Dao) GetDiscussCategoryByID(c context.Context, node sqalx.Node, id int64) (item *model.DiscussCategory, err error) {
-	item = new(model.DiscussCategory)
-	sqlSelect := "SELECT a.* FROM discuss_categories a WHERE a.id=? AND a.deleted=0"
-
-	if err = node.GetContext(c, item, sqlSelect, id); err != nil {
-		if err == sql.ErrNoRows {
-			item = nil
-			err = nil
-			return
-		}
-		log.For(c).Error(fmt.Sprintf("dao.GetDiscussCategoryByID err(%+v), id(%+v)", err, id))
-	}
-
-	return
-}
-
-func (p *Dao) GetDiscussionByID(c context.Context, node sqalx.Node, id int64) (item *model.Discussion, err error) {
-	item = new(model.Discussion)
-	sqlSelect := "SELECT a.* FROM discussions a WHERE a.id=? AND a.deleted=0"
-
-	if err = node.GetContext(c, item, sqlSelect, id); err != nil {
-		if err == sql.ErrNoRows {
-			item = nil
-			err = nil
-			return
-		}
-		log.For(c).Error(fmt.Sprintf("dao.GetDiscussionByID err(%+v), id(%+v)", err, id))
-	}
-
 	return
 }

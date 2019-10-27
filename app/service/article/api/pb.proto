@@ -53,6 +53,10 @@ message ArticleInfo {
     string  Content = 9 [(gogoproto.jsontag) = "content"];
 
     string  ContentText = 10 [(gogoproto.jsontag) = "content_text"];
+
+    bool  DisableRevise = 11 [(gogoproto.jsontag) = "disable_revise"];
+
+    bool  DisableComment = 12 [(gogoproto.jsontag) = "disable_comment"];
 }
 
 message ArticleStat {

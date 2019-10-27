@@ -2,13 +2,11 @@ package dao
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"fmt"
 	"strconv"
 	"valerian/app/service/search/model"
 	"valerian/library/conf/env"
-	"valerian/library/database/sqalx"
 	"valerian/library/log"
 	"valerian/library/sync/errgroup"
 
@@ -195,32 +193,5 @@ func (p *Dao) DelESArticle(c context.Context, id int64) (err error) {
 		err = errors.New(msg)
 		return
 	}
-	return
-}
-
-func (p *Dao) GetArticles(c context.Context, node sqalx.Node) (items []*model.Article, err error) {
-	items = make([]*model.Article, 0)
-	sqlSelect := "SELECT a.* FROM articles a WHERE a.deleted=0 ORDER BY a.id DESC "
-
-	if err = node.SelectContext(c, &items, sqlSelect); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.GetArticles err(%+v)", err))
-		return
-	}
-	return
-}
-
-func (p *Dao) GetArticleByID(c context.Context, node sqalx.Node, id int64) (item *model.Article, err error) {
-	item = new(model.Article)
-	sqlSelect := "SELECT a.* FROM articles a WHERE a.id=? AND a.deleted=0"
-
-	if err = node.GetContext(c, item, sqlSelect, id); err != nil {
-		if err == sql.ErrNoRows {
-			item = nil
-			err = nil
-			return
-		}
-		log.For(c).Error(fmt.Sprintf("dao.GetArticleByID err(%+v), id(%+v)", err, id))
-	}
-
 	return
 }

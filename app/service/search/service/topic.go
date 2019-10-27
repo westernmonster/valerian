@@ -3,9 +3,9 @@ package service
 import (
 	"context"
 	"fmt"
-	account "valerian/app/service/account/api"
 	"valerian/app/service/feed/def"
 	"valerian/app/service/search/model"
+	topic "valerian/app/service/topic/api"
 	"valerian/library/log"
 
 	"github.com/nats-io/stan.go"
@@ -20,8 +20,8 @@ func (p *Service) onTopicAdded(m *stan.Msg) {
 		return
 	}
 
-	var v *model.Topic
-	if v, err = p.d.GetTopicByID(c, p.d.DB(), info.TopicID); err != nil {
+	var v *topic.TopicInfo
+	if v, err = p.d.GetTopic(c, info.TopicID); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onTopicAdded GetTopicByID failed %#v", err))
 		return
 	} else if v == nil {
@@ -31,8 +31,8 @@ func (p *Service) onTopicAdded(m *stan.Msg) {
 	item := &model.ESTopic{
 		ID:              v.ID,
 		Name:            &v.Name,
-		Avatar:          v.Avatar,
-		Bg:              v.Bg,
+		Avatar:          &v.Avatar,
+		Bg:              &v.Bg,
 		Introduction:    &v.Introduction,
 		ViewPermission:  &v.ViewPermission,
 		EditPermission:  &v.EditPermission,
@@ -40,25 +40,16 @@ func (p *Service) onTopicAdded(m *stan.Msg) {
 		CatalogViewType: &v.CatalogViewType,
 		CreatedAt:       &v.CreatedAt,
 		UpdatedAt:       &v.UpdatedAt,
-	}
-
-	allowDiscuss := bool(v.AllowDiscuss)
-	allowChat := bool(v.AllowChat)
-	isPrivate := bool(v.IsPrivate)
-	item.AllowDiscuss = &allowDiscuss
-	item.AllowChat = &allowChat
-	item.IsPrivate = &isPrivate
-
-	var acc *account.BaseInfoReply
-	if acc, err = p.d.GetAccountBaseInfo(c, v.CreatedBy); err != nil {
-		return
+		AllowDiscuss:    &v.AllowDiscuss,
+		AllowChat:       &v.AllowChat,
+		IsPrivate:       &v.IsPrivate,
 	}
 
 	item.Creator = &model.ESCreator{
-		ID:           acc.ID,
-		UserName:     &acc.UserName,
-		Avatar:       &acc.Avatar,
-		Introduction: &acc.Introduction,
+		ID:           v.Creator.ID,
+		UserName:     &v.Creator.UserName,
+		Avatar:       &v.Creator.Avatar,
+		Introduction: &v.Creator.Introduction,
 	}
 
 	if err = p.d.PutTopic2ES(c, item); err != nil {
@@ -77,9 +68,9 @@ func (p *Service) onTopicUpdated(m *stan.Msg) {
 		return
 	}
 
-	var v *model.Topic
-	if v, err = p.d.GetTopicByID(c, p.d.DB(), info.TopicID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onTopicUpdated GetTopicByID failed %#v", err))
+	var v *topic.TopicInfo
+	if v, err = p.d.GetTopic(c, info.TopicID); err != nil {
+		log.For(c).Error(fmt.Sprintf("service.onTopicAdded GetTopicByID failed %#v", err))
 		return
 	} else if v == nil {
 		return
@@ -88,8 +79,8 @@ func (p *Service) onTopicUpdated(m *stan.Msg) {
 	item := &model.ESTopic{
 		ID:              v.ID,
 		Name:            &v.Name,
-		Avatar:          v.Avatar,
-		Bg:              v.Bg,
+		Avatar:          &v.Avatar,
+		Bg:              &v.Bg,
 		Introduction:    &v.Introduction,
 		ViewPermission:  &v.ViewPermission,
 		EditPermission:  &v.EditPermission,
@@ -97,25 +88,16 @@ func (p *Service) onTopicUpdated(m *stan.Msg) {
 		CatalogViewType: &v.CatalogViewType,
 		CreatedAt:       &v.CreatedAt,
 		UpdatedAt:       &v.UpdatedAt,
-	}
-
-	allowDiscuss := bool(v.AllowDiscuss)
-	allowChat := bool(v.AllowChat)
-	isPrivate := bool(v.IsPrivate)
-	item.AllowDiscuss = &allowDiscuss
-	item.AllowChat = &allowChat
-	item.IsPrivate = &isPrivate
-
-	var acc *account.BaseInfoReply
-	if acc, err = p.d.GetAccountBaseInfo(c, v.CreatedBy); err != nil {
-		return
+		AllowDiscuss:    &v.AllowDiscuss,
+		AllowChat:       &v.AllowChat,
+		IsPrivate:       &v.IsPrivate,
 	}
 
 	item.Creator = &model.ESCreator{
-		ID:           acc.ID,
-		UserName:     &acc.UserName,
-		Avatar:       &acc.Avatar,
-		Introduction: &acc.Introduction,
+		ID:           v.Creator.ID,
+		UserName:     &v.Creator.UserName,
+		Avatar:       &v.Creator.Avatar,
+		Introduction: &v.Creator.Introduction,
 	}
 
 	if err = p.d.PutTopic2ES(c, item); err != nil {
