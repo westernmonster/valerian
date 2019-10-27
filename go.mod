@@ -10,7 +10,6 @@ replace (
 )
 
 require (
-	github.com/Azure/azure-sdk-for-go v21.1.0+incompatible
 	github.com/BurntSushi/toml v0.3.1
 	github.com/PuerkitoBio/goquery v1.5.0
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
@@ -44,7 +43,7 @@ require (
 	github.com/nats-io/nats-streaming-server v0.16.2 // indirect
 	github.com/nats-io/stan.go v0.5.0
 	github.com/nicksnyder/go-i18n/v2 v2.0.2
-	github.com/olivere/elastic v6.2.23+incompatible
+	github.com/olivere/elastic v6.2.23+incompatible // indirect
 	github.com/opentracing-contrib/go-stdlib v0.0.0-20190519235532-cf7a6c988dc9
 	github.com/opentracing/opentracing-go v1.1.0
 	github.com/pkg/errors v0.8.1
@@ -54,7 +53,7 @@ require (
 	github.com/sergi/go-diff v1.0.0
 	github.com/sirupsen/logrus v1.4.2
 	github.com/smartystreets/goconvey v0.0.0-20190731233626-505e41936337
-	github.com/sony/gobreaker v0.4.1
+	github.com/sony/gobreaker v0.4.1 // indirect
 	github.com/spf13/pflag v1.0.3
 	github.com/stretchr/testify v1.4.0
 	github.com/swaggo/swag v1.6.2

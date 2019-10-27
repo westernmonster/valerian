@@ -4,6 +4,7 @@ import (
 	"context"
 
 	account "valerian/app/service/account/api"
+	article "valerian/app/service/article/api"
 	"valerian/app/service/search/model"
 	"valerian/library/database/sqalx"
 )
@@ -35,6 +36,9 @@ type IDao interface {
 	GetTopicByID(c context.Context, node sqalx.Node, id int64) (item *model.Topic, err error)
 	GetArticleByID(c context.Context, node sqalx.Node, id int64) (item *model.Article, err error)
 	GetDiscussionByID(c context.Context, node sqalx.Node, id int64) (item *model.Discussion, err error)
+
+	GetArticle(c context.Context, id int64) (info *article.ArticleInfo, err error)
+	GetRevise(c context.Context, id int64) (info *article.ReviseInfo, err error)
 
 	GetAllAccounts(c context.Context) (info *account.AllAccountsResp, err error)
 	GetAccountInfo(c context.Context, aid int64) (info *account.DBAccount, err error)
