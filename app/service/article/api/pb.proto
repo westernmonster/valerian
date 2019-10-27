@@ -49,6 +49,10 @@ message ArticleInfo {
     int64 UpdatedAt = 7 [(gogoproto.jsontag) = "updated_at"];
 
     ArticleStat  Stat = 8 [(gogoproto.jsontag) = "stat"];
+
+    string  Content = 9 [(gogoproto.jsontag) = "content"];
+
+    string  ContentText = 10 [(gogoproto.jsontag) = "content_text"];
 }
 
 message ArticleStat {
@@ -80,11 +84,16 @@ message ReviseInfo {
     ReviseStat  Stat = 8 [(gogoproto.jsontag) = "stat"];
 
     int64 ArticleID = 9 [(gogoproto.jsontag) = "article_id"];
+
+    string  Content = 10 [(gogoproto.jsontag) = "content"];
+
+    string  ContentText = 11 [(gogoproto.jsontag) = "content_text"];
 }
 
 
 message IDReq {
     int64 ID = 1 [(gogoproto.jsontag) = "id"];
+    string include = 2 [(gogoproto.jsontag) = "include"];
 }
 
 message UserArticlesReq {

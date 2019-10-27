@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"fmt"
+	"strings"
 	"valerian/app/service/article/api"
 	"valerian/app/service/article/service"
 	"valerian/library/log"
@@ -79,6 +80,16 @@ func (s *server) GetArticleInfo(ctx context.Context, req *api.IDReq) (*api.Artic
 			Avatar:       m.Avatar,
 			Introduction: m.Introduction,
 		},
+	}
+
+	inc := includeParam(req.Include)
+
+	if inc["content"] {
+		resp.Content = article.Content
+	}
+
+	if inc["content_text"] {
+		resp.ContentText = article.ContentText
 	}
 
 	return resp, nil
@@ -190,6 +201,16 @@ func (s *server) GetReviseInfo(ctx context.Context, req *api.IDReq) (*api.Revise
 		ArticleID: revise.ArticleID,
 	}
 
+	inc := includeParam(req.Include)
+
+	if inc["content"] {
+		resp.Content = article.Content
+	}
+
+	if inc["content_text"] {
+		resp.ContentText = article.ContentText
+	}
+
 	return resp, nil
 }
 
@@ -245,4 +266,14 @@ func (s *server) GetUserArticlesPaged(c context.Context, req *api.UserArticlesRe
 	}
 
 	return resp, nil
+}
+
+func includeParam(include string) (dic map[string]bool) {
+	arr := strings.Split(include, ",")
+	dic = make(map[string]bool)
+	for _, v := range arr {
+		dic[v] = true
+	}
+
+	return
 }
