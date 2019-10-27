@@ -33,7 +33,7 @@ func (p *Dao) GetFeedbackTypesByCond(c context.Context, node sqalx.Node, cond ma
 		condition = append(condition, val)
 	}
 	if val, ok := cond["type"]; ok {
-		clause += " AND a.type =?"
+		clause += " AND a.`type` =?"
 		condition = append(condition, val)
 	}
 	if val, ok := cond["name"]; ok {
@@ -51,7 +51,7 @@ func (p *Dao) GetFeedbackTypesByCond(c context.Context, node sqalx.Node, cond ma
 }
 
 // GetByID get a record by ID
-func (p *Dao) GetFeedbackTypeByID(c context.Context, node sqalx.Node, id int) (item *model.FeedbackType, err error) {
+func (p *Dao) GetFeedbackTypeByID(c context.Context, node sqalx.Node, id int32) (item *model.FeedbackType, err error) {
 	item = new(model.FeedbackType)
 	sqlSelect := "SELECT a.* FROM feedback_types a WHERE a.id=? AND a.deleted=0"
 
@@ -78,7 +78,7 @@ func (p *Dao) GetFeedbackTypeByCond(c context.Context, node sqalx.Node, cond map
 		condition = append(condition, val)
 	}
 	if val, ok := cond["type"]; ok {
-		clause += " AND a.type =?"
+		clause += " AND a.`type` =?"
 		condition = append(condition, val)
 	}
 	if val, ok := cond["name"]; ok {
@@ -103,7 +103,7 @@ func (p *Dao) GetFeedbackTypeByCond(c context.Context, node sqalx.Node, cond map
 
 // Insert insert a new record
 func (p *Dao) AddFeedbackType(c context.Context, node sqalx.Node, item *model.FeedbackType) (err error) {
-	sqlInsert := "INSERT INTO feedback_types( id,type,name,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?)"
+	sqlInsert := "INSERT INTO feedback_types( id,`type`,name,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?)"
 
 	if _, err = node.ExecContext(c, sqlInsert, item.ID, item.Type, item.Name, item.Deleted, item.CreatedAt, item.UpdatedAt); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.AddFeedbackTypes err(%+v), item(%+v)", err, item))
@@ -115,7 +115,7 @@ func (p *Dao) AddFeedbackType(c context.Context, node sqalx.Node, item *model.Fe
 
 // Update update a exist record
 func (p *Dao) UpdateFeedbackType(c context.Context, node sqalx.Node, item *model.FeedbackType) (err error) {
-	sqlUpdate := "UPDATE feedback_types SET type=?,name=?,updated_at=? WHERE id=?"
+	sqlUpdate := "UPDATE feedback_types SET `type`=?,name=?,updated_at=? WHERE id=?"
 
 	_, err = node.ExecContext(c, sqlUpdate, item.Type, item.Name, item.UpdatedAt, item.ID)
 	if err != nil {
@@ -127,7 +127,7 @@ func (p *Dao) UpdateFeedbackType(c context.Context, node sqalx.Node, item *model
 }
 
 // Delete logic delete a exist record
-func (p *Dao) DelFeedbackType(c context.Context, node sqalx.Node, id int) (err error) {
+func (p *Dao) DelFeedbackType(c context.Context, node sqalx.Node, id int32) (err error) {
 	sqlDelete := "UPDATE feedback_types SET deleted=1 WHERE id=? "
 
 	if _, err = node.ExecContext(c, sqlDelete, id); err != nil {

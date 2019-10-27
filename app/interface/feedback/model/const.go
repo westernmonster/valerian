@@ -1,13 +1,13 @@
 package model
 
 const (
-	TargetTypeFeedback = 1
-	TargetTypeMember   = 2
-	TargetTypeTopic    = 3
-	TargetTypeArticle  = 4
-	TargetTypeDiscuss  = 5
-	TargetTypeRevise   = 6
-	TargetTypeComment  = 7
+	TargetTypeFeedback = int32(1)
+	TargetTypeMember   = int32(2)
+	TargetTypeTopic    = int32(3)
+	TargetTypeArticle  = int32(4)
+	TargetTypeDiscuss  = int32(5)
+	TargetTypeRevise   = int32(6)
+	TargetTypeComment  = int32(7)
 )
 
 const (

@@ -17,10 +17,10 @@ type ArgAddFeedback struct {
 	//  5 讨论
 	//  6 补充
 	//  7 评论
-	TargetType int `json:"target_type"`
+	TargetType int32 `json:"target_type"`
 	//  举报类型
 	//  通过 /list/feedback_types 获取
-	Type int `json:"type"`
+	Type int32 `json:"type"`
 	// 备注
 	Desc string `json:"desc"`
 }

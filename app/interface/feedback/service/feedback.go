@@ -43,14 +43,14 @@ func (p *Service) AddFeedback(c context.Context, arg *model.ArgAddFeedback) (err
 	}
 
 	item := &model.Feedback{
-		ID:         gid.NewID(),
-		TargetID:   arg.TargetID,
-		TargetType: arg.TargetType,
-		Type:       fType.ID,
-		Desc:       arg.Desc,
-		CreatedBy:  aid,
-		CreatedAt:  time.Now().Unix(),
-		UpdatedAt:  time.Now().Unix(),
+		ID:           gid.NewID(),
+		TargetID:     arg.TargetID,
+		TargetType:   arg.TargetType,
+		FeedbackType: fType.ID,
+		FeedbackDesc: arg.Desc,
+		CreatedBy:    aid,
+		CreatedAt:    time.Now().Unix(),
+		UpdatedAt:    time.Now().Unix(),
 	}
 
 	if err = p.d.AddFeedback(c, p.d.DB(), item); err != nil {
