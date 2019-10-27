@@ -24,6 +24,9 @@ type IDao interface {
 	BulkArticle2ES(c context.Context, items []*model.ESArticle) (err error)
 
 	PutDiscussion2ES(c context.Context, item *model.ESDiscussion) (err error)
+	BulkDiscussion2ES(c context.Context, items []*model.ESDiscussion) (err error)
+
+	BulkTopic2ES(c context.Context, items []*model.ESTopic) (err error)
 	PutTopic2ES(c context.Context, item *model.ESTopic) (err error)
 
 	DelESDiscussion(c context.Context, id int64) (err error)

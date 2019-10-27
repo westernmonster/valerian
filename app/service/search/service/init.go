@@ -76,7 +76,8 @@ func (p *Service) Init(c context.Context) (err error) {
 		return
 	}
 
-	for _, v := range topics {
+	iTopic := make([]*model.ESTopic, len(topics))
+	for i, v := range topics {
 		item := &model.ESTopic{
 			ID:              v.ID,
 			Name:            &v.Name,
@@ -105,9 +106,11 @@ func (p *Service) Init(c context.Context) (err error) {
 			Introduction: &v.Creator.Introduction,
 		}
 
-		if err = p.d.PutTopic2ES(c, item); err != nil {
-			return
-		}
+		iTopic[i] = item
+	}
+
+	if err = p.d.BulkTopic2ES(c, iTopic); err != nil {
+		return
 	}
 
 	var articles []*article.DBArticle
@@ -153,7 +156,8 @@ func (p *Service) Init(c context.Context) (err error) {
 		return
 	}
 
-	for _, v := range discussions {
+	iDiscuss := make([]*model.ESDiscussion, len(discussions))
+	for i, v := range discussions {
 		item := &model.ESDiscussion{
 			ID:          v.ID,
 			Title:       &v.Title,
@@ -192,9 +196,12 @@ func (p *Service) Init(c context.Context) (err error) {
 				Seq:  &v.CategoryInfo.Seq,
 			}
 		}
-		if err = p.d.PutDiscussion2ES(c, item); err != nil {
-			return
-		}
+
+		iDiscuss[i] = item
+	}
+
+	if err = p.d.BulkDiscussion2ES(c, iDiscuss); err != nil {
+		return
 	}
 
 	return
