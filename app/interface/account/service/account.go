@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"valerian/app/interface/account/model"
@@ -225,10 +226,15 @@ func (p *Service) ChangePassword(c context.Context, aid int64, arg *model.ArgCha
 		return
 	}
 
+	fmt.Printf("arg Password: %s\n", arg.Password)
+	fmt.Printf("old Salt: %s\n", acc.Salt)
+	fmt.Printf("old Hash: %s\n", acc.Password)
 	passwordHash, err := hashPassword(arg.Password, acc.Salt)
 	if err != nil {
 		return
 	}
+	fmt.Printf("new Salt: %s\n", acc.Salt)
+	fmt.Printf("new Hash: %s\n", passwordHash)
 
 	if err = p.d.SetPassword(c, p.d.DB(), acc.Salt, passwordHash, aid); err != nil {
 		return
