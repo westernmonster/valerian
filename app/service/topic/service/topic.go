@@ -28,6 +28,10 @@ func (p *Service) GetUserTopicsPaged(c context.Context, aid int64, limit, offset
 	return p.d.GetUserTopicsPaged(c, p.d.DB(), aid, limit, offset)
 }
 
+func (p *Service) GetAllTopics(c context.Context) (items []*model.Topic, err error) {
+	return p.d.GetTopics(c, p.d.DB())
+}
+
 func (p *Service) GetTopic(c context.Context, topicID int64) (item *model.Topic, err error) {
 	return p.getTopic(c, p.d.DB(), topicID)
 }

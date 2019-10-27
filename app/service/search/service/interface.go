@@ -37,6 +37,7 @@ type IDao interface {
 	GetArticleByID(c context.Context, node sqalx.Node, id int64) (item *model.Article, err error)
 	GetDiscussionByID(c context.Context, node sqalx.Node, id int64) (item *model.Discussion, err error)
 
+	GetAllArticles(c context.Context) (items []*article.DBArticle, err error)
 	GetArticle(c context.Context, id int64) (info *article.ArticleInfo, err error)
 	GetRevise(c context.Context, id int64) (info *article.ReviseInfo, err error)
 

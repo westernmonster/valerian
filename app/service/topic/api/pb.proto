@@ -124,6 +124,11 @@ message UserTopicsResp {
     repeated TopicInfo Items = 1 [(gogoproto.jsontag) = 'items'];
 }
 
+message AllTopicsResp {
+    repeated TopicInfo Items = 1 [(gogoproto.jsontag) = 'items'];
+}
+
+
 
 message AidReq {
     int64 AccountID = 1 [(gogoproto.jsontag) = "account_id"];
@@ -134,6 +139,8 @@ message IDsResp {
 }
 
 service Topic {
+    rpc  GetAllTopics(EmptyStruct) returns (AllTopicsResp);
+
     rpc  GetTopicInfo(TopicReq) returns (TopicInfo);
 
     rpc  GetTopicStat(TopicReq) returns (TopicStat);

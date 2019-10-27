@@ -150,3 +150,29 @@ func (s *server) GetTopicMemberIDs(ctx context.Context, req *api.TopicReq) (*api
 
 	return &api.IDsResp{IDs: ids}, nil
 }
+
+func (s *server) GetAllTopics(ctx context.Context, req *api.EmptyStruct) (resp *api.AllTopicsResp, err error) {
+	items, err := s.svr.GetAllTopics(ctx)
+	if err != nil {
+		return nil, err
+	}
+	resp = &api.AllTopicsResp{
+		Items: make([]*api.TopicInfo, len(items)),
+	}
+
+	for i, v := range items {
+		stat, err := s.svr.GetTopicStat(ctx, v.ID)
+		if err != nil {
+			return nil, err
+		}
+
+		m, err := s.svr.GetAccountBaseInfo(ctx, v.CreatedBy)
+		if err != nil {
+			return nil, err
+		}
+
+		resp.Items[i] = api.FromTopic(v, stat, m)
+	}
+
+	return
+}
