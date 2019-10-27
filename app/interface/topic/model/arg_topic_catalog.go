@@ -274,3 +274,8 @@ func (p *ArgTopicCatalog) Validate() error {
 		validation.Field(&p.RefID, ValidateRefID(p.Type)),
 	)
 }
+
+type ArticleItem struct {
+	TopicID   int64
+	ArticleID int64
+}

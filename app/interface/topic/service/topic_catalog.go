@@ -259,6 +259,10 @@ func (p *Service) SaveCatalogs(c context.Context, req *model.ArgSaveTopicCatalog
 		err = ecode.AcquireAccountIDFailed
 		return
 	}
+
+	newArticles := make([]*model.ArticleItem, 0)
+	delArticles := make([]*model.ArticleItem, 0)
+
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
@@ -304,9 +308,7 @@ func (p *Service) SaveCatalogs(c context.Context, req *model.ArgSaveTopicCatalog
 			}
 
 			if v.Type == model.TopicCatalogArticle {
-				p.addCache(func() {
-					p.onCatalogArticleAdded(c, v.RefID, req.TopicID, aid, time.Now().Unix())
-				})
+				newArticles = append(newArticles, &model.ArticleItem{TopicID: req.TopicID, ArticleID: v.RefID})
 			}
 			continue
 		}
@@ -371,9 +373,7 @@ func (p *Service) SaveCatalogs(c context.Context, req *model.ArgSaveTopicCatalog
 		}
 
 		if v.Item.Type == model.TopicCatalogArticle {
-			p.addCache(func() {
-				p.onCatalogArticleDeleted(c, v.Item.RefID, req.TopicID, aid, time.Now().Unix())
-			})
+			delArticles = append(delArticles, &model.ArticleItem{TopicID: req.TopicID, ArticleID: v.Item.RefID})
 		}
 	}
 
@@ -384,6 +384,13 @@ func (p *Service) SaveCatalogs(c context.Context, req *model.ArgSaveTopicCatalog
 
 	p.addCache(func() {
 		p.d.DelTopicCatalogCache(context.TODO(), req.TopicID)
+		for _, v := range newArticles {
+			p.onCatalogArticleAdded(c, v.ArticleID, v.TopicID, aid, time.Now().Unix())
+		}
+
+		for _, v := range delArticles {
+			p.onCatalogArticleDeleted(c, v.ArticleID, v.TopicID, aid, time.Now().Unix())
+		}
 	})
 	return
 }
