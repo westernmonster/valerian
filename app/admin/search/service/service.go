@@ -4,8 +4,10 @@ import (
 	"context"
 	"net/url"
 
-	"valerian/app/admin/login/conf"
-	"valerian/app/admin/login/dao"
+	"valerian/app/admin/search/conf"
+	"valerian/app/admin/search/dao"
+	"valerian/app/admin/search/model"
+	search "valerian/app/service/search/api"
 	"valerian/library/conf/env"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
@@ -15,6 +17,11 @@ import (
 type Service struct {
 	c *conf.Config
 	d interface {
+		SearchTopic(c context.Context, arg *model.BasicSearchParams) (info *search.SearchResult, err error)
+		SearchAccount(c context.Context, arg *model.BasicSearchParams) (info *search.SearchResult, err error)
+		SearchArticle(c context.Context, arg *model.BasicSearchParams) (info *search.SearchResult, err error)
+		SearchDiscussion(c context.Context, arg *model.BasicSearchParams) (info *search.SearchResult, err error)
+
 		Ping(c context.Context) (err error)
 		Close()
 		DB() sqalx.Node

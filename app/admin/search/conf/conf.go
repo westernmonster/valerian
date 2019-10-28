@@ -12,6 +12,7 @@ import (
 	"valerian/library/naming/discovery"
 	"valerian/library/net/http/mars"
 	"valerian/library/net/http/mars/middleware/permit"
+	"valerian/library/net/rpc/warden"
 	xtime "valerian/library/time"
 	"valerian/library/tracing"
 
@@ -32,8 +33,10 @@ type Config struct {
 	// Auth
 	Memcache *Memcache
 
-	Discovery *discovery.Config
-	Session   *permit.SessionConfig
+	AccountRPC *warden.ClientConfig
+	SearchRPC  *warden.ClientConfig
+	Discovery  *discovery.Config
+	Session    *permit.SessionConfig
 }
 
 // DB db config.
