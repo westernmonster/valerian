@@ -29,10 +29,10 @@ type Service struct {
 		AccountCache(c context.Context, accountID int64) (m *model.Account, err error)
 		DelAccountCache(c context.Context, accountID int64) (err error)
 
-		MobileValcodeCache(c context.Context, vtype int, mobile string) (code string, err error)
-		DelMobileValcodeCache(c context.Context, vtype int, mobile string) (err error)
-		EmailValcodeCache(c context.Context, vtype int, mobile string) (code string, err error)
-		DelEmailValcideCache(c context.Context, vtype int, mobile string) (err error)
+		MobileValcodeCache(c context.Context, vtype int32, mobile string) (code string, err error)
+		DelMobileValcodeCache(c context.Context, vtype int32, mobile string) (err error)
+		EmailValcodeCache(c context.Context, vtype int32, mobile string) (code string, err error)
+		DelEmailValcideCache(c context.Context, vtype int32, mobile string) (err error)
 
 		SetSession(ctx context.Context, p *permit.Session) (err error)
 		Session(ctx context.Context, sid string) (res *permit.Session, err error)
