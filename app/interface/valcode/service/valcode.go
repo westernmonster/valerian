@@ -25,12 +25,14 @@ func generateValcode(max int) string {
 
 func (p *Service) EmailValcode(c context.Context, req *model.ArgEmailValcode) (createdTime int64, err error) {
 
-	var exist bool
-	if exist, err = p.d.IsEmailExist(c, req.Email); err != nil {
-		return
-	} else if exist {
-		err = ecode.AccountExist
-		return
+	if req.CodeType == model.ValcodeRegister {
+		var exist bool
+		if exist, err = p.d.IsEmailExist(c, req.Email); err != nil {
+			return
+		} else if exist {
+			err = ecode.AccountExist
+			return
+		}
 	}
 
 	code := generateValcode(6)
@@ -59,12 +61,14 @@ func (p *Service) EmailValcode(c context.Context, req *model.ArgEmailValcode) (c
 
 func (p *Service) MobileValcode(c context.Context, req *model.ArgMobileValcode) (createdTime int64, err error) {
 
-	var exist bool
-	if exist, err = p.d.IsMobileExist(c, req.Prefix, req.Mobile); err != nil {
-		return
-	} else if exist {
-		err = ecode.AccountExist
-		return
+	if req.CodeType == model.ValcodeRegister {
+		var exist bool
+		if exist, err = p.d.IsMobileExist(c, req.Prefix, req.Mobile); err != nil {
+			return
+		} else if exist {
+			err = ecode.AccountExist
+			return
+		}
 	}
 
 	var code string

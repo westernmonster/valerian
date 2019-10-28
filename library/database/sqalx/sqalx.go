@@ -269,10 +269,12 @@ func (n *node) GetContext(ctx context.Context, dest interface{}, query string, a
 }
 
 func (n *node) QueryxContext(ctx context.Context, query string, args ...interface{}) (rows *sqlx.Rows, err error) {
-	idx := n.readIndex()
-	for i := range n.read {
-		if rows, err = n.read[(idx+i)%len(n.read)].QueryxContext(ctx, query, args...); !ecode.ServiceUnavailable.Equal(err) {
-			return
+	if n.tx == nil {
+		idx := n.readIndex()
+		for i := range n.read {
+			if rows, err = n.read[(idx+i)%len(n.read)].QueryxContext(ctx, query, args...); !ecode.ServiceUnavailable.Equal(err) {
+				return
+			}
 		}
 	}
 
