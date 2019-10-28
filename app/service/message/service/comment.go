@@ -59,6 +59,10 @@ func (p *Service) onArticleCommented(m *stan.Msg) {
 		return
 	}
 
+	p.addCache(func() {
+		p.pushSingleUser(context.Background(), msg.AccountID, msg.ActionText)
+	})
+
 	m.Ack()
 }
 
