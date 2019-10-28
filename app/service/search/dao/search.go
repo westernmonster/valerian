@@ -9,7 +9,7 @@ import (
 	"gopkg.in/olivere/elastic.v6"
 )
 
-func (p *Dao) AccountSearch(c context.Context, arg *model.AccountSearchParams) (res *model.SearchResult, err error) {
+func (p *Dao) AccountSearch(c context.Context, arg *model.BasicSearchParams) (res *model.SearchResult, err error) {
 	var (
 		query = elastic.NewBoolQuery()
 	)
@@ -23,7 +23,7 @@ func (p *Dao) AccountSearch(c context.Context, arg *model.AccountSearchParams) (
 		query = query.Must(elastic.NewMultiMatchQuery(arg.KW, arg.KwFields...).Type("best_fields").TieBreaker(0.6))
 	}
 
-	if res, err = p.searchResult(c, indexName, query, arg.BasicSearchParams); err != nil {
+	if res, err = p.searchResult(c, indexName, query, arg); err != nil {
 		PromError(c, fmt.Sprintf("es:%+v ", arg), "%v", err)
 		return
 	}
@@ -31,7 +31,7 @@ func (p *Dao) AccountSearch(c context.Context, arg *model.AccountSearchParams) (
 	return
 }
 
-func (p *Dao) TopicSearch(c context.Context, arg *model.TopicSearchParams) (res *model.SearchResult, err error) {
+func (p *Dao) TopicSearch(c context.Context, arg *model.BasicSearchParams) (res *model.SearchResult, err error) {
 	var (
 		query = elastic.NewBoolQuery()
 	)
@@ -45,7 +45,7 @@ func (p *Dao) TopicSearch(c context.Context, arg *model.TopicSearchParams) (res 
 		query = query.Must(elastic.NewMultiMatchQuery(arg.KW, arg.KwFields...).Type("best_fields").TieBreaker(0.6))
 	}
 
-	if res, err = p.searchResult(c, indexName, query, arg.BasicSearchParams); err != nil {
+	if res, err = p.searchResult(c, indexName, query, arg); err != nil {
 		PromError(c, fmt.Sprintf("es:%+v ", arg), "%v", err)
 		return
 	}
@@ -53,7 +53,7 @@ func (p *Dao) TopicSearch(c context.Context, arg *model.TopicSearchParams) (res 
 	return
 }
 
-func (p *Dao) ArticleSearch(c context.Context, arg *model.ArticleSearchParams) (res *model.SearchResult, err error) {
+func (p *Dao) ArticleSearch(c context.Context, arg *model.BasicSearchParams) (res *model.SearchResult, err error) {
 	var (
 		query = elastic.NewBoolQuery()
 	)
@@ -67,7 +67,7 @@ func (p *Dao) ArticleSearch(c context.Context, arg *model.ArticleSearchParams) (
 		query = query.Must(elastic.NewMultiMatchQuery(arg.KW, arg.KwFields...).Type("best_fields").TieBreaker(0.6))
 	}
 
-	if res, err = p.searchResult(c, indexName, query, arg.BasicSearchParams); err != nil {
+	if res, err = p.searchResult(c, indexName, query, arg); err != nil {
 		PromError(c, fmt.Sprintf("es:%+v ", arg), "%v", err)
 		return
 	}
@@ -75,7 +75,7 @@ func (p *Dao) ArticleSearch(c context.Context, arg *model.ArticleSearchParams) (
 	return
 }
 
-func (p *Dao) DiscussionSearch(c context.Context, arg *model.DiscussionSearchParams) (res *model.SearchResult, err error) {
+func (p *Dao) DiscussionSearch(c context.Context, arg *model.BasicSearchParams) (res *model.SearchResult, err error) {
 	var (
 		query = elastic.NewBoolQuery()
 	)
@@ -89,7 +89,7 @@ func (p *Dao) DiscussionSearch(c context.Context, arg *model.DiscussionSearchPar
 		query = query.Must(elastic.NewMultiMatchQuery(arg.KW, arg.KwFields...).Type("best_fields").TieBreaker(0.6))
 	}
 
-	if res, err = p.searchResult(c, indexName, query, arg.BasicSearchParams); err != nil {
+	if res, err = p.searchResult(c, indexName, query, arg); err != nil {
 		PromError(c, fmt.Sprintf("es:%+v ", arg), "%v", err)
 		return
 	}

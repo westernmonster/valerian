@@ -51,10 +51,10 @@ type IDao interface {
 	GetTopic(c context.Context, id int64) (resp *topic.TopicInfo, err error)
 	GetAllTopics(c context.Context) (items []*topic.TopicInfo, err error)
 
-	AccountSearch(c context.Context, arg *model.AccountSearchParams) (res *model.SearchResult, err error)
-	TopicSearch(c context.Context, arg *model.TopicSearchParams) (res *model.SearchResult, err error)
-	ArticleSearch(c context.Context, arg *model.ArticleSearchParams) (res *model.SearchResult, err error)
-	DiscussionSearch(c context.Context, arg *model.DiscussionSearchParams) (res *model.SearchResult, err error)
+	AccountSearch(c context.Context, arg *model.BasicSearchParams) (res *model.SearchResult, err error)
+	TopicSearch(c context.Context, arg *model.BasicSearchParams) (res *model.SearchResult, err error)
+	ArticleSearch(c context.Context, arg *model.BasicSearchParams) (res *model.SearchResult, err error)
+	DiscussionSearch(c context.Context, arg *model.BasicSearchParams) (res *model.SearchResult, err error)
 
 	Ping(c context.Context) (err error)
 	Close()

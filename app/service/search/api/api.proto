@@ -8,6 +8,36 @@ import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 message EmptyStruct {
 }
 
+message SearchResult {
+    string Order = 1;
+    string Sort = 2;
+    repeated bytes Result = 3;
+    Page Page = 4;
+    string Debug = 5;
+}
+
+message Page {
+    int32 Pn = 1;
+    int32 Ps = 2;
+    int64 Total = 3;
+}
+
+message SearchParam {
+    string KW = 1;
+    repeated string KwFields = 2;
+    repeated string Order = 3;
+    repeated string Sort = 4;
+    int32 Pn = 5;
+    int32 Ps = 6;
+    bool Debug = 7;
+    repeated string Source = 8;
+}
+
+
 service Search {
+    rpc SearchAccount(SearchParam) returns (SearchResult);
+    rpc SearchTopic(SearchParam) returns (SearchResult);
+    rpc SearchArticle(SearchParam) returns (SearchResult);
+    rpc SearchDiscussion(SearchParam) returns (SearchResult);
 }
 
