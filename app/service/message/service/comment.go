@@ -15,6 +15,8 @@ import (
 	"valerian/library/gid"
 	"valerian/library/log"
 
+	"github.com/kamilsk/retry/v4"
+	"github.com/kamilsk/retry/v4/strategy"
 	"github.com/nats-io/stan.go"
 )
 
@@ -28,14 +30,34 @@ func (p *Service) onArticleCommented(m *stan.Msg) {
 	}
 
 	var comment *comment.CommentInfo
-	if comment, err = p.d.GetComment(c, info.CommentID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onArticleCommented GetComment failed %#v", err))
+	action := func(c context.Context, _ uint) error {
+		ct, e := p.d.GetComment(c, info.CommentID)
+		if e != nil {
+			return e
+		}
+
+		comment = ct
+		return nil
+	}
+
+	if err := retry.TryContext(c, action, strategy.Limit(3)); err != nil {
+		m.Ack()
 		return
 	}
 
 	var article *article.ArticleInfo
-	if article, err = p.d.GetArticle(c, comment.OwnerID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onCommentAdded GetArticle failed %#v", err))
+	action = func(c context.Context, _ uint) error {
+		ct, e := p.d.GetArticle(c, comment.OwnerID)
+		if e != nil {
+			return e
+		}
+
+		article = ct
+		return nil
+	}
+
+	if err := retry.TryContext(c, action, strategy.Limit(3)); err != nil {
+		m.Ack()
 		return
 	}
 
@@ -59,11 +81,14 @@ func (p *Service) onArticleCommented(m *stan.Msg) {
 		return
 	}
 
+	m.Ack()
+
 	p.addCache(func() {
-		p.pushSingleUser(context.Background(), msg.AccountID, msg.ActionText)
+		if _, err := p.pushSingleUser(context.Background(), msg.AccountID, msg.ActionText); err != nil {
+			log.For(context.Background()).Error(fmt.Sprintf("service.onCommentAdded Push message failed %#v", err))
+		}
 	})
 
-	m.Ack()
 }
 
 func (p *Service) onReviseCommented(m *stan.Msg) {
