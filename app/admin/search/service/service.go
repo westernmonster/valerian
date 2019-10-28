@@ -22,6 +22,11 @@ type Service struct {
 		SearchArticle(c context.Context, arg *model.BasicSearchParams) (info *search.SearchResult, err error)
 		SearchDiscussion(c context.Context, arg *model.BasicSearchParams) (info *search.SearchResult, err error)
 
+		GetDiscussionStatByID(c context.Context, node sqalx.Node, id int64) (item *model.DiscussionStat, err error)
+		GetArticleStatByID(c context.Context, node sqalx.Node, id int64) (item *model.ArticleStat, err error)
+		GetTopicStatByID(c context.Context, node sqalx.Node, id int64) (item *model.TopicStat, err error)
+		GetAccountStatByID(c context.Context, node sqalx.Node, id int64) (item *model.AccountStat, err error)
+
 		Ping(c context.Context) (err error)
 		Close()
 		DB() sqalx.Node

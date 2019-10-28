@@ -6,15 +6,20 @@ import (
 	"valerian/library/ecode"
 	"valerian/library/log"
 	"valerian/library/net/http/mars"
+	"valerian/library/net/http/mars/middleware/permit"
 )
 
 var (
-	srv *service.Service
+	srv       *service.Service
+	permitSvc *permit.Permit
 )
 
 // Init init
 func Init(c *conf.Config, s *service.Service) {
 	srv = s
+	permitSvc = permit.New(&permit.Config{
+		Session: c.Session,
+	})
 	engine := mars.DefaultServer(c.Mars)
 	route(engine)
 
@@ -27,11 +32,12 @@ func Init(c *conf.Config, s *service.Service) {
 func route(e *mars.Engine) {
 	e.Ping(ping)
 	e.Register(register)
-	// g := e.Group("/api/v1/admin/search")
+	g := e.Group("/api/v1/admin/search", permitSvc.Verify())
 	{
-		// g.POST("/mobile", mobileLogin)
-		// g.POST("/digit", digitLogin)
-		// g.POST("/email", emailLogin)
+		g.GET("/topics", searchTopics)
+		g.GET("/articles", searchArticles)
+		g.GET("/accounts", searchAccounts)
+		g.GET("/discussions", searchDiscusstions)
 	}
 }
 
