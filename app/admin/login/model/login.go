@@ -117,7 +117,7 @@ func ValidateMobile(prefix string) *ValidateIdentityRule {
 }
 
 type ValidateMobileRule struct {
-	IdentityType int
+	IdentityType int32
 	Prefix       string
 }
 
@@ -140,7 +140,7 @@ func (p *ValidateMobileRule) Validate(v interface{}) error {
 	return nil
 }
 
-func ValidateIdentity(identityType int, prefix string) *ValidateIdentityRule {
+func ValidateIdentity(identityType int32, prefix string) *ValidateIdentityRule {
 	return &ValidateIdentityRule{
 		IdentityType: identityType,
 		Prefix:       prefix,
@@ -148,7 +148,7 @@ func ValidateIdentity(identityType int, prefix string) *ValidateIdentityRule {
 }
 
 type ValidateIdentityRule struct {
-	IdentityType int
+	IdentityType int32
 	Prefix       string
 }
 
