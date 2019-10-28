@@ -26,33 +26,16 @@ func InetAtoN(ip string) int64 {
 
 func asteriskEmailName(email string) string {
 	components := strings.Split(email, "@")
-	username := components[0]
-
-	newUserName := ""
-	count := len(username)
-	for i, ch := range username {
-		if count-i <= 4 {
-			newUserName += "*"
-		} else {
-			newUserName += string(ch)
-		}
-	}
-
+	newUserName := components[0]
 	return newUserName
 }
 
 func asteriskMobile(mobile string) string {
-	newUserName := ""
-	count := len(mobile)
-	for i, ch := range mobile {
-		if count-i <= 4 {
-			newUserName += string(ch)
-		} else {
-			newUserName += "*"
-		}
-	}
+	runes := []rune(mobile)
 
-	return newUserName
+	newMobile := "*" + string(runes[len(runes)-4:])
+
+	return newMobile
 }
 
 func comparePassword(password, passwordHash, salt string) (identical bool, err error) {

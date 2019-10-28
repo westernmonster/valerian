@@ -214,3 +214,7 @@ func (p *Service) GetDiscussionStat(c context.Context, discussionID int64) (item
 	}
 	return
 }
+
+func (p *Service) DelDiscussion(c context.Context, aid, discussionID int64) (err error) {
+	return
+}

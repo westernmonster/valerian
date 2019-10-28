@@ -18,7 +18,7 @@ func strArr(val string) []string {
 
 // @Summary 搜索话题
 // @Description 搜索话题
-// @Tags search
+// @Tags admin
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer"
@@ -90,7 +90,7 @@ func searchTopics(c *mars.Context) {
 
 // @Summary 搜索账户
 // @Description 搜索账户
-// @Tags search
+// @Tags admin
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer"
@@ -162,7 +162,7 @@ func searchAccounts(c *mars.Context) {
 
 // @Summary 搜索文章
 // @Description 搜索文章
-// @Tags search
+// @Tags admin
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer"
@@ -234,7 +234,7 @@ func searchArticles(c *mars.Context) {
 
 // @Summary 搜索讨论
 // @Description 搜索讨论
-// @Tags search
+// @Tags admin
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer"
@@ -252,7 +252,7 @@ func searchArticles(c *mars.Context) {
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /search/discussions [get]
+// @Router /admin/search/discussions [get]
 func searchDiscusstions(c *mars.Context) {
 	param := c.Request.Form
 

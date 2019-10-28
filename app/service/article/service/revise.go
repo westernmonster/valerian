@@ -65,3 +65,7 @@ func (p *Service) GetReviseImageUrls(c context.Context, reviseID int64) (urls []
 
 	return
 }
+
+func (p *Service) DelRevise(c context.Context, aid int64, reviseID int64) (err error) {
+	return
+}
