@@ -47,8 +47,6 @@ func (s *server) GetTopicInfo(ctx context.Context, req *api.TopicReq) (*api.Topi
 		return nil, err
 	}
 
-	spew.Dump(resp)
-
 	stat, err := s.svr.GetTopicStat(ctx, req.ID)
 	if err != nil {
 		return nil, err
@@ -58,7 +56,10 @@ func (s *server) GetTopicInfo(ctx context.Context, req *api.TopicReq) (*api.Topi
 	if err != nil {
 		return nil, err
 	}
-	return api.FromTopic(resp, stat, acc), nil
+
+	ret := api.FromTopic(resp, stat, acc)
+	spew.Dump(ret)
+	return ret, nil
 }
 
 func (s *server) GetTopicStat(ctx context.Context, req *api.TopicReq) (*api.TopicStat, error) {
