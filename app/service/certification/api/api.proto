@@ -10,6 +10,7 @@ message EmptyStruct {
 
 message AidReq {
     int64 Aid = 1 [(gogoproto.jsontag) = "aid"];
+    bool UseMaster = 2;
 }
 
 

@@ -6,6 +6,7 @@ import (
 	"valerian/app/service/certification/api"
 	"valerian/app/service/certification/model"
 	"valerian/app/service/certification/service"
+	"valerian/library/database/sqalx"
 	"valerian/library/log"
 	"valerian/library/net/metadata"
 	"valerian/library/net/rpc/warden"
@@ -40,6 +41,12 @@ type server struct {
 }
 
 func (p *server) RequestIDCert(c context.Context, req *api.AidReq) (*api.RequestIDCertResp, error) {
+	if req.UseMaster {
+		c = sqalx.NewContext(c, true)
+		defer func() {
+			c = sqalx.NewContext(c, false)
+		}()
+	}
 	data, err := p.svr.RequestIDCert(c, req.Aid)
 	if err != nil {
 		return nil, err
@@ -66,6 +73,12 @@ func (p *server) RequestIDCert(c context.Context, req *api.AidReq) (*api.Request
 }
 
 func (p *server) RefreshIDCertStatus(c context.Context, req *api.AidReq) (*api.IDCertStatus, error) {
+	if req.UseMaster {
+		c = sqalx.NewContext(c, true)
+		defer func() {
+			c = sqalx.NewContext(c, false)
+		}()
+	}
 	status, err := p.svr.RefreshIDCertStatus(c, req.Aid)
 	if err != nil {
 		return nil, err
@@ -75,6 +88,12 @@ func (p *server) RefreshIDCertStatus(c context.Context, req *api.AidReq) (*api.I
 }
 
 func (p *server) GetIDCert(c context.Context, req *api.AidReq) (*api.IDCertInfo, error) {
+	if req.UseMaster {
+		c = sqalx.NewContext(c, true)
+		defer func() {
+			c = sqalx.NewContext(c, false)
+		}()
+	}
 	data, err := p.svr.GetIDCert(c, req.Aid)
 	if err != nil {
 		return nil, err
@@ -101,6 +120,12 @@ func (p *server) GetIDCert(c context.Context, req *api.AidReq) (*api.IDCertInfo,
 }
 
 func (p *server) GetIDCertStatus(c context.Context, req *api.AidReq) (*api.IDCertStatus, error) {
+	if req.UseMaster {
+		c = sqalx.NewContext(c, true)
+		defer func() {
+			c = sqalx.NewContext(c, false)
+		}()
+	}
 	status, err := p.svr.GetIDCertStatus(c, req.Aid)
 	if err != nil {
 		return nil, err
@@ -141,6 +166,12 @@ func (p *server) AuditWorkCert(c context.Context, req *api.AuditWorkCertReq) (*a
 }
 
 func (p *server) GetWorkCert(c context.Context, req *api.AidReq) (*api.WorkCertInfo, error) {
+	if req.UseMaster {
+		c = sqalx.NewContext(c, true)
+		defer func() {
+			c = sqalx.NewContext(c, false)
+		}()
+	}
 	data, err := p.svr.GetWorkCert(c, req.Aid)
 	if err != nil {
 		return nil, err
@@ -162,6 +193,12 @@ func (p *server) GetWorkCert(c context.Context, req *api.AidReq) (*api.WorkCertI
 }
 
 func (p *server) GetWorkCertStatus(c context.Context, req *api.AidReq) (*api.WorkCertStatus, error) {
+	if req.UseMaster {
+		c = sqalx.NewContext(c, true)
+		defer func() {
+			c = sqalx.NewContext(c, false)
+		}()
+	}
 	status, err := p.svr.GetWorkCertStatus(c, req.Aid)
 	if err != nil {
 		return nil, err
