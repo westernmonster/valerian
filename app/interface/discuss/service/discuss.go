@@ -612,11 +612,6 @@ func (p *Service) GetDiscussion(c context.Context, discussionID int64) (resp *mo
 		return
 	}
 
-	if aid == data.CreatedBy {
-		resp.CanEdit = true
-		return
-	}
-
 	var tp *topic.TopicInfo
 	if tp, err = p.d.GetTopic(c, data.TopicID); err != nil {
 		return
@@ -624,11 +619,10 @@ func (p *Service) GetDiscussion(c context.Context, discussionID int64) (resp *mo
 
 	resp.TopicName = tp.Name
 
-	fmt.Println("===================")
-	fmt.Printf("topic (%+v)\n", tp)
-	fmt.Printf("topic name (%+v)\n", tp.Name)
-	fmt.Printf("resp (%+v)\n", resp)
-	fmt.Println("===================")
+	if aid == data.CreatedBy {
+		resp.CanEdit = true
+		return
+	}
 
 	var info *topic.MemberRoleReply
 	if info, err = p.d.GetTopicMemberRole(c, data.TopicID, aid); err != nil {
