@@ -7,6 +7,7 @@ import (
 	"valerian/app/service/account/api"
 	"valerian/app/service/account/model"
 	"valerian/app/service/account/service"
+	"valerian/library/database/sqalx"
 	"valerian/library/database/sqlx/types"
 	"valerian/library/log"
 	"valerian/library/net/metadata"
@@ -81,6 +82,12 @@ func (s *server) AllAccounts(ctx context.Context, req *api.EmptyStruct) (*api.Al
 }
 
 func (s *server) SelfProfileInfo(ctx context.Context, req *api.AidReq) (*api.SelfProfile, error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
 	resp, err := s.svr.GetSelfProfile(ctx, req.Aid)
 	if err != nil {
 		return nil, err
@@ -90,6 +97,12 @@ func (s *server) SelfProfileInfo(ctx context.Context, req *api.AidReq) (*api.Sel
 }
 
 func (s *server) MemberInfo(ctx context.Context, req *api.AidReq) (*api.MemberInfoReply, error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
 	resp, err := s.svr.GetMemberProfile(ctx, req.Aid)
 	if err != nil {
 		return nil, err
@@ -109,6 +122,12 @@ func (s *server) MemberInfo(ctx context.Context, req *api.AidReq) (*api.MemberIn
 }
 
 func (s *server) AccountInfo(ctx context.Context, req *api.AidReq) (*api.DBAccount, error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
 	v, err := s.svr.GetAccountByID(ctx, req.Aid)
 	if err != nil {
 		return nil, err
@@ -141,6 +160,12 @@ func (s *server) AccountInfo(ctx context.Context, req *api.AidReq) (*api.DBAccou
 }
 
 func (s *server) BasicInfo(ctx context.Context, req *api.AidReq) (*api.BaseInfoReply, error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
 	resp, err := s.svr.BaseInfo(ctx, req.Aid)
 	if err != nil {
 		return nil, err
@@ -150,6 +175,12 @@ func (s *server) BasicInfo(ctx context.Context, req *api.AidReq) (*api.BaseInfoR
 }
 
 func (s *server) BaseInfos(ctx context.Context, req *api.AidsReq) (*api.BaseInfosReply, error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
 	resp, err := s.svr.BatchBaseInfo(ctx, req.Aids)
 	if err != nil {
 		return nil, err
@@ -168,6 +199,12 @@ func (s *server) BaseInfos(ctx context.Context, req *api.AidsReq) (*api.BaseInfo
 }
 
 func (s *server) AccountStat(ctx context.Context, req *api.AidReq) (*api.AccountStatInfo, error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
 	resp, err := s.svr.GetAccountStat(ctx, req.Aid)
 	if err != nil {
 		return nil, err
@@ -185,6 +222,12 @@ func (s *server) UpdateSetting(ctx context.Context, req *api.SettingReq) (*api.E
 }
 
 func (s *server) SettingInfo(ctx context.Context, req *api.AidReq) (*api.Setting, error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
 	data, err := s.svr.GetAccountSetting(ctx, req.Aid)
 	if err != nil {
 		return nil, err
@@ -203,6 +246,12 @@ func (s *server) SettingInfo(ctx context.Context, req *api.AidReq) (*api.Setting
 }
 
 func (s *server) MobileExist(ctx context.Context, req *api.MobileReq) (*api.ExistResp, error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
 	exist, err := s.svr.IsMobileExist(ctx, req.Prefix, req.Mobile)
 	if err != nil {
 		return nil, err
@@ -212,6 +261,12 @@ func (s *server) MobileExist(ctx context.Context, req *api.MobileReq) (*api.Exis
 }
 
 func (s *server) EmailExist(ctx context.Context, req *api.EmailReq) (*api.ExistResp, error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
 	exist, err := s.svr.IsEmailExist(ctx, req.Email)
 	if err != nil {
 		return nil, err

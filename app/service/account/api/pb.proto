@@ -36,6 +36,7 @@ message SettingReq {
     int64 Aid = 1;
     map<string, bool> Settings = 2;
     string Language = 3;
+    bool UseMaster = 4;
 }
 
 message SelfProfile {
@@ -151,6 +152,7 @@ message MemberInfoReply {
 message AidReq {
     int64 aid = 1 ;
     string remoteIP = 2 ;
+    bool UseMaster = 3;
 }
 
 message AidResp {
@@ -159,11 +161,13 @@ message AidResp {
 
 message EmailReq {
     string email = 1 ;
+    bool UseMaster = 2;
 }
 
 message MobileReq {
     string mobile = 1 ;
     string prefix = 2 ;
+    bool UseMaster = 3;
 }
 
 message ExistResp {
@@ -174,6 +178,7 @@ message AidsReq {
     // aid 列表
     repeated int64 aids = 1 ;
     string remoteIP = 2 ;
+    bool UseMaster = 3;
 }
 
 message DBAccount {
