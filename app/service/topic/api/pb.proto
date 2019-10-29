@@ -95,22 +95,26 @@ message TopicPermissionInfo {
 
 message TopicReq {
     int64 ID = 1 [(gogoproto.jsontag) = "id"];
+    bool UseMaster = 2;
 }
 
 message TopicMetaReq {
     int64 TopicID = 1 [(gogoproto.jsontag) = "topic_id"];
     int64 AccountID = 2 [(gogoproto.jsontag) = "aid"];
+    bool UseMaster = 3;
 }
 
 message TopicMemberRoleReq {
     int64 TopicID = 1 [(gogoproto.jsontag) = "topic_id"];
     int64 AccountID = 2 [(gogoproto.jsontag) = "aid"];
+    bool UseMaster = 3;
 }
 
 
 message TopicPermissionReq {
     int64 TopicID = 1 [(gogoproto.jsontag) = "topic_id"];
     int64 AccountID = 2 [(gogoproto.jsontag) = "aid"];
+    bool UseMaster = 3;
 }
 
 message UserTopicsReq {
@@ -132,6 +136,7 @@ message AllTopicsResp {
 
 message AidReq {
     int64 AccountID = 1 [(gogoproto.jsontag) = "account_id"];
+    bool UseMaster = 2;
 }
 
 message IDsResp {

@@ -6,6 +6,7 @@ import (
 
 	"valerian/app/service/topic/api"
 	"valerian/app/service/topic/service"
+	"valerian/library/database/sqalx"
 	"valerian/library/log"
 	"valerian/library/net/metadata"
 	"valerian/library/net/rpc/warden"
@@ -73,6 +74,12 @@ func (s *server) GetTopicStat(ctx context.Context, req *api.TopicReq) (*api.Topi
 }
 
 func (s *server) GetTopicMemberRole(ctx context.Context, req *api.TopicMemberRoleReq) (resp *api.MemberRoleReply, err error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
 	resp = &api.MemberRoleReply{}
 	isMember, role, err := s.svr.GetTopicManagerRole(ctx, req.TopicID, req.AccountID)
 	if err != nil {
@@ -86,6 +93,12 @@ func (s *server) GetTopicMemberRole(ctx context.Context, req *api.TopicMemberRol
 }
 
 func (s *server) GetTopicMeta(ctx context.Context, req *api.TopicMetaReq) (resp *api.TopicMetaInfo, err error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
 	meta, err := s.svr.GetTopicMeta(ctx, req.AccountID, req.TopicID)
 	if err != nil {
 		return nil, err
@@ -95,6 +108,12 @@ func (s *server) GetTopicMeta(ctx context.Context, req *api.TopicMetaReq) (resp 
 }
 
 func (s *server) GetTopicPermission(ctx context.Context, req *api.TopicPermissionReq) (resp *api.TopicPermissionInfo, err error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
 	isMember, role, editPermission, err := s.svr.GetTopicPermission(ctx, req.AccountID, req.TopicID)
 	if err != nil {
 		return nil, err
@@ -134,6 +153,12 @@ func (s *server) GetUserTopicsPaged(ctx context.Context, req *api.UserTopicsReq)
 }
 
 func (s *server) GetBelongsTopicIDs(ctx context.Context, req *api.AidReq) (*api.IDsResp, error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
 	ids, err := s.svr.GetBelongsTopicIDs(ctx, req.AccountID)
 	if err != nil {
 		return nil, err
@@ -143,6 +168,12 @@ func (s *server) GetBelongsTopicIDs(ctx context.Context, req *api.AidReq) (*api.
 }
 
 func (s *server) GetTopicMemberIDs(ctx context.Context, req *api.TopicReq) (*api.IDsResp, error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
 	ids, err := s.svr.GetTopicMemberIDs(ctx, req.ID)
 	if err != nil {
 		return nil, err
