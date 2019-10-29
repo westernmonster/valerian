@@ -31,7 +31,7 @@ func (p *Service) onArticleCommented(m *stan.Msg) {
 
 	var comment *comment.CommentInfo
 	action := func(c context.Context, _ uint) error {
-		ct, e := p.d.GetComment(c, info.CommentID)
+		ct, e := p.d.GetComment(c, info.CommentID, true)
 		if e != nil {
 			return e
 		}
@@ -47,7 +47,7 @@ func (p *Service) onArticleCommented(m *stan.Msg) {
 
 	var article *article.ArticleInfo
 	action = func(c context.Context, _ uint) error {
-		ct, e := p.d.GetArticle(c, comment.OwnerID)
+		ct, e := p.d.GetArticle(c, comment.OwnerID, true)
 		if e != nil {
 			return e
 		}
@@ -101,13 +101,13 @@ func (p *Service) onReviseCommented(m *stan.Msg) {
 	}
 
 	var comment *comment.CommentInfo
-	if comment, err = p.d.GetComment(c, info.CommentID); err != nil {
+	if comment, err = p.d.GetComment(c, info.CommentID, true); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onReviseCommented GetComment failed %#v", err))
 		return
 	}
 
 	var revise *article.ReviseInfo
-	if revise, err = p.d.GetRevise(c, comment.OwnerID); err != nil {
+	if revise, err = p.d.GetRevise(c, comment.OwnerID, true); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onCommentAdded GetRevise failed %#v", err))
 		return
 	}
@@ -145,7 +145,7 @@ func (p *Service) onDiscussionCommented(m *stan.Msg) {
 	}
 
 	var comment *comment.CommentInfo
-	if comment, err = p.d.GetComment(c, info.CommentID); err != nil {
+	if comment, err = p.d.GetComment(c, info.CommentID, true); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onDiscussionCommented GetComment failed %#v", err))
 		return
 	}
@@ -213,7 +213,7 @@ func (p *Service) onCommentReplied(m *stan.Msg) {
 	}
 
 	var comment *comment.CommentInfo
-	if comment, err = p.d.GetComment(c, info.CommentID); err != nil {
+	if comment, err = p.d.GetComment(c, info.CommentID, true); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onCommentReplied GetComment failed %#v", err))
 		return
 	}

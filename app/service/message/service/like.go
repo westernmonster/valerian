@@ -28,7 +28,7 @@ func (p *Service) onArticleLiked(m *stan.Msg) {
 	}
 
 	var article *article.ArticleInfo
-	if article, err = p.d.GetArticle(c, info.ArticleID); err != nil {
+	if article, err = p.d.GetArticle(c, info.ArticleID, true); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onArticleLiked GetArticle failed %#v", err))
 		return
 	}
@@ -91,7 +91,7 @@ func (p *Service) onReviseLiked(m *stan.Msg) {
 	}
 
 	var article *article.ReviseInfo
-	if article, err = p.d.GetRevise(c, info.ReviseID); err != nil {
+	if article, err = p.d.GetRevise(c, info.ReviseID, true); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onReviseLiked GetRevise failed %#v", err))
 		return
 	}
@@ -216,7 +216,7 @@ func (p *Service) onCommentLiked(m *stan.Msg) {
 	}
 
 	var comment *comment.CommentInfo
-	if comment, err = p.d.GetComment(c, info.CommentID); err != nil {
+	if comment, err = p.d.GetComment(c, info.CommentID, true); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onCommentLiked GetComment failed %#v", err))
 		return
 	}
