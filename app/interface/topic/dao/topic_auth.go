@@ -187,3 +187,14 @@ func (p *Dao) DelAuthTopic(c context.Context, node sqalx.Node, id int64) (err er
 
 	return
 }
+
+func (p *Dao) DelAuthTopicByCond(c context.Context, node sqalx.Node, topicID, toTopicID int64) (err error) {
+	sqlDelete := "UPDATE auth_topics SET deleted=1 WHERE topic_id=? AND to_topic_id=?"
+
+	if _, err = node.ExecContext(c, sqlDelete, topicID, toTopicID); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.DelAuthTopics err(%+v), topic_id(%d) to_topic_id(%d)", err, topicID, toTopicID))
+		return
+	}
+
+	return
+}

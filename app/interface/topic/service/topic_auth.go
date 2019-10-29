@@ -14,8 +14,6 @@ import (
 	"valerian/library/gid"
 	"valerian/library/log"
 	"valerian/library/net/metadata"
-
-	"github.com/davecgh/go-spew/spew"
 )
 
 func (p *Service) isAuthTopic(c context.Context, node sqalx.Node, toTopicID, fromTopicID int64) (isAuth bool, err error) {
@@ -96,8 +94,6 @@ func (p *Service) bulkSaveAuthTopics(c context.Context, node sqalx.Node, topicID
 		return
 	}
 
-	spew.Dump(dic)
-
 	for _, v := range items {
 		var dItem *model.AuthTopic
 		if dItem, err = p.d.GetAuthTopicByCond(c, tx, map[string]interface{}{"topic_id": topicID, "to_topic_id": v.TopicID}); err != nil {
@@ -131,8 +127,7 @@ func (p *Service) bulkSaveAuthTopics(c context.Context, node sqalx.Node, topicID
 			continue
 		}
 
-		spew.Dump(k)
-		if err = p.d.DelAuthTopic(c, tx, k); err != nil {
+		if err = p.d.DelAuthTopicByCond(c, tx, topicID, k); err != nil {
 			return
 		}
 	}

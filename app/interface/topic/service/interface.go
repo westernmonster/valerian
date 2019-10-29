@@ -34,7 +34,7 @@ type IDao interface {
 	GetAuthTopicByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (item *model.AuthTopic, err error)
 	AddAuthTopic(c context.Context, node sqalx.Node, item *model.AuthTopic) (err error)
 	UpdateAuthTopic(c context.Context, node sqalx.Node, item *model.AuthTopic) (err error)
-	DelAuthTopic(c context.Context, node sqalx.Node, id int64) (err error)
+	DelAuthTopicByCond(c context.Context, node sqalx.Node, topicID, toTopicID int64) (err error)
 	GetUserCanEditTopicIDs(c context.Context, node sqalx.Node, aid int64) (items []int64, err error)
 
 	GetTopicsByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.Topic, err error)
