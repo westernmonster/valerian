@@ -40,10 +40,12 @@ type server struct {
 }
 
 func (s *server) GetCommentInfo(ctx context.Context, req *api.IDReq) (*api.CommentInfo, error) {
-	ctx = sqalx.NewContext(ctx, true)
-	defer func() {
-		ctx = sqalx.NewContext(ctx, false)
-	}()
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
 
 	comment, err := s.svr.GetComment(ctx, req.ID)
 	if err != nil {
