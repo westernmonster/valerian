@@ -45,7 +45,7 @@ func reqWorkCert(c *mars.Context) {
 // @Failure 42 "尚未发起身份认证"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /certification/work [get]
+// @Router /certification/workcert [get]
 func workCert(c *mars.Context) {
 	c.JSON(srv.GetWorkCert(c))
 }

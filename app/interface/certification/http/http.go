@@ -34,10 +34,10 @@ func route(e *mars.Engine) {
 	g := e.Group("/api/v1/certification")
 	{
 		g.POST("/id", authSvc.User, idCertificationRequest)
-		g.GET("/id", authSvc.User, idCert)
+		g.GET("/idcert", authSvc.User, idCert)
 		g.GET("/id/status", authSvc.User, idCertificationStatus)
 		g.POST("/work", authSvc.User, reqWorkCert)
-		g.GET("/work", authSvc.User, workCert)
+		g.GET("/workcert", authSvc.User, workCert)
 	}
 }
 

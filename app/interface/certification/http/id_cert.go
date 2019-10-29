@@ -47,7 +47,7 @@ func idCertificationStatus(c *mars.Context) {
 // @Failure 42 "尚未发起身份认证"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /certification/id [get]
+// @Router /certification/idcert [get]
 func idCert(c *mars.Context) {
 	c.JSON(srv.GetIDCert(c))
 }
