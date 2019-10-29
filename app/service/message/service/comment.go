@@ -40,7 +40,7 @@ func (p *Service) onArticleCommented(m *stan.Msg) {
 		return nil
 	}
 
-	if err := retry.TryContext(c, action, strategy.Limit(3)); err != nil {
+	if err := retry.TryContext(c, action, strategy.Limit(10)); err != nil {
 		m.Ack()
 		return
 	}
