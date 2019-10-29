@@ -6,6 +6,7 @@ import (
 	"time"
 	"valerian/app/interface/topic/model"
 	discuss "valerian/app/service/discuss/api"
+	topic "valerian/app/service/topic/api"
 	"valerian/library/database/sqalx"
 	"valerian/library/database/sqlx/types"
 	"valerian/library/ecode"
@@ -31,91 +32,11 @@ func (p *Service) CreateTopic(c context.Context, arg *model.ArgCreateTopic) (top
 		err = ecode.AcquireAccountIDFailed
 		return
 	}
-	var tx sqalx.Node
-	if tx, err = p.d.DB().Beginx(c); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+
+	if topicID, err = p.d.CreateTopic(c, aid, &topic.ArgCreateTopic{}); err != nil {
 		return
 	}
 
-	defer func() {
-		if err != nil {
-			if err1 := tx.Rollback(); err1 != nil {
-				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
-			}
-			return
-		}
-	}()
-
-	item := &model.Topic{
-		ID:              gid.NewID(),
-		Name:            arg.Name,
-		Introduction:    arg.Introduction,
-		TopicHome:       model.TopicHomeFeed,
-		IsPrivate:       false,
-		AllowChat:       types.BitBool(arg.AllowChat),
-		AllowDiscuss:    types.BitBool(arg.AllowDiscuss),
-		ViewPermission:  model.ViewPermissionJoin,
-		EditPermission:  model.EditPermissionAdmin,
-		JoinPermission:  model.JoinPermissionMemberApprove,
-		CatalogViewType: arg.CatalogViewType,
-		CreatedBy:       aid,
-		CreatedAt:       time.Now().Unix(),
-		UpdatedAt:       time.Now().Unix(),
-	}
-
-	if arg.Avatar != nil {
-		item.Avatar = *arg.Avatar
-	}
-
-	if arg.Bg != nil {
-		item.Bg = *arg.Bg
-	}
-
-	if err = p.d.AddTopic(c, tx, item); err != nil {
-		return
-	}
-
-	setting := &model.AccountTopicSetting{
-		ID:               gid.NewID(),
-		AccountID:        aid,
-		TopicID:          item.ID,
-		Important:        types.BitBool(false),
-		MuteNotification: types.BitBool(false),
-		CreatedAt:        time.Now().Unix(),
-		UpdatedAt:        time.Now().Unix(),
-	}
-
-	if err = p.d.AddAccountTopicSetting(c, tx, setting); err != nil {
-		return
-	}
-
-	if err = p.createTopicMemberOwner(c, tx, aid, item.ID); err != nil {
-		return
-	}
-
-	if err = p.d.AddTopicStat(c, tx, &model.TopicStat{
-		TopicID:     item.ID,
-		MemberCount: 1,
-		CreatedAt:   time.Now().Unix(),
-		UpdatedAt:   time.Now().Unix(),
-	}); err != nil {
-		return
-	}
-
-	if err = p.d.IncrAccountStat(c, tx, &model.AccountStat{AccountID: item.CreatedBy, TopicCount: 1}); err != nil {
-		return
-	}
-
-	if err = tx.Commit(); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
-		return
-	}
-
-	topicID = item.ID
-
-	p.addCache(func() {
-		p.onTopicAdded(context.Background(), topicID, aid, item.CreatedAt)
-	})
 	return
 }
 

@@ -14,3 +14,12 @@ func (p *Dao) GetTopicMeta(c context.Context, aid, topicID int64) (info *stopic.
 	}
 	return
 }
+
+func (p *Dao) CreateTopic(c context.Context, aid int64, arg *stopic.ArgCreateTopic) (id int64, err error) {
+	var idRet *stopic.IDResp
+	if idRet, err = p.topicRPC.CreateTopic(c, arg); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.CreateTopic err(%+v) arg(%+v)", err, arg))
+		return
+	}
+	return idRet.ID, nil
+}
