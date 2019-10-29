@@ -84,11 +84,6 @@ func (s *server) GetDiscussionInfo(ctx context.Context, req *api.IDReq) (*api.Di
 		return nil, err
 	}
 
-	c, err := s.svr.GetDiscussCategory(ctx, v.CategoryID)
-	if err != nil {
-		return nil, err
-	}
-
 	resp := &api.DiscussionInfo{
 		ID:         v.ID,
 		TopicID:    v.TopicID,
@@ -116,11 +111,26 @@ func (s *server) GetDiscussionInfo(ctx context.Context, req *api.IDReq) (*api.Di
 		CommentCount: int32(stat.CommentCount),
 	}
 
-	resp.CategoryInfo = &api.CategoryInfo{
-		ID:      c.ID,
-		TopicID: c.TopicID,
-		Name:    c.Name,
-		Seq:     c.Seq,
+	if v.CategoryID != -1 {
+		c, err := s.svr.GetDiscussCategory(ctx, v.CategoryID)
+		if err != nil {
+			return nil, err
+		}
+
+		resp.CategoryInfo = &api.CategoryInfo{
+			ID:      c.ID,
+			TopicID: c.TopicID,
+			Name:    c.Name,
+			Seq:     c.Seq,
+		}
+
+	} else {
+		resp.CategoryInfo = &api.CategoryInfo{
+			ID:      -1,
+			TopicID: v.TopicID,
+			Name:    "问答",
+			Seq:     1,
+		}
 	}
 
 	resp.Creator = &api.Creator{

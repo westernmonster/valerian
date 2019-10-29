@@ -62,7 +62,7 @@ func (p *Service) GetUserDiscussionsPaged(c context.Context, aid int64, limit, o
 			CommentCount: int32(stat.CommentCount),
 		}
 
-		if v.CategoryID != -1 {
+		if v.CategoryID != int64(-1) {
 			var cate *model.DiscussCategory
 			if cate, err = p.d.GetDiscussCategoryByID(c, p.d.DB(), v.CategoryID); err != nil {
 				return
@@ -143,7 +143,7 @@ func (p *Service) GetAllDiscussions(c context.Context) (items []*api.DiscussionI
 			CommentCount: int32(stat.CommentCount),
 		}
 
-		if v.CategoryID != -1 {
+		if v.CategoryID != int64(-1) {
 			var cate *model.DiscussCategory
 			if cate, err = p.d.GetDiscussCategoryByID(c, p.d.DB(), v.CategoryID); err != nil {
 				return
