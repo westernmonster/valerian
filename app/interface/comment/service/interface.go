@@ -24,6 +24,10 @@ type IDao interface {
 	UpdateCommentStat(c context.Context, node sqalx.Node, item *model.CommentStat) (err error)
 	IncrCommentStat(c context.Context, node sqalx.Node, item *model.CommentStat) (err error)
 
+	GetArticleStatByID(c context.Context, node sqalx.Node, articleID int64) (item *model.ArticleStat, err error)
+	GetReviseStatByID(c context.Context, node sqalx.Node, reviseID int64) (item *model.ReviseStat, err error)
+	GetDiscussionStatByID(c context.Context, node sqalx.Node, discussionID int64) (item *model.DiscussionStat, err error)
+
 	IncrReviseStat(c context.Context, node sqalx.Node, item *model.ReviseStat) (err error)
 	IncrArticleStat(c context.Context, node sqalx.Node, item *model.ArticleStat) (err error)
 	IncrDiscussionStat(c context.Context, node sqalx.Node, item *model.DiscussionStat) (err error)

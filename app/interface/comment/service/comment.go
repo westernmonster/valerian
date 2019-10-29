@@ -31,6 +31,35 @@ func (p *Service) GetCommentsPaged(c context.Context, resourceID int64, targetTy
 		Items:  make([]*model.CommentItem, len(data)),
 	}
 
+	switch targetType {
+	case model.TargetTypeArticle:
+		var stat *model.ArticleStat
+		if stat, err = p.d.GetArticleStatByID(c, p.d.DB(), resourceID); err != nil {
+			return
+		}
+
+		resp.CommentsCount = stat.CommentCount
+		break
+
+	case model.TargetTypeRevise:
+		var stat *model.ReviseStat
+		if stat, err = p.d.GetReviseStatByID(c, p.d.DB(), resourceID); err != nil {
+			return
+		}
+
+		resp.CommentsCount = stat.CommentCount
+		break
+
+	case model.TargetTypeDiscussion:
+		var stat *model.DiscussionStat
+		if stat, err = p.d.GetDiscussionStatByID(c, p.d.DB(), resourceID); err != nil {
+			return
+		}
+
+		resp.CommentsCount = stat.CommentCount
+		break
+	}
+
 	for i, v := range data {
 		item := &model.CommentItem{
 			ID:        v.ID,
