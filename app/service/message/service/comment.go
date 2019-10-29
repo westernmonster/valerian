@@ -213,8 +213,19 @@ func (p *Service) onCommentReplied(m *stan.Msg) {
 	}
 
 	var comment *comment.CommentInfo
-	if comment, err = p.d.GetComment(c, info.CommentID, true); err != nil {
+	action := func(c context.Context, _ uint) error {
+		ct, e := p.d.GetComment(c, info.CommentID, true)
+		if e != nil {
+			return e
+		}
+
+		comment = ct
+		return nil
+	}
+
+	if err := retry.TryContext(c, action, strategy.Limit(3)); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onCommentReplied GetComment failed %#v", err))
+		m.Ack()
 		return
 	}
 
