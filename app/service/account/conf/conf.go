@@ -35,9 +35,10 @@ type Config struct {
 	// grpc server
 	WardenServer *warden.ServerConfig
 	// Auth
-	Auth      *auth.Config
-	Memcache  *Memcache
-	Discovery *discovery.Config
+	Auth             *auth.Config
+	CertificationRPC *warden.ClientConfig
+	Memcache         *Memcache
+	Discovery        *discovery.Config
 }
 
 // DB db config.

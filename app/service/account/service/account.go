@@ -155,6 +155,14 @@ func (p *Service) getSelfProfile(c context.Context, node sqalx.Node, accountID i
 		}
 	}
 
+	if profile.WorkCertStatus, err = p.d.GetWorkCertStatus(c, accountID); err != nil {
+		return
+	}
+
+	if profile.IDCertStatus, err = p.d.GetIDCertStatus(c, accountID); err != nil {
+		return
+	}
+
 	var stat *model.AccountStat
 	if stat, err = p.getAccountStat(c, node, accountID); err != nil {
 		return
