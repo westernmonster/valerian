@@ -33,7 +33,20 @@ func (p *Service) CreateTopic(c context.Context, arg *model.ArgCreateTopic) (top
 		return
 	}
 
-	if topicID, err = p.d.CreateTopic(c, aid, &topic.ArgCreateTopic{}); err != nil {
+	item := &topic.ArgCreateTopic{
+		Name:            arg.Name,
+		Introduction:    arg.Introduction,
+		CatalogViewType: arg.CatalogViewType,
+		AllowDiscuss:    arg.AllowDiscuss,
+		AllowChat:       arg.AllowChat,
+	}
+	if arg.Avatar != nil {
+		item.Avatar = &topic.ArgCreateTopic_AvatarValue{*arg.Avatar}
+	}
+	if arg.Bg != nil {
+		item.Bg = &topic.ArgCreateTopic_BgValue{*arg.Bg}
+	}
+	if topicID, err = p.d.CreateTopic(c, aid, item); err != nil {
 		return
 	}
 
