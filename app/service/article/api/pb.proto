@@ -98,6 +98,7 @@ message ReviseInfo {
 message IDReq {
     int64 ID = 1 [(gogoproto.jsontag) = "id"];
     string include = 2 [(gogoproto.jsontag) = "include"];
+    bool UseMaster = 3;
 }
 
 message UserArticlesReq {

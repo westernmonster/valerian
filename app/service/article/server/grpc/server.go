@@ -6,6 +6,7 @@ import (
 	"strings"
 	"valerian/app/service/article/api"
 	"valerian/app/service/article/service"
+	"valerian/library/database/sqalx"
 	"valerian/library/log"
 	"valerian/library/net/metadata"
 	"valerian/library/net/rpc/warden"
@@ -41,6 +42,13 @@ type server struct {
 }
 
 func (s *server) GetArticleInfo(ctx context.Context, req *api.IDReq) (*api.ArticleInfo, error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
+
 	article, err := s.svr.GetArticle(ctx, req.ID)
 	if err != nil {
 		return nil, err
@@ -158,6 +166,13 @@ func (s *server) GetArticleStat(ctx context.Context, req *api.IDReq) (*api.Artic
 }
 
 func (s *server) GetReviseInfo(ctx context.Context, req *api.IDReq) (*api.ReviseInfo, error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
+
 	revise, err := s.svr.GetRevise(ctx, req.ID)
 	if err != nil {
 		return nil, err
