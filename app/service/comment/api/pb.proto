@@ -56,6 +56,7 @@ message CommentStat {
 
 message IDReq {
     int64 ID = 1 [(gogoproto.jsontag) = "id"];
+    bool UseMaster = 2;
 }
 
 service Comment {

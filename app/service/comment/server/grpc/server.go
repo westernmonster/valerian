@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"valerian/app/service/comment/api"
 	"valerian/app/service/comment/service"
+	"valerian/library/database/sqalx"
 	"valerian/library/log"
 	"valerian/library/net/metadata"
 	"valerian/library/net/rpc/warden"
@@ -39,6 +40,11 @@ type server struct {
 }
 
 func (s *server) GetCommentInfo(ctx context.Context, req *api.IDReq) (*api.CommentInfo, error) {
+	ctx = sqalx.NewContext(ctx, true)
+	defer func() {
+		ctx = sqalx.NewContext(ctx, false)
+	}()
+
 	comment, err := s.svr.GetComment(ctx, req.ID)
 	if err != nil {
 		return nil, err
