@@ -84,6 +84,7 @@ func (p *Service) onArticleCommented(m *stan.Msg) {
 	m.Ack()
 
 	p.addCache(func() {
+		fmt.Printf("push to account (%d) msg(%s)\n", msg.AccountID, msg.ActionText)
 		if _, err := p.pushSingleUser(context.Background(), msg.AccountID, msg.ActionText); err != nil {
 			log.For(context.Background()).Error(fmt.Sprintf("service.onCommentAdded Push message failed %#v", err))
 		}
