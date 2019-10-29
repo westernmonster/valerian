@@ -618,15 +618,14 @@ func (p *Service) GetDiscussion(c context.Context, discussionID int64) (resp *mo
 		return
 	}
 
-	var t *topic.TopicInfo
-	if t, err = p.d.GetTopic(c, data.TopicID); err != nil {
+	var tp *topic.TopicInfo
+	if tp, err = p.d.GetTopic(c, data.TopicID); err != nil {
 		return
 	}
 
-	spew.Dump(t)
+	spew.Dump(tp)
 
-	resp.TopicName = t.Name
-	fmt.Println(resp.TopicName)
+	resp.TopicName = tp.Name
 
 	var info *topic.MemberRoleReply
 	if info, err = p.d.GetTopicMemberRole(c, data.TopicID, aid); err != nil {
