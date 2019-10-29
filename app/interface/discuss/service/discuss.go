@@ -19,7 +19,6 @@ import (
 	"valerian/library/xstr"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/davecgh/go-spew/spew"
 )
 
 func (p *Service) initDiscussionStat(c context.Context, discussionID int64) (err error) {
@@ -625,11 +624,11 @@ func (p *Service) GetDiscussion(c context.Context, discussionID int64) (resp *mo
 
 	resp.TopicName = tp.Name
 
-	fmt.Println("========================")
-	spew.Dump(tp.Name)
-	fmt.Println("========================")
-	spew.Dump(resp)
-	fmt.Println("========================")
+	fmt.Println("===================")
+	fmt.Printf("topic (%+v)\n", tp)
+	fmt.Printf("topic name (%+v)\n", tp.Name)
+	fmt.Printf("resp (%+v)\n", resp)
+	fmt.Println("===================")
 
 	var info *topic.MemberRoleReply
 	if info, err = p.d.GetTopicMemberRole(c, data.TopicID, aid); err != nil {
