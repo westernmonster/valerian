@@ -18,6 +18,21 @@ import (
 	xtime "valerian/library/time"
 )
 
+type masterKey struct{}
+
+func NewContext(c context.Context, useMaster bool) context.Context {
+	return context.WithValue(c, masterKey{}, useMaster)
+}
+
+func UseMaster(c context.Context) bool {
+	useMaster, ok := c.Value(masterKey{}).(bool)
+	if !ok {
+		return false
+	}
+
+	return useMaster
+}
+
 type Config struct {
 	Addr         string          // for trace
 	DSN          string          // write data source name.
@@ -234,6 +249,10 @@ func (n *node) Close() (err error) {
 }
 
 func (n *node) SelectContext(ctx context.Context, dest interface{}, query string, args ...interface{}) (err error) {
+	if UseMaster(ctx) {
+		return n.Driver.SelectContext(ctx, dest, query, args...)
+	}
+
 	// 事务默认write库执行，如果没有事务，则从随机从只读库中读取
 	if n.tx == nil {
 		idx := n.readIndex()
@@ -247,6 +266,10 @@ func (n *node) SelectContext(ctx context.Context, dest interface{}, query string
 }
 
 func (n *node) ExecContext(ctx context.Context, query string, args ...interface{}) (result sql.Result, err error) {
+	if UseMaster(ctx) {
+		return n.tx.ExecContext(n.tx.Context, query, args...)
+	}
+
 	// 默认write库执行，如果有事务则Driver为 write 库
 	if n.tx != nil {
 		return n.tx.ExecContext(n.tx.Context, query, args...)
@@ -256,6 +279,9 @@ func (n *node) ExecContext(ctx context.Context, query string, args ...interface{
 }
 
 func (n *node) GetContext(ctx context.Context, dest interface{}, query string, args ...interface{}) (err error) {
+	if UseMaster(ctx) {
+		return n.Driver.GetContext(ctx, dest, query, args...)
+	}
 	// 事务默认write库执行，如果没有事务，则从随机从只读库中读取
 	if n.tx == nil {
 		idx := n.readIndex()
@@ -269,6 +295,10 @@ func (n *node) GetContext(ctx context.Context, dest interface{}, query string, a
 }
 
 func (n *node) QueryxContext(ctx context.Context, query string, args ...interface{}) (rows *sqlx.Rows, err error) {
+	if UseMaster(ctx) {
+		return n.write.QueryxContext(ctx, query, args...)
+	}
+
 	if n.tx == nil {
 		idx := n.readIndex()
 		for i := range n.read {
