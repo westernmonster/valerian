@@ -625,8 +625,11 @@ func (p *Service) GetDiscussion(c context.Context, discussionID int64) (resp *mo
 
 	resp.TopicName = tp.Name
 
+	fmt.Println("========================")
 	spew.Dump(tp.Name)
+	fmt.Println("========================")
 	spew.Dump(resp)
+	fmt.Println("========================")
 
 	var info *topic.MemberRoleReply
 	if info, err = p.d.GetTopicMemberRole(c, data.TopicID, aid); err != nil {
