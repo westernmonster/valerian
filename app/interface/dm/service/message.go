@@ -287,7 +287,7 @@ func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, o
 				switch tg.OwnerType {
 				case model.TargetTypeArticle:
 					owner := tg.Owner.(*model.TargetArticle)
-					item.Content.Target.Link = fmt.Sprintf("pronote://{%s}/{%d}/comment/%d/sub/%d",
+					item.Content.Target.Link = fmt.Sprintf("pronote://%s/%d/comment/%d/sub/%d",
 						tg.OwnerType,
 						owner.ID,
 						tg.ParentComment.ID,
@@ -296,7 +296,7 @@ func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, o
 					break
 				case model.TargetTypeRevise:
 					owner := tg.Owner.(*model.TargetRevise)
-					item.Content.Target.Link = fmt.Sprintf("pronote://{%s}/{%d}/comment/%d/sub/%d",
+					item.Content.Target.Link = fmt.Sprintf("pronote://%s/%d/comment/%d/sub/%d",
 						tg.OwnerType,
 						owner.ID,
 						tg.ParentComment.ID,
@@ -304,7 +304,7 @@ func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, o
 					break
 				case model.TargetTypeDiscussion:
 					owner := tg.Owner.(*model.TargetDiscuss)
-					item.Content.Target.Link = fmt.Sprintf("pronote://{%s}/{%d}/comment/%d/sub/%d",
+					item.Content.Target.Link = fmt.Sprintf("pronote://%s/%d/comment/%d/sub/%d",
 						tg.OwnerType,
 						owner.ID,
 						tg.ParentComment.ID,
