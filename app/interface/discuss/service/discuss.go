@@ -625,7 +625,7 @@ func (p *Service) GetDiscussion(c context.Context, discussionID int64) (resp *mo
 
 	resp.TopicName = tp.Name
 
-	spew.Dump(tp.name)
+	spew.Dump(tp.Name)
 	spew.Dump(resp)
 
 	var info *topic.MemberRoleReply
