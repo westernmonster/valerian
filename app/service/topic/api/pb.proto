@@ -143,6 +143,28 @@ message IDsResp {
     repeated int64 IDs = 1 [(gogoproto.jsontag) = 'ids'];
 }
 
+
+message ArgCreateTopic {
+    oneof Avatar {
+        string AvatarValue = 2;
+    }
+
+    oneof Bg {
+        string BgValue = 3;
+    }
+
+    string Name = 4;
+
+    string Introduction = 5;
+
+    string CatalogViewType = 6;
+
+    bool AllowDiscuss = 7;
+
+    bool AllowChat = 8;
+}
+
+
 service Topic {
     rpc  GetAllTopics(EmptyStruct) returns (AllTopicsResp);
 
