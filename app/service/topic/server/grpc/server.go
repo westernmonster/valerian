@@ -11,7 +11,6 @@ import (
 	"valerian/library/net/metadata"
 	"valerian/library/net/rpc/warden"
 
-	"github.com/davecgh/go-spew/spew"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )
@@ -58,7 +57,6 @@ func (s *server) GetTopicInfo(ctx context.Context, req *api.TopicReq) (*api.Topi
 	}
 
 	ret := api.FromTopic(resp, stat, acc)
-	spew.Dump(ret)
 	return ret, nil
 }
 
