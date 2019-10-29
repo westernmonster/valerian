@@ -1,8 +1,8 @@
 package model
 
 const (
-	IdentityMobile = 1
-	IdentityEmail  = 2
+	IdentityMobile = int32(1)
+	IdentityEmail  = int32(2)
 )
 
 const (
