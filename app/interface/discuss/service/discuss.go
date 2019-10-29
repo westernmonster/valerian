@@ -623,6 +623,7 @@ func (p *Service) GetDiscussion(c context.Context, discussionID int64) (resp *mo
 	}
 
 	resp.TopicName = t.Name
+	fmt.Println(resp.TopicName)
 
 	var info *topic.MemberRoleReply
 	if info, err = p.d.GetTopicMemberRole(c, data.TopicID, aid); err != nil {
