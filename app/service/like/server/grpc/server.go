@@ -6,6 +6,7 @@ import (
 
 	"valerian/app/service/like/api"
 	"valerian/app/service/like/service"
+	"valerian/library/database/sqalx"
 	"valerian/library/log"
 	"valerian/library/net/metadata"
 	"valerian/library/net/rpc/warden"
@@ -40,6 +41,12 @@ type server struct {
 }
 
 func (s *server) IsLike(ctx context.Context, req *api.LikeReq) (*api.LikeInfo, error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
 	isLike, err := s.svr.IsLike(ctx, req.AccountID, req.TargetID, req.TargetType)
 	if err != nil {
 		return nil, err
@@ -49,6 +56,12 @@ func (s *server) IsLike(ctx context.Context, req *api.LikeReq) (*api.LikeInfo, e
 }
 
 func (s *server) Like(ctx context.Context, req *api.LikeReq) (*api.EmptyStruct, error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
 	err := s.svr.Like(ctx, req.AccountID, req.TargetID, req.TargetType)
 	if err != nil {
 		return nil, err
@@ -58,6 +71,12 @@ func (s *server) Like(ctx context.Context, req *api.LikeReq) (*api.EmptyStruct, 
 }
 
 func (s *server) CancelLike(ctx context.Context, req *api.LikeReq) (*api.EmptyStruct, error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
 	err := s.svr.CancelLike(ctx, req.AccountID, req.TargetID, req.TargetType)
 	if err != nil {
 		return nil, err
@@ -67,6 +86,12 @@ func (s *server) CancelLike(ctx context.Context, req *api.LikeReq) (*api.EmptySt
 }
 
 func (s *server) IsDislike(ctx context.Context, req *api.DislikeReq) (*api.DislikeInfo, error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
 	isDislike, err := s.svr.IsDislike(ctx, req.AccountID, req.TargetID, req.TargetType)
 	if err != nil {
 		return nil, err
@@ -76,6 +101,12 @@ func (s *server) IsDislike(ctx context.Context, req *api.DislikeReq) (*api.Disli
 }
 
 func (s *server) Dislike(ctx context.Context, req *api.DislikeReq) (*api.EmptyStruct, error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
 	err := s.svr.Dislike(ctx, req.AccountID, req.TargetID, req.TargetType)
 	if err != nil {
 		return nil, err
@@ -85,6 +116,12 @@ func (s *server) Dislike(ctx context.Context, req *api.DislikeReq) (*api.EmptySt
 }
 
 func (s *server) CancelDislike(ctx context.Context, req *api.DislikeReq) (*api.EmptyStruct, error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
 	err := s.svr.CancelDislike(ctx, req.AccountID, req.TargetID, req.TargetType)
 	if err != nil {
 		return nil, err
