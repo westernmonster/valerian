@@ -6,6 +6,7 @@ import (
 
 	"valerian/app/service/fav/api"
 	"valerian/app/service/fav/service"
+	"valerian/library/database/sqalx"
 	"valerian/library/log"
 	"valerian/library/net/metadata"
 	"valerian/library/net/rpc/warden"
@@ -40,6 +41,12 @@ type server struct {
 }
 
 func (s *server) IsFav(ctx context.Context, req *api.FavReq) (*api.FavInfo, error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
 	isFav, err := s.svr.IsFav(ctx, req.AccountID, req.TargetID, req.TargetType)
 	if err != nil {
 		return nil, err
@@ -49,6 +56,12 @@ func (s *server) IsFav(ctx context.Context, req *api.FavReq) (*api.FavInfo, erro
 }
 
 func (s *server) Fav(ctx context.Context, req *api.FavReq) (*api.EmptyStruct, error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
 	err := s.svr.Fav(ctx, req.AccountID, req.TargetID, req.TargetType)
 	if err != nil {
 		return nil, err
@@ -58,6 +71,12 @@ func (s *server) Fav(ctx context.Context, req *api.FavReq) (*api.EmptyStruct, er
 }
 
 func (s *server) Unfav(ctx context.Context, req *api.FavReq) (*api.EmptyStruct, error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
 	err := s.svr.Unfav(ctx, req.AccountID, req.TargetID, req.TargetType)
 	if err != nil {
 		return nil, err

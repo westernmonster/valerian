@@ -17,6 +17,7 @@ message FavReq {
     int64 AccountID = 1 [(gogoproto.jsontag) = "account_id"];
     int64 TargetID = 2 [(gogoproto.jsontag) = "target_id"];
     string TargetType = 3 [(gogoproto.jsontag) = "target_type"];
+    bool UseMaster = 4;
 }
 
 
