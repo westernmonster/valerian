@@ -7,6 +7,7 @@ import (
 
 	"valerian/app/service/discuss/api"
 	"valerian/app/service/discuss/service"
+	"valerian/library/database/sqalx"
 	"valerian/library/log"
 	"valerian/library/net/metadata"
 	"valerian/library/net/rpc/warden"
@@ -42,6 +43,12 @@ type server struct {
 }
 
 func (s *server) GetDiscussionStat(ctx context.Context, req *api.IDReq) (*api.DiscussionStat, error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
 	stat, err := s.svr.GetDiscussionStat(ctx, req.ID)
 	if err != nil {
 		return nil, err
@@ -56,6 +63,12 @@ func (s *server) GetDiscussionStat(ctx context.Context, req *api.IDReq) (*api.Di
 }
 
 func (s *server) GetDiscussionInfo(ctx context.Context, req *api.IDReq) (*api.DiscussionInfo, error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
 	v, imgs, err := s.svr.GetDiscussion(ctx, req.ID)
 	if err != nil {
 		return nil, err
@@ -121,6 +134,12 @@ func (s *server) GetDiscussionInfo(ctx context.Context, req *api.IDReq) (*api.Di
 }
 
 func (s *server) GetDiscussionCategories(ctx context.Context, req *api.CategoriesReq) (*api.CategoriesResp, error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
 	data, err := s.svr.GetDiscussCategories(ctx, req.TopicID)
 	if err != nil {
 		return nil, err
