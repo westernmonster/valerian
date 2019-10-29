@@ -75,6 +75,8 @@ type DiscussDetailResp struct {
 
 	// 话题ID
 	TopicID int64 `json:"topic_id,string" swaggertype:"string"`
+
+	TopicName string `json:"topic_name"`
 	// 讨论分类
 	Category *DiscussItemCategory `json:"category,omitempty"`
 	// 标题

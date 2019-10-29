@@ -617,6 +617,13 @@ func (p *Service) GetDiscussion(c context.Context, discussionID int64) (resp *mo
 		return
 	}
 
+	var t *topic.TopicInfo
+	if t, err = p.d.GetTopic(c, data.TopicID); err != nil {
+		return
+	}
+
+	resp.TopicName = t.Name
+
 	var info *topic.MemberRoleReply
 	if info, err = p.d.GetTopicMemberRole(c, data.TopicID, aid); err != nil {
 		return
