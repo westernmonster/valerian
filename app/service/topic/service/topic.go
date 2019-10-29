@@ -66,15 +66,16 @@ func (p *Service) GetTopicManagerRole(c context.Context, topicID, aid int64) (is
 
 // 创建
 func (p *Service) CreateTopic(c context.Context, arg *api.ArgCreateTopic) (topicID int64, err error) {
+
+	fmt.Printf("aid(%d)\n", aid)
+	md, _ := metadata.FromContext(c)
+	fmt.Printf("md(%+v)\n", md)
+
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed
 		return
 	}
-
-	fmt.Printf("aid(%d)\n", aid)
-	md, _ := metadata.FromContext(c)
-	fmt.Printf("md(%+v)\n", md)
 
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
