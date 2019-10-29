@@ -50,14 +50,14 @@ func (p *Service) RequestWorkCert(c context.Context, arg *model.ArgAddWorkCert) 
 
 	item = &model.WorkCertification{
 		ID:         gid.NewID(),
-		AccountID:  item.AccountID,
+		AccountID:  arg.AccountID,
 		Status:     model.WorkCertificationInProgress,
-		WorkPic:    item.WorkPic,
-		OtherPic:   item.OtherPic,
-		Company:    item.Company,
-		Department: item.Department,
-		Position:   item.Position,
-		ExpiresAt:  item.ExpiresAt,
+		WorkPic:    arg.WorkPic,
+		OtherPic:   arg.OtherPic,
+		Company:    arg.Company,
+		Department: arg.Department,
+		Position:   arg.Position,
+		ExpiresAt:  arg.ExpiresAt,
 		CreatedAt:  time.Now().Unix(),
 		UpdatedAt:  time.Now().Unix(),
 	}
