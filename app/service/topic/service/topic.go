@@ -72,6 +72,10 @@ func (p *Service) CreateTopic(c context.Context, arg *api.ArgCreateTopic) (topic
 		return
 	}
 
+	fmt.Printf("aid(%d)\n", aid)
+	md, _ := metadata.FromContext(c)
+	fmt.Printf("md(%+v)\n", md)
+
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
