@@ -235,7 +235,9 @@ func (p *Service) AddComment(c context.Context, arg *model.ArgAddComment) (id in
 
 	id = item.ID
 
-	p.sendNotify(item.ResourceID, item.ID, aid, arg)
+	p.addCache(func() {
+		p.sendNotify(item.ResourceID, item.ID, aid, arg)
+	})
 
 	return
 }
