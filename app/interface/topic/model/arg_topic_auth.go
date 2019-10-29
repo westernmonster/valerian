@@ -14,7 +14,7 @@ func (p *ArgSaveAuthTopics) Validate() error {
 	return validation.ValidateStruct(
 		p,
 		validation.Field(&p.TopicID, validation.Required),
-		validation.Field(&p.AuthTopics, validation.Required),
+		validation.Field(&p.AuthTopics),
 	)
 }
 
