@@ -250,7 +250,10 @@ func (n *node) Close() (err error) {
 
 func (n *node) SelectContext(ctx context.Context, dest interface{}, query string, args ...interface{}) (err error) {
 	if UseMaster(ctx) {
-		return n.Driver.SelectContext(ctx, dest, query, args...)
+		fmt.Println("----------")
+		fmt.Printf("SelectContext sql(%s), args(%+v) \n", query, args)
+		fmt.Println("----------")
+		return n.write.SelectContext(ctx, dest, query, args...)
 	}
 
 	// 事务默认write库执行，如果没有事务，则从随机从只读库中读取
@@ -267,7 +270,10 @@ func (n *node) SelectContext(ctx context.Context, dest interface{}, query string
 
 func (n *node) ExecContext(ctx context.Context, query string, args ...interface{}) (result sql.Result, err error) {
 	if UseMaster(ctx) {
-		return n.tx.ExecContext(n.tx.Context, query, args...)
+		fmt.Println("----------")
+		fmt.Printf("ExecContext sql(%s), args(%+v) \n", query, args)
+		fmt.Println("----------")
+		return n.write.ExecContext(n.tx.Context, query, args...)
 	}
 
 	// 默认write库执行，如果有事务则Driver为 write 库
@@ -280,7 +286,10 @@ func (n *node) ExecContext(ctx context.Context, query string, args ...interface{
 
 func (n *node) GetContext(ctx context.Context, dest interface{}, query string, args ...interface{}) (err error) {
 	if UseMaster(ctx) {
-		return n.Driver.GetContext(ctx, dest, query, args...)
+		fmt.Println("----------")
+		fmt.Printf("GetContext sql(%s), args(%+v) \n", query, args)
+		fmt.Println("----------")
+		return n.write.GetContext(ctx, dest, query, args...)
 	}
 	// 事务默认write库执行，如果没有事务，则从随机从只读库中读取
 	if n.tx == nil {
@@ -296,6 +305,9 @@ func (n *node) GetContext(ctx context.Context, dest interface{}, query string, a
 
 func (n *node) QueryxContext(ctx context.Context, query string, args ...interface{}) (rows *sqlx.Rows, err error) {
 	if UseMaster(ctx) {
+		fmt.Println("----------")
+		fmt.Printf("QueryxContext sql(%s), args(%+v) \n", query, args)
+		fmt.Println("----------")
 		return n.write.QueryxContext(ctx, query, args...)
 	}
 
