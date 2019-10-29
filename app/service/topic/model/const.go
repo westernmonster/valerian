@@ -47,25 +47,41 @@ const (
 )
 
 const (
-	FollowStatusUnfollowed = 1
-	FollowStatusApproving  = 2
-	FollowStatusFollowed   = 3
+	// 未关注
+	FollowStatusUnfollowed = int32(1)
+	// 审核中
+	FollowStatusApproving = int32(2)
+	// 已关注
+	FollowStatusFollowed = int32(3)
 )
 
 const (
-	InviteStatusSent = 1
+	InviteStatusSent     = int32(1)
+	InviteStatusJoined   = int32(2)
+	InviteStatusRejected = int32(3)
 )
 
 const (
-	FollowRequestStatusCommited = 0
-	FollowRequestStatusApproved = 1
-	FollowRequestStatusRejected = 2
+	// 审核请求已经提交
+	FollowRequestStatusCommited = int32(0)
+	// 审核请求通过
+	FollowRequestStatusApproved = int32(1)
+	// 审核请求拒绝
+	FollowRequestStatusRejected = int32(2)
 )
 
 const (
-	ReportTypeSpam       = 1 // 垃圾广告
-	ReportTypeCopyRight  = 2 // 涉嫌侵权
-	ReportTypeDiscomfort = 3 // 内容引起不适
-	ReportTypeIncorrect  = 4 // 内容有误
-	ReportTypeOther      = 5 // 其他
+	ReportTypeSpam       = int32(1) // 垃圾广告
+	ReportTypeCopyRight  = int32(2) // 涉嫌侵权
+	ReportTypeDiscomfort = int32(3) // 内容引起不适
+	ReportTypeIncorrect  = int32(4) // 内容有误
+	ReportTypeOther      = int32(5) // 其他
+)
+
+const (
+	TargetTypeTopic      = "topic"
+	TargetTypeDiscussion = "discussion"
+	TargetTypeRevise     = "revise"
+	TargetTypeArticle    = "article"
+	TargetTypeMember     = "member"
 )

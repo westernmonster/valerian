@@ -76,7 +76,7 @@ func (p *Dao) GetTopicMembersCount(c context.Context, node sqalx.Node, topicID i
 }
 
 // GetTopicMembersPaged
-func (p *Dao) GetTopicMembersPaged(c context.Context, node sqalx.Node, topicID int64, page, pageSize int) (count int, items []*model.TopicMember, err error) {
+func (p *Dao) GetTopicMembersPaged(c context.Context, node sqalx.Node, topicID int64, page, pageSize int32) (count int32, items []*model.TopicMember, err error) {
 	items = make([]*model.TopicMember, 0)
 	offset := (page - 1) * pageSize
 

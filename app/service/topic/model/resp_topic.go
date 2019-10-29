@@ -7,7 +7,7 @@ type TopicResp struct {
 	Members []*TopicMemberResp `json:"members,omitempty"`
 
 	// 成员数
-	MemberCount int `json:"member_count,omitempty"`
+	MemberCount int32 `json:"member_count,omitempty"`
 
 	// 目录
 	Catalogs []*TopicLevel1Catalog `json:"catalogs,omitempty"`
@@ -20,7 +20,7 @@ type TopicResp struct {
 
 	// 头像
 	// 必须为URL
-	Avatar string `json:"avatar"`
+	Avatar string `json:"avatar,omitempty" extensions:"x-nullable,x-abc=def"`
 
 	// 背景图
 	// 必须为URL
@@ -79,6 +79,8 @@ type TopicResp struct {
 	CreatedAt int64 `json:"created_at" swaggertype:"integer"`
 
 	TopicMeta *TopicMeta `json:"meta,omitempty"`
+
+	HasCatalogTaxonomy bool `json:"has_catalog_taxonomy"`
 }
 
 type TopicMeta struct {
@@ -95,11 +97,37 @@ type TopicMeta struct {
 	CanView bool `json:"can_view"`
 
 	// 关注状态
-	FollowStatus int `json:"follow_status"`
+	FollowStatus int32 `json:"follow_status"`
 
-	// 是否成员
 	IsMember bool `json:"is_member"`
 
 	// 成员角色
 	MemberRole string `json:"member_role"`
+}
+
+type TopicItem struct {
+	// ID
+	ID int64 `json:"id,string" swaggertype:"string"`
+	// 话题名
+	Name string `json:"name"`
+
+	// 简介
+	Introduction string `json:"introduction"`
+
+	// 封面
+	Avatar string `json:"avatar,omitempty" extensions:"x-nullable,x-abc=def"`
+
+	// 成员数
+	MemberCount int32 `json:"member_count"`
+
+	// 文章数
+	ArticleCount int32 `json:"article_count"`
+
+	// 讨论数
+	DiscussionCount int32 `json:"discussion_count"`
+}
+
+type TopicListResp struct {
+	Items  []*TopicItem `json:"items"`
+	Paging *Paging      `json:"paging"`
 }

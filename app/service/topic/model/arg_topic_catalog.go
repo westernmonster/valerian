@@ -13,15 +13,15 @@ type CatalogArticleItem struct {
 	// 内容
 	Excerpt string `json:"excerpt"`
 	// 喜欢数
-	LikeCount int `json:"like_count"`
+	LikeCount int32 `json:"like_count"`
+	// 反对数
+	DislikeCount int32 `json:"dislike_count"`
 	// 补充个数
-	ReviseCount int `json:"revise_count"`
+	ReviseCount int32 `json:"revise_count"`
 	// 评论数
-	CommentCount int `json:"comment_count"`
+	CommentCount int32 `json:"comment_count"`
 
-	// 头像
-	Avatar string `json:"avatar,omitempty"`
-
+	Images []string `json:"images"`
 	// 发布日期
 	CreatedAt int64 `json:"created_at"`
 }
@@ -34,19 +34,19 @@ type TopicLevel1Catalog struct {
 
 	// 顺序
 	// required: true
-	Seq int `json:"seq"`
+	Seq int32 `json:"seq"`
 
 	// 类型
 	// required: true
 	Type string `json:"type"`
 
 	// 引用ID
-	RefID *int64 `json:"ref_id,string,omitempty" swaggertype:"string"`
+	RefID int64 `json:"ref_id,string,omitempty" swaggertype:"string"`
 
 	Children []*TopicLevel2Catalog `json:"children,omitempty"`
 
 	// 文章
-	Article *CatalogArticleItem `json:"article,omitempty"`
+	Article *TargetArticle `json:"article,omitempty"`
 }
 
 func (p *TopicLevel1Catalog) Validate() error {
@@ -74,20 +74,20 @@ type ValidateTypeRule struct {
 }
 
 func (p *ValidateTypeRule) Validate(v interface{}) error {
-	refID := v.(*int64)
+	refID := v.(int64)
 	switch p.Type {
 	case TopicCatalogTaxonomy:
-		if refID != nil {
+		if refID != 0 {
 			return ecode.ShouldNotSetRefID
 		}
 		break
 	case TopicCatalogArticle:
-		if refID == nil {
+		if refID == 0 {
 			return ecode.RefIDRequired
 		}
 		break
 	case TopicCatalogTestSet:
-		if refID == nil {
+		if refID == 0 {
 			return ecode.RefIDRequired
 		}
 		break
@@ -168,19 +168,18 @@ type TopicLevel2Catalog struct {
 
 	// 顺序
 	// required: true
-	Seq int `json:"seq"`
+	Seq int32 `json:"seq"`
 
 	// 类型
 	// required: true
 	Type string `json:"type"`
 
 	// 引用ID
-	RefID *int64 `json:"ref_id,string,omitempty" swaggertype:"string"`
+	RefID int64 `json:"ref_id,string,omitempty" swaggertype:"string"`
 
 	Children []*TopicChildCatalog `json:"children,omitempty"`
 
-	// 文章
-	Article *CatalogArticleItem `json:"article,omitempty"`
+	Article *TargetArticle `json:"article,omitempty"`
 }
 
 func (p *TopicLevel2Catalog) Validate() error {
@@ -205,17 +204,16 @@ type TopicChildCatalog struct {
 
 	// 顺序
 	// required: true
-	Seq int `json:"seq"`
+	Seq int32 `json:"seq"`
 
 	// 类型
 	// required: true
 	Type string `json:"type"`
 
 	// 引用ID
-	RefID *int64 `json:"ref_id,string,omitempty" swaggertype:"string"`
+	RefID int64 `json:"ref_id,string,omitempty" swaggertype:"string"`
 
-	// 文章
-	Article *CatalogArticleItem `json:"article,omitempty"`
+	Article *TargetArticle `json:"article,omitempty"`
 }
 
 func (p *TopicChildCatalog) Validate() error {
@@ -258,14 +256,14 @@ type ArgTopicCatalog struct {
 
 	// 顺序
 	// required: true
-	Seq int `json:"seq"`
+	Seq int32 `json:"seq"`
 
 	// 类型
 	// required: true
 	Type string `json:"type"`
 
 	// 引用ID
-	RefID *int64 `json:"ref_id,string,omitempty" swaggertype:"string"`
+	RefID int64 `json:"ref_id,string,omitempty" swaggertype:"string"`
 }
 
 func (p *ArgTopicCatalog) Validate() error {
@@ -275,4 +273,9 @@ func (p *ArgTopicCatalog) Validate() error {
 		validation.Field(&p.Type, validation.Required, validation.In(TopicCatalogTaxonomy, TopicCatalogArticle, TopicCatalogTestSet)),
 		validation.Field(&p.RefID, ValidateRefID(p.Type)),
 	)
+}
+
+type ArticleItem struct {
+	TopicID   int64
+	ArticleID int64
 }

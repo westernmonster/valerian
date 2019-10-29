@@ -5,7 +5,7 @@ import "valerian/library/database/sqlx/types"
 type TopicCatalog struct {
 	ID         int64         `db:"id" json:"id,string"`                    // ID ID
 	Name       string        `db:"name" json:"name"`                       // Name 名称
-	Seq        int           `db:"seq" json:"seq"`                         // Seq 顺序
+	Seq        int32         `db:"seq" json:"seq"`                         // Seq 顺序
 	Type       string        `db:"type" json:"type"`                       // Type 类型
 	ParentID   int64         `db:"parent_id" json:"parent_id,string"`      // ParentID 父ID
 	RefID      int64         `db:"ref_id" json:"ref_id,omitempty,string"`  // RefID 引用ID
@@ -25,15 +25,6 @@ type TopicMember struct {
 	Deleted   types.BitBool `db:"deleted" json:"deleted"`              // Deleted 是否删除
 	CreatedAt int64         `db:"created_at" json:"created_at"`        // CreatedAt 创建时间
 	UpdatedAt int64         `db:"updated_at" json:"updated_at"`        // UpdatedAt 更新时间
-}
-
-type TopicStat struct {
-	TopicID         int64 `db:"topic_id" json:"topic_id,string"`          // TopicID 话题ID
-	MemberCount     int   `db:"member_count" json:"member_count"`         // MemberCount 成员数
-	ArticleCount    int   `db:"article_count" json:"article_count"`       // ArticleCount 文章数
-	DiscussionCount int   `db:"discussion_count" json:"discussion_count"` // DiscussionCount 讨论数
-	CreatedAt       int64 `db:"created_at" json:"created_at"`             // CreatedAt 创建时间
-	UpdatedAt       int64 `db:"updated_at" json:"updated_at"`             // UpdatedAt 更新时间
 }
 
 type Topic struct {
@@ -60,7 +51,7 @@ type TopicFollowRequest struct {
 	ID        int64         `db:"id" json:"id,string"`                 // ID ID
 	AccountID int64         `db:"account_id" json:"account_id,string"` // AccountID 用户ID
 	TopicID   int64         `db:"topic_id" json:"topic_id,string"`     // TopicID 话题ID
-	Status    int           `db:"status" json:"status"`                // Status 状态
+	Status    int32         `db:"status" json:"status"`                // Status 状态
 	Deleted   types.BitBool `db:"deleted" json:"deleted"`              // Deleted 是否删除
 	CreatedAt int64         `db:"created_at" json:"created_at"`        // CreatedAt 创建时间
 	UpdatedAt int64         `db:"updated_at" json:"updated_at"`        // UpdatedAt 更新时间
@@ -92,7 +83,7 @@ type TopicInviteRequest struct {
 	ID        int64         `db:"id" json:"id,string"`                 // ID ID
 	AccountID int64         `db:"account_id" json:"account_id,string"` // AccountID 用户ID
 	TopicID   int64         `db:"topic_id" json:"topic_id,string"`     // TopicID 话题ID
-	Status    int           `db:"status" json:"status"`                // Status 状态
+	Status    int32         `db:"status" json:"status"`                // Status 状态
 	Deleted   types.BitBool `db:"deleted" json:"deleted"`              // Deleted 是否删除
 	CreatedAt int64         `db:"created_at" json:"created_at"`        // CreatedAt 创建时间
 	UpdatedAt int64         `db:"updated_at" json:"updated_at"`        // UpdatedAt 更新时间
@@ -101,9 +92,30 @@ type TopicInviteRequest struct {
 type DiscussCategory struct {
 	ID        int64         `db:"id" json:"id,string"`             // ID ID
 	TopicID   int64         `db:"topic_id" json:"topic_id,string"` // TopicID 话题ID
-	Seq       int           `db:"seq" json:"seq"`                  // Seq 顺序
+	Seq       int32         `db:"seq" json:"seq"`                  // Seq 顺序
 	Name      string        `db:"name" json:"name"`                // Name 话题名
 	Deleted   types.BitBool `db:"deleted" json:"deleted"`          // Deleted 是否删除
 	CreatedAt int64         `db:"created_at" json:"created_at"`    // CreatedAt 创建时间
 	UpdatedAt int64         `db:"updated_at" json:"updated_at"`    // UpdatedAt 更新时间
+}
+
+type AccountStat struct {
+	AccountID       int64 `db:"account_id" json:"account_id,string"`      // AccountID 用户ID
+	Following       int32 `db:"following" json:"following"`               // Following 关注数
+	Fans            int32 `db:"fans" json:"fans"`                         // Fans 粉丝数
+	ArticleCount    int32 `db:"article_count" json:"article_count"`       // ArticleCount 文章数
+	DiscussionCount int32 `db:"discussion_count" json:"discussion_count"` // DiscussionCount 讨论数
+	TopicCount      int32 `db:"topic_count" json:"topic_count"`           // TopicCount 讨论数
+	Black           int32 `db:"black" json:"black"`                       // Black 黑名单数
+	CreatedAt       int64 `db:"created_at" json:"created_at"`             // CreatedAt 创建时间
+	UpdatedAt       int64 `db:"updated_at" json:"updated_at"`             // UpdatedAt 更新时间
+}
+
+type TopicStat struct {
+	TopicID         int64 `db:"topic_id" json:"topic_id,string"`          // TopicID 话题ID
+	MemberCount     int32 `db:"member_count" json:"member_count"`         // MemberCount 成员数
+	ArticleCount    int32 `db:"article_count" json:"article_count"`       // ArticleCount 文章数
+	DiscussionCount int32 `db:"discussion_count" json:"discussion_count"` // DiscussionCount 讨论数
+	CreatedAt       int64 `db:"created_at" json:"created_at"`             // CreatedAt 创建时间
+	UpdatedAt       int64 `db:"updated_at" json:"updated_at"`             // UpdatedAt 更新时间
 }

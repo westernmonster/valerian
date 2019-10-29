@@ -8,12 +8,12 @@ import (
 	"valerian/library/log"
 )
 
-func accountTopicSettingKey(aid int64, topicID int64) string {
-	return fmt.Sprintf("acc_topic_setting_%d_%d", aid, topicID)
+func authTopicsKey(topicID int64) string {
+	return fmt.Sprintf("auth_topics_%d", topicID)
 }
 
-func (p *Dao) SetAccountTopicSettingCache(c context.Context, m *model.AccountTopicSetting) (err error) {
-	key := accountTopicSettingKey(m.AccountID, m.TopicID)
+func (p *Dao) SetAuthTopicsCache(c context.Context, topicID int64, m []*model.AuthTopic) (err error) {
+	key := authTopicsKey(topicID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 
@@ -24,8 +24,8 @@ func (p *Dao) SetAccountTopicSettingCache(c context.Context, m *model.AccountTop
 	return
 }
 
-func (p *Dao) AccountTopicSettingCache(c context.Context, aid, topicID int64) (m *model.AccountTopicSetting, err error) {
-	key := accountTopicSettingKey(aid, topicID)
+func (p *Dao) AuthTopicsCache(c context.Context, topicID int64) (m []*model.AuthTopic, err error) {
+	key := authTopicsKey(topicID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	var item *memcache.Item
@@ -38,15 +38,14 @@ func (p *Dao) AccountTopicSettingCache(c context.Context, aid, topicID int64) (m
 		return
 	}
 
-	m = new(model.AccountTopicSetting)
 	if err = conn.Scan(item, &m); err != nil {
 		log.For(c).Error(fmt.Sprintf("conn.Scan(%v) error(%v)", string(item.Value), err))
 	}
 	return
 }
 
-func (p *Dao) DelAccountTopicSettingCache(c context.Context, aid, topicID int64) (err error) {
-	key := accountTopicSettingKey(aid, topicID)
+func (p *Dao) DelAuthTopicsCache(c context.Context, topicID int64) (err error) {
+	key := authTopicsKey(topicID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	if err = conn.Delete(key); err != nil {
