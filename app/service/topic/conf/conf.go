@@ -40,7 +40,9 @@ type Config struct {
 	Memcache  *Memcache
 	Discovery *discovery.Config
 
-	FavRPC *warden.ClientConfig
+	DiscussRPC *warden.ClientConfig
+	FavRPC     *warden.ClientConfig
+	ArticleRPC *warden.ClientConfig
 }
 
 type NatsConfig struct {

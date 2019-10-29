@@ -7,8 +7,51 @@ import (
 
 	"valerian/app/service/topic/model"
 	"valerian/library/database/sqalx"
+	"valerian/library/database/sqlx"
 	"valerian/library/log"
 )
+
+// GetAll get all records
+func (p *Dao) GetUserCanEditTopicIDs(c context.Context, node sqalx.Node, aid int64) (items []int64, err error) {
+	items = make([]int64, 0)
+	// 当前用户是管理员的话题
+	// 用户所在话题角色是普通用户，该话题被授权为edit，找出授权话题
+	// 用户所在话题角色是管理员，该话题被授权为admin_edit，找出授权话题
+	sqlSelect := `
+SELECT topic_id
+FROM topic_members
+WHERE account_id = ? AND role IN ( 'owner', 'admin' )
+UNION
+SELECT b.topic_id
+FROM topic_members a JOIN auth_topics b ON a.topic_id = b.to_topic_id
+WHERE a.account_id = ? AND a.role = 'user' AND b.permission = 'edit'
+UNION
+SELECT b.topic_id
+FROM topic_members a JOIN auth_topics b ON a.topic_id = b.to_topic_id
+WHERE a.account_id = ? AND a.role IN ( 'owner', 'admin' ) AND b.permission = 'admin_edit'
+`
+
+	var rows *sqlx.Rows
+	if rows, err = node.QueryxContext(c, sqlSelect, aid, aid, aid); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetUserCanEditTopicIDs err(%+v)", err))
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var (
+			targetID int64
+		)
+		if err = rows.Scan(&targetID); err != nil {
+			log.For(c).Error(fmt.Sprintf("dao.GetUserCanEditTopicIDs err(%+v)", err))
+			return
+		}
+		items = append(items, targetID)
+	}
+
+	err = rows.Err()
+	return
+}
 
 // GetAll get all records
 func (p *Dao) GetAuthTopics(c context.Context, node sqalx.Node) (items []*model.AuthTopic, err error) {

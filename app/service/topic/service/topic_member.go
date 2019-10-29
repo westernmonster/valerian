@@ -170,7 +170,7 @@ func (p *Service) getTopicMembers(c context.Context, node sqalx.Node, topicID in
 	return
 }
 
-func (p *Service) createTopicMemberOwner(c context.Context, node sqalx.Node, aid, topicID int64) (err error) {
+func (p *Service) createOwner(c context.Context, node sqalx.Node, aid, topicID int64) (err error) {
 	var tx sqalx.Node
 	if tx, err = node.Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))

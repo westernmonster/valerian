@@ -14,7 +14,7 @@ import (
 // Service struct of service
 type Service struct {
 	c      *conf.Config
-	d      IDao
+	d      *dao.Dao
 	missch chan func()
 	mq     *mq.MessageQueue
 }

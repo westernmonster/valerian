@@ -4,12 +4,12 @@ import (
 	"context"
 	"fmt"
 	"time"
+
 	account "valerian/app/service/account/api"
+	discuss "valerian/app/service/discuss/api"
 	"valerian/app/service/topic/model"
 	"valerian/library/database/sqalx"
-	"valerian/library/database/sqlx/types"
 	"valerian/library/ecode"
-	"valerian/library/gid"
 	"valerian/library/log"
 	"valerian/library/net/metadata"
 )
@@ -49,30 +49,6 @@ func (p *Service) GetTopicStat(c context.Context, topicID int64) (stat *model.To
 	return
 }
 
-func (p *Service) getTopic(c context.Context, node sqalx.Node, topicID int64) (item *model.Topic, err error) {
-	var addCache = true
-	if item, err = p.d.TopicCache(c, topicID); err != nil {
-		addCache = false
-	} else if item != nil {
-		return
-	}
-
-	if item, err = p.d.GetTopicByID(c, node, topicID); err != nil {
-		return
-	} else if item == nil {
-		log.For(c).Error(fmt.Sprintf("service.getTopic not exist. id(%d)", topicID))
-		return nil, ecode.TopicNotExist
-	}
-
-	if addCache {
-		p.addCache(func() {
-			p.d.SetTopicCache(context.TODO(), item)
-		})
-	}
-
-	return
-}
-
 func (p *Service) GetTopicManagerRole(c context.Context, topicID, aid int64) (isMember bool, role string, err error) {
 	var member *model.TopicMember
 	if member, err = p.d.GetTopicMemberByCond(c, p.d.DB(), map[string]interface{}{"account_id": aid, "topic_id": topicID}); err != nil {
@@ -87,44 +63,14 @@ func (p *Service) GetTopicManagerRole(c context.Context, topicID, aid int64) (is
 	return
 }
 
-func (p *Service) getAccountTopicSetting(c context.Context, node sqalx.Node, aid, topicID int64) (item *model.AccountTopicSetting, err error) {
-	var addCache = true
-	if item, err = p.d.AccountTopicSettingCache(c, aid, topicID); err != nil {
-		addCache = false
-	} else if item != nil {
-		return
-	}
-
-	if item, err = p.d.GetAccountTopicSettingByCond(c, node, map[string]interface{}{"account_id": aid, "topic_id": topicID}); err != nil {
-		return
-	} else if item == nil {
-		item = &model.AccountTopicSetting{
-			ID:               gid.NewID(),
-			AccountID:        aid,
-			TopicID:          topicID,
-			Important:        false,
-			MuteNotification: false,
-			Fav:              false,
-			CreatedAt:        time.Now().Unix(),
-			UpdatedAt:        time.Now().Unix(),
-		}
-	}
-
-	if addCache {
-		p.addCache(func() {
-			p.d.SetAccountTopicSettingCache(context.TODO(), item)
-		})
-	}
-
-	return
-}
-
+// 创建
 func (p *Service) CreateTopic(c context.Context, arg *model.ArgCreateTopic) (topicID int64, err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed
 		return
 	}
+
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
@@ -140,63 +86,7 @@ func (p *Service) CreateTopic(c context.Context, arg *model.ArgCreateTopic) (top
 		}
 	}()
 
-	item := &model.Topic{
-		ID:              gid.NewID(),
-		Name:            arg.Name,
-		Introduction:    arg.Introduction,
-		TopicHome:       model.TopicHomeFeed,
-		IsPrivate:       false,
-		AllowChat:       types.BitBool(arg.AllowChat),
-		AllowDiscuss:    types.BitBool(arg.AllowDiscuss),
-		ViewPermission:  model.ViewPermissionJoin,
-		EditPermission:  model.EditPermissionAdmin,
-		JoinPermission:  model.JoinPermissionMemberApprove,
-		CatalogViewType: arg.CatalogViewType,
-		CreatedBy:       aid,
-		CreatedAt:       time.Now().Unix(),
-		UpdatedAt:       time.Now().Unix(),
-	}
-
-	if arg.Avatar != nil {
-		item.Avatar = *arg.Avatar
-	}
-
-	if arg.Bg != nil {
-		item.Bg = *arg.Bg
-	}
-
-	if err = p.d.AddTopic(c, tx, item); err != nil {
-		return
-	}
-
-	setting := &model.AccountTopicSetting{
-		ID:               gid.NewID(),
-		AccountID:        aid,
-		TopicID:          item.ID,
-		Important:        types.BitBool(false),
-		MuteNotification: types.BitBool(false),
-		CreatedAt:        time.Now().Unix(),
-		UpdatedAt:        time.Now().Unix(),
-	}
-
-	if err = p.d.AddAccountTopicSetting(c, tx, setting); err != nil {
-		return
-	}
-
-	if err = p.createTopicMemberOwner(c, tx, aid, item.ID); err != nil {
-		return
-	}
-
-	if err = p.d.AddTopicStat(c, tx, &model.TopicStat{
-		TopicID:     item.ID,
-		MemberCount: 1,
-		CreatedAt:   time.Now().Unix(),
-		UpdatedAt:   time.Now().Unix(),
-	}); err != nil {
-		return
-	}
-
-	if err = p.d.IncrAccountStat(c, tx, &model.AccountStat{AccountID: item.CreatedBy, TopicCount: 1}); err != nil {
+	if topicID, err = p.createTopic(c, tx, aid, arg); err != nil {
 		return
 	}
 
@@ -205,10 +95,115 @@ func (p *Service) CreateTopic(c context.Context, arg *model.ArgCreateTopic) (top
 		return
 	}
 
-	topicID = item.ID
+	p.addCache(func() {
+		p.onTopicAdded(context.Background(), topicID, aid, time.Now().Unix())
+	})
+	return
+}
+
+func (p *Service) UpdateTopic(c context.Context, arg *model.ArgUpdateTopic) (err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+
+	var tx sqalx.Node
+	if tx, err = p.d.DB().Beginx(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		return
+	}
+
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+			}
+			return
+		}
+	}()
+
+	if err = p.checkTopic(c, tx, arg.ID); err != nil {
+		return
+	}
+
+	if err = p.updateTopic(c, tx, aid, arg); err != nil {
+		return
+	}
+
+	if err = tx.Commit(); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		return
+	}
 
 	p.addCache(func() {
-		p.onTopicAdded(context.Background(), topicID, aid, item.CreatedAt)
+		p.d.DelAccountTopicSettingCache(context.TODO(), aid, arg.ID)
+		p.d.DelTopicCache(context.TODO(), arg.ID)
+		p.onTopicUpdated(context.Background(), arg.ID, aid, time.Now().Unix())
 	})
+	return
+}
+
+func (p *Service) GetTopicResp(c context.Context, topicID int64, include string) (item *model.TopicResp, err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+
+	if item, err = p.getTopicResp(c, p.d.DB(), aid, topicID); err != nil {
+		return
+	}
+	inc := includeParam(include)
+	if inc["members"] {
+		if item.MemberCount, item.Members, err = p.getTopicMembers(c, p.d.DB(), topicID, 10); err != nil {
+			return
+		}
+	}
+
+	if inc["catalogs"] {
+		if item.Catalogs, err = p.getCatalogsHierarchy(c, p.d.DB(), topicID); err != nil {
+			return
+		}
+	}
+
+	if inc["discuss_categories"] {
+		var resp *discuss.CategoriesResp
+		if resp, err = p.d.GetDiscussionCategories(c, topicID); err != nil {
+			return
+		}
+
+		item.DiscussCategories = make([]*model.DiscussCategoryResp, len(resp.Items))
+
+		for i, v := range resp.Items {
+			item.DiscussCategories[i] = &model.DiscussCategoryResp{
+				ID:      v.ID,
+				TopicID: v.TopicID,
+				Name:    v.Name,
+				Seq:     (v.Seq),
+			}
+		}
+	}
+
+	if inc["auth_topics"] {
+		if item.AuthTopics, err = p.getAuthTopicsResp(c, p.d.DB(), topicID); err != nil {
+			return
+		}
+	}
+
+	if inc["meta"] {
+		if item.TopicMeta, err = p.GetTopicMeta(c, aid, topicID); err != nil {
+			return
+		}
+	}
+
+	if item.HasCatalogTaxonomy, err = p.d.HasTaxonomy(c, p.d.DB(), topicID); err != nil {
+		return
+	}
+
+	p.addCache(func() {
+		p.onTopicViewed(context.Background(), topicID, aid, time.Now().Unix())
+	})
+
 	return
 }
