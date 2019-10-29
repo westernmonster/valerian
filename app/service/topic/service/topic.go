@@ -10,9 +10,7 @@ import (
 	"valerian/app/service/topic/api"
 	"valerian/app/service/topic/model"
 	"valerian/library/database/sqalx"
-	"valerian/library/ecode"
 	"valerian/library/log"
-	"valerian/library/net/metadata"
 )
 
 func (p *Service) GetBelongsTopicIDs(c context.Context, aid int64) (ids []int64, err error) {
@@ -66,17 +64,6 @@ func (p *Service) GetTopicManagerRole(c context.Context, topicID, aid int64) (is
 
 // 创建
 func (p *Service) CreateTopic(c context.Context, arg *api.ArgCreateTopic) (topicID int64, err error) {
-
-	fmt.Printf("aid(%d)\n", aid)
-	md, _ := metadata.FromContext(c)
-	fmt.Printf("md(%+v)\n", md)
-
-	aid, ok := metadata.Value(c, metadata.Aid).(int64)
-	if !ok {
-		err = ecode.AcquireAccountIDFailed
-		return
-	}
-
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
@@ -92,7 +79,7 @@ func (p *Service) CreateTopic(c context.Context, arg *api.ArgCreateTopic) (topic
 		}
 	}()
 
-	if topicID, err = p.createTopic(c, tx, aid, arg); err != nil {
+	if topicID, err = p.createTopic(c, tx, arg.Aid, arg); err != nil {
 		return
 	}
 
@@ -102,18 +89,12 @@ func (p *Service) CreateTopic(c context.Context, arg *api.ArgCreateTopic) (topic
 	}
 
 	p.addCache(func() {
-		p.onTopicAdded(context.Background(), topicID, aid, time.Now().Unix())
+		p.onTopicAdded(context.Background(), topicID, arg.Aid, time.Now().Unix())
 	})
 	return
 }
 
 func (p *Service) UpdateTopic(c context.Context, arg *api.ArgUpdateTopic) (err error) {
-	aid, ok := metadata.Value(c, metadata.Aid).(int64)
-	if !ok {
-		err = ecode.AcquireAccountIDFailed
-		return
-	}
-
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
@@ -133,7 +114,7 @@ func (p *Service) UpdateTopic(c context.Context, arg *api.ArgUpdateTopic) (err e
 		return
 	}
 
-	if err = p.updateTopic(c, tx, aid, arg); err != nil {
+	if err = p.updateTopic(c, tx, arg.Aid, arg); err != nil {
 		return
 	}
 
@@ -143,20 +124,14 @@ func (p *Service) UpdateTopic(c context.Context, arg *api.ArgUpdateTopic) (err e
 	}
 
 	p.addCache(func() {
-		p.d.DelAccountTopicSettingCache(context.TODO(), aid, arg.ID)
+		p.d.DelAccountTopicSettingCache(context.TODO(), arg.Aid, arg.ID)
 		p.d.DelTopicCache(context.TODO(), arg.ID)
-		p.onTopicUpdated(context.Background(), arg.ID, aid, time.Now().Unix())
+		p.onTopicUpdated(context.Background(), arg.ID, arg.Aid, time.Now().Unix())
 	})
 	return
 }
 
-func (p *Service) GetTopicResp(c context.Context, topicID int64, include string) (item *api.TopicResp, err error) {
-	aid, ok := metadata.Value(c, metadata.Aid).(int64)
-	if !ok {
-		err = ecode.AcquireAccountIDFailed
-		return
-	}
-
+func (p *Service) GetTopicResp(c context.Context, aid int64, topicID int64, include string) (item *api.TopicResp, err error) {
 	if item, err = p.getTopicResp(c, p.d.DB(), aid, topicID); err != nil {
 		return
 	}

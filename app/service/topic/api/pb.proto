@@ -190,6 +190,7 @@ message IDsResp {
 message IDReq {
     int64 ID = 1 [(gogoproto.jsontag) = 'id'];
     string Include = 2;
+    int64 Aid = 3;
 }
 
 
@@ -284,6 +285,7 @@ message ArgChangeOwner {
 
 
 message ArgCreateTopic {
+    int64 Aid  = 1;
     oneof Avatar {
         string AvatarValue = 2;
     }
@@ -304,6 +306,7 @@ message ArgCreateTopic {
 }
 
 message ArgUpdateTopic {
+
     int64 ID = 1;
 
     oneof Avatar {
@@ -357,6 +360,8 @@ message ArgUpdateTopic {
     oneof MuteNotification {
         bool MuteNotificationValue = 14;
     }
+
+    int64 Aid  = 15;
 
 }
 

@@ -73,7 +73,7 @@ func (s *server) ChangeOwner(ctx context.Context, arg *api.ArgChangeOwner) (*api
 }
 
 func (s *server) GetTopicResp(ctx context.Context, arg *api.IDReq) (*api.TopicResp, error) {
-	resp, err := s.svr.GetTopicResp(ctx, arg.ID, arg.Include)
+	resp, err := s.svr.GetTopicResp(ctx, arg.Aid, arg.ID, arg.Include)
 	if err != nil {
 		return nil, err
 	}
