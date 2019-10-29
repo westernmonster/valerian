@@ -6,6 +6,7 @@ import (
 
 	"valerian/app/service/relation/api"
 	"valerian/app/service/relation/service"
+	"valerian/library/database/sqalx"
 	"valerian/library/log"
 	"valerian/library/net/metadata"
 	"valerian/library/net/rpc/warden"
@@ -58,6 +59,12 @@ func (s *server) GetFansPaged(ctx context.Context, req *api.RelationReq) (*api.F
 }
 
 func (s *server) Follow(ctx context.Context, req *api.FollowReq) (*api.EmptyStruct, error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
 	err := s.svr.Follow(ctx, req.AccountID, req.TargetAccountID)
 	if err != nil {
 		return nil, err
@@ -67,6 +74,12 @@ func (s *server) Follow(ctx context.Context, req *api.FollowReq) (*api.EmptyStru
 }
 
 func (s *server) Unfollow(ctx context.Context, req *api.FollowReq) (*api.EmptyStruct, error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
 	err := s.svr.Unfollow(ctx, req.AccountID, req.TargetAccountID)
 	if err != nil {
 		return nil, err
@@ -76,6 +89,12 @@ func (s *server) Unfollow(ctx context.Context, req *api.FollowReq) (*api.EmptySt
 }
 
 func (s *server) IsFollowing(ctx context.Context, req *api.FollowReq) (*api.IsFollowingResp, error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
 	isFollowing, err := s.svr.IsFollowing(ctx, req.AccountID, req.TargetAccountID)
 	if err != nil {
 		return nil, err
@@ -89,6 +108,12 @@ func (s *server) IsFollowing(ctx context.Context, req *api.FollowReq) (*api.IsFo
 }
 
 func (s *server) GetFansIDs(ctx context.Context, req *api.AidReq) (*api.IDsResp, error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
 	ids, err := s.svr.GetFansIDs(ctx, req.AccountID)
 	if err != nil {
 		return nil, err

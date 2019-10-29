@@ -39,6 +39,7 @@ message RelationReq {
 message FollowReq {
     int64 AccountID = 1 [(gogoproto.jsontag) = "account_id"];
     int64 TargetAccountID = 2 [(gogoproto.jsontag) = "target_account_id"];
+    bool UseMaster = 3;
 }
 
 message IDsResp {
@@ -47,6 +48,7 @@ message IDsResp {
 
 message AidReq {
     int64 AccountID = 1 [(gogoproto.jsontag) = "account_id"];
+    bool UseMaster = 3;
 }
 
 message IsFollowingResp {
