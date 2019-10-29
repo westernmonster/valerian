@@ -7,6 +7,7 @@ import (
 
 	account "valerian/app/service/account/api"
 	discuss "valerian/app/service/discuss/api"
+	"valerian/app/service/topic/api"
 	"valerian/app/service/topic/model"
 	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
@@ -64,7 +65,7 @@ func (p *Service) GetTopicManagerRole(c context.Context, topicID, aid int64) (is
 }
 
 // 创建
-func (p *Service) CreateTopic(c context.Context, arg *model.ArgCreateTopic) (topicID int64, err error) {
+func (p *Service) CreateTopic(c context.Context, arg *api.ArgCreateTopic) (topicID int64, err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed
@@ -101,7 +102,7 @@ func (p *Service) CreateTopic(c context.Context, arg *model.ArgCreateTopic) (top
 	return
 }
 
-func (p *Service) UpdateTopic(c context.Context, arg *model.ArgUpdateTopic) (err error) {
+func (p *Service) UpdateTopic(c context.Context, arg *api.ArgUpdateTopic) (err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed
@@ -144,7 +145,7 @@ func (p *Service) UpdateTopic(c context.Context, arg *model.ArgUpdateTopic) (err
 	return
 }
 
-func (p *Service) GetTopicResp(c context.Context, topicID int64, include string) (item *model.TopicResp, err error) {
+func (p *Service) GetTopicResp(c context.Context, topicID int64, include string) (item *api.TopicResp, err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed
@@ -156,13 +157,13 @@ func (p *Service) GetTopicResp(c context.Context, topicID int64, include string)
 	}
 	inc := includeParam(include)
 	if inc["members"] {
-		if item.MemberCount, item.Members, err = p.getTopicMembers(c, p.d.DB(), topicID, 10); err != nil {
-			return
-		}
+		// if item.MemberCount, item.Members, err = p.getTopicMembers(c, p.d.DB(), topicID, 10); err != nil {
+		// 	return
+		// }
 	}
 
 	if inc["catalogs"] {
-		if item.Catalogs, err = p.getCatalogsHierarchy(c, p.d.DB(), topicID); err != nil {
+		if item.Catalogs, err = p.getCatalogHierarchyOfAll(c, p.d.DB(), topicID); err != nil {
 			return
 		}
 	}
@@ -173,10 +174,10 @@ func (p *Service) GetTopicResp(c context.Context, topicID int64, include string)
 			return
 		}
 
-		item.DiscussCategories = make([]*model.DiscussCategoryResp, len(resp.Items))
+		item.DiscussCategories = make([]*api.DiscussCategoryInfo, len(resp.Items))
 
 		for i, v := range resp.Items {
-			item.DiscussCategories[i] = &model.DiscussCategoryResp{
+			item.DiscussCategories[i] = &api.DiscussCategoryInfo{
 				ID:      v.ID,
 				TopicID: v.TopicID,
 				Name:    v.Name,
@@ -205,5 +206,9 @@ func (p *Service) GetTopicResp(c context.Context, topicID int64, include string)
 		p.onTopicViewed(context.Background(), topicID, aid, time.Now().Unix())
 	})
 
+	return
+}
+
+func (p *Service) DelTopic(c context.Context, topicID int64) (err error) {
 	return
 }

@@ -70,10 +70,6 @@ type IDao interface {
 	TopicCache(c context.Context, topicID int64) (m *model.Topic, err error)
 	DelTopicCache(c context.Context, topicID int64) (err error)
 
-	SetTopicCatalogCache(c context.Context, topicID int64, m []*model.TopicLevel1Catalog) (err error)
-	TopicCatalogCache(c context.Context, topicID int64) (m []*model.TopicLevel1Catalog, err error)
-	DelTopicCatalogCache(c context.Context, topicID int64) (err error)
-
 	SetAuthTopicsCache(c context.Context, topicID int64, m []*model.AuthTopic) (err error)
 	AuthTopicsCache(c context.Context, topicID int64) (m []*model.AuthTopic, err error)
 	DelAuthTopicsCache(c context.Context, topicID int64) (err error)

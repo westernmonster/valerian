@@ -4,11 +4,12 @@ import (
 	"context"
 
 	account "valerian/app/service/account/api"
+	"valerian/app/service/topic/api"
 	"valerian/app/service/topic/model"
 	"valerian/library/ecode"
 )
 
-func (p *Service) GetTopicMeta(c context.Context, aid, topicID int64) (meta *model.TopicMeta, err error) {
+func (p *Service) GetTopicMeta(c context.Context, aid, topicID int64) (meta *api.TopicMetaInfo, err error) {
 	var t *model.Topic
 	if t, err = p.getTopic(c, p.d.DB(), topicID); err != nil {
 		return
@@ -31,7 +32,7 @@ func (p *Service) GetTopicMeta(c context.Context, aid, topicID int64) (meta *mod
 		isMember = true
 	}
 
-	meta = new(model.TopicMeta)
+	meta = new(api.TopicMetaInfo)
 
 	meta.FollowStatus = model.FollowStatusUnfollowed
 
@@ -75,8 +76,8 @@ func (p *Service) GetTopicMeta(c context.Context, aid, topicID int64) (meta *mod
 	return
 }
 
-func (p *Service) GetGuestTopicMeta(c context.Context, t *model.Topic) (meta *model.TopicMeta, err error) {
-	meta = new(model.TopicMeta)
+func (p *Service) GetGuestTopicMeta(c context.Context, t *model.Topic) (meta *api.TopicMetaInfo, err error) {
+	meta = new(api.TopicMetaInfo)
 	if t.ViewPermission == model.ViewPermissionPublic {
 		meta.CanView = true
 	}

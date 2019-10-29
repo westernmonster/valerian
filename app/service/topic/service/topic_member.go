@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"valerian/app/service/topic/api"
 	"valerian/app/service/topic/model"
 	"valerian/library/database/sqalx"
 	"valerian/library/database/sqlx/types"
@@ -130,8 +131,8 @@ func (p *Service) GetTopicMembersPaged(c context.Context, topicID int64, page, p
 	return
 }
 
-func (p *Service) getTopicMembers(c context.Context, node sqalx.Node, topicID int64, limit int32) (total int32, resp []*model.TopicMemberResp, err error) {
-	resp = make([]*model.TopicMemberResp, 0)
+func (p *Service) getTopicMembers(c context.Context, node sqalx.Node, topicID int64, limit int32) (total int32, resp []*api.TopicMemberInfo, err error) {
+	resp = make([]*api.TopicMemberInfo, 0)
 
 	var (
 		addCache = true
@@ -159,7 +160,7 @@ func (p *Service) getTopicMembers(c context.Context, node sqalx.Node, topicID in
 		if e != nil {
 			return
 		}
-		resp = append(resp, &model.TopicMemberResp{
+		resp = append(resp, &api.TopicMemberInfo{
 			AccountID: v.AccountID,
 			Role:      v.Role,
 			Avatar:    account.Avatar,
@@ -447,7 +448,7 @@ func (p *Service) addMember(c context.Context, node sqalx.Node, topicID, aid int
 }
 
 // ChangeOwner 更改主理人
-func (p *Service) ChangeOwner(c context.Context, arg *model.ArgChangeOwner) (err error) {
+func (p *Service) ChangeOwner(c context.Context, arg *api.ArgChangeOwner) (err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed

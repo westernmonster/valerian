@@ -3,67 +3,17 @@ package service
 import (
 	"context"
 	"fmt"
-	"time"
 
+	"valerian/app/service/topic/api"
 	"valerian/app/service/topic/model"
 	"valerian/library/database/sqalx"
-	"valerian/library/ecode"
-	"valerian/library/gid"
 	"valerian/library/log"
 )
 
-func (p *Service) isAuthTopic(c context.Context, node sqalx.Node, toTopicID, fromTopicID int64) (isAuth bool, err error) {
-	var t *model.AuthTopic
-	if t, err = p.d.GetAuthTopicByCond(c, node, map[string]interface{}{"to_topic_id": toTopicID, "topic_id": fromTopicID}); err != nil {
-		return
-	} else if t != nil {
-		isAuth = true
-	}
-
-	return
-}
-
-func (p *Service) checkAuthTopics(c context.Context, node sqalx.Node, topicID int64, items []*model.ArgAuthTopic) (err error) {
-	// must unique and not equal to current topic
-	dic := make(map[int64]bool)
-	for _, v := range items {
-		if v.TopicID == topicID {
-			err = ecode.MustNotUseCurrentTopic
-			return
-		}
-
-		if dic[v.TopicID] {
-			err = ecode.AuthTopicDuplicate
-			return
-		}
-
-		if err = p.checkTopic(c, node, v.TopicID); err != nil {
-			return
-		}
-
-		dic[v.TopicID] = true
-	}
-
-	return
-}
-
-func (p *Service) loadAuthTopicsMap(c context.Context, node sqalx.Node, topicID int64) (dic map[int64]bool, err error) {
-	dic = make(map[int64]bool)
-	var dbItems []*model.AuthTopic
-	if dbItems, err = p.d.GetAuthTopicsByCond(c, node, map[string]interface{}{"topic_id": topicID}); err != nil {
-		return
-	}
-
-	for _, v := range dbItems {
-		dic[v.ToTopicID] = false
-	}
-
-	return
-}
-
-func (p *Service) bulkSaveAuthTopics(c context.Context, node sqalx.Node, topicID int64, items []*model.ArgAuthTopic) (err error) {
+// SaveAuthTopics  保存授权话题
+func (p *Service) SaveAuthTopics(c context.Context, arg *model.ArgSaveAuthTopics) (err error) {
 	var tx sqalx.Node
-	if tx, err = node.Beginx(c); err != nil {
+	if tx, err = p.d.DB().Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
 		return
 	}
@@ -76,55 +26,8 @@ func (p *Service) bulkSaveAuthTopics(c context.Context, node sqalx.Node, topicID
 			return
 		}
 	}()
-
-	if err = p.checkAuthTopics(c, tx, topicID, items); err != nil {
+	if err = p.bulkSaveAuthTopics(c, tx, arg.TopicID, arg.AuthTopics); err != nil {
 		return
-	}
-
-	if err = p.checkTopic(c, tx, topicID); err != nil {
-		return
-	}
-
-	var dic map[int64]bool
-	if dic, err = p.loadAuthTopicsMap(c, tx, topicID); err != nil {
-		return
-	}
-
-	for _, v := range items {
-		var dItem *model.AuthTopic
-		if dItem, err = p.d.GetAuthTopicByCond(c, tx, map[string]interface{}{"topic_id": topicID, "to_topic_id": v.TopicID}); err != nil {
-			return
-		}
-		dic[v.TopicID] = true
-
-		if dItem == nil {
-			item := &model.AuthTopic{
-				ID:         gid.NewID(),
-				TopicID:    topicID,
-				ToTopicID:  v.TopicID,
-				Permission: v.Permission,
-				CreatedAt:  time.Now().Unix(),
-				UpdatedAt:  time.Now().Unix(),
-			}
-			if err = p.d.AddAuthTopic(c, tx, item); err != nil {
-				return
-			}
-
-			continue
-		}
-		dItem.Permission = v.Permission
-		if err = p.d.UpdateAuthTopic(c, tx, dItem); err != nil {
-			return
-		}
-	}
-
-	for k, used := range dic {
-		if used {
-			continue
-		}
-		if err = p.d.DelAuthTopic(c, tx, k); err != nil {
-			return
-		}
 	}
 
 	if err = tx.Commit(); err != nil {
@@ -132,72 +35,15 @@ func (p *Service) bulkSaveAuthTopics(c context.Context, node sqalx.Node, topicID
 	}
 
 	p.addCache(func() {
-		p.d.DelAuthTopicsCache(context.TODO(), topicID)
+		p.d.DelAuthTopicsCache(context.TODO(), arg.TopicID)
 	})
+
 	return
 }
 
-func (p *Service) SaveAuthTopics(c context.Context, arg *model.ArgSaveAuthTopics) (err error) {
-	return p.bulkSaveAuthTopics(c, p.d.DB(), arg.TopicID, arg.AuthTopics)
-}
-
-func (p *Service) GetAuthTopics(c context.Context, topicID int64) (items []*model.AuthTopicResp, err error) {
+// GetAuthTopics 获取授权话题
+func (p *Service) GetAuthTopics(c context.Context, topicID int64) (items []*api.AuthTopicInfo, err error) {
 	return p.getAuthTopicsResp(c, p.d.DB(), topicID)
-}
-
-func (p *Service) getAuthTopicsResp(c context.Context, node sqalx.Node, topicID int64) (items []*model.AuthTopicResp, err error) {
-	var data []*model.AuthTopic
-	if data, err = p.getAuthTopics(c, node, topicID); err != nil {
-		return
-	}
-
-	items = make([]*model.AuthTopicResp, len(data))
-
-	for i, v := range data {
-		var t *model.Topic
-		if t, err = p.getTopic(c, node, v.ToTopicID); err != nil {
-			return
-		}
-
-		// TODO: need cache ?
-		var stat *model.TopicStat
-		if stat, err = p.d.GetTopicStatByID(c, node, topicID); err != nil {
-			return
-		}
-
-		item := &model.AuthTopicResp{
-			ToTopicID:      v.ToTopicID,
-			Permission:     v.Permission,
-			Avatar:         t.Avatar,
-			Name:           t.Name,
-			MemberCount:    stat.MemberCount,
-			EditPermission: t.EditPermission,
-		}
-
-		items[i] = item
-	}
-
-	return
-}
-
-func (p *Service) getAuthTopics(c context.Context, node sqalx.Node, topicID int64) (data []*model.AuthTopic, err error) {
-	var addCache = true
-	if data, err = p.d.AuthTopicsCache(c, topicID); err != nil {
-		addCache = false
-	} else if data != nil {
-		return
-	}
-
-	if data, err = p.d.GetAuthTopicsByCond(c, node, map[string]interface{}{"topic_id": topicID}); err != nil {
-		return
-	}
-
-	if addCache {
-		p.addCache(func() {
-			p.d.SetAuthTopicsCache(context.TODO(), topicID, data)
-		})
-	}
-	return
 }
 
 func (p *Service) GetUserCanEditTopics(c context.Context, query string, pn, ps int) (resp *model.CanEditTopicsResp, err error) {

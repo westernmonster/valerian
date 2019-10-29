@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"time"
+	"valerian/app/service/topic/api"
 	"valerian/app/service/topic/model"
 	"valerian/library/database/sqalx"
 	"valerian/library/database/sqlx/types"
@@ -22,7 +23,7 @@ func (p *Service) checkTopic(c context.Context, node sqalx.Node, topicID int64) 
 	return
 }
 
-func (p *Service) createTopic(c context.Context, node sqalx.Node, aid int64, arg *model.ArgCreateTopic) (id int64, err error) {
+func (p *Service) createTopic(c context.Context, node sqalx.Node, aid int64, arg *api.ArgCreateTopic) (id int64, err error) {
 	item := &model.Topic{
 		ID:              gid.NewID(),
 		Name:            arg.Name,
@@ -41,11 +42,11 @@ func (p *Service) createTopic(c context.Context, node sqalx.Node, aid int64, arg
 	}
 
 	if arg.Avatar != nil {
-		item.Avatar = *arg.Avatar
+		item.Avatar = arg.GetAvatarValue()
 	}
 
 	if arg.Bg != nil {
-		item.Bg = *arg.Bg
+		item.Bg = arg.GetBgValue()
 	}
 
 	if err = p.d.AddTopic(c, node, item); err != nil {
@@ -87,7 +88,7 @@ func (p *Service) createTopic(c context.Context, node sqalx.Node, aid int64, arg
 
 }
 
-func (p *Service) updateTopic(c context.Context, node sqalx.Node, aid int64, arg *model.ArgUpdateTopic) (err error) {
+func (p *Service) updateTopic(c context.Context, node sqalx.Node, aid int64, arg *api.ArgUpdateTopic) (err error) {
 	var isAdmin bool
 	if isAdmin, err = p.isTopicMemberAdmin(c, node, arg.ID, aid); err != nil {
 		return
@@ -109,11 +110,11 @@ func (p *Service) updateTopic(c context.Context, node sqalx.Node, aid int64, arg
 	}
 
 	if arg.Important != nil {
-		s.Important = types.BitBool(*arg.Important)
+		s.Important = types.BitBool(arg.GetImportantValue())
 	}
 
 	if arg.MuteNotification != nil {
-		s.MuteNotification = types.BitBool(*arg.MuteNotification)
+		s.MuteNotification = types.BitBool(arg.GetMuteNotificationValue())
 	}
 
 	if err = p.d.UpdateAccountTopicSetting(c, node, s); err != nil {
@@ -125,48 +126,48 @@ func (p *Service) updateTopic(c context.Context, node sqalx.Node, aid int64, arg
 		return
 	}
 
-	if arg.Avatar != nil && *arg.Avatar != "" {
-		t.Avatar = *arg.Avatar
+	if arg.Avatar != nil && arg.GetAvatarValue() != "" {
+		t.Avatar = arg.GetAvatarValue()
 	}
 
-	if arg.Bg != nil && *arg.Bg != "" {
-		t.Bg = *arg.Bg
+	if arg.Bg != nil && arg.GetBgValue() != "" {
+		t.Bg = arg.GetBgValue()
 	}
 
-	if arg.Name != nil && *arg.Name != "" {
-		t.Name = *arg.Name
+	if arg.Name != nil && arg.GetNameValue() != "" {
+		t.Name = arg.GetNameValue()
 	}
 
-	if arg.Introduction != nil && *arg.Introduction != "" {
-		t.Introduction = *arg.Introduction
+	if arg.Introduction != nil && arg.GetIntroductionValue() != "" {
+		t.Introduction = arg.GetIntroductionValue()
 	}
 
-	if arg.JoinPermission != nil && *arg.JoinPermission != "" {
-		t.JoinPermission = *arg.JoinPermission
+	if arg.JoinPermission != nil && arg.GetJoinPermissionValue() != "" {
+		t.JoinPermission = arg.GetJoinPermissionValue()
 	}
 
-	if arg.EditPermission != nil && *arg.EditPermission != "" {
-		t.EditPermission = *arg.EditPermission
+	if arg.EditPermission != nil && arg.GetEditPermissionValue() != "" {
+		t.EditPermission = arg.GetEditPermissionValue()
 	}
 
-	if arg.ViewPermission != nil && *arg.ViewPermission != "" {
-		t.ViewPermission = *arg.ViewPermission
+	if arg.ViewPermission != nil && arg.GetViewPermissionValue() != "" {
+		t.ViewPermission = arg.GetViewPermissionValue()
 	}
 
-	if arg.CatalogViewType != nil && *arg.CatalogViewType != "" {
-		t.CatalogViewType = *arg.CatalogViewType
+	if arg.CatalogViewType != nil && arg.GetCatalogViewTypeValue() != "" {
+		t.CatalogViewType = arg.GetCatalogViewTypeValue()
 	}
 
 	if arg.IsPrivate != nil {
-		t.IsPrivate = types.BitBool(*arg.IsPrivate)
+		t.IsPrivate = types.BitBool(arg.GetIsPrivateValue())
 	}
 
 	if arg.AllowChat != nil {
-		t.AllowChat = types.BitBool(*arg.AllowChat)
+		t.AllowChat = types.BitBool(arg.GetAllowChatValue())
 	}
 
 	if arg.AllowDiscuss != nil {
-		t.AllowDiscuss = types.BitBool(*arg.AllowDiscuss)
+		t.AllowDiscuss = types.BitBool(arg.GetAllowDiscussValue())
 	}
 
 	if err = p.d.UpdateTopic(c, node, t); err != nil {
@@ -231,12 +232,12 @@ func (p *Service) getTopic(c context.Context, node sqalx.Node, topicID int64) (i
 	return
 }
 
-func (p *Service) getTopicResp(c context.Context, node sqalx.Node, aid, topicID int64) (item *model.TopicResp, err error) {
+func (p *Service) getTopicResp(c context.Context, node sqalx.Node, aid, topicID int64) (item *api.TopicResp, err error) {
 	var t *model.Topic
 	if t, err = p.getTopic(c, node, topicID); err != nil {
 		return
 	}
-	item = &model.TopicResp{
+	item = &api.TopicResp{
 		ID:              t.ID,
 		Avatar:          t.Avatar,
 		Bg:              t.Bg,

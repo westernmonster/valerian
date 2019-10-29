@@ -24,43 +24,87 @@ message Creator {
 }
 
 message TopicInfo {
-    int64 ID = 1 [(gogoproto.jsontag) = "id"];
+    int64 ID = 1;
 
-    string Name = 2 [(gogoproto.jsontag) = "name"];
+    string Name = 2;
 
-    string  Avatar = 3 [(gogoproto.jsontag) = "avatar"] ;
+    string  Avatar = 3;
 
-    string  Bg = 4 [(gogoproto.jsontag) = "bg"] ;
+    string  Bg = 4;
 
-    string  Introduction = 5 [(gogoproto.jsontag) = "introduction"];
+    string  Introduction = 5;
 
-    bool AllowDiscuss = 6 [(gogoproto.jsontag) = "allow_discuss"];
+    bool AllowDiscuss = 6;
 
-    bool AllowChat = 7 [(gogoproto.jsontag) = "allow_chat"];
+    bool AllowChat = 7;
 
-    bool IsPrivate = 8 [(gogoproto.jsontag) = "is_private"];
+    bool IsPrivate = 8;
 
-    string ViewPermission = 9 [(gogoproto.jsontag) = "view_permission"];
+    string ViewPermission = 9;
 
-    string EditPermission = 10 [(gogoproto.jsontag) = "edit_permission"];
+    string EditPermission = 10;
 
-    string JoinPermission = 11 [(gogoproto.jsontag) = "join_permission"];
+    string JoinPermission = 11;
 
-    string CatalogViewType = 12 [(gogoproto.jsontag) = "catalog_view_type"];
+    string CatalogViewType = 12;
 
-    string TopicHome = 13 [(gogoproto.jsontag) = "topic_home"];
+    string TopicHome = 13;
 
-    Creator  Creator  = 14 [(gogoproto.jsontag) = "creator"];
-
-    // unix timestamp
-    int64 CreatedAt = 15 [(gogoproto.jsontag) = "created_at"];
+    Creator  Creator  = 14;
 
     // unix timestamp
-    int64 UpdatedAt = 16 [(gogoproto.jsontag) = "updated_at"];
+    int64 CreatedAt = 15;
 
-    TopicStat Stat = 17 [(gogoproto.jsontag) = "stat"];
+    // unix timestamp
+    int64 UpdatedAt = 16;
+
+    TopicStat Stat = 17;
 
 }
+
+message TopicRootCatalogInfo {
+    int64 ID = 1;
+    string Name = 2;
+    int32 Seq = 3;
+    string Type = 4;
+    int64 RefID = 6;
+    TargetArticle Article = 7;
+    repeated  TopicParentCatalogInfo Children = 8;
+}
+
+message TopicParentCatalogInfo {
+    int64 ID = 1;
+    string Name = 2;
+    int32 Seq = 3;
+    string Type = 4;
+    int64 RefID = 5;
+    TargetArticle Article = 7;
+    repeated  TopicChildCatalogInfo Children = 8;
+}
+
+message TopicChildCatalogInfo {
+    int64 ID = 1;
+    string Name = 2;
+    int32 Seq = 3;
+    string Type = 4;
+    int64 RefID = 5;
+    TargetArticle Article = 7;
+}
+
+message TargetArticle {
+    int64 ID  = 1;
+    string Title  = 2;
+    string Excerpt = 3;
+    repeated string ImageUrls  = 4;
+    int32 LikeCount = 5;
+    int32 DislikeCount = 6;
+    int32 ReviseCount  = 7;
+    int32 CommentCount  = 8;
+    int64 CreatedAt = 9;
+    int64 UpdatedAt = 10;
+    Creator Creator = 11;
+}
+
 
 message TopicStat {
     int32 MemberCount = 1 [(gogoproto.jsontag) = "member_count"];
@@ -143,6 +187,101 @@ message IDsResp {
     repeated int64 IDs = 1 [(gogoproto.jsontag) = 'ids'];
 }
 
+message IDReq {
+    int64 ID = 1 [(gogoproto.jsontag) = 'id'];
+    string Include = 2;
+}
+
+
+message IDResp {
+    int64 ID = 1 [(gogoproto.jsontag) = 'id'];
+}
+
+message TopicResp {
+    int64 ID = 1;
+
+    string Name = 2;
+
+    string  Avatar = 3;
+
+    string  Bg = 4;
+
+    string  Introduction = 5;
+
+    bool AllowDiscuss = 6;
+
+    bool AllowChat = 7;
+
+    bool IsPrivate = 8;
+
+    string ViewPermission = 9;
+
+    string EditPermission = 10;
+
+    string JoinPermission = 11;
+
+    string CatalogViewType = 12;
+
+    string TopicHome = 13;
+
+    Creator  Creator  = 14;
+
+    // unix timestamp
+    int64 CreatedAt = 15;
+
+    // unix timestamp
+    int64 UpdatedAt = 16;
+
+
+    bool MuteNotification = 18;
+
+    bool Important = 19;
+
+    TopicStat Stat = 20;
+
+    bool HasCatalogTaxonomy = 21;
+
+    repeated TopicMemberInfo Members = 22;
+
+    repeated TopicRootCatalogInfo Catalogs = 24;
+
+    repeated DiscussCategoryInfo DiscussCategories = 25;
+
+    repeated AuthTopicInfo AuthTopics = 26;
+
+    TopicMetaInfo TopicMeta = 27;
+}
+
+
+message TopicMemberInfo {
+    int64 AccountID = 1;
+    string Role = 2;
+    string Avatar = 3;
+    string UserName = 4;
+}
+
+message AuthTopicInfo {
+    int64 ToTopicID = 1;
+    string EditPermission = 2;
+    string Permission = 3;
+    int32 MemberCount = 4;
+    string Avatar = 5;
+    string Name = 6;
+}
+
+message DiscussCategoryInfo {
+    int64 ID = 1;
+    int64 TopicID = 2;
+    string Name = 3;
+    int32 Seq = 4;
+}
+
+
+message ArgChangeOwner {
+    int64 TopicID = 1;
+    int64 ToAccountID = 2;
+}
+
 
 message ArgCreateTopic {
     oneof Avatar {
@@ -164,8 +303,75 @@ message ArgCreateTopic {
     bool AllowChat = 8;
 }
 
+message ArgUpdateTopic {
+    int64 ID = 1;
+
+    oneof Avatar {
+        string AvatarValue = 2;
+    }
+
+    oneof Bg {
+        string BgValue = 3;
+    }
+
+    oneof Name {
+        string NameValue = 4;
+    }
+
+    oneof Introduction {
+        string IntroductionValue = 5;
+    }
+
+    oneof CatalogViewType {
+        string CatalogViewTypeValue = 6;
+    }
+
+    oneof AllowChat {
+        bool AllowChatValue = 7;
+    }
+
+    oneof AllowDiscuss {
+        bool AllowDiscussValue = 8;
+    }
+
+    oneof IsPrivate {
+        bool IsPrivateValue = 9;
+    }
+
+    oneof ViewPermission {
+        string ViewPermissionValue = 10;
+    }
+
+    oneof EditPermission {
+        string EditPermissionValue = 11;
+    }
+
+    oneof JoinPermission {
+        string JoinPermissionValue = 12;
+    }
+
+    oneof Important {
+        bool ImportantValue = 13;
+    }
+
+    oneof MuteNotification {
+        bool MuteNotificationValue = 14;
+    }
+
+}
+
 
 service Topic {
+    rpc  CreateTopic(ArgCreateTopic) returns (IDResp);
+
+    rpc  UpdateTopic(ArgUpdateTopic) returns (EmptyStruct);
+
+    rpc  DelTopic(IDReq) returns (EmptyStruct);
+
+    rpc  GetTopicResp(IDReq) returns (TopicResp);
+
+    rpc  ChangeOwner(ArgChangeOwner) returns (EmptyStruct);
+
     rpc  GetAllTopics(EmptyStruct) returns (AllTopicsResp);
 
     rpc  GetTopicInfo(TopicReq) returns (TopicInfo);

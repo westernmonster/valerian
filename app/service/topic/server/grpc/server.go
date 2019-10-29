@@ -40,6 +40,46 @@ type server struct {
 	svr *service.Service
 }
 
+func (s *server) CreateTopic(ctx context.Context, arg *api.ArgCreateTopic) (*api.IDResp, error) {
+	id, err := s.svr.CreateTopic(ctx, arg)
+	if err != nil {
+		return nil, err
+	}
+	return &api.IDResp{ID: id}, nil
+}
+
+func (s *server) UpdateTopic(ctx context.Context, arg *api.ArgUpdateTopic) (*api.EmptyStruct, error) {
+	err := s.svr.UpdateTopic(ctx, arg)
+	if err != nil {
+		return nil, err
+	}
+	return &api.EmptyStruct{}, nil
+}
+
+func (s *server) DelTopic(ctx context.Context, arg *api.IDReq) (*api.EmptyStruct, error) {
+	err := s.svr.DelTopic(ctx, arg.ID)
+	if err != nil {
+		return nil, err
+	}
+	return &api.EmptyStruct{}, nil
+}
+
+func (s *server) ChangeOwner(ctx context.Context, arg *api.ArgChangeOwner) (*api.EmptyStruct, error) {
+	err := s.svr.ChangeOwner(ctx, arg)
+	if err != nil {
+		return nil, err
+	}
+	return &api.EmptyStruct{}, nil
+}
+
+func (s *server) GetTopicResp(ctx context.Context, arg *api.IDReq) (*api.TopicResp, error) {
+	resp, err := s.svr.GetTopicResp(ctx, arg.ID, arg.Include)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
 func (s *server) GetTopicInfo(ctx context.Context, req *api.TopicReq) (*api.TopicInfo, error) {
 	resp, err := s.svr.GetTopic(ctx, req.ID)
 	if err != nil {
@@ -106,7 +146,7 @@ func (s *server) GetTopicMeta(ctx context.Context, req *api.TopicMetaReq) (resp 
 		return nil, err
 	}
 
-	return api.FromTopicMeta(meta), nil
+	return meta, err
 }
 
 func (s *server) GetTopicPermission(ctx context.Context, req *api.TopicPermissionReq) (resp *api.TopicPermissionInfo, err error) {
