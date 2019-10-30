@@ -12,7 +12,7 @@ func topicCatalogKey(topicID int64) string {
 	return fmt.Sprintf("t_catalog_%d", topicID)
 }
 
-func (p *Dao) SetTopicCatalogCache(c context.Context, topicID int64, m []*model.TopicLevel1Catalog) (err error) {
+func (p *Dao) SetTopicCatalogCache(c context.Context, topicID int64, m []*model.TopicRootCatalog) (err error) {
 	key := topicCatalogKey(topicID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
@@ -24,7 +24,7 @@ func (p *Dao) SetTopicCatalogCache(c context.Context, topicID int64, m []*model.
 	return
 }
 
-func (p *Dao) TopicCatalogCache(c context.Context, topicID int64) (m []*model.TopicLevel1Catalog, err error) {
+func (p *Dao) TopicCatalogCache(c context.Context, topicID int64) (m []*model.TopicRootCatalog, err error) {
 	key := topicCatalogKey(topicID)
 	conn := p.mc.Get(c)
 	defer conn.Close()

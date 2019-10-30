@@ -226,7 +226,7 @@ func (p *Service) createCatalog(c context.Context, node sqalx.Node, item *model.
 
 }
 
-func (p *Service) saveCatalogs(c context.Context, node sqalx.Node, aid int64, req *model.ArgSaveTopicCatalog) (delArticles []*model.ArticleItem, newArticles []*model.ArticleItem, err error) {
+func (p *Service) saveCatalogs(c context.Context, node sqalx.Node, aid int64, req *api.ArgSaveTopicCatalog) (delArticles []*model.ArticleItem, newArticles []*model.ArticleItem, err error) {
 	newArticles = make([]*model.ArticleItem, 0)
 	delArticles = make([]*model.ArticleItem, 0)
 
@@ -278,7 +278,7 @@ func (p *Service) saveCatalogs(c context.Context, node sqalx.Node, aid int64, re
 
 		// Deal Move Logic
 		var item *model.TopicCatalog
-		if item, err = p.d.GetTopicCatalogByID(c, node, *v.ID); err != nil {
+		if item, err = p.d.GetTopicCatalogByID(c, node, v.GetIDValue()); err != nil {
 			return
 		} else if item == nil {
 			err = ecode.TopicCatalogNotExist
@@ -299,7 +299,7 @@ func (p *Service) saveCatalogs(c context.Context, node sqalx.Node, aid int64, re
 			}
 		}
 
-		dic[*v.ID] = dicItem{Done: true}
+		dic[v.GetIDValue()] = dicItem{Done: true}
 
 		item.Name = v.Name
 		item.Seq = v.Seq

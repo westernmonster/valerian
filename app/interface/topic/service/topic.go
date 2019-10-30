@@ -2,29 +2,11 @@ package service
 
 import (
 	"context"
-	"fmt"
-	"time"
 	"valerian/app/interface/topic/model"
-	discuss "valerian/app/service/discuss/api"
 	topic "valerian/app/service/topic/api"
-	"valerian/library/database/sqalx"
-	"valerian/library/database/sqlx/types"
 	"valerian/library/ecode"
-	"valerian/library/gid"
-	"valerian/library/log"
 	"valerian/library/net/metadata"
 )
-
-func (p *Service) checkTopic(c context.Context, node sqalx.Node, topicID int64) (err error) {
-	var t *model.Topic
-	if t, err = p.d.GetTopicByID(c, node, topicID); err != nil {
-		return
-	} else if t == nil {
-		return ecode.TopicNotExist
-	}
-
-	return
-}
 
 func (p *Service) CreateTopic(c context.Context, arg *model.ArgCreateTopic) (topicID int64, err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
@@ -34,6 +16,7 @@ func (p *Service) CreateTopic(c context.Context, arg *model.ArgCreateTopic) (top
 	}
 
 	item := &topic.ArgCreateTopic{
+		Aid:             aid,
 		Name:            arg.Name,
 		Introduction:    arg.Introduction,
 		CatalogViewType: arg.CatalogViewType,
@@ -46,7 +29,7 @@ func (p *Service) CreateTopic(c context.Context, arg *model.ArgCreateTopic) (top
 	if arg.Bg != nil {
 		item.Bg = &topic.ArgCreateTopic_BgValue{*arg.Bg}
 	}
-	if topicID, err = p.d.CreateTopic(c, aid, item); err != nil {
+	if topicID, err = p.d.CreateTopic(c, item); err != nil {
 		return
 	}
 
@@ -60,213 +43,60 @@ func (p *Service) UpdateTopic(c context.Context, arg *model.ArgUpdateTopic) (err
 		return
 	}
 
-	if err = p.checkTopic(c, p.d.DB(), arg.ID); err != nil {
+	item := &topic.ArgUpdateTopic{
+		Aid: aid,
+		ID:  arg.ID,
+	}
+	if arg.Avatar != nil {
+		item.Avatar = &topic.ArgUpdateTopic_AvatarValue{*arg.Avatar}
+	}
+	if arg.Bg != nil {
+		item.Bg = &topic.ArgUpdateTopic_BgValue{*arg.Bg}
+	}
+
+	if arg.Name != nil {
+		item.Name = &topic.ArgUpdateTopic_NameValue{*arg.Name}
+	}
+
+	if arg.Introduction != nil {
+		item.Introduction = &topic.ArgUpdateTopic_IntroductionValue{*arg.Introduction}
+	}
+
+	if arg.CatalogViewType != nil {
+		item.CatalogViewType = &topic.ArgUpdateTopic_CatalogViewTypeValue{*arg.CatalogViewType}
+	}
+
+	if arg.AllowChat != nil {
+		item.AllowChat = &topic.ArgUpdateTopic_AllowChatValue{*arg.AllowChat}
+	}
+
+	if arg.AllowDiscuss != nil {
+		item.AllowDiscuss = &topic.ArgUpdateTopic_AllowDiscussValue{*arg.AllowDiscuss}
+	}
+
+	if arg.IsPrivate != nil {
+		item.IsPrivate = &topic.ArgUpdateTopic_IsPrivateValue{*arg.IsPrivate}
+	}
+	if arg.ViewPermission != nil {
+		item.ViewPermission = &topic.ArgUpdateTopic_ViewPermissionValue{*arg.ViewPermission}
+	}
+	if arg.EditPermission != nil {
+		item.EditPermission = &topic.ArgUpdateTopic_EditPermissionValue{*arg.EditPermission}
+	}
+	if arg.JoinPermission != nil {
+		item.JoinPermission = &topic.ArgUpdateTopic_JoinPermissionValue{*arg.JoinPermission}
+	}
+	if arg.Important != nil {
+		item.Important = &topic.ArgUpdateTopic_ImportantValue{*arg.Important}
+	}
+	if arg.MuteNotification != nil {
+		item.MuteNotification = &topic.ArgUpdateTopic_MuteNotificationValue{*arg.MuteNotification}
+	}
+
+	if err = p.d.UpdateTopic(c, item); err != nil {
 		return
 	}
 
-	if err = p.updateTopic(c, p.d.DB(), aid, arg); err != nil {
-		return
-	}
-
-	p.addCache(func() {
-		p.onTopicUpdated(context.Background(), arg.ID, aid, time.Now().Unix())
-	})
-
-	return
-}
-
-func (p *Service) updateTopic(c context.Context, node sqalx.Node, aid int64, arg *model.ArgUpdateTopic) (err error) {
-	var tx sqalx.Node
-	if tx, err = node.Beginx(c); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
-		return
-	}
-
-	defer func() {
-		if err != nil {
-			if err1 := tx.Rollback(); err1 != nil {
-				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
-			}
-			return
-		}
-	}()
-
-	var isAdmin bool
-	if isAdmin, err = p.isTopicMemberAdmin(c, tx, arg.ID, aid); err != nil {
-		return
-	}
-
-	var t *model.Topic
-	if t, err = p.d.GetTopicByID(c, tx, arg.ID); err != nil {
-		return
-	} else if t == nil {
-		return ecode.TopicNotExist
-	}
-
-	if isAdmin {
-		if arg.Avatar != nil && *arg.Avatar != "" {
-			t.Avatar = *arg.Avatar
-		}
-
-		if arg.Bg != nil && *arg.Bg != "" {
-			t.Bg = *arg.Bg
-		}
-
-		if arg.Name != nil && *arg.Name != "" {
-			t.Name = *arg.Name
-		}
-
-		if arg.Introduction != nil && *arg.Introduction != "" {
-			t.Introduction = *arg.Introduction
-		}
-
-		if arg.JoinPermission != nil && *arg.JoinPermission != "" {
-			t.JoinPermission = *arg.JoinPermission
-		}
-
-		if arg.EditPermission != nil && *arg.EditPermission != "" {
-			t.EditPermission = *arg.EditPermission
-		}
-
-		if arg.ViewPermission != nil && *arg.ViewPermission != "" {
-			t.ViewPermission = *arg.ViewPermission
-		}
-
-		if arg.CatalogViewType != nil && *arg.CatalogViewType != "" {
-			t.CatalogViewType = *arg.CatalogViewType
-		}
-
-		if arg.IsPrivate != nil {
-			t.IsPrivate = types.BitBool(*arg.IsPrivate)
-		}
-
-		if arg.AllowChat != nil {
-			t.AllowChat = types.BitBool(*arg.AllowChat)
-		}
-
-		if arg.AllowDiscuss != nil {
-			t.AllowDiscuss = types.BitBool(*arg.AllowDiscuss)
-		}
-
-		var s *model.AccountTopicSetting
-		if s, err = p.d.GetAccountTopicSettingByCond(c, tx, map[string]interface{}{"account_id": aid, "topic_id": t.ID}); err != nil {
-			return
-		} else if s == nil {
-			err = ecode.AccountTopicSettingNotExist
-			return
-		}
-
-		if arg.Important != nil {
-			s.Important = types.BitBool(*arg.Important)
-		}
-
-		if arg.MuteNotification != nil {
-			s.MuteNotification = types.BitBool(*arg.MuteNotification)
-		}
-
-		if err = p.d.UpdateAccountTopicSetting(c, tx, s); err != nil {
-			return
-		}
-
-		if err = p.d.UpdateTopic(c, tx, t); err != nil {
-			return
-		}
-	} else {
-		var s *model.AccountTopicSetting
-		if s, err = p.d.GetAccountTopicSettingByCond(c, tx, map[string]interface{}{"account_id": aid, "topic_id": t.ID}); err != nil {
-			return
-		} else if s == nil {
-			err = ecode.AccountTopicSettingNotExist
-			return
-		}
-
-		if arg.Important != nil {
-			s.Important = types.BitBool(*arg.Important)
-		}
-
-		if arg.MuteNotification != nil {
-			s.MuteNotification = types.BitBool(*arg.MuteNotification)
-		}
-
-		if err = p.d.UpdateAccountTopicSetting(c, tx, s); err != nil {
-			return
-		}
-	}
-
-	if err = tx.Commit(); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
-	}
-
-	p.addCache(func() {
-		p.d.DelAccountTopicSettingCache(context.TODO(), aid, t.ID)
-		p.d.DelTopicCache(context.TODO(), arg.ID)
-	})
-	return
-}
-
-func (p *Service) GetBaseTopic(c context.Context, topicID int64) (item *model.Topic, err error) {
-	return p.getTopic(c, p.d.DB(), topicID)
-}
-
-func (p *Service) getTopic(c context.Context, node sqalx.Node, topicID int64) (item *model.Topic, err error) {
-	var addCache = true
-	if item, err = p.d.TopicCache(c, topicID); err != nil {
-		addCache = false
-	} else if item != nil {
-		return
-	}
-
-	if item, err = p.d.GetTopicByID(c, node, topicID); err != nil {
-		return
-	} else if item == nil {
-		return nil, ecode.TopicNotExist
-	}
-
-	if addCache {
-		p.addCache(func() {
-			p.d.SetTopicCache(context.TODO(), item)
-		})
-	}
-
-	return
-}
-
-func (p *Service) getTopicResp(c context.Context, node sqalx.Node, topicID int64) (item *model.TopicResp, err error) {
-	var t *model.Topic
-	if t, err = p.getTopic(c, node, topicID); err != nil {
-		return
-	}
-
-	aid, ok := metadata.Value(c, metadata.Aid).(int64)
-	if !ok {
-		err = ecode.AcquireAccountIDFailed
-		return
-	}
-
-	item = &model.TopicResp{
-		ID:              t.ID,
-		Avatar:          t.Avatar,
-		Bg:              t.Bg,
-		Name:            t.Name,
-		Introduction:    t.Introduction,
-		CatalogViewType: t.CatalogViewType,
-		TopicHome:       t.TopicHome,
-		IsPrivate:       bool(t.IsPrivate),
-		AllowChat:       bool(t.AllowChat),
-		AllowDiscuss:    bool(t.AllowDiscuss),
-		ViewPermission:  t.ViewPermission,
-		EditPermission:  t.EditPermission,
-		JoinPermission:  t.JoinPermission,
-		CreatedAt:       t.CreatedAt,
-	}
-
-	var s *model.AccountTopicSetting
-	if s, err = p.getAccountTopicSetting(c, node, aid, topicID); err != nil {
-		return
-	}
-
-	item.Important = bool(s.Important)
-	item.MuteNotification = bool(s.MuteNotification)
 	return
 }
 
@@ -277,95 +107,190 @@ func (p *Service) GetTopic(c context.Context, topicID int64, include string) (it
 		return
 	}
 
-	if item, err = p.getTopicResp(c, p.d.DB(), topicID); err != nil {
+	var t *topic.TopicResp
+	if t, err = p.d.GetTopicResp(c, &topic.IDReq{ID: topicID, Aid: aid, Include: include}); err != nil {
 		return
 	}
-	inc := includeParam(include)
-	if inc["members"] {
-		if item.MemberCount, item.Members, err = p.getTopicMembers(c, p.d.DB(), topicID, 10); err != nil {
-			return
+
+	item = &model.TopicResp{
+		ID:                 t.ID,
+		Name:               t.Name,
+		Bg:                 t.Bg,
+		Avatar:             t.Avatar,
+		Introduction:       t.Introduction,
+		CatalogViewType:    t.CatalogViewType,
+		TopicHome:          t.TopicHome,
+		IsPrivate:          t.IsPrivate,
+		AllowChat:          t.AllowChat,
+		AllowDiscuss:       t.AllowDiscuss,
+		MuteNotification:   t.MuteNotification,
+		EditPermission:     t.EditPermission,
+		JoinPermission:     t.JoinPermission,
+		ViewPermission:     t.ViewPermission,
+		Important:          t.Important,
+		CreatedAt:          t.CreatedAt,
+		HasCatalogTaxonomy: t.HasCatalogTaxonomy,
+		MemberCount:        t.Stat.MemberCount,
+		Members:            make([]*model.TopicMemberResp, 0),
+		Catalogs:           make([]*model.TopicRootCatalog, 0),
+		AuthTopics:         make([]*model.AuthTopicResp, 0),
+		DiscussCategories:  make([]*model.DiscussCategoryResp, 0),
+	}
+
+	if t.Creator != nil {
+		item.Creator = &model.Creator{
+			ID:           t.Creator.ID,
+			Avatar:       t.Creator.Avatar,
+			UserName:     t.Creator.UserName,
+			Introduction: t.Creator.Introduction,
 		}
 	}
 
-	if inc["catalogs"] {
-		if item.Catalogs, err = p.getCatalogsHierarchy(c, p.d.DB(), topicID); err != nil {
-			return
+	if t.Members != nil {
+		for _, v := range t.Members {
+			item.Members = append(item.Members, &model.TopicMemberResp{
+				AccountID: v.AccountID,
+				Role:      v.Role,
+				Avatar:    v.Avatar,
+				UserName:  v.UserName,
+			})
 		}
 	}
 
-	if inc["discuss_categories"] {
-		var resp *discuss.CategoriesResp
-		if resp, err = p.d.GetDiscussionCategories(c, topicID); err != nil {
-			return
+	if t.Catalogs != nil {
+		item.Catalogs = p.FromCatalogs(t.Catalogs)
+	}
+
+	if t.AuthTopics != nil {
+		for _, v := range t.AuthTopics {
+			item.AuthTopics = append(item.AuthTopics, &model.AuthTopicResp{
+				ToTopicID:      v.ToTopicID,
+				EditPermission: v.EditPermission,
+				Permission:     v.Permission,
+				MemberCount:    v.MemberCount,
+				Avatar:         v.Avatar,
+				Name:           v.Name,
+			})
 		}
+	}
 
-		item.DiscussCategories = make([]*model.DiscussCategoryResp, len(resp.Items))
-
-		for i, v := range resp.Items {
-			item.DiscussCategories[i] = &model.DiscussCategoryResp{
+	if t.DiscussCategories != nil {
+		for _, v := range t.DiscussCategories {
+			item.DiscussCategories = append(item.DiscussCategories, &model.DiscussCategoryResp{
 				ID:      v.ID,
 				TopicID: v.TopicID,
 				Name:    v.Name,
-				Seq:     int(v.Seq),
+				Seq:     v.Seq,
+			})
+		}
+	}
+
+	if t.Members != nil {
+		for _, v := range t.Members {
+			item.Members = append(item.Members, &model.TopicMemberResp{
+				AccountID: v.AccountID,
+				Role:      v.Role,
+				UserName:  v.UserName,
+				Avatar:    v.Avatar,
+			})
+		}
+	}
+
+	return
+}
+
+func (p *Service) FromCatalogs(items []*topic.TopicRootCatalogInfo) (resp []*model.TopicRootCatalog) {
+	resp = make([]*model.TopicRootCatalog, 0)
+	for _, v := range items {
+		root := &model.TopicRootCatalog{
+			ID:       &v.ID,
+			Name:     v.Name,
+			Type:     v.Type,
+			RefID:    v.RefID,
+			Children: make([]*model.TopicParentCatalog, 0),
+		}
+		if v.Article != nil {
+			root.Article = &model.TargetArticle{
+				ID:           v.Article.ID,
+				Title:        v.Article.Title,
+				Excerpt:      v.Article.Excerpt,
+				LikeCount:    v.Article.LikeCount,
+				DislikeCount: v.Article.DislikeCount,
+				ReviseCount:  v.Article.ReviseCount,
+				CommentCount: v.Article.CommentCount,
+				CreatedAt:    v.Article.CreatedAt,
+				UpdatedAt:    v.Article.UpdatedAt,
+				Creator: &model.Creator{
+					ID:           v.Article.Creator.ID,
+					Avatar:       v.Article.Creator.Avatar,
+					UserName:     v.Article.Creator.UserName,
+					Introduction: v.Article.Creator.Introduction,
+				},
 			}
 		}
-	}
 
-	if inc["auth_topics"] {
-		if item.AuthTopics, err = p.getAuthTopicsResp(c, p.d.DB(), topicID); err != nil {
-			return
+		if v.Children != nil {
+			for _, x := range v.Children {
+				parent := &model.TopicParentCatalog{
+					ID:       &x.ID,
+					Name:     x.Name,
+					Type:     x.Type,
+					RefID:    x.RefID,
+					Children: make([]*model.TopicChildCatalog, 0),
+				}
+				if x.Article != nil {
+					root.Article = &model.TargetArticle{
+						ID:           x.Article.ID,
+						Title:        x.Article.Title,
+						Excerpt:      x.Article.Excerpt,
+						LikeCount:    x.Article.LikeCount,
+						DislikeCount: x.Article.DislikeCount,
+						ReviseCount:  x.Article.ReviseCount,
+						CommentCount: x.Article.CommentCount,
+						CreatedAt:    x.Article.CreatedAt,
+						UpdatedAt:    x.Article.UpdatedAt,
+						Creator: &model.Creator{
+							ID:           x.Article.Creator.ID,
+							Avatar:       x.Article.Creator.Avatar,
+							UserName:     x.Article.Creator.UserName,
+							Introduction: x.Article.Creator.Introduction,
+						},
+					}
+				}
+				if x.Children != nil {
+					for _, j := range x.Children {
+						child := &model.TopicChildCatalog{
+							ID:    &j.ID,
+							Name:  j.Name,
+							Type:  j.Type,
+							RefID: j.RefID,
+						}
+						if j.Article != nil {
+							child.Article = &model.TargetArticle{
+								ID:           j.Article.ID,
+								Title:        j.Article.Title,
+								Excerpt:      j.Article.Excerpt,
+								LikeCount:    j.Article.LikeCount,
+								DislikeCount: j.Article.DislikeCount,
+								ReviseCount:  j.Article.ReviseCount,
+								CommentCount: j.Article.CommentCount,
+								CreatedAt:    j.Article.CreatedAt,
+								UpdatedAt:    j.Article.UpdatedAt,
+								Creator: &model.Creator{
+									ID:           j.Article.Creator.ID,
+									Avatar:       j.Article.Creator.Avatar,
+									UserName:     j.Article.Creator.UserName,
+									Introduction: j.Article.Creator.Introduction,
+								},
+							}
+						}
+						parent.Children = append(parent.Children, child)
+					}
+				}
+				root.Children = append(root.Children, parent)
+			}
 		}
+		resp = append(resp, root)
 	}
-
-	if inc["meta"] {
-		if item.TopicMeta, err = p.GetTopicMeta(c, aid, topicID); err != nil {
-			return
-		}
-	}
-
-	if item.HasCatalogTaxonomy, err = p.d.HasTaxonomy(c, p.d.DB(), topicID); err != nil {
-		return
-	}
-
-	p.addCache(func() {
-		p.onTopicViewed(context.Background(), topicID, aid, time.Now().Unix())
-	})
-
-	return
-}
-
-func (p *Service) getAccountTopicSetting(c context.Context, node sqalx.Node, aid, topicID int64) (item *model.AccountTopicSetting, err error) {
-	var addCache = true
-	if item, err = p.d.AccountTopicSettingCache(c, aid, topicID); err != nil {
-		addCache = false
-	} else if item != nil {
-		return
-	}
-
-	if item, err = p.d.GetAccountTopicSettingByCond(c, node, map[string]interface{}{"account_id": aid, "topic_id": topicID}); err != nil {
-		return
-	} else if item == nil {
-		item = &model.AccountTopicSetting{
-			ID:               gid.NewID(),
-			AccountID:        aid,
-			TopicID:          topicID,
-			Important:        false,
-			MuteNotification: false,
-			Fav:              false,
-			CreatedAt:        time.Now().Unix(),
-			UpdatedAt:        time.Now().Unix(),
-		}
-	}
-
-	if addCache {
-		p.addCache(func() {
-			p.d.SetAccountTopicSettingCache(context.TODO(), item)
-		})
-	}
-
-	return
-}
-
-func (p *Service) DelTopic(c context.Context, topicID int64) (err error) {
 	return
 }

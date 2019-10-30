@@ -231,35 +231,3 @@ func (p *Service) getTopic(c context.Context, node sqalx.Node, topicID int64) (i
 
 	return
 }
-
-func (p *Service) getTopicResp(c context.Context, node sqalx.Node, aid, topicID int64) (item *api.TopicResp, err error) {
-	var t *model.Topic
-	if t, err = p.getTopic(c, node, topicID); err != nil {
-		return
-	}
-	item = &api.TopicResp{
-		ID:              t.ID,
-		Avatar:          t.Avatar,
-		Bg:              t.Bg,
-		Name:            t.Name,
-		Introduction:    t.Introduction,
-		CatalogViewType: t.CatalogViewType,
-		TopicHome:       t.TopicHome,
-		IsPrivate:       bool(t.IsPrivate),
-		AllowChat:       bool(t.AllowChat),
-		AllowDiscuss:    bool(t.AllowDiscuss),
-		ViewPermission:  t.ViewPermission,
-		EditPermission:  t.EditPermission,
-		JoinPermission:  t.JoinPermission,
-		CreatedAt:       t.CreatedAt,
-	}
-
-	var s *model.AccountTopicSetting
-	if s, err = p.getAccountTopicSetting(c, node, aid, topicID); err != nil {
-		return
-	}
-
-	item.Important = bool(s.Important)
-	item.MuteNotification = bool(s.MuteNotification)
-	return
-}

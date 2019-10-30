@@ -132,9 +132,35 @@ func (p *Service) UpdateTopic(c context.Context, arg *api.ArgUpdateTopic) (err e
 }
 
 func (p *Service) GetTopicResp(c context.Context, aid int64, topicID int64, include string) (item *api.TopicResp, err error) {
-	if item, err = p.getTopicResp(c, p.d.DB(), aid, topicID); err != nil {
+	var t *model.Topic
+	if t, err = p.getTopic(c, p.d.DB(), topicID); err != nil {
 		return
 	}
+	item = &api.TopicResp{
+		ID:              t.ID,
+		Avatar:          t.Avatar,
+		Bg:              t.Bg,
+		Name:            t.Name,
+		Introduction:    t.Introduction,
+		CatalogViewType: t.CatalogViewType,
+		TopicHome:       t.TopicHome,
+		IsPrivate:       bool(t.IsPrivate),
+		AllowChat:       bool(t.AllowChat),
+		AllowDiscuss:    bool(t.AllowDiscuss),
+		ViewPermission:  t.ViewPermission,
+		EditPermission:  t.EditPermission,
+		JoinPermission:  t.JoinPermission,
+		CreatedAt:       t.CreatedAt,
+	}
+
+	var s *model.AccountTopicSetting
+	if s, err = p.getAccountTopicSetting(c, p.d.DB(), aid, topicID); err != nil {
+		return
+	}
+
+	item.Important = bool(s.Important)
+	item.MuteNotification = bool(s.MuteNotification)
+
 	inc := includeParam(include)
 	if inc["members"] {
 		// if item.MemberCount, item.Members, err = p.getTopicMembers(c, p.d.DB(), topicID, 10); err != nil {
@@ -176,6 +202,30 @@ func (p *Service) GetTopicResp(c context.Context, aid int64, topicID int64, incl
 		if item.TopicMeta, err = p.GetTopicMeta(c, aid, topicID); err != nil {
 			return
 		}
+	}
+
+	if inc["creator"] {
+		var acc *account.BaseInfoReply
+		if acc, err = p.d.GetAccountBaseInfo(c, t.CreatedBy); err != nil {
+			return
+		}
+
+		item.Creator = &api.Creator{
+			ID:           acc.ID,
+			UserName:     acc.UserName,
+			Avatar:       acc.Avatar,
+			Introduction: acc.Introduction,
+		}
+	}
+
+	var stat *model.TopicStat
+	if stat, err = p.d.GetTopicStatByID(c, p.d.DB(), topicID); err != nil {
+		return
+	}
+	item.Stat = &api.TopicStat{
+		MemberCount:     stat.MemberCount,
+		ArticleCount:    stat.ArticleCount,
+		DiscussionCount: stat.DiscussionCount,
 	}
 
 	if item.HasCatalogTaxonomy, err = p.d.HasTaxonomy(c, p.d.DB(), topicID); err != nil {

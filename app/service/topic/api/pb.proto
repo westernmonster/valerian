@@ -281,6 +281,7 @@ message DiscussCategoryInfo {
 message ArgChangeOwner {
     int64 TopicID = 1;
     int64 ToAccountID = 2;
+    int64 Aid  = 3;
 }
 
 
@@ -363,6 +364,41 @@ message ArgUpdateTopic {
 
     int64 Aid  = 15;
 
+}
+
+message TopicMembersPagedResp {
+    int32 Count = 1;
+    int32 PageSize = 2;
+    repeated TopicMemberInfo Data = 3;
+}
+
+message ArgBatchSavedTopicMember {
+    int64 TopicID = 1;
+    repeated ArgTopicMember Members = 2;
+    int64 Aid  = 3;
+}
+
+message ArgTopicMember {
+    int64 AccountID = 1;
+    string Role = 2;
+    string Opt = 3;
+}
+
+message ArgSaveTopicCatalog {
+    int64 TopicID = 1;
+    int64 ParentID = 2;
+    repeated  ArgTopicCatalog Items = 3;
+    int64 Aid  = 4;
+}
+
+message ArgTopicCatalog {
+    oneof ID {
+        int64 IDValue = 1;
+    }
+    string Name = 2;
+    int32 Seq = 3;
+    string Type = 4;
+    int64 RefID = 5;
 }
 
 

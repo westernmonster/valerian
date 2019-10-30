@@ -73,13 +73,13 @@ type TargetArticle struct {
 	// 图片
 	ImageUrls []string `json:"images"`
 	// 喜欢数
-	LikeCount int `json:"like_count"`
+	LikeCount int32 `json:"like_count"`
 	// 反对数
-	DislikeCount int `json:"dislike_count"`
+	DislikeCount int32 `json:"dislike_count"`
 	// 补充个数
-	ReviseCount int `json:"revise_count"`
+	ReviseCount int32 `json:"revise_count"`
 	// 评论数
-	CommentCount int `json:"comment_count"`
+	CommentCount int32 `json:"comment_count"`
 
 	// 创建时间
 	CreatedAt int64 `json:"created_at"`
@@ -100,13 +100,13 @@ type TargetDiscussion struct {
 	Images []string `json:"images"`
 
 	// 喜欢数
-	LikeCount int `json:"like_count"`
+	LikeCount int32 `json:"like_count"`
 
 	// 反对数
-	DislikeCount int `json:"dislike_count"`
+	DislikeCount int32 `json:"dislike_count"`
 
 	// 评论数
-	CommentCount int `json:"comment_count"`
+	CommentCount int32 `json:"comment_count"`
 
 	Creator *Creator `json:"creator,omitempty"`
 }
@@ -119,7 +119,7 @@ type TargetComment struct {
 	// 评论内容
 	Excerpt string `json:"excerpt"`
 	// 子评论数
-	CommentCount int `json:"comment_count"`
+	CommentCount int32 `json:"comment_count"`
 
 	Creator *Creator `json:"creator,omitempty"`
 }
@@ -137,13 +137,13 @@ type TargetTopic struct {
 	Avatar string `json:"avatar,omitempty"`
 
 	// 成员数
-	MemberCount int `json:"member_count"`
+	MemberCount int32 `json:"member_count"`
 
 	// 成员数
-	ArticleCount int `json:"article_count"`
+	ArticleCount int32 `json:"article_count"`
 
 	// 讨论数
-	DiscussionCount int `json:"discussion_count"`
+	DiscussionCount int32 `json:"discussion_count"`
 
 	Creator *Creator `json:"creator,omitempty"`
 }
@@ -152,13 +152,13 @@ type TargetMember struct {
 	// ID
 	ID int64 `json:"id,string" swaggertype:"string"`
 	// 关注数
-	FollowingCount int `json:"following_count"`
+	FollowingCount int32 `json:"following_count"`
 	// 粉丝数
-	FansCount int `json:"fans_count"`
+	FansCount int32 `json:"fans_count"`
 	// 话题数
-	TopicCount int `json:"topic_count"`
+	TopicCount int32 `json:"topic_count"`
 	// 文章数
-	ArticleCount int `json:"article_count"`
+	ArticleCount int32 `json:"article_count"`
 	// 简介
 	Introduction string
 	// 头像

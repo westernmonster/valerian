@@ -8,9 +8,7 @@ import (
 	"valerian/app/service/topic/api"
 	"valerian/app/service/topic/model"
 	"valerian/library/database/sqalx"
-	"valerian/library/ecode"
 	"valerian/library/log"
-	"valerian/library/net/metadata"
 )
 
 //  GetCatalogsHierarchy 按层级获取类目
@@ -27,13 +25,7 @@ func (p *Service) GetCatalogTaxonomiesHierarchy(c context.Context, topicID int64
 	return
 }
 
-func (p *Service) SaveCatalogs(c context.Context, req *model.ArgSaveTopicCatalog) (err error) {
-	aid, ok := metadata.Value(c, metadata.Aid).(int64)
-	if !ok {
-		err = ecode.AcquireAccountIDFailed
-		return
-	}
-
+func (p *Service) SaveCatalogs(c context.Context, req *api.ArgSaveTopicCatalog) (err error) {
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
@@ -50,7 +42,7 @@ func (p *Service) SaveCatalogs(c context.Context, req *model.ArgSaveTopicCatalog
 	}()
 
 	var newArticles, delArticles []*model.ArticleItem
-	if delArticles, newArticles, err = p.saveCatalogs(c, tx, aid, req); err != nil {
+	if delArticles, newArticles, err = p.saveCatalogs(c, tx, req.Aid, req); err != nil {
 		return
 	}
 
@@ -61,11 +53,11 @@ func (p *Service) SaveCatalogs(c context.Context, req *model.ArgSaveTopicCatalog
 
 	p.addCache(func() {
 		for _, v := range newArticles {
-			p.onCatalogArticleAdded(c, v.ArticleID, v.TopicID, aid, time.Now().Unix())
+			p.onCatalogArticleAdded(c, v.ArticleID, v.TopicID, req.Aid, time.Now().Unix())
 		}
 
 		for _, v := range delArticles {
-			p.onCatalogArticleDeleted(c, v.ArticleID, v.TopicID, aid, time.Now().Unix())
+			p.onCatalogArticleDeleted(c, v.ArticleID, v.TopicID, req.Aid, time.Now().Unix())
 		}
 	})
 	return

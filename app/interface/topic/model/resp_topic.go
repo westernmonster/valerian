@@ -7,10 +7,10 @@ type TopicResp struct {
 	Members []*TopicMemberResp `json:"members,omitempty"`
 
 	// 成员数
-	MemberCount int `json:"member_count,omitempty"`
+	MemberCount int32 `json:"member_count,omitempty"`
 
 	// 目录
-	Catalogs []*TopicLevel1Catalog `json:"catalogs,omitempty"`
+	Catalogs []*TopicRootCatalog `json:"catalogs,omitempty"`
 
 	// 授权话题
 	AuthTopics []*AuthTopicResp `json:"auth_topics,omitempty"`
@@ -80,7 +80,12 @@ type TopicResp struct {
 
 	TopicMeta *TopicMeta `json:"meta,omitempty"`
 
+	// 是否有类目分类
 	HasCatalogTaxonomy bool `json:"has_catalog_taxonomy"`
+
+	TopicStat *TopicStat `stat`
+
+	Creator *Creator `json:"creator"`
 }
 
 type TopicMeta struct {
