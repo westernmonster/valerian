@@ -21,7 +21,7 @@ const (
 	ChinaSignName                  = "飞行百科"          // 短信签名
 	ChinaRegisterTemplateCode      = "SMS_161380530" // 注册验证码模板
 	ChinaResetPasswordTemplateCode = "SMS_161380531" // 重置密码模板
-	ChinaLoginTemplateCode         = "SMS_161380530" // 注册验证码模板
+	ChinaLoginTemplateCode         = "SMS_166690586" // 注册验证码模板
 	SendSms                        = "SendSms"
 	SendBatchSms                   = "SendBatchSms"
 	QuerySendDetails               = "QuerySendDetails"
@@ -177,7 +177,7 @@ func (p *SMSClient) sendResetPasswordValcode(c context.Context, mobile string, v
 	request.ApiName = SendSms
 	request.QueryParams["PhoneNumbers"] = mobile
 	request.QueryParams["SignName"] = signName
-	request.QueryParams["TemplateCode"] = ResetPasswordTemplateCode
+	request.QueryParams["TemplateCode"] = template
 	request.QueryParams["Action"] = SendSms
 	request.QueryParams["TemplateParam"] = fmt.Sprintf(`{"code":"%s"}`, valcode)
 
