@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	SignName                       = "flywk"         // 短信签名
+	SignName                       = "飞行百科"          // 短信签名
 	RegisterTemplateCode           = "SMS_166865016" // 注册验证码模板
 	ResetPasswordTemplateCode      = "SMS_166865016" // 重置密码模板
 	LoginTemplateCode              = "SMS_166776690" // 注册验证码模板
@@ -176,7 +176,7 @@ func (p *SMSClient) sendResetPasswordValcode(c context.Context, mobile string, v
 	request.Version = Version
 	request.ApiName = SendSms
 	request.QueryParams["PhoneNumbers"] = mobile
-	request.QueryParams["SignName"] = SignName
+	request.QueryParams["SignName"] = signName
 	request.QueryParams["TemplateCode"] = ResetPasswordTemplateCode
 	request.QueryParams["Action"] = SendSms
 	request.QueryParams["TemplateParam"] = fmt.Sprintf(`{"code":"%s"}`, valcode)

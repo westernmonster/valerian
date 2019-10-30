@@ -24,7 +24,6 @@ func generateValcode(max int) string {
 }
 
 func (p *Service) EmailValcode(c context.Context, req *model.ArgEmailValcode) (createdTime int64, err error) {
-
 	if req.CodeType == model.ValcodeRegister {
 		var exist bool
 		if exist, err = p.d.IsEmailExist(c, req.Email); err != nil {
