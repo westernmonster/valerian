@@ -168,6 +168,9 @@ type TargetArticle struct {
 	// 内容
 	Excerpt string `json:"excerpt"`
 
+	// 更改备注
+	ChangeDesc string `json:"change_desc"`
+
 	// 图片
 	ImageUrls []string `json:"images"`
 

@@ -70,6 +70,7 @@ func (p *Service) FromArticle(v *article.ArticleInfo) (item *model.TargetArticle
 			UserName:     v.Creator.UserName,
 			Introduction: v.Creator.Introduction,
 		},
+		ChangeDesc: v.ChangeDesc,
 	}
 
 	return
