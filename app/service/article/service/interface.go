@@ -16,6 +16,8 @@ type IDao interface {
 	UpdateArticle(c context.Context, node sqalx.Node, item *model.Article) (err error)
 	DelArticle(c context.Context, node sqalx.Node, id int64) (err error)
 
+	GetLastArticleHistory(c context.Context, node sqalx.Node, articleID int64) (item *model.ArticleHistory, err error)
+
 	GetRevisesByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.Revise, err error)
 	GetRevises(c context.Context, node sqalx.Node) (items []*model.Revise, err error)
 	GetReviseByID(c context.Context, node sqalx.Node, id int64) (item *model.Revise, err error)

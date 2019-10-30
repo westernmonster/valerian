@@ -57,6 +57,8 @@ message ArticleInfo {
     bool  DisableRevise = 11 [(gogoproto.jsontag) = "disable_revise"];
 
     bool  DisableComment = 12 [(gogoproto.jsontag) = "disable_comment"];
+
+    string ChangeDesc = 13;
 }
 
 message ArticleStat {

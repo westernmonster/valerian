@@ -54,6 +54,11 @@ func (s *server) GetArticleInfo(ctx context.Context, req *api.IDReq) (*api.Artic
 		return nil, err
 	}
 
+	changeDesc, err := s.svr.GetArticleLastChangeDesc(ctx, req.ID)
+	if err != nil {
+		return nil, err
+	}
+
 	stat, err := s.svr.GetArticleStat(ctx, req.ID)
 	if err != nil {
 		return nil, err
@@ -90,6 +95,7 @@ func (s *server) GetArticleInfo(ctx context.Context, req *api.IDReq) (*api.Artic
 			Avatar:       m.Avatar,
 			Introduction: m.Introduction,
 		},
+		ChangeDesc: changeDesc,
 	}
 
 	inc := includeParam(req.Include)

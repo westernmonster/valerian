@@ -17,6 +17,19 @@ func (p *Service) GetArticle(c context.Context, articleID int64) (item *model.Ar
 	return p.getArticle(c, p.d.DB(), articleID)
 }
 
+func (p *Service) GetArticleLastChangeDesc(c context.Context, articleID int64) (changeDesc string, err error) {
+	var history *model.ArticleHistory
+	if history, err = p.d.GetLastArticleHistory(c, p.d.DB(), articleID); err != nil {
+		return
+	} else if history != nil {
+		changeDesc = history.ChangeDesc
+	} else {
+		changeDesc = ""
+	}
+
+	return
+}
+
 func (p *Service) GetAllArticles(c context.Context) (items []*model.Article, err error) {
 	return p.d.GetArticles(c, p.d.DB())
 }
