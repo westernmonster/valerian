@@ -14,7 +14,7 @@ type WorkCertResp struct {
 	// 部门
 	Department string `json:"department"`
 	// 职位
-	Position string `json:""position`
+	Position string `json:"position"`
 
 	// 工作证有效期
 	// 过期时间
@@ -25,11 +25,11 @@ type WorkCertResp struct {
 	Status int `json:"status"`
 
 	// 提交时间
-	CreatedAt int64 `created_at`
+	CreatedAt int64 `json:"created_at"`
 
 	// 审核时间
-	AuditAt int64 `audit_at`
+	AuditAt int64 `json:"audit_at"`
 
 	// 审核结果
-	Result string `result`
+	Result string `json:"result"`
 }
