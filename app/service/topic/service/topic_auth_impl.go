@@ -22,7 +22,7 @@ func (p *Service) isAuthTopic(c context.Context, node sqalx.Node, toTopicID, fro
 	return
 }
 
-func (p *Service) checkAuthTopics(c context.Context, node sqalx.Node, topicID int64, items []*model.ArgAuthTopic) (err error) {
+func (p *Service) checkAuthTopics(c context.Context, node sqalx.Node, topicID int64, items []*api.ArgAuthTopic) (err error) {
 	// must unique and not equal to current topic
 	dic := make(map[int64]bool)
 	for _, v := range items {
@@ -60,7 +60,7 @@ func (p *Service) loadAuthTopicsMap(c context.Context, node sqalx.Node, topicID 
 	return
 }
 
-func (p *Service) bulkSaveAuthTopics(c context.Context, node sqalx.Node, topicID int64, items []*model.ArgAuthTopic) (err error) {
+func (p *Service) bulkSaveAuthTopics(c context.Context, node sqalx.Node, topicID int64, items []*api.ArgAuthTopic) (err error) {
 	if err = p.checkAuthTopics(c, node, topicID, items); err != nil {
 		return
 	}

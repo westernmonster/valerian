@@ -439,6 +439,51 @@ message Paging {
     string Prev = 4;
 }
 
+message ArgSaveAuthTopics {
+    int64 TopicID = 1;
+    repeated  ArgAuthTopic AuthTopics = 2;
+    int64 Aid  = 3;
+}
+
+message ArgAuthTopic {
+    int64 TopicID = 1;
+    string Permission = 2;
+}
+
+message AuthTopicsResp {
+    repeated AuthTopicInfo Items = 1;
+}
+
+message CatalogsResp {
+    repeated TopicRootCatalogInfo Items = 1;
+}
+
+message ArgSaveCatalogs {
+    int64 TopicID = 1;
+    int64 Aid = 2;
+    int64 ParentID = 3;
+    repeated ArgTopicCatalog Items = 4;
+}
+
+message ArgTopicFollow {
+    int64 TopicID = 1;
+    string Reason = 2;
+    bool AllowViewCert = 3;
+    int64 Aid = 4;
+}
+
+message ArgAuditFollow {
+    int64 ID = 1;
+    bool Approve = 2;
+    string Reason = 3;
+    int64 Aid = 4;
+}
+
+message StatusResp {
+    int32 Status = 1;
+}
+
+
 
 service Topic {
     rpc  CreateTopic(ArgCreateTopic) returns (IDResp);
@@ -451,7 +496,19 @@ service Topic {
 
     rpc  ChangeOwner(ArgChangeOwner) returns (EmptyStruct);
 
-    rpc  GetCanEditTopics(ArgCanEditTopicsReq) returns (CanEditTopicsResp);
+    rpc  SaveAuthTopics(ArgSaveAuthTopics) returns (EmptyStruct);
+
+    rpc  GetAuthTopics(IDReq) returns (AuthTopicsResp);
+
+    rpc GetCatalogsHierarchy(IDReq) returns (CatalogsResp);
+
+    rpc GetCatalogTaxonomiesHierarchy(IDReq) returns (CatalogsResp);
+
+    rpc SaveCatalogs(ArgSaveCatalogs) returns (EmptyStruct);
+
+    rpc FollowTopic(ArgTopicFollow) returns (StatusResp);
+
+    rpc AuditFollow(ArgAuditFollow) returns (EmptyStruct);
 
     rpc  GetAllTopics(EmptyStruct) returns (AllTopicsResp);
 

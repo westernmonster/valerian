@@ -72,12 +72,44 @@ func (s *server) ChangeOwner(ctx context.Context, arg *api.ArgChangeOwner) (*api
 	return &api.EmptyStruct{}, nil
 }
 
+func (s *server) SaveAuthTopics(ctx context.Context, arg *api.ArgSaveAuthTopics) (*api.EmptyStruct, error) {
+	err := s.svr.SaveAuthTopics(ctx, arg)
+	if err != nil {
+		return nil, err
+	}
+	return &api.EmptyStruct{}, nil
+}
+
+func (s *server) GetAuthTopics(ctx context.Context, arg *api.IDReq) (*api.AuthTopicsResp, error) {
+	items, err := s.svr.GetAuthTopics(ctx, arg.ID)
+	if err != nil {
+		return nil, err
+	}
+	return &api.AuthTopicsResp{Items: items}, nil
+}
+
 func (s *server) GetTopicResp(ctx context.Context, arg *api.IDReq) (*api.TopicResp, error) {
 	resp, err := s.svr.GetTopicResp(ctx, arg.Aid, arg.ID, arg.Include)
 	if err != nil {
 		return nil, err
 	}
 	return resp, nil
+}
+
+func (s *server) FollowTopic(ctx context.Context, arg *api.ArgTopicFollow) (*api.StatusResp, error) {
+	status, err := s.svr.FollowTopic(ctx, arg)
+	if err != nil {
+		return nil, err
+	}
+	return &api.StatusResp{Status: status}, nil
+}
+
+func (s *server) AuditFollow(ctx context.Context, arg *api.ArgAuditFollow) (*api.EmptyStruct, error) {
+	err := s.svr.AuditFollow(ctx, arg)
+	if err != nil {
+		return nil, err
+	}
+	return &api.EmptyStruct{}, nil
 }
 
 func (s *server) GetTopicInfo(ctx context.Context, req *api.TopicReq) (*api.TopicInfo, error) {

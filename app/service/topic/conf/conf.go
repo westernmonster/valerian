@@ -43,6 +43,8 @@ type Config struct {
 	DiscussRPC *warden.ClientConfig
 	FavRPC     *warden.ClientConfig
 	ArticleRPC *warden.ClientConfig
+	SearchRPC  *warden.ClientConfig
+	TopicRPC   *warden.ClientConfig
 }
 
 type NatsConfig struct {
