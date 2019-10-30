@@ -4,13 +4,66 @@ import (
 	"context"
 
 	"valerian/app/interface/topic/model"
+	topic "valerian/app/service/topic/api"
+	"valerian/library/ecode"
+	"valerian/library/net/metadata"
 )
 
 func (p *Service) SaveAuthTopics(c context.Context, arg *model.ArgSaveAuthTopics) (err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+	item := &topic.ArgSaveAuthTopics{
+		TopicID:    arg.TopicID,
+		Aid:        aid,
+		AuthTopics: make([]*topic.ArgAuthTopic, 0),
+	}
+
+	if arg.AuthTopics != nil {
+		for _, v := range arg.AuthTopics {
+			item.AuthTopics = append(item.AuthTopics, &topic.ArgAuthTopic{
+				TopicID:    v.TopicID,
+				Permission: v.Permission,
+			})
+		}
+	}
+
+	if err = p.d.SaveAuthTopics(c, item); err != nil {
+		return
+	}
 	return
 }
 
 func (p *Service) GetAuthTopics(c context.Context, topicID int64) (items []*model.AuthTopicResp, err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+	var resp *topic.AuthTopicsResp
+	if resp, err = p.d.GetAuthTopics(c, &topic.IDReq{ID: topicID, Aid: aid}); err != nil {
+		return
+	}
+
+	items = make([]*model.AuthTopicResp, 0)
+
+	if resp.Items == nil {
+		return
+	}
+
+	for _, v := range resp.Items {
+		items = append(items, &model.AuthTopicResp{
+			ToTopicID:      v.ToTopicID,
+			EditPermission: v.EditPermission,
+			Permission:     v.Permission,
+			MemberCount:    v.MemberCount,
+			Avatar:         v.Avatar,
+			Name:           v.Name,
+		})
+	}
+
 	return
 }
 

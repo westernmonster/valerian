@@ -256,7 +256,7 @@ type ArgTopicCatalog struct {
 
 	// 顺序
 	// required: true
-	Seq int `json:"seq"`
+	Seq int32 `json:"seq"`
 
 	// 类型
 	// required: true
