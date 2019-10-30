@@ -25,7 +25,7 @@ func (p *Service) GetCatalogTaxonomiesHierarchy(c context.Context, topicID int64
 	return
 }
 
-func (p *Service) SaveCatalogs(c context.Context, req *api.ArgSaveTopicCatalog) (err error) {
+func (p *Service) SaveCatalogs(c context.Context, req *api.ArgSaveCatalogs) (err error) {
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))

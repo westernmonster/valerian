@@ -226,7 +226,7 @@ func (p *Service) createCatalog(c context.Context, node sqalx.Node, item *model.
 
 }
 
-func (p *Service) saveCatalogs(c context.Context, node sqalx.Node, aid int64, req *api.ArgSaveTopicCatalog) (delArticles []*model.ArticleItem, newArticles []*model.ArticleItem, err error) {
+func (p *Service) saveCatalogs(c context.Context, node sqalx.Node, aid int64, req *api.ArgSaveCatalogs) (delArticles []*model.ArticleItem, newArticles []*model.ArticleItem, err error) {
 	newArticles = make([]*model.ArticleItem, 0)
 	delArticles = make([]*model.ArticleItem, 0)
 

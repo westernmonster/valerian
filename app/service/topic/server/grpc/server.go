@@ -97,7 +97,7 @@ func (s *server) GetTopicResp(ctx context.Context, arg *api.IDReq) (*api.TopicRe
 }
 
 func (s *server) FollowTopic(ctx context.Context, arg *api.ArgTopicFollow) (*api.StatusResp, error) {
-	status, err := s.svr.FollowTopic(ctx, arg)
+	status, err := s.svr.Follow(ctx, arg)
 	if err != nil {
 		return nil, err
 	}
@@ -106,6 +106,30 @@ func (s *server) FollowTopic(ctx context.Context, arg *api.ArgTopicFollow) (*api
 
 func (s *server) AuditFollow(ctx context.Context, arg *api.ArgAuditFollow) (*api.EmptyStruct, error) {
 	err := s.svr.AuditFollow(ctx, arg)
+	if err != nil {
+		return nil, err
+	}
+	return &api.EmptyStruct{}, nil
+}
+
+func (s *server) GetCatalogTaxonomiesHierarchy(ctx context.Context, arg *api.IDReq) (*api.CatalogsResp, error) {
+	items, err := s.svr.GetCatalogTaxonomiesHierarchy(ctx, arg.ID)
+	if err != nil {
+		return nil, err
+	}
+	return &api.CatalogsResp{Items: items}, nil
+}
+
+func (s *server) GetCatalogsHierarchy(ctx context.Context, arg *api.IDReq) (*api.CatalogsResp, error) {
+	items, err := s.svr.GetCatalogsHierarchy(ctx, arg.ID)
+	if err != nil {
+		return nil, err
+	}
+	return &api.CatalogsResp{Items: items}, nil
+}
+
+func (s *server) SaveCatalogs(ctx context.Context, arg *api.ArgSaveCatalogs) (*api.EmptyStruct, error) {
+	err := s.svr.SaveCatalogs(ctx, arg)
 	if err != nil {
 		return nil, err
 	}
