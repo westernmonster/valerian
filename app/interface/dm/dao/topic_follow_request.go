@@ -48,6 +48,10 @@ func (p *Dao) GetTopicFollowRequestsByCond(c context.Context, node sqalx.Node, c
 		clause += " AND a.reason =?"
 		condition = append(condition, val)
 	}
+	if val, ok := cond["allow_view_cert"]; ok {
+		clause += " AND a.allow_view_cert =?"
+		condition = append(condition, val)
+	}
 
 	sqlSelect := fmt.Sprintf("SELECT a.* FROM topic_follow_requests a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
 
@@ -101,6 +105,10 @@ func (p *Dao) GetTopicFollowRequestByCond(c context.Context, node sqalx.Node, co
 		clause += " AND a.reason =?"
 		condition = append(condition, val)
 	}
+	if val, ok := cond["allow_view_cert"]; ok {
+		clause += " AND a.allow_view_cert =?"
+		condition = append(condition, val)
+	}
 
 	sqlSelect := fmt.Sprintf("SELECT a.* FROM topic_follow_requests a WHERE a.deleted=0 %s", clause)
 
@@ -119,9 +127,9 @@ func (p *Dao) GetTopicFollowRequestByCond(c context.Context, node sqalx.Node, co
 
 // Insert insert a new record
 func (p *Dao) AddTopicFollowRequest(c context.Context, node sqalx.Node, item *model.TopicFollowRequest) (err error) {
-	sqlInsert := "INSERT INTO topic_follow_requests( id,account_id,topic_id,status,deleted,created_at,updated_at,reason) VALUES ( ?,?,?,?,?,?,?,?)"
+	sqlInsert := "INSERT INTO topic_follow_requests( id,account_id,topic_id,status,deleted,created_at,updated_at,reason,allow_view_cert) VALUES ( ?,?,?,?,?,?,?,?,?)"
 
-	if _, err = node.ExecContext(c, sqlInsert, item.ID, item.AccountID, item.TopicID, item.Status, item.Deleted, item.CreatedAt, item.UpdatedAt, item.Reason); err != nil {
+	if _, err = node.ExecContext(c, sqlInsert, item.ID, item.AccountID, item.TopicID, item.Status, item.Deleted, item.CreatedAt, item.UpdatedAt, item.Reason, item.AllowViewCert); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.AddTopicFollowRequests err(%+v), item(%+v)", err, item))
 		return
 	}
@@ -131,9 +139,9 @@ func (p *Dao) AddTopicFollowRequest(c context.Context, node sqalx.Node, item *mo
 
 // Update update a exist record
 func (p *Dao) UpdateTopicFollowRequest(c context.Context, node sqalx.Node, item *model.TopicFollowRequest) (err error) {
-	sqlUpdate := "UPDATE topic_follow_requests SET account_id=?,topic_id=?,status=?,updated_at=?,reason=? WHERE id=?"
+	sqlUpdate := "UPDATE topic_follow_requests SET account_id=?,topic_id=?,status=?,updated_at=?,reason=?,allow_view_cert=? WHERE id=?"
 
-	_, err = node.ExecContext(c, sqlUpdate, item.AccountID, item.TopicID, item.Status, item.UpdatedAt, item.Reason, item.ID)
+	_, err = node.ExecContext(c, sqlUpdate, item.AccountID, item.TopicID, item.Status, item.UpdatedAt, item.Reason, item.AllowViewCert, item.ID)
 	if err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.UpdateTopicFollowRequests err(%+v), item(%+v)", err, item))
 		return

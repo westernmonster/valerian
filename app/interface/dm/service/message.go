@@ -326,10 +326,11 @@ func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, o
 			}
 
 			tg := &model.TargetTopicFollowRequest{
-				ID:        req.ID,
-				Status:    req.Status,
-				Reason:    req.Reason,
-				CreatedAt: req.CreatedAt,
+				ID:            req.ID,
+				Status:        req.Status,
+				Reason:        req.Reason,
+				CreatedAt:     req.CreatedAt,
+				AllowViewCert: bool(req.AllowViewCert),
 			}
 
 			var acc *account.BaseInfoReply

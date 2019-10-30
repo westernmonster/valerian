@@ -260,8 +260,10 @@ type TargetTopicFollowRequest struct {
 	// 1 请求已经发送
 	// 2 审批通过
 	// 3 已经拒绝
-	Status int `json:"status"`
+	Status int32 `json:"status"`
 
 	// 发布日期
 	CreatedAt int64 `json:"created_at"`
+
+	AllowViewCert bool `json:"allow_view_cert"`
 }
