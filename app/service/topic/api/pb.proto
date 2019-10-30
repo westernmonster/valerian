@@ -401,6 +401,44 @@ message ArgTopicCatalog {
     int64 RefID = 5;
 }
 
+message ArgCanEditTopicsReq {
+    int32 Pn = 1;
+    int32 Ps = 2;
+    string Query = 3;
+}
+
+message CanEditTopicsResp {
+    repeated  CanEditTopicItem Items = 1;
+    Paging  Paging = 2;
+}
+
+message CanEditTopicItem {
+    int64 ID = 1;
+
+    string Name = 2;
+
+    string  Avatar = 3;
+
+    string  Introduction = 5;
+
+    int32 MemberCount = 6;
+
+    int32 ArticleCount = 7;
+
+    int32 DiscussionCount = 8;
+
+    string EditPermission = 9;
+
+    bool HasCatalogTaxonomy  = 10;
+}
+
+message Paging {
+    int32 Total = 1;
+    bool IsEnd = 2;
+    string Next = 3;
+    string Prev = 4;
+}
+
 
 service Topic {
     rpc  CreateTopic(ArgCreateTopic) returns (IDResp);
@@ -412,6 +450,8 @@ service Topic {
     rpc  GetTopicResp(IDReq) returns (TopicResp);
 
     rpc  ChangeOwner(ArgChangeOwner) returns (EmptyStruct);
+
+    rpc  GetCanEditTopics(ArgCanEditTopicsReq) returns (CanEditTopicsResp);
 
     rpc  GetAllTopics(EmptyStruct) returns (AllTopicsResp);
 

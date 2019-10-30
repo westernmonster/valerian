@@ -15,8 +15,8 @@ func (p *Service) AccountSearch(c context.Context, arg *model.BasicSearchParams)
 	return
 }
 
-func (p *Service) TopicSearch(c context.Context, arg *model.BasicSearchParams) (resp *model.SearchResult, err error) {
-	if resp, err = p.d.TopicSearch(c, arg); err != nil {
+func (p *Service) TopicSearch(c context.Context, arg *model.BasicSearchParams, ids []int64) (resp *model.SearchResult, err error) {
+	if resp, err = p.d.TopicSearch(c, arg, ids); err != nil {
 		err = ecode.SearchAccountFailed
 		return
 	}

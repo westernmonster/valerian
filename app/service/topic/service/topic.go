@@ -163,9 +163,9 @@ func (p *Service) GetTopicResp(c context.Context, aid int64, topicID int64, incl
 
 	inc := includeParam(include)
 	if inc["members"] {
-		// if item.MemberCount, item.Members, err = p.getTopicMembers(c, p.d.DB(), topicID, 10); err != nil {
-		// 	return
-		// }
+		if _, item.Members, err = p.getTopicMembers(c, p.d.DB(), topicID, 10); err != nil {
+			return
+		}
 	}
 
 	if inc["catalogs"] {

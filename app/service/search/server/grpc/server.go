@@ -50,7 +50,7 @@ func (s *server) SearchTopic(ctx context.Context, req *api.SearchParam) (*api.Se
 		Ps:       int(req.Ps),
 		Debug:    req.Debug,
 		Source:   req.Source,
-	})
+	}, req.IDs)
 	if err != nil {
 		return nil, err
 	}

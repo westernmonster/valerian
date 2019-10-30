@@ -31,6 +31,7 @@ message SearchParam {
     int32 Ps = 6;
     bool Debug = 7;
     repeated string Source = 8;
+    repeated int64  IDs = 9;
 }
 
 
