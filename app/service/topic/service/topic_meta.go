@@ -62,13 +62,6 @@ func (p *Service) GetTopicMeta(c context.Context, aid, topicID int64) (meta *api
 		break
 	}
 
-	var isFav bool
-	if isFav, err = p.d.IsFav(c, aid, t.ID, "topic"); err != nil {
-		return
-	}
-
-	meta.Fav = isFav
-
 	if meta.CanView, meta.CanEdit, err = p.CheckEditPermission(c, aid, member, t); err != nil {
 		return
 	}

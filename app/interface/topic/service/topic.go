@@ -161,11 +161,14 @@ func (p *Service) GetTopic(c context.Context, topicID int64, include string) (it
 		item.TopicMeta = &model.TopicMeta{
 			CanFollow:    t.TopicMeta.CanFollow,
 			CanEdit:      t.TopicMeta.CanEdit,
-			Fav:          t.TopicMeta.Fav,
 			CanView:      t.TopicMeta.CanView,
 			FollowStatus: t.TopicMeta.FollowStatus,
 			IsMember:     t.TopicMeta.IsMember,
 			MemberRole:   t.TopicMeta.MemberRole,
+		}
+
+		if item.TopicMeta.Fav, err = p.d.IsFav(c, aid, t.ID, model.TargetTypeTopic); err != nil {
+			return
 		}
 	}
 
