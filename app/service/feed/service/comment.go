@@ -5,16 +5,16 @@ import (
 	"fmt"
 	"time"
 
-	article "valerian/app/service/article/api"
-	discuss "valerian/app/service/discuss/api"
+	comment "valerian/app/service/comment/api"
 	"valerian/app/service/feed/def"
 	"valerian/app/service/feed/model"
 	relation "valerian/app/service/relation/api"
 	"valerian/library/database/sqalx"
-	"valerian/library/ecode"
 	"valerian/library/gid"
 	"valerian/library/log"
 
+	"github.com/kamilsk/retry/v4"
+	"github.com/kamilsk/retry/v4/strategy"
 	"github.com/nats-io/stan.go"
 )
 
@@ -27,18 +27,37 @@ func (p *Service) onArticleCommented(m *stan.Msg) {
 		return
 	}
 
-	var article *article.ArticleInfo
-	if article, err = p.d.GetArticle(c, info.CommentID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onArticleCommented GetArticle failed %#v", err))
-		if ecode.Cause(err) == ecode.ArticleNotExist {
-			m.Ack()
+	var cmt *comment.CommentInfo
+	action := func(c context.Context, _ uint) error {
+		ct, e := p.d.GetComment(c, info.CommentID)
+		if e != nil {
+			log.For(c).Error(fmt.Sprintf("service.onArticleCommented GetArticle failed %#v", e))
+			return e
 		}
+
+		cmt = ct
+		return nil
+	}
+
+	if err := retry.TryContext(c, action, strategy.Limit(3)); err != nil {
+		m.Ack()
 		return
 	}
 
 	var fansResp *relation.IDsResp
-	if fansResp, err = p.d.GetFansIDs(c, info.ActorID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onArticleCommented GetFansIDs failed %#v", err))
+	action = func(c context.Context, _ uint) error {
+		res, e := p.d.GetFansIDs(c, info.ActorID)
+		if e != nil {
+			log.For(c).Error(fmt.Sprintf("service.onArticleCommented GetFansIDs failed %#v", e))
+			return e
+		}
+
+		fansResp = res
+		return nil
+	}
+
+	if err := retry.TryContext(c, action, strategy.Limit(3)); err != nil {
+		m.Ack()
 		return
 	}
 
@@ -66,8 +85,8 @@ func (p *Service) onArticleCommented(m *stan.Msg) {
 			ActionText: def.ActionTextCommentArticle,
 			ActorID:    info.ActorID,
 			ActorType:  def.ActorTypeUser,
-			TargetID:   article.ID,
-			TargetType: def.TargetTypeArticle,
+			TargetID:   cmt.ID,
+			TargetType: def.TargetTypeComment,
 			CreatedAt:  time.Now().Unix(),
 			UpdatedAt:  time.Now().Unix(),
 		}
@@ -95,18 +114,37 @@ func (p *Service) onReviseCommented(m *stan.Msg) {
 		return
 	}
 
-	var article *article.ReviseInfo
-	if article, err = p.d.GetRevise(c, info.CommentID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onReviseCommented GetRevise failed %#v", err))
-		if ecode.Cause(err) == ecode.ReviseNotExist {
-			m.Ack()
+	var cmt *comment.CommentInfo
+	action := func(c context.Context, _ uint) error {
+		ct, e := p.d.GetComment(c, info.CommentID)
+		if e != nil {
+			log.For(c).Error(fmt.Sprintf("service.onReviseCommented GetRevise failed %#v", e))
+			return e
 		}
+
+		cmt = ct
+		return nil
+	}
+
+	if err := retry.TryContext(c, action, strategy.Limit(3)); err != nil {
+		m.Ack()
 		return
 	}
 
 	var fansResp *relation.IDsResp
-	if fansResp, err = p.d.GetFansIDs(c, info.ActorID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onReviseCommented GetFansIDs failed %#v", err))
+	action = func(c context.Context, _ uint) error {
+		res, e := p.d.GetFansIDs(c, info.ActorID)
+		if e != nil {
+			log.For(c).Error(fmt.Sprintf("service.onReviseCommented GetFansIDs failed %#v", e))
+			return e
+		}
+
+		fansResp = res
+		return nil
+	}
+
+	if err := retry.TryContext(c, action, strategy.Limit(3)); err != nil {
+		m.Ack()
 		return
 	}
 
@@ -134,8 +172,8 @@ func (p *Service) onReviseCommented(m *stan.Msg) {
 			ActionText: def.ActionTextCommentRevise,
 			ActorID:    info.ActorID,
 			ActorType:  def.ActorTypeUser,
-			TargetID:   article.ID,
-			TargetType: def.TargetTypeRevise,
+			TargetID:   info.CommentID,
+			TargetType: def.TargetTypeComment,
 			CreatedAt:  time.Now().Unix(),
 			UpdatedAt:  time.Now().Unix(),
 		}
@@ -163,18 +201,37 @@ func (p *Service) onDiscussionCommented(m *stan.Msg) {
 		return
 	}
 
-	var discuss *discuss.DiscussionInfo
-	if discuss, err = p.d.GetDiscussion(c, info.CommentID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onDiscussionCommented GetDiscussion failed %#v", err))
-		if ecode.Cause(err) == ecode.DiscussionNotExist {
-			m.Ack()
+	var cmt *comment.CommentInfo
+	action := func(c context.Context, _ uint) error {
+		ct, e := p.d.GetComment(c, info.CommentID)
+		if e != nil {
+			log.For(c).Error(fmt.Sprintf("service.onDiscussionCommented GetDiscussion failed %#v", e))
+			return e
 		}
+
+		cmt = ct
+		return nil
+	}
+
+	if err := retry.TryContext(c, action, strategy.Limit(3)); err != nil {
+		m.Ack()
 		return
 	}
 
 	var fansResp *relation.IDsResp
-	if fansResp, err = p.d.GetFansIDs(c, info.ActorID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onDiscussionCommented GetFansIDs failed %#v", err))
+	action = func(c context.Context, _ uint) error {
+		res, e := p.d.GetFansIDs(c, info.ActorID)
+		if e != nil {
+			log.For(c).Error(fmt.Sprintf("service.onDiscussionCommented GetFansIDs failed %#v", e))
+			return e
+		}
+
+		fansResp = res
+		return nil
+	}
+
+	if err := retry.TryContext(c, action, strategy.Limit(3)); err != nil {
+		m.Ack()
 		return
 	}
 
@@ -202,8 +259,8 @@ func (p *Service) onDiscussionCommented(m *stan.Msg) {
 			ActionText: def.ActionTextCommentDiscussion,
 			ActorID:    info.ActorID,
 			ActorType:  def.ActorTypeUser,
-			TargetID:   discuss.ID,
-			TargetType: def.TargetTypeDiscussion,
+			TargetID:   info.CommentID,
+			TargetType: def.TargetTypeComment,
 			CreatedAt:  time.Now().Unix(),
 			UpdatedAt:  time.Now().Unix(),
 		}

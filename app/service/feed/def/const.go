@@ -139,4 +139,5 @@ const (
 	TargetTypeArticle      = "article"
 	TargetTypeMember       = "member"
 	TargetTypeTopicCatalog = "catalog"
+	TargetTypeComment      = "comment"
 )
