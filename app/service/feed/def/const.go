@@ -16,6 +16,7 @@ const (
 	ActionTypeCreateTopic = "MEMBER_CREATE_TOPIC"
 	ActionTypeDeleteTopic = "MEMBER_DELETE_TOPIC"
 	ActionTypeFollowTopic = "MEMBER_FOLLOW_TOPIC"
+	ActionTypeUpdateTopic = "MEMBER_UPDATE_TOPIC"
 
 	ActionTypeCreateRevise = "MEMBER_CREATE_REVISE"
 	ActionTypeUpdateRevise = "MEMBER_UPDATE_REVISE"
@@ -24,6 +25,11 @@ const (
 	ActionTypeFavRevise    = "MEMBER_FAV_REVISE"
 
 	ActionTypeFollowMember = "MEMBER_FOLLOW_MEMBER"
+
+	ActionTypeTopicTaxonomyCatalogAdded   = "MEMBER_ADD_TOPIC_TAXONOMY"
+	ActionTypeTopicTaxonomyCatalogRenamed = "MEMBER_RENAME_TOPIC_TAXONOMY"
+	ActionTypeTopicTaxonomyCatalogDeleted = "MEMBER_DELETE_TOPIC_TAXONOMY"
+	ActionTypeTopicTaxonomyCatalogMoved   = "MEMBER_MOVE_TOPIC_TAXONOMY"
 )
 
 const (
@@ -41,7 +47,8 @@ const (
 
 	ActionTextCreateTopic = "创建了话题"
 	ActionTextDeleteTopic = "删除了话题"
-	ActionTextFollowTopic = "关注了话题"
+	ActionTextFollowTopic = "{%s}加入了话题"
+	ActionTextUpdateTopic = "{%s}更新了话题属性"
 
 	ActionTextCreateRevise = "添加了补充"
 	ActionTextUpdateRevise = "更新了补充"
@@ -50,6 +57,11 @@ const (
 	ActionTextFavRevise    = "收藏了补充"
 
 	ActionTextFollowMember = "关注了用户"
+
+	ActionTextTopicTaxonomyCatalogAdded   = "{%s}新增了分类{%s}"
+	ActionTextTopicTaxonomyCatalogDeleted = "{%s}删除了分类{%s}"
+	ActionTextTopicTaxonomyCatalogRenamed = "{%s}重名了分类{%s}, 新名称{%s}"
+	ActionTextTopicTaxonomyCatalogMoved   = "{%s}移动了分类{%s}"
 )
 
 const (
@@ -113,9 +125,10 @@ const (
 )
 
 const (
-	TargetTypeTopic      = "topic"
-	TargetTypeDiscussion = "discussion"
-	TargetTypeRevise     = "revise"
-	TargetTypeArticle    = "article"
-	TargetTypeMember     = "member"
+	TargetTypeTopic        = "topic"
+	TargetTypeDiscussion   = "discussion"
+	TargetTypeRevise       = "revise"
+	TargetTypeArticle      = "article"
+	TargetTypeMember       = "member"
+	TargetTypeTopicCatalog = "catalog"
 )
