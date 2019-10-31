@@ -20,6 +20,9 @@ type MemberInfo struct {
 	// 头像
 	Avatar string `json:"avatar"`
 
+	Company  string `json:"company"`
+	Position string `json:"position"`
+
 	// 是否身份认证
 	IDCert bool `json:"id_cert"`
 

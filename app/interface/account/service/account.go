@@ -270,6 +270,8 @@ func (p *Service) GetProfile(c context.Context, aid int64) (item *model.Profile,
 		Role:           profile.Role,
 		CreatedAt:      profile.CreatedAt,
 		UpdatedAt:      profile.UpdatedAt,
+		Company:        profile.Company,
+		Position:       profile.Position,
 	}
 
 	item.Stat = &model.MemberInfoStat{

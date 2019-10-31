@@ -217,6 +217,8 @@ func (p *Service) GetMemberInfo(c context.Context, targetID int64) (resp *model.
 		WorkCert:       f.WorkCert,
 		IsOrg:          f.IsOrg,
 		IsVIP:          f.IsVIP,
+		Company:        f.Company,
+		Position:       f.Position,
 	}
 
 	var isFollowing bool

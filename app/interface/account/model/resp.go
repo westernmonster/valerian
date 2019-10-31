@@ -68,4 +68,7 @@ type Profile struct {
 
 	// 设置
 	Settings *SettingResp `json:"settings"`
+
+	Company  string `json:"company"`
+	Position string `json:"position"`
 }
