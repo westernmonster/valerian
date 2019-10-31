@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"valerian/app/service/feed/def"
+	"valerian/app/service/topic/model"
 	"valerian/library/log"
 )
 
@@ -230,6 +231,105 @@ func (p *Service) onCatalogArticleDeleted(c context.Context, articleID, topicID,
 
 	if err = p.mq.Publish(def.BusCatalogArticleDeleted, data); err != nil {
 		log.For(c).Error(fmt.Sprintf("onCatalogArticleDeleted.Publish(), err(%+v)", err))
+		return
+	}
+
+	return
+}
+
+func (p *Service) onTopicTaxonomyCatalogAdded(c context.Context, item *model.NewTaxonomyItem, aid, actionTime int64) {
+	msg := &def.MsgTopicTaxonomyCatalogAdded{
+		TopicID:    item.TopicID,
+		CatalogID:  item.ID,
+		Name:       item.Name,
+		ActorID:    aid,
+		ActionTime: actionTime}
+
+	var data []byte
+	var err error
+
+	if data, err = msg.Marshal(); err != nil {
+		log.For(c).Error(fmt.Sprintf("onTopicTaxonomyCatalogAdded.Marshal(), err(%+v)", err))
+		return
+	}
+
+	if err = p.mq.Publish(def.BusTopicTaxonomyCatalogAdded, data); err != nil {
+		log.For(c).Error(fmt.Sprintf("onTopicTaxonomyCatalogAdded.Publish(), err(%+v)", err))
+		return
+	}
+
+	return
+}
+
+func (p *Service) onTopicTaxonomyCatalogDeleted(c context.Context, item *model.DelTaxonomyItem, aid, actionTime int64) {
+	msg := &def.MsgTopicTaxonomyCatalogDeleted{
+		TopicID:    item.TopicID,
+		CatalogID:  item.ID,
+		Name:       item.Name,
+		ActorID:    aid,
+		ActionTime: actionTime}
+
+	var data []byte
+	var err error
+
+	if data, err = msg.Marshal(); err != nil {
+		log.For(c).Error(fmt.Sprintf("onTopicTaxonomyCatalogDeleted.Marshal(), err(%+v)", err))
+		return
+	}
+
+	if err = p.mq.Publish(def.BusTopicTaxonomyCatalogDeleted, data); err != nil {
+		log.For(c).Error(fmt.Sprintf("onTopicTaxonomyCatalogDeleted.Publish(), err(%+v)", err))
+		return
+	}
+
+	return
+}
+
+func (p *Service) onTopicTaxonomyCatalogRenamed(c context.Context, item *model.RenamedTaxonomyItem, aid, actionTime int64) {
+	msg := &def.MsgTopicTaxonomyCatalogRenamed{
+		TopicID:    item.TopicID,
+		CatalogID:  item.ID,
+		OldName:    item.OldName,
+		NewName:    item.NewName,
+		ActorID:    aid,
+		ActionTime: actionTime}
+
+	var data []byte
+	var err error
+
+	if data, err = msg.Marshal(); err != nil {
+		log.For(c).Error(fmt.Sprintf("onTopicTaxonomyCatalogRenamed.Marshal(), err(%+v)", err))
+		return
+	}
+
+	if err = p.mq.Publish(def.BusTopicTaxonomyCatalogRenamed, data); err != nil {
+		log.For(c).Error(fmt.Sprintf("onTopicTaxonomyCatalogRenamed.Publish(), err(%+v)", err))
+		return
+	}
+
+	return
+}
+
+func (p *Service) onTopicTaxonomyCatalogMoved(c context.Context, item *model.MovedTaxonomyItem, aid, actionTime int64) {
+	msg := &def.MsgTopicTaxonomyCatalogMoved{
+		TopicID:     item.TopicID,
+		CatalogID:   item.ID,
+		OldParentID: item.OldParentID,
+		NewParentID: item.NewParentID,
+		Name:        item.Name,
+		ActorID:     aid,
+		ActionTime:  actionTime}
+
+	var data []byte
+	var err error
+
+	if data, err = msg.Marshal(); err != nil {
+		log.For(c).Error(fmt.Sprintf("onTopicTaxonomyCatalogMoved.Marshal(), err(%+v)", err))
+		return
+	}
+
+	if err = p.mq.Publish(def.BusTopicTaxonomyCatalogMoved, data); err != nil {
+		log.For(c).Error(fmt.Sprintf("onTopicTaxonomyCatalogMoved.Publish(), err(%+v)", err))
 		return
 	}
 

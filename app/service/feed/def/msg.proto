@@ -198,7 +198,7 @@ message MsgTopicInviteSent {
     int64 ActionTime = 4 [(gogoproto.jsontag) = "action_time"] ;
 }
 
-message MsgTopicCatalogAdded {
+message MsgTopicTaxonomyCatalogAdded {
     int64 TopicID = 1;
     int64 CatalogID = 2;
     string Name = 3;
@@ -206,7 +206,7 @@ message MsgTopicCatalogAdded {
     int64 ActionTime = 5 ;
 }
 
-message MsgTopicCatalogDeleted {
+message MsgTopicTaxonomyCatalogDeleted {
     int64 TopicID = 1;
     int64 CatalogID = 2;
     string Name = 3;
@@ -214,7 +214,7 @@ message MsgTopicCatalogDeleted {
     int64 ActionTime = 5 ;
 }
 
-message MsgTopicCatalogRenamed {
+message MsgTopicTaxonomyCatalogRenamed {
     int64 TopicID = 1;
     int64 CatalogID = 2;
     string OldName = 3;
@@ -223,12 +223,12 @@ message MsgTopicCatalogRenamed {
     int64 ActionTime = 6 ;
 }
 
-message MsgTopicCatalogMoved {
+message MsgTopicTaxonomyCatalogMoved {
     int64 TopicID = 1;
     int64 CatalogID = 2;
     string Name = 3;
-    string OldParentID = 4;
-    string NewParentID = 5;
+    int64 OldParentID = 4;
+    int64 NewParentID = 5;
     int64 ActorID = 6 ;
     int64 ActionTime = 7 ;
 }

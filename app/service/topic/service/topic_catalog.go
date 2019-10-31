@@ -59,6 +59,22 @@ func (p *Service) SaveCatalogs(c context.Context, req *api.ArgSaveCatalogs) (err
 		for _, v := range change.DelArticles {
 			p.onCatalogArticleDeleted(c, v.ArticleID, v.TopicID, req.Aid, time.Now().Unix())
 		}
+
+		for _, v := range change.NewTaxonomyItems {
+			p.onTopicTaxonomyCatalogAdded(c, v, req.Aid, time.Now().Unix())
+		}
+
+		for _, v := range change.RenamedTaxonomyItems {
+			p.onTopicTaxonomyCatalogRenamed(c, v, req.Aid, time.Now().Unix())
+		}
+
+		for _, v := range change.MovedTaxonomyItems {
+			p.onTopicTaxonomyCatalogMoved(c, v, req.Aid, time.Now().Unix())
+		}
+
+		for _, v := range change.DelTaxonomyItems {
+			p.onTopicTaxonomyCatalogDeleted(c, v, req.Aid, time.Now().Unix())
+		}
 	})
 	return
 }
