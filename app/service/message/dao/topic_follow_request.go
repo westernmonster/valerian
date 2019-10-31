@@ -10,14 +10,59 @@ import (
 	"valerian/library/log"
 )
 
-const (
-	_getTopicFollowRequestsSQL   = "SELECT a.* FROM topic_follow_requests a WHERE a.deleted=0 AND a.topic_id=? AND a.status=? ORDER BY a.id "
-	_getTopicFollowRequestSQL    = "SELECT a.* FROM topic_follow_requests a WHERE a.deleted=0 AND a.topic_id=? AND a.account_id=? ORDER BY a.id DESC limit 1"
-	_addTopicFollowRequestSQL    = "INSERT INTO topic_follow_requests( id,account_id,topic_id,status,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?)"
-	_updateTopicFollowRequestSQL = "UPDATE topic_follow_requests SET account_id=?,topic_id=?,status=?,updated_at=? WHERE id=?"
-	_delTopicFollowRequestSQL    = "UPDATE topic_follow_requests SET deleted=1 WHERE id=? "
-)
+// GetAll get all records
+func (p *Dao) GetTopicFollowRequests(c context.Context, node sqalx.Node) (items []*model.TopicFollowRequest, err error) {
+	items = make([]*model.TopicFollowRequest, 0)
+	sqlSelect := "SELECT a.* FROM topic_follow_requests a WHERE a.deleted=0 ORDER BY a.id DESC "
 
+	if err = node.SelectContext(c, &items, sqlSelect); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetTopicFollowRequests err(%+v)", err))
+		return
+	}
+	return
+}
+
+// GetAllByCondition get records by condition
+func (p *Dao) GetTopicFollowRequestsByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.TopicFollowRequest, err error) {
+	items = make([]*model.TopicFollowRequest, 0)
+	condition := make([]interface{}, 0)
+	clause := ""
+
+	if val, ok := cond["id"]; ok {
+		clause += " AND a.id =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["account_id"]; ok {
+		clause += " AND a.account_id =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["topic_id"]; ok {
+		clause += " AND a.topic_id =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["status"]; ok {
+		clause += " AND a.status =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["reason"]; ok {
+		clause += " AND a.reason =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["allow_view_cert"]; ok {
+		clause += " AND a.allow_view_cert =?"
+		condition = append(condition, val)
+	}
+
+	sqlSelect := fmt.Sprintf("SELECT a.* FROM topic_follow_requests a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
+
+	if err = node.SelectContext(c, &items, sqlSelect, condition...); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetTopicFollowRequestsByCond err(%+v), condition(%+v)", err, cond))
+		return
+	}
+	return
+}
+
+// GetByID get a record by ID
 func (p *Dao) GetTopicFollowRequestByID(c context.Context, node sqalx.Node, id int64) (item *model.TopicFollowRequest, err error) {
 	item = new(model.TopicFollowRequest)
 	sqlSelect := "SELECT a.* FROM topic_follow_requests a WHERE a.id=? AND a.deleted=0"
@@ -34,49 +79,84 @@ func (p *Dao) GetTopicFollowRequestByID(c context.Context, node sqalx.Node, id i
 	return
 }
 
-func (p *Dao) GetTopicFollowRequests(c context.Context, node sqalx.Node, topicID int64, status int) (items []*model.TopicFollowRequest, err error) {
-	items = make([]*model.TopicFollowRequest, 0)
-
-	if err = node.SelectContext(c, &items, _getTopicFollowRequestsSQL, topicID, status); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.GetTopicFollowRequests error(%+v), topic id(%d) status(%d)", err, topicID, status))
-	}
-	return
-}
-
-func (p *Dao) GetTopicFollowRequest(c context.Context, node sqalx.Node, topicID, aid int64) (item *model.TopicFollowRequest, err error) {
+// GetByCondition get a record by condition
+func (p *Dao) GetTopicFollowRequestByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (item *model.TopicFollowRequest, err error) {
 	item = new(model.TopicFollowRequest)
+	condition := make([]interface{}, 0)
+	clause := ""
 
-	if err = node.GetContext(c, item, _getTopicFollowRequestSQL, topicID, aid); err != nil {
+	if val, ok := cond["id"]; ok {
+		clause += " AND a.id =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["account_id"]; ok {
+		clause += " AND a.account_id =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["topic_id"]; ok {
+		clause += " AND a.topic_id =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["status"]; ok {
+		clause += " AND a.status =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["reason"]; ok {
+		clause += " AND a.reason =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["allow_view_cert"]; ok {
+		clause += " AND a.allow_view_cert =?"
+		condition = append(condition, val)
+	}
+
+	sqlSelect := fmt.Sprintf("SELECT a.* FROM topic_follow_requests a WHERE a.deleted=0 %s", clause)
+
+	if err = node.GetContext(c, item, sqlSelect, condition...); err != nil {
 		if err == sql.ErrNoRows {
 			item = nil
 			err = nil
 			return
 		}
-		log.For(c).Error(fmt.Sprintf("dao.GetTopicFollowRequest error(%+v), topic id(%d) account id(%d)", err, topicID, aid))
+		log.For(c).Error(fmt.Sprintf("dao.GetTopicFollowRequestsByCond err(%+v), condition(%+v)", err, cond))
+		return
 	}
 
 	return
 }
 
+// Insert insert a new record
 func (p *Dao) AddTopicFollowRequest(c context.Context, node sqalx.Node, item *model.TopicFollowRequest) (err error) {
-	if _, err = node.ExecContext(c, _addTopicFollowRequestSQL, item.ID, item.AccountID, item.TopicID, item.Status, item.Deleted, item.CreatedAt, item.UpdatedAt); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.addTopicFollowRequest error(%+v), item(%+v)", err, item))
+	sqlInsert := "INSERT INTO topic_follow_requests( id,account_id,topic_id,status,deleted,created_at,updated_at,reason,allow_view_cert) VALUES ( ?,?,?,?,?,?,?,?,?)"
+
+	if _, err = node.ExecContext(c, sqlInsert, item.ID, item.AccountID, item.TopicID, item.Status, item.Deleted, item.CreatedAt, item.UpdatedAt, item.Reason, item.AllowViewCert); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.AddTopicFollowRequests err(%+v), item(%+v)", err, item))
+		return
 	}
 
 	return
 }
 
+// Update update a exist record
 func (p *Dao) UpdateTopicFollowRequest(c context.Context, node sqalx.Node, item *model.TopicFollowRequest) (err error) {
-	if _, err = node.ExecContext(c, _updateTopicFollowRequestSQL, item.AccountID, item.TopicID, item.Status, item.UpdatedAt, item.ID); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.UpdateTopicFollowRequest error(%+v), item(%+v)", err, item))
+	sqlUpdate := "UPDATE topic_follow_requests SET account_id=?,topic_id=?,status=?,updated_at=?,reason=?,allow_view_cert=? WHERE id=?"
+
+	_, err = node.ExecContext(c, sqlUpdate, item.AccountID, item.TopicID, item.Status, item.UpdatedAt, item.Reason, item.AllowViewCert, item.ID)
+	if err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.UpdateTopicFollowRequests err(%+v), item(%+v)", err, item))
+		return
 	}
 
 	return
 }
 
+// Delete logic delete a exist record
 func (p *Dao) DelTopicFollowRequest(c context.Context, node sqalx.Node, id int64) (err error) {
-	if _, err = node.ExecContext(c, _delTopicFollowRequestSQL, id); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.DelTopicFollowRequest error(%+v), topic follow id(%d)", err, id))
+	sqlDelete := "UPDATE topic_follow_requests SET deleted=1 WHERE id=? "
+
+	if _, err = node.ExecContext(c, sqlDelete, id); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.DelTopicFollowRequests err(%+v), item(%+v)", err, id))
+		return
 	}
 
 	return
