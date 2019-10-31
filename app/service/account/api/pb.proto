@@ -89,6 +89,10 @@ message SelfProfile {
     AccountStatInfo Stat = 25 ;
 
     Setting Setting = 26;
+
+    string Company = 27;
+
+    string Position = 28;
 }
 
 
@@ -145,6 +149,10 @@ message MemberInfoReply {
     int64 CreatedAt  = 12 ;
 
     AccountStatInfo Stat = 13 ;
+
+    string Company = 14;
+
+    string Position = 15;
 }
 
 

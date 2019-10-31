@@ -7,6 +7,15 @@ import (
 	"valerian/library/log"
 )
 
+func (p *Dao) GetWorkCert(c context.Context, aid int64) (resp *certification.WorkCertInfo, err error) {
+	if resp, err = p.certificationRPC.GetWorkCert(c, &certification.AidReq{Aid: aid}); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetWorkCert, aid(%d) error(%+v)", aid, err))
+		return
+	}
+
+	return
+}
+
 func (p *Dao) GetWorkCertStatus(c context.Context, aid int64) (status int32, err error) {
 	var statusResp *certification.WorkCertStatus
 	if statusResp, err = p.certificationRPC.GetWorkCertStatus(c, &certification.AidReq{Aid: aid}); err != nil {

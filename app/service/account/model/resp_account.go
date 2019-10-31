@@ -89,6 +89,8 @@ type ProfileInfo struct {
 	IsOrg          bool   `json:"is_org"`    //  是否机构用户
 	IsVIP          bool   `json:"is_vip"`    //  是否VIP用户
 	Role           string `json:"role"`
+	Company        string `json:"company"`
+	Position       string `json:"position"`
 	// 注册时间
 	CreatedAt int64 `json:"created_at"`
 	// 更新时间

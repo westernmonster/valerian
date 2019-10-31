@@ -7,6 +7,7 @@ import (
 
 	"valerian/app/service/account/api"
 	"valerian/app/service/account/model"
+	certification "valerian/app/service/certification/api"
 	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
 	"valerian/library/log"
@@ -159,6 +160,16 @@ func (p *Service) getSelfProfile(c context.Context, node sqalx.Node, accountID i
 		return
 	}
 
+	if profile.WorkCertStatus == 1 {
+		var workCert *certification.WorkCertInfo
+		if workCert, err = p.d.GetWorkCert(c, accountID); err != nil {
+			return
+		}
+
+		profile.Company = workCert.Company
+		profile.Position = workCert.Position
+	}
+
 	if profile.IDCertStatus, err = p.d.GetIDCertStatus(c, accountID); err != nil {
 		return
 	}
@@ -217,6 +228,21 @@ func (p *Service) GetMemberProfile(c context.Context, accountID int64) (profile 
 		Role:         item.Role,
 		CreatedAt:    item.CreatedAt,
 		UpdatedAt:    item.UpdatedAt,
+	}
+
+	var workCertStatus int32
+	if workCertStatus, err = p.d.GetWorkCertStatus(c, accountID); err != nil {
+		return
+	}
+
+	if workCertStatus == int32(1) {
+		var workCert *certification.WorkCertInfo
+		if workCert, err = p.d.GetWorkCert(c, accountID); err != nil {
+			return
+		}
+
+		profile.Company = workCert.Company
+		profile.Position = workCert.Position
 	}
 
 	if item.Location != 0 {

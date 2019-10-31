@@ -6,6 +6,7 @@ import (
 	"valerian/app/service/account/conf"
 	"valerian/app/service/account/dao"
 	"valerian/app/service/account/model"
+	certification "valerian/app/service/certification/api"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
 )
@@ -35,6 +36,7 @@ type Service struct {
 
 		GetWorkCertStatus(c context.Context, aid int64) (status int32, err error)
 		GetIDCertStatus(c context.Context, aid int64) (status int32, err error)
+		GetWorkCert(c context.Context, aid int64) (resp *certification.WorkCertInfo, err error)
 
 		SetAccountCache(c context.Context, m *model.Account) (err error)
 		AccountCache(c context.Context, accountID int64) (m *model.Account, err error)

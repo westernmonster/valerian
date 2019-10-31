@@ -60,6 +60,8 @@ func FromProfileInfo(model *model.ProfileInfo) *MemberInfoReply {
 		Introduction:   model.Introduction,
 		Location:       model.Location,
 		LocationString: model.LocationString,
+		Company:        model.Company,
+		Position:       model.Position,
 	}
 
 	return reply
