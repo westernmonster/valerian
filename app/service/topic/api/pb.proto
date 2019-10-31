@@ -103,6 +103,7 @@ message TargetArticle {
     int64 CreatedAt = 9;
     int64 UpdatedAt = 10;
     Creator Creator = 11;
+    string ChangeDesc = 12;
 }
 
 

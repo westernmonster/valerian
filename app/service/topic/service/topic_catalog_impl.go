@@ -23,6 +23,7 @@ func (p *Service) FromArticle(v *article.ArticleInfo) (item *api.TargetArticle) 
 		ID:           v.ID,
 		Title:        v.Title,
 		Excerpt:      v.Excerpt,
+		ChangeDesc:   v.ChangeDesc,
 		ImageUrls:    v.ImageUrls,
 		ReviseCount:  (v.Stat.ReviseCount),
 		CommentCount: (v.Stat.CommentCount),
