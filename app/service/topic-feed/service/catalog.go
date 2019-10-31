@@ -472,7 +472,7 @@ func (p *Service) onTopicFollowed(m *stan.Msg) {
 		TopicID:    info.TopicID,
 		ActionType: def.ActionTypeFollowTopic,
 		ActionTime: time.Now().Unix(),
-		ActionText: fmt.Sprintf(def.ActionTextFollowTopic, v.UserName),
+		ActionText: def.ActionTextFollowTopic,
 		ActorID:    info.ActorID,
 		ActorType:  def.ActorTypeUser,
 		TargetID:   info.TopicID,

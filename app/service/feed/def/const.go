@@ -51,7 +51,7 @@ const (
 
 	ActionTextCreateTopic = "创建了话题"
 	ActionTextDeleteTopic = "删除了话题"
-	ActionTextFollowTopic = "{%s}加入了话题"
+	ActionTextFollowTopic = "加入了话题"
 	ActionTextUpdateTopic = "{%s}更新了话题属性"
 
 	ActionTextCreateRevise = "添加了补充"
