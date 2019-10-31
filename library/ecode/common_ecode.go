@@ -102,6 +102,7 @@ var (
 	AppExist                       = add(10054) // App 已经存在
 	WorkCertExist                  = add(10055) // 工作认证已经提交
 	IDCertFirst                    = add(10056) // 首选需要通过身份认证
+	HasDiscussionInCategory        = add(10057) // 该分类下已经有讨论了
 
 	UserNotExist                  = add(90001) // 用户不存在
 	TagNotExist                   = add(90002) // Tag 不存在
