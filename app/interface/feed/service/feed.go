@@ -208,7 +208,7 @@ func (p *Service) GetFeedPaged(c context.Context, limit, offset int) (resp *mode
 			switch info.TargetType {
 			case model.TargetTypeArticle:
 				var article *article.ArticleInfo
-				if article, err = p.d.GetArticle(c, v.TargetID); err != nil {
+				if article, err = p.d.GetArticle(c, info.ResourceID); err != nil {
 					return
 				}
 
@@ -216,7 +216,7 @@ func (p *Service) GetFeedPaged(c context.Context, limit, offset int) (resp *mode
 				break
 			case model.TargetTypeRevise:
 				var revise *article.ReviseInfo
-				if revise, err = p.d.GetRevise(c, v.TargetID); err != nil {
+				if revise, err = p.d.GetRevise(c, info.ResourceID); err != nil {
 					return
 				}
 
@@ -224,7 +224,7 @@ func (p *Service) GetFeedPaged(c context.Context, limit, offset int) (resp *mode
 				break
 			case model.TargetTypeDiscussion:
 				var discuss *discuss.DiscussionInfo
-				if discuss, err = p.d.GetDiscussion(c, v.TargetID); err != nil {
+				if discuss, err = p.d.GetDiscussion(c, info.ResourceID); err != nil {
 					return
 				}
 
