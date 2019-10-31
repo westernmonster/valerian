@@ -84,7 +84,7 @@ func (s *server) SearchAccount(ctx context.Context, req *api.SearchParam) (*api.
 		Ps:       int(req.Ps),
 		Debug:    req.Debug,
 		Source:   req.Source,
-	})
+	}, req.IDs)
 	if err != nil {
 		return nil, err
 	}
@@ -118,7 +118,7 @@ func (s *server) SearchArticle(ctx context.Context, req *api.SearchParam) (*api.
 		Ps:       int(req.Ps),
 		Debug:    req.Debug,
 		Source:   req.Source,
-	})
+	}, req.IDs)
 	if err != nil {
 		return nil, err
 	}
@@ -152,7 +152,7 @@ func (s *server) SearchDiscussion(ctx context.Context, req *api.SearchParam) (*a
 		Ps:       int(req.Ps),
 		Debug:    req.Debug,
 		Source:   req.Source,
-	})
+	}, req.IDs)
 	if err != nil {
 		return nil, err
 	}
