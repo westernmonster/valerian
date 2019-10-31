@@ -215,6 +215,7 @@ func (p *Service) FromCatalogs(items []*topic.TopicRootCatalogInfo) (resp []*mod
 				ID:           v.Article.ID,
 				Title:        v.Article.Title,
 				Excerpt:      v.Article.Excerpt,
+				ChangeDesc:   v.Article.ChangeDesc,
 				LikeCount:    v.Article.LikeCount,
 				DislikeCount: v.Article.DislikeCount,
 				ReviseCount:  v.Article.ReviseCount,
@@ -240,10 +241,11 @@ func (p *Service) FromCatalogs(items []*topic.TopicRootCatalogInfo) (resp []*mod
 					Children: make([]*model.TopicChildCatalog, 0),
 				}
 				if x.Article != nil {
-					root.Article = &model.TargetArticle{
+					parent.Article = &model.TargetArticle{
 						ID:           x.Article.ID,
 						Title:        x.Article.Title,
 						Excerpt:      x.Article.Excerpt,
+						ChangeDesc:   x.Article.ChangeDesc,
 						LikeCount:    x.Article.LikeCount,
 						DislikeCount: x.Article.DislikeCount,
 						ReviseCount:  x.Article.ReviseCount,
@@ -271,6 +273,7 @@ func (p *Service) FromCatalogs(items []*topic.TopicRootCatalogInfo) (resp []*mod
 								ID:           j.Article.ID,
 								Title:        j.Article.Title,
 								Excerpt:      j.Article.Excerpt,
+								ChangeDesc:   j.Article.ChangeDesc,
 								LikeCount:    j.Article.LikeCount,
 								DislikeCount: j.Article.DislikeCount,
 								ReviseCount:  j.Article.ReviseCount,
