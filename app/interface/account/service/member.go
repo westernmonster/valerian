@@ -75,6 +75,7 @@ func (p *Service) FromArticle(v *article.ArticleInfo) (item *model.TargetArticle
 		ID:           v.ID,
 		Title:        v.Title,
 		Excerpt:      v.Excerpt,
+		ChangeDesc:   v.ChangeDesc,
 		ReviseCount:  (v.Stat.ReviseCount),
 		CommentCount: (v.Stat.CommentCount),
 		LikeCount:    (v.Stat.LikeCount),
