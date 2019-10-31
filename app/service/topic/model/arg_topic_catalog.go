@@ -318,3 +318,8 @@ type CatalogChange struct {
 	RenamedTaxonomyItems []*RenamedTaxonomyItem
 	MovedTaxonomyItems   []*MovedTaxonomyItem
 }
+
+type MemberChange struct {
+	NewMembers []int64
+	DelMembers []int64
+}

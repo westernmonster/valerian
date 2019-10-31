@@ -9,8 +9,6 @@ import (
 	"valerian/app/service/topic/model"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
-
-	"github.com/davecgh/go-spew/spew"
 )
 
 // Leave 退出话题
@@ -94,9 +92,6 @@ func (p *Service) GetTopicMembersPaged(c context.Context, arg *api.ArgTopicMembe
 }
 
 func (p *Service) BulkSaveMembers(c context.Context, req *api.ArgBatchSavedTopicMember) (err error) {
-
-	spew.Dump(req)
-
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
@@ -112,11 +107,23 @@ func (p *Service) BulkSaveMembers(c context.Context, req *api.ArgBatchSavedTopic
 		}
 	}()
 
-	if err = p.bulkSaveMembers(c, tx, req); err != nil {
+	var change *model.MemberChange
+	if change, err = p.bulkSaveMembers(c, tx, req); err != nil {
+		return
+	}
+
+	if err = tx.Commit(); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 		return
 	}
 
 	p.addCache(func() {
+		for _, v := range change.NewMembers {
+			p.onTopicFollowed(c, req.TopicID, v, time.Now().Unix())
+		}
+		for _, v := range change.NewMembers {
+			p.onTopicLeaved(c, req.TopicID, v, time.Now().Unix())
+		}
 		p.d.DelTopicCache(context.TODO(), req.TopicID)
 		p.d.DelTopicMembersCache(context.TODO(), req.TopicID)
 	})

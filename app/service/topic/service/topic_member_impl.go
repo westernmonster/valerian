@@ -236,7 +236,11 @@ func (p *Service) addMember(c context.Context, node sqalx.Node, topicID, aid int
 	return
 }
 
-func (p *Service) bulkSaveMembers(c context.Context, node sqalx.Node, req *api.ArgBatchSavedTopicMember) (err error) {
+func (p *Service) bulkSaveMembers(c context.Context, node sqalx.Node, req *api.ArgBatchSavedTopicMember) (change *model.MemberChange, err error) {
+	change = &model.MemberChange{
+		NewMembers: make([]int64, 0),
+		DelMembers: make([]int64, 0),
+	}
 
 	if err = p.checkTopic(c, node, req.TopicID); err != nil {
 		return
@@ -302,9 +306,7 @@ func (p *Service) bulkSaveMembers(c context.Context, node sqalx.Node, req *api.A
 				return
 			}
 
-			p.addCache(func() {
-				p.onTopicFollowed(c, req.TopicID, v.AccountID, time.Now().Unix())
-			})
+			change.NewMembers = append(change.NewMembers, v.AccountID)
 
 			break
 		case "U":
@@ -327,10 +329,8 @@ func (p *Service) bulkSaveMembers(c context.Context, node sqalx.Node, req *api.A
 			if err = p.d.IncrTopicStat(c, node, &model.TopicStat{TopicID: req.TopicID, MemberCount: -1}); err != nil {
 				return
 			}
+			change.NewMembers = append(change.NewMembers, member.ID)
 
-			p.addCache(func() {
-				p.onTopicLeaved(c, req.TopicID, v.AccountID, time.Now().Unix())
-			})
 			break
 		}
 
