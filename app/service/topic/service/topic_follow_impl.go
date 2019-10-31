@@ -11,12 +11,12 @@ import (
 	"valerian/library/gid"
 )
 
-func (p *Service) follow(c context.Context, node sqalx.Node, arg *api.ArgTopicFollow) (status int32, err error) {
+func (p *Service) follow(c context.Context, node sqalx.Node, arg *api.ArgTopicFollow) (id int64, status int32, err error) {
 	var member *model.TopicMember
 	if member, err = p.d.GetTopicMemberByCond(c, node, map[string]interface{}{"account_id": arg.Aid, "topic_id": arg.TopicID}); err != nil {
 		return
 	} else if member != nil {
-		return model.FollowStatusFollowed, nil
+		return 0, model.FollowStatusFollowed, nil
 	}
 
 	var req *model.TopicFollowRequest
@@ -30,9 +30,9 @@ func (p *Service) follow(c context.Context, node sqalx.Node, arg *api.ArgTopicFo
 	if req != nil {
 		switch req.Status {
 		case model.FollowRequestStatusCommited:
-			return model.FollowStatusApproving, nil
+			return req.ID, model.FollowStatusApproving, nil
 		case model.FollowRequestStatusApproved:
-			return model.FollowStatusFollowed, nil
+			return req.ID, model.FollowStatusFollowed, nil
 		case model.FollowRequestStatusRejected:
 			break
 		}
@@ -42,14 +42,14 @@ func (p *Service) follow(c context.Context, node sqalx.Node, arg *api.ArgTopicFo
 	if t, err = p.d.GetTopicByID(c, node, arg.TopicID); err != nil {
 		return
 	} else if t == nil {
-		return 0, ecode.TopicNotExist
+		return 0, 0, ecode.TopicNotExist
 	}
 
 	var account *account.BaseInfoReply
 	if account, err = p.d.GetAccountBaseInfo(c, arg.Aid); err != nil {
 		return
 	} else if account == nil {
-		return 0, ecode.UserNotExist
+		return 0, 0, ecode.UserNotExist
 	}
 
 	item := &model.TopicFollowRequest{
@@ -77,7 +77,7 @@ func (p *Service) follow(c context.Context, node sqalx.Node, arg *api.ArgTopicFo
 		break
 	case model.JoinPermissionCertApprove:
 		if !account.IDCert || !account.WorkCert {
-			return model.FollowStatusUnfollowed, ecode.NeedWorkCert
+			return 0, model.FollowStatusUnfollowed, ecode.NeedWorkCert
 		}
 
 		status = model.FollowStatusApproving
@@ -90,6 +90,7 @@ func (p *Service) follow(c context.Context, node sqalx.Node, arg *api.ArgTopicFo
 		err = ecode.OnlyAllowAdminAdded
 		return
 	}
+	id = item.ID
 
 	return
 

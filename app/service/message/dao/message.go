@@ -178,7 +178,7 @@ func (p *Dao) AddMessage(c context.Context, node sqalx.Node, item *model.Message
 	sqlInsert := "INSERT INTO messages( id,account_id,action_type,action_time,action_text,actors,extend,merge_count,actor_type,target_id,target_type,is_read,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
 
 	if _, err = node.ExecContext(c, sqlInsert, item.ID, item.AccountID, item.ActionType, item.ActionTime, item.ActionText, item.Actors, item.Extend, item.MergeCount, item.ActorType, item.TargetID, item.TargetType, item.IsRead, item.Deleted, item.CreatedAt, item.UpdatedAt); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.AddMessages err(%+v), item(%+v)", err, item))
+		log.For(c).Error(fmt.Sprintf("dao.AddMessage err(%+v), item(%+v)", err, item))
 		return
 	}
 

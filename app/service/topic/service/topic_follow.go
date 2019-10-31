@@ -26,7 +26,8 @@ func (p *Service) Follow(c context.Context, arg *api.ArgTopicFollow) (status int
 		}
 	}()
 
-	if status, err = p.follow(c, tx, arg); err != nil {
+	var reqID int64
+	if reqID, status, err = p.follow(c, tx, arg); err != nil {
 		return
 	}
 
@@ -34,6 +35,12 @@ func (p *Service) Follow(c context.Context, arg *api.ArgTopicFollow) (status int
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 		return
 	}
+
+	p.addCache(func() {
+		if status == model.FollowStatusApproving {
+			p.onTopicFollowRequested(context.Background(), reqID, arg.TopicID, arg.Aid, time.Now().Unix())
+		}
+	})
 
 	return
 
