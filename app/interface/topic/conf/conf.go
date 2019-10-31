@@ -40,6 +40,7 @@ type Config struct {
 	TopicRPC     *warden.ClientConfig
 	RelationRPC  *warden.ClientConfig
 	ArticleRPC   *warden.ClientConfig
+	SearchRPC    *warden.ClientConfig
 
 	Es *EsInfo
 

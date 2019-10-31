@@ -44,3 +44,11 @@ func (p *Service) SaveAuthTopics(c context.Context, arg *api.ArgSaveAuthTopics) 
 func (p *Service) GetAuthTopics(c context.Context, topicID int64) (items []*api.AuthTopicInfo, err error) {
 	return p.getAuthTopicsResp(c, p.d.DB(), topicID)
 }
+
+func (p *Service) GetUserCanEditTopicIDs(c context.Context, aid int64) (ids []int64, err error) {
+	if ids, err = p.d.GetUserCanEditTopicIDs(c, p.d.DB(), aid); err != nil {
+		return
+	}
+
+	return
+}

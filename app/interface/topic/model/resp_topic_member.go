@@ -16,8 +16,8 @@ type TopicMemberResp struct {
 }
 
 type TopicMembersPagedResp struct {
-	Count    int                `json:"count"`
-	PageSize int                `json:"page_size"`
+	Count    int32              `json:"count"`
+	PageSize int32              `json:"page_size"`
 	Data     []*TopicMemberResp `json:"data"`
 }
 
@@ -33,7 +33,7 @@ type FollowItem struct {
 	UserName string `json:"user_name" db:"user_name"`
 
 	// 性别 1为男， 2为女
-	Gender int `json:"gender,omitempty" db:"gender"`
+	Gender int32 `json:"gender,omitempty" db:"gender"`
 
 	// 是否身份认证
 	IDCert bool `json:"id_cert" db:"id_cert"`
@@ -48,10 +48,10 @@ type FollowItem struct {
 	IsVIP bool `json:"is_vip" db:"is_vip"`
 
 	// 关注数
-	FollowingCount int `json:"following_count" db:"-"`
+	FollowingCount int32 `json:"following_count" db:"-"`
 
 	// 粉丝数
-	FansCount int `json:"fans_count"  db:"-"`
+	FansCount int32 `json:"fans_count"  db:"-"`
 
 	// 是否当前粉丝
 	IsMember bool `json:"is_member" db:"-"`
@@ -67,7 +67,7 @@ type TopicMemberFansResp struct {
 
 type Paging struct {
 	// 统计数量
-	Total int `json:"total,omitempty"`
+	Total int32 `json:"total,omitempty"`
 	// 是否结束
 	IsEnd bool `json:"is_end"`
 	// 下一页

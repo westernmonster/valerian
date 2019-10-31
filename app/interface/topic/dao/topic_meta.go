@@ -101,3 +101,10 @@ func (p *Dao) SaveCatalogs(c context.Context, arg *api.ArgSaveCatalogs) (err err
 	}
 	return
 }
+
+func (p *Dao) GetUserCanEditTopicIDs(c context.Context, arg *api.AidReq) (resp *api.IDsResp, err error) {
+	if resp, err = p.topicRPC.GetUserCanEditTopicIDs(c, arg); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetUserCanEditTopicIDs err(%+v) arg(%+v)", err, arg))
+	}
+	return
+}

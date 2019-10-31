@@ -10,6 +10,7 @@ import (
 	article "valerian/app/service/article/api"
 	discuss "valerian/app/service/discuss/api"
 	relation "valerian/app/service/relation/api"
+	search "valerian/app/service/search/api"
 	topicFeed "valerian/app/service/topic-feed/api"
 	stopic "valerian/app/service/topic/api"
 	"valerian/library/cache/memcache"
@@ -33,6 +34,7 @@ type Dao struct {
 	articleRPC   article.ArticleClient
 	topicRPC     stopic.TopicClient
 	relationRPC  relation.RelationClient
+	searchRPC    search.SearchClient
 
 	esClient *elastic.Client
 }
@@ -78,6 +80,12 @@ func New(c *conf.Config) (dao *Dao) {
 		panic(errors.WithMessage(err, "Failed to dial topic service"))
 	} else {
 		dao.topicRPC = topicRPC
+	}
+
+	if searchRPC, err := search.NewClient(c.SearchRPC); err != nil {
+		panic(errors.WithMessage(err, "Failed to dial search service"))
+	} else {
+		dao.searchRPC = searchRPC
 	}
 
 	if client, err := elastic.NewClient(

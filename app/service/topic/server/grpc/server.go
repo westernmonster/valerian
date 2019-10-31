@@ -136,6 +136,14 @@ func (s *server) SaveCatalogs(ctx context.Context, arg *api.ArgSaveCatalogs) (*a
 	return &api.EmptyStruct{}, nil
 }
 
+func (s *server) GetUserCanEditTopicIDs(ctx context.Context, arg *api.AidReq) (*api.IDsResp, error) {
+	ids, err := s.svr.GetUserCanEditTopicIDs(ctx, arg.AccountID)
+	if err != nil {
+		return nil, err
+	}
+	return &api.IDsResp{IDs: ids}, nil
+}
+
 func (s *server) GetTopicInfo(ctx context.Context, req *api.TopicReq) (*api.TopicInfo, error) {
 	resp, err := s.svr.GetTopic(ctx, req.ID)
 	if err != nil {

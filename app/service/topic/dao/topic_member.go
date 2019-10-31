@@ -15,6 +15,43 @@ const (
 	_getTopicMembersPagedSQL = "SELECT a.* FROM topic_members a WHERE a.deleted=0 AND a.topic_id=? ORDER BY a.role,a.id DESC limit ?,?"
 )
 
+func (p *Dao) GetFollowedTopicsPaged(c context.Context, node sqalx.Node, aid int64, query string, limit, offset int) (items []*model.Topic, err error) {
+	items = make([]*model.Topic, 0)
+	sqlSelect := "SELECT b.* FROM topic_members a LEFT JOIN topics b ON a.topic_id=b.id WHERE a.deleted=0 AND a.account_id=? ORDER BY b.id DESC LIMIT ?,?"
+
+	if err = node.SelectContext(c, &items, sqlSelect, aid, offset, limit); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetFollowedTopicsPaged err(%+v) aid(%d) limit(%d) offset(%d)", err, aid, limit, offset))
+		return
+	}
+	return
+}
+
+func (p *Dao) GetFollowedTopicsIDs(c context.Context, node sqalx.Node, aid int64) (items []int64, err error) {
+	items = make([]int64, 0)
+	sqlSelect := "SELECT a.topic_id FROM topic_members a  WHERE a.deleted=0 AND a.account_id=?"
+
+	var rows *sqlx.Rows
+	if rows, err = node.QueryxContext(c, sqlSelect, aid); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetFollowedTopicsIDs err(%+v)", err))
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var (
+			targetID int64
+		)
+		if err = rows.Scan(&targetID); err != nil {
+			log.For(c).Error(fmt.Sprintf("dao.GetFollowedTopicsIDs err(%+v)", err))
+			return
+		}
+		items = append(items, targetID)
+	}
+
+	err = rows.Err()
+	return
+}
+
 func (p *Dao) GetTopicMemberIDs(c context.Context, node sqalx.Node, topicID int64) (items []int64, err error) {
 	items = make([]int64, 0)
 	sqlSelect := "SELECT a.account_id FROM topic_members a WHERE a.deleted=0 AND a.topic_id=?"

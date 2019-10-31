@@ -67,16 +67,16 @@ type ESAccount struct {
 	Role string `json:"role,omitempty"`
 
 	// 性别
-	Gender *int `json:"gender,omitempty"`
+	Gender *int32 `json:"gender,omitempty"`
 
 	// 出生年
-	BirthYear *int `json:"birth_year,omitempty"`
+	BirthYear *int32 `json:"birth_year,omitempty"`
 
 	// 出生月
-	BirthMonth *int `json:"birth_month,omitempty"`
+	BirthMonth *int32 `json:"birth_month,omitempty"`
 
 	// 出生日
-	BirthDay *int `json:"birth_day,omitempty"`
+	BirthDay *int32 `json:"birth_day,omitempty"`
 
 	// 地区
 	Location *int64 `json:"location,omitempty" swaggertype:"string"`
@@ -88,7 +88,7 @@ type ESAccount struct {
 	Avatar *string `json:"avatar,omitempty"`
 
 	// 注册来源
-	Source *int `json:"source,omitempty"`
+	Source *int32 `json:"source,omitempty"`
 
 	// 是否身份认证
 	IDCert *bool `json:"id_cert,omitempty"`
@@ -145,18 +145,18 @@ func (p *AccountSearchParams) Validate() error {
 
 type Page struct {
 	// 页码
-	Pn int `json:"num"`
+	Pn int32 `json:"num"`
 	// 页大小
-	Ps int `json:"size"`
+	Ps int32 `json:"size"`
 	// 统计数量
 	Total int64 `json:"total"`
 }
 
 type ESPage struct {
 	// 页码
-	Pn int `json:"num"`
+	Pn int32 `json:"num"`
 	// 页大小
-	Ps int `json:"size"`
+	Ps int32 `json:"size"`
 	// 统计数量
 	Total int64 `json:"total"`
 }
@@ -180,9 +180,9 @@ type BasicSearchParams struct {
 	// 排序的字段
 	Sort []string `json:"sort" form:"sort"`
 	// 页码
-	Pn int `json:"pn" form:"pn"`
+	Pn int32 `json:"pn" form:"pn"`
 	// 每页大小
-	Ps int `json:"ps" form:"ps"`
+	Ps int32 `json:"ps" form:"ps"`
 	// 是否输出Debug信息
 	Debug bool `json:"debug" form:"debug"`
 	// 输出的字段

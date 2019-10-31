@@ -479,6 +479,7 @@ message StatusResp {
 
 
 
+
 service Topic {
     rpc  CreateTopic(ArgCreateTopic) returns (IDResp);
 
@@ -503,6 +504,8 @@ service Topic {
     rpc FollowTopic(ArgTopicFollow) returns (StatusResp);
 
     rpc AuditFollow(ArgAuditFollow) returns (EmptyStruct);
+
+    rpc  GetUserCanEditTopicIDs(AidReq) returns (IDsResp);
 
     rpc  GetAllTopics(EmptyStruct) returns (AllTopicsResp);
 

@@ -2,8 +2,12 @@ package service
 
 import (
 	"context"
+	"encoding/json"
+	"net/url"
+	"strconv"
 
 	"valerian/app/interface/topic/model"
+	search "valerian/app/service/search/api"
 	topic "valerian/app/service/topic/api"
 	"valerian/library/ecode"
 	"valerian/library/net/metadata"
@@ -68,82 +72,82 @@ func (p *Service) GetAuthTopics(c context.Context, topicID int64) (items []*mode
 }
 
 func (p *Service) GetUserCanEditTopics(c context.Context, query string, pn, ps int) (resp *model.CanEditTopicsResp, err error) {
-	// aid, ok := metadata.Value(c, metadata.Aid).(int64)
-	// if !ok {
-	// 	err = ecode.AcquireAccountIDFailed
-	// 	return
-	// }
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
 
-	// var ids []int64
-	// if ids, err = p.d.GetUserCanEditTopicIDs(c, p.d.DB(), aid); err != nil {
-	// 	return
-	// }
+	var idsResp *topic.IDsResp
+	if idsResp, err = p.d.GetUserCanEditTopicIDs(c, &topic.AidReq{AccountID: aid}); err != nil {
+		return
+	}
 
-	// var data *model.SearchResult
-	// if data, err = p.d.TopicSearch(c, &model.TopicSearchParams{&model.BasicSearchParams{KW: query, Pn: pn, Ps: ps}}, ids); err != nil {
-	// 	err = ecode.SearchTopicFailed
-	// 	return
-	// }
+	var data *search.SearchResult
+	if data, err = p.d.SearchTopic(c, &search.SearchParam{KW: query, Pn: int32(pn), Ps: int32(ps), IDs: idsResp.IDs}); err != nil {
+		err = ecode.SearchTopicFailed
+		return
+	}
 
-	// resp = &model.CanEditTopicsResp{
-	// 	Items:  make([]*model.CanEditTopicItem, len(data.Result)),
-	// 	Paging: &model.Paging{},
-	// }
+	resp = &model.CanEditTopicsResp{
+		Items:  make([]*model.CanEditTopicItem, len(data.Result)),
+		Paging: &model.Paging{},
+	}
 
-	// for i, v := range data.Result {
-	// 	t := new(model.ESTopic)
-	// 	err = json.Unmarshal(v, t)
-	// 	if err != nil {
-	// 		return
-	// 	}
-	// 	item := &model.CanEditTopicItem{
-	// 		ID:             t.ID,
-	// 		Name:           *t.Name,
-	// 		Introduction:   *t.Introduction,
-	// 		EditPermission: *t.EditPermission,
-	// 		Avatar:         *t.Avatar,
-	// 	}
+	for i, v := range data.Result {
+		t := new(model.ESTopic)
+		err = json.Unmarshal(v, t)
+		if err != nil {
+			return
+		}
+		item := &model.CanEditTopicItem{
+			ID:             t.ID,
+			Name:           *t.Name,
+			Introduction:   *t.Introduction,
+			EditPermission: *t.EditPermission,
+			Avatar:         *t.Avatar,
+		}
 
-	// 	var stat *model.TopicStat
-	// 	if stat, err = p.GetTopicStat(c, t.ID); err != nil {
-	// 		return
-	// 	}
+		// var stat *model.TopicStat
+		// if stat, err = p.GetTopicStat(c, t.ID); err != nil {
+		// 	return
+		// }
 
-	// 	item.MemberCount = stat.MemberCount
-	// 	item.ArticleCount = stat.ArticleCount
-	// 	item.DiscussionCount = stat.DiscussionCount
+		// item.MemberCount = stat.MemberCount
+		// item.ArticleCount = stat.ArticleCount
+		// item.DiscussionCount = stat.DiscussionCount
 
-	// 	if item.HasCatalogTaxonomy, err = p.d.HasTaxonomy(c, p.d.DB(), t.ID); err != nil {
-	// 		return
-	// 	}
+		// if item.HasCatalogTaxonomy, err = p.d.HasTaxonomy(c, p.d.DB(), t.ID); err != nil {
+		// 	return
+		// }
 
-	// 	resp.Items[i] = item
-	// }
+		resp.Items[i] = item
+	}
 
-	// if resp.Paging.Prev, err = genURL("/api/v1/topic/list/has_edit_permission", url.Values{
-	// 	"query": []string{query},
-	// 	"pn":    []string{strconv.Itoa(pn - 1)},
-	// 	"ps":    []string{strconv.Itoa(ps)},
-	// }); err != nil {
-	// 	return
-	// }
+	if resp.Paging.Prev, err = genURL("/api/v1/topic/list/has_edit_permission", url.Values{
+		"query": []string{query},
+		"pn":    []string{strconv.Itoa(pn - 1)},
+		"ps":    []string{strconv.Itoa(ps)},
+	}); err != nil {
+		return
+	}
 
-	// if resp.Paging.Next, err = genURL("/api/v1/topic/list/has_edit_permission", url.Values{
-	// 	"query": []string{query},
-	// 	"pn":    []string{strconv.Itoa(pn + 1)},
-	// 	"ps":    []string{strconv.Itoa(ps)},
-	// }); err != nil {
-	// 	return
-	// }
+	if resp.Paging.Next, err = genURL("/api/v1/topic/list/has_edit_permission", url.Values{
+		"query": []string{query},
+		"pn":    []string{strconv.Itoa(pn + 1)},
+		"ps":    []string{strconv.Itoa(ps)},
+	}); err != nil {
+		return
+	}
 
-	// if len(resp.Items) < ps {
-	// 	resp.Paging.IsEnd = true
-	// 	resp.Paging.Next = ""
-	// }
+	if len(resp.Items) < ps {
+		resp.Paging.IsEnd = true
+		resp.Paging.Next = ""
+	}
 
-	// if pn == 1 {
-	// 	resp.Paging.Prev = ""
-	// }
+	if pn == 1 {
+		resp.Paging.Prev = ""
+	}
 
 	return
 }
