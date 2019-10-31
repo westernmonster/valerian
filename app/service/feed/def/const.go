@@ -96,6 +96,11 @@ const (
 	BusTopicInviteSent      = "topic.invite.sent"
 	BusTopicViewed          = "topic.viewed"
 
+	BusTopicCatalogAdded   = "topic.catalog.added"
+	BusTopicCatalogDeleted = "topic.catalog.deleted"
+	BusTopicCatalogRenamed = "topic.catalog.renamed"
+	BusTopicCatalogMoved   = "topic.catalog.moved"
+
 	BusMemberFollowed   = "member.followed"
 	BusMemberUnfollowed = "member.unfollowed"
 

@@ -12,6 +12,7 @@ func FromBaseInfo(model *model.BaseInfo) *BaseInfoReply {
 		IsOrg:        model.IsOrg,
 		IsVIP:        model.IsVIP,
 		Gender:       int32(model.Gender),
+		Role:         model.Role,
 		Introduction: model.Introduction,
 	}
 

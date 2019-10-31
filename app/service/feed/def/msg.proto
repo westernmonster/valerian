@@ -198,6 +198,41 @@ message MsgTopicInviteSent {
     int64 ActionTime = 4 [(gogoproto.jsontag) = "action_time"] ;
 }
 
+message MsgTopicCatalogAdded {
+    int64 TopicID = 1;
+    int64 CatalogID = 2;
+    string Name = 3;
+    int64 ActorID = 4 ;
+    int64 ActionTime = 5 ;
+}
+
+message MsgTopicCatalogDeleted {
+    int64 TopicID = 1;
+    int64 CatalogID = 2;
+    string Name = 3;
+    int64 ActorID = 4 ;
+    int64 ActionTime = 5 ;
+}
+
+message MsgTopicCatalogRenamed {
+    int64 TopicID = 1;
+    int64 CatalogID = 2;
+    string OldName = 3;
+    string NewName = 4;
+    int64 ActorID = 5 ;
+    int64 ActionTime = 6 ;
+}
+
+message MsgTopicCatalogMoved {
+    int64 TopicID = 1;
+    int64 CatalogID = 2;
+    string Name = 3;
+    string OldParentID = 4;
+    string NewParentID = 5;
+    int64 ActorID = 6 ;
+    int64 ActionTime = 7 ;
+}
+
 
 message MsgCommentLiked {
     int64 CommentID = 1 [(gogoproto.jsontag) = "comment_id"] ;

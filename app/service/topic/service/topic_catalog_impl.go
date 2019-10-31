@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	account "valerian/app/service/account/api"
 	article "valerian/app/service/article/api"
 	"valerian/app/service/topic/api"
 	"valerian/app/service/topic/model"
@@ -226,9 +227,15 @@ func (p *Service) createCatalog(c context.Context, node sqalx.Node, item *model.
 
 }
 
-func (p *Service) saveCatalogs(c context.Context, node sqalx.Node, aid int64, req *api.ArgSaveCatalogs) (delArticles []*model.ArticleItem, newArticles []*model.ArticleItem, err error) {
-	newArticles = make([]*model.ArticleItem, 0)
-	delArticles = make([]*model.ArticleItem, 0)
+func (p *Service) saveCatalogs(c context.Context, node sqalx.Node, aid int64, req *api.ArgSaveCatalogs) (change *model.CatalogChange, err error) {
+	change = &model.CatalogChange{
+		NewArticles:          make([]*model.ArticleItem, 0),
+		DelArticles:          make([]*model.ArticleItem, 0),
+		NewTaxonomyItems:     make([]*model.NewTaxonomyItem, 0),
+		DelTaxonomyItems:     make([]*model.DelTaxonomyItem, 0),
+		RenamedTaxonomyItems: make([]*model.RenamedTaxonomyItem, 0),
+		MovedTaxonomyItems:   make([]*model.MovedTaxonomyItem, 0),
+	}
 
 	// check topic
 	if err = p.checkTopic(c, node, req.TopicID); err != nil {
@@ -271,7 +278,7 @@ func (p *Service) saveCatalogs(c context.Context, node sqalx.Node, aid int64, re
 			}
 
 			if v.Type == model.TopicCatalogArticle {
-				newArticles = append(newArticles, &model.ArticleItem{TopicID: req.TopicID, ArticleID: v.RefID})
+				change.NewArticles = append(change.NewArticles, &model.ArticleItem{TopicID: req.TopicID, ArticleID: v.RefID})
 			}
 			continue
 		}
@@ -337,8 +344,19 @@ func (p *Service) saveCatalogs(c context.Context, node sqalx.Node, aid int64, re
 		}
 
 		if v.Item.Type == model.TopicCatalogArticle {
-			delArticles = append(delArticles, &model.ArticleItem{TopicID: req.TopicID, ArticleID: v.Item.RefID})
+			change.DelArticles = append(change.DelArticles, &model.ArticleItem{TopicID: req.TopicID, ArticleID: v.Item.RefID})
 		}
+	}
+	return
+}
+
+func (p *Service) IsSystemAdmin(c context.Context, aid int64) (ret bool, err error) {
+	var acc *account.BaseInfoReply
+	if acc, err = p.d.GetAccountBaseInfo(c, aid); err != nil {
+		return
+	}
+
+	if acc.Role == "" {
 	}
 	return
 }

@@ -24,6 +24,7 @@ func baseInfoFromAccount(account *model.Account) (info *model.BaseInfo) {
 		WorkCert:     bool(account.WorkCert),
 		IsOrg:        bool(account.IsOrg),
 		IsVIP:        bool(account.IsVip),
+		Role:         account.Role,
 	}
 	return
 }

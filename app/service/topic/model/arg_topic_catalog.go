@@ -279,3 +279,42 @@ type ArticleItem struct {
 	TopicID   int64
 	ArticleID int64
 }
+
+type NewTaxonomyItem struct {
+	ID       int64
+	TopicID  int64
+	ParentID int64
+	Name     string
+}
+
+type DelTaxonomyItem struct {
+	ID       int64
+	TopicID  int64
+	ParentID int64
+	Name     string
+}
+
+type MovedTaxonomyItem struct {
+	ID          int64
+	TopicID     int64
+	OldParentID int64
+	NewParentID int64
+	Name        string
+}
+
+type RenamedTaxonomyItem struct {
+	ID          int64
+	TopicID     int64
+	OldParentID int64
+	NewParentID int64
+	Name        string
+}
+
+type CatalogChange struct {
+	NewArticles          []*ArticleItem
+	DelArticles          []*ArticleItem
+	NewTaxonomyItems     []*NewTaxonomyItem
+	DelTaxonomyItems     []*DelTaxonomyItem
+	RenamedTaxonomyItems []*RenamedTaxonomyItem
+	MovedTaxonomyItems   []*MovedTaxonomyItem
+}

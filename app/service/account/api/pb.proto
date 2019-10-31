@@ -25,6 +25,8 @@ message BaseInfoReply {
     bool IsOrg  = 8 ;
 
     bool IsVIP  = 9 ;
+
+    string Role = 10;
 }
 
 message BaseInfosReply {

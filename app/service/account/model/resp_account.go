@@ -10,6 +10,7 @@ type BaseInfo struct {
 	WorkCert     bool   `json:"work_cert"`                      //  是否工作认证
 	IsOrg        bool   `json:"is_org"`                         //  是否机构用户
 	IsVIP        bool   `json:"is_vip"`                         //  是否VIP用户
+	Role         string `json:"role"`
 }
 
 type SelfProfile struct {

@@ -41,8 +41,8 @@ func (p *Service) SaveCatalogs(c context.Context, req *api.ArgSaveCatalogs) (err
 		}
 	}()
 
-	var newArticles, delArticles []*model.ArticleItem
-	if delArticles, newArticles, err = p.saveCatalogs(c, tx, req.Aid, req); err != nil {
+	var change *model.CatalogChange
+	if change, err = p.saveCatalogs(c, tx, req.Aid, req); err != nil {
 		return
 	}
 
@@ -52,11 +52,11 @@ func (p *Service) SaveCatalogs(c context.Context, req *api.ArgSaveCatalogs) (err
 	}
 
 	p.addCache(func() {
-		for _, v := range newArticles {
+		for _, v := range change.NewArticles {
 			p.onCatalogArticleAdded(c, v.ArticleID, v.TopicID, req.Aid, time.Now().Unix())
 		}
 
-		for _, v := range delArticles {
+		for _, v := range change.DelArticles {
 			p.onCatalogArticleDeleted(c, v.ArticleID, v.TopicID, req.Aid, time.Now().Unix())
 		}
 	})
