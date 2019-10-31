@@ -7,6 +7,7 @@ import (
 	"valerian/app/interface/feed/model"
 	account "valerian/app/service/account/api"
 	article "valerian/app/service/article/api"
+	comment "valerian/app/service/comment/api"
 	discuss "valerian/app/service/discuss/api"
 	feed "valerian/app/service/feed/api"
 	topic "valerian/app/service/topic/api"
@@ -91,6 +92,18 @@ func (p *Service) FromTopic(v *topic.TopicInfo) (item *model.TargetTopic) {
 			Introduction: v.Creator.Introduction,
 		},
 		Avatar: v.Avatar,
+	}
+
+	return
+}
+
+func (p *Service) FromComment(v *comment.CommentInfo) (item *model.TargetComment) {
+	item = &model.TargetComment{
+		ID:         v.ID,
+		Type:       v.TargetType,
+		Excerpt:    v.Content,
+		CreatedAt:  v.CreatedAt,
+		ResourceID: v.ResourceID,
 	}
 
 	return
@@ -184,6 +197,43 @@ func (p *Service) GetFeedPaged(c context.Context, limit, offset int) (resp *mode
 
 			item.Target.Member = info
 			break
+		case model.TargetTypeComment:
+			var info *comment.CommentInfo
+			if info, err = p.d.GetComment(c, v.TargetID); err != nil {
+				return
+			}
+
+			item.Target.Comment = p.FromComment(info)
+
+			switch info.TargetType {
+			case model.TargetTypeArticle:
+				var article *article.ArticleInfo
+				if article, err = p.d.GetArticle(c, v.TargetID); err != nil {
+					return
+				}
+
+				item.Target.Article = p.FromArticle(article)
+				break
+			case model.TargetTypeRevise:
+				var revise *article.ReviseInfo
+				if revise, err = p.d.GetRevise(c, v.TargetID); err != nil {
+					return
+				}
+
+				item.Target.Revise = p.FromRevise(revise)
+				break
+			case model.TargetTypeDiscussion:
+				var discuss *discuss.DiscussionInfo
+				if discuss, err = p.d.GetDiscussion(c, v.TargetID); err != nil {
+					return
+				}
+
+				item.Target.Discussion = p.FromDiscussion(discuss)
+				break
+
+			}
+			break
+
 		}
 
 		resp.Items[i] = item

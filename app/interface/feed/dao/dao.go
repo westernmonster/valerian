@@ -8,6 +8,7 @@ import (
 	"valerian/app/interface/feed/conf"
 	account "valerian/app/service/account/api"
 	article "valerian/app/service/article/api"
+	comment "valerian/app/service/comment/api"
 	discuss "valerian/app/service/discuss/api"
 	feed "valerian/app/service/feed/api"
 	relation "valerian/app/service/relation/api"
@@ -32,6 +33,7 @@ type Dao struct {
 	articleRPC  article.ArticleClient
 	topicRPC    topic.TopicClient
 	relationRPC relation.RelationClient
+	commentRPC  comment.CommentClient
 }
 
 func New(c *conf.Config) (dao *Dao) {
@@ -40,6 +42,12 @@ func New(c *conf.Config) (dao *Dao) {
 		db:       sqalx.NewMySQL(c.DB.Main),
 		mc:       memcache.NewPool(c.Memcache.Main.Config),
 		mcExpire: int32(time.Duration(c.Memcache.Main.Expire) / time.Second),
+	}
+
+	if commentRPC, err := comment.NewClient(c.CommentRPC); err != nil {
+		panic(errors.WithMessage(err, "Failed to dial comment service"))
+	} else {
+		dao.commentRPC = commentRPC
 	}
 
 	if relationRPC, err := relation.NewClient(c.RelationRPC); err != nil {

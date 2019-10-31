@@ -39,6 +39,7 @@ type Config struct {
 	TopicRPC    *warden.ClientConfig
 	RelationRPC *warden.ClientConfig
 	ArticleRPC  *warden.ClientConfig
+	CommentRPC  *warden.ClientConfig
 
 	// Auth
 	Auth      *auth.Config
