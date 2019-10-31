@@ -129,6 +129,8 @@ type ESArticle struct {
 	// 内容
 	Excerpt *string `json:"excerpt,omitempty"`
 
+	ChangeDesc *string `json:"change_desc,omitempty"`
+
 	//  禁止补充
 	DisableRevise *bool `json:"disable_revise,omitempty"`
 
