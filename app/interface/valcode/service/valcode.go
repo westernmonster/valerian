@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"crypto/rand"
+	"fmt"
 	"io"
 	"time"
 	"valerian/app/interface/valcode/model"
@@ -89,6 +90,7 @@ func (p *Service) MobileValcode(c context.Context, req *model.ArgMobileValcode) 
 		}
 		break
 	case model.ValcodeRegister:
+		fmt.Println(code)
 		if err = p.sms.SendRegisterValcode(c, req.Prefix, req.Mobile, code); err != nil {
 			return
 		}
