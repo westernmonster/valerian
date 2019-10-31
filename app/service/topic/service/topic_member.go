@@ -9,6 +9,8 @@ import (
 	"valerian/app/service/topic/model"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
+
+	"github.com/davecgh/go-spew/spew"
 )
 
 // Leave 退出话题
@@ -92,6 +94,9 @@ func (p *Service) GetTopicMembersPaged(c context.Context, arg *api.ArgTopicMembe
 }
 
 func (p *Service) BulkSaveMembers(c context.Context, req *api.ArgBatchSavedTopicMember) (err error) {
+
+	spew.Dump(req)
+
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
