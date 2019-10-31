@@ -48,34 +48,34 @@ const (
 
 const (
 	// 未关注
-	FollowStatusUnfollowed = int32(1)
+	FollowStatusUnfollowed = 1
 	// 审核中
-	FollowStatusApproving = int32(2)
+	FollowStatusApproving = 2
 	// 已关注
-	FollowStatusFollowed = int32(3)
+	FollowStatusFollowed = 3
 )
 
 const (
-	InviteStatusSent     = int32(1)
-	InviteStatusJoined   = int32(2)
-	InviteStatusRejected = int32(3)
+	InviteStatusSent     = 1
+	InviteStatusJoined   = 2
+	InviteStatusRejected = 3
 )
 
 const (
 	// 审核请求已经提交
-	FollowRequestStatusCommited = int32(0)
+	FollowRequestStatusCommited = 0
 	// 审核请求通过
-	FollowRequestStatusApproved = int32(1)
+	FollowRequestStatusApproved = 1
 	// 审核请求拒绝
-	FollowRequestStatusRejected = int32(2)
+	FollowRequestStatusRejected = 2
 )
 
 const (
-	ReportTypeSpam       = int32(1) // 垃圾广告
-	ReportTypeCopyRight  = int32(2) // 涉嫌侵权
-	ReportTypeDiscomfort = int32(3) // 内容引起不适
-	ReportTypeIncorrect  = int32(4) // 内容有误
-	ReportTypeOther      = int32(5) // 其他
+	ReportTypeSpam       = 1 // 垃圾广告
+	ReportTypeCopyRight  = 2 // 涉嫌侵权
+	ReportTypeDiscomfort = 3 // 内容引起不适
+	ReportTypeIncorrect  = 4 // 内容有误
+	ReportTypeOther      = 5 // 其他
 )
 
 const (

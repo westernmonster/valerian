@@ -10,7 +10,7 @@ type TopicResp struct {
 	MemberCount int32 `json:"member_count,omitempty"`
 
 	// 目录
-	Catalogs []*TopicLevel1Catalog `json:"catalogs,omitempty"`
+	Catalogs []*TopicRootCatalog `json:"catalogs,omitempty"`
 
 	// 授权话题
 	AuthTopics []*AuthTopicResp `json:"auth_topics,omitempty"`
@@ -80,7 +80,12 @@ type TopicResp struct {
 
 	TopicMeta *TopicMeta `json:"meta,omitempty"`
 
+	// 是否有类目分类
 	HasCatalogTaxonomy bool `json:"has_catalog_taxonomy"`
+
+	TopicStat *TopicStat `json:"stat,omitempty"`
+
+	Creator *Creator `json:"creator,omitempty"`
 }
 
 type TopicMeta struct {
@@ -97,7 +102,7 @@ type TopicMeta struct {
 	CanView bool `json:"can_view"`
 
 	// 关注状态
-	FollowStatus int32 `json:"follow_status"`
+	FollowStatus int `json:"follow_status"`
 
 	IsMember bool `json:"is_member"`
 
@@ -118,13 +123,13 @@ type TopicItem struct {
 	Avatar string `json:"avatar,omitempty" extensions:"x-nullable,x-abc=def"`
 
 	// 成员数
-	MemberCount int32 `json:"member_count"`
+	MemberCount int `json:"member_count"`
 
 	// 文章数
-	ArticleCount int32 `json:"article_count"`
+	ArticleCount int `json:"article_count"`
 
 	// 讨论数
-	DiscussionCount int32 `json:"discussion_count"`
+	DiscussionCount int `json:"discussion_count"`
 }
 
 type TopicListResp struct {

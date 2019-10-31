@@ -8,10 +8,13 @@ import (
 	"valerian/library/cache/memcache"
 	"valerian/library/conf"
 	"valerian/library/database/sqalx"
+	ecode "valerian/library/ecode/tip"
 	"valerian/library/log"
+	"valerian/library/mq"
 	"valerian/library/naming/discovery"
 	"valerian/library/net/http/mars"
 	"valerian/library/net/http/mars/middleware/permit"
+	"valerian/library/net/rpc/warden"
 	xtime "valerian/library/time"
 	"valerian/library/tracing"
 
@@ -29,22 +32,30 @@ type Config struct {
 	Mars   *mars.ServerConfig
 	Tracer *tracing.Config
 	DB     *DB
-	// Auth
-	Memcache *Memcache
+	Ecode  *ecode.Config
 
+	AccountRPC   *warden.ClientConfig
+	DiscussRPC   *warden.ClientConfig
+	TopicFeedRPC *warden.ClientConfig
+	TopicRPC     *warden.ClientConfig
+	RelationRPC  *warden.ClientConfig
+	ArticleRPC   *warden.ClientConfig
+	SearchRPC    *warden.ClientConfig
+
+	Session *permit.SessionConfig
+	// Auth
+	Memcache  *Memcache
 	Discovery *discovery.Config
-	Session   *permit.SessionConfig
+	Nats      *mq.Config
 }
 
 // DB db config.
 type DB struct {
 	Main *sqalx.Config
-	Auth *sqalx.Config
 }
 
 // Memcache memcache config.
 type Memcache struct {
-	Auth *MC
 	Main *MC
 }
 

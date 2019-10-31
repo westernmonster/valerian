@@ -7,9 +7,9 @@ import (
 
 	flag "github.com/spf13/pflag"
 
-	"valerian/app/admin/search/conf"
-	"valerian/app/admin/search/http"
-	"valerian/app/admin/search/service"
+	"valerian/app/admin/topic/conf"
+	"valerian/app/admin/topic/http"
+	"valerian/app/admin/topic/service"
 	ecode "valerian/library/ecode/tip"
 	"valerian/library/log"
 	"valerian/library/tracing"
@@ -29,7 +29,7 @@ func main() {
 	// init log
 	log.Init(conf.Conf.Log)
 	defer log.Close()
-	log.Info("admin-search start")
+	log.Info("admin-topic start")
 	// init trace
 	tracing.Init(nil)
 	// service init
@@ -41,11 +41,11 @@ func main() {
 	signal.Notify(c, syscall.SIGHUP, syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT)
 	for {
 		s := <-c
-		log.Infof("admin-search get a signal %s", s.String())
+		log.Infof("admin-topic get a signal %s", s.String())
 		switch s {
 		case syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT:
 			svc.Close()
-			log.Info("admin-search exit")
+			log.Info("admin-topic exit")
 			return
 		case syscall.SIGHUP:
 		// TODO reload

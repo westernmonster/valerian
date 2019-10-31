@@ -13,20 +13,20 @@ type CatalogArticleItem struct {
 	// 内容
 	Excerpt string `json:"excerpt"`
 	// 喜欢数
-	LikeCount int32 `json:"like_count"`
+	LikeCount int `json:"like_count"`
 	// 反对数
-	DislikeCount int32 `json:"dislike_count"`
+	DislikeCount int `json:"dislike_count"`
 	// 补充个数
-	ReviseCount int32 `json:"revise_count"`
+	ReviseCount int `json:"revise_count"`
 	// 评论数
-	CommentCount int32 `json:"comment_count"`
+	CommentCount int `json:"comment_count"`
 
 	Images []string `json:"images"`
 	// 发布日期
 	CreatedAt int64 `json:"created_at"`
 }
 
-type TopicLevel1Catalog struct {
+type TopicRootCatalog struct {
 	ID *int64 `json:"id,string" swaggertype:"string"`
 	//  名称
 	// required: true
@@ -34,7 +34,7 @@ type TopicLevel1Catalog struct {
 
 	// 顺序
 	// required: true
-	Seq int32 `json:"seq"`
+	Seq int `json:"seq"`
 
 	// 类型
 	// required: true
@@ -43,13 +43,13 @@ type TopicLevel1Catalog struct {
 	// 引用ID
 	RefID int64 `json:"ref_id,string,omitempty" swaggertype:"string"`
 
-	Children []*TopicLevel2Catalog `json:"children,omitempty"`
+	Children []*TopicParentCatalog `json:"children"`
 
 	// 文章
 	Article *TargetArticle `json:"article,omitempty"`
 }
 
-func (p *TopicLevel1Catalog) Validate() error {
+func (p *TopicRootCatalog) Validate() error {
 	return validation.ValidateStruct(
 		p,
 		validation.Field(&p.Name,
@@ -58,7 +58,7 @@ func (p *TopicLevel1Catalog) Validate() error {
 		validation.Field(&p.Type,
 			validation.Required.Error(`请输入类型`),
 			validation.In(TopicCatalogTaxonomy, TopicCatalogArticle, TopicCatalogTestSet).Error("类型不正确")),
-		validation.Field(&p.Children, ValidateLevel1Children(p.Type)),
+		validation.Field(&p.Children, ValidateRootChildren(p.Type)),
 		validation.Field(&p.RefID, ValidateRefID(p.Type)),
 	)
 }
@@ -96,18 +96,18 @@ func (p *ValidateTypeRule) Validate(v interface{}) error {
 	return nil
 }
 
-func ValidateLevel1Children(rtype string) *ValidateLevel1ChildrenRule {
-	return &ValidateLevel1ChildrenRule{
+func ValidateRootChildren(rtype string) *ValidateRootChildrenRule {
+	return &ValidateRootChildrenRule{
 		Type: rtype,
 	}
 }
 
-type ValidateLevel1ChildrenRule struct {
+type ValidateRootChildrenRule struct {
 	Type string
 }
 
-func (p *ValidateLevel1ChildrenRule) Validate(v interface{}) error {
-	children := v.([]*TopicLevel2Catalog)
+func (p *ValidateRootChildrenRule) Validate(v interface{}) error {
+	children := v.([]*TopicParentCatalog)
 	switch p.Type {
 	case TopicCatalogTaxonomy:
 		break
@@ -126,17 +126,17 @@ func (p *ValidateLevel1ChildrenRule) Validate(v interface{}) error {
 	return nil
 }
 
-func ValidateLevel2Children(rtype string) *ValidateLevel2ChildrenRule {
-	return &ValidateLevel2ChildrenRule{
+func ValidateParentChildren(rtype string) *ValidateParentChildrenRule {
+	return &ValidateParentChildrenRule{
 		Type: rtype,
 	}
 }
 
-type ValidateLevel2ChildrenRule struct {
+type ValidateParentChildrenRule struct {
 	Type string
 }
 
-func (p *ValidateLevel2ChildrenRule) Validate(v interface{}) error {
+func (p *ValidateParentChildrenRule) Validate(v interface{}) error {
 	children := v.([]*TopicChildCatalog)
 	switch p.Type {
 	case TopicCatalogTaxonomy:
@@ -156,11 +156,11 @@ func (p *ValidateLevel2ChildrenRule) Validate(v interface{}) error {
 	return nil
 }
 
-// func checkLevel2Duplicate(value interface{}) error {
-// 	children, _ := value.([]*TopicLevel2Catalog)
+// func checkParentDuplicate(value interface{}) error {
+// 	children, _ := value.([]*TopicParentCatalog)
 // }
 
-type TopicLevel2Catalog struct {
+type TopicParentCatalog struct {
 	ID *int64 `json:"id,string" swaggertype:"string"`
 	//  名称
 	// required: true
@@ -168,7 +168,7 @@ type TopicLevel2Catalog struct {
 
 	// 顺序
 	// required: true
-	Seq int32 `json:"seq"`
+	Seq int `json:"seq"`
 
 	// 类型
 	// required: true
@@ -177,12 +177,12 @@ type TopicLevel2Catalog struct {
 	// 引用ID
 	RefID int64 `json:"ref_id,string,omitempty" swaggertype:"string"`
 
-	Children []*TopicChildCatalog `json:"children,omitempty"`
+	Children []*TopicChildCatalog `json:"children"`
 
 	Article *TargetArticle `json:"article,omitempty"`
 }
 
-func (p *TopicLevel2Catalog) Validate() error {
+func (p *TopicParentCatalog) Validate() error {
 	return validation.ValidateStruct(
 		p,
 		validation.Field(&p.Name,
@@ -191,7 +191,7 @@ func (p *TopicLevel2Catalog) Validate() error {
 		validation.Field(&p.Type,
 			validation.Required.Error(`请输入类型`),
 			validation.In(TopicCatalogTaxonomy, TopicCatalogArticle, TopicCatalogTestSet).Error("类型不正确")),
-		validation.Field(&p.Children, ValidateLevel2Children(p.Type)),
+		validation.Field(&p.Children, ValidateParentChildren(p.Type)),
 		validation.Field(&p.RefID, ValidateRefID(p.Type)),
 	)
 }
@@ -204,7 +204,7 @@ type TopicChildCatalog struct {
 
 	// 顺序
 	// required: true
-	Seq int32 `json:"seq"`
+	Seq int `json:"seq"`
 
 	// 类型
 	// required: true

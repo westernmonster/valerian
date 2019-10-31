@@ -3,22 +3,18 @@ package service
 import (
 	"context"
 	"net/url"
+	"strings"
 
-	"valerian/app/admin/login/conf"
-	"valerian/app/admin/login/dao"
+	"valerian/app/admin/topic/conf"
+	"valerian/app/admin/topic/dao"
 	"valerian/library/conf/env"
-	"valerian/library/database/sqalx"
 	"valerian/library/log"
 )
 
 // Service struct of service
 type Service struct {
-	c *conf.Config
-	d interface {
-		Ping(c context.Context) (err error)
-		Close()
-		DB() sqalx.Node
-	}
+	c      *conf.Config
+	d      *dao.Dao
 	missch chan func()
 }
 
@@ -57,6 +53,16 @@ func (s *Service) cacheproc() {
 		f := <-s.missch
 		f()
 	}
+}
+
+func includeParam(include string) (dic map[string]bool) {
+	arr := strings.Split(include, ",")
+	dic = make(map[string]bool)
+	for _, v := range arr {
+		dic[v] = true
+	}
+
+	return
 }
 
 func genURL(path string, param url.Values) (uri string, err error) {

@@ -2,14 +2,14 @@ package http
 
 import (
 	"strconv"
-	"valerian/app/interface/topic/model"
+	"valerian/app/admin/topic/model"
 	"valerian/library/ecode"
 	"valerian/library/net/http/mars"
 )
 
 // @Summary 获取话题目录层级分类
 // @Description 获取话题目录层级分类
-// @Tags topic
+// @Tags admin
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer"
@@ -17,7 +17,7 @@ import (
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param topic_id query string true "话题ID"
 // @Param include query string true  "ref_item"
-// @Success 200 {array}  app.interface.topic.model.TopicRootCatalog "话题类目"
+// @Success 200 {array}  app.admin.topic.model.TopicRootCatalog "话题类目"
 // @Failure 400 "请求验证失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
@@ -38,7 +38,7 @@ func topicCatalogTaxonomies(c *mars.Context) {
 
 // @Summary 获取话题类目
 // @Description 获取话题类目
-// @Tags topic
+// @Tags admin
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer"
@@ -46,7 +46,7 @@ func topicCatalogTaxonomies(c *mars.Context) {
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param topic_id query string true "话题ID"
 // @Param include query string true  "ref_item"
-// @Success 200 {array}  app.interface.topic.model.TopicRootCatalog "话题类目"
+// @Success 200 {array}  app.admin.topic.model.TopicRootCatalog "话题类目"
 // @Failure 400 "请求验证失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
@@ -67,13 +67,13 @@ func topicCatalogs(c *mars.Context) {
 
 // @Summary 更新话题类目
 // @Description 更新话题类目
-// @Tags topic
+// @Tags admin
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body  app.interface.topic.model.ArgSaveTopicCatalog true "请求"
+// @Param req body  app.admin.topic.model.ArgSaveTopicCatalog true "请求"
 // @Success 200 "成功"
 // @Failure 400 "请求验证失败"
 // @Failure 401 "登录验证失败"

@@ -1,20 +1,26 @@
 package http
 
 import (
-	"valerian/app/admin/search/conf"
-	"valerian/app/admin/search/service"
+	"valerian/app/admin/topic/conf"
+	"valerian/app/admin/topic/service"
 	"valerian/library/ecode"
 	"valerian/library/log"
 	"valerian/library/net/http/mars"
+	"valerian/library/net/http/mars/middleware/permit"
 )
 
 var (
-	srv *service.Service
+	srv       *service.Service
+	permitSvc *permit.Permit
 )
 
 // Init init
 func Init(c *conf.Config, s *service.Service) {
 	srv = s
+	permitSvc = permit.New(&permit.Config{
+		Session: c.Session,
+	})
+
 	engine := mars.DefaultServer(c.Mars)
 	route(engine)
 
@@ -27,12 +33,33 @@ func Init(c *conf.Config, s *service.Service) {
 func route(e *mars.Engine) {
 	e.Ping(ping)
 	e.Register(register)
-	// g := e.Group("/api/v1/admin/search")
+	g := e.Group("/api/v1/admin/topic", permitSvc.Verify())
 	{
-		// g.POST("/mobile", mobileLogin)
-		// g.POST("/digit", digitLogin)
-		// g.POST("/email", emailLogin)
+		g.GET("/get", getTopic)
+		g.GET("/meta", topicMeta)
+		g.POST("/add", createTopic)
+		g.POST("/edit", editTopic)
+		g.POST("/del", deleteTopic)
+		g.POST("/owner", changeOwner)
+		g.POST("/leave", leave)
+		g.POST("/invite", inviteFans)
+		g.POST("/follow", followTopic)
+		g.POST("/members", editTopicMembers)
+		g.POST("/auth_topics", editAuthTopics)
+		g.POST("/catalogs", editTopicCatalogs)
+		g.POST("/audit_follow", auditFollow)
+		g.POST("/process_invite", processInvite)
+
+		g.GET("/list/followed", followedTopics)
+		g.GET("/list/has_edit_permission", topicsWithEditPermission)
+		g.GET("/list/activities", getActivites)
+		g.GET("/list/catalogs", topicCatalogs)
+		g.GET("/list/catalog_taxonomies", topicCatalogTaxonomies)
+		g.GET("/list/members", topicMembers)
+		g.GET("/list/member_fans", memberFansList)
+		g.GET("/list/auth_topics", authTopics)
 	}
+
 }
 
 // ping check server ok.
