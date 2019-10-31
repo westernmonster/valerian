@@ -9,6 +9,7 @@ import (
 	feed "valerian/app/service/account-feed/api"
 	account "valerian/app/service/account/api"
 	article "valerian/app/service/article/api"
+	certification "valerian/app/service/certification/api"
 	discuss "valerian/app/service/discuss/api"
 	recent "valerian/app/service/recent/api"
 	topic "valerian/app/service/topic/api"
@@ -517,6 +518,84 @@ func (p *Service) GetMemberTopicsPaged(c context.Context, aid int64, limit, offs
 
 	if offset == 0 {
 		resp.Paging.Prev = ""
+	}
+
+	return
+}
+func (p *Service) GetMemberCert(c context.Context, targetID int64) (resp *model.MemberCertInfo, err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+
+	var f *account.MemberInfoReply
+	if f, err = p.d.GetMemberInfo(c, targetID); err != nil {
+		return
+	}
+
+	resp = &model.MemberCertInfo{}
+
+	resp.Member = &model.MemberInfo{
+		ID:             f.ID,
+		UserName:       f.UserName,
+		Gender:         (f.Gender),
+		Location:       f.Location,
+		LocationString: f.LocationString,
+		Introduction:   f.Introduction,
+		Avatar:         f.Avatar,
+		IDCert:         f.IDCert,
+		WorkCert:       f.WorkCert,
+		IsOrg:          f.IsOrg,
+		IsVIP:          f.IsVIP,
+		Company:        f.Company,
+		Position:       f.Position,
+	}
+
+	var isFollowing bool
+	if isFollowing, err = p.d.IsFollowing(c, aid, targetID); err != nil {
+		return
+	}
+
+	resp.Member.Stat = &model.MemberInfoStat{
+		FansCount:       (f.Stat.FansCount),
+		FollowingCount:  (f.Stat.FollowingCount),
+		TopicCount:      (f.Stat.TopicCount),
+		ArticleCount:    (f.Stat.ArticleCount),
+		DiscussionCount: (f.Stat.DiscussionCount),
+		IsFollow:        isFollowing,
+	}
+
+	var v *certification.IDCertInfo
+	if v, err = p.d.GetIDCert(c, targetID); err != nil {
+		return
+	}
+
+	var w *certification.WorkCertInfo
+	if w, err = p.d.GetWorkCert(c, targetID); err != nil {
+		return
+	}
+
+	resp.IDCert = &model.IDCertificationInfo{
+		ID:         v.AccountID,
+		Name:       v.Name,
+		IDCardType: v.IDCardType,
+		Status:     v.Status,
+		UpdatedAt:  v.UpdatedAt,
+	}
+
+	if len(v.IdentificationNumber) > 0 {
+		numbers := []rune(v.IdentificationNumber)
+		resp.IDCert.IdentificationNumber = string(numbers[0]) + "*********" + string(numbers[len(numbers)-1])
+	}
+
+	resp.WorkCert = &model.WorkCertificationInfo{
+		ID:         w.AccountID,
+		Company:    w.Company,
+		Department: w.Department,
+		Position:   w.Position,
+		Status:     w.Status,
+		UpdatedAt:  w.UpdatedAt,
 	}
 
 	return

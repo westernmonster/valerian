@@ -9,6 +9,7 @@ import (
 	accountFeed "valerian/app/service/account-feed/api"
 	account "valerian/app/service/account/api"
 	article "valerian/app/service/article/api"
+	certification "valerian/app/service/certification/api"
 	discuss "valerian/app/service/discuss/api"
 	recent "valerian/app/service/recent/api"
 	relation "valerian/app/service/relation/api"
@@ -22,19 +23,20 @@ import (
 
 // Dao dao struct
 type Dao struct {
-	mc             *memcache.Pool
-	mcExpire       int32
-	authMC         *memcache.Pool
-	authMCExpire   int32
-	db             sqalx.Node
-	c              *conf.Config
-	accountRPC     account.AccountClient
-	relationRPC    relation.RelationClient
-	articleRPC     article.ArticleClient
-	topicRPC       topic.TopicClient
-	discussRPC     discuss.DiscussionClient
-	accountFeedRPC accountFeed.AccountFeedClient
-	recentRPC      recent.RecentClient
+	mc               *memcache.Pool
+	mcExpire         int32
+	authMC           *memcache.Pool
+	authMCExpire     int32
+	db               sqalx.Node
+	c                *conf.Config
+	accountRPC       account.AccountClient
+	relationRPC      relation.RelationClient
+	articleRPC       article.ArticleClient
+	topicRPC         topic.TopicClient
+	discussRPC       discuss.DiscussionClient
+	accountFeedRPC   accountFeed.AccountFeedClient
+	recentRPC        recent.RecentClient
+	certificationRPC certification.CertificationClient
 }
 
 func New(c *conf.Config) (dao *Dao) {
@@ -45,6 +47,12 @@ func New(c *conf.Config) (dao *Dao) {
 		authMCExpire: int32(time.Duration(c.Memcache.Auth.Expire) / time.Second),
 		mc:           memcache.NewPool(c.Memcache.Main.Config),
 		mcExpire:     int32(time.Duration(c.Memcache.Main.Expire) / time.Second),
+	}
+
+	if certificationRPC, err := certification.NewClient(c.CertificationRPC); err != nil {
+		panic(errors.WithMessage(err, "Failed to dial certification service"))
+	} else {
+		dao.certificationRPC = certificationRPC
 	}
 
 	if accountRPC, err := account.NewClient(c.AccountRPC); err != nil {

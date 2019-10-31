@@ -107,6 +107,15 @@ func memberInfo(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /account/cert [get]
 func memberCert(c *mars.Context) {
+	var id int64
+	var err error
+	params := c.Request.Form
+
+	if id, err = strconv.ParseInt(params.Get("id"), 10, 64); err != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+	c.JSON(srv.GetMemberCert(c, id))
 }
 
 // @Summary 获取用户动态

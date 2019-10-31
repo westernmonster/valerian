@@ -19,11 +19,12 @@ type IDCertificationInfo struct {
 
 	// 证件号
 	IdentificationNumber string `json:"identification_number,omitempty"`
+
 	// 证件类型, identityCard代表身份证
 	IDCardType string `json:"id_card_type,omitempty"`
 
 	// Status 状态：-1 未认证, 0 认证中,  1 认证成功, 2 认证失败
-	Status int `json:"status"`
+	Status int32 `json:"status"`
 
 	UpdatedAt int64 `json:"updated_at"`
 }
@@ -42,7 +43,7 @@ type WorkCertificationInfo struct {
 	Position string `json:"position,omitempty"`
 
 	// Status 状态：-1 未认证, 0 认证中,  1 认证成功, 2 认证失败
-	Status int `json:"status"`
+	Status int32 `json:"status"`
 
 	UpdatedAt int64 `json:"updated_at"`
 }
