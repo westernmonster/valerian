@@ -3,13 +3,10 @@ package service
 import (
 	"context"
 	"fmt"
-	account "valerian/app/service/account/api"
 	"valerian/app/service/feed/def"
 	"valerian/app/service/search/model"
 	"valerian/library/log"
 
-	retry "github.com/kamilsk/retry/v4"
-	strategy "github.com/kamilsk/retry/v4/strategy"
 	"github.com/nats-io/stan.go"
 )
 
@@ -22,20 +19,11 @@ func (p *Service) onAccountAdded(m *stan.Msg) {
 		return
 	}
 
-	var v *account.DBAccount
-	action := func(c context.Context, _ uint) error {
-		acc, e := p.d.GetAccountInfo(c, info.AccountID)
-		if e != nil {
-			return e
-		}
-
-		v = acc
-		return nil
-	}
-
-	if err := retry.TryContext(c, action, strategy.Limit(3)); err != nil {
-		m.Ack()
+	var v *model.Account
+	if v, err = p.d.GetAccountByID(c, p.d.DB(), info.AccountID); err != nil {
 		return
+	} else if v == nil {
+		m.Ack()
 	}
 
 	item := &model.ESAccount{
@@ -54,11 +42,16 @@ func (p *Service) onAccountAdded(m *stan.Msg) {
 		Source:       &v.Source,
 		CreatedAt:    &v.CreatedAt,
 		UpdatedAt:    &v.UpdatedAt,
-		IDCert:       &v.IDCert,
-		WorkCert:     &v.WorkCert,
-		IsVIP:        &v.IsVIP,
-		IsOrg:        &v.IsOrg,
 	}
+
+	idCert := bool(v.IDCert)
+	item.IDCert = &idCert
+	workCert := bool(v.WorkCert)
+	item.WorkCert = &workCert
+	isVIP := bool(v.IsVip)
+	item.IsVIP = &isVIP
+	isOrg := bool(v.IsOrg)
+	item.IsOrg = &isOrg
 
 	if err = p.d.PutAccount2ES(c, item); err != nil {
 		return
@@ -75,20 +68,11 @@ func (p *Service) onAccountUpdated(m *stan.Msg) {
 		return
 	}
 
-	var v *account.DBAccount
-	action := func(c context.Context, _ uint) error {
-		acc, e := p.d.GetAccountInfo(c, info.AccountID)
-		if e != nil {
-			return e
-		}
-
-		v = acc
-		return nil
-	}
-
-	if err := retry.TryContext(c, action, strategy.Limit(3)); err != nil {
-		m.Ack()
+	var v *model.Account
+	if v, err = p.d.GetAccountByID(c, p.d.DB(), info.AccountID); err != nil {
 		return
+	} else if v == nil {
+		m.Ack()
 	}
 
 	item := &model.ESAccount{
@@ -107,11 +91,16 @@ func (p *Service) onAccountUpdated(m *stan.Msg) {
 		Source:       &v.Source,
 		CreatedAt:    &v.CreatedAt,
 		UpdatedAt:    &v.UpdatedAt,
-		IDCert:       &v.IDCert,
-		WorkCert:     &v.WorkCert,
-		IsVIP:        &v.IsVIP,
-		IsOrg:        &v.IsOrg,
 	}
+
+	idCert := bool(v.IDCert)
+	item.IDCert = &idCert
+	workCert := bool(v.WorkCert)
+	item.WorkCert = &workCert
+	isVIP := bool(v.IsVip)
+	item.IsVIP = &isVIP
+	isOrg := bool(v.IsOrg)
+	item.IsOrg = &isOrg
 
 	if err = p.d.PutAccount2ES(c, item); err != nil {
 		return

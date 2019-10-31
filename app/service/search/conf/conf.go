@@ -41,12 +41,6 @@ type Config struct {
 
 	// es cluster
 	Es *EsInfo
-
-	AccountRPC  *warden.ClientConfig
-	TopicRPC    *warden.ClientConfig
-	ArticleRPC  *warden.ClientConfig
-	DiscussRPC  *warden.ClientConfig
-	RelationRPC *warden.ClientConfig
 }
 
 // EsInfo .

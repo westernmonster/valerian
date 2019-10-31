@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"valerian/app/service/feed/def"
 	"valerian/app/service/search/model"
-	topic "valerian/app/service/topic/api"
 	"valerian/library/log"
 
 	"github.com/nats-io/stan.go"
@@ -20,11 +19,12 @@ func (p *Service) onTopicAdded(m *stan.Msg) {
 		return
 	}
 
-	var v *topic.TopicInfo
-	if v, err = p.d.GetTopic(c, info.TopicID); err != nil {
+	var v *model.Topic
+	if v, err = p.d.GetTopicByID(c, p.d.DB(), info.TopicID); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onTopicAdded GetTopicByID failed %#v", err))
 		return
 	} else if v == nil {
+		m.Ack()
 		return
 	}
 
@@ -40,16 +40,28 @@ func (p *Service) onTopicAdded(m *stan.Msg) {
 		CatalogViewType: &v.CatalogViewType,
 		CreatedAt:       &v.CreatedAt,
 		UpdatedAt:       &v.UpdatedAt,
-		AllowDiscuss:    &v.AllowDiscuss,
-		AllowChat:       &v.AllowChat,
-		IsPrivate:       &v.IsPrivate,
+	}
+
+	allowDiscuss := bool(v.AllowDiscuss)
+	allowChat := bool(v.AllowChat)
+	isPrivate := bool(v.IsPrivate)
+	item.AllowDiscuss = &allowDiscuss
+	item.AllowChat = &allowChat
+	item.IsPrivate = &isPrivate
+
+	var acc *model.Account
+	if acc, err = p.d.GetAccountByID(c, p.d.DB(), v.CreatedBy); err != nil {
+		return
+	} else if acc == nil {
+		m.Ack()
+		return
 	}
 
 	item.Creator = &model.ESCreator{
-		ID:           v.Creator.ID,
-		UserName:     &v.Creator.UserName,
-		Avatar:       &v.Creator.Avatar,
-		Introduction: &v.Creator.Introduction,
+		ID:           acc.ID,
+		UserName:     &acc.UserName,
+		Avatar:       &acc.Avatar,
+		Introduction: &acc.Introduction,
 	}
 
 	if err = p.d.PutTopic2ES(c, item); err != nil {
@@ -68,11 +80,12 @@ func (p *Service) onTopicUpdated(m *stan.Msg) {
 		return
 	}
 
-	var v *topic.TopicInfo
-	if v, err = p.d.GetTopic(c, info.TopicID); err != nil {
+	var v *model.Topic
+	if v, err = p.d.GetTopicByID(c, p.d.DB(), info.TopicID); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onTopicAdded GetTopicByID failed %#v", err))
 		return
 	} else if v == nil {
+		m.Ack()
 		return
 	}
 
@@ -88,18 +101,29 @@ func (p *Service) onTopicUpdated(m *stan.Msg) {
 		CatalogViewType: &v.CatalogViewType,
 		CreatedAt:       &v.CreatedAt,
 		UpdatedAt:       &v.UpdatedAt,
-		AllowDiscuss:    &v.AllowDiscuss,
-		AllowChat:       &v.AllowChat,
-		IsPrivate:       &v.IsPrivate,
+	}
+
+	allowDiscuss := bool(v.AllowDiscuss)
+	allowChat := bool(v.AllowChat)
+	isPrivate := bool(v.IsPrivate)
+	item.AllowDiscuss = &allowDiscuss
+	item.AllowChat = &allowChat
+	item.IsPrivate = &isPrivate
+
+	var acc *model.Account
+	if acc, err = p.d.GetAccountByID(c, p.d.DB(), v.CreatedBy); err != nil {
+		return
+	} else if acc == nil {
+		m.Ack()
+		return
 	}
 
 	item.Creator = &model.ESCreator{
-		ID:           v.Creator.ID,
-		UserName:     &v.Creator.UserName,
-		Avatar:       &v.Creator.Avatar,
-		Introduction: &v.Creator.Introduction,
+		ID:           acc.ID,
+		UserName:     &acc.UserName,
+		Avatar:       &acc.Avatar,
+		Introduction: &acc.Introduction,
 	}
-
 	if err = p.d.PutTopic2ES(c, item); err != nil {
 		return
 	}

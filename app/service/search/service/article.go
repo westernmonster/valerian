@@ -3,9 +3,9 @@ package service
 import (
 	"context"
 	"fmt"
-	article "valerian/app/service/article/api"
 	"valerian/app/service/feed/def"
 	"valerian/app/service/search/model"
+	"valerian/library/database/sqalx"
 	"valerian/library/log"
 
 	"github.com/nats-io/stan.go"
@@ -14,37 +14,56 @@ import (
 func (p *Service) onArticleAdded(m *stan.Msg) {
 	var err error
 	c := context.Background()
+	c = sqalx.NewContext(c, true)
 	info := new(def.MsgArticleCreated)
 	if err = info.Unmarshal(m.Data); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onArticleAdded Unmarshal failed %#v", err))
 		return
 	}
 
-	var v *article.ArticleInfo
-	if v, err = p.d.GetArticle(c, info.ArticleID); err != nil {
+	var v *model.Article
+	if v, err = p.d.GetArticleByID(c, p.d.DB(), info.ArticleID); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onArticleAdded GetArticleByID failed %#v", err))
 		return
 	} else if v == nil {
 		return
 	}
 
+	changeDesc := ""
+	var h *model.ArticleHistory
+	if h, err = p.d.GetLastArticleHistory(c, p.d.DB(), v.ID); err != nil {
+		log.For(c).Error(fmt.Sprintf("service.onArticleAdded GetArticleByID failed %#v", err))
+		return
+	} else if h != nil {
+		changeDesc = h.ChangeDesc
+	}
+
 	item := &model.ESArticle{
-		ID:             v.ID,
-		Title:          &v.Title,
-		Content:        &v.Content,
-		ContentText:    &v.ContentText,
-		ChangeDesc:     &v.ChangeDesc,
-		CreatedAt:      &v.CreatedAt,
-		UpdatedAt:      &v.UpdatedAt,
-		DisableRevise:  &v.DisableRevise,
-		DisableComment: &v.DisableComment,
+		ID:          v.ID,
+		Title:       &v.Title,
+		Content:     &v.Content,
+		ContentText: &v.ContentText,
+		ChangeDesc:  &changeDesc,
+		CreatedAt:   &v.CreatedAt,
+		UpdatedAt:   &v.UpdatedAt,
+	}
+	disableRevise := bool(v.DisableRevise)
+	item.DisableRevise = &disableRevise
+	disableComment := bool(v.DisableComment)
+	item.DisableComment = &disableComment
+
+	var acc *model.Account
+	if acc, err = p.d.GetAccountByID(c, p.d.DB(), v.CreatedBy); err != nil {
+		return
+	} else if acc == nil {
+		m.Ack()
 	}
 
 	item.Creator = &model.ESCreator{
-		ID:           v.Creator.ID,
-		UserName:     &v.Creator.UserName,
-		Avatar:       &v.Creator.Avatar,
-		Introduction: &v.Creator.Introduction,
+		ID:           acc.ID,
+		UserName:     &acc.UserName,
+		Avatar:       &acc.Avatar,
+		Introduction: &acc.Introduction,
 	}
 
 	if err = p.d.PutArticle2ES(c, item); err != nil {
@@ -63,31 +82,49 @@ func (p *Service) onArticleUpdated(m *stan.Msg) {
 		return
 	}
 
-	var v *article.ArticleInfo
-	if v, err = p.d.GetArticle(c, info.ArticleID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onArticleUpdated GetArticleByID failed %#v", err))
+	var v *model.Article
+	if v, err = p.d.GetArticleByID(c, p.d.DB(), info.ArticleID); err != nil {
+		log.For(c).Error(fmt.Sprintf("service.onArticleAdded GetArticleByID failed %#v", err))
 		return
 	} else if v == nil {
 		return
 	}
 
+	changeDesc := ""
+	var h *model.ArticleHistory
+	if h, err = p.d.GetLastArticleHistory(c, p.d.DB(), v.ID); err != nil {
+		log.For(c).Error(fmt.Sprintf("service.onArticleAdded GetArticleByID failed %#v", err))
+		return
+	} else if h != nil {
+		changeDesc = h.ChangeDesc
+	}
+
 	item := &model.ESArticle{
-		ID:             v.ID,
-		Title:          &v.Title,
-		Content:        &v.Content,
-		ChangeDesc:     &v.ChangeDesc,
-		ContentText:    &v.ContentText,
-		CreatedAt:      &v.CreatedAt,
-		UpdatedAt:      &v.UpdatedAt,
-		DisableRevise:  &v.DisableRevise,
-		DisableComment: &v.DisableComment,
+		ID:          v.ID,
+		Title:       &v.Title,
+		Content:     &v.Content,
+		ContentText: &v.ContentText,
+		ChangeDesc:  &changeDesc,
+		CreatedAt:   &v.CreatedAt,
+		UpdatedAt:   &v.UpdatedAt,
+	}
+	disableRevise := bool(v.DisableRevise)
+	item.DisableRevise = &disableRevise
+	disableComment := bool(v.DisableComment)
+	item.DisableComment = &disableComment
+
+	var acc *model.Account
+	if acc, err = p.d.GetAccountByID(c, p.d.DB(), v.CreatedBy); err != nil {
+		return
+	} else if acc == nil {
+		m.Ack()
 	}
 
 	item.Creator = &model.ESCreator{
-		ID:           v.Creator.ID,
-		UserName:     &v.Creator.UserName,
-		Avatar:       &v.Creator.Avatar,
-		Introduction: &v.Creator.Introduction,
+		ID:           acc.ID,
+		UserName:     &acc.UserName,
+		Avatar:       &acc.Avatar,
+		Introduction: &acc.Introduction,
 	}
 
 	if err = p.d.PutArticle2ES(c, item); err != nil {

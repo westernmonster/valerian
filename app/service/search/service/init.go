@@ -3,12 +3,7 @@ package service
 import (
 	"context"
 	"time"
-	account "valerian/app/service/account/api"
-	article "valerian/app/service/article/api"
-	discuss "valerian/app/service/discuss/api"
 	"valerian/app/service/search/model"
-	topic "valerian/app/service/topic/api"
-	"valerian/library/ecode"
 )
 
 func (p *Service) Init(c context.Context) (err error) {
@@ -30,8 +25,8 @@ func (p *Service) Init(c context.Context) (err error) {
 		return
 	}
 
-	var accounts []*account.DBAccount
-	if accounts, err = p.d.GetAllAccounts(c); err != nil {
+	var accounts []*model.Account
+	if accounts, err = p.d.GetAccounts(c, p.d.DB()); err != nil {
 		return
 	}
 
@@ -58,7 +53,7 @@ func (p *Service) Init(c context.Context) (err error) {
 		idCert := bool(v.IDCert)
 		workCert := bool(v.WorkCert)
 		isOrg := bool(v.IsOrg)
-		isVIP := bool(v.IsVIP)
+		isVIP := bool(v.IsVip)
 		item.IDCert = &idCert
 		item.WorkCert = &workCert
 		item.IsVIP = &isVIP
@@ -71,8 +66,8 @@ func (p *Service) Init(c context.Context) (err error) {
 		return
 	}
 
-	var topics []*topic.TopicInfo
-	if topics, err = p.d.GetAllTopics(c); err != nil {
+	var topics []*model.Topic
+	if topics, err = p.d.GetTopics(c, p.d.DB()); err != nil {
 		return
 	}
 
@@ -99,11 +94,18 @@ func (p *Service) Init(c context.Context) (err error) {
 		item.AllowChat = &allowChat
 		item.IsPrivate = &isPrivate
 
+		var acc *model.Account
+		if acc, err = p.d.GetAccountByID(c, p.d.DB(), v.CreatedBy); err != nil {
+			return
+		} else if acc == nil {
+			return
+		}
+
 		item.Creator = &model.ESCreator{
-			ID:           v.Creator.ID,
-			UserName:     &v.Creator.UserName,
-			Avatar:       &v.Creator.Avatar,
-			Introduction: &v.Creator.Introduction,
+			ID:           acc.ID,
+			UserName:     &acc.UserName,
+			Avatar:       &acc.Avatar,
+			Introduction: &acc.Introduction,
 		}
 
 		iTopic[i] = item
@@ -113,26 +115,31 @@ func (p *Service) Init(c context.Context) (err error) {
 		return
 	}
 
-	var articles []*article.DBArticle
-	if articles, err = p.d.GetAllArticles(c); err != nil {
+	var articles []*model.Article
+	if articles, err = p.d.GetArticles(c, p.d.DB()); err != nil {
 		return
 	}
 
 	iArticles := make([]*model.ESArticle, len(articles))
 	for i, v := range articles {
 		item := &model.ESArticle{
-			ID:             v.ID,
-			Title:          &v.Title,
-			Content:        &v.Content,
-			ContentText:    &v.ContentText,
-			CreatedAt:      &v.CreatedAt,
-			UpdatedAt:      &v.UpdatedAt,
-			DisableRevise:  &v.DisableRevise,
-			DisableComment: &v.DisableComment,
+			ID:          v.ID,
+			Title:       &v.Title,
+			Content:     &v.Content,
+			ContentText: &v.ContentText,
+			CreatedAt:   &v.CreatedAt,
+			UpdatedAt:   &v.UpdatedAt,
 		}
 
-		var acc *account.BaseInfoReply
-		if acc, err = p.d.GetAccountBaseInfo(c, v.CreatedBy); err != nil {
+		disableRevise := bool(v.DisableRevise)
+		item.DisableRevise = &disableRevise
+		disableComment := bool(v.DisableComment)
+		item.DisableComment = &disableComment
+
+		var acc *model.Account
+		if acc, err = p.d.GetAccountByID(c, p.d.DB(), v.CreatedBy); err != nil {
+			return
+		} else if acc == nil {
 			return
 		}
 
@@ -151,8 +158,8 @@ func (p *Service) Init(c context.Context) (err error) {
 		return
 	}
 
-	var discussions []*discuss.DiscussionInfo
-	if discussions, err = p.d.GetAllDiscussions(c); err != nil {
+	var discussions []*model.Discussion
+	if discussions, err = p.d.GetDiscussions(c, p.d.DB()); err != nil {
 		return
 	}
 
@@ -167,18 +174,24 @@ func (p *Service) Init(c context.Context) (err error) {
 			UpdatedAt:   &v.UpdatedAt,
 		}
 
-		item.Creator = &model.ESCreator{
-			ID:           v.Creator.ID,
-			UserName:     &v.Creator.UserName,
-			Avatar:       &v.Creator.Avatar,
-			Introduction: &v.Creator.Introduction,
+		var acc *model.Account
+		if acc, err = p.d.GetAccountByID(c, p.d.DB(), v.CreatedBy); err != nil {
+			return
+		} else if acc == nil {
+			return
 		}
 
-		var t *topic.TopicInfo
-		if t, err = p.d.GetTopic(c, v.TopicID); err != nil {
+		item.Creator = &model.ESCreator{
+			ID:           acc.ID,
+			UserName:     &acc.UserName,
+			Avatar:       &acc.Avatar,
+			Introduction: &acc.Introduction,
+		}
+
+		var t *model.Topic
+		if t, err = p.d.GetTopicByID(c, p.d.DB(), v.TopicID); err != nil {
 			return
 		} else if t == nil {
-			err = ecode.TopicNotExist
 			return
 		}
 
@@ -190,10 +203,16 @@ func (p *Service) Init(c context.Context) (err error) {
 		}
 
 		if v.CategoryID != -1 {
+			var cate *model.DiscussCategory
+			if cate, err = p.d.GetDiscussCategoryByID(c, p.d.DB(), v.CategoryID); err != nil {
+				return
+			} else if cate == nil {
+				return
+			}
 			item.Category = &model.ESDiscussionCategory{
-				ID:   v.CategoryInfo.ID,
-				Name: &v.CategoryInfo.Name,
-				Seq:  &v.CategoryInfo.Seq,
+				ID:   cate.ID,
+				Name: &cate.Name,
+				Seq:  &cate.Seq,
 			}
 		}
 

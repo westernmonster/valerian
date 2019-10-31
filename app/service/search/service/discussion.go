@@ -3,11 +3,9 @@ package service
 import (
 	"context"
 	"fmt"
-	discuss "valerian/app/service/discuss/api"
 	"valerian/app/service/feed/def"
 	"valerian/app/service/search/model"
-	topic "valerian/app/service/topic/api"
-	"valerian/library/ecode"
+	"valerian/library/database/sqalx"
 	"valerian/library/log"
 
 	"github.com/nats-io/stan.go"
@@ -16,17 +14,19 @@ import (
 func (p *Service) onDiscussionAdded(m *stan.Msg) {
 	var err error
 	c := context.Background()
+	c = sqalx.NewContext(c, true)
 	info := new(def.MsgDiscussionAdded)
 	if err = info.Unmarshal(m.Data); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onDiscussionAdded Unmarshal failed %#v", err))
 		return
 	}
 
-	var v *discuss.DiscussionInfo
-	if v, err = p.d.GetDiscussion(c, info.DiscussionID); err != nil {
+	var v *model.Discussion
+	if v, err = p.d.GetDiscussionByID(c, p.d.DB(), info.DiscussionID); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onDiscussionAdded GetDiscussionByID failed %#v", err))
 		return
 	} else if v == nil {
+		m.Ack()
 		return
 	}
 
@@ -39,18 +39,26 @@ func (p *Service) onDiscussionAdded(m *stan.Msg) {
 		UpdatedAt:   &v.UpdatedAt,
 	}
 
-	item.Creator = &model.ESCreator{
-		ID:           v.Creator.ID,
-		UserName:     &v.Creator.UserName,
-		Avatar:       &v.Creator.Avatar,
-		Introduction: &v.Creator.Introduction,
+	var acc *model.Account
+	if acc, err = p.d.GetAccountByID(c, p.d.DB(), v.CreatedBy); err != nil {
+		return
+	} else if acc == nil {
+		m.Ack()
+		return
 	}
 
-	var t *topic.TopicInfo
-	if t, err = p.d.GetTopic(c, v.TopicID); err != nil {
+	item.Creator = &model.ESCreator{
+		ID:           acc.ID,
+		UserName:     &acc.UserName,
+		Avatar:       &acc.Avatar,
+		Introduction: &acc.Introduction,
+	}
+
+	var t *model.Topic
+	if t, err = p.d.GetTopicByID(c, p.d.DB(), v.TopicID); err != nil {
 		return
 	} else if t == nil {
-		err = ecode.TopicNotExist
+		m.Ack()
 		return
 	}
 
@@ -62,10 +70,17 @@ func (p *Service) onDiscussionAdded(m *stan.Msg) {
 	}
 
 	if v.CategoryID != -1 {
+		var cate *model.DiscussCategory
+		if cate, err = p.d.GetDiscussCategoryByID(c, p.d.DB(), v.CategoryID); err != nil {
+			return
+		} else if cate == nil {
+			m.Ack()
+			return
+		}
 		item.Category = &model.ESDiscussionCategory{
-			ID:   v.CategoryInfo.ID,
-			Name: &v.CategoryInfo.Name,
-			Seq:  &v.CategoryInfo.Seq,
+			ID:   cate.ID,
+			Name: &cate.Name,
+			Seq:  &cate.Seq,
 		}
 	}
 
@@ -85,11 +100,12 @@ func (p *Service) onDiscussionUpdated(m *stan.Msg) {
 		return
 	}
 
-	var v *discuss.DiscussionInfo
-	if v, err = p.d.GetDiscussion(c, info.DiscussionID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onDiscussionUpdated GetDiscussionByID failed %#v", err))
+	var v *model.Discussion
+	if v, err = p.d.GetDiscussionByID(c, p.d.DB(), info.DiscussionID); err != nil {
+		log.For(c).Error(fmt.Sprintf("service.onDiscussionAdded GetDiscussionByID failed %#v", err))
 		return
 	} else if v == nil {
+		m.Ack()
 		return
 	}
 
@@ -102,18 +118,26 @@ func (p *Service) onDiscussionUpdated(m *stan.Msg) {
 		UpdatedAt:   &v.UpdatedAt,
 	}
 
-	item.Creator = &model.ESCreator{
-		ID:           v.Creator.ID,
-		UserName:     &v.Creator.UserName,
-		Avatar:       &v.Creator.Avatar,
-		Introduction: &v.Creator.Introduction,
+	var acc *model.Account
+	if acc, err = p.d.GetAccountByID(c, p.d.DB(), v.CreatedBy); err != nil {
+		return
+	} else if acc == nil {
+		m.Ack()
+		return
 	}
 
-	var t *topic.TopicInfo
-	if t, err = p.d.GetTopic(c, v.TopicID); err != nil {
+	item.Creator = &model.ESCreator{
+		ID:           acc.ID,
+		UserName:     &acc.UserName,
+		Avatar:       &acc.Avatar,
+		Introduction: &acc.Introduction,
+	}
+
+	var t *model.Topic
+	if t, err = p.d.GetTopicByID(c, p.d.DB(), v.TopicID); err != nil {
 		return
 	} else if t == nil {
-		err = ecode.TopicNotExist
+		m.Ack()
 		return
 	}
 
@@ -125,10 +149,17 @@ func (p *Service) onDiscussionUpdated(m *stan.Msg) {
 	}
 
 	if v.CategoryID != -1 {
+		var cate *model.DiscussCategory
+		if cate, err = p.d.GetDiscussCategoryByID(c, p.d.DB(), v.CategoryID); err != nil {
+			return
+		} else if cate == nil {
+			m.Ack()
+			return
+		}
 		item.Category = &model.ESDiscussionCategory{
-			ID:   v.CategoryInfo.ID,
-			Name: &v.CategoryInfo.Name,
-			Seq:  &v.CategoryInfo.Seq,
+			ID:   cate.ID,
+			Name: &cate.Name,
+			Seq:  &cate.Seq,
 		}
 	}
 
