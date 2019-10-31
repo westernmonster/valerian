@@ -83,9 +83,9 @@ type TopicResp struct {
 	// 是否有类目分类
 	HasCatalogTaxonomy bool `json:"has_catalog_taxonomy"`
 
-	TopicStat *TopicStat `stat`
+	TopicStat *TopicStat `json:"stat,omitempty"`
 
-	Creator *Creator `json:"creator"`
+	Creator *Creator `json:"creator,omitempty"`
 }
 
 type TopicMeta struct {
