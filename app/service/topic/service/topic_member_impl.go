@@ -77,15 +77,16 @@ func (p *Service) getTopicMembers(c context.Context, node sqalx.Node, topicID in
 	}
 
 	for _, v := range items {
-		account, e := p.d.GetAccountBaseInfo(c, v.AccountID)
+		acc, e := p.d.GetAccountBaseInfo(c, v.AccountID)
 		if e != nil {
+			err = e
 			return
 		}
 		resp = append(resp, &api.TopicMemberInfo{
 			AccountID: v.AccountID,
 			Role:      v.Role,
-			Avatar:    account.Avatar,
-			UserName:  account.UserName,
+			Avatar:    acc.Avatar,
+			UserName:  acc.UserName,
 		})
 	}
 

@@ -197,17 +197,6 @@ func (p *Service) GetTopic(c context.Context, topicID int64, include string) (it
 		}
 	}
 
-	if t.Members != nil {
-		for _, v := range t.Members {
-			item.Members = append(item.Members, &model.TopicMemberResp{
-				AccountID: v.AccountID,
-				Role:      v.Role,
-				UserName:  v.UserName,
-				Avatar:    v.Avatar,
-			})
-		}
-	}
-
 	return
 }
 

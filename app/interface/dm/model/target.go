@@ -257,9 +257,9 @@ type TargetTopicFollowRequest struct {
 	Reason string `json:"reason"`
 
 	// 状态
-	// 1 请求已经发送
-	// 2 审批通过
-	// 3 已经拒绝
+	// 0 请求已经发送
+	// 1 审批通过
+	// 2 已经拒绝
 	Status int32 `json:"status"`
 
 	// 发布日期
