@@ -477,7 +477,32 @@ message StatusResp {
     int32 Status = 1;
 }
 
+message ArgTopicInvite {
+    int64 TopicID = 1;
+	int64 AccountID  = 2;
+    int64 Aid = 3;
+}
 
+message ArgProcessInvite {
+    int64 ID = 1;
+    bool Result = 2;
+    int64 Aid = 3;
+}
+
+message BoolResp {
+    bool Result = 1;
+}
+
+message ArgIsTopicMember {
+	int64 AccountID  = 1;
+	int64 TopicID  = 2;
+}
+
+
+message ArgHasInvite {
+	int64 AccountID  = 1;
+	int64 TopicID  = 2;
+}
 
 
 service Topic {
@@ -506,6 +531,16 @@ service Topic {
     rpc AuditFollow(ArgAuditFollow) returns (EmptyStruct);
 
     rpc  GetUserCanEditTopicIDs(AidReq) returns (IDsResp);
+
+    rpc  GetFollowedTopicsIDs(AidReq) returns (IDsResp);
+
+    rpc  HasTaxonomy(TopicReq) returns (BoolResp);
+
+    rpc  IsTopicMember(ArgIsTopicMember) returns (BoolResp);
+
+    rpc  Invite(ArgTopicInvite) returns (EmptyStruct);
+    rpc  ProcessInvite(ArgProcessInvite) returns (EmptyStruct);
+    rpc  HasInvite(ArgHasInvite) returns (BoolResp);
 
     rpc  GetAllTopics(EmptyStruct) returns (AllTopicsResp);
 

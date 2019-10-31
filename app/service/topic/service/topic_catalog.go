@@ -62,3 +62,11 @@ func (p *Service) SaveCatalogs(c context.Context, req *api.ArgSaveCatalogs) (err
 	})
 	return
 }
+
+func (p *Service) HasTaxonomy(c context.Context, topicID int64) (hasTaxonomy bool, err error) {
+	if hasTaxonomy, err = p.d.HasTaxonomy(c, p.d.DB(), topicID); err != nil {
+		return
+	}
+
+	return
+}

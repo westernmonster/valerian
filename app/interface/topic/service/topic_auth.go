@@ -108,18 +108,18 @@ func (p *Service) GetUserCanEditTopics(c context.Context, query string, pn, ps i
 			Avatar:         *t.Avatar,
 		}
 
-		// var stat *model.TopicStat
-		// if stat, err = p.GetTopicStat(c, t.ID); err != nil {
-		// 	return
-		// }
+		var stat *topic.TopicStat
+		if stat, err = p.d.GetTopicStat(c, &topic.TopicReq{ID: t.ID}); err != nil {
+			return
+		}
 
-		// item.MemberCount = stat.MemberCount
-		// item.ArticleCount = stat.ArticleCount
-		// item.DiscussionCount = stat.DiscussionCount
+		item.MemberCount = stat.MemberCount
+		item.ArticleCount = stat.ArticleCount
+		item.DiscussionCount = stat.DiscussionCount
 
-		// if item.HasCatalogTaxonomy, err = p.d.HasTaxonomy(c, p.d.DB(), t.ID); err != nil {
-		// 	return
-		// }
+		if item.HasCatalogTaxonomy, err = p.d.HasTaxonomy(c, &topic.TopicReq{ID: t.ID}); err != nil {
+			return
+		}
 
 		resp.Items[i] = item
 	}

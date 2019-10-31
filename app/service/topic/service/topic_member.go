@@ -146,3 +146,13 @@ func (p *Service) ChangeOwner(c context.Context, arg *api.ArgChangeOwner) (err e
 
 	return
 }
+
+func (p *Service) IsTopicMember(c context.Context, aid int64, topicID int64) (ret bool, err error) {
+	var member *model.TopicMember
+	if member, err = p.d.GetTopicMemberByCond(c, p.d.DB(), map[string]interface{}{"account_id": aid, "topic_id": topicID}); err != nil {
+		return
+	} else if member != nil {
+		ret = true
+	}
+	return
+}

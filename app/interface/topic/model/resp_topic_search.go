@@ -13,13 +13,13 @@ type CanEditTopicItem struct {
 	Avatar string `json:"avatar,omitempty"`
 
 	// 成员数
-	MemberCount int `json:"member_count"`
+	MemberCount int32 `json:"member_count"`
 
 	// 成员数
-	ArticleCount int `json:"article_count"`
+	ArticleCount int32 `json:"article_count"`
 
 	// 讨论数
-	DiscussionCount int `json:"discussion_count"`
+	DiscussionCount int32 `json:"discussion_count"`
 
 	// EditPermission 编辑权限
 	EditPermission string `json:"edit_permission,omitempty"`
@@ -59,13 +59,13 @@ type JoinedTopicItem struct {
 	Avatar string `json:"avatar,omitempty"`
 
 	// 成员数
-	MemberCount int `json:"member_count"`
+	MemberCount int32 `json:"member_count"`
 
 	// 成员数
-	ArticleCount int `json:"article_count"`
+	ArticleCount int32 `json:"article_count"`
 
 	// 讨论数
-	DiscussionCount int `json:"discussion_count"`
+	DiscussionCount int32 `json:"discussion_count"`
 
 	// EditPermission 编辑权限
 	EditPermission string `json:"edit_permission,omitempty"`

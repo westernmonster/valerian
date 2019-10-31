@@ -144,6 +144,46 @@ func (s *server) GetUserCanEditTopicIDs(ctx context.Context, arg *api.AidReq) (*
 	return &api.IDsResp{IDs: ids}, nil
 }
 
+func (s *server) HasTaxonomy(ctx context.Context, arg *api.TopicReq) (*api.BoolResp, error) {
+	has, err := s.svr.HasTaxonomy(ctx, arg.ID)
+	if err != nil {
+		return nil, err
+	}
+	return &api.BoolResp{Result: has}, nil
+}
+
+func (s *server) IsTopicMember(ctx context.Context, arg *api.ArgIsTopicMember) (*api.BoolResp, error) {
+	has, err := s.svr.IsTopicMember(ctx, arg.AccountID, arg.TopicID)
+	if err != nil {
+		return nil, err
+	}
+	return &api.BoolResp{Result: has}, nil
+}
+
+func (s *server) HasInvite(ctx context.Context, arg *api.ArgHasInvite) (*api.BoolResp, error) {
+	has, err := s.svr.HasInvited(ctx, arg.AccountID, arg.TopicID)
+	if err != nil {
+		return nil, err
+	}
+	return &api.BoolResp{Result: has}, nil
+}
+
+func (s *server) Invite(ctx context.Context, arg *api.ArgTopicInvite) (*api.EmptyStruct, error) {
+	err := s.svr.Invite(ctx, arg)
+	if err != nil {
+		return nil, err
+	}
+	return &api.EmptyStruct{}, nil
+}
+
+func (s *server) ProcessInvite(ctx context.Context, arg *api.ArgProcessInvite) (*api.EmptyStruct, error) {
+	err := s.svr.ProcessInvite(ctx, arg)
+	if err != nil {
+		return nil, err
+	}
+	return &api.EmptyStruct{}, nil
+}
+
 func (s *server) GetTopicInfo(ctx context.Context, req *api.TopicReq) (*api.TopicInfo, error) {
 	resp, err := s.svr.GetTopic(ctx, req.ID)
 	if err != nil {
@@ -266,6 +306,21 @@ func (s *server) GetBelongsTopicIDs(ctx context.Context, req *api.AidReq) (*api.
 		}()
 	}
 	ids, err := s.svr.GetBelongsTopicIDs(ctx, req.AccountID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.IDsResp{IDs: ids}, nil
+}
+
+func (s *server) GetFollowedTopicsIDs(ctx context.Context, req *api.AidReq) (*api.IDsResp, error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
+	ids, err := s.svr.GetFollowedTopicsIDs(ctx, req.AccountID)
 	if err != nil {
 		return nil, err
 	}

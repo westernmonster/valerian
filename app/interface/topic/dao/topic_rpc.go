@@ -108,3 +108,63 @@ func (p *Dao) GetUserCanEditTopicIDs(c context.Context, arg *api.AidReq) (resp *
 	}
 	return
 }
+
+func (p *Dao) GetFollowedTopicsIDs(c context.Context, arg *api.AidReq) (resp *api.IDsResp, err error) {
+	if resp, err = p.topicRPC.GetFollowedTopicsIDs(c, arg); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetFollowedTopicsIDs err(%+v) arg(%+v)", err, arg))
+	}
+	return
+}
+
+func (p *Dao) GetTopicStat(c context.Context, arg *api.TopicReq) (info *topic.TopicStat, err error) {
+	if info, err = p.topicRPC.GetTopicStat(c, arg); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetTopicStat err(%+v)", err))
+	}
+	return
+}
+
+func (p *Dao) HasTaxonomy(c context.Context, arg *api.TopicReq) (has bool, err error) {
+	var resp *topic.BoolResp
+	if resp, err = p.topicRPC.HasTaxonomy(c, arg); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.HasTaxonomy err(%+v)", err))
+	}
+
+	has = resp.Result
+	return
+}
+
+func (p *Dao) IsTopicMember(c context.Context, arg *api.ArgIsTopicMember) (has bool, err error) {
+	var resp *topic.BoolResp
+	if resp, err = p.topicRPC.IsTopicMember(c, arg); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.HasTaxonomy err(%+v)", err))
+	}
+
+	has = resp.Result
+	return
+}
+
+func (p *Dao) HasInvite(c context.Context, arg *api.ArgHasInvite) (has bool, err error) {
+	var resp *topic.BoolResp
+	if resp, err = p.topicRPC.HasInvite(c, arg); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.HasInvite err(%+v)", err))
+	}
+
+	has = resp.Result
+	return
+}
+
+func (p *Dao) Invite(c context.Context, arg *api.ArgTopicInvite) (err error) {
+	if _, err = p.topicRPC.Invite(c, arg); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.Invite err(%+v)", err))
+	}
+
+	return
+}
+
+func (p *Dao) ProcessInvite(c context.Context, arg *api.ArgProcessInvite) (err error) {
+	if _, err = p.topicRPC.ProcessInvite(c, arg); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.ProcessInvite err(%+v)", err))
+	}
+
+	return
+}
