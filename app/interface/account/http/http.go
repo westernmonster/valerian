@@ -48,6 +48,7 @@ func route(e *mars.Engine) {
 		x.POST("/unfollow", authSvc.User, unfollow)
 
 		x.GET("/info", authSvc.User, memberInfo)
+		x.GET("/cert", authSvc.User, memberCert)
 
 		x.GET("/list/recent", authSvc.User, recent)
 		x.GET("/list/activities", authSvc.User, memberActivites)
