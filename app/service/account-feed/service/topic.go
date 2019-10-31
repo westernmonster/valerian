@@ -55,6 +55,7 @@ func (p *Service) onTopicAdded(m *stan.Msg) {
 func (p *Service) onTopicFollowed(m *stan.Msg) {
 	var err error
 	info := new(def.MsgTopicFollowed)
+	c := context.Background()
 	if err = info.Unmarshal(m.Data); err != nil {
 		log.Errorf("service.onTopicFollowed Unmarshal failed %#v", err)
 		return
@@ -69,7 +70,7 @@ func (p *Service) onTopicFollowed(m *stan.Msg) {
 	}
 
 	var v *account.BaseInfoReply
-	action = func(c context.Context, _ uint) error {
+	action := func(c context.Context, _ uint) error {
 		acc, e := p.d.GetAccountBaseInfo(c, info.ActorID)
 		if e != nil {
 			return e
