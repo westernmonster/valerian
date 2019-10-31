@@ -9,14 +9,14 @@ import (
 
 func (p *Dao) GetAccountBaseInfo(c context.Context, aid int64) (info *account.BaseInfoReply, err error) {
 	if info, err = p.accountRPC.BasicInfo(c, &account.AidReq{Aid: aid}); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.GetAccountBaseInfo err(%+v) aid(%d)", err))
+		log.For(c).Error(fmt.Sprintf("dao.GetAccountBaseInfo err(%+v) aid(%d)", err, aid))
 	}
 	return
 }
 
 func (p *Dao) GetMemberInfo(c context.Context, aid int64) (info *account.MemberInfoReply, err error) {
 	if info, err = p.accountRPC.MemberInfo(c, &account.AidReq{Aid: aid}); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.GetMemberInfo err(%+v) aid(%d)", err))
+		log.For(c).Error(fmt.Sprintf("dao.GetMemberInfo err(%+v) aid(%d)", err, aid))
 	}
 	return
 }
