@@ -168,3 +168,26 @@ func (p *Dao) ProcessInvite(c context.Context, arg *api.ArgProcessInvite) (err e
 
 	return
 }
+
+func (p *Dao) Leave(c context.Context, arg *api.TopicReq) (err error) {
+	if _, err = p.topicRPC.Leave(c, arg); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.Leave err(%+v)", err))
+	}
+
+	return
+}
+
+func (p *Dao) BulkSaveMembers(c context.Context, arg *api.ArgBatchSavedTopicMember) (err error) {
+	if _, err = p.topicRPC.BulkSaveMembers(c, arg); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.BulkSaveMembers err(%+v)", err))
+	}
+
+	return
+}
+
+func (p *Dao) GetTopicMembersPaged(c context.Context, arg *api.ArgTopicMembers) (resp *api.TopicMembersPagedResp, err error) {
+	if resp, err = p.topicRPC.GetTopicMembersPaged(c, arg); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetTopicMembersPaged err(%+v) arg(%+v)", err, arg))
+	}
+	return
+}

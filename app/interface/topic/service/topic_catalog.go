@@ -25,7 +25,6 @@ func (p *Service) GetCatalogsHierarchy(c context.Context, topicID int64) (items 
 }
 
 func (p *Service) GetCatalogTaxonomiesHierarchy(c context.Context, topicID int64) (items []*model.TopicRootCatalog, err error) {
-
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed

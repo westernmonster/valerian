@@ -184,6 +184,30 @@ func (s *server) ProcessInvite(ctx context.Context, arg *api.ArgProcessInvite) (
 	return &api.EmptyStruct{}, nil
 }
 
+func (s *server) Leave(ctx context.Context, arg *api.TopicReq) (*api.EmptyStruct, error) {
+	err := s.svr.Leave(ctx, arg.Aid, arg.ID)
+	if err != nil {
+		return nil, err
+	}
+	return &api.EmptyStruct{}, nil
+}
+
+func (s *server) BulkSaveMembers(ctx context.Context, arg *api.ArgBatchSavedTopicMember) (*api.EmptyStruct, error) {
+	err := s.svr.BulkSaveMembers(ctx, arg)
+	if err != nil {
+		return nil, err
+	}
+	return &api.EmptyStruct{}, nil
+}
+
+func (s *server) GetTopicMembersPaged(ctx context.Context, arg *api.ArgTopicMembers) (*api.TopicMembersPagedResp, error) {
+	resp, err := s.svr.GetTopicMembersPaged(ctx, arg)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
 func (s *server) GetTopicInfo(ctx context.Context, req *api.TopicReq) (*api.TopicInfo, error) {
 	resp, err := s.svr.GetTopic(ctx, req.ID)
 	if err != nil {

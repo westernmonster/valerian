@@ -52,7 +52,7 @@ func topicMembers(c *mars.Context) {
 		return
 	}
 
-	c.JSON(srv.GetTopicMembersPaged(c, id, page, pageSize))
+	c.JSON(srv.GetTopicMembersPaged(c, id, int32(page), int32(pageSize)))
 }
 
 // @Summary 批量更新话题成员

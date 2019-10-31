@@ -46,9 +46,9 @@ func (p *Service) Leave(c context.Context, aid, topicID int64) (err error) {
 }
 
 //  GetTopicMembersPaged 分页获取话题成员
-func (p *Service) GetTopicMembersPaged(c context.Context, topicID int64, page, pageSize int32) (resp *api.TopicMembersPagedResp, err error) {
+func (p *Service) GetTopicMembersPaged(c context.Context, arg *api.ArgTopicMembers) (resp *api.TopicMembersPagedResp, err error) {
 	resp = new(api.TopicMembersPagedResp)
-	resp.PageSize = pageSize
+	resp.PageSize = arg.PageSize
 	resp.Data = make([]*api.TopicMemberInfo, 0)
 
 	var (
@@ -57,19 +57,19 @@ func (p *Service) GetTopicMembersPaged(c context.Context, topicID int64, page, p
 		items    []*model.TopicMember
 	)
 
-	if count, items, err = p.d.TopicMembersCache(c, topicID, page, pageSize); err != nil {
+	if count, items, err = p.d.TopicMembersCache(c, arg.TopicID, arg.Page, arg.PageSize); err != nil {
 		addCache = false
 	}
 
 	if items == nil {
-		if count, items, err = p.d.GetTopicMembersPaged(c, p.d.DB(), topicID, page, pageSize); err != nil {
+		if count, items, err = p.d.GetTopicMembersPaged(c, p.d.DB(), arg.TopicID, arg.Page, arg.PageSize); err != nil {
 			return
 		}
 	}
 
 	if items != nil && addCache {
 		p.addCache(func() {
-			p.d.SetTopicMembersCache(context.TODO(), topicID, count, page, pageSize, items)
+			p.d.SetTopicMembersCache(context.TODO(), arg.TopicID, count, arg.Page, arg.PageSize, items)
 		})
 	}
 

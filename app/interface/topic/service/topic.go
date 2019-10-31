@@ -294,3 +294,15 @@ func (p *Service) FromCatalogs(items []*topic.TopicRootCatalogInfo) (resp []*mod
 	}
 	return
 }
+
+func (p *Service) DelTopic(c context.Context, topicID int64) (err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+	if err = p.d.DelTopic(c, &topic.IDReq{ID: topicID, Aid: aid}); err != nil {
+		return
+	}
+	return
+}
