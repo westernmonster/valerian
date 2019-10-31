@@ -152,6 +152,11 @@ func (p *Service) ChangeOwner(c context.Context, arg *api.ArgChangeOwner) (err e
 		return
 	}
 
+	if err = tx.Commit(); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		return
+	}
+
 	p.addCache(func() {
 		p.d.DelTopicMembersCache(context.TODO(), arg.TopicID)
 	})
