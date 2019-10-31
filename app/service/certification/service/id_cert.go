@@ -172,7 +172,13 @@ func (p *Service) getIDCertByID(c context.Context, node sqalx.Node, aid int64) (
 	if item, err = p.d.GetIDCertificationByCond(c, node, map[string]interface{}{"account_id": aid}); err != nil {
 		return
 	} else if item == nil {
-		err = ecode.IDCertificationNotExist
+		item = &model.IDCertification{
+			ID:        gid.NewID(),
+			AccountID: aid,
+			Status:    model.IDCertificationUncommitted,
+			CreatedAt: time.Now().Unix(),
+			UpdatedAt: time.Now().Unix(),
+		}
 		return
 	}
 

@@ -163,7 +163,13 @@ func (p *Service) getWorkCertByID(c context.Context, node sqalx.Node, aid int64)
 	if item, err = p.d.GetWorkCertificationByCond(c, node, map[string]interface{}{"account_id": aid}); err != nil {
 		return
 	} else if item == nil {
-		err = ecode.WorkCertificationNotExist
+		item = &model.WorkCertification{
+			ID:        gid.NewID(),
+			AccountID: aid,
+			Status:    model.WorkCertificationUncommitted,
+			CreatedAt: time.Now().Unix(),
+			UpdatedAt: time.Now().Unix(),
+		}
 		return
 	}
 
