@@ -40,6 +40,7 @@ type Config struct {
 	Memcache  *Memcache
 	Discovery *discovery.Config
 
+	AccountRPC *warden.ClientConfig
 	DiscussRPC *warden.ClientConfig
 	ArticleRPC *warden.ClientConfig
 	SearchRPC  *warden.ClientConfig

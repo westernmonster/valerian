@@ -38,7 +38,7 @@ func New(c *conf.Config) (dao *Dao) {
 		mcExpire: int32(time.Duration(c.Memcache.Main.Expire) / time.Second),
 	}
 
-	if accountRPC, err := account.NewClient(c.FavRPC); err != nil {
+	if accountRPC, err := account.NewClient(c.AccountRPC); err != nil {
 		panic(errors.WithMessage(err, "Failed to dial account service"))
 	} else {
 		dao.accountRPC = accountRPC
