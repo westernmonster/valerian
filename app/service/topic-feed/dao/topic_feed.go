@@ -45,11 +45,11 @@ func (p *Dao) UpdateTopicFeed(c context.Context, node sqalx.Node, item *model.To
 }
 
 // Delete logic delete a exist record
-func (p *Dao) DelTopicFeed(c context.Context, node sqalx.Node, id int64) (err error) {
-	sqlDelete := "UPDATE topic_feeds SET deleted=1 WHERE id=? "
+func (p *Dao) DelTopicFeedByTopicID(c context.Context, node sqalx.Node, topicID int64) (err error) {
+	sqlDelete := "UPDATE topic_feeds SET deleted=1 WHERE topic_id=? "
 
-	if _, err = node.ExecContext(c, sqlDelete, id); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.DelTopicFeeds err(%+v), item(%+v)", err, id))
+	if _, err = node.ExecContext(c, sqlDelete, topicID); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.DelTopicFeeds err(%+v), topic_id(%+v)", err, topicID))
 		return
 	}
 

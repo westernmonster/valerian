@@ -31,12 +31,12 @@ func New(c *conf.Config) (s *Service) {
 	}
 
 	if err := s.mq.QueueSubscribe(def.BusCatalogArticleAdded, "topic-feed", s.onArticleAdded); err != nil {
-		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusArticleAdded, "topic-feed")
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusCatalogArticleAdded, "topic-feed")
 		panic(err)
 	}
 
 	if err := s.mq.QueueSubscribe(def.BusCatalogArticleDeleted, "topic-feed", s.onArticleDeleted); err != nil {
-		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusArticleDeleted, "topic-feed")
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusCatalogArticleDeleted, "topic-feed")
 		panic(err)
 	}
 
@@ -52,6 +52,36 @@ func New(c *conf.Config) (s *Service) {
 
 	if err := s.mq.QueueSubscribe(def.BusReviseDeleted, "topic-feed", s.onReviseDeleted); err != nil {
 		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusReviseDeleted, "topic-feed")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusTopicTaxonomyCatalogAdded, "topic-feed", s.onTopicTaxonomyCatalogAdded); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusTopicTaxonomyCatalogAdded, "topic-feed")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusTopicTaxonomyCatalogMoved, "topic-feed", s.onTopicTaxonomyCatalogMoved); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusTopicTaxonomyCatalogMoved, "topic-feed")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusTopicTaxonomyCatalogRenamed, "topic-feed", s.onTopicTaxonomyCatalogRenamed); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusTopicTaxonomyCatalogRenamed, "topic-feed")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusTopicTaxonomyCatalogDeleted, "topic-feed", s.onTopicTaxonomyCatalogDeleted); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusTopicTaxonomyCatalogDeleted, "topic-feed")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusTopicUpdated, "topic-feed", s.onTopicUpdated); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusTopicUpdated, "topic-feed")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusTopicFollowed, "topic-feed", s.onTopicFollowed); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusTopicFollowed, "topic-feed")
 		panic(err)
 	}
 
