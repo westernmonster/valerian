@@ -60,7 +60,6 @@ func (p *Service) EmailValcode(c context.Context, req *model.ArgEmailValcode) (c
 }
 
 func (p *Service) MobileValcode(c context.Context, req *model.ArgMobileValcode) (createdTime int64, err error) {
-
 	if req.CodeType == model.ValcodeRegister {
 		var exist bool
 		if exist, err = p.d.IsMobileExist(c, req.Prefix, req.Mobile); err != nil {
