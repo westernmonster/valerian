@@ -18,7 +18,7 @@ import (
 // @Success 200  "返回关注状态"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /topic/follow [post]
+// @Router /admin/topic/follow [post]
 func followTopic(c *mars.Context) {
 	arg := new(model.ArgTopicFollow)
 	if e := c.Bind(arg); e != nil {
@@ -45,7 +45,7 @@ func followTopic(c *mars.Context) {
 // @Success 200  "返回关注状态"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /topic/audit_follow [post]
+// @Router /admin/topic/audit_follow [post]
 func auditFollow(c *mars.Context) {
 	arg := new(model.ArgAuditFollow)
 	if e := c.Bind(arg); e != nil {

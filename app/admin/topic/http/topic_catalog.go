@@ -21,7 +21,7 @@ import (
 // @Failure 400 "请求验证失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /topic/list/catalog_taxonomies [get]
+// @Router /admin/topic/list/catalog_taxonomies [get]
 func topicCatalogTaxonomies(c *mars.Context) {
 	var (
 		id  int64
@@ -50,7 +50,7 @@ func topicCatalogTaxonomies(c *mars.Context) {
 // @Failure 400 "请求验证失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /topic/list/catalogs [get]
+// @Router /admin/topic/list/catalogs [get]
 func topicCatalogs(c *mars.Context) {
 	var (
 		id  int64
@@ -78,7 +78,7 @@ func topicCatalogs(c *mars.Context) {
 // @Failure 400 "请求验证失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /topic/catalogs [post]
+// @Router /admin/topic/catalogs [post]
 func editTopicCatalogs(c *mars.Context) {
 	arg := new(model.ArgSaveTopicCatalog)
 	if e := c.Bind(arg); e != nil {

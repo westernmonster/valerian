@@ -23,7 +23,7 @@ import (
 // @Failure 400 "请求验证失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /topic/list/members [get]
+// @Router /admin/topic/list/members [get]
 func topicMembers(c *mars.Context) {
 	var (
 		id       int64
@@ -70,7 +70,7 @@ func topicMembers(c *mars.Context) {
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /topic/members [post]
+// @Router /admin/topic/members [post]
 func editTopicMembers(c *mars.Context) {
 	arg := new(model.ArgBatchSavedTopicMember)
 	if e := c.Bind(arg); e != nil {
@@ -101,7 +101,7 @@ func editTopicMembers(c *mars.Context) {
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /topic/leave [post]
+// @Router /admin/topic/leave [post]
 func leave(c *mars.Context) {
 	arg := new(model.ArgLeave)
 	if e := c.Bind(arg); e != nil {

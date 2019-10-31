@@ -20,7 +20,7 @@ import (
 // @Failure 400 "请求验证失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /topic/list/auth_topics [get]
+// @Router /admin/topic/list/auth_topics [get]
 func authTopics(c *mars.Context) {
 	var (
 		id  int64
@@ -50,7 +50,7 @@ func authTopics(c *mars.Context) {
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /topic/auth_topics [post]
+// @Router /admin/topic/auth_topics [post]
 func editAuthTopics(c *mars.Context) {
 	arg := new(model.ArgSaveAuthTopics)
 	if e := c.Bind(arg); e != nil {

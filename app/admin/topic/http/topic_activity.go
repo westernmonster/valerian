@@ -21,7 +21,7 @@ import (
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /topic/list/activities [get]
+// @Router /admin/topic/list/activities [get]
 func getActivites(c *mars.Context) {
 	var (
 		id     int64

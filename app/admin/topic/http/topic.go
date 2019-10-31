@@ -21,7 +21,7 @@ import (
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /topic/add [post]
+// @Router /admin/topic/add [post]
 func createTopic(c *mars.Context) {
 	arg := new(model.ArgCreateTopic)
 	if e := c.Bind(arg); e != nil {
@@ -54,7 +54,7 @@ func createTopic(c *mars.Context) {
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /topic/edit [post]
+// @Router /admin/topic/edit [post]
 func editTopic(c *mars.Context) {
 	arg := new(model.ArgUpdateTopic)
 	if e := c.Bind(arg); e != nil {
@@ -82,7 +82,7 @@ func editTopic(c *mars.Context) {
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /topic/del [post]
+// @Router /admin/topic/del [post]
 func deleteTopic(c *mars.Context) {
 	arg := new(model.ArgDelete)
 	if e := c.Bind(arg); e != nil {
@@ -111,7 +111,7 @@ func deleteTopic(c *mars.Context) {
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /topic/get [get]
+// @Router /admin/topic/get [get]
 func getTopic(c *mars.Context) {
 	include := c.Request.Form.Get("include")
 	idStr := c.Request.Form.Get("id")
@@ -139,7 +139,7 @@ func getTopic(c *mars.Context) {
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /topic/owner [post]
+// @Router /admin/topic/owner [post]
 func changeOwner(c *mars.Context) {
 	arg := new(model.ArgChangeOwner)
 	if e := c.Bind(arg); e != nil {
@@ -169,7 +169,7 @@ func changeOwner(c *mars.Context) {
 // @Failure 400 "请求验证失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /topic/list/has_edit_permission [get]
+// @Router /admin/topic/list/has_edit_permission [get]
 func topicsWithEditPermission(c *mars.Context) {
 	var (
 		err error
@@ -209,7 +209,7 @@ func topicsWithEditPermission(c *mars.Context) {
 // @Failure 400 "请求验证失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /topic/list/followed [get]
+// @Router /admin/topic/list/followed [get]
 func followedTopics(c *mars.Context) {
 	var (
 		err error
@@ -247,7 +247,7 @@ func followedTopics(c *mars.Context) {
 // @Failure 400 "请求验证失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /topic/meta [get]
+// @Router /admin/topic/meta [get]
 func topicMeta(c *mars.Context) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
