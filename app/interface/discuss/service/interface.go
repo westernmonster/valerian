@@ -19,6 +19,7 @@ type IDao interface {
 	AddDiscussion(c context.Context, node sqalx.Node, item *model.Discussion) (err error)
 	UpdateDiscussion(c context.Context, node sqalx.Node, item *model.Discussion) (err error)
 	DelDiscussion(c context.Context, node sqalx.Node, id int64) (err error)
+	HasDiscussionInCategory(c context.Context, node sqalx.Node, categoryID int64) (has bool, err error)
 
 	GetDiscussCategoriesByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.DiscussCategory, err error)
 	GetDiscussCategories(c context.Context, node sqalx.Node) (items []*model.DiscussCategory, err error)

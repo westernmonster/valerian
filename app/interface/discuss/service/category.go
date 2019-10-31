@@ -166,8 +166,16 @@ func (p *Service) SaveDiscussCategories(c context.Context, arg *model.ArgSaveDis
 		if used {
 			continue
 		}
-		if err = p.d.DelDiscussCategory(c, tx, k); err != nil {
+		if has, e := p.d.HasDiscussionInCategory(c, tx, k); err != nil {
+			err = e
 			return
+		} else if has {
+			err = ecode.HasDiscussionInCategory
+			return
+		} else {
+			if err = p.d.DelDiscussCategory(c, tx, k); err != nil {
+				return
+			}
 		}
 	}
 

@@ -51,6 +51,24 @@ func (p *Dao) GetDiscussions(c context.Context, node sqalx.Node) (items []*model
 	return
 }
 
+func (p *Dao) HasDiscussionInCategory(c context.Context, node sqalx.Node, categoryID int64) (has bool, err error) {
+	item := new(model.Discussion)
+	sqlSelect := "SELECT a.* FROM discussions a WHERE a.category_id=? AND a.deleted=0 LIMIT 1"
+
+	if err = node.GetContext(c, item, sqlSelect, categoryID); err != nil {
+		if err == sql.ErrNoRows {
+			err = nil
+			has = false
+			return
+		}
+		log.For(c).Error(fmt.Sprintf("dao.HasDiscussionInCategory err(%+v), category_id(%+v)", err, categoryID))
+	}
+
+	has = true
+
+	return
+}
+
 // GetAllByCondition get records by condition
 func (p *Dao) GetDiscussionsByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.Discussion, err error) {
 	items = make([]*model.Discussion, 0)
