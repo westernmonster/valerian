@@ -138,6 +138,8 @@ type ESArticle struct {
 	//  禁止评论
 	DisableComment *bool `json:"disable_comment,omitempty"`
 
+	ChangeDesc *string `json:"change_desc,omitempty"`
+
 	Creator *ESCreator `json:"creator,omitempty"`
 
 	// 创建时间
