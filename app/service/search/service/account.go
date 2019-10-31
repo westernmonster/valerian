@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"valerian/app/service/feed/def"
 	"valerian/app/service/search/model"
+	"valerian/library/database/sqalx"
 	"valerian/library/log"
 
 	"github.com/nats-io/stan.go"
@@ -13,6 +14,7 @@ import (
 func (p *Service) onAccountAdded(m *stan.Msg) {
 	var err error
 	c := context.Background()
+	c = sqalx.NewContext(c, true)
 	info := new(def.MsgAccountAdded)
 	if err = info.Unmarshal(m.Data); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onAccountAdded Unmarshal failed %#v", err))
@@ -24,6 +26,7 @@ func (p *Service) onAccountAdded(m *stan.Msg) {
 		return
 	} else if v == nil {
 		m.Ack()
+		return
 	}
 
 	item := &model.ESAccount{
@@ -45,12 +48,12 @@ func (p *Service) onAccountAdded(m *stan.Msg) {
 	}
 
 	idCert := bool(v.IDCert)
-	item.IDCert = &idCert
 	workCert := bool(v.WorkCert)
-	item.WorkCert = &workCert
 	isVIP := bool(v.IsVip)
-	item.IsVIP = &isVIP
 	isOrg := bool(v.IsOrg)
+	item.IDCert = &idCert
+	item.WorkCert = &workCert
+	item.IsVIP = &isVIP
 	item.IsOrg = &isOrg
 
 	if err = p.d.PutAccount2ES(c, item); err != nil {
@@ -62,6 +65,7 @@ func (p *Service) onAccountAdded(m *stan.Msg) {
 func (p *Service) onAccountUpdated(m *stan.Msg) {
 	var err error
 	c := context.Background()
+	c = sqalx.NewContext(c, true)
 	info := new(def.MsgAccountUpdated)
 	if err = info.Unmarshal(m.Data); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onAccountUpdated Unmarshal failed %#v", err))

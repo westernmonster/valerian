@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"valerian/app/service/feed/def"
 	"valerian/app/service/search/model"
+	"valerian/library/database/sqalx"
 	"valerian/library/log"
 
 	"github.com/nats-io/stan.go"
@@ -13,6 +14,7 @@ import (
 func (p *Service) onTopicAdded(m *stan.Msg) {
 	var err error
 	c := context.Background()
+	c = sqalx.NewContext(c, true)
 	info := new(def.MsgTopicAdded)
 	if err = info.Unmarshal(m.Data); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onTopicAdded Unmarshal failed %#v", err))
@@ -74,6 +76,7 @@ func (p *Service) onTopicAdded(m *stan.Msg) {
 func (p *Service) onTopicUpdated(m *stan.Msg) {
 	var err error
 	c := context.Background()
+	c = sqalx.NewContext(c, true)
 	info := new(def.MsgTopicUpdated)
 	if err = info.Unmarshal(m.Data); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onTopicUpdated Unmarshal failed %#v", err))

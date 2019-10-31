@@ -26,6 +26,7 @@ func (p *Service) onArticleAdded(m *stan.Msg) {
 		log.For(c).Error(fmt.Sprintf("service.onArticleAdded GetArticleByID failed %#v", err))
 		return
 	} else if v == nil {
+		m.Ack()
 		return
 	}
 
@@ -57,6 +58,7 @@ func (p *Service) onArticleAdded(m *stan.Msg) {
 		return
 	} else if acc == nil {
 		m.Ack()
+		return
 	}
 
 	item.Creator = &model.ESCreator{
@@ -76,6 +78,7 @@ func (p *Service) onArticleAdded(m *stan.Msg) {
 func (p *Service) onArticleUpdated(m *stan.Msg) {
 	var err error
 	c := context.Background()
+	c = sqalx.NewContext(c, true)
 	info := new(def.MsgArticleUpdated)
 	if err = info.Unmarshal(m.Data); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onArticleUpdated Unmarshal failed %#v", err))
@@ -87,6 +90,7 @@ func (p *Service) onArticleUpdated(m *stan.Msg) {
 		log.For(c).Error(fmt.Sprintf("service.onArticleAdded GetArticleByID failed %#v", err))
 		return
 	} else if v == nil {
+		m.Ack()
 		return
 	}
 
@@ -118,6 +122,7 @@ func (p *Service) onArticleUpdated(m *stan.Msg) {
 		return
 	} else if acc == nil {
 		m.Ack()
+		return
 	}
 
 	item.Creator = &model.ESCreator{
