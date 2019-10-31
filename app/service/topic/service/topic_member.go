@@ -119,10 +119,10 @@ func (p *Service) BulkSaveMembers(c context.Context, req *api.ArgBatchSavedTopic
 
 	p.addCache(func() {
 		for _, v := range change.NewMembers {
-			p.onTopicFollowed(c, req.TopicID, v, time.Now().Unix())
+			p.onTopicFollowed(context.TODO(), req.TopicID, v, time.Now().Unix())
 		}
-		for _, v := range change.NewMembers {
-			p.onTopicLeaved(c, req.TopicID, v, time.Now().Unix())
+		for _, v := range change.DelMembers {
+			p.onTopicLeaved(context.TODO(), req.TopicID, v, time.Now().Unix())
 		}
 		p.d.DelTopicCache(context.TODO(), req.TopicID)
 		p.d.DelTopicMembersCache(context.TODO(), req.TopicID)

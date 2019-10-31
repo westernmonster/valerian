@@ -164,74 +164,47 @@ func (p *Service) checkTopicMemberAdmin(c context.Context, node sqalx.Node, topi
 
 // addMember 添加成员
 func (p *Service) addMember(c context.Context, node sqalx.Node, topicID, aid int64, role string) (err error) {
-	var tx sqalx.Node
-	if tx, err = p.d.DB().Beginx(c); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+	if _, err = p.d.GetAccountBaseInfo(c, aid); err != nil {
 		return
 	}
 
-	defer func() {
-		if err != nil {
-			if err1 := tx.Rollback(); err1 != nil {
-				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
-			}
-			return
-		}
-	}()
-	{
-
-		if _, err = p.d.GetAccountBaseInfo(c, aid); err != nil {
-			return
-		}
-
-		var member *model.TopicMember
-		if member, err = p.d.GetTopicMemberByCond(c, node, map[string]interface{}{"account_id": aid, "topic_id": topicID}); err != nil {
-			return
-		} else if member != nil {
-			return
-		}
-
-		item := &model.TopicMember{
-			ID:        gid.NewID(),
-			AccountID: aid,
-			Role:      role,
-			TopicID:   topicID,
-			CreatedAt: time.Now().Unix(),
-			UpdatedAt: time.Now().Unix(),
-		}
-		if err = p.d.AddTopicMember(c, node, item); err != nil {
-			return
-		}
-
-		setting := &model.AccountTopicSetting{
-			ID:               gid.NewID(),
-			AccountID:        aid,
-			TopicID:          topicID,
-			Important:        types.BitBool(false),
-			Fav:              types.BitBool(false),
-			MuteNotification: types.BitBool(false),
-			CreatedAt:        time.Now().Unix(),
-			UpdatedAt:        time.Now().Unix(),
-		}
-
-		if err = p.d.AddAccountTopicSetting(c, node, setting); err != nil {
-			return
-		}
-
-		if err = p.d.IncrTopicStat(c, tx, &model.TopicStat{TopicID: topicID, MemberCount: -1}); err != nil {
-			return
-		}
-	}
-
-	if err = tx.Commit(); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+	var member *model.TopicMember
+	if member, err = p.d.GetTopicMemberByCond(c, node, map[string]interface{}{"account_id": aid, "topic_id": topicID}); err != nil {
+		return
+	} else if member != nil {
 		return
 	}
 
-	p.addCache(func() {
-		p.d.DelTopicMembersCache(context.TODO(), topicID)
-		p.onTopicFollowed(context.TODO(), topicID, aid, time.Now().Unix())
-	})
+	item := &model.TopicMember{
+		ID:        gid.NewID(),
+		AccountID: aid,
+		Role:      role,
+		TopicID:   topicID,
+		CreatedAt: time.Now().Unix(),
+		UpdatedAt: time.Now().Unix(),
+	}
+	if err = p.d.AddTopicMember(c, node, item); err != nil {
+		return
+	}
+
+	setting := &model.AccountTopicSetting{
+		ID:               gid.NewID(),
+		AccountID:        aid,
+		TopicID:          topicID,
+		Important:        types.BitBool(false),
+		Fav:              types.BitBool(false),
+		MuteNotification: types.BitBool(false),
+		CreatedAt:        time.Now().Unix(),
+		UpdatedAt:        time.Now().Unix(),
+	}
+
+	if err = p.d.AddAccountTopicSetting(c, node, setting); err != nil {
+		return
+	}
+
+	if err = p.d.IncrTopicStat(c, node, &model.TopicStat{TopicID: topicID, MemberCount: 1}); err != nil {
+		return
+	}
 
 	return
 }
@@ -329,7 +302,7 @@ func (p *Service) bulkSaveMembers(c context.Context, node sqalx.Node, req *api.A
 			if err = p.d.IncrTopicStat(c, node, &model.TopicStat{TopicID: req.TopicID, MemberCount: -1}); err != nil {
 				return
 			}
-			change.NewMembers = append(change.NewMembers, member.ID)
+			change.DelMembers = append(change.DelMembers, member.ID)
 
 			break
 		}

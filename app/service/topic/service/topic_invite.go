@@ -80,7 +80,7 @@ func (p *Service) ProcessInvite(c context.Context, arg *api.ArgProcessInvite) (e
 	}
 
 	var member *model.TopicMember
-	if member, err = p.d.GetTopicMemberByCond(c, tx, map[string]interface{}{"account_id": arg.Aid, "topic_id": req.TopicID}); err != nil {
+	if member, err = p.d.GetTopicMemberByCond(c, tx, map[string]interface{}{"account_id": req.AccountID, "topic_id": req.TopicID}); err != nil {
 		return
 	} else if member != nil {
 		return
@@ -95,7 +95,6 @@ func (p *Service) ProcessInvite(c context.Context, arg *api.ArgProcessInvite) (e
 	if arg.Result {
 		req.Status = model.InviteStatusJoined
 		req.UpdatedAt = time.Now().Unix()
-
 		if err = p.addMember(c, tx, req.TopicID, req.AccountID, model.MemberRoleUser); err != nil {
 			return
 		}
@@ -112,6 +111,13 @@ func (p *Service) ProcessInvite(c context.Context, arg *api.ArgProcessInvite) (e
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 		return
 	}
+
+	p.addCache(func() {
+		p.d.DelTopicMembersCache(context.TODO(), req.TopicID)
+		if req.Status == model.InviteStatusJoined {
+			p.onTopicFollowed(context.TODO(), req.TopicID, req.AccountID, time.Now().Unix())
+		}
+	})
 
 	return
 
