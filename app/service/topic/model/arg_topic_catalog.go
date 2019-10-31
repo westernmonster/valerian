@@ -303,11 +303,11 @@ type MovedTaxonomyItem struct {
 }
 
 type RenamedTaxonomyItem struct {
-	ID          int64
-	TopicID     int64
-	OldParentID int64
-	NewParentID int64
-	Name        string
+	ID      int64
+	TopicID int64
+	OldName string
+	NewName string
+	Name    string
 }
 
 type CatalogChange struct {

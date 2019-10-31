@@ -227,6 +227,23 @@ func (p *Service) createCatalog(c context.Context, node sqalx.Node, item *model.
 
 }
 
+func (p *Service) getTopicCatalogsMap(c context.Context, node sqalx.Node, topicID, parentID int64) (dic map[int64]dicItem, err error) {
+	var dbCatalogs []*model.TopicCatalog
+	if dbCatalogs, err = p.d.GetTopicCatalogsByCond(c, node, map[string]interface{}{"topic_id": topicID, "parent_id": parentID}); err != nil {
+		return
+	}
+
+	dic = make(map[int64]dicItem)
+	for _, v := range dbCatalogs {
+		dic[v.ID] = dicItem{
+			Done: false,
+			Item: v,
+		}
+	}
+
+	return
+}
+
 func (p *Service) saveCatalogs(c context.Context, node sqalx.Node, aid int64, req *api.ArgSaveCatalogs) (change *model.CatalogChange, err error) {
 	change = &model.CatalogChange{
 		NewArticles:          make([]*model.ArticleItem, 0),
@@ -242,22 +259,21 @@ func (p *Service) saveCatalogs(c context.Context, node sqalx.Node, aid int64, re
 		return
 	}
 
-	// check admin role
-	if err = p.checkTopicMemberAdmin(c, node, req.TopicID, aid); err != nil {
+	var isAdmin bool
+	if isAdmin, err = p.IsSystemAdmin(c, aid); err != nil {
 		return
 	}
 
-	var dbCatalogs []*model.TopicCatalog
-	if dbCatalogs, err = p.d.GetTopicCatalogsByCond(c, node, map[string]interface{}{"topic_id": req.TopicID, "parent_id": req.ParentID}); err != nil {
-		return
-	}
-
-	dic := make(map[int64]dicItem)
-	for _, v := range dbCatalogs {
-		dic[v.ID] = dicItem{
-			Done: false,
-			Item: v,
+	if !isAdmin {
+		// check admin role
+		if err = p.checkTopicMemberAdmin(c, node, req.TopicID, aid); err != nil {
+			return
 		}
+	}
+
+	var dic map[int64]dicItem
+	if dic, err = p.getTopicCatalogsMap(c, node, req.TopicID, req.ParentID); err != nil {
+		return
 	}
 
 	for _, v := range req.Items {
@@ -280,6 +296,11 @@ func (p *Service) saveCatalogs(c context.Context, node sqalx.Node, aid int64, re
 			if v.Type == model.TopicCatalogArticle {
 				change.NewArticles = append(change.NewArticles, &model.ArticleItem{TopicID: req.TopicID, ArticleID: v.RefID})
 			}
+
+			if v.Type == model.TopicCatalogTaxonomy {
+				change.NewTaxonomyItems = append(change.NewTaxonomyItems, &model.NewTaxonomyItem{TopicID: req.TopicID, ID: tc.ID, ParentID: req.ParentID, Name: tc.Name})
+			}
+
 			continue
 		}
 
@@ -291,6 +312,7 @@ func (p *Service) saveCatalogs(c context.Context, node sqalx.Node, aid int64, re
 			err = ecode.TopicCatalogNotExist
 			return
 		}
+
 		if item.ParentID != req.ParentID {
 			var parent *model.TopicCatalog
 			if parent, err = p.d.GetTopicCatalogByCond(c, node, map[string]interface{}{"topic_id": req.TopicID, "id": req.ParentID}); err != nil {
@@ -303,6 +325,24 @@ func (p *Service) saveCatalogs(c context.Context, node sqalx.Node, aid int64, re
 			if item.Type == model.TopicCatalogTaxonomy && parent.ParentID != 0 {
 				err = ecode.InvalidCatalog
 				return
+			}
+
+			if v.Type == model.TopicCatalogTaxonomy {
+				change.MovedTaxonomyItems = append(change.MovedTaxonomyItems, &model.MovedTaxonomyItem{
+					TopicID:     item.TopicID,
+					ID:          item.ID,
+					OldParentID: item.ParentID,
+					NewParentID: req.ParentID,
+					Name:        v.Name})
+			}
+
+		} else {
+			if v.Type == model.TopicCatalogTaxonomy && v.Name != item.Name {
+				change.RenamedTaxonomyItems = append(change.RenamedTaxonomyItems, &model.RenamedTaxonomyItem{
+					TopicID: item.TopicID,
+					ID:      item.ID,
+					OldName: item.Name,
+					NewName: v.Name})
 			}
 		}
 
@@ -346,6 +386,14 @@ func (p *Service) saveCatalogs(c context.Context, node sqalx.Node, aid int64, re
 		if v.Item.Type == model.TopicCatalogArticle {
 			change.DelArticles = append(change.DelArticles, &model.ArticleItem{TopicID: req.TopicID, ArticleID: v.Item.RefID})
 		}
+
+		if v.Item.Type == model.TopicCatalogTaxonomy {
+			change.DelTaxonomyItems = append(change.DelTaxonomyItems, &model.DelTaxonomyItem{
+				TopicID:  req.TopicID,
+				ID:       v.Item.ID,
+				ParentID: v.Item.ParentID,
+				Name:     v.Item.Name})
+		}
 	}
 	return
 }
@@ -356,7 +404,10 @@ func (p *Service) IsSystemAdmin(c context.Context, aid int64) (ret bool, err err
 		return
 	}
 
-	if acc.Role == "" {
+	if acc.Role == "admin" || acc.Role == "superadmin" {
+		ret = true
+		return
 	}
+
 	return
 }
