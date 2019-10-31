@@ -30,6 +30,10 @@ const (
 	ActionTypeTopicTaxonomyCatalogRenamed = "MEMBER_RENAME_TOPIC_TAXONOMY"
 	ActionTypeTopicTaxonomyCatalogDeleted = "MEMBER_DELETE_TOPIC_TAXONOMY"
 	ActionTypeTopicTaxonomyCatalogMoved   = "MEMBER_MOVE_TOPIC_TAXONOMY"
+
+	ActionTypeCommentArticle    = "MEMBER_COMMENT_ARTICLE"
+	ActionTypeCommentRevise     = "MEMBER_COMMENT_REVISE"
+	ActionTypeCommentDiscussion = "MEMBER_COMMENT_DISCUSSION"
 )
 
 const (
@@ -62,6 +66,10 @@ const (
 	ActionTextTopicTaxonomyCatalogDeleted = "{%s}删除了分类{%s}"
 	ActionTextTopicTaxonomyCatalogRenamed = "{%s}重名了分类{%s}, 新名称{%s}"
 	ActionTextTopicTaxonomyCatalogMoved   = "{%s}移动了分类{%s}"
+
+	ActionTextCommentArticle    = "评论了文章"
+	ActionTextCommentRevise     = "评论了补充"
+	ActionTextCommentDiscussion = "评论了讨论"
 )
 
 const (

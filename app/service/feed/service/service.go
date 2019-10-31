@@ -90,6 +90,21 @@ func New(c *conf.Config) (s *Service) {
 		panic(err)
 	}
 
+	if err := s.mq.QueueSubscribe(def.BusArticleCommented, "feed", s.onArticleCommented); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusArticleCommented, "feed")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusReviseCommented, "feed", s.onReviseCommented); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusReviseCommented, "feed")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusDiscussionCommented, "feed", s.onDiscussionCommented); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusDiscussionCommented, "feed")
+		panic(err)
+	}
+
 	go s.cacheproc()
 	return
 }

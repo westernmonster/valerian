@@ -40,6 +40,7 @@ type Config struct {
 	WardenServer *warden.ServerConfig
 
 	AccountRPC  *warden.ClientConfig
+	CommentRPC  *warden.ClientConfig
 	TopicRPC    *warden.ClientConfig
 	ArticleRPC  *warden.ClientConfig
 	DiscussRPC  *warden.ClientConfig
