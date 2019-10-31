@@ -14,7 +14,6 @@ import (
 	"valerian/library/gid"
 	"valerian/library/log"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/nats-io/stan.go"
 )
 
@@ -300,8 +299,6 @@ func (p *Service) onTopicInvite(m *stan.Msg) {
 		log.For(c).Error(fmt.Sprintf("service.onTopicFollowed Unmarshal failed %#v", err))
 		return
 	}
-	spew.Dump(info)
-
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
