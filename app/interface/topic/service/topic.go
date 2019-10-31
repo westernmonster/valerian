@@ -157,6 +157,18 @@ func (p *Service) GetTopic(c context.Context, topicID int64, include string) (it
 		}
 	}
 
+	if t.TopicMeta != nil {
+		item.TopicMeta = &model.TopicMeta{
+			CanFollow:    t.TopicMeta.CanFollow,
+			CanEdit:      t.TopicMeta.CanEdit,
+			Fav:          t.TopicMeta.Fav,
+			CanView:      t.TopicMeta.CanView,
+			FollowStatus: t.TopicMeta.FollowStatus,
+			IsMember:     t.TopicMeta.IsMember,
+			MemberRole:   t.TopicMeta.MemberRole,
+		}
+	}
+
 	if t.Catalogs != nil {
 		item.Catalogs = p.FromCatalogs(t.Catalogs)
 	}
