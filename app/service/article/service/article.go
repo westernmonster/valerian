@@ -2,15 +2,42 @@ package service
 
 import (
 	"context"
+	"fmt"
+	"strings"
+	"time"
 
-	account "valerian/app/service/account/api"
+	"valerian/app/service/article/api"
 	"valerian/app/service/article/model"
 	"valerian/library/database/sqalx"
+	"valerian/library/database/sqlx/types"
 	"valerian/library/ecode"
+	"valerian/library/gid"
+	"valerian/library/log"
+
+	"github.com/PuerkitoBio/goquery"
+	"github.com/sergi/go-diff/diffmatchpatch"
 )
 
-func (p *Service) GetAccountBaseInfo(c context.Context, aid int64) (info *account.BaseInfoReply, err error) {
-	return p.d.GetAccountBaseInfo(c, aid)
+func (p *Service) getAccount(c context.Context, node sqalx.Node, aid int64) (info *model.Account, err error) {
+	if info, err = p.d.GetAccountByID(c, node, aid); err != nil {
+		return
+	} else if info == nil {
+		err = ecode.UserNotExist
+		return
+	}
+
+	return
+}
+
+func (p *Service) getTopic(c context.Context, node sqalx.Node, tid int64) (info *model.Topic, err error) {
+	if info, err = p.d.GetTopicByID(c, node, tid); err != nil {
+		return
+	} else if info == nil {
+		err = ecode.TopicNotExist
+		return
+	}
+
+	return
 }
 
 func (p *Service) GetArticle(c context.Context, articleID int64) (item *model.Article, err error) {
@@ -83,5 +110,124 @@ func (p *Service) GetUserArticlesPaged(c context.Context, aid int64, limit, offs
 		return
 	}
 
+	return
+}
+
+func (p *Service) AddArticle(c context.Context, arg *api.ArgAddArticle) (id int64, err error) {
+	var tx sqalx.Node
+	if tx, err = p.d.DB().Beginx(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		return
+	}
+
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+			}
+			return
+		}
+	}()
+
+	item := &model.Article{
+		ID:             gid.NewID(),
+		Title:          arg.Title,
+		Content:        arg.Content,
+		DisableComment: types.BitBool(arg.DisableComment),
+		DisableRevise:  types.BitBool(arg.DisableRevise),
+		CreatedBy:      arg.Aid,
+		CreatedAt:      time.Now().Unix(),
+		UpdatedAt:      time.Now().Unix(),
+	}
+
+	var doc *goquery.Document
+	doc, err = goquery.NewDocumentFromReader(strings.NewReader(item.Content))
+	if err != nil {
+		err = ecode.ParseHTMLFailed
+		return
+	}
+	item.ContentText = doc.Text()
+
+	doc.Find("img").Each(func(i int, s *goquery.Selection) {
+		if url, exist := s.Attr("src"); exist {
+			u := &model.ImageURL{
+				ID:         gid.NewID(),
+				TargetType: model.TargetTypeArticle,
+				TargetID:   item.ID,
+				URL:        url,
+				CreatedAt:  time.Now().Unix(),
+				UpdatedAt:  time.Now().Unix(),
+			}
+			if err = p.d.AddImageURL(c, tx, u); err != nil {
+				return
+			}
+		}
+	})
+
+	h := &model.ArticleHistory{
+		ID:          gid.NewID(),
+		ArticleID:   item.ID,
+		Seq:         1,
+		Content:     item.Content,
+		ContentText: item.ContentText,
+		UpdatedBy:   arg.Aid,
+		ChangeDesc:  "创建文章",
+		CreatedAt:   time.Now().Unix(),
+		UpdatedAt:   time.Now().Unix(),
+	}
+
+	dmp := diffmatchpatch.New()
+	diffs := dmp.DiffMain("", item.ContentText, false)
+	h.Diff = dmp.DiffPrettyHtml(diffs)
+
+	if err = p.d.AddArticle(c, tx, item); err != nil {
+		return
+	}
+
+	if err = p.d.AddArticleHistory(c, tx, h); err != nil {
+		return
+	}
+
+	if err = p.d.AddArticleStat(c, tx, &model.ArticleStat{
+		ArticleID: item.ID,
+		CreatedAt: time.Now().Unix(),
+		UpdatedAt: time.Now().Unix(),
+	}); err != nil {
+		return
+	}
+
+	if err = p.bulkCreateFiles(c, tx, item.ID, arg.Files); err != nil {
+		return
+	}
+
+	if err = p.bulkCreateArticleRelations(c, tx, item.ID, item.Title, arg.Relations); err != nil {
+		return
+	}
+
+	if err = p.d.IncrAccountStat(c, tx, &model.AccountStat{AccountID: item.CreatedBy, ArticleCount: 1}); err != nil {
+		return
+	}
+
+	if err = p.d.IncrTopicStat(c, tx, &model.TopicStat{ArticleCount: 1}); err != nil {
+		return
+	}
+
+	if err = tx.Commit(); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+	}
+
+	id = item.ID
+
+	var relations []*api.ArticleRelationResp
+	if relations, err = p.getArticleRelations(c, p.d.DB(), item.ID); err != nil {
+		return
+	}
+
+	p.addCache(func() {
+		p.onArticleAdded(context.Background(), item.ID, arg.Aid, time.Now().Unix())
+		for _, v := range relations {
+			p.onCatalogArticleAdded(context.Background(), item.ID, v.ToTopicID, arg.Aid, time.Now().Unix())
+		}
+	})
 	return
 }

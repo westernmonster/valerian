@@ -258,7 +258,7 @@ func (p *Service) AddDiscussion(c context.Context, arg *model.ArgAddDiscuss) (id
 	}
 
 	// 检测话题
-	if _, err = p.d.GetTopic(c, arg.TopicID); err != nil {
+	if t, err = p.d.GetTopic(c, arg.TopicID); err != nil {
 		return
 	}
 
