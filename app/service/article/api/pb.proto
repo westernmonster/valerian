@@ -108,10 +108,18 @@ message ArgAddArticle {
 
 message ArgUpdateArticle {
     int64 ID = 1;
-    string Title = 2;
+    oneof Title {
+        string TitleValue = 2;
+    }
     string Content = 3;
-    bool DisableRevise = 4;
-    bool DisableComment = 5;
+
+    oneof DisableRevise{
+        bool DisableReviseValue = 4;
+
+    }
+    oneof DisableComment{
+        bool DisableCommentValue = 5;
+    }
     string ChangeDesc = 6;
     int64 Aid = 7;
 }
@@ -135,6 +143,7 @@ message IDReq {
     int64 ID = 1 [(gogoproto.jsontag) = "id"];
     string include = 2 [(gogoproto.jsontag) = "include"];
     bool UseMaster = 3;
+    int64 Aid = 4;
 }
 
 message UserArticlesReq {
@@ -148,11 +157,6 @@ message UserArticlesResp {
 }
 
 
-message Paging {
-    bool IsEnd = 2;
-    string Next = 3;
-    string Prev = 4;
-}
 
 
 message ArticleFileResp {
@@ -160,6 +164,14 @@ message ArticleFileResp {
     string FileName = 2;
     string FileURL = 3;
     int32 Seq = 4;
+}
+
+message ArticleFilesResp {
+    repeated ArticleFileResp Items = 1;
+}
+
+message ArticleRelationsResp {
+    repeated ArticleRelationResp Items = 1;
 }
 
 
@@ -187,7 +199,6 @@ message ArticleHistoryItem {
 
 message ArticleHistoryListResp {
 	repeated ArticleHistoryItem Items = 1;
-	Paging Paging = 2;
 }
 
 message ArticleRelationResp {
@@ -253,9 +264,36 @@ message ArgUpdateArticleRelation {
 	int64 Aid  = 6;
 }
 
+message IDResp {
+    int64 ID = 1;
+}
+
+message ArgArticleHistoriesPaged {
+    int64 ArticleID = 1;
+    int32 Limit = 2;
+    int32 Offset = 3;
+}
+
 
 
 service Article {
+    rpc AddArticle(ArgAddArticle) returns (IDResp);
+    rpc UpdateArticle(ArgUpdateArticle) returns (EmptyStruct);
+    rpc DelArticle(IDReq) returns (EmptyStruct);
+
+    rpc GetArticleFiles(IDReq) returns (ArticleFilesResp);
+    rpc SaveArticleFiles(ArgSaveArticleFiles) returns (EmptyStruct);
+
+    rpc GetArticleHistoriesPaged(ArgArticleHistoriesPaged) returns (ArticleHistoryListResp);
+    rpc GetArticleHistory(IDReq) returns (ArticleHistoryResp);
+
+    rpc GetArticleRelations(IDReq) returns (ArticleRelationsResp);
+
+    rpc UpdateArticleRelation(ArgUpdateArticleRelation) returns (EmptyStruct);
+    rpc SetPrimary(ArgSetPrimaryArticleRelation) returns (EmptyStruct);
+    rpc AddArticleRelation(ArgAddArticleRelation) returns (EmptyStruct);
+    rpc DelArticleRelation(ArgDelArticleRelation) returns (EmptyStruct);
+
     rpc GetAllArticles(EmptyStruct) returns (ArticlesResp);
     rpc GetArticleInfo(IDReq) returns (ArticleInfo);
     rpc GetReviseInfo(IDReq) returns (ReviseInfo);

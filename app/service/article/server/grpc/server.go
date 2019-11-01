@@ -10,7 +10,6 @@ import (
 	"valerian/library/log"
 	"valerian/library/net/metadata"
 	"valerian/library/net/rpc/warden"
-	"valerian/library/xstr"
 
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -49,66 +48,7 @@ func (s *server) GetArticleInfo(ctx context.Context, req *api.IDReq) (*api.Artic
 		}()
 	}
 
-	article, err := s.svr.GetArticle(ctx, req.ID)
-	if err != nil {
-		return nil, err
-	}
-
-	changeDesc, err := s.svr.GetArticleLastChangeDesc(ctx, req.ID)
-	if err != nil {
-		return nil, err
-	}
-
-	stat, err := s.svr.GetArticleStat(ctx, req.ID)
-	if err != nil {
-		return nil, err
-	}
-
-	urls, err := s.svr.GetArticleImageUrls(ctx, req.ID)
-	if err != nil {
-		return nil, err
-	}
-
-	m, err := s.svr.GetAccountBaseInfo(ctx, article.CreatedBy)
-	if err != nil {
-		return nil, err
-	}
-
-	resp := &api.ArticleInfo{
-		ID:             article.ID,
-		Title:          article.Title,
-		Excerpt:        xstr.Excerpt(article.ContentText),
-		CreatedAt:      article.CreatedAt,
-		UpdatedAt:      article.UpdatedAt,
-		ImageUrls:      urls,
-		DisableRevise:  bool(article.DisableRevise),
-		DisableComment: bool(article.DisableComment),
-		Stat: &api.ArticleStat{
-			ReviseCount:  int32(stat.ReviseCount),
-			CommentCount: int32(stat.CommentCount),
-			LikeCount:    int32(stat.LikeCount),
-			DislikeCount: int32(stat.DislikeCount),
-		},
-		Creator: &api.Creator{
-			ID:           m.ID,
-			UserName:     m.UserName,
-			Avatar:       m.Avatar,
-			Introduction: m.Introduction,
-		},
-		ChangeDesc: changeDesc,
-	}
-
-	inc := includeParam(req.Include)
-
-	if inc["content"] {
-		resp.Content = article.Content
-	}
-
-	if inc["content_text"] {
-		resp.ContentText = article.ContentText
-	}
-
-	return resp, nil
+	return s.svr.GetArticleInfo(ctx, req)
 }
 
 func (s *server) GetAllArticles(ctx context.Context, req *api.EmptyStruct) (*api.ArticlesResp, error) {
@@ -155,6 +95,132 @@ func (s *server) GetReviseStat(ctx context.Context, req *api.IDReq) (*api.Revise
 	return resp, nil
 }
 
+func (s *server) AddArticle(ctx context.Context, req *api.ArgAddArticle) (*api.IDResp, error) {
+	id, err := s.svr.AddArticle(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &api.IDResp{
+		ID: id,
+	}
+
+	return resp, nil
+}
+
+func (s *server) UpdateArticle(ctx context.Context, req *api.ArgUpdateArticle) (*api.EmptyStruct, error) {
+	// err := s.svr.UpdateArticle(ctx, req)
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	resp := &api.EmptyStruct{}
+
+	return resp, nil
+}
+
+func (s *server) DelArticle(ctx context.Context, req *api.IDReq) (*api.EmptyStruct, error) {
+	err := s.svr.DelArticle(ctx, req.Aid, req.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &api.EmptyStruct{}
+
+	return resp, nil
+}
+
+func (s *server) GetArticleFiles(ctx context.Context, req *api.IDReq) (*api.ArticleFilesResp, error) {
+	data, err := s.svr.GetArticleFiles(ctx, req.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.ArticleFilesResp{Items: data}, nil
+}
+
+func (s *server) SaveArticleFiles(ctx context.Context, req *api.ArgSaveArticleFiles) (*api.EmptyStruct, error) {
+	err := s.svr.SaveArticleFiles(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &api.EmptyStruct{}
+
+	return resp, nil
+}
+
+func (s *server) GetArticleHistoriesPaged(ctx context.Context, req *api.ArgArticleHistoriesPaged) (*api.ArticleHistoryListResp, error) {
+	resp, err := s.svr.GetArticleHistoriesPaged(ctx, req.ArticleID, int(req.Offset), int(req.Limit))
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+}
+
+func (s *server) GetArticleHistory(ctx context.Context, req *api.IDReq) (*api.ArticleHistoryResp, error) {
+	resp, err := s.svr.GetArticleHistory(ctx, req.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+}
+
+func (s *server) GetArticleRelations(ctx context.Context, req *api.IDReq) (*api.ArticleRelationsResp, error) {
+	data, err := s.svr.GetArticleRelations(ctx, req.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.ArticleRelationsResp{Items: data}, nil
+}
+
+func (s *server) UpdateArticleRelation(ctx context.Context, req *api.ArgUpdateArticleRelation) (*api.EmptyStruct, error) {
+	err := s.svr.DelArticle(ctx, req.Aid, req.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &api.EmptyStruct{}
+
+	return resp, nil
+}
+
+func (s *server) SetPrimary(ctx context.Context, req *api.ArgSetPrimaryArticleRelation) (*api.EmptyStruct, error) {
+	err := s.svr.DelArticle(ctx, req.Aid, req.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &api.EmptyStruct{}
+
+	return resp, nil
+}
+
+func (s *server) AddArticleRelation(ctx context.Context, req *api.ArgAddArticleRelation) (*api.EmptyStruct, error) {
+	err := s.svr.AddArticleRelation(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &api.EmptyStruct{}
+
+	return resp, nil
+}
+
+func (s *server) DelArticleRelation(ctx context.Context, req *api.ArgDelArticleRelation) (*api.EmptyStruct, error) {
+	err := s.svr.DelArticle(ctx, req.Aid, req.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &api.EmptyStruct{}
+
+	return resp, nil
+}
+
 func (s *server) GetArticleStat(ctx context.Context, req *api.IDReq) (*api.ArticleStat, error) {
 	stat, err := s.svr.GetArticleStat(ctx, req.ID)
 	if err != nil {
@@ -179,116 +245,11 @@ func (s *server) GetReviseInfo(ctx context.Context, req *api.IDReq) (*api.Revise
 		}()
 	}
 
-	revise, err := s.svr.GetRevise(ctx, req.ID)
-	if err != nil {
-		return nil, err
-	}
-	article, err := s.svr.GetArticle(ctx, revise.ArticleID)
-	if err != nil {
-		return nil, err
-	}
-
-	stat, err := s.svr.GetReviseStat(ctx, req.ID)
-	if err != nil {
-		return nil, err
-	}
-
-	urls, err := s.svr.GetReviseImageUrls(ctx, req.ID)
-	if err != nil {
-		return nil, err
-	}
-
-	m, err := s.svr.GetAccountBaseInfo(ctx, article.CreatedBy)
-	if err != nil {
-		return nil, err
-	}
-
-	resp := &api.ReviseInfo{
-		ID:        revise.ID,
-		Title:     article.Title,
-		Excerpt:   xstr.Excerpt(revise.ContentText),
-		CreatedAt: revise.CreatedAt,
-		UpdatedAt: revise.UpdatedAt,
-		ImageUrls: urls,
-		Stat: &api.ReviseStat{
-			CommentCount: int32(stat.CommentCount),
-			LikeCount:    int32(stat.LikeCount),
-			DislikeCount: int32(stat.DislikeCount),
-		},
-		Creator: &api.Creator{
-			ID:           m.ID,
-			UserName:     m.UserName,
-			Avatar:       m.Avatar,
-			Introduction: m.Introduction,
-		},
-		ArticleID: revise.ArticleID,
-	}
-
-	inc := includeParam(req.Include)
-
-	if inc["content"] {
-		resp.Content = article.Content
-	}
-
-	if inc["content_text"] {
-		resp.ContentText = article.ContentText
-	}
-
-	return resp, nil
+	return s.svr.GetReviseInfo(ctx, req)
 }
 
 func (s *server) GetUserArticlesPaged(c context.Context, req *api.UserArticlesReq) (*api.UserArticlesResp, error) {
-	items, err := s.svr.GetUserArticlesPaged(c, req.AccountID, int(req.Limit), int(req.Offset))
-	if err != nil {
-		return nil, err
-	}
-
-	resp := &api.UserArticlesResp{
-		Items: make([]*api.ArticleInfo, len(items)),
-	}
-
-	for i, v := range items {
-		stat, err := s.svr.GetArticleStat(c, v.ID)
-		if err != nil {
-			return nil, err
-		}
-
-		urls, err := s.svr.GetArticleImageUrls(c, v.ID)
-		if err != nil {
-			return nil, err
-		}
-
-		m, err := s.svr.GetAccountBaseInfo(c, v.CreatedBy)
-		if err != nil {
-			return nil, err
-		}
-
-		info := &api.ArticleInfo{
-			ID:        v.ID,
-			Title:     v.Title,
-			Excerpt:   xstr.Excerpt(v.ContentText),
-			CreatedAt: v.CreatedAt,
-			UpdatedAt: v.UpdatedAt,
-			ImageUrls: urls,
-			Stat: &api.ArticleStat{
-				ReviseCount:  int32(stat.ReviseCount),
-				CommentCount: int32(stat.CommentCount),
-				LikeCount:    int32(stat.LikeCount),
-				DislikeCount: int32(stat.DislikeCount),
-			},
-			Creator: &api.Creator{
-				ID:           m.ID,
-				UserName:     m.UserName,
-				Avatar:       m.Avatar,
-				Introduction: m.Introduction,
-			},
-		}
-
-		resp.Items[i] = info
-
-	}
-
-	return resp, nil
+	return s.svr.GetUserArticlesPaged(c, req)
 }
 
 func includeParam(include string) (dic map[string]bool) {

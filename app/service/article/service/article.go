@@ -13,6 +13,7 @@ import (
 	"valerian/library/ecode"
 	"valerian/library/gid"
 	"valerian/library/log"
+	"valerian/library/xstr"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/sergi/go-diff/diffmatchpatch"
@@ -42,6 +43,70 @@ func (p *Service) getTopic(c context.Context, node sqalx.Node, tid int64) (info 
 
 func (p *Service) GetArticle(c context.Context, articleID int64) (item *model.Article, err error) {
 	return p.getArticle(c, p.d.DB(), articleID)
+}
+
+func (p *Service) GetArticleInfo(c context.Context, req *api.IDReq) (resp *api.ArticleInfo, err error) {
+	article, err := p.GetArticle(c, req.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	changeDesc, err := p.GetArticleLastChangeDesc(c, req.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	stat, err := p.GetArticleStat(c, req.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	urls, err := p.GetArticleImageUrls(c, req.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	m, err := p.getAccount(c, p.d.DB(), article.CreatedBy)
+	if err != nil {
+		return nil, err
+	}
+
+	resp = &api.ArticleInfo{
+		ID:             article.ID,
+		Title:          article.Title,
+		Excerpt:        xstr.Excerpt(article.ContentText),
+		CreatedAt:      article.CreatedAt,
+		UpdatedAt:      article.UpdatedAt,
+		ImageUrls:      urls,
+		DisableRevise:  bool(article.DisableRevise),
+		DisableComment: bool(article.DisableComment),
+		Stat: &api.ArticleStat{
+			ReviseCount:  int32(stat.ReviseCount),
+			CommentCount: int32(stat.CommentCount),
+			LikeCount:    int32(stat.LikeCount),
+			DislikeCount: int32(stat.DislikeCount),
+		},
+		Creator: &api.Creator{
+			ID:           m.ID,
+			UserName:     m.UserName,
+			Avatar:       m.Avatar,
+			Introduction: m.Introduction,
+		},
+		ChangeDesc: changeDesc,
+	}
+
+	inc := includeParam(req.Include)
+
+	if inc["content"] {
+		resp.Content = article.Content
+	}
+
+	if inc["content_text"] {
+		resp.ContentText = article.ContentText
+	}
+
+	return
+
 }
 
 func (p *Service) GetArticleLastChangeDesc(c context.Context, articleID int64) (changeDesc string, err error) {
@@ -105,10 +170,58 @@ func (p *Service) GetArticleStat(c context.Context, articleID int64) (stat *mode
 	return p.d.GetArticleStatByID(c, p.d.DB(), articleID)
 }
 
-func (p *Service) GetUserArticlesPaged(c context.Context, aid int64, limit, offset int) (items []*model.Article, err error) {
-	if items, err = p.d.GetUserArticlesPaged(c, p.d.DB(), aid, limit, offset); err != nil {
+func (p *Service) GetUserArticlesPaged(c context.Context, req *api.UserArticlesReq) (resp *api.UserArticlesResp, err error) {
+	var data []*model.Article
+	if data, err = p.d.GetUserArticlesPaged(c, p.d.DB(), req.AccountID, int(req.Limit), int(req.Offset)); err != nil {
 		return
 	}
+
+	resp = &api.UserArticlesResp{
+		Items: make([]*api.ArticleInfo, len(data)),
+	}
+
+	for i, v := range data {
+		stat, err := p.GetArticleStat(c, v.ID)
+		if err != nil {
+			return nil, err
+		}
+
+		urls, err := p.GetArticleImageUrls(c, v.ID)
+		if err != nil {
+			return nil, err
+		}
+
+		m, err := p.getAccount(c, p.d.DB(), v.CreatedBy)
+		if err != nil {
+			return nil, err
+		}
+
+		info := &api.ArticleInfo{
+			ID:        v.ID,
+			Title:     v.Title,
+			Excerpt:   xstr.Excerpt(v.ContentText),
+			CreatedAt: v.CreatedAt,
+			UpdatedAt: v.UpdatedAt,
+			ImageUrls: urls,
+			Stat: &api.ArticleStat{
+				ReviseCount:  int32(stat.ReviseCount),
+				CommentCount: int32(stat.CommentCount),
+				LikeCount:    int32(stat.LikeCount),
+				DislikeCount: int32(stat.DislikeCount),
+			},
+			Creator: &api.Creator{
+				ID:           m.ID,
+				UserName:     m.UserName,
+				Avatar:       m.Avatar,
+				Introduction: m.Introduction,
+			},
+		}
+
+		resp.Items[i] = info
+
+	}
+
+	return resp, nil
 
 	return
 }
@@ -229,5 +342,118 @@ func (p *Service) AddArticle(c context.Context, arg *api.ArgAddArticle) (id int6
 			p.onCatalogArticleAdded(context.Background(), item.ID, v.ToTopicID, arg.Aid, time.Now().Unix())
 		}
 	})
+	return
+}
+
+func (p *Service) DelArticle(c context.Context, articleID, aid int64) (err error) {
+	return
+}
+
+func (p *Service) UpdateArticle(c context.Context, arg *api.ArgUpdateArticle) (err error) {
+	var tx sqalx.Node
+	if tx, err = p.d.DB().Beginx(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		return
+	}
+
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+			}
+			return
+		}
+	}()
+
+	var item *model.Article
+	if item, err = p.d.GetArticleByID(c, tx, arg.ID); err != nil {
+		return
+	} else if item == nil {
+		err = ecode.ArticleNotExist
+		return
+	}
+
+	oldContentText := item.ContentText
+
+	var seq int
+	if seq, err = p.d.GetArticleHistoriesMaxSeq(c, tx, arg.ID); err != nil {
+		return
+	}
+
+	if arg.Title != nil {
+		item.Title = arg.GetTitleValue()
+	}
+
+	item.Content = arg.Content
+
+	var doc *goquery.Document
+	doc, err = goquery.NewDocumentFromReader(strings.NewReader(item.Content))
+	if err != nil {
+		err = ecode.ParseHTMLFailed
+		return
+	}
+	item.ContentText = doc.Text()
+
+	if err = p.d.DelImageURLByCond(c, tx, model.TargetTypeArticle, item.ID); err != nil {
+		return
+	}
+
+	doc.Find("img").Each(func(i int, s *goquery.Selection) {
+		if url, exist := s.Attr("src"); exist {
+			u := &model.ImageURL{
+				ID:         gid.NewID(),
+				TargetType: model.TargetTypeArticle,
+				TargetID:   item.ID,
+				URL:        url,
+				CreatedAt:  time.Now().Unix(),
+				UpdatedAt:  time.Now().Unix(),
+			}
+			if err = p.d.AddImageURL(c, tx, u); err != nil {
+				return
+			}
+		}
+	})
+
+	if arg.DisableRevise != nil {
+		item.DisableRevise = types.BitBool(arg.GetDisableReviseValue())
+	}
+
+	if arg.DisableComment != nil {
+		item.DisableComment = types.BitBool(arg.GetDisableCommentValue())
+	}
+
+	h := &model.ArticleHistory{
+		ID:          gid.NewID(),
+		ArticleID:   item.ID,
+		Seq:         int32(seq + 1),
+		Content:     item.Content,
+		ContentText: item.ContentText,
+		UpdatedBy:   arg.Aid,
+		ChangeDesc:  arg.ChangeDesc,
+		CreatedAt:   time.Now().Unix(),
+		UpdatedAt:   time.Now().Unix(),
+	}
+
+	dmp := diffmatchpatch.New()
+	diffs := dmp.DiffMain(oldContentText, h.ContentText, false)
+	h.Diff = dmp.DiffPrettyHtml(diffs)
+
+	if err = p.d.UpdateArticle(c, tx, item); err != nil {
+		return
+	}
+
+	if err = p.d.AddArticleHistory(c, tx, h); err != nil {
+		return
+	}
+
+	if err = tx.Commit(); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+	}
+
+	p.addCache(func() {
+		p.d.DelArticleCache(context.TODO(), arg.ID)
+		p.onArticleUpdated(context.Background(), arg.ID, arg.Aid, time.Now().Unix())
+	})
+
 	return
 }

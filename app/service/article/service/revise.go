@@ -3,9 +3,11 @@ package service
 import (
 	"context"
 
+	"valerian/app/service/article/api"
 	"valerian/app/service/article/model"
 	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
+	"valerian/library/xstr"
 )
 
 func (p *Service) GetReviseStat(c context.Context, reviseID int64) (item *model.ReviseStat, err error) {
@@ -68,4 +70,64 @@ func (p *Service) GetReviseImageUrls(c context.Context, reviseID int64) (urls []
 
 func (p *Service) DelRevise(c context.Context, aid int64, reviseID int64) (err error) {
 	return
+}
+
+func (p *Service) GetReviseInfo(c context.Context, req *api.IDReq) (item *api.ReviseInfo, err error) {
+	revise, err := p.GetRevise(c, req.ID)
+	if err != nil {
+		return nil, err
+	}
+	article, err := p.GetArticle(c, revise.ArticleID)
+	if err != nil {
+		return nil, err
+	}
+
+	stat, err := p.GetReviseStat(c, req.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	urls, err := p.GetReviseImageUrls(c, req.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	m, err := p.getAccount(c, p.d.DB(), article.CreatedBy)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &api.ReviseInfo{
+		ID:        revise.ID,
+		Title:     article.Title,
+		Excerpt:   xstr.Excerpt(revise.ContentText),
+		CreatedAt: revise.CreatedAt,
+		UpdatedAt: revise.UpdatedAt,
+		ImageUrls: urls,
+		Stat: &api.ReviseStat{
+			CommentCount: int32(stat.CommentCount),
+			LikeCount:    int32(stat.LikeCount),
+			DislikeCount: int32(stat.DislikeCount),
+		},
+		Creator: &api.Creator{
+			ID:           m.ID,
+			UserName:     m.UserName,
+			Avatar:       m.Avatar,
+			Introduction: m.Introduction,
+		},
+		ArticleID: revise.ArticleID,
+	}
+
+	inc := includeParam(req.Include)
+
+	if inc["content"] {
+		resp.Content = article.Content
+	}
+
+	if inc["content_text"] {
+		resp.ContentText = article.ContentText
+	}
+
+	return resp, nil
+
 }
