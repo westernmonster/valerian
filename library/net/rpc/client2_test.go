@@ -16,7 +16,7 @@ import (
 )
 
 var c = &discovery.Config{
-	Nodes:  []string{"api.bilibili.co"},
+	Nodes:  []string{"api.flywk.co"},
 	Zone:   "sh001",
 	Env:    "test",
 	Key:    "0c4b8fe3ff35a4b6",

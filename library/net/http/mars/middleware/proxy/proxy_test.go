@@ -118,7 +118,7 @@ func TestZoneProxy(t *testing.T) {
 	req, err := http.NewRequest("GET", "http://127.0.0.1:18080/icon", nil)
 	assert.NoError(t, err)
 	req.Host = "api.flywk.com"
-	req.Header.Set("X-BILI-SLB", "shjd-out-slb")
+	req.Header.Set("X-FLYWK-SLB", "shjd-out-slb")
 
 	resp, err := http.DefaultClient.Do(req)
 	assert.NoError(t, err)

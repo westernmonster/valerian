@@ -34,7 +34,7 @@ func (t *testConf) Set(text string) error {
 }
 
 func TestSven(t *testing.T) {
-	svenHost = "config.bilibili.co"
+	svenHost = "config.flywk.co"
 	svenVersion = "server-1"
 	svenPath = "/tmp"
 	svenToken = "1afe5efaf45e11e7b3f8c6cd4f230d8c"
