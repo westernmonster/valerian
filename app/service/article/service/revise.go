@@ -2,12 +2,19 @@ package service
 
 import (
 	"context"
+	"fmt"
+	"strings"
+	"time"
 
 	"valerian/app/service/article/api"
 	"valerian/app/service/article/model"
 	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
+	"valerian/library/gid"
+	"valerian/library/log"
 	"valerian/library/xstr"
+
+	"github.com/PuerkitoBio/goquery"
 )
 
 func (p *Service) GetReviseStat(c context.Context, reviseID int64) (item *model.ReviseStat, err error) {
@@ -65,10 +72,6 @@ func (p *Service) GetReviseImageUrls(c context.Context, reviseID int64) (urls []
 		urls = append(urls, v.URL)
 	}
 
-	return
-}
-
-func (p *Service) DelRevise(c context.Context, aid int64, reviseID int64) (err error) {
 	return
 }
 
@@ -130,4 +133,221 @@ func (p *Service) GetReviseInfo(c context.Context, req *api.IDReq) (item *api.Re
 
 	return resp, nil
 
+}
+
+func (p *Service) AddRevise(c context.Context, arg *api.ArgAddRevise) (id int64, err error) {
+	var tx sqalx.Node
+	if tx, err = p.d.DB().Beginx(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		return
+	}
+
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+			}
+			return
+		}
+	}()
+
+	// check article
+	if _, err = p.getArticle(c, tx, arg.ArticleID); err != nil {
+		return
+	}
+
+	if canEdit, e := p.checkEditPermission(c, tx, arg.ArticleID, arg.Aid); e != nil {
+		err = e
+		return
+	} else if !canEdit {
+		err = ecode.NeedArticleEditPermission
+		return
+	}
+
+	item := &model.Revise{
+		ID:        gid.NewID(),
+		ArticleID: arg.ArticleID,
+		Content:   arg.Content,
+		CreatedBy: arg.Aid,
+		CreatedAt: time.Now().Unix(),
+		UpdatedAt: time.Now().Unix(),
+	}
+
+	var doc *goquery.Document
+	doc, err = goquery.NewDocumentFromReader(strings.NewReader(item.Content))
+	if err != nil {
+		err = ecode.ParseHTMLFailed
+		return
+	}
+	item.ContentText = doc.Text()
+
+	doc.Find("img").Each(func(i int, s *goquery.Selection) {
+		if url, exist := s.Attr("src"); exist {
+			u := &model.ImageURL{
+				ID:         gid.NewID(),
+				TargetType: model.TargetTypeRevise,
+				TargetID:   item.ID,
+				URL:        url,
+				CreatedAt:  time.Now().Unix(),
+				UpdatedAt:  time.Now().Unix(),
+			}
+			if err = p.d.AddImageURL(c, tx, u); err != nil {
+				return
+			}
+		}
+	})
+
+	if err = p.d.AddRevise(c, tx, item); err != nil {
+		return
+	}
+
+	if err = p.bulkCreateReviseFiles(c, tx, item.ID, arg.Files); err != nil {
+		return
+	}
+
+	if err = p.d.AddReviseStat(c, tx, &model.ReviseStat{
+		ReviseID:  item.ID,
+		CreatedAt: time.Now().Unix(),
+		UpdatedAt: time.Now().Unix(),
+	}); err != nil {
+		return
+	}
+
+	if err = p.d.IncrArticleStat(c, tx, &model.ArticleStat{ArticleID: item.ArticleID, ReviseCount: 1}); err != nil {
+		return
+	}
+
+	if err = tx.Commit(); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+	}
+
+	id = item.ID
+	p.addCache(func() {
+		p.onReviseAdded(context.Background(), item.ID, arg.Aid, time.Now().Unix())
+	})
+
+	return
+}
+
+func (p *Service) UpdateRevise(c context.Context, arg *api.ArgUpdateRevise) (err error) {
+	var tx sqalx.Node
+	if tx, err = p.d.DB().Beginx(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		return
+	}
+
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+			}
+			return
+		}
+	}()
+
+	var item *model.Revise
+	if item, err = p.d.GetReviseByID(c, tx, arg.ID); err != nil {
+		return
+	} else if item == nil {
+		err = ecode.ReviseNotExist
+		return
+	}
+
+	if canEdit, e := p.checkEditPermission(c, tx, item.ArticleID, arg.Aid); e != nil {
+		return e
+	} else if !canEdit {
+		err = ecode.NeedArticleEditPermission
+		return
+	}
+
+	item.Content = arg.Content
+
+	var doc *goquery.Document
+	doc, err = goquery.NewDocumentFromReader(strings.NewReader(item.Content))
+	if err != nil {
+		err = ecode.ParseHTMLFailed
+		return
+	}
+	item.ContentText = doc.Text()
+
+	if err = p.d.DelImageURLByCond(c, tx, model.TargetTypeRevise, item.ID); err != nil {
+		return
+	}
+
+	doc.Find("img").Each(func(i int, s *goquery.Selection) {
+		if url, exist := s.Attr("src"); exist {
+			u := &model.ImageURL{
+				ID:         gid.NewID(),
+				TargetType: model.TargetTypeArticle,
+				TargetID:   item.ID,
+				URL:        url,
+				CreatedAt:  time.Now().Unix(),
+				UpdatedAt:  time.Now().Unix(),
+			}
+			if err = p.d.AddImageURL(c, tx, u); err != nil {
+				return
+			}
+		}
+	})
+
+	if err = p.d.UpdateRevise(c, tx, item); err != nil {
+		return
+	}
+
+	if err = tx.Commit(); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+	}
+
+	p.addCache(func() {
+		p.d.DelReviseCache(context.TODO(), arg.ID)
+		p.onReviseUpdated(context.Background(), arg.ID, arg.Aid, time.Now().Unix())
+	})
+
+	return
+}
+
+func (p *Service) DelRevise(c context.Context, arg *api.IDReq) (err error) {
+	var tx sqalx.Node
+	if tx, err = p.d.DB().Beginx(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		return
+	}
+
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+			}
+			return
+		}
+	}()
+
+	var item *model.Revise
+	if item, err = p.d.GetReviseByID(c, tx, arg.ID); err != nil {
+		return
+	} else if item == nil {
+		err = ecode.ReviseNotExist
+		return
+	}
+
+	if canEdit, e := p.checkEditPermission(c, tx, item.ArticleID, arg.Aid); e != nil {
+		return e
+	} else if !canEdit {
+		err = ecode.NeedArticleEditPermission
+		return
+	}
+
+	if err = tx.Commit(); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+	}
+
+	p.addCache(func() {
+		p.d.DelReviseCache(context.TODO(), arg.ID)
+		p.onReviseDeleted(context.Background(), arg.ID, arg.Aid, time.Now().Unix())
+	})
+	return
+}
+
+func (p *Service) GetArticleRevisesPaged(c context.Context, req *api.ArgArticleRevisesPaged) (resp *api.ReviseListResp, err error) {
+	return
 }

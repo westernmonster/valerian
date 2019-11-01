@@ -218,6 +218,7 @@ func (p *Service) AddComment(c context.Context, arg *model.ArgAddComment) (id in
 		TargetType: arg.TargetType,
 		ResourceID: arg.TargetID,
 		OwnerID:    arg.TargetID,
+		OwnerType:  arg.TargetType,
 		CreatedBy:  aid,
 		CreatedAt:  time.Now().Unix(),
 		UpdatedAt:  time.Now().Unix(),
@@ -230,6 +231,7 @@ func (p *Service) AddComment(c context.Context, arg *model.ArgAddComment) (id in
 		}
 
 		item.OwnerID = comment.OwnerID
+		item.OwnerType = comment.OwnerType
 
 		// 如果对象是子回复，则添加被回复人
 		if comment.TargetType == model.TargetTypeComment {
@@ -239,7 +241,6 @@ func (p *Service) AddComment(c context.Context, arg *model.ArgAddComment) (id in
 			// 如果被回复对象是回复  则直接设置当前的资源ID为被回复的ID
 			item.ResourceID = comment.ID
 		}
-
 	}
 
 	if err = p.d.AddComment(c, tx, item); err != nil {

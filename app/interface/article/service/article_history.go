@@ -4,44 +4,54 @@ import (
 	"context"
 	"net/url"
 	"strconv"
+
 	"valerian/app/interface/article/model"
-	account "valerian/app/service/account/api"
+	article "valerian/app/service/article/api"
 	"valerian/library/ecode"
+	"valerian/library/net/metadata"
 )
 
 func (p *Service) GetArticleHistoriesResp(c context.Context, articleID int64, limit, offset int) (resp *model.ArticleHistoryListResp, err error) {
-	var data []*model.ArticleHistory
-	if data, err = p.d.GetArticleHistoriesPaged(c, p.d.DB(), articleID, limit, offset); err != nil {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+	var data *article.ArticleHistoryListResp
+	if data, err = p.d.GetArticleHistoriesPaged(c, &article.ArgArticleHistoriesPaged{
+		Aid:       aid,
+		ArticleID: articleID,
+		Limit:     int32(limit),
+		Offset:    int32(offset),
+	}); err != nil {
 		return
 	}
 
 	resp = &model.ArticleHistoryListResp{
-		Items:  make([]*model.ArticleHistoryItem, len(data)),
+		Items:  make([]*model.ArticleHistoryItem, 0),
 		Paging: &model.Paging{},
 	}
 
-	for i, v := range data {
-		item := &model.ArticleHistoryItem{
-			ID:         v.ID,
-			ArticleID:  v.ArticleID,
-			Seq:        v.Seq,
-			ChangeDesc: v.ChangeDesc,
-			UpdatedAt:  v.UpdatedAt,
-			CreatedAt:  v.CreatedAt,
-		}
+	if data.Items != nil {
+		for _, v := range data.Items {
+			item := &model.ArticleHistoryItem{
+				ID:         v.ID,
+				ArticleID:  v.ArticleID,
+				Seq:        int(v.Seq),
+				ChangeDesc: v.ChangeDesc,
+				UpdatedAt:  v.UpdatedAt,
+				CreatedAt:  v.CreatedAt,
+			}
 
-		var acc *account.BaseInfoReply
-		if acc, err = p.d.GetAccountBaseInfo(c, v.UpdatedBy); err != nil {
-			return
-		}
-		item.Updator = &model.Creator{
-			ID:           acc.ID,
-			UserName:     acc.UserName,
-			Avatar:       acc.Avatar,
-			Introduction: acc.Introduction,
-		}
+			item.Updator = &model.Creator{
+				ID:           v.Updator.ID,
+				UserName:     v.Updator.UserName,
+				Avatar:       v.Updator.Avatar,
+				Introduction: v.Updator.Introduction,
+			}
 
-		resp.Items[i] = item
+			resp.Items = append(resp.Items, item)
+		}
 	}
 
 	param := url.Values{}
@@ -70,8 +80,13 @@ func (p *Service) GetArticleHistoriesResp(c context.Context, articleID int64, li
 }
 
 func (p *Service) GetArticleHistoryResp(c context.Context, articleHistoryID int64) (item *model.ArticleHistoryResp, err error) {
-	var v *model.ArticleHistory
-	if v, err = p.d.GetArticleHistoryByID(c, p.d.DB(), articleHistoryID); err != nil {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+	var v *article.ArticleHistoryResp
+	if v, err = p.d.GetArticleHistory(c, &article.IDReq{ID: articleHistoryID, Aid: aid}); err != nil {
 		return
 	} else if v == nil {
 		err = ecode.ArticleHistoryNotExist
@@ -81,22 +96,18 @@ func (p *Service) GetArticleHistoryResp(c context.Context, articleHistoryID int6
 	item = &model.ArticleHistoryResp{
 		ID:         v.ID,
 		ArticleID:  v.ArticleID,
-		Seq:        v.Seq,
+		Seq:        int(v.Seq),
 		ChangeDesc: v.ChangeDesc,
 		Diff:       v.Diff,
 		UpdatedAt:  v.UpdatedAt,
 		CreatedAt:  v.CreatedAt,
 	}
 
-	var acc *account.BaseInfoReply
-	if acc, err = p.d.GetAccountBaseInfo(c, v.UpdatedBy); err != nil {
-		return
-	}
 	item.Updator = &model.Creator{
-		ID:           acc.ID,
-		UserName:     acc.UserName,
-		Avatar:       acc.Avatar,
-		Introduction: acc.Introduction,
+		ID:           v.Updator.ID,
+		UserName:     v.Updator.UserName,
+		Avatar:       v.Updator.Avatar,
+		Introduction: v.Updator.Introduction,
 	}
 
 	return

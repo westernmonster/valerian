@@ -272,9 +272,62 @@ message ArgArticleHistoriesPaged {
     int64 ArticleID = 1;
     int32 Limit = 2;
     int32 Offset = 3;
+    int64 Aid = 4;
+}
+
+message ArgAddRevise {
+    int64 ArticleID = 1;
+    string Content = 2;
+    int64 Aid  = 3;
+    repeated AddReviseFile Files = 4;
+}
+
+message AddReviseFile {
+    oneof ID {
+        int64 IDValue = 1;
+    }
+    string FileName  = 2;
+    string FileURL  = 3;
+    int32 Seq      = 4;
+}
+
+message ArgUpdateRevise {
+    int64 ID = 1;
+    string Content = 2;
+    int64 Aid  = 3;
+    repeated AddReviseFile Files = 4;
 }
 
 
+message ArgSaveReviseFiles {
+    int64 ReviseID = 1;
+    string Content = 2;
+    repeated AddReviseFile Items = 4;
+}
+
+message ReviseFileResp {
+    int64 ID = 1;
+    string FileName  = 2;
+    string FileURL  = 3;
+    int32 Seq      = 4;
+}
+
+
+message ReviseFilesResp {
+    repeated ReviseFileResp Items = 1;
+}
+
+
+message ReviseListResp {
+    repeated ReviseInfo Items = 1;
+}
+
+message ArgArticleRevisesPaged {
+    int64 ArticleID = 1;
+    string Sort = 2;
+    int32 Limit = 3 ;
+    int32 Offset = 4 ;
+}
 
 service Article {
     rpc AddArticle(ArgAddArticle) returns (IDResp);
@@ -293,6 +346,16 @@ service Article {
     rpc SetPrimary(ArgSetPrimaryArticleRelation) returns (EmptyStruct);
     rpc AddArticleRelation(ArgAddArticleRelation) returns (EmptyStruct);
     rpc DelArticleRelation(ArgDelArticleRelation) returns (EmptyStruct);
+
+    rpc AddRevise(ArgAddRevise) returns (IDResp);
+    rpc UpdateRevise(ArgUpdateRevise) returns (EmptyStruct);
+    rpc DelRevise(IDReq) returns (EmptyStruct);
+
+    rpc GetArticleRevisesPaged(ArgArticleRevisesPaged) returns(ReviseListResp);
+
+    rpc GetReviseFiles(IDReq) returns(ReviseFilesResp);
+
+    rpc SaveReviseFiles(ArgSaveReviseFiles) returns (EmptyStruct);
 
     rpc GetAllArticles(EmptyStruct) returns (ArticlesResp);
     rpc GetArticleInfo(IDReq) returns (ArticleInfo);

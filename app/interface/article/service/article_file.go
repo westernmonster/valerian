@@ -2,179 +2,71 @@ package service
 
 import (
 	"context"
-	"fmt"
-	"time"
-	"valerian/app/interface/article/model"
-	"valerian/library/database/sqalx"
-	"valerian/library/ecode"
-	"valerian/library/gid"
-	"valerian/library/log"
 
-	"github.com/jinzhu/copier"
+	"valerian/app/interface/article/model"
+	article "valerian/app/service/article/api"
+	"valerian/library/ecode"
+	"valerian/library/net/metadata"
 )
 
 func (p *Service) GetArticleFiles(c context.Context, articleID int64) (items []*model.ArticleFileResp, err error) {
-	return p.getArticleFiles(c, p.d.DB(), articleID)
-}
-
-func (p *Service) getArticleFiles(c context.Context, node sqalx.Node, articleID int64) (items []*model.ArticleFileResp, err error) {
-	var addCache = true
-
-	if items, err = p.d.ArticleFileCache(c, articleID); err != nil {
-		addCache = false
-	} else if items != nil {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
 		return
 	}
 
-	var data []*model.ArticleFile
-	if data, err = p.d.GetArticleFilesByCond(c, node, map[string]interface{}{"article_id": articleID}); err != nil {
+	var data *article.ArticleFilesResp
+	if data, err = p.d.GetArticleFiles(c, &article.IDReq{Aid: aid, ID: articleID}); err != nil {
 		return
 	}
 
 	items = make([]*model.ArticleFileResp, 0)
-	if err = copier.Copy(&items, &data); err != nil {
-		return
-	}
 
-	if addCache {
-		p.addCache(func() {
-			p.d.SetArticleFileCache(context.TODO(), articleID, items)
-		})
-	}
-
-	return
-}
-
-func (p *Service) bulkCreateFiles(c context.Context, node sqalx.Node, articleID int64, files []*model.AddArticleFile) (err error) {
-	var tx sqalx.Node
-	if tx, err = node.Beginx(c); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
-		return
-	}
-
-	defer func() {
-		if err != nil {
-			if err1 := tx.Rollback(); err1 != nil {
-				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
-			}
-			return
-		}
-	}()
-
-	for _, v := range files {
-		item := &model.ArticleFile{
-			ID:        gid.NewID(),
-			FileName:  v.FileName,
-			FileURL:   v.FileURL,
-			Seq:       v.Seq,
-			ArticleID: articleID,
-			CreatedAt: time.Now().Unix(),
-			UpdatedAt: time.Now().Unix(),
-		}
-
-		if err = p.d.AddArticleFile(c, tx, item); err != nil {
-			return
+	if data.Items != nil {
+		for _, v := range items {
+			items = append(items, &model.ArticleFileResp{
+				ID:       v.ID,
+				FileName: v.FileName,
+				FileURL:  v.FileURL,
+				Seq:      int(v.Seq),
+			})
 		}
 	}
-
-	if err = tx.Commit(); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
-		return
-	}
-
-	p.addCache(func() {
-		p.d.DelArticleFileCache(context.TODO(), articleID)
-	})
 
 	return
 }
 
 func (p *Service) SaveArticleFiles(c context.Context, arg *model.ArgSaveArticleFiles) (err error) {
-	var tx sqalx.Node
-	if tx, err = p.d.DB().Beginx(c); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
 		return
 	}
 
-	defer func() {
-		if err != nil {
-			if err1 := tx.Rollback(); err1 != nil {
-				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+	item := &article.ArgSaveArticleFiles{
+		Items:     make([]*article.ArgUpdateArticleFile, 0),
+		ArticleID: arg.ArticleID,
+		Aid:       aid,
+	}
+
+	if arg.Items != nil {
+		for _, v := range arg.Items {
+			c := &article.ArgUpdateArticleFile{
+				FileName: v.FileName,
+				FileURL:  v.FileURL,
+				Seq:      int32(v.Seq),
 			}
-			return
+			if v.ID != nil {
+				c.ID = &article.ArgUpdateArticleFile_IDValue{*v.ID}
+			}
+			item.Items = append(item.Items, c)
 		}
-	}()
+	}
 
-	// TODO: check edit permission
-
-	var article *model.Article
-	if article, err = p.d.GetArticleByID(c, tx, arg.ArticleID); err != nil {
+	if err = p.d.SaveArticleFiles(c, item); err != nil {
 		return
-	} else if article == nil {
-		return ecode.ArticleNotExist
 	}
 
-	dbItems, err := p.d.GetArticleFilesByCond(c, tx, map[string]interface{}{"article_id": arg.ArticleID})
-	if err != nil {
-		return
-	}
-
-	dic := make(map[int64]bool)
-	for _, v := range arg.Items {
-		if v.ID == nil {
-			// Add
-			item := &model.ArticleFile{
-				ID:        gid.NewID(),
-				FileName:  v.FileName,
-				FileURL:   v.FileURL,
-				Seq:       v.Seq,
-				ArticleID: arg.ArticleID,
-				CreatedAt: time.Now().Unix(),
-				UpdatedAt: time.Now().Unix(),
-			}
-
-			if err = p.d.AddArticleFile(c, tx, item); err != nil {
-				return
-			}
-			continue
-		}
-
-		// Update
-		dic[*v.ID] = true
-		var file *model.ArticleFile
-		if file, err = p.d.GetArticleFileByID(c, tx, *v.ID); err != nil {
-			return
-		} else if file == nil {
-			err = ecode.ArticleFileNotExist
-			return
-		}
-
-		file.FileName = v.FileName
-		file.FileURL = v.FileURL
-		file.Seq = v.Seq
-
-		if err = p.d.UpdateArticleFile(c, tx, file); err != nil {
-			return
-		}
-	}
-
-	// Delete
-	for _, v := range dbItems {
-		if dic[v.ID] {
-			continue
-		}
-
-		if err = p.d.DelArticleFile(c, tx, v.ID); err != nil {
-			return
-		}
-	}
-
-	if err = tx.Commit(); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
-	}
-
-	p.addCache(func() {
-		p.d.DelArticleFileCache(context.TODO(), arg.ArticleID)
-	})
 	return
 }

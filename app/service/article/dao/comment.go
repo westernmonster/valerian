@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"valerian/app/interface/comment/model"
+	"valerian/app/service/comment/model"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
 )
@@ -81,7 +81,7 @@ func (p *Dao) UpdateComment(c context.Context, node sqalx.Node, item *model.Comm
 }
 
 // Delete logic delete a exist record
-func (p *Dao) DelComment(c context.Context, node sqalx.Node, id int64) (err error) {
+func (p *Dao) DelCommentByCond(c context.Context, node sqalx.Node, id int64) (err error) {
 	sqlDelete := "UPDATE comments SET deleted=1 WHERE id=? "
 
 	if _, err = node.ExecContext(c, sqlDelete, id); err != nil {
