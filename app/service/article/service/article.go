@@ -45,6 +45,72 @@ func (p *Service) GetArticle(c context.Context, articleID int64) (item *model.Ar
 	return p.getArticle(c, p.d.DB(), articleID)
 }
 
+func (p *Service) GetArticleDetail(c context.Context, req *api.IDReq) (resp *api.ArticleDetail, err error) {
+	article, err := p.GetArticle(c, req.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	lastHistory, err := p.d.GetLastArticleHistory(c, p.d.DB(), req.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	stat, err := p.GetArticleStat(c, req.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	urls, err := p.GetArticleImageUrls(c, req.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	m, err := p.getAccount(c, p.d.DB(), article.CreatedBy)
+	if err != nil {
+		return nil, err
+	}
+
+	resp = &api.ArticleDetail{
+		ID:             article.ID,
+		Title:          article.Title,
+		CreatedAt:      article.CreatedAt,
+		UpdatedAt:      article.UpdatedAt,
+		ImageUrls:      urls,
+		Content:        article.Content,
+		ContentText:    article.ContentText,
+		DisableRevise:  bool(article.DisableRevise),
+		DisableComment: bool(article.DisableComment),
+		Stat: &api.ArticleStat{
+			ReviseCount:  int32(stat.ReviseCount),
+			CommentCount: int32(stat.CommentCount),
+			LikeCount:    int32(stat.LikeCount),
+			DislikeCount: int32(stat.DislikeCount),
+		},
+		Creator: &api.Creator{
+			ID:           m.ID,
+			UserName:     m.UserName,
+			Avatar:       m.Avatar,
+			Introduction: m.Introduction,
+		},
+	}
+
+	if lastHistory != nil {
+		resp.LastHistory = &api.ArticleHistoryResp{
+			ID:         lastHistory.ID,
+			ArticleID:  lastHistory.ArticleID,
+			Seq:        lastHistory.Seq,
+			ChangeDesc: lastHistory.ChangeDesc,
+			Diff:       lastHistory.Diff,
+			UpdatedAt:  lastHistory.UpdatedAt,
+			CreatedAt:  lastHistory.CreatedAt,
+		}
+	}
+
+	return
+
+}
+
 func (p *Service) GetArticleInfo(c context.Context, req *api.IDReq) (resp *api.ArticleInfo, err error) {
 	article, err := p.GetArticle(c, req.ID)
 	if err != nil {

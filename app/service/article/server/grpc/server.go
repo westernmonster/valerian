@@ -51,6 +51,17 @@ func (s *server) GetArticleInfo(ctx context.Context, req *api.IDReq) (*api.Artic
 	return s.svr.GetArticleInfo(ctx, req)
 }
 
+func (s *server) GetArticleDetail(ctx context.Context, req *api.IDReq) (*api.ArticleDetail, error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
+
+	return s.svr.GetArticleDetail(ctx, req)
+}
+
 func (s *server) GetAllArticles(ctx context.Context, req *api.EmptyStruct) (*api.ArticlesResp, error) {
 	resp := &api.ArticlesResp{
 		Items: make([]*api.DBArticle, 0),

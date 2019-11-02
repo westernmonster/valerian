@@ -3,6 +3,7 @@ package dao
 import (
 	"context"
 	"fmt"
+
 	article "valerian/app/service/article/api"
 	"valerian/library/log"
 )
@@ -173,4 +174,20 @@ func (p *Dao) GetArticleRevisesPaged(c context.Context, req *article.ArgArticleR
 		return
 	}
 	return resp, err
+}
+
+func (p *Dao) GetReviseFiles(c context.Context, req *article.IDReq) (resp *article.ReviseFilesResp, err error) {
+	if resp, err = p.articleRPC.GetReviseFiles(c, req); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetReviseFiles() error(%+v), req(%+v)", err, req))
+		return
+	}
+	return resp, err
+}
+
+func (p *Dao) SaveReviseFiles(c context.Context, req *article.ArgSaveReviseFiles) (err error) {
+	if _, err = p.articleRPC.SaveReviseFiles(c, req); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetReviseFiles() error(%+v), req(%+v)", err, req))
+		return
+	}
+	return err
 }
