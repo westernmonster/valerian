@@ -1,5 +1,5 @@
 global:
-  image: registry.cn-hangzhou.aliyuncs.com/valerian/app:0.1
+  image: registry.cn-hangzhou.aliyuncs.com/valerian/web:0.1
   pullPolicy: IfNotPresent
   name: app
 
@@ -9,16 +9,3 @@ server:
   exEnv:
     CI: 1
 
-env:
-  region: hz
-  zone: hz001
-  deployEnv: uat
-  appId: app.app
-  trace: jaeger-uat-agent:6831
-  confPath: /go/bin/conf
-  confEnv: uat
-  confToken: 740ac786d93c11e988f22c4d549dd5ee
-  treeId: 1
-  confVersion: 1
-  confHost: config.pronote.loc
-  siteUrl: https://uat.flywk.com

@@ -8,6 +8,9 @@ spec:
     - hosts:
       - uat.flywk.com
       secretName: locale-secret0
+    - hosts:
+      - web.flywk.com
+      secretName: locale-secret0
 
   rules:
   - host: uat.flywk.com
@@ -109,6 +112,10 @@ spec:
         backend:
           serviceName: interface-location
           servicePort: 8000
+      - path: /api/v1/editor
+        backend:
+          serviceName: interface-editor
+          servicePort: 8000
       - path: /api/v1/dm
         backend:
           serviceName: interface-dm
@@ -141,3 +148,142 @@ spec:
         backend:
           serviceName: admin-account
           servicePort: 8000
+  - host: web.flywk.com
+    http:
+      paths:
+      - path: /api/v1/account
+        backend:
+          serviceName: interface-account
+          servicePort: 8000
+      - path: /api/v1/me
+        backend:
+          serviceName: interface-account
+          servicePort: 8000
+      - path: /api/v1/list/locales
+        backend:
+          serviceName: interface-locale
+          servicePort: 8000
+      - path: /api/v1/oauth/login
+        backend:
+          serviceName: 	interface-passport-login
+          servicePort: 8000
+      - path: /api/v1/oauth/renew
+        backend:
+          serviceName: interface-passport-auth
+          servicePort: 8000
+      - path: /api/v1/oauth/password
+        backend:
+          serviceName: interface-account
+          servicePort: 8000
+      - path: /api/v1/oauth/registration
+        backend:
+          serviceName: interface-passport-register
+          servicePort: 8000
+      - path: /api/v1/oauth/logout
+        backend:
+          serviceName: interface-passport-auth
+          servicePort: 8000
+      - path: /api/v1/certification
+        backend:
+          serviceName: interface-certification
+          servicePort: 8000
+      - path: /api/v1/valcode
+        backend:
+          serviceName: interface-valcode
+          servicePort: 8000
+      - path: /api/v1/topic
+        backend:
+          serviceName: interface-topic
+          servicePort: 8000
+      - path: /api/v1/article
+        backend:
+          serviceName: interface-article
+          servicePort: 8000
+      - path: /api/v1/discussion
+        backend:
+          serviceName: interface-discuss
+          servicePort: 8000
+      - path: /api/v1/feed
+        backend:
+          serviceName: interface-feed
+          servicePort: 8000
+      - path: /api/v1/file
+        backend:
+          serviceName: interface-file
+          servicePort: 8000
+      - path: /api/v1/fav
+        backend:
+          serviceName: interface-fav
+          servicePort: 8000
+      - path: /api/v1/like
+        backend:
+          serviceName: interface-like
+          servicePort: 8000
+      - path: /api/v1/list/activities
+        backend:
+          serviceName: interface-feed
+          servicePort: 8000
+      - path: /api/v1/comment
+        backend:
+          serviceName: interface-comment
+          servicePort: 8000
+      - path: /api/v1/search
+        backend:
+          serviceName: interface-search
+          servicePort: 8000
+      - path: /api/v1/list/feedback_types
+        backend:
+          serviceName: interface-feedback
+          servicePort: 8000
+      - path: /api/v1/feedback
+        backend:
+          serviceName: interface-feedback
+          servicePort: 8000
+      - path: /api/v1/list/recent
+        backend:
+          serviceName: interface-recent
+          servicePort: 8000
+      - path: /api/v1/list/country_codes
+        backend:
+          serviceName: interface-location
+          servicePort: 8000
+      - path: /api/v1/editor
+        backend:
+          serviceName: interface-editor
+          servicePort: 8000
+      - path: /api/v1/dm
+        backend:
+          serviceName: interface-dm
+          servicePort: 8000
+      - path: /api/v1/admin/login
+        backend:
+          serviceName: admin-login
+          servicePort: 8000
+      - path: /api/v1/admin/search
+        backend:
+          serviceName: admin-search
+          servicePort: 8000
+      - path: /api/v1/admin/topic
+        backend:
+          serviceName: admin-topic
+          servicePort: 8000
+      - path: /api/v1/admin/article
+        backend:
+          serviceName: admin-article
+          servicePort: 8000
+      - path: /api/v1/admin/discuss
+        backend:
+          serviceName: admin-discuss
+          servicePort: 8000
+      - path: /api/v1/admin/account
+        backend:
+          serviceName: admin-account
+          servicePort: 8000
+      - path: /api/v1/admin/me
+        backend:
+          serviceName: admin-account
+          servicePort: 8000
+      - path: /
+        backend:
+          serviceName: web
+          servicePort: 80
