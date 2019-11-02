@@ -3,9 +3,18 @@ package service
 import (
 	"context"
 
+	"valerian/app/service/article/api"
 	"valerian/app/service/article/model"
 	"valerian/library/database/sqalx"
 )
+
+func (p *Service) CanEdit(c context.Context, arg *api.IDReq) (canEdit bool, err error) {
+	if canEdit, err = p.checkEditPermission(c, p.d.DB(), arg.ID, arg.Aid); err != nil {
+		return
+	}
+
+	return
+}
 
 // 检查编辑权限
 // TODO：这里会成为性能瓶颈，业务目前是这么制定的，我也没辙，后续人员请持续优化

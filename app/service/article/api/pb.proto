@@ -35,6 +35,7 @@ message ArticlesResp {
     repeated DBArticle Items  = 1;
 }
 
+
 message ArticleDetail {
     int64 ID = 1 [(gogoproto.jsontag) = "id"];
     string  Title = 2 [(gogoproto.jsontag) = "title"];
@@ -359,10 +360,16 @@ message ArgArticleRevisesPaged {
     int32 Offset = 4 ;
 }
 
+message BoolResp {
+    bool Result = 1;
+}
+
 service Article {
     rpc AddArticle(ArgAddArticle) returns (IDResp);
     rpc UpdateArticle(ArgUpdateArticle) returns (EmptyStruct);
     rpc DelArticle(IDReq) returns (EmptyStruct);
+
+    rpc CanEdit(IDReq) returns (BoolResp);
 
     rpc GetArticleFiles(IDReq) returns (ArticleFilesResp);
     rpc SaveArticleFiles(ArgSaveArticleFiles) returns (EmptyStruct);

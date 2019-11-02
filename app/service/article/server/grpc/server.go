@@ -40,6 +40,22 @@ type server struct {
 	svr *service.Service
 }
 
+func (s *server) CanEdit(ctx context.Context, req *api.IDReq) (*api.BoolResp, error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
+
+	canEdit, err := s.svr.CanEdit(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.BoolResp{Result: canEdit}, nil
+}
+
 func (s *server) GetArticleInfo(ctx context.Context, req *api.IDReq) (*api.ArticleInfo, error) {
 	if req.UseMaster {
 		ctx = sqalx.NewContext(ctx, true)

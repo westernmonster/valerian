@@ -16,6 +16,14 @@ func (p *Dao) GetArticleInfo(c context.Context, req *article.IDReq) (resp *artic
 	return resp, err
 }
 
+func (p *Dao) GetArticleDetail(c context.Context, req *article.IDReq) (resp *article.ArticleDetail, err error) {
+	if resp, err = p.articleRPC.GetArticleDetail(c, req); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetArticleDetail() error(%+v), req(%+v)", err, req))
+		return
+	}
+	return resp, err
+}
+
 func (p *Dao) GetReviseStat(c context.Context, req *article.IDReq) (resp *article.ReviseStat, err error) {
 	if resp, err = p.articleRPC.GetReviseStat(c, req); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetReviseStat() error(%+v), req(%+v)", err, req))
@@ -190,4 +198,14 @@ func (p *Dao) SaveReviseFiles(c context.Context, req *article.ArgSaveReviseFiles
 		return
 	}
 	return err
+}
+
+func (p *Dao) CanEdit(c context.Context, req *article.IDReq) (canEdit bool, err error) {
+	var resp *article.BoolResp
+	if resp, err = p.articleRPC.CanEdit(c, req); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.CanEdit() error(%+v), req(%+v)", err, req))
+		return
+	}
+	canEdit = resp.Result
+	return
 }

@@ -47,10 +47,10 @@ type ArticleFileResp struct {
 type ArticleMeta struct {
 	Like bool `json:"like"`
 
-	LikeCount int `json:"like_count"`
+	LikeCount int32 `json:"like_count"`
 
 	// 反对数
-	DislikeCount int `json:"dislike_count"`
+	DislikeCount int32 `json:"dislike_count"`
 
 	Read bool `json:"read"`
 
@@ -61,10 +61,10 @@ type ArticleMeta struct {
 	Dislike bool `json:"dislike"`
 
 	// 补充数
-	ReviseCount int `json:"revise_count"`
+	ReviseCount int32 `json:"revise_count"`
 
 	// 评论数
-	CommentCount int `json:"comment_count"`
+	CommentCount int32 `json:"comment_count"`
 }
 
 type Creator struct {

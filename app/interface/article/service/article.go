@@ -6,7 +6,6 @@ import (
 
 	"valerian/app/interface/article/model"
 	article "valerian/app/service/article/api"
-	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
 	"valerian/library/net/metadata"
 )
@@ -113,8 +112,8 @@ func (p *Service) GetArticle(c context.Context, id int64, include string) (item 
 	}
 
 	inc := includeParam(include)
-	var data *article.ArticleInfo
-	if data, err = p.d.GetArticleInfo(c, &article.IDReq{Aid: aid, ID: id, Include: include}); err != nil {
+	var data *article.ArticleDetail
+	if data, err = p.d.GetArticleDetail(c, &article.IDReq{Aid: aid, ID: id, Include: include}); err != nil {
 		return
 	}
 
@@ -136,41 +135,33 @@ func (p *Service) GetArticle(c context.Context, id int64, include string) (item 
 		Introduction: data.Creator.Introduction,
 	}
 
-	// var history *model.ArticleHistory
-	// if history, err = p.d.GetLastArticleHistory(c, p.d.DB(), id); err != nil {
-	// 	return
-	// } else if history != nil {
-	// 	var acc *account.BaseInfoReply
-	// 	if acc, err = p.d.GetAccountBaseInfo(c, history.UpdatedBy); err != nil {
-	// 		return
-	// 	}
+	if data.LastHistory != nil {
+		item.Updator = &model.Creator{
+			ID:           data.LastHistory.Updator.ID,
+			UserName:     data.LastHistory.Updator.UserName,
+			Avatar:       data.LastHistory.Updator.Avatar,
+			Introduction: data.LastHistory.Updator.Introduction,
+		}
 
-	// 	item.Updator = &model.Creator{
-	// 		ID:           acc.ID,
-	// 		UserName:     acc.UserName,
-	// 		Avatar:       acc.Avatar,
-	// 		Introduction: acc.Introduction,
-	// 	}
-
-	// 	item.ChangeDesc = history.ChangeDesc
-	// }
+		item.ChangeDesc = data.LastHistory.ChangeDesc
+	}
 
 	if inc["files"] {
-		// if item.Files, err = p.getArticleFiles(c, p.d.DB(), id); err != nil {
-		// 	return
-		// }
+		if item.Files, err = p.GetArticleFiles(c, id); err != nil {
+			return
+		}
 	}
 
 	if inc["relations"] {
-		// if item.Relations, err = p.getArticleRelations(c, p.d.DB(), id); err != nil {
-		// 	return
-		// }
+		if item.Relations, err = p.GetArticleRelations(c, id); err != nil {
+			return
+		}
 	}
 
 	if inc["meta"] {
-		// if item.ArticleMeta, err = p.getArticleMeta(c, p.d.DB(), data); err != nil {
-		// 	return
-		// }
+		if item.ArticleMeta, err = p.getArticleMeta(c, data); err != nil {
+			return
+		}
 	}
 
 	p.addCache(func() {
@@ -180,7 +171,7 @@ func (p *Service) GetArticle(c context.Context, id int64, include string) (item 
 	return
 }
 
-func (p *Service) getArticleMeta(c context.Context, node sqalx.Node, article *model.Article) (item *model.ArticleMeta, err error) {
+func (p *Service) getArticleMeta(c context.Context, data *article.ArticleDetail) (item *model.ArticleMeta, err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed
@@ -188,31 +179,26 @@ func (p *Service) getArticleMeta(c context.Context, node sqalx.Node, article *mo
 	}
 	item = new(model.ArticleMeta)
 
-	if aid == article.CreatedBy {
-		item.CanEdit = true
-	}
-
-	if item.Like, err = p.d.IsLike(c, aid, article.ID, model.TargetTypeArticle); err != nil {
+	if item.CanEdit, err = p.d.CanEdit(c, &article.IDReq{Aid: aid, ID: data.ID}); err != nil {
 		return
 	}
 
-	if item.Fav, err = p.d.IsFav(c, aid, article.ID, model.TargetTypeArticle); err != nil {
+	if item.Like, err = p.d.IsLike(c, aid, data.ID, model.TargetTypeArticle); err != nil {
 		return
 	}
 
-	if item.Dislike, err = p.d.IsDislike(c, aid, article.ID, model.TargetTypeArticle); err != nil {
+	if item.Fav, err = p.d.IsFav(c, aid, data.ID, model.TargetTypeArticle); err != nil {
 		return
 	}
 
-	var stat *model.ArticleStat
-	if stat, err = p.d.GetArticleStatByID(c, node, article.ID); err != nil {
+	if item.Dislike, err = p.d.IsDislike(c, aid, data.ID, model.TargetTypeArticle); err != nil {
 		return
 	}
 
-	item.LikeCount = stat.LikeCount
-	item.DislikeCount = stat.DislikeCount
-	item.ReviseCount = stat.ReviseCount
-	item.CommentCount = stat.CommentCount
+	item.LikeCount = data.Stat.LikeCount
+	item.DislikeCount = data.Stat.DislikeCount
+	item.ReviseCount = data.Stat.ReviseCount
+	item.CommentCount = data.Stat.CommentCount
 
 	return
 }

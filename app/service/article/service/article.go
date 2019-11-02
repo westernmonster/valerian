@@ -96,6 +96,10 @@ func (p *Service) GetArticleDetail(c context.Context, req *api.IDReq) (resp *api
 	}
 
 	if lastHistory != nil {
+		m, err := p.getAccount(c, p.d.DB(), lastHistory.UpdatedBy)
+		if err != nil {
+			return nil, err
+		}
 		resp.LastHistory = &api.ArticleHistoryResp{
 			ID:         lastHistory.ID,
 			ArticleID:  lastHistory.ArticleID,
@@ -104,7 +108,14 @@ func (p *Service) GetArticleDetail(c context.Context, req *api.IDReq) (resp *api
 			Diff:       lastHistory.Diff,
 			UpdatedAt:  lastHistory.UpdatedAt,
 			CreatedAt:  lastHistory.CreatedAt,
+			Updator: &api.Creator{
+				ID:           m.ID,
+				UserName:     m.UserName,
+				Avatar:       m.Avatar,
+				Introduction: m.Introduction,
+			},
 		}
+
 	}
 
 	return
