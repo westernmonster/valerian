@@ -142,3 +142,35 @@ func (p *Dao) GetUserArticlesPaged(c context.Context, req *article.UserArticlesR
 	}
 	return resp, err
 }
+
+func (p *Dao) AddRevise(c context.Context, req *article.ArgAddRevise) (resp *article.IDResp, err error) {
+	if resp, err = p.articleRPC.AddRevise(c, req); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.AddRevise() error(%+v), req(%+v)", err, req))
+		return
+	}
+	return resp, err
+}
+
+func (p *Dao) UpdateRevise(c context.Context, req *article.ArgUpdateRevise) (err error) {
+	if _, err = p.articleRPC.UpdateRevise(c, req); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.UpdateRevise() error(%+v), req(%+v)", err, req))
+		return
+	}
+	return
+}
+
+func (p *Dao) DelRevise(c context.Context, req *article.IDReq) (err error) {
+	if _, err = p.articleRPC.DelRevise(c, req); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.DelRevise() error(%+v), req(%+v)", err, req))
+		return
+	}
+	return
+}
+
+func (p *Dao) GetArticleRevisesPaged(c context.Context, req *article.ArgArticleRevisesPaged) (resp *article.ReviseListResp, err error) {
+	if resp, err = p.articleRPC.GetArticleRevisesPaged(c, req); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetArticleRevisesPaged() error(%+v), req(%+v)", err, req))
+		return
+	}
+	return resp, err
+}
