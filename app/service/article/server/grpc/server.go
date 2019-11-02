@@ -109,10 +109,10 @@ func (s *server) AddArticle(ctx context.Context, req *api.ArgAddArticle) (*api.I
 }
 
 func (s *server) UpdateArticle(ctx context.Context, req *api.ArgUpdateArticle) (*api.EmptyStruct, error) {
-	// err := s.svr.UpdateArticle(ctx, req)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	err := s.svr.UpdateArticle(ctx, req)
+	if err != nil {
+		return nil, err
+	}
 
 	resp := &api.EmptyStruct{}
 
@@ -120,7 +120,7 @@ func (s *server) UpdateArticle(ctx context.Context, req *api.ArgUpdateArticle) (
 }
 
 func (s *server) DelArticle(ctx context.Context, req *api.IDReq) (*api.EmptyStruct, error) {
-	err := s.svr.DelArticle(ctx, req.Aid, req.ID)
+	err := s.svr.DelArticle(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -178,7 +178,7 @@ func (s *server) GetArticleRelations(ctx context.Context, req *api.IDReq) (*api.
 }
 
 func (s *server) UpdateArticleRelation(ctx context.Context, req *api.ArgUpdateArticleRelation) (*api.EmptyStruct, error) {
-	err := s.svr.DelArticle(ctx, req.Aid, req.ID)
+	err := s.svr.UpdateArticleRelation(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -189,7 +189,7 @@ func (s *server) UpdateArticleRelation(ctx context.Context, req *api.ArgUpdateAr
 }
 
 func (s *server) SetPrimary(ctx context.Context, req *api.ArgSetPrimaryArticleRelation) (*api.EmptyStruct, error) {
-	err := s.svr.DelArticle(ctx, req.Aid, req.ID)
+	err := s.svr.SetPrimary(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -211,7 +211,7 @@ func (s *server) AddArticleRelation(ctx context.Context, req *api.ArgAddArticleR
 }
 
 func (s *server) DelArticleRelation(ctx context.Context, req *api.ArgDelArticleRelation) (*api.EmptyStruct, error) {
-	err := s.svr.DelArticle(ctx, req.Aid, req.ID)
+	err := s.svr.DelArticleRelation(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -250,6 +250,68 @@ func (s *server) GetReviseInfo(ctx context.Context, req *api.IDReq) (*api.Revise
 
 func (s *server) GetUserArticlesPaged(c context.Context, req *api.UserArticlesReq) (*api.UserArticlesResp, error) {
 	return s.svr.GetUserArticlesPaged(c, req)
+}
+
+func (s *server) AddRevise(ctx context.Context, req *api.ArgAddRevise) (*api.IDResp, error) {
+	id, err := s.svr.AddRevise(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &api.IDResp{
+		ID: id,
+	}
+
+	return resp, nil
+}
+
+func (s *server) UpdateRevise(ctx context.Context, req *api.ArgUpdateRevise) (*api.EmptyStruct, error) {
+	err := s.svr.UpdateRevise(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &api.EmptyStruct{}
+
+	return resp, nil
+}
+
+func (s *server) DelRevise(ctx context.Context, req *api.IDReq) (*api.EmptyStruct, error) {
+	err := s.svr.DelRevise(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &api.EmptyStruct{}
+
+	return resp, nil
+}
+
+func (s *server) GetArticleRevisesPaged(ctx context.Context, req *api.ArgArticleRevisesPaged) (*api.ReviseListResp, error) {
+	resp, err := s.svr.GetArticleRevisesPaged(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+}
+
+func (s *server) GetReviseFiles(ctx context.Context, req *api.IDReq) (*api.ReviseFilesResp, error) {
+	data, err := s.svr.GetReviseFiles(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.ReviseFilesResp{Items: data}, nil
+}
+
+func (s *server) SaveReviseFiles(ctx context.Context, req *api.ArgSaveReviseFiles) (*api.EmptyStruct, error) {
+	err := s.svr.SaveReviseFiles(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.EmptyStruct{}, nil
 }
 
 func includeParam(include string) (dic map[string]bool) {

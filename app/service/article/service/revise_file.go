@@ -14,8 +14,8 @@ import (
 	"github.com/jinzhu/copier"
 )
 
-func (p *Service) GetReviseFiles(c context.Context, reviseID int64) (items []*api.ReviseFileResp, err error) {
-	return p.getReviseFiles(c, p.d.DB(), reviseID)
+func (p *Service) GetReviseFiles(c context.Context, req *api.IDReq) (items []*api.ReviseFileResp, err error) {
+	return p.getReviseFiles(c, p.d.DB(), req.ID)
 }
 
 func (p *Service) getReviseFiles(c context.Context, node sqalx.Node, reviseID int64) (items []*api.ReviseFileResp, err error) {

@@ -222,8 +222,6 @@ func (p *Service) GetUserArticlesPaged(c context.Context, req *api.UserArticlesR
 	}
 
 	return resp, nil
-
-	return
 }
 
 func (p *Service) AddArticle(c context.Context, arg *api.ArgAddArticle) (id int64, err error) {
@@ -345,7 +343,99 @@ func (p *Service) AddArticle(c context.Context, arg *api.ArgAddArticle) (id int6
 	return
 }
 
-func (p *Service) DelArticle(c context.Context, articleID, aid int64) (err error) {
+func (p *Service) DelArticle(c context.Context, arg *api.IDReq) (err error) {
+	var tx sqalx.Node
+	if tx, err = p.d.DB().Beginx(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		return
+	}
+
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+			}
+			return
+		}
+	}()
+
+	var item *model.Article
+	if item, err = p.d.GetArticleByID(c, tx, arg.ID); err != nil {
+		return
+	} else if item == nil {
+		err = ecode.ArticleNotExist
+		return
+	}
+
+	if canEdit, e := p.checkEditPermission(c, tx, arg.ID, arg.Aid); e != nil {
+		return e
+	} else if !canEdit {
+		err = ecode.NeedArticleEditPermission
+		return
+	}
+
+	if err = p.d.DelFavByCond(c, tx, arg.ID, model.TargetTypeArticle); err != nil {
+		return
+	}
+
+	if err = p.d.DelAccountFeedByCond(c, tx, arg.ID, model.TargetTypeArticle); err != nil {
+		return
+	}
+
+	if err = p.d.DelFeedByCond(c, tx, arg.ID, model.TargetTypeArticle); err != nil {
+		return
+	}
+
+	if err = p.d.DelTopicFeedByCond(c, tx, arg.ID, model.TargetTypeArticle); err != nil {
+		return
+	}
+
+	if err = p.d.DelRecentPubByCond(c, tx, arg.ID, model.TargetTypeArticle); err != nil {
+		return
+	}
+
+	if err = p.d.DelFeedbacksByCond(c, tx, arg.ID, model.TargetTypeArticle); err != nil {
+		return
+	}
+
+	if err = p.d.DelMessageByCond(c, tx, arg.ID, model.TargetTypeArticle); err != nil {
+		return
+	}
+
+	if err = p.d.DelArticle(c, tx, arg.ID); err != nil {
+		return
+	}
+
+	if err = p.d.IncrAccountStat(c, tx, &model.AccountStat{AccountID: item.CreatedBy, ArticleCount: -1}); err != nil {
+		return
+	}
+
+	var catalogs []*model.TopicCatalog
+	if catalogs, err = p.d.GetTopicCatalogsByCond(c, tx, map[string]interface{}{
+		"type":   model.TopicCatalogArticle,
+		"ref_id": arg.ID,
+	}); err != nil {
+		return
+	}
+
+	for _, v := range catalogs {
+		if err = p.d.IncrTopicStat(c, tx, &model.TopicStat{TopicID: v.TopicID, ArticleCount: -1}); err != nil {
+			return
+		}
+
+		if err = p.d.DelTopicCatalog(c, tx, v.ID); err != nil {
+			return
+		}
+	}
+
+	if err = tx.Commit(); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+	}
+
+	p.addCache(func() {
+		p.d.DelReviseCache(context.TODO(), arg.ID)
+		p.onReviseDeleted(context.Background(), arg.ID, arg.Aid, time.Now().Unix())
+	})
 	return
 }
 
@@ -370,6 +460,14 @@ func (p *Service) UpdateArticle(c context.Context, arg *api.ArgUpdateArticle) (e
 		return
 	} else if item == nil {
 		err = ecode.ArticleNotExist
+		return
+	}
+
+	if canEdit, e := p.checkEditPermission(c, tx, arg.ID, arg.Aid); e != nil {
+		err = e
+		return
+	} else if !canEdit {
+		err = ecode.NeedArticleEditPermission
 		return
 	}
 
