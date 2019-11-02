@@ -168,15 +168,3 @@ func (p *Dao) UpdateArticle(c context.Context, node sqalx.Node, item *model.Arti
 
 	return
 }
-
-// Delete logic delete a exist record
-func (p *Dao) DelArticle(c context.Context, node sqalx.Node, id int64) (err error) {
-	sqlDelete := "UPDATE articles SET deleted=1 WHERE id=? "
-
-	if _, err = node.ExecContext(c, sqlDelete, id); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.DelArticles err(%+v), item(%+v)", err, id))
-		return
-	}
-
-	return
-}

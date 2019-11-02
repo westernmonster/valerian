@@ -337,6 +337,42 @@ func (p *Service) DelRevise(c context.Context, arg *api.IDReq) (err error) {
 		return
 	}
 
+	if err = p.d.DelFavByCond(c, tx, arg.ID, model.TargetTypeRevise); err != nil {
+		return
+	}
+
+	if err = p.d.DelAccountFeedByCond(c, tx, arg.ID, model.TargetTypeRevise); err != nil {
+		return
+	}
+
+	if err = p.d.DelFeedByCond(c, tx, arg.ID, model.TargetTypeRevise); err != nil {
+		return
+	}
+
+	if err = p.d.DelTopicFeedByCond(c, tx, arg.ID, model.TargetTypeRevise); err != nil {
+		return
+	}
+
+	if err = p.d.DelRecentPubByCond(c, tx, arg.ID, model.TargetTypeRevise); err != nil {
+		return
+	}
+
+	if err = p.d.DelFeedbacksByCond(c, tx, arg.ID, model.TargetTypeRevise); err != nil {
+		return
+	}
+
+	if err = p.d.DelMessageByCond(c, tx, arg.ID, model.TargetTypeRevise); err != nil {
+		return
+	}
+
+	if err = p.d.DelRevise(c, tx, arg.ID); err != nil {
+		return
+	}
+
+	if err = p.d.IncrArticleStat(c, tx, &model.ArticleStat{ArticleID: item.ArticleID, ReviseCount: -1}); err != nil {
+		return
+	}
+
 	if err = tx.Commit(); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 	}
@@ -349,5 +385,66 @@ func (p *Service) DelRevise(c context.Context, arg *api.IDReq) (err error) {
 }
 
 func (p *Service) GetArticleRevisesPaged(c context.Context, req *api.ArgArticleRevisesPaged) (resp *api.ReviseListResp, err error) {
+	var data []*model.Revise
+	if data, err = p.d.GetArticleRevisesPaged(c, p.d.DB(), req.ArticleID, req.Sort, int(req.Limit), int(req.Offset)); err != nil {
+		return
+	}
+
+	resp = &api.ReviseListResp{
+		Items: make([]*api.ReviseInfo, len(data)),
+	}
+
+	for i, v := range data {
+		article, err := p.GetArticle(c, v.ArticleID)
+		if err != nil {
+			return nil, err
+		}
+
+		stat, err := p.GetReviseStat(c, v.ID)
+		if err != nil {
+			return nil, err
+		}
+
+		urls, err := p.GetReviseImageUrls(c, v.ID)
+		if err != nil {
+			return nil, err
+		}
+
+		m, err := p.getAccount(c, p.d.DB(), article.CreatedBy)
+		if err != nil {
+			return nil, err
+		}
+
+		item := &api.ReviseInfo{
+			ID:        v.ID,
+			Title:     article.Title,
+			Excerpt:   xstr.Excerpt(v.ContentText),
+			ImageUrls: urls,
+			CreatedAt: v.CreatedAt,
+			UpdatedAt: v.UpdatedAt,
+			Stat: &api.ReviseStat{
+				CommentCount: int32(stat.CommentCount),
+				LikeCount:    int32(stat.LikeCount),
+				DislikeCount: int32(stat.DislikeCount),
+			},
+			Creator: &api.Creator{
+				ID:           m.ID,
+				UserName:     m.UserName,
+				Avatar:       m.Avatar,
+				Introduction: m.Introduction,
+			},
+			ArticleID: v.ArticleID,
+		}
+
+		resp.Items[i] = item
+	}
+
+	var stat *model.ArticleStat
+	if stat, err = p.d.GetArticleStatByID(c, p.d.DB(), req.ArticleID); err != nil {
+		return
+	}
+
+	resp.ReviseCount = int32(stat.ReviseCount)
+
 	return
 }

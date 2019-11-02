@@ -106,13 +106,19 @@ func (p *Service) SaveReviseFiles(c context.Context, arg *api.ArgSaveReviseFiles
 		}
 	}()
 
-	// TODO: check edit permission
-
 	var article *model.Revise
 	if article, err = p.d.GetReviseByID(c, tx, arg.ReviseID); err != nil {
 		return
 	} else if article == nil {
 		return ecode.ReviseNotExist
+	}
+
+	if canEdit, e := p.checkEditPermission(c, tx, article.ArticleID, arg.Aid); e != nil {
+		err = e
+		return
+	} else if !canEdit {
+		err = ecode.NeedArticleEditPermission
+		return
 	}
 
 	dbItems, err := p.d.GetReviseFilesByCond(c, tx, map[string]interface{}{"article_id": arg.ReviseID})

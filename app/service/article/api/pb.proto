@@ -303,6 +303,7 @@ message ArgSaveReviseFiles {
     int64 ReviseID = 1;
     string Content = 2;
     repeated AddReviseFile Items = 4;
+    int64 Aid  = 5;
 }
 
 message ReviseFileResp {
@@ -320,6 +321,7 @@ message ReviseFilesResp {
 
 message ReviseListResp {
     repeated ReviseInfo Items = 1;
+    int32 ReviseCount = 2;
 }
 
 message ArgArticleRevisesPaged {

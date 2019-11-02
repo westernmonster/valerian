@@ -75,4 +75,12 @@ const (
 	TargetTypeDiscussion = "discussion"
 	TargetTypeRevise     = "revise"
 	TargetTypeArticle    = "article"
+	TargetTypeComment    = "comment"
+)
+
+const (
+	UserRoleAdmin      = "admin"
+	UserRoleSuperAdmin = "superadmin"
+	UserRoleUser       = "user"
+	UserRoleOrg        = "org"
 )

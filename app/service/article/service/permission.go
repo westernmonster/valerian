@@ -10,6 +10,17 @@ import (
 // 检查编辑权限
 // TODO：这里会成为性能瓶颈，业务目前是这么制定的，我也没辙，后续人员请持续优化
 func (p *Service) checkEditPermission(c context.Context, node sqalx.Node, articleID, aid int64) (canEdit bool, err error) {
+	var acc *model.Account
+	if acc, err = p.getAccount(c, node, aid); err != nil {
+		return
+	}
+
+	// 如果是系统管理员，则可编辑
+	if acc.Role == model.UserRoleAdmin || acc.Role == model.UserRoleSuperAdmin {
+		canEdit = true
+		return
+	}
+
 	var article *model.Article
 	if article, err = p.getArticle(c, node, articleID); err != nil {
 		return
