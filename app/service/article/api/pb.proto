@@ -125,6 +125,29 @@ message ReviseInfo {
     string  ContentText = 11 [(gogoproto.jsontag) = "content_text"];
 }
 
+message ReviseDetail {
+    int64 ID = 1 [(gogoproto.jsontag) = "id"];
+    string  Title = 2 [(gogoproto.jsontag) = "title"];
+    repeated string ImageUrls  = 4 [(gogoproto.jsontag) = "image_urls"];
+
+    Creator  Creator  = 5 [(gogoproto.jsontag) = "creator"];
+
+    // unix timestamp
+    int64 CreatedAt = 6 [(gogoproto.jsontag) = "created_at"];
+    // unix timestamp
+    int64 UpdatedAt = 7 [(gogoproto.jsontag) = "updated_at"];
+
+    ReviseStat  Stat = 8 [(gogoproto.jsontag) = "stat"];
+
+    int64 ArticleID = 9 [(gogoproto.jsontag) = "article_id"];
+
+    string  Content = 10 [(gogoproto.jsontag) = "content"];
+
+    string  ContentText = 11 [(gogoproto.jsontag) = "content_text"];
+
+    repeated ReviseFileResp Files = 12;
+}
+
 message ArgAddArticle {
     string Title = 1;
     string Content = 2;
@@ -397,6 +420,7 @@ service Article {
     rpc GetArticleInfo(IDReq) returns (ArticleInfo);
     rpc GetArticleDetail(IDReq) returns (ArticleDetail);
     rpc GetReviseInfo(IDReq) returns (ReviseInfo);
+    rpc GetReviseDetail(IDReq) returns (ReviseDetail);
     rpc GetReviseStat(IDReq) returns (ReviseStat);
     rpc GetArticleStat(IDReq) returns (ArticleStat);
     rpc GetUserArticlesPaged(UserArticlesReq) returns (UserArticlesResp);

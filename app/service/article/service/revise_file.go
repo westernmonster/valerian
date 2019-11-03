@@ -10,8 +10,6 @@ import (
 	"valerian/library/ecode"
 	"valerian/library/gid"
 	"valerian/library/log"
-
-	"github.com/jinzhu/copier"
 )
 
 func (p *Service) GetReviseFiles(c context.Context, req *api.IDReq) (items []*api.ReviseFileResp, err error) {
@@ -33,8 +31,13 @@ func (p *Service) getReviseFiles(c context.Context, node sqalx.Node, reviseID in
 	}
 
 	items = make([]*api.ReviseFileResp, 0)
-	if err = copier.Copy(&items, &data); err != nil {
-		return
+	for _, v := range data {
+		items = append(items, &api.ReviseFileResp{
+			ID:       v.ID,
+			FileName: v.FileName,
+			FileURL:  v.FileURL,
+			Seq:      v.Seq,
+		})
 	}
 
 	if addCache {

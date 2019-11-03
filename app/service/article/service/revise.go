@@ -135,6 +135,72 @@ func (p *Service) GetReviseInfo(c context.Context, req *api.IDReq) (item *api.Re
 
 }
 
+func (p *Service) GetReviseDetail(c context.Context, req *api.IDReq) (item *api.ReviseDetail, err error) {
+	revise, err := p.GetRevise(c, req.ID)
+	if err != nil {
+		return nil, err
+	}
+	article, err := p.GetArticle(c, revise.ArticleID)
+	if err != nil {
+		return nil, err
+	}
+
+	stat, err := p.GetReviseStat(c, req.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	urls, err := p.GetReviseImageUrls(c, req.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	m, err := p.getAccount(c, p.d.DB(), article.CreatedBy)
+	if err != nil {
+		return nil, err
+	}
+
+	files, err := p.getReviseFiles(c, p.d.DB(), req.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &api.ReviseDetail{
+		ID:          revise.ID,
+		Title:       article.Title,
+		CreatedAt:   revise.CreatedAt,
+		UpdatedAt:   revise.UpdatedAt,
+		ImageUrls:   urls,
+		Content:     revise.Content,
+		ContentText: revise.ContentText,
+		Stat: &api.ReviseStat{
+			CommentCount: int32(stat.CommentCount),
+			LikeCount:    int32(stat.LikeCount),
+			DislikeCount: int32(stat.DislikeCount),
+		},
+		Creator: &api.Creator{
+			ID:           m.ID,
+			UserName:     m.UserName,
+			Avatar:       m.Avatar,
+			Introduction: m.Introduction,
+		},
+		ArticleID: revise.ArticleID,
+		Files:     make([]*api.ReviseFileResp, 0),
+	}
+
+	for _, v := range files {
+		resp.Files = append(resp.Files, &api.ReviseFileResp{
+			ID:       v.ID,
+			FileName: v.FileName,
+			FileURL:  v.FileURL,
+			Seq:      v.Seq,
+		})
+	}
+
+	return resp, nil
+
+}
+
 func (p *Service) AddRevise(c context.Context, arg *api.ArgAddRevise) (id int64, err error) {
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
