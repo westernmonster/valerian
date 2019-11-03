@@ -72,12 +72,12 @@ func (p *Service) onTopicViewed(m *stan.Msg) {
 	var err error
 	c := context.Background()
 	info := new(def.MsgTopicViewed)
-	fmt.Printf("onTopicViewed info(%+v)\n", info)
 	if err = info.Unmarshal(m.Data); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onTopicViewed Unmarshal failed %#v", err))
 		return
 	}
 
+	fmt.Printf("onTopicViewed info(%+v)\n", info)
 	if _, err = p.d.GetTopic(c, info.TopicID); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onTopicViewed GetTopic failed %#v", err))
 		if ecode.Cause(err) == ecode.TopicNotExist {
