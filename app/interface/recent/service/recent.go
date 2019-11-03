@@ -21,6 +21,7 @@ func (p *Service) FromArticle(v *article.ArticleInfo) (item *model.ItemArticle) 
 		CommentCount: int(v.Stat.CommentCount),
 		LikeCount:    int(v.Stat.LikeCount),
 		DislikeCount: int(v.Stat.DislikeCount),
+		ChangeDesc:   v.ChangeDesc,
 		Creator: &model.Creator{
 			ID:           v.Creator.ID,
 			Avatar:       v.Creator.Avatar,

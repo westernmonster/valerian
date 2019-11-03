@@ -54,6 +54,8 @@ type ItemArticle struct {
 	// 补充个数
 	ReviseCount int `json:"revise_count"`
 
+	ChangeDesc string `json:"change_desc"`
+
 	// 喜欢数
 	LikeCount int `json:"like_count"`
 
