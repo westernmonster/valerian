@@ -72,6 +72,7 @@ func (p *Service) onTopicViewed(m *stan.Msg) {
 	var err error
 	c := context.Background()
 	info := new(def.MsgTopicViewed)
+	fmt.Print("onTopicViewed info(%+v)", info)
 	if err = info.Unmarshal(m.Data); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onTopicViewed Unmarshal failed %#v", err))
 		return
