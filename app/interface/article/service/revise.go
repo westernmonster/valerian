@@ -150,8 +150,8 @@ func (p *Service) GetRevise(c context.Context, reviseID int64) (resp *model.Revi
 		return
 	}
 
-	var data *article.ReviseInfo
-	if data, err = p.d.GetReviseInfo(c, &article.IDReq{ID: reviseID, Aid: aid}); err != nil {
+	var data *article.ReviseDetail
+	if data, err = p.d.GetReviseDetail(c, &article.IDReq{ID: reviseID, Aid: aid}); err != nil {
 		return
 	}
 
@@ -162,6 +162,7 @@ func (p *Service) GetRevise(c context.Context, reviseID int64) (resp *model.Revi
 		Content:   data.Content,
 		CreatedAt: data.CreatedAt,
 		UpdatedAt: data.UpdatedAt,
+		Files:     make([]*model.ReviseFileResp, 0),
 	}
 
 	resp.Creator = &model.Creator{
@@ -171,18 +172,20 @@ func (p *Service) GetRevise(c context.Context, reviseID int64) (resp *model.Revi
 		Introduction: data.Creator.Introduction,
 	}
 
-	if resp.Files, err = p.GetReviseFiles(c, reviseID); err != nil {
-		return
+	if data.Files != nil {
+		for _, v := range data.Files {
+			resp.Files = append(resp.Files, &model.ReviseFileResp{
+				ID:       v.ID,
+				FileName: v.FileName,
+				FileURL:  v.FileURL,
+				Seq:      int(v.Seq),
+			})
+		}
 	}
 
-	var stat *model.ReviseStat
-	if stat, err = p.d.GetReviseStatByID(c, p.d.DB(), reviseID); err != nil {
-		return
-	}
-
-	resp.DislikeCount = stat.DislikeCount
-	resp.LikeCount = stat.LikeCount
-	resp.CommentCount = stat.CommentCount
+	resp.DislikeCount = int(data.Stat.DislikeCount)
+	resp.LikeCount = int(data.Stat.LikeCount)
+	resp.CommentCount = int(data.Stat.CommentCount)
 
 	if resp.Fav, err = p.d.IsFav(c, aid, reviseID, model.TargetTypeRevise); err != nil {
 		return

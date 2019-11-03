@@ -32,6 +32,14 @@ func (p *Dao) GetReviseStat(c context.Context, req *article.IDReq) (resp *articl
 	return resp, err
 }
 
+func (p *Dao) GetReviseDetail(c context.Context, req *article.IDReq) (resp *article.ReviseDetail, err error) {
+	if resp, err = p.articleRPC.GetReviseDetail(c, req); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetReviseDetail() error(%+v), req(%+v)", err, req))
+		return
+	}
+	return resp, err
+}
+
 func (p *Dao) AddArticle(c context.Context, req *article.ArgAddArticle) (resp *article.IDResp, err error) {
 	if resp, err = p.articleRPC.AddArticle(c, req); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.AddArticle() error(%+v), req(%+v)", err, req))
