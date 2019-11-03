@@ -95,6 +95,7 @@ func (p *Service) onTopicViewed(m *stan.Msg) {
 		fmt.Printf("GetRecentViewByCond err(%+v)\n", err)
 		return
 	} else if data != nil {
+		fmt.Printf("UpdateRecentView data(%+v)\n", data)
 		data.UpdatedAt = time.Now().Unix()
 		if err = p.d.UpdateRecentView(c, p.d.DB(), data); err != nil {
 			return
@@ -115,5 +116,6 @@ func (p *Service) onTopicViewed(m *stan.Msg) {
 		return
 	}
 
+	fmt.Println("finished")
 	m.Ack()
 }
