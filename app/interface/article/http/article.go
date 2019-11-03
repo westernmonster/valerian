@@ -82,6 +82,16 @@ func editArticle(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /article/del [post]
 func delArticle(c *mars.Context) {
+	idStr := c.Request.Form.Get("id")
+	if id, err := strconv.ParseInt(idStr, 10, 64); err != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	} else if id == 0 {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	} else {
+		c.JSON(nil, srv.DelArticle(c, id))
+	}
 }
 
 // @Summary 获取文章
