@@ -125,6 +125,8 @@ func (p *Service) cancelLike(c context.Context, node sqalx.Node, aid, targetID i
 		}
 	}()
 
+	fmt.Printf("cancelLike aid(%d) target_id(%d) target_type(%s)\n", aid, targetID, targetType)
+
 	var fav *model.Like
 	if fav, err = p.d.GetLikeByCond(c, tx, map[string]interface{}{
 		"account_id":  aid,
