@@ -372,6 +372,7 @@ func (p *Service) GetMemberArticlesPaged(c context.Context, aid int64, limit, of
 			ID:           v.ID,
 			Title:        v.Title,
 			Excerpt:      v.Excerpt,
+			ChangeDesc:   v.ChangeDesc,
 			LikeCount:    (v.Stat.LikeCount),
 			DislikeCount: (v.Stat.DislikeCount),
 			CommentCount: (v.Stat.CommentCount),

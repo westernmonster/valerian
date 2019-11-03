@@ -7,6 +7,8 @@ type MemberArticle struct {
 	Title string `json:"title"`
 	// 内容
 	Excerpt string `json:"excerpt"`
+
+	ChangeDesc string `json:"change_desc"`
 	// 喜欢数
 	LikeCount int32 `json:"like_count"`
 	// 反对数
