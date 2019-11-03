@@ -79,6 +79,7 @@ func (p *Service) onTopicViewed(m *stan.Msg) {
 
 	fmt.Printf("onTopicViewed info(%+v)\n", info)
 	if _, err = p.d.GetTopic(c, info.TopicID); err != nil {
+		fmt.Printf("GetTopic err(%+v)\n", err)
 		log.For(c).Error(fmt.Sprintf("service.onTopicViewed GetTopic failed %#v", err))
 		if ecode.Cause(err) == ecode.TopicNotExist {
 			m.Ack()
@@ -91,6 +92,7 @@ func (p *Service) onTopicViewed(m *stan.Msg) {
 		"target_type": model.TargetTypeTopic,
 		"target_id":   info.TopicID,
 	}); err != nil {
+		fmt.Printf("GetRecentViewByCond err(%+v)\n", err)
 		return
 	} else if data != nil {
 		data.UpdatedAt = time.Now().Unix()
@@ -109,6 +111,7 @@ func (p *Service) onTopicViewed(m *stan.Msg) {
 		CreatedAt:  info.ActionTime,
 		UpdatedAt:  info.ActionTime,
 	}); err != nil {
+		fmt.Printf("AddRecentView err(%+v)\n", err)
 		return
 	}
 
