@@ -43,6 +43,7 @@ func (p *Service) onArticleViewed(m *stan.Msg) {
 	if data, err = p.d.GetRecentViewByCond(c, p.d.DB(), map[string]interface{}{
 		"target_type": model.TargetTypeArticle,
 		"target_id":   info.ArticleID,
+		"account_id":  info.ActorID,
 	}); err != nil {
 		return
 	} else if data != nil {
@@ -77,9 +78,7 @@ func (p *Service) onTopicViewed(m *stan.Msg) {
 		return
 	}
 
-	fmt.Printf("onTopicViewed info(%+v)\n", info)
 	if _, err = p.d.GetTopic(c, info.TopicID); err != nil {
-		fmt.Printf("GetTopic err(%+v)\n", err)
 		log.For(c).Error(fmt.Sprintf("service.onTopicViewed GetTopic failed %#v", err))
 		if ecode.Cause(err) == ecode.TopicNotExist {
 			m.Ack()
@@ -91,11 +90,10 @@ func (p *Service) onTopicViewed(m *stan.Msg) {
 	if data, err = p.d.GetRecentViewByCond(c, p.d.DB(), map[string]interface{}{
 		"target_type": model.TargetTypeTopic,
 		"target_id":   info.TopicID,
+		"account_id":  info.ActorID,
 	}); err != nil {
-		fmt.Printf("GetRecentViewByCond err(%+v)\n", err)
 		return
 	} else if data != nil {
-		fmt.Printf("UpdateRecentView data(%+v)\n", data)
 		data.UpdatedAt = time.Now().Unix()
 		if err = p.d.UpdateRecentView(c, p.d.DB(), data); err != nil {
 			return
@@ -112,10 +110,8 @@ func (p *Service) onTopicViewed(m *stan.Msg) {
 		CreatedAt:  info.ActionTime,
 		UpdatedAt:  info.ActionTime,
 	}); err != nil {
-		fmt.Printf("AddRecentView err(%+v)\n", err)
 		return
 	}
 
-	fmt.Println("finished")
 	m.Ack()
 }
