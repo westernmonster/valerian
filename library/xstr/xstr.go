@@ -55,8 +55,9 @@ func SplitInts(s string) ([]int64, error) {
 }
 
 func Excerpt(s string) string {
-	if len(s) > 100 {
-		return string([]rune(s)[:100])
+	str := []rune(s)
+	if len(str) > 100 {
+		return string(str[:100])
 	}
 
 	return s
