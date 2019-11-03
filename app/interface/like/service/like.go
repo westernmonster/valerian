@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"valerian/app/interface/like/model"
@@ -71,6 +72,8 @@ func (p *Service) CancelLike(c context.Context, arg *model.ArgCancelLike) (err e
 		err = ecode.AcquireAccountIDFailed
 		return
 	}
+
+	fmt.Printf("CancelLike() aid(%d) target_id(%d), target_type(%s)\n", aid, arg.TargetID, arg.TargetType)
 
 	if err = p.d.CancelLike(c, aid, arg.TargetID, arg.TargetType); err != nil {
 		return
