@@ -52,7 +52,7 @@ const (
 	ActionTextCreateTopic = "创建了话题"
 	ActionTextDeleteTopic = "删除了话题"
 	ActionTextFollowTopic = "加入了话题"
-	ActionTextUpdateTopic = "{%s}更新了话题属性"
+	ActionTextUpdateTopic = "更新了话题属性"
 
 	ActionTextCreateRevise = "添加了补充"
 	ActionTextUpdateRevise = "更新了补充"
@@ -62,10 +62,10 @@ const (
 
 	ActionTextFollowMember = "关注了用户"
 
-	ActionTextTopicTaxonomyCatalogAdded   = "{%s}新增了分类{%s}"
-	ActionTextTopicTaxonomyCatalogDeleted = "{%s}删除了分类{%s}"
-	ActionTextTopicTaxonomyCatalogRenamed = "{%s}重名了分类{%s}, 新名称{%s}"
-	ActionTextTopicTaxonomyCatalogMoved   = "{%s}移动了分类{%s}"
+	ActionTextTopicTaxonomyCatalogAdded   = "新增了分类 %s"
+	ActionTextTopicTaxonomyCatalogDeleted = "删除了分类 %s"
+	ActionTextTopicTaxonomyCatalogRenamed = "重名了分类 %s, 新名称 %s"
+	ActionTextTopicTaxonomyCatalogMoved   = "移动了分类 %s"
 
 	ActionTextCommentArticle    = "评论了文章"
 	ActionTextCommentRevise     = "评论了补充"
