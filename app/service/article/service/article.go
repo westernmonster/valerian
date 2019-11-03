@@ -273,13 +273,19 @@ func (p *Service) GetUserArticlesPaged(c context.Context, req *api.UserArticlesR
 			return nil, err
 		}
 
+		changeDesc, err := p.GetArticleLastChangeDesc(c, v.ID)
+		if err != nil {
+			return nil, err
+		}
+
 		info := &api.ArticleInfo{
-			ID:        v.ID,
-			Title:     v.Title,
-			Excerpt:   xstr.Excerpt(v.ContentText),
-			CreatedAt: v.CreatedAt,
-			UpdatedAt: v.UpdatedAt,
-			ImageUrls: urls,
+			ID:         v.ID,
+			Title:      v.Title,
+			Excerpt:    xstr.Excerpt(v.ContentText),
+			CreatedAt:  v.CreatedAt,
+			UpdatedAt:  v.UpdatedAt,
+			ImageUrls:  urls,
+			ChangeDesc: changeDesc,
 			Stat: &api.ArticleStat{
 				ReviseCount:  int32(stat.ReviseCount),
 				CommentCount: int32(stat.CommentCount),
