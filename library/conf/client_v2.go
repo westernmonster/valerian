@@ -224,7 +224,6 @@ func (c *Client) checkVersion2(reqVer *ver) (ver *ver, err error) {
 	}
 	switch v.Code {
 	case _codeOk:
-		fmt.Printf("%#v\n", v)
 		if v.Result == nil {
 			err = fmt.Errorf("checkVersion() response error result: %v", v)
 			return

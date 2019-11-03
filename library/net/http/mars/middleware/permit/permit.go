@@ -62,7 +62,6 @@ func (p *Permit) Verify() mars.HandlerFunc {
 	return func(ctx *mars.Context) {
 		sid, uid, username, err := p.auth(ctx)
 		if err != nil {
-			fmt.Printf("permit.Verify() err(%+v)\n", err)
 			ctx.JSON(nil, ecode.Unauthorized)
 			ctx.Abort()
 			return

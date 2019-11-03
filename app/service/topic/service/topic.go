@@ -132,7 +132,6 @@ func (p *Service) UpdateTopic(c context.Context, arg *api.ArgUpdateTopic) (err e
 }
 
 func (p *Service) GetTopicResp(c context.Context, aid int64, topicID int64, include string) (item *api.TopicResp, err error) {
-	fmt.Printf("GetTopicResp aid(%d) topic_id(%d)\n", aid, topicID)
 	var t *model.Topic
 	if t, err = p.getTopic(c, p.d.DB(), topicID); err != nil {
 		return

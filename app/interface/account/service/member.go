@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"net/url"
 	"strconv"
 
@@ -202,8 +201,6 @@ func (p *Service) GetMemberInfo(c context.Context, targetID int64) (resp *model.
 		err = ecode.AcquireAccountIDFailed
 		return
 	}
-
-	fmt.Printf("aid(%d) targetID(%d)", aid, targetID)
 
 	var f *account.MemberInfoReply
 	if f, err = p.d.GetMemberInfo(c, targetID); err != nil {

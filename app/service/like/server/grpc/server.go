@@ -62,7 +62,6 @@ func (s *server) Like(ctx context.Context, req *api.LikeReq) (*api.EmptyStruct, 
 			ctx = sqalx.NewContext(ctx, false)
 		}()
 	}
-	fmt.Printf("Like aid(%d) target_id(%d) target_type(%s)\n", req.AccountID, req.TargetID, req.TargetType)
 	err := s.svr.Like(ctx, req.AccountID, req.TargetID, req.TargetType)
 	if err != nil {
 		return nil, err
