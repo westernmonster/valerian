@@ -2,8 +2,10 @@ package dao
 
 import (
 	"context"
+	"fmt"
 
 	like "valerian/app/service/like/api"
+	"valerian/library/log"
 )
 
 func (p *Dao) Like(c context.Context, aid, targetID int64, targetType string) (err error) {
@@ -12,6 +14,7 @@ func (p *Dao) Like(c context.Context, aid, targetID int64, targetType string) (e
 		AccountID:  aid,
 		TargetType: targetType,
 	}); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.Like() aid(%d) target_id(%d), target_type(%s)", aid, targetID, targetType))
 		return
 	}
 
@@ -24,6 +27,7 @@ func (p *Dao) CancelLike(c context.Context, aid, targetID int64, targetType stri
 		AccountID:  aid,
 		TargetType: targetType,
 	}); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.CancelLike() aid(%d) target_id(%d), target_type(%s)", aid, targetID, targetType))
 		return
 	}
 
@@ -36,6 +40,7 @@ func (p *Dao) Dislike(c context.Context, aid, targetID int64, targetType string)
 		AccountID:  aid,
 		TargetType: targetType,
 	}); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.Dislike() aid(%d) target_id(%d), target_type(%s)", aid, targetID, targetType))
 		return
 	}
 
@@ -48,6 +53,7 @@ func (p *Dao) CancelDislike(c context.Context, aid, targetID int64, targetType s
 		AccountID:  aid,
 		TargetType: targetType,
 	}); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.CancelDislike() aid(%d) target_id(%d), target_type(%s)", aid, targetID, targetType))
 		return
 	}
 
