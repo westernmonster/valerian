@@ -110,6 +110,7 @@ func (p *Service) CancelLike(c context.Context, aid, targetID int64, targetType 
 }
 
 func (p *Service) cancelLike(c context.Context, node sqalx.Node, aid, targetID int64, targetType string) (err error) {
+	fmt.Printf("begin cancelLike aid(%d) target_id(%d) target_type(%s)\n", aid, targetID, targetType)
 	var tx sqalx.Node
 	if tx, err = node.Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
@@ -125,8 +126,6 @@ func (p *Service) cancelLike(c context.Context, node sqalx.Node, aid, targetID i
 		}
 	}()
 
-	fmt.Printf("cancelLike aid(%d) target_id(%d) target_type(%s)\n", aid, targetID, targetType)
-
 	var fav *model.Like
 	if fav, err = p.d.GetLikeByCond(c, tx, map[string]interface{}{
 		"account_id":  aid,
@@ -135,6 +134,7 @@ func (p *Service) cancelLike(c context.Context, node sqalx.Node, aid, targetID i
 	}); err != nil {
 		return
 	} else if fav == nil {
+		fmt.Printf("like == nil ,Like aid(%d) target_id(%d) target_type(%s)\n", aid, targetID, targetType)
 		return
 	}
 
