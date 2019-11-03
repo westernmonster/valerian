@@ -275,6 +275,17 @@ func (s *server) GetReviseInfo(ctx context.Context, req *api.IDReq) (*api.Revise
 	return s.svr.GetReviseInfo(ctx, req)
 }
 
+func (s *server) GetReviseDetail(ctx context.Context, req *api.IDReq) (*api.ReviseDetail, error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
+
+	return s.svr.GetReviseDetail(ctx, req)
+}
+
 func (s *server) GetUserArticlesPaged(c context.Context, req *api.UserArticlesReq) (*api.UserArticlesResp, error) {
 	return s.svr.GetUserArticlesPaged(c, req)
 }
