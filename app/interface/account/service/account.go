@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"valerian/app/interface/account/model"
@@ -42,7 +41,6 @@ func validateBirthDay(arg *model.ArgUpdateProfile) (err error) {
 
 func (p *Service) ForgetPassword(c context.Context, arg *model.ArgForgetPassword) (sessionID string, err error) {
 	var account *model.Account
-	fmt.Printf("arg(%+v)\n", arg)
 	if govalidator.IsEmail(arg.Identity) {
 		if account, err = p.d.GetAccountByEmail(c, p.d.DB(), arg.Identity); err != nil {
 			return
@@ -71,7 +69,7 @@ func (p *Service) ForgetPassword(c context.Context, arg *model.ArgForgetPassword
 		}
 
 		var code string
-		if code, err = p.d.MobileValcodeCache(c, model.ValcodeForgetPassword, arg.Identity); err != nil {
+		if code, err = p.d.MobileValcodeCache(c, model.ValcodeForgetPassword, mobile); err != nil {
 			return
 		} else if code == "" {
 			err = ecode.ValcodeExpires
