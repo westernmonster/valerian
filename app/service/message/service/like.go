@@ -13,6 +13,7 @@ import (
 	"valerian/app/service/message/model"
 	"valerian/library/database/sqalx"
 	"valerian/library/gid"
+	"valerian/library/jpush"
 	"valerian/library/log"
 
 	"github.com/nats-io/stan.go"
@@ -79,6 +80,20 @@ func (p *Service) onArticleLiked(m *stan.Msg) {
 
 	m.Ack()
 
+	p.addCache(func() {
+		if _, err := p.pushSingleUser(context.Background(), msg.AccountID, &jpush.Message{
+			Title:   def.PushMsgTitleArticleLiked,
+			Content: def.PushMsgTitleArticleLiked,
+			Extras: map[string]interface{}{
+				"id":   strconv.FormatInt(msg.ID, 10),
+				"type": "link",
+				"url":  fmt.Sprintf(def.LinkArticle, article.ID),
+			},
+		}); err != nil {
+			log.For(context.Background()).Error(fmt.Sprintf("service.onArticleLiked Push message failed %#v", err))
+		}
+	})
+
 }
 
 func (p *Service) onReviseLiked(m *stan.Msg) {
@@ -142,6 +157,20 @@ func (p *Service) onReviseLiked(m *stan.Msg) {
 
 	m.Ack()
 
+	p.addCache(func() {
+		if _, err := p.pushSingleUser(context.Background(), msg.AccountID, &jpush.Message{
+			Title:   def.PushMsgTitleReviseLiked,
+			Content: def.PushMsgTitleReviseLiked,
+			Extras: map[string]interface{}{
+				"id":   strconv.FormatInt(msg.ID, 10),
+				"type": "link",
+				"url":  fmt.Sprintf(def.LinkRevise, article.ID),
+			},
+		}); err != nil {
+			log.For(context.Background()).Error(fmt.Sprintf("service.onReviseLiked Push message failed %#v", err))
+		}
+	})
+
 }
 
 func (p *Service) onDiscussionLiked(m *stan.Msg) {
@@ -204,6 +233,19 @@ func (p *Service) onDiscussionLiked(m *stan.Msg) {
 
 	m.Ack()
 
+	p.addCache(func() {
+		if _, err := p.pushSingleUser(context.Background(), msg.AccountID, &jpush.Message{
+			Title:   def.PushMsgTitleDiscussionLiked,
+			Content: def.PushMsgTitleDiscussionLiked,
+			Extras: map[string]interface{}{
+				"id":   strconv.FormatInt(msg.ID, 10),
+				"type": "link",
+				"url":  fmt.Sprintf(def.LinkDiscussion, discuss.ID),
+			},
+		}); err != nil {
+			log.For(context.Background()).Error(fmt.Sprintf("service.onDiscussionLiked Push message failed %#v", err))
+		}
+	})
 }
 
 func (p *Service) onCommentLiked(m *stan.Msg) {
@@ -266,5 +308,19 @@ func (p *Service) onCommentLiked(m *stan.Msg) {
 	}
 
 	m.Ack()
+
+	p.addCache(func() {
+		if _, err := p.pushSingleUser(context.Background(), msg.AccountID, &jpush.Message{
+			Title:   def.PushMsgTitleCommentLiked,
+			Content: def.PushMsgTitleCommentLiked,
+			Extras: map[string]interface{}{
+				"id":   strconv.FormatInt(msg.ID, 10),
+				"type": "link",
+				"url":  fmt.Sprintf(def.LinkComment, comment.ID),
+			},
+		}); err != nil {
+			log.For(context.Background()).Error(fmt.Sprintf("service.onCommentLiked Push message failed %#v", err))
+		}
+	})
 
 }

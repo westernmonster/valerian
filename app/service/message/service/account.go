@@ -10,6 +10,7 @@ import (
 	"valerian/app/service/message/model"
 	"valerian/library/database/sqalx"
 	"valerian/library/gid"
+	"valerian/library/jpush"
 	"valerian/library/log"
 
 	"github.com/nats-io/stan.go"
@@ -69,5 +70,19 @@ func (p *Service) onMemberFollowed(m *stan.Msg) {
 	}
 
 	m.Ack()
+
+	p.addCache(func() {
+		if _, err := p.pushSingleUser(context.Background(), msg.AccountID, &jpush.Message{
+			Title:   def.PushMsgTitleFollowed,
+			Content: def.PushMsgTitleFollowed,
+			Extras: map[string]interface{}{
+				"id":   strconv.FormatInt(msg.ID, 10),
+				"type": "link",
+				"url":  fmt.Sprintf(def.LinkUser, info.TargetAccountID),
+			},
+		}); err != nil {
+			log.For(context.Background()).Error(fmt.Sprintf("service.onMemberFollowed Push message failed %#v", err))
+		}
+	})
 
 }

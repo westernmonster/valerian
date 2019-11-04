@@ -69,6 +69,7 @@ func (s *server) GetCommentInfo(ctx context.Context, req *api.IDReq) (*api.Comme
 		Deleted:    bool(comment.Deleted),
 		Featured:   bool(comment.Featured),
 		OwnerID:    comment.OwnerID,
+		OwnerType:  comment.OwnerType,
 		ResourceID: comment.ResourceID,
 		CreatedAt:  comment.CreatedAt,
 		UpdatedAt:  comment.UpdatedAt,

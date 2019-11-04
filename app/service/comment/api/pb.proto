@@ -45,6 +45,8 @@ message CommentInfo {
     CommentStat  Stat = 11 [(gogoproto.jsontag) = "stat"];
 
     int64  ReplyTo = 12 [(gogoproto.jsontag) = "reply_to"] ;
+
+    string OwnerType = 13 [(gogoproto.jsontag) = "owner_type"];
 }
 
 message CommentStat {

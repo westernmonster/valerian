@@ -10,6 +10,7 @@ import (
 	"valerian/app/service/message/model"
 	"valerian/library/database/sqalx"
 	"valerian/library/gid"
+	"valerian/library/jpush"
 	"valerian/library/log"
 
 	"github.com/nats-io/stan.go"
@@ -82,4 +83,17 @@ func (p *Service) onReviseAdded(m *stan.Msg) {
 
 	m.Ack()
 
+	p.addCache(func() {
+		if _, err := p.pushSingleUser(context.Background(), msg.AccountID, &jpush.Message{
+			Title:   def.PushMsgTitleReviseAdded,
+			Content: def.PushMsgTitleReviseAdded,
+			Extras: map[string]interface{}{
+				"id":   strconv.FormatInt(msg.ID, 10),
+				"type": "link",
+				"url":  fmt.Sprintf(def.LinkRevise, revise.ID),
+			},
+		}); err != nil {
+			log.For(context.Background()).Error(fmt.Sprintf("service.onReviseAdded Push message failed %#v", err))
+		}
+	})
 }

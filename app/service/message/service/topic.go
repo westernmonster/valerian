@@ -12,6 +12,7 @@ import (
 	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
 	"valerian/library/gid"
+	"valerian/library/jpush"
 	"valerian/library/log"
 
 	"github.com/nats-io/stan.go"
@@ -125,7 +126,15 @@ func (p *Service) onTopicFollowRequested(m *stan.Msg) {
 		return
 	}
 
+	type PushMessge struct {
+		Aid int64
+		Msg *jpush.Message
+	}
+
+	pushMsgs := make([]*PushMessge, 0)
+
 	for _, v := range admins {
+
 		msg := &model.Message{
 			ID:         gid.NewID(),
 			AccountID:  v.AccountID,
@@ -150,6 +159,19 @@ func (p *Service) onTopicFollowRequested(m *stan.Msg) {
 			return
 		}
 
+		pushMsgs = append(pushMsgs, &PushMessge{
+			Msg: &jpush.Message{
+				Title:   def.PushMsgTitleTopicFollowRequested,
+				Content: def.PushMsgTitleTopicFollowRequested,
+				Extras: map[string]interface{}{
+					"id":   strconv.FormatInt(msg.ID, 10),
+					"type": "link",
+					"url":  fmt.Sprintf(def.LinkTopicRequest, req.ID),
+				},
+			},
+			Aid: v.AccountID,
+		})
+
 	}
 
 	if err = tx.Commit(); err != nil {
@@ -158,6 +180,14 @@ func (p *Service) onTopicFollowRequested(m *stan.Msg) {
 	}
 
 	m.Ack()
+
+	p.addCache(func() {
+		for _, v := range pushMsgs {
+			if _, err := p.pushSingleUser(context.Background(), v.Aid, v.Msg); err != nil {
+				log.For(context.Background()).Error(fmt.Sprintf("service.onTopicFollowRequested Push message failed %#v", err))
+			}
+		}
+	})
 
 }
 
@@ -224,6 +254,20 @@ func (p *Service) onTopicFollowApproved(m *stan.Msg) {
 
 	m.Ack()
 
+	p.addCache(func() {
+		if _, err := p.pushSingleUser(context.Background(), msg.AccountID, &jpush.Message{
+			Title:   def.PushMsgTitleTopicFollowApproved,
+			Content: def.PushMsgTitleTopicFollowApproved,
+			Extras: map[string]interface{}{
+				"id":   strconv.FormatInt(msg.ID, 10),
+				"type": "link",
+				"url":  fmt.Sprintf(def.LinkTopicRequest, req.ID),
+			},
+		}); err != nil {
+			log.For(context.Background()).Error(fmt.Sprintf("service.onTopicFollowApproved Push message failed %#v", err))
+		}
+	})
+
 }
 
 func (p *Service) onTopicFollowRejected(m *stan.Msg) {
@@ -289,6 +333,20 @@ func (p *Service) onTopicFollowRejected(m *stan.Msg) {
 
 	m.Ack()
 
+	p.addCache(func() {
+		if _, err := p.pushSingleUser(context.Background(), msg.AccountID, &jpush.Message{
+			Title:   def.PushMsgTitleTopicFollowRejected,
+			Content: def.PushMsgTitleTopicFollowRejected,
+			Extras: map[string]interface{}{
+				"id":   strconv.FormatInt(msg.ID, 10),
+				"type": "link",
+				"url":  fmt.Sprintf(def.LinkTopicRequest, req.ID),
+			},
+		}); err != nil {
+			log.For(context.Background()).Error(fmt.Sprintf("service.onTopicFollowRejected Push message failed %#v", err))
+		}
+	})
+
 }
 
 func (p *Service) onTopicInvite(m *stan.Msg) {
@@ -353,4 +411,17 @@ func (p *Service) onTopicInvite(m *stan.Msg) {
 
 	m.Ack()
 
+	p.addCache(func() {
+		if _, err := p.pushSingleUser(context.Background(), msg.AccountID, &jpush.Message{
+			Title:   def.PushMsgTitleTopicFollowInvited,
+			Content: def.PushMsgTitleTopicFollowInvited,
+			Extras: map[string]interface{}{
+				"id":   strconv.FormatInt(msg.ID, 10),
+				"type": "link",
+				"url":  fmt.Sprintf(def.LinkTopicInvite, req.ID),
+			},
+		}); err != nil {
+			log.For(context.Background()).Error(fmt.Sprintf("service.onTopicInvite Push message failed %#v", err))
+		}
+	})
 }
