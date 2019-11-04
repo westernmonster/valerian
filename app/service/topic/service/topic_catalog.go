@@ -9,6 +9,8 @@ import (
 	"valerian/app/service/topic/model"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
+
+	"github.com/davecgh/go-spew/spew"
 )
 
 //  GetCatalogsHierarchy 按层级获取类目
@@ -73,6 +75,7 @@ func (p *Service) SaveCatalogs(c context.Context, req *api.ArgSaveCatalogs) (err
 		}
 
 		for _, v := range change.DelTaxonomyItems {
+			spew.Dump(v)
 			p.onTopicTaxonomyCatalogDeleted(c, v, req.Aid, time.Now().Unix())
 		}
 	})
