@@ -8,6 +8,7 @@ import (
 )
 
 func (p *Service) pushSingleUser(c context.Context, aid int64, msg *jpush.Message) (msgID string, err error) {
+	fmt.Printf("push to alias(%d)  message(%+v) \n", aid, msg)
 	payload := &jpush.Payload{
 		Platform: jpush.NewPlatform().All(),
 		Audience: jpush.NewAudience().SetAlias(fmt.Sprintf("%d", aid)),
