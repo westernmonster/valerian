@@ -8,6 +8,8 @@ import (
 	"valerian/app/service/article/model"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
+
+	"github.com/davecgh/go-spew/spew"
 )
 
 func (p *Dao) GetArticleHistoriesPaged(c context.Context, node sqalx.Node, articleID int64, limit, offset int) (items []*model.ArticleHistory, err error) {
@@ -18,6 +20,8 @@ func (p *Dao) GetArticleHistoriesPaged(c context.Context, node sqalx.Node, artic
 		log.For(c).Error(fmt.Sprintf("dao.GetArticleHistoriesPaged err(%+v) article_id(%d) limit(%d) offset(%d)", err, articleID, limit, offset))
 		return
 	}
+
+	spew.Dump(items)
 	return
 }
 
