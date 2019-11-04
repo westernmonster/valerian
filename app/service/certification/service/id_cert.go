@@ -149,6 +149,7 @@ func (p *Service) RefreshIDCertStatus(c context.Context, aid int64) (status int3
 
 	p.addCache(func() {
 		p.d.DelAccountCache(context.TODO(), item.AccountID)
+		p.d.DelIDCertCache(context.TODO(), item.AccountID)
 	})
 	return
 }
