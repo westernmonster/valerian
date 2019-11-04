@@ -209,23 +209,12 @@ func (s *server) GetTopicMembersPaged(ctx context.Context, arg *api.ArgTopicMemb
 }
 
 func (s *server) GetTopicInfo(ctx context.Context, req *api.TopicReq) (*api.TopicInfo, error) {
-	resp, err := s.svr.GetTopic(ctx, req.ID)
+	resp, err := s.svr.GetTopicInfo(ctx, req.ID)
 	if err != nil {
 		return nil, err
 	}
 
-	stat, err := s.svr.GetTopicStat(ctx, req.ID)
-	if err != nil {
-		return nil, err
-	}
-
-	acc, err := s.svr.GetAccountBaseInfo(ctx, resp.CreatedBy)
-	if err != nil {
-		return nil, err
-	}
-
-	ret := api.FromTopic(resp, stat, acc)
-	return ret, nil
+	return resp, nil
 }
 
 func (s *server) GetTopicStat(ctx context.Context, req *api.TopicReq) (*api.TopicStat, error) {
@@ -297,28 +286,9 @@ func (s *server) GetTopicPermission(ctx context.Context, req *api.TopicPermissio
 }
 
 func (s *server) GetUserTopicsPaged(ctx context.Context, req *api.UserTopicsReq) (resp *api.UserTopicsResp, err error) {
-	items, err := s.svr.GetUserTopicsPaged(ctx, req.AccountID, int(req.Limit), int(req.Offset))
-	if err != nil {
-		return nil, err
+	if resp, err = s.svr.GetUserTopicsPaged(ctx, req.AccountID, int(req.Limit), int(req.Offset)); err != nil {
+		return
 	}
-	resp = &api.UserTopicsResp{
-		Items: make([]*api.TopicInfo, len(items)),
-	}
-
-	for i, v := range items {
-		stat, err := s.svr.GetTopicStat(ctx, v.ID)
-		if err != nil {
-			return nil, err
-		}
-
-		m, err := s.svr.GetAccountBaseInfo(ctx, v.CreatedBy)
-		if err != nil {
-			return nil, err
-		}
-
-		resp.Items[i] = api.FromTopic(v, stat, m)
-	}
-
 	return
 }
 
@@ -365,30 +335,4 @@ func (s *server) GetTopicMemberIDs(ctx context.Context, req *api.TopicReq) (*api
 	}
 
 	return &api.IDsResp{IDs: ids}, nil
-}
-
-func (s *server) GetAllTopics(ctx context.Context, req *api.EmptyStruct) (resp *api.AllTopicsResp, err error) {
-	items, err := s.svr.GetAllTopics(ctx)
-	if err != nil {
-		return nil, err
-	}
-	resp = &api.AllTopicsResp{
-		Items: make([]*api.TopicInfo, len(items)),
-	}
-
-	for i, v := range items {
-		stat, err := s.svr.GetTopicStat(ctx, v.ID)
-		if err != nil {
-			return nil, err
-		}
-
-		m, err := s.svr.GetAccountBaseInfo(ctx, v.CreatedBy)
-		if err != nil {
-			return nil, err
-		}
-
-		resp.Items[i] = api.FromTopic(v, stat, m)
-	}
-
-	return
 }

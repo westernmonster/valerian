@@ -19,8 +19,62 @@ func (p *Service) GetTopicMemberIDs(c context.Context, aid int64) (ids []int64, 
 	return p.d.GetTopicMemberIDs(c, p.d.DB(), aid)
 }
 
-func (p *Service) GetUserTopicsPaged(c context.Context, aid int64, limit, offset int) (items []*model.Topic, err error) {
-	return p.d.GetUserTopicsPaged(c, p.d.DB(), aid, limit, offset)
+func (p *Service) GetUserTopicsPaged(c context.Context, aid int64, limit, offset int) (resp *api.UserTopicsResp, err error) {
+	var items []*model.Topic
+	if items, err = p.d.GetUserTopicsPaged(c, p.d.DB(), aid, limit, offset); err != nil {
+		return
+	}
+
+	resp = &api.UserTopicsResp{
+		Items: make([]*api.TopicInfo, len(items)),
+	}
+
+	for i, v := range items {
+		var stat *model.TopicStat
+		if stat, err = p.d.GetTopicStatByID(c, p.d.DB(), v.ID); err != nil {
+			return
+		}
+
+		var acc *model.Account
+		if acc, err = p.getAccount(c, p.d.DB(), v.CreatedBy); err != nil {
+			return
+		}
+
+		item := &api.TopicInfo{
+			ID:              v.ID,
+			Name:            v.Name,
+			Introduction:    v.Introduction,
+			AllowDiscuss:    bool(v.AllowDiscuss),
+			AllowChat:       bool(v.AllowChat),
+			IsPrivate:       bool(v.IsPrivate),
+			ViewPermission:  v.ViewPermission,
+			EditPermission:  v.EditPermission,
+			JoinPermission:  v.JoinPermission,
+			CatalogViewType: v.CatalogViewType,
+			Avatar:          v.Avatar,
+			Bg:              v.Bg,
+			TopicHome:       v.TopicHome,
+			CreatedAt:       v.CreatedAt,
+			UpdatedAt:       v.UpdatedAt,
+		}
+
+		item.Stat = &api.TopicStat{
+			MemberCount:     int32(stat.MemberCount),
+			DiscussionCount: int32(stat.DiscussionCount),
+			ArticleCount:    int32(stat.ArticleCount),
+		}
+
+		item.Creator = &api.Creator{
+			ID:           acc.ID,
+			UserName:     acc.UserName,
+			Avatar:       acc.Avatar,
+			Introduction: acc.Introduction,
+		}
+
+		resp.Items[i] = item
+	}
+
+	return
 }
 
 func (p *Service) GetAllTopics(c context.Context) (items []*model.Topic, err error) {
@@ -29,6 +83,57 @@ func (p *Service) GetAllTopics(c context.Context) (items []*model.Topic, err err
 
 func (p *Service) GetTopic(c context.Context, topicID int64) (item *model.Topic, err error) {
 	return p.getTopic(c, p.d.DB(), topicID)
+}
+
+func (p *Service) GetTopicInfo(c context.Context, topicID int64) (item *api.TopicInfo, err error) {
+	var v *model.Topic
+	if v, err = p.getTopic(c, p.d.DB(), topicID); err != nil {
+		return
+	}
+
+	var stat *model.TopicStat
+	if stat, err = p.d.GetTopicStatByID(c, p.d.DB(), topicID); err != nil {
+		return
+	}
+
+	var acc *model.Account
+	if acc, err = p.getAccount(c, p.d.DB(), v.CreatedBy); err != nil {
+		return
+	}
+
+	item = &api.TopicInfo{
+		ID:              v.ID,
+		Name:            v.Name,
+		Introduction:    v.Introduction,
+		AllowDiscuss:    bool(v.AllowDiscuss),
+		AllowChat:       bool(v.AllowChat),
+		IsPrivate:       bool(v.IsPrivate),
+		ViewPermission:  v.ViewPermission,
+		EditPermission:  v.EditPermission,
+		JoinPermission:  v.JoinPermission,
+		CatalogViewType: v.CatalogViewType,
+		Avatar:          v.Avatar,
+		Bg:              v.Bg,
+		TopicHome:       v.TopicHome,
+		CreatedAt:       v.CreatedAt,
+		UpdatedAt:       v.UpdatedAt,
+	}
+
+	item.Stat = &api.TopicStat{
+		MemberCount:     int32(stat.MemberCount),
+		DiscussionCount: int32(stat.DiscussionCount),
+		ArticleCount:    int32(stat.ArticleCount),
+	}
+
+	item.Creator = &api.Creator{
+		ID:           acc.ID,
+		UserName:     acc.UserName,
+		Avatar:       acc.Avatar,
+		Introduction: acc.Introduction,
+	}
+
+	return
+
 }
 
 func (p *Service) GetTopicStat(c context.Context, topicID int64) (stat *model.TopicStat, err error) {

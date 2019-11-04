@@ -177,9 +177,6 @@ message UserTopicsResp {
     repeated TopicInfo Items = 1 [(gogoproto.jsontag) = 'items'];
 }
 
-message AllTopicsResp {
-    repeated TopicInfo Items = 1 [(gogoproto.jsontag) = 'items'];
-}
 
 
 
@@ -549,9 +546,6 @@ service Topic {
 
     rpc  GetTopicMembersPaged(ArgTopicMembers) returns (TopicMembersPagedResp);
 
-
-
-    rpc  GetAllTopics(EmptyStruct) returns (AllTopicsResp);
 
     rpc  GetTopicInfo(TopicReq) returns (TopicInfo);
 
