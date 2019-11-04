@@ -31,23 +31,21 @@ func (p *Service) RequestIDCert(c context.Context, aid int64) (token cloudauth.V
 	}()
 
 	var item *model.IDCertification
-	if item, err = p.getIDCertByID(c, tx, aid); err != nil {
-		if ecode.Cause(err) == ecode.IDCertificationNotExist {
-			err = nil
-			item = &model.IDCertification{
-				ID:        gid.NewID(),
-				AccountID: aid,
-				Status:    model.IDCertificationUncommitted,
-				CreatedAt: time.Now().Unix(),
-				UpdatedAt: time.Now().Unix(),
-			}
+	if item, err = p.d.GetIDCertificationByCond(c, tx, map[string]interface{}{"account_id": aid}); err != nil {
+		return
+	} else if item == nil {
+		item = &model.IDCertification{
+			ID:        gid.NewID(),
+			AccountID: aid,
+			Status:    model.IDCertificationUncommitted,
+			CreatedAt: time.Now().Unix(),
+			UpdatedAt: time.Now().Unix(),
+		}
 
-			if err = p.d.AddIDCertification(c, tx, item); err != nil {
-				return
-			}
-		} else {
+		if err = p.d.AddIDCertification(c, tx, item); err != nil {
 			return
 		}
+		return
 	}
 
 	if err = tx.Commit(); err != nil {
