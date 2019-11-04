@@ -481,6 +481,26 @@ func (p *Service) DelArticle(c context.Context, arg *api.IDReq) (err error) {
 		return
 	}
 
+	if err = p.d.DelArticleHistories(c, tx, arg.ID); err != nil {
+		return
+	}
+
+	if err = p.d.DelArticleFiles(c, tx, arg.ID); err != nil {
+		return
+	}
+
+	if err = p.d.DelImageURLByCond(c, tx, model.TargetTypeArticle, arg.ID); err != nil {
+		return
+	}
+
+	if err = p.d.DelLikeByCond(c, tx, model.TargetTypeArticle, arg.ID); err != nil {
+		return
+	}
+
+	if err = p.d.DelRecentViewByCond(c, tx, arg.ID, model.TargetTypeArticle); err != nil {
+		return
+	}
+
 	if err = p.d.DelMessageByCond(c, tx, arg.ID, model.TargetTypeArticle); err != nil {
 		return
 	}
@@ -516,8 +536,8 @@ func (p *Service) DelArticle(c context.Context, arg *api.IDReq) (err error) {
 	}
 
 	p.addCache(func() {
-		p.d.DelReviseCache(context.TODO(), arg.ID)
-		p.onReviseDeleted(context.Background(), arg.ID, arg.Aid, time.Now().Unix())
+		p.d.DelArticleCache(context.TODO(), arg.ID)
+		p.onArticleDeleted(context.Background(), arg.ID, arg.Aid, time.Now().Unix())
 	})
 	return
 }

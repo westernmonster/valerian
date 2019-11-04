@@ -74,13 +74,29 @@ func (p *Service) GetTopicFeedPaged(c context.Context, topicID int64, limit, off
 			Introduction: account.Introduction,
 		}
 
-		if v.TargetType == model.TargetTypeArticle {
+		switch v.TargetType {
+		case model.TargetTypeArticle:
 			var article *article.ArticleInfo
 			if article, err = p.d.GetArticle(c, v.TargetID); err != nil {
 				return
 			}
 
 			item.Target.Article = p.FromArticle(article)
+		case model.TargetTypeArticleHistory:
+			var h *article.ArticleHistoryResp
+			if h, err = p.d.GetArticleHistory(c, v.TargetID); err != nil {
+				return
+			}
+
+			var article *article.ArticleInfo
+			if article, err = p.d.GetArticle(c, h.ArticleID); err != nil {
+				return
+			}
+
+			item.Target.Article = p.FromArticle(article)
+			item.Target.Article.ChangeDesc = h.ChangeDesc
+
+			break
 		}
 
 		resp.Items[i] = item

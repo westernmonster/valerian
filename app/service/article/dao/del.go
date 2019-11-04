@@ -129,3 +129,58 @@ func (p *Dao) DelFeedbacksByCond(c context.Context, node sqalx.Node, targetID in
 
 	return
 }
+
+func (p *Dao) DelArticleHistories(c context.Context, node sqalx.Node, articleID int64) (err error) {
+	sqlDelete := "UPDATE article_histories SET deleted=1 WHERE article_id=?"
+
+	if _, err = node.ExecContext(c, sqlDelete, articleID); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.DelArticleHistories err(%+v), article_id(%d)", err, articleID))
+		return
+	}
+
+	return
+}
+
+func (p *Dao) DelArticleFiles(c context.Context, node sqalx.Node, articleID int64) (err error) {
+	sqlDelete := "UPDATE article_files SET deleted=1 WHERE article_id=?"
+
+	if _, err = node.ExecContext(c, sqlDelete, articleID); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.DelArticleFiles err(%+v), article_id(%d)", err, articleID))
+		return
+	}
+
+	return
+}
+
+func (p *Dao) DelImageURLByCond(c context.Context, node sqalx.Node, targetType string, targetID int64) (err error) {
+	sqlDelete := "UPDATE image_urls SET deleted=1 WHERE target_id=? AND target_type =?"
+
+	if _, err = node.ExecContext(c, sqlDelete, targetID, targetType); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.DelImageUrls err(%+v), target_id(%d) target_type(%s)", err, targetID, targetType))
+		return
+	}
+
+	return
+}
+
+func (p *Dao) DelLikeByCond(c context.Context, node sqalx.Node, targetType string, targetID int64) (err error) {
+	sqlDelete := "UPDATE likes SET deleted=1 WHERE target_id=? AND target_type =?"
+
+	if _, err = node.ExecContext(c, sqlDelete, targetID, targetType); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.DelLikesByCond err(%+v), target_id(%d) target_type(%s)", err, targetID, targetType))
+		return
+	}
+
+	return
+}
+
+func (p *Dao) DelRecentViewByCond(c context.Context, node sqalx.Node, targetID int64, targetType string) (err error) {
+	sqlDelete := "UPDATE recent_views SET deleted=1 WHERE target_id=? AND target_type=?"
+
+	if _, err = node.ExecContext(c, sqlDelete, targetID, targetType); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.DelRecentViewByCond err(%+v), target_id(%+v) target_type(%d)", err, targetID, targetType))
+		return
+	}
+
+	return
+}
