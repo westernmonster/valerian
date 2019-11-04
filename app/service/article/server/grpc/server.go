@@ -178,6 +178,7 @@ func (s *server) SaveArticleFiles(ctx context.Context, req *api.ArgSaveArticleFi
 }
 
 func (s *server) GetArticleHistoriesPaged(ctx context.Context, req *api.ArgArticleHistoriesPaged) (*api.ArticleHistoryListResp, error) {
+	fmt.Printf("server.GetArticleHistoriesPaged")
 	resp, err := s.svr.GetArticleHistoriesPaged(ctx, req.ArticleID, int(req.Offset), int(req.Limit))
 	if err != nil {
 		return nil, err
