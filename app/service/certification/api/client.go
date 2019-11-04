@@ -2,8 +2,10 @@ package api
 
 import (
 	"context"
+	"time"
 
 	"valerian/library/net/rpc/warden"
+	xtime "valerian/library/time"
 
 	"google.golang.org/grpc"
 )
@@ -13,6 +15,14 @@ const AppID = "service.certification"
 
 // NewClient new member grpc client
 func NewClient(cfg *warden.ClientConfig, opts ...grpc.DialOption) (CertificationClient, error) {
+	if cfg == nil {
+		cfg = &warden.ClientConfig{
+			Dial:    xtime.Duration(time.Second * 10),
+			Timeout: xtime.Duration(time.Second * 3),
+			Subset:  50,
+		}
+	}
+
 	client := warden.NewClient(cfg, opts...)
 	conn, err := client.Dial(context.Background(), "discovery://default/"+AppID)
 	if err != nil {
