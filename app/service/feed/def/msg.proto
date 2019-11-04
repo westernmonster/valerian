@@ -27,6 +27,7 @@ message MsgArticleCreated {
 message MsgArticleUpdated {
     int64 ArticleID = 1 [(gogoproto.jsontag) = "article_id"] ;
     int64 ActorID = 2 [(gogoproto.jsontag) = "actor_id"] ;
+    int64 ArticleHistoryID = 3 [(gogoproto.jsontag) = "article_history_id"] ;
     int64 ActionTime = 4 [(gogoproto.jsontag) = "action_time"] ;
 }
 

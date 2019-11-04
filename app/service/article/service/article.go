@@ -633,7 +633,7 @@ func (p *Service) UpdateArticle(c context.Context, arg *api.ArgUpdateArticle) (e
 
 	p.addCache(func() {
 		p.d.DelArticleCache(context.TODO(), arg.ID)
-		p.onArticleUpdated(context.Background(), arg.ID, arg.Aid, time.Now().Unix())
+		p.onArticleUpdated(context.Background(), arg.ID, h.ID, arg.Aid, time.Now().Unix())
 	})
 
 	return

@@ -65,7 +65,7 @@ func (p *Service) onArticleAdded(c context.Context, articleID, aid, actionTime i
 	return
 }
 
-func (p *Service) onArticleUpdated(c context.Context, articleID, aid, actionTime int64) {
+func (p *Service) onArticleUpdated(c context.Context, articleID, historyID, aid, actionTime int64) {
 	msg := &def.MsgArticleUpdated{ArticleID: articleID, ActorID: aid, ActionTime: actionTime}
 
 	var data []byte
