@@ -7,13 +7,22 @@ import (
 	"valerian/app/service/feed/def"
 	"valerian/app/service/topic-feed/model"
 	"valerian/library/database/sqalx"
+	"valerian/library/ecode"
 	"valerian/library/gid"
 	"valerian/library/log"
 
-	"github.com/kamilsk/retry/v4"
-	"github.com/kamilsk/retry/v4/strategy"
 	"github.com/nats-io/stan.go"
 )
+
+func (p *Service) getTopicCatalog(c context.Context, node sqalx.Node, id int64) (item *model.TopicCatalog, err error) {
+	if item, err = p.d.GetTopicCatalogByID(c, node, id); err != nil {
+		return
+	} else if item == nil {
+		err = ecode.TopicCatalogNotExist
+		return
+	}
+	return
+}
 
 func (p *Service) onTopicTaxonomyCatalogAdded(m *stan.Msg) {
 	var err error
@@ -42,27 +51,10 @@ func (p *Service) onTopicTaxonomyCatalogAdded(m *stan.Msg) {
 	}()
 
 	var catalog *model.TopicCatalog
-	if catalog, err = p.d.GetTopicCatalogByID(c, tx, info.CatalogID); err != nil {
-		return
-	} else if catalog == nil {
-		log.For(c).Error(fmt.Sprintf("service.onTopicTaxonomyCatalogAdded() catalog not exist id(%d)", err, info.CatalogID))
-		m.Ack()
-		return
-	}
-
-	var v *model.Account
-	action := func(c context.Context, _ uint) error {
-		acc, e := p.getAccount(c, p.d.DB(), info.ActorID)
-		if e != nil {
-			return e
+	if catalog, err = p.getTopicCatalog(c, tx, info.CatalogID); err != nil {
+		if ecode.Cause(err) == ecode.TopicCatalogNotExist {
+			m.Ack()
 		}
-
-		v = acc
-		return nil
-	}
-
-	if err := retry.TryContext(c, action, strategy.Limit(3)); err != nil {
-		m.Ack()
 		return
 	}
 
@@ -80,7 +72,7 @@ func (p *Service) onTopicTaxonomyCatalogAdded(m *stan.Msg) {
 		UpdatedAt:  time.Now().Unix(),
 	}
 
-	if err = p.d.AddTopicFeed(c, p.d.DB(), feed); err != nil {
+	if err = p.d.AddTopicFeed(c, tx, feed); err != nil {
 		log.Errorf("service.onTopicTaxonomyCatalogAdded() failed %#v", err)
 		return
 	}
@@ -119,27 +111,10 @@ func (p *Service) onTopicTaxonomyCatalogDeleted(m *stan.Msg) {
 	}()
 
 	var catalog *model.TopicCatalog
-	if catalog, err = p.d.GetTopicCatalogByID(c, tx, info.CatalogID); err != nil {
-		return
-	} else if catalog == nil {
-		log.For(c).Error(fmt.Sprintf("service.onTopicTaxonomyCatalogDeleted() catalog not exist id(%d)", err, info.CatalogID))
-		m.Ack()
-		return
-	}
-
-	var v *model.Account
-	action := func(c context.Context, _ uint) error {
-		acc, e := p.getAccount(c, p.d.DB(), info.ActorID)
-		if e != nil {
-			return e
+	if catalog, err = p.getTopicCatalog(c, tx, info.CatalogID); err != nil {
+		if ecode.Cause(err) == ecode.TopicCatalogNotExist {
+			m.Ack()
 		}
-
-		v = acc
-		return nil
-	}
-
-	if err := retry.TryContext(c, action, strategy.Limit(3)); err != nil {
-		m.Ack()
 		return
 	}
 
@@ -157,7 +132,7 @@ func (p *Service) onTopicTaxonomyCatalogDeleted(m *stan.Msg) {
 		UpdatedAt:  time.Now().Unix(),
 	}
 
-	if err = p.d.AddTopicFeed(c, p.d.DB(), feed); err != nil {
+	if err = p.d.AddTopicFeed(c, tx, feed); err != nil {
 		log.Errorf("service.onTopicTaxonomyCatalogDeleted() failed %#v", err)
 		return
 	}
@@ -196,27 +171,10 @@ func (p *Service) onTopicTaxonomyCatalogRenamed(m *stan.Msg) {
 	}()
 
 	var catalog *model.TopicCatalog
-	if catalog, err = p.d.GetTopicCatalogByID(c, tx, info.CatalogID); err != nil {
-		return
-	} else if catalog == nil {
-		log.For(c).Error(fmt.Sprintf("service.onTopicTaxonomyCatalogRenamed() catalog not exist id(%d)", err, info.CatalogID))
-		m.Ack()
-		return
-	}
-
-	var v *model.Account
-	action := func(c context.Context, _ uint) error {
-		acc, e := p.getAccount(c, p.d.DB(), info.ActorID)
-		if e != nil {
-			return e
+	if catalog, err = p.getTopicCatalog(c, tx, info.CatalogID); err != nil {
+		if ecode.Cause(err) == ecode.TopicCatalogNotExist {
+			m.Ack()
 		}
-
-		v = acc
-		return nil
-	}
-
-	if err := retry.TryContext(c, action, strategy.Limit(3)); err != nil {
-		m.Ack()
 		return
 	}
 
@@ -234,7 +192,7 @@ func (p *Service) onTopicTaxonomyCatalogRenamed(m *stan.Msg) {
 		UpdatedAt:  time.Now().Unix(),
 	}
 
-	if err = p.d.AddTopicFeed(c, p.d.DB(), feed); err != nil {
+	if err = p.d.AddTopicFeed(c, tx, feed); err != nil {
 		log.Errorf("service.onTopicTaxonomyCatalogRenamed() failed %#v", err)
 		return
 	}
@@ -273,27 +231,10 @@ func (p *Service) onTopicTaxonomyCatalogMoved(m *stan.Msg) {
 	}()
 
 	var catalog *model.TopicCatalog
-	if catalog, err = p.d.GetTopicCatalogByID(c, tx, info.CatalogID); err != nil {
-		return
-	} else if catalog == nil {
-		log.For(c).Error(fmt.Sprintf("service.onTopicTaxonomyCatalogMoved() catalog not exist id(%d)", err, info.CatalogID))
-		m.Ack()
-		return
-	}
-
-	var v *model.Account
-	action := func(c context.Context, _ uint) error {
-		acc, e := p.getAccount(c, p.d.DB(), info.ActorID)
-		if e != nil {
-			return e
+	if catalog, err = p.getTopicCatalog(c, tx, info.CatalogID); err != nil {
+		if ecode.Cause(err) == ecode.TopicCatalogNotExist {
+			m.Ack()
 		}
-
-		v = acc
-		return nil
-	}
-
-	if err := retry.TryContext(c, action, strategy.Limit(3)); err != nil {
-		m.Ack()
 		return
 	}
 
@@ -311,7 +252,7 @@ func (p *Service) onTopicTaxonomyCatalogMoved(m *stan.Msg) {
 		UpdatedAt:  time.Now().Unix(),
 	}
 
-	if err = p.d.AddTopicFeed(c, p.d.DB(), feed); err != nil {
+	if err = p.d.AddTopicFeed(c, tx, feed); err != nil {
 		log.Errorf("service.onTopicTaxonomyCatalogMoved() failed %#v", err)
 		return
 	}
@@ -350,37 +291,12 @@ func (p *Service) onTopicUpdated(m *stan.Msg) {
 	}()
 
 	var t *model.Topic
-	action := func(c context.Context, _ uint) error {
-		tp, e := p.getTopic(c, p.d.DB(), info.TopicID)
-		if e != nil {
-			return e
+	if t, err = p.getTopic(c, tx, info.TopicID); err != nil {
+		if ecode.Cause(err) == ecode.TopicNotExist {
+			m.Ack()
 		}
-
-		t = tp
-		return nil
-	}
-
-	if err := retry.TryContext(c, action, strategy.Limit(3)); err != nil {
-		m.Ack()
 		return
 	}
-
-	var v *model.Account
-	action = func(c context.Context, _ uint) error {
-		acc, e := p.getAccount(c, p.d.DB(), info.ActorID)
-		if e != nil {
-			return e
-		}
-
-		v = acc
-		return nil
-	}
-
-	if err := retry.TryContext(c, action, strategy.Limit(3)); err != nil {
-		m.Ack()
-		return
-	}
-
 	feed := &model.TopicFeed{
 		ID:         gid.NewID(),
 		TopicID:    info.TopicID,
@@ -389,13 +305,13 @@ func (p *Service) onTopicUpdated(m *stan.Msg) {
 		ActionText: def.ActionTextUpdateTopic,
 		ActorID:    info.ActorID,
 		ActorType:  def.ActorTypeUser,
-		TargetID:   info.TopicID,
+		TargetID:   t.ID,
 		TargetType: def.TargetTypeTopic,
 		CreatedAt:  time.Now().Unix(),
 		UpdatedAt:  time.Now().Unix(),
 	}
 
-	if err = p.d.AddTopicFeed(c, p.d.DB(), feed); err != nil {
+	if err = p.d.AddTopicFeed(c, tx, feed); err != nil {
 		log.Errorf("service.onTopicUpdated() failed %#v", err)
 		return
 	}
@@ -435,38 +351,14 @@ func (p *Service) onTopicFollowed(m *stan.Msg) {
 	}()
 
 	var t *model.Topic
-	action := func(c context.Context, _ uint) error {
-		tp, e := p.getTopic(c, p.d.DB(), info.TopicID)
-		if e != nil {
-			return e
+	if t, err = p.getTopic(c, tx, info.TopicID); err != nil {
+		if ecode.Cause(err) == ecode.TopicNotExist {
+			m.Ack()
 		}
-
-		t = tp
-		return nil
-	}
-
-	if err := retry.TryContext(c, action, strategy.Limit(3)); err != nil {
-		m.Ack()
 		return
 	}
 
 	if !t.IsPrivate {
-		return
-	}
-
-	var v *model.Account
-	action = func(c context.Context, _ uint) error {
-		acc, e := p.getAccount(c, p.d.DB(), info.ActorID)
-		if e != nil {
-			return e
-		}
-
-		v = acc
-		return nil
-	}
-
-	if err := retry.TryContext(c, action, strategy.Limit(3)); err != nil {
-		m.Ack()
 		return
 	}
 
@@ -484,7 +376,7 @@ func (p *Service) onTopicFollowed(m *stan.Msg) {
 		UpdatedAt:  time.Now().Unix(),
 	}
 
-	if err = p.d.AddTopicFeed(c, p.d.DB(), feed); err != nil {
+	if err = p.d.AddTopicFeed(c, tx, feed); err != nil {
 		log.Errorf("service.onTopicUpdated() failed %#v", err)
 		return
 	}

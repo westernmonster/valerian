@@ -14,6 +14,17 @@ import (
 	"github.com/nats-io/stan.go"
 )
 
+func (p *Service) getArticleHistory(c context.Context, node sqalx.Node, articleID int64) (item *model.ArticleHistory, err error) {
+	if item, err = p.d.GetArticleHistoryByID(c, p.d.DB(), articleID); err != nil {
+		return
+	} else if item == nil {
+		err = ecode.ArticleHistoryNotExist
+		return
+	}
+
+	return
+}
+
 func (p *Service) getArticle(c context.Context, node sqalx.Node, articleID int64) (item *model.Article, err error) {
 	var addCache = true
 	if item, err = p.d.ArticleCache(c, articleID); err != nil {
@@ -47,6 +58,14 @@ func (p *Service) onArticleAdded(m *stan.Msg) {
 		return
 	}
 
+	var history *model.ArticleHistory
+	if history, err = p.getArticleHistory(c, p.d.DB(), info.ArticleHistoryID); err != nil {
+		if ecode.Cause(err) == ecode.ArticleHistoryNotExist {
+			m.Ack()
+		}
+		return
+	}
+
 	var article *model.Article
 	if article, err = p.getArticle(c, p.d.DB(), info.ArticleID); err != nil {
 		if ecode.Cause(err) == ecode.ArticleNotExist {
@@ -63,7 +82,7 @@ func (p *Service) onArticleAdded(m *stan.Msg) {
 		ActionText: def.ActionTextCreateArticle,
 		ActorID:    article.CreatedBy,
 		ActorType:  def.ActorTypeUser,
-		TargetID:   article.ID,
+		TargetID:   history.ID,
 		TargetType: def.TargetTypeArticleHistory,
 		CreatedAt:  time.Now().Unix(),
 		UpdatedAt:  time.Now().Unix(),
@@ -85,6 +104,14 @@ func (p *Service) onArticleUpdated(m *stan.Msg) {
 	info := new(def.MsgArticleUpdated)
 	if err = info.Unmarshal(m.Data); err != nil {
 		log.Errorf("onReviseUpdated Unmarshal failed %#v", err)
+		return
+	}
+
+	var history *model.ArticleHistory
+	if history, err = p.getArticleHistory(c, p.d.DB(), info.ArticleHistoryID); err != nil {
+		if ecode.Cause(err) == ecode.ArticleHistoryNotExist {
+			m.Ack()
+		}
 		return
 	}
 
@@ -128,8 +155,8 @@ func (p *Service) onArticleUpdated(m *stan.Msg) {
 			ActionText: def.ActionTextUpdateArticle,
 			ActorID:    info.ActorID,
 			ActorType:  def.ActorTypeUser,
-			TargetID:   article.ID,
-			TargetType: def.TargetTypeArticle,
+			TargetID:   history.ID,
+			TargetType: def.TargetTypeArticleHistory,
 			CreatedAt:  time.Now().Unix(),
 			UpdatedAt:  time.Now().Unix(),
 		}
