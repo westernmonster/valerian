@@ -1,7 +1,6 @@
 package http
 
 import (
-	"fmt"
 	"valerian/app/interface/certification/model"
 	"valerian/library/ecode"
 	"valerian/library/net/http/mars"
@@ -23,12 +22,10 @@ import (
 func reqWorkCert(c *mars.Context) {
 	arg := new(model.ArgWorkCert)
 	if e := c.Bind(arg); e != nil {
-		fmt.Println(e)
 		return
 	}
 
 	if e := arg.Validate(); e != nil {
-		fmt.Println(e)
 		c.JSON(nil, ecode.RequestErr)
 		return
 	}
