@@ -17,7 +17,7 @@ func (p *Dao) SetArticleFileCache(c context.Context, articleID int64, m []*api.A
 	conn := p.mc.Get(c)
 	defer conn.Close()
 
-	item := &memcache.Item{Key: key, Object: m, Flags: memcache.FlagProtobuf, Expiration: int32(p.mcExpire)}
+	item := &memcache.Item{Key: key, Object: m, Flags: memcache.FlagJSON, Expiration: int32(p.mcExpire)}
 	if err = conn.Set(item); err != nil {
 		log.For(c).Error(fmt.Sprintf("set article file cache error(%s,%d,%v)", key, p.mcExpire, err))
 	}
