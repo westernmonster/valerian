@@ -4,10 +4,8 @@ import (
 	"context"
 	"fmt"
 	"time"
-	account "valerian/app/service/account/api"
 	"valerian/app/service/feed/def"
 	"valerian/app/service/topic-feed/model"
-	topic "valerian/app/service/topic/api"
 	"valerian/library/database/sqalx"
 	"valerian/library/gid"
 	"valerian/library/log"
@@ -20,6 +18,7 @@ import (
 func (p *Service) onTopicTaxonomyCatalogAdded(m *stan.Msg) {
 	var err error
 	c := context.Background()
+	c = sqalx.NewContext(c, true)
 
 	info := new(def.MsgTopicTaxonomyCatalogAdded)
 	if err = info.Unmarshal(m.Data); err != nil {
@@ -51,9 +50,9 @@ func (p *Service) onTopicTaxonomyCatalogAdded(m *stan.Msg) {
 		return
 	}
 
-	var v *account.BaseInfoReply
+	var v *model.Account
 	action := func(c context.Context, _ uint) error {
-		acc, e := p.d.GetAccountBaseInfo(c, info.ActorID)
+		acc, e := p.getAccount(c, p.d.DB(), info.ActorID)
 		if e != nil {
 			return e
 		}
@@ -81,7 +80,7 @@ func (p *Service) onTopicTaxonomyCatalogAdded(m *stan.Msg) {
 		UpdatedAt:  time.Now().Unix(),
 	}
 
-	if err = p.d.AddTopicFeed(context.Background(), p.d.DB(), feed); err != nil {
+	if err = p.d.AddTopicFeed(c, p.d.DB(), feed); err != nil {
 		log.Errorf("service.onTopicTaxonomyCatalogAdded() failed %#v", err)
 		return
 	}
@@ -96,6 +95,7 @@ func (p *Service) onTopicTaxonomyCatalogAdded(m *stan.Msg) {
 func (p *Service) onTopicTaxonomyCatalogDeleted(m *stan.Msg) {
 	var err error
 	c := context.Background()
+	c = sqalx.NewContext(c, true)
 
 	info := new(def.MsgTopicTaxonomyCatalogDeleted)
 	if err = info.Unmarshal(m.Data); err != nil {
@@ -127,9 +127,9 @@ func (p *Service) onTopicTaxonomyCatalogDeleted(m *stan.Msg) {
 		return
 	}
 
-	var v *account.BaseInfoReply
+	var v *model.Account
 	action := func(c context.Context, _ uint) error {
-		acc, e := p.d.GetAccountBaseInfo(c, info.ActorID)
+		acc, e := p.getAccount(c, p.d.DB(), info.ActorID)
 		if e != nil {
 			return e
 		}
@@ -157,7 +157,7 @@ func (p *Service) onTopicTaxonomyCatalogDeleted(m *stan.Msg) {
 		UpdatedAt:  time.Now().Unix(),
 	}
 
-	if err = p.d.AddTopicFeed(context.Background(), p.d.DB(), feed); err != nil {
+	if err = p.d.AddTopicFeed(c, p.d.DB(), feed); err != nil {
 		log.Errorf("service.onTopicTaxonomyCatalogDeleted() failed %#v", err)
 		return
 	}
@@ -172,6 +172,7 @@ func (p *Service) onTopicTaxonomyCatalogDeleted(m *stan.Msg) {
 func (p *Service) onTopicTaxonomyCatalogRenamed(m *stan.Msg) {
 	var err error
 	c := context.Background()
+	c = sqalx.NewContext(c, true)
 
 	info := new(def.MsgTopicTaxonomyCatalogRenamed)
 	if err = info.Unmarshal(m.Data); err != nil {
@@ -203,9 +204,9 @@ func (p *Service) onTopicTaxonomyCatalogRenamed(m *stan.Msg) {
 		return
 	}
 
-	var v *account.BaseInfoReply
+	var v *model.Account
 	action := func(c context.Context, _ uint) error {
-		acc, e := p.d.GetAccountBaseInfo(c, info.ActorID)
+		acc, e := p.getAccount(c, p.d.DB(), info.ActorID)
 		if e != nil {
 			return e
 		}
@@ -233,7 +234,7 @@ func (p *Service) onTopicTaxonomyCatalogRenamed(m *stan.Msg) {
 		UpdatedAt:  time.Now().Unix(),
 	}
 
-	if err = p.d.AddTopicFeed(context.Background(), p.d.DB(), feed); err != nil {
+	if err = p.d.AddTopicFeed(c, p.d.DB(), feed); err != nil {
 		log.Errorf("service.onTopicTaxonomyCatalogRenamed() failed %#v", err)
 		return
 	}
@@ -248,6 +249,7 @@ func (p *Service) onTopicTaxonomyCatalogRenamed(m *stan.Msg) {
 func (p *Service) onTopicTaxonomyCatalogMoved(m *stan.Msg) {
 	var err error
 	c := context.Background()
+	c = sqalx.NewContext(c, true)
 
 	info := new(def.MsgTopicTaxonomyCatalogMoved)
 	if err = info.Unmarshal(m.Data); err != nil {
@@ -279,9 +281,9 @@ func (p *Service) onTopicTaxonomyCatalogMoved(m *stan.Msg) {
 		return
 	}
 
-	var v *account.BaseInfoReply
+	var v *model.Account
 	action := func(c context.Context, _ uint) error {
-		acc, e := p.d.GetAccountBaseInfo(c, info.ActorID)
+		acc, e := p.getAccount(c, p.d.DB(), info.ActorID)
 		if e != nil {
 			return e
 		}
@@ -309,7 +311,7 @@ func (p *Service) onTopicTaxonomyCatalogMoved(m *stan.Msg) {
 		UpdatedAt:  time.Now().Unix(),
 	}
 
-	if err = p.d.AddTopicFeed(context.Background(), p.d.DB(), feed); err != nil {
+	if err = p.d.AddTopicFeed(c, p.d.DB(), feed); err != nil {
 		log.Errorf("service.onTopicTaxonomyCatalogMoved() failed %#v", err)
 		return
 	}
@@ -347,9 +349,9 @@ func (p *Service) onTopicUpdated(m *stan.Msg) {
 		}
 	}()
 
-	var t *topic.TopicInfo
+	var t *model.Topic
 	action := func(c context.Context, _ uint) error {
-		tp, e := p.d.GetTopic(c, info.TopicID)
+		tp, e := p.getTopic(c, p.d.DB(), info.TopicID)
 		if e != nil {
 			return e
 		}
@@ -363,9 +365,9 @@ func (p *Service) onTopicUpdated(m *stan.Msg) {
 		return
 	}
 
-	var v *account.BaseInfoReply
+	var v *model.Account
 	action = func(c context.Context, _ uint) error {
-		acc, e := p.d.GetAccountBaseInfo(c, info.ActorID)
+		acc, e := p.getAccount(c, p.d.DB(), info.ActorID)
 		if e != nil {
 			return e
 		}
@@ -393,7 +395,7 @@ func (p *Service) onTopicUpdated(m *stan.Msg) {
 		UpdatedAt:  time.Now().Unix(),
 	}
 
-	if err = p.d.AddTopicFeed(context.Background(), p.d.DB(), feed); err != nil {
+	if err = p.d.AddTopicFeed(c, p.d.DB(), feed); err != nil {
 		log.Errorf("service.onTopicUpdated() failed %#v", err)
 		return
 	}
@@ -409,6 +411,7 @@ func (p *Service) onTopicUpdated(m *stan.Msg) {
 func (p *Service) onTopicFollowed(m *stan.Msg) {
 	var err error
 	c := context.Background()
+	c = sqalx.NewContext(c, true)
 
 	info := new(def.MsgTopicFollowed)
 	if err = info.Unmarshal(m.Data); err != nil {
@@ -431,9 +434,9 @@ func (p *Service) onTopicFollowed(m *stan.Msg) {
 		}
 	}()
 
-	var t *topic.TopicInfo
+	var t *model.Topic
 	action := func(c context.Context, _ uint) error {
-		tp, e := p.d.GetTopic(c, info.TopicID)
+		tp, e := p.getTopic(c, p.d.DB(), info.TopicID)
 		if e != nil {
 			return e
 		}
@@ -451,9 +454,9 @@ func (p *Service) onTopicFollowed(m *stan.Msg) {
 		return
 	}
 
-	var v *account.BaseInfoReply
+	var v *model.Account
 	action = func(c context.Context, _ uint) error {
-		acc, e := p.d.GetAccountBaseInfo(c, info.ActorID)
+		acc, e := p.getAccount(c, p.d.DB(), info.ActorID)
 		if e != nil {
 			return e
 		}
@@ -481,7 +484,7 @@ func (p *Service) onTopicFollowed(m *stan.Msg) {
 		UpdatedAt:  time.Now().Unix(),
 	}
 
-	if err = p.d.AddTopicFeed(context.Background(), p.d.DB(), feed); err != nil {
+	if err = p.d.AddTopicFeed(c, p.d.DB(), feed); err != nil {
 		log.Errorf("service.onTopicUpdated() failed %#v", err)
 		return
 	}

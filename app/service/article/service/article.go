@@ -420,7 +420,7 @@ func (p *Service) AddArticle(c context.Context, arg *api.ArgAddArticle) (id int6
 	p.addCache(func() {
 		p.onArticleAdded(context.Background(), item.ID, arg.Aid, time.Now().Unix())
 		for _, v := range relations {
-			p.onCatalogArticleAdded(context.Background(), item.ID, v.ToTopicID, arg.Aid, time.Now().Unix())
+			p.onCatalogArticleAdded(context.Background(), item.ID, h.ID, v.ToTopicID, arg.Aid, time.Now().Unix())
 		}
 	})
 	return

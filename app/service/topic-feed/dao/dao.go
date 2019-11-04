@@ -5,17 +5,11 @@ import (
 	"fmt"
 	"time"
 
-	account "valerian/app/service/account/api"
-	article "valerian/app/service/article/api"
-	discuss "valerian/app/service/discuss/api"
 	"valerian/app/service/topic-feed/conf"
-	topic "valerian/app/service/topic/api"
 	"valerian/library/cache/memcache"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
 	"valerian/library/stat/prom"
-
-	"github.com/pkg/errors"
 )
 
 // Dao dao struct
@@ -24,11 +18,6 @@ type Dao struct {
 	mc       *memcache.Pool
 	mcExpire int32
 	c        *conf.Config
-
-	accountRPC account.AccountClient
-	topicRPC   topic.TopicClient
-	articleRPC article.ArticleClient
-	discussRPC discuss.DiscussionClient
 }
 
 func New(c *conf.Config) (dao *Dao) {
@@ -37,30 +26,6 @@ func New(c *conf.Config) (dao *Dao) {
 		db:       sqalx.NewMySQL(c.DB.Main),
 		mc:       memcache.NewPool(c.Memcache.Main.Config),
 		mcExpire: int32(time.Duration(c.Memcache.Main.Expire) / time.Second),
-	}
-
-	if accountRPC, err := account.NewClient(c.AccountRPC); err != nil {
-		panic(errors.WithMessage(err, "Failed to dial account service"))
-	} else {
-		dao.accountRPC = accountRPC
-	}
-
-	if topicRPC, err := topic.NewClient(c.TopicRPC); err != nil {
-		panic(errors.WithMessage(err, "Failed to dial topic service"))
-	} else {
-		dao.topicRPC = topicRPC
-	}
-
-	if articleRPC, err := article.NewClient(c.ArticleRPC); err != nil {
-		panic(errors.WithMessage(err, "Failed to dial article service"))
-	} else {
-		dao.articleRPC = articleRPC
-	}
-
-	if discussRPC, err := discuss.NewClient(c.AccountRPC); err != nil {
-		panic(errors.WithMessage(err, "Failed to dial discuss service"))
-	} else {
-		dao.discussRPC = discussRPC
 	}
 
 	return

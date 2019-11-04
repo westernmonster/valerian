@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"time"
-	article "valerian/app/service/article/api"
 	"valerian/app/service/feed/def"
 	"valerian/app/service/topic-feed/model"
 	"valerian/library/database/sqalx"
@@ -15,16 +14,41 @@ import (
 	"github.com/nats-io/stan.go"
 )
 
+func (p *Service) getArticle(c context.Context, node sqalx.Node, articleID int64) (item *model.Article, err error) {
+	var addCache = true
+	if item, err = p.d.ArticleCache(c, articleID); err != nil {
+		addCache = false
+	} else if item != nil {
+		return
+	}
+
+	if item, err = p.d.GetArticleByID(c, p.d.DB(), articleID); err != nil {
+		return
+	} else if item == nil {
+		err = ecode.ArticleNotExist
+		return
+	}
+
+	if addCache {
+		p.addCache(func() {
+			p.d.SetArticleCache(context.TODO(), item)
+		})
+	}
+	return
+}
+
 func (p *Service) onArticleAdded(m *stan.Msg) {
 	var err error
 	info := new(def.MsgCatalogArticleAdded)
+	c := context.Background()
+	c = sqalx.NewContext(c, true)
 	if err = info.Unmarshal(m.Data); err != nil {
 		log.Errorf("onReviseAdded Unmarshal failed %#v", err)
 		return
 	}
 
-	var article *article.ArticleInfo
-	if article, err = p.d.GetArticle(context.Background(), info.ArticleID); err != nil {
+	var article *model.Article
+	if article, err = p.getArticle(c, p.d.DB(), info.ArticleID); err != nil {
 		if ecode.Cause(err) == ecode.ArticleNotExist {
 			m.Ack()
 		}
@@ -37,10 +61,10 @@ func (p *Service) onArticleAdded(m *stan.Msg) {
 		ActionType: def.ActionTypeCreateArticle,
 		ActionTime: time.Now().Unix(),
 		ActionText: def.ActionTextCreateArticle,
-		ActorID:    article.Creator.ID,
+		ActorID:    article.CreatedBy,
 		ActorType:  def.ActorTypeUser,
 		TargetID:   article.ID,
-		TargetType: def.TargetTypeArticle,
+		TargetType: def.TargetTypeArticleHistory,
 		CreatedAt:  time.Now().Unix(),
 		UpdatedAt:  time.Now().Unix(),
 	}
@@ -56,6 +80,7 @@ func (p *Service) onArticleAdded(m *stan.Msg) {
 func (p *Service) onArticleUpdated(m *stan.Msg) {
 	var err error
 	c := context.Background()
+	c = sqalx.NewContext(c, true)
 
 	info := new(def.MsgArticleUpdated)
 	if err = info.Unmarshal(m.Data); err != nil {
@@ -63,8 +88,8 @@ func (p *Service) onArticleUpdated(m *stan.Msg) {
 		return
 	}
 
-	var article *article.ArticleInfo
-	if article, err = p.d.GetArticle(c, info.ArticleID); err != nil {
+	var article *model.Article
+	if article, err = p.getArticle(c, p.d.DB(), info.ArticleID); err != nil {
 		if ecode.Cause(err) == ecode.ArticleNotExist {
 			m.Ack()
 		}

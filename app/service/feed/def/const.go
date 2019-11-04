@@ -133,11 +133,12 @@ const (
 )
 
 const (
-	TargetTypeTopic        = "topic"
-	TargetTypeDiscussion   = "discussion"
-	TargetTypeRevise       = "revise"
-	TargetTypeArticle      = "article"
-	TargetTypeMember       = "member"
-	TargetTypeTopicCatalog = "catalog"
-	TargetTypeComment      = "comment"
+	TargetTypeTopic          = "topic"
+	TargetTypeDiscussion     = "discussion"
+	TargetTypeRevise         = "revise"
+	TargetTypeArticle        = "article"
+	TargetTypeArticleHistory = "article_history"
+	TargetTypeMember         = "member"
+	TargetTypeTopicCatalog   = "catalog"
+	TargetTypeComment        = "comment"
 )

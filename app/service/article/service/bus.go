@@ -8,8 +8,8 @@ import (
 	"valerian/library/log"
 )
 
-func (p *Service) onCatalogArticleAdded(c context.Context, articleID, topicID, aid, actionTime int64) {
-	msg := &def.MsgCatalogArticleAdded{ArticleID: articleID, TopicID: topicID, ActorID: aid, ActionTime: actionTime}
+func (p *Service) onCatalogArticleAdded(c context.Context, articleID, articleHistoryID, topicID, aid, actionTime int64) {
+	msg := &def.MsgCatalogArticleAdded{ArticleID: articleID, ArticleHistoryID: articleHistoryID, TopicID: topicID, ActorID: aid, ActionTime: actionTime}
 
 	var data []byte
 	var err error

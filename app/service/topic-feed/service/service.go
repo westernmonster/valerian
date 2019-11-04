@@ -16,7 +16,7 @@ import (
 // Service struct of service
 type Service struct {
 	c      *conf.Config
-	d      IDao
+	d      *dao.Dao
 	mq     *mq.MessageQueue
 	missch chan func()
 }
@@ -42,16 +42,6 @@ func New(c *conf.Config) (s *Service) {
 
 	if err := s.mq.QueueSubscribe(def.BusArticleUpdated, "topic-feed", s.onArticleUpdated); err != nil {
 		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusArticleUpdated, "topic-feed")
-		panic(err)
-	}
-
-	if err := s.mq.QueueSubscribe(def.BusReviseAdded, "topic-feed", s.onReviseAdded); err != nil {
-		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusReviseAdded, "topic-feed")
-		panic(err)
-	}
-
-	if err := s.mq.QueueSubscribe(def.BusReviseDeleted, "topic-feed", s.onReviseDeleted); err != nil {
-		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusReviseDeleted, "topic-feed")
 		panic(err)
 	}
 
