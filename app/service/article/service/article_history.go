@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"fmt"
 
 	"valerian/app/service/article/api"
 	"valerian/app/service/article/model"
@@ -15,7 +14,6 @@ func (p *Service) GetArticleHistoriesPaged(c context.Context, articleID int64, l
 		return
 	}
 
-	fmt.Printf("dao.GetArticleHistoriesPaged(), data(%+v)", data)
 	resp = &api.ArticleHistoryListResp{
 		Items: make([]*api.ArticleHistoryItem, len(data)),
 	}
