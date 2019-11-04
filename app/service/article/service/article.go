@@ -623,6 +623,7 @@ func (p *Service) UpdateArticle(c context.Context, arg *api.ArgUpdateArticle) (e
 		return
 	}
 
+	fmt.Println("addArticleHistory")
 	if err = p.d.AddArticleHistory(c, tx, h); err != nil {
 		return
 	}
