@@ -13,6 +13,7 @@ import (
 	"valerian/app/service/message/model"
 	"valerian/library/database/sqalx"
 	"valerian/library/gid"
+	"valerian/library/jpush"
 	"valerian/library/log"
 
 	"github.com/kamilsk/retry/v4"
@@ -84,7 +85,15 @@ func (p *Service) onArticleCommented(m *stan.Msg) {
 	m.Ack()
 
 	p.addCache(func() {
-		if _, err := p.pushSingleUser(context.Background(), msg.AccountID, msg.ActionText); err != nil {
+		if _, err := p.pushSingleUser(context.Background(), msg.AccountID, &jpush.Message{
+			Title:   def.PushMsgTitleArticleCommented,
+			Content: def.PushMsgTitleArticleCommented,
+			Extras: map[string]interface{}{
+				"id":   strconv.FormatInt(msg.ID, 10),
+				"type": "link",
+				"url":  "link",
+			},
+		}); err != nil {
 			log.For(context.Background()).Error(fmt.Sprintf("service.onCommentAdded Push message failed %#v", err))
 		}
 	})

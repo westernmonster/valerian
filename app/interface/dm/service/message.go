@@ -201,7 +201,7 @@ func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, o
 				return
 			}
 
-			item.Content.Target.Link = fmt.Sprintf("pronote://article/%d", article.ID)
+			item.Content.Target.Link = fmt.Sprintf("stonote://article/%d", article.ID)
 			item.Content.Target.Text = article.Title
 
 			item.Target = p.FromArticle(article)
@@ -212,7 +212,7 @@ func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, o
 				return
 			}
 
-			item.Content.Target.Link = fmt.Sprintf("pronote://revise/%d", revise.ID)
+			item.Content.Target.Link = fmt.Sprintf("stonote://revise/%d", revise.ID)
 			item.Content.Target.Text = revise.Title
 			item.Target = p.FromRevise(revise)
 			break
@@ -222,7 +222,7 @@ func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, o
 				return
 			}
 
-			item.Content.Target.Link = fmt.Sprintf("pronote://discuss/%d", discuss.ID)
+			item.Content.Target.Link = fmt.Sprintf("stonote://discuss/%d", discuss.ID)
 			item.Content.Target.Text = discuss.Title
 			item.Target = p.FromDiscussion(discuss)
 			break
@@ -233,7 +233,7 @@ func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, o
 				return
 			}
 
-			item.Content.Target.Link = fmt.Sprintf("pronote://topic/%d", topic.ID)
+			item.Content.Target.Link = fmt.Sprintf("stonote://topic/%d", topic.ID)
 			item.Content.Target.Text = topic.Name
 			item.Target = p.FromTopic(topic)
 			break
@@ -244,7 +244,7 @@ func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, o
 				return
 			}
 
-			item.Content.Target.Link = fmt.Sprintf("pronote://user/%d", info.ID)
+			item.Content.Target.Link = fmt.Sprintf("stonote://user/%d", info.ID)
 			item.Content.Target.Text = info.UserName
 			item.Target = info
 			break
@@ -261,21 +261,21 @@ func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, o
 					return
 				}
 
-				item.Content.Target.Link = fmt.Sprintf("pronote://%s/%d/comment/%d", model.TargetTypeArticle, ct.OwnerID, ct.ID)
+				item.Content.Target.Link = fmt.Sprintf("stonote://%s/%d/comment/%d", model.TargetTypeArticle, ct.OwnerID, ct.ID)
 				item.Content.Target.Text = xstr.Excerpt(ct.Content)
 				break
 			case model.TargetTypeRevise:
 				if item.Target, err = p.GetCommentTarget(c, ct); err != nil {
 					return
 				}
-				item.Content.Target.Link = fmt.Sprintf("pronote://%s/%d/comment/%d", model.TargetTypeRevise, ct.OwnerID, ct.ID)
+				item.Content.Target.Link = fmt.Sprintf("stonote://%s/%d/comment/%d", model.TargetTypeRevise, ct.OwnerID, ct.ID)
 				item.Content.Target.Text = xstr.Excerpt(ct.Content)
 				break
 			case model.TargetTypeDiscussion:
 				if item.Target, err = p.GetCommentTarget(c, ct); err != nil {
 					return
 				}
-				item.Content.Target.Link = fmt.Sprintf("pronote://%s/%d/comment/%d", model.TargetTypeDiscussion, ct.OwnerID, ct.ID)
+				item.Content.Target.Link = fmt.Sprintf("stonote://%s/%d/comment/%d", model.TargetTypeDiscussion, ct.OwnerID, ct.ID)
 				item.Content.Target.Text = xstr.Excerpt(ct.Content)
 				break
 			case model.TargetTypeComment:
@@ -288,7 +288,7 @@ func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, o
 				switch tg.OwnerType {
 				case model.TargetTypeArticle:
 					owner := tg.Owner.(*model.TargetArticle)
-					item.Content.Target.Link = fmt.Sprintf("pronote://%s/%d/comment/%d/sub/%d",
+					item.Content.Target.Link = fmt.Sprintf("stonote://%s/%d/comment/%d/sub/%d",
 						tg.OwnerType,
 						owner.ID,
 						tg.ParentComment.ID,
@@ -297,7 +297,7 @@ func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, o
 					break
 				case model.TargetTypeRevise:
 					owner := tg.Owner.(*model.TargetRevise)
-					item.Content.Target.Link = fmt.Sprintf("pronote://%s/%d/comment/%d/sub/%d",
+					item.Content.Target.Link = fmt.Sprintf("stonote://%s/%d/comment/%d/sub/%d",
 						tg.OwnerType,
 						owner.ID,
 						tg.ParentComment.ID,
@@ -305,7 +305,7 @@ func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, o
 					break
 				case model.TargetTypeDiscussion:
 					owner := tg.Owner.(*model.TargetDiscuss)
-					item.Content.Target.Link = fmt.Sprintf("pronote://%s/%d/comment/%d/sub/%d",
+					item.Content.Target.Link = fmt.Sprintf("stonote://%s/%d/comment/%d/sub/%d",
 						tg.OwnerType,
 						owner.ID,
 						tg.ParentComment.ID,
