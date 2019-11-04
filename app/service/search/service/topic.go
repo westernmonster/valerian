@@ -30,6 +30,10 @@ func (p *Service) onTopicAdded(m *stan.Msg) {
 		return
 	}
 
+	if v.IsPrivate {
+		return
+	}
+
 	item := &model.ESTopic{
 		ID:              v.ID,
 		Name:            &v.Name,
@@ -127,8 +131,15 @@ func (p *Service) onTopicUpdated(m *stan.Msg) {
 		Avatar:       &acc.Avatar,
 		Introduction: &acc.Introduction,
 	}
-	if err = p.d.PutTopic2ES(c, item); err != nil {
-		return
+
+	if v.IsPrivate {
+		if err = p.d.DelESTopic(c, v.ID); err != nil {
+			return
+		}
+	} else {
+		if err = p.d.PutTopic2ES(c, item); err != nil {
+			return
+		}
 	}
 
 	m.Ack()
