@@ -20,7 +20,7 @@ type ArgWorkCert struct {
 	// 工作证有效期
 	// 过期时间
 	// Unix时间戳
-	ExpiresAt int64 `json:"expires_at"`
+	ExpiresAt int64 `json:"expires_at,string" swaggertype:"string"`
 }
 
 func (p *ArgWorkCert) Validate() error {
