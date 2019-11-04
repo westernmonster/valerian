@@ -15,7 +15,7 @@ const AppID = "service.certification"
 
 // NewClient new member grpc client
 func NewClient(cfg *warden.ClientConfig, opts ...grpc.DialOption) (CertificationClient, error) {
-	cfg.Timeout = xtime.Duration(time.Second * 2)
+	cfg.Timeout = xtime.Duration(time.Second * 3)
 	client := warden.NewClient(cfg, opts...)
 	conn, err := client.Dial(context.Background(), "discovery://default/"+AppID)
 	if err != nil {
