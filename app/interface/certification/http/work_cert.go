@@ -23,6 +23,7 @@ import (
 func reqWorkCert(c *mars.Context) {
 	arg := new(model.ArgWorkCert)
 	if e := c.Bind(arg); e != nil {
+		fmt.Println(e)
 		return
 	}
 
