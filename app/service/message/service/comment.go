@@ -86,8 +86,9 @@ func (p *Service) onArticleCommented(m *stan.Msg) {
 
 	p.addCache(func() {
 		if _, err := p.pushSingleUser(context.Background(), msg.AccountID, &jpush.Message{
-			Title:   def.PushMsgTitleArticleCommented,
-			Content: def.PushMsgTitleArticleCommented,
+			Title:       def.PushMsgTitleArticleCommented,
+			Content:     def.PushMsgTitleArticleCommented,
+			ContentType: "text",
 			Extras: map[string]interface{}{
 				"id":   strconv.FormatInt(msg.ID, 10),
 				"type": "link",
@@ -145,8 +146,9 @@ func (p *Service) onReviseCommented(m *stan.Msg) {
 
 	p.addCache(func() {
 		if _, err := p.pushSingleUser(context.Background(), msg.AccountID, &jpush.Message{
-			Title:   def.PushMsgTitleReviseCommented,
-			Content: def.PushMsgTitleReviseCommented,
+			Title:       def.PushMsgTitleReviseCommented,
+			Content:     def.PushMsgTitleReviseCommented,
+			ContentType: "text",
 			Extras: map[string]interface{}{
 				"id":   strconv.FormatInt(msg.ID, 10),
 				"type": "link",
@@ -227,8 +229,9 @@ func (p *Service) onDiscussionCommented(m *stan.Msg) {
 
 	p.addCache(func() {
 		if _, err := p.pushSingleUser(context.Background(), msg.AccountID, &jpush.Message{
-			Title:   def.PushMsgTitleDiscussionCommented,
-			Content: def.PushMsgTitleDiscussionCommented,
+			Title:       def.PushMsgTitleDiscussionCommented,
+			Content:     def.PushMsgTitleDiscussionCommented,
+			ContentType: "text",
 			Extras: map[string]interface{}{
 				"id":   strconv.FormatInt(msg.ID, 10),
 				"type": "link",
@@ -290,8 +293,9 @@ func (p *Service) onCommentReplied(m *stan.Msg) {
 
 	p.addCache(func() {
 		if _, err := p.pushSingleUser(context.Background(), msg.AccountID, &jpush.Message{
-			Title:   def.PushMsgTitleCommentReplied,
-			Content: def.PushMsgTitleCommentReplied,
+			Title:       def.PushMsgTitleCommentReplied,
+			Content:     def.PushMsgTitleCommentReplied,
+			ContentType: "text",
 			Extras: map[string]interface{}{
 				"id":   strconv.FormatInt(msg.ID, 10),
 				"type": "link",

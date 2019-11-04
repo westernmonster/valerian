@@ -85,8 +85,9 @@ func (p *Service) onReviseAdded(m *stan.Msg) {
 
 	p.addCache(func() {
 		if _, err := p.pushSingleUser(context.Background(), msg.AccountID, &jpush.Message{
-			Title:   def.PushMsgTitleReviseAdded,
-			Content: def.PushMsgTitleReviseAdded,
+			Title:       def.PushMsgTitleReviseAdded,
+			Content:     def.PushMsgTitleReviseAdded,
+			ContentType: "text",
 			Extras: map[string]interface{}{
 				"id":   strconv.FormatInt(msg.ID, 10),
 				"type": "link",

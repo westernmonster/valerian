@@ -73,8 +73,9 @@ func (p *Service) onMemberFollowed(m *stan.Msg) {
 
 	p.addCache(func() {
 		if _, err := p.pushSingleUser(context.Background(), msg.AccountID, &jpush.Message{
-			Title:   def.PushMsgTitleFollowed,
-			Content: def.PushMsgTitleFollowed,
+			Title:       def.PushMsgTitleFollowed,
+			Content:     def.PushMsgTitleFollowed,
+			ContentType: "text",
 			Extras: map[string]interface{}{
 				"id":   strconv.FormatInt(msg.ID, 10),
 				"type": "link",

@@ -161,8 +161,9 @@ func (p *Service) onTopicFollowRequested(m *stan.Msg) {
 
 		pushMsgs = append(pushMsgs, &PushMessge{
 			Msg: &jpush.Message{
-				Title:   def.PushMsgTitleTopicFollowRequested,
-				Content: def.PushMsgTitleTopicFollowRequested,
+				Title:       def.PushMsgTitleTopicFollowRequested,
+				Content:     def.PushMsgTitleTopicFollowRequested,
+				ContentType: "text",
 				Extras: map[string]interface{}{
 					"id":   strconv.FormatInt(msg.ID, 10),
 					"type": "link",
@@ -256,8 +257,9 @@ func (p *Service) onTopicFollowApproved(m *stan.Msg) {
 
 	p.addCache(func() {
 		if _, err := p.pushSingleUser(context.Background(), msg.AccountID, &jpush.Message{
-			Title:   def.PushMsgTitleTopicFollowApproved,
-			Content: def.PushMsgTitleTopicFollowApproved,
+			Title:       def.PushMsgTitleTopicFollowApproved,
+			Content:     def.PushMsgTitleTopicFollowApproved,
+			ContentType: "text",
 			Extras: map[string]interface{}{
 				"id":   strconv.FormatInt(msg.ID, 10),
 				"type": "link",
@@ -335,8 +337,9 @@ func (p *Service) onTopicFollowRejected(m *stan.Msg) {
 
 	p.addCache(func() {
 		if _, err := p.pushSingleUser(context.Background(), msg.AccountID, &jpush.Message{
-			Title:   def.PushMsgTitleTopicFollowRejected,
-			Content: def.PushMsgTitleTopicFollowRejected,
+			Title:       def.PushMsgTitleTopicFollowRejected,
+			Content:     def.PushMsgTitleTopicFollowRejected,
+			ContentType: "text",
 			Extras: map[string]interface{}{
 				"id":   strconv.FormatInt(msg.ID, 10),
 				"type": "link",
@@ -413,8 +416,9 @@ func (p *Service) onTopicInvite(m *stan.Msg) {
 
 	p.addCache(func() {
 		if _, err := p.pushSingleUser(context.Background(), msg.AccountID, &jpush.Message{
-			Title:   def.PushMsgTitleTopicFollowInvited,
-			Content: def.PushMsgTitleTopicFollowInvited,
+			Title:       def.PushMsgTitleTopicFollowInvited,
+			Content:     def.PushMsgTitleTopicFollowInvited,
+			ContentType: "text",
 			Extras: map[string]interface{}{
 				"id":   strconv.FormatInt(msg.ID, 10),
 				"type": "link",

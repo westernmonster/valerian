@@ -82,8 +82,9 @@ func (p *Service) onArticleLiked(m *stan.Msg) {
 
 	p.addCache(func() {
 		if _, err := p.pushSingleUser(context.Background(), msg.AccountID, &jpush.Message{
-			Title:   def.PushMsgTitleArticleLiked,
-			Content: def.PushMsgTitleArticleLiked,
+			Title:       def.PushMsgTitleArticleLiked,
+			Content:     def.PushMsgTitleArticleLiked,
+			ContentType: "text",
 			Extras: map[string]interface{}{
 				"id":   strconv.FormatInt(msg.ID, 10),
 				"type": "link",
@@ -159,8 +160,9 @@ func (p *Service) onReviseLiked(m *stan.Msg) {
 
 	p.addCache(func() {
 		if _, err := p.pushSingleUser(context.Background(), msg.AccountID, &jpush.Message{
-			Title:   def.PushMsgTitleReviseLiked,
-			Content: def.PushMsgTitleReviseLiked,
+			Title:       def.PushMsgTitleReviseLiked,
+			Content:     def.PushMsgTitleReviseLiked,
+			ContentType: "text",
 			Extras: map[string]interface{}{
 				"id":   strconv.FormatInt(msg.ID, 10),
 				"type": "link",
@@ -235,8 +237,9 @@ func (p *Service) onDiscussionLiked(m *stan.Msg) {
 
 	p.addCache(func() {
 		if _, err := p.pushSingleUser(context.Background(), msg.AccountID, &jpush.Message{
-			Title:   def.PushMsgTitleDiscussionLiked,
-			Content: def.PushMsgTitleDiscussionLiked,
+			Title:       def.PushMsgTitleDiscussionLiked,
+			Content:     def.PushMsgTitleDiscussionLiked,
+			ContentType: "text",
 			Extras: map[string]interface{}{
 				"id":   strconv.FormatInt(msg.ID, 10),
 				"type": "link",
@@ -311,8 +314,9 @@ func (p *Service) onCommentLiked(m *stan.Msg) {
 
 	p.addCache(func() {
 		if _, err := p.pushSingleUser(context.Background(), msg.AccountID, &jpush.Message{
-			Title:   def.PushMsgTitleCommentLiked,
-			Content: def.PushMsgTitleCommentLiked,
+			Title:       def.PushMsgTitleCommentLiked,
+			Content:     def.PushMsgTitleCommentLiked,
+			ContentType: "text",
 			Extras: map[string]interface{}{
 				"id":   strconv.FormatInt(msg.ID, 10),
 				"type": "link",
