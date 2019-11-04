@@ -135,7 +135,7 @@ func (p *Service) AuditWorkCert(c context.Context, arg *model.ArgAuditWorkCert) 
 	return
 }
 
-func (p *Service) GetWorkCertStatus(c context.Context, aid int64) (status int, err error) {
+func (p *Service) GetWorkCertStatus(c context.Context, aid int64) (status int32, err error) {
 	var item *model.WorkCertification
 	if item, err = p.getWorkCertByID(c, p.d.DB(), aid); err != nil {
 		if ecode.Cause(err) == ecode.WorkCertificationNotExist {

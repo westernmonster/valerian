@@ -5,7 +5,7 @@ import "valerian/library/database/sqlx/types"
 type IDCertification struct {
 	ID                   int64         `db:"id" json:"id,string"`                                // ID ID
 	AccountID            int64         `db:"account_id" json:"account_id,string"`                // AccountID 账户ID
-	Status               int           `db:"status" json:"status"`                               // Status 状态：-1 未认证, 0 认证中,  1 认证成功, 2 认证失败
+	Status               int32         `db:"status" json:"status"`                               // Status 状态：-1 未认证, 0 认证中,  1 认证成功, 2 认证失败
 	AuditConclusions     string        `db:"audit_conclusions" json:"audit_conclusions"`         // AuditConclusions 失败原因
 	Name                 string        `db:"name" json:"name"`                                   // Name 姓名
 	IdentificationNumber string        `db:"identification_number" json:"identification_number"` // IdentificationNumber 证件号

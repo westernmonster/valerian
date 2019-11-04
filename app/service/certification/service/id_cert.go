@@ -64,7 +64,7 @@ func (p *Service) RequestIDCert(c context.Context, aid int64) (token cloudauth.V
 
 }
 
-func (p *Service) GetIDCertStatus(c context.Context, aid int64) (status int, err error) {
+func (p *Service) GetIDCertStatus(c context.Context, aid int64) (status int32, err error) {
 	var item *model.IDCertification
 	if item, err = p.getIDCertByID(c, p.d.DB(), aid); err != nil {
 		if ecode.Cause(err) == ecode.IDCertificationNotExist {
@@ -77,7 +77,7 @@ func (p *Service) GetIDCertStatus(c context.Context, aid int64) (status int, err
 }
 
 // 刷新认证状态
-func (p *Service) RefreshIDCertStatus(c context.Context, aid int64) (status int, err error) {
+func (p *Service) RefreshIDCertStatus(c context.Context, aid int64) (status int32, err error) {
 	var item *model.IDCertification
 	if item, err = p.getIDCertByID(c, p.d.DB(), aid); err != nil {
 		return
@@ -90,7 +90,7 @@ func (p *Service) RefreshIDCertStatus(c context.Context, aid int64) (status int,
 		return
 	}
 
-	item.Status = resp.Data.StatusCode
+	item.Status = int32(resp.Data.StatusCode)
 	item.AuditConclusions = resp.Data.AuditConclusions
 
 	if item.Status == model.IDCertificationSuccess {
