@@ -6,10 +6,12 @@ import (
 
 	"valerian/app/service/article/api"
 	"valerian/app/service/article/model"
+	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
 )
 
 func (p *Service) GetArticleHistoriesPaged(c context.Context, articleID int64, limit, offset int) (resp *api.ArticleHistoryListResp, err error) {
+	c = sqalx.NewContext(c, true)
 	fmt.Printf("dao.GetArticleHistoriesPaged(), article_id(%d) limit(%d) offset(%d)", articleID, limit, offset)
 	var data []*model.ArticleHistory
 	if data, err = p.d.GetArticleHistoriesPaged(c, p.d.DB(), articleID, limit, offset); err != nil {
