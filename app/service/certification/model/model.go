@@ -26,7 +26,7 @@ type IDCertification struct {
 type WorkCertification struct {
 	ID          int64         `db:"id" json:"id,string"`                 // ID ID
 	AccountID   int64         `db:"account_id" json:"account_id,string"` // AccountID 账户ID
-	Status      int           `db:"status" json:"status"`                // Status 状态：-1 未认证, 0 认证中,  1 认证成功, 2 认证失败
+	Status      int32         `db:"status" json:"status"`                // Status 状态：-1 未认证, 0 认证中,  1 认证成功, 2 认证失败
 	WorkPic     string        `db:"work_pic" json:"work_pic"`            // WorkPic 工作证
 	OtherPic    string        `db:"other_pic" json:"other_pic"`          // OtherPic 其他证明
 	Company     string        `db:"company" json:"company"`              // Company 公司

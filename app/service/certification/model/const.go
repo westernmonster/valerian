@@ -1,15 +1,15 @@
 package model
 
 const (
-	IDCertificationUncommitted = -1
-	IDCertificationInProgress  = 0
-	IDCertificationSuccess     = 1
-	IDCertificationFailed      = 2
+	IDCertificationUncommitted = int32(-1)
+	IDCertificationInProgress  = int32(0)
+	IDCertificationSuccess     = int32(1)
+	IDCertificationFailed      = int32(3)
 )
 
 const (
-	WorkCertificationUncommitted = -1
-	WorkCertificationInProgress  = 0
-	WorkCertificationSuccess     = 1
-	WorkCertificationFailed      = 2
+	WorkCertificationUncommitted = int32(-1)
+	WorkCertificationInProgress  = int32(0)
+	WorkCertificationSuccess     = int32(1)
+	WorkCertificationFailed      = int32(2)
 )
