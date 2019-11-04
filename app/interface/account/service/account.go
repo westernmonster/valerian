@@ -62,7 +62,8 @@ func (p *Service) ForgetPassword(c context.Context, arg *model.ArgForgetPassword
 			return
 		}
 	} else {
-		if account, err = p.d.GetAccountByMobile(c, p.d.DB(), arg.Identity); err != nil {
+		mobile := arg.Prefix + arg.Identity
+		if account, err = p.d.GetAccountByMobile(c, p.d.DB(), mobile); err != nil {
 			return
 		} else if account == nil {
 			err = ecode.UserNotExist
