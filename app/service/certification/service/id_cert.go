@@ -45,7 +45,6 @@ func (p *Service) RequestIDCert(c context.Context, aid int64) (token cloudauth.V
 		if err = p.d.AddIDCertification(c, tx, item); err != nil {
 			return
 		}
-		return
 	}
 
 	if err = tx.Commit(); err != nil {
