@@ -74,7 +74,7 @@ func (p *Service) GetTopicMembersPaged(c context.Context, arg *api.ArgTopicMembe
 	}
 
 	for _, v := range items {
-		account, e := p.d.GetAccountBaseInfo(c, v.AccountID)
+		account, e := p.getAccount(c, p.d.DB(), v.AccountID)
 		if e != nil {
 			return
 		}

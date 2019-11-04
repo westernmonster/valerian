@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"time"
-	account "valerian/app/service/account/api"
 	"valerian/app/service/topic/api"
 	"valerian/app/service/topic/model"
 	"valerian/library/database/sqalx"
@@ -57,16 +56,13 @@ func (p *Service) Follow(c context.Context, arg *api.ArgTopicFollow) (status int
 	}
 
 	var t *model.Topic
-	if t, err = p.d.GetTopicByID(c, tx, arg.TopicID); err != nil {
+	if t, err = p.getTopic(c, tx, arg.TopicID); err != nil {
 		return
-	} else if t == nil {
 	}
 
-	var acc *account.BaseInfoReply
-	if acc, err = p.d.GetAccountBaseInfo(c, arg.Aid); err != nil {
+	var acc *model.Account
+	if acc, err = p.getAccount(c, tx, arg.Aid); err != nil {
 		return
-	} else if acc == nil {
-		return 0, ecode.UserNotExist
 	}
 
 	item := &model.TopicFollowRequest{

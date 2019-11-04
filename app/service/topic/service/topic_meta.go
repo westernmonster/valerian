@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 
-	account "valerian/app/service/account/api"
 	"valerian/app/service/topic/api"
 	"valerian/app/service/topic/model"
 	"valerian/library/ecode"
@@ -19,8 +18,8 @@ func (p *Service) GetTopicMeta(c context.Context, aid, topicID int64) (meta *api
 		return p.GetGuestTopicMeta(c, t)
 	}
 
-	var account *account.BaseInfoReply
-	if account, err = p.d.GetAccountBaseInfo(c, aid); err != nil {
+	var account *model.Account
+	if account, err = p.getAccount(c, p.d.DB(), aid); err != nil {
 		return
 	}
 
@@ -63,6 +62,10 @@ func (p *Service) GetTopicMeta(c context.Context, aid, topicID int64) (meta *api
 	}
 
 	if meta.CanView, meta.CanEdit, err = p.CheckEditPermission(c, aid, member, t); err != nil {
+		return
+	}
+
+	if meta.Fav, err = p.isFav(c, p.d.DB(), aid, topicID, model.TargetTypeTopic); err != nil {
 		return
 	}
 

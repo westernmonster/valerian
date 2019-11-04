@@ -3,20 +3,18 @@ package dao
 import (
 	"context"
 	"fmt"
-	discuss "valerian/app/service/discuss/api"
+	"valerian/app/service/topic/model"
+	"valerian/library/database/sqalx"
 	"valerian/library/log"
 )
 
-func (p *Dao) GetDiscussion(c context.Context, id int64) (info *discuss.DiscussionInfo, err error) {
-	if info, err = p.discussRPC.GetDiscussionInfo(c, &discuss.IDReq{ID: id}); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.GetDiscussion err(%+v)", err))
-	}
-	return
-}
+func (p *Dao) GetTopicDiscussCategories(c context.Context, node sqalx.Node, topicID int64) (items []*model.DiscussCategory, err error) {
+	items = make([]*model.DiscussCategory, 0)
+	sqlSelect := "SELECT a.id,a.topic_id,a.seq,a.name,a.deleted,a.created_at,a.updated_at FROM discuss_categories a WHERE a.deleted=0 AND a.topic_id=? ORDER BY a.id "
 
-func (p *Dao) GetDiscussionCategories(c context.Context, topicID int64) (resp *discuss.CategoriesResp, err error) {
-	if resp, err = p.discussRPC.GetDiscussionCategories(c, &discuss.CategoriesReq{TopicID: topicID}); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.GetDiscussionCategories err(%+v)", err))
+	if err = node.SelectContext(c, &items, sqlSelect, topicID); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetTopicDiscussCategories err(%+v) topic_id(%d)", err, topicID))
+		return
 	}
 	return
 }

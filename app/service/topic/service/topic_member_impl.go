@@ -77,7 +77,7 @@ func (p *Service) getTopicMembers(c context.Context, node sqalx.Node, topicID in
 	}
 
 	for _, v := range items {
-		acc, e := p.d.GetAccountBaseInfo(c, v.AccountID)
+		acc, e := p.getAccount(c, node, v.AccountID)
 		if e != nil {
 			err = e
 			return
@@ -164,7 +164,7 @@ func (p *Service) checkTopicMemberAdmin(c context.Context, node sqalx.Node, topi
 
 // addMember 添加成员
 func (p *Service) addMember(c context.Context, node sqalx.Node, topicID, aid int64, role string) (err error) {
-	if _, err = p.d.GetAccountBaseInfo(c, aid); err != nil {
+	if _, err = p.getAccount(c, node, aid); err != nil {
 		return
 	}
 
@@ -244,7 +244,7 @@ func (p *Service) bulkSaveMembers(c context.Context, node sqalx.Node, req *api.A
 				continue
 			}
 
-			if _, err = p.d.GetAccountBaseInfo(c, v.AccountID); err != nil {
+			if _, err = p.getAccount(c, node, v.AccountID); err != nil {
 				return
 			}
 

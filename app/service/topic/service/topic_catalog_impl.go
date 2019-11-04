@@ -4,7 +4,6 @@ import (
 	"context"
 	"time"
 
-	account "valerian/app/service/account/api"
 	article "valerian/app/service/article/api"
 	"valerian/app/service/topic/api"
 	"valerian/app/service/topic/model"
@@ -55,12 +54,13 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 
 	for _, lvl1 := range parents {
 		parent := &api.TopicRootCatalogInfo{
-			ID:       lvl1.ID,
-			Name:     lvl1.Name,
-			Seq:      lvl1.Seq,
-			Type:     lvl1.Type,
-			RefID:    lvl1.RefID,
-			Children: make([]*api.TopicParentCatalogInfo, 0),
+			ID:        lvl1.ID,
+			Name:      lvl1.Name,
+			Seq:       lvl1.Seq,
+			Type:      lvl1.Type,
+			RefID:     lvl1.RefID,
+			IsPrimary: bool(lvl1.IsPrimary),
+			Children:  make([]*api.TopicParentCatalogInfo, 0),
 		}
 
 		switch lvl1.Type {
@@ -84,12 +84,13 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 
 		for _, lvl2 := range children {
 			child := &api.TopicParentCatalogInfo{
-				ID:       lvl2.ID,
-				Name:     lvl2.Name,
-				Seq:      lvl2.Seq,
-				Type:     lvl2.Type,
-				RefID:    lvl2.RefID,
-				Children: make([]*api.TopicChildCatalogInfo, 0),
+				ID:        lvl2.ID,
+				Name:      lvl2.Name,
+				Seq:       lvl2.Seq,
+				Type:      lvl2.Type,
+				RefID:     lvl2.RefID,
+				IsPrimary: bool(lvl2.IsPrimary),
+				Children:  make([]*api.TopicChildCatalogInfo, 0),
 			}
 
 			switch lvl2.Type {
@@ -113,11 +114,12 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 
 			for _, lvl3 := range sub {
 				subItem := &api.TopicChildCatalogInfo{
-					ID:    lvl3.ID,
-					Name:  lvl3.Name,
-					Seq:   lvl3.Seq,
-					Type:  lvl3.Type,
-					RefID: lvl3.RefID,
+					ID:        lvl3.ID,
+					Name:      lvl3.Name,
+					Seq:       lvl3.Seq,
+					Type:      lvl3.Type,
+					RefID:     lvl3.RefID,
+					IsPrimary: bool(lvl3.IsPrimary),
 				}
 
 				switch lvl3.Type {
@@ -157,12 +159,13 @@ func (p *Service) getCatalogTaxonomyHierarchyOfAll(c context.Context, node sqalx
 
 	for _, lvl1 := range parents {
 		parent := &api.TopicRootCatalogInfo{
-			ID:       lvl1.ID,
-			Name:     lvl1.Name,
-			Seq:      lvl1.Seq,
-			Type:     lvl1.Type,
-			RefID:    lvl1.RefID,
-			Children: make([]*api.TopicParentCatalogInfo, 0),
+			ID:        lvl1.ID,
+			Name:      lvl1.Name,
+			Seq:       lvl1.Seq,
+			Type:      lvl1.Type,
+			RefID:     lvl1.RefID,
+			IsPrimary: bool(lvl1.IsPrimary),
+			Children:  make([]*api.TopicParentCatalogInfo, 0),
 		}
 
 		children, eInner := p.d.GetTopicCatalogsByCond(c, node, map[string]interface{}{
@@ -177,12 +180,13 @@ func (p *Service) getCatalogTaxonomyHierarchyOfAll(c context.Context, node sqalx
 
 		for _, lvl2 := range children {
 			child := &api.TopicParentCatalogInfo{
-				ID:       lvl2.ID,
-				Name:     lvl2.Name,
-				Seq:      lvl2.Seq,
-				Type:     lvl2.Type,
-				RefID:    lvl2.RefID,
-				Children: make([]*api.TopicChildCatalogInfo, 0),
+				ID:        lvl2.ID,
+				Name:      lvl2.Name,
+				Seq:       lvl2.Seq,
+				Type:      lvl2.Type,
+				RefID:     lvl2.RefID,
+				IsPrimary: bool(lvl2.IsPrimary),
+				Children:  make([]*api.TopicChildCatalogInfo, 0),
 			}
 
 			parent.Children = append(parent.Children, child)
@@ -261,7 +265,7 @@ func (p *Service) saveCatalogs(c context.Context, node sqalx.Node, aid int64, re
 	}
 
 	var isAdmin bool
-	if isAdmin, err = p.IsSystemAdmin(c, aid); err != nil {
+	if isAdmin, err = p.IsSystemAdmin(c, node, aid); err != nil {
 		return
 	}
 
@@ -399,9 +403,9 @@ func (p *Service) saveCatalogs(c context.Context, node sqalx.Node, aid int64, re
 	return
 }
 
-func (p *Service) IsSystemAdmin(c context.Context, aid int64) (ret bool, err error) {
-	var acc *account.BaseInfoReply
-	if acc, err = p.d.GetAccountBaseInfo(c, aid); err != nil {
+func (p *Service) IsSystemAdmin(c context.Context, node sqalx.Node, aid int64) (ret bool, err error) {
+	var acc *model.Account
+	if acc, err = p.getAccount(c, node, aid); err != nil {
 		return
 	}
 

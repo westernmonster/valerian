@@ -2,7 +2,10 @@ package service
 
 import (
 	"context"
+
 	"valerian/app/interface/topic/model"
+	discuss "valerian/app/service/discuss/api"
+	stopic "valerian/app/service/topic/api"
 	topic "valerian/app/service/topic/api"
 	"valerian/library/ecode"
 	"valerian/library/net/metadata"
@@ -137,69 +140,102 @@ func (p *Service) GetTopic(c context.Context, topicID int64, include string) (it
 		DiscussCategories:  make([]*model.DiscussCategoryResp, 0),
 	}
 
-	if t.Creator != nil {
-		item.Creator = &model.Creator{
-			ID:           t.Creator.ID,
-			Avatar:       t.Creator.Avatar,
-			UserName:     t.Creator.UserName,
-			Introduction: t.Creator.Introduction,
+	inc := includeParam(include)
+
+	if inc["creator"] {
+		if t.Creator != nil {
+			item.Creator = &model.Creator{
+				ID:           t.Creator.ID,
+				Avatar:       t.Creator.Avatar,
+				UserName:     t.Creator.UserName,
+				Introduction: t.Creator.Introduction,
+			}
 		}
 	}
 
-	p.d.GetTopicMembersPaged(c, &topic.ArgTopicMembers{TopicID: t.ID, Page: 1, PageSize: 10})
-
-	if t.Members != nil {
-		for _, v := range t.Members {
-			item.Members = append(item.Members, &model.TopicMemberResp{
-				AccountID: v.AccountID,
-				Role:      v.Role,
-				Avatar:    v.Avatar,
-				UserName:  v.UserName,
-			})
-		}
-	}
-
-	if t.TopicMeta != nil {
-		item.TopicMeta = &model.TopicMeta{
-			CanFollow:    t.TopicMeta.CanFollow,
-			CanEdit:      t.TopicMeta.CanEdit,
-			CanView:      t.TopicMeta.CanView,
-			FollowStatus: t.TopicMeta.FollowStatus,
-			IsMember:     t.TopicMeta.IsMember,
-			MemberRole:   t.TopicMeta.MemberRole,
-		}
-
-		if item.TopicMeta.Fav, err = p.d.IsFav(c, aid, t.ID, model.TargetTypeTopic); err != nil {
+	if inc["members"] {
+		var data *topic.TopicMembersPagedResp
+		if data, err = p.d.GetTopicMembersPaged(c, &topic.ArgTopicMembers{TopicID: topicID, Page: 1, PageSize: 10}); err != nil {
 			return
 		}
-	}
 
-	if t.Catalogs != nil {
-		item.Catalogs = p.FromCatalogs(t.Catalogs)
-	}
-
-	if t.AuthTopics != nil {
-		for _, v := range t.AuthTopics {
-			item.AuthTopics = append(item.AuthTopics, &model.AuthTopicResp{
-				ToTopicID:      v.ToTopicID,
-				EditPermission: v.EditPermission,
-				Permission:     v.Permission,
-				MemberCount:    v.MemberCount,
-				Avatar:         v.Avatar,
-				Name:           v.Name,
-			})
+		if data.Data != nil {
+			for _, v := range data.Data {
+				item.Members = append(item.Members, &model.TopicMemberResp{
+					AccountID: v.AccountID,
+					Role:      v.Role,
+					Avatar:    v.Avatar,
+					UserName:  v.UserName,
+				})
+			}
 		}
 	}
 
-	if t.DiscussCategories != nil {
-		for _, v := range t.DiscussCategories {
-			item.DiscussCategories = append(item.DiscussCategories, &model.DiscussCategoryResp{
-				ID:      v.ID,
-				TopicID: v.TopicID,
-				Name:    v.Name,
-				Seq:     v.Seq,
-			})
+	if inc["catalogs"] {
+		var resp *topic.CatalogsResp
+		if resp, err = p.d.GetCatalogsHierarchy(c, &topic.IDReq{ID: topicID, Aid: aid}); err != nil {
+			return
 		}
+
+		item.Catalogs = p.FromCatalogs(resp.Items)
+	}
+
+	if inc["auth_topics"] {
+		var resp *topic.AuthTopicsResp
+		if resp, err = p.d.GetAuthTopics(c, &topic.IDReq{ID: topicID, Aid: aid}); err != nil {
+			return
+		}
+
+		if resp.Items == nil {
+			for _, v := range resp.Items {
+				item.AuthTopics = append(item.AuthTopics, &model.AuthTopicResp{
+					ToTopicID:      v.ToTopicID,
+					EditPermission: v.EditPermission,
+					Permission:     v.Permission,
+					MemberCount:    v.MemberCount,
+					Avatar:         v.Avatar,
+					Name:           v.Name,
+				})
+			}
+		}
+
+	}
+
+	if inc["discuss_categories"] {
+		var resp *discuss.CategoriesResp
+		if resp, err = p.d.GetDiscussionCategories(c, topicID); err != nil {
+			return
+		}
+
+		if resp.Items != nil {
+			for _, v := range resp.Items {
+				item.DiscussCategories = append(item.DiscussCategories, &model.DiscussCategoryResp{
+					ID:      v.ID,
+					TopicID: v.TopicID,
+					Name:    v.Name,
+					Seq:     v.Seq,
+				})
+			}
+		}
+
+	}
+
+	if inc["meta"] {
+		var m *stopic.TopicMetaInfo
+		if m, err = p.d.GetTopicMeta(c, aid, topicID); err != nil {
+			return
+		}
+
+		item.TopicMeta = &model.TopicMeta{
+			CanFollow:    m.CanFollow,
+			CanEdit:      m.CanEdit,
+			Fav:          m.Fav,
+			CanView:      m.CanView,
+			FollowStatus: (m.FollowStatus),
+			IsMember:     m.CanView,
+			MemberRole:   m.MemberRole,
+		}
+
 	}
 
 	return
@@ -209,11 +245,12 @@ func (p *Service) FromCatalogs(items []*topic.TopicRootCatalogInfo) (resp []*mod
 	resp = make([]*model.TopicRootCatalog, 0)
 	for _, v := range items {
 		root := &model.TopicRootCatalog{
-			ID:       &v.ID,
-			Name:     v.Name,
-			Type:     v.Type,
-			RefID:    v.RefID,
-			Children: make([]*model.TopicParentCatalog, 0),
+			ID:        &v.ID,
+			Name:      v.Name,
+			Type:      v.Type,
+			RefID:     v.RefID,
+			IsPrimary: v.IsPrimary,
+			Children:  make([]*model.TopicParentCatalog, 0),
 		}
 		if v.Article != nil {
 			root.Article = &model.TargetArticle{
@@ -239,11 +276,12 @@ func (p *Service) FromCatalogs(items []*topic.TopicRootCatalogInfo) (resp []*mod
 		if v.Children != nil {
 			for _, x := range v.Children {
 				parent := &model.TopicParentCatalog{
-					ID:       &x.ID,
-					Name:     x.Name,
-					Type:     x.Type,
-					RefID:    x.RefID,
-					Children: make([]*model.TopicChildCatalog, 0),
+					ID:        &x.ID,
+					Name:      x.Name,
+					Type:      x.Type,
+					RefID:     x.RefID,
+					IsPrimary: v.IsPrimary,
+					Children:  make([]*model.TopicChildCatalog, 0),
 				}
 				if x.Article != nil {
 					parent.Article = &model.TargetArticle{
@@ -268,10 +306,11 @@ func (p *Service) FromCatalogs(items []*topic.TopicRootCatalogInfo) (resp []*mod
 				if x.Children != nil {
 					for _, j := range x.Children {
 						child := &model.TopicChildCatalog{
-							ID:    &j.ID,
-							Name:  j.Name,
-							Type:  j.Type,
-							RefID: j.RefID,
+							ID:        &j.ID,
+							Name:      j.Name,
+							Type:      j.Type,
+							RefID:     j.RefID,
+							IsPrimary: v.IsPrimary,
 						}
 						if j.Article != nil {
 							child.Article = &model.TargetArticle{

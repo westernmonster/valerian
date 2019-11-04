@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	account "valerian/app/service/account/api"
-	discuss "valerian/app/service/discuss/api"
 	"valerian/app/service/topic/api"
 	"valerian/app/service/topic/model"
 	"valerian/library/database/sqalx"
@@ -19,10 +17,6 @@ func (p *Service) GetBelongsTopicIDs(c context.Context, aid int64) (ids []int64,
 
 func (p *Service) GetTopicMemberIDs(c context.Context, aid int64) (ids []int64, err error) {
 	return p.d.GetTopicMemberIDs(c, p.d.DB(), aid)
-}
-
-func (p *Service) GetAccountBaseInfo(c context.Context, aid int64) (info *account.BaseInfoReply, err error) {
-	return p.d.GetAccountBaseInfo(c, aid)
 }
 
 func (p *Service) GetUserTopicsPaged(c context.Context, aid int64, limit, offset int) (items []*model.Topic, err error) {
@@ -160,63 +154,6 @@ func (p *Service) GetTopicResp(c context.Context, aid int64, topicID int64, incl
 
 	item.Important = bool(s.Important)
 	item.MuteNotification = bool(s.MuteNotification)
-
-	inc := includeParam(include)
-	if inc["members"] {
-		if _, item.Members, err = p.getTopicMembers(c, p.d.DB(), topicID, 10); err != nil {
-			return
-		}
-	}
-
-	if inc["catalogs"] {
-		if item.Catalogs, err = p.getCatalogHierarchyOfAll(c, p.d.DB(), topicID); err != nil {
-			return
-		}
-	}
-
-	if inc["discuss_categories"] {
-		var resp *discuss.CategoriesResp
-		if resp, err = p.d.GetDiscussionCategories(c, topicID); err != nil {
-			return
-		}
-
-		item.DiscussCategories = make([]*api.DiscussCategoryInfo, len(resp.Items))
-
-		for i, v := range resp.Items {
-			item.DiscussCategories[i] = &api.DiscussCategoryInfo{
-				ID:      v.ID,
-				TopicID: v.TopicID,
-				Name:    v.Name,
-				Seq:     (v.Seq),
-			}
-		}
-	}
-
-	if inc["auth_topics"] {
-		if item.AuthTopics, err = p.getAuthTopicsResp(c, p.d.DB(), topicID); err != nil {
-			return
-		}
-	}
-
-	if inc["meta"] {
-		if item.TopicMeta, err = p.GetTopicMeta(c, aid, topicID); err != nil {
-			return
-		}
-	}
-
-	if inc["creator"] {
-		var acc *account.BaseInfoReply
-		if acc, err = p.d.GetAccountBaseInfo(c, t.CreatedBy); err != nil {
-			return
-		}
-
-		item.Creator = &api.Creator{
-			ID:           acc.ID,
-			UserName:     acc.UserName,
-			Avatar:       acc.Avatar,
-			Introduction: acc.Introduction,
-		}
-	}
 
 	var stat *model.TopicStat
 	if stat, err = p.d.GetTopicStatByID(c, p.d.DB(), topicID); err != nil {

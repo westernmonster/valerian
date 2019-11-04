@@ -70,6 +70,7 @@ message TopicRootCatalogInfo {
     int64 RefID = 6;
     TargetArticle Article = 7;
     repeated  TopicParentCatalogInfo Children = 8;
+    bool IsPrimary = 9;
 }
 
 message TopicParentCatalogInfo {
@@ -80,6 +81,7 @@ message TopicParentCatalogInfo {
     int64 RefID = 5;
     TargetArticle Article = 7;
     repeated  TopicChildCatalogInfo Children = 8;
+    bool IsPrimary = 9;
 }
 
 message TopicChildCatalogInfo {
@@ -89,6 +91,7 @@ message TopicChildCatalogInfo {
     string Type = 4;
     int64 RefID = 5;
     TargetArticle Article = 7;
+    bool IsPrimary = 8;
 }
 
 message TargetArticle {
@@ -243,16 +246,6 @@ message TopicResp {
     TopicStat Stat = 20;
 
     bool HasCatalogTaxonomy = 21;
-
-    repeated TopicMemberInfo Members = 22;
-
-    repeated TopicRootCatalogInfo Catalogs = 24;
-
-    repeated DiscussCategoryInfo DiscussCategories = 25;
-
-    repeated AuthTopicInfo AuthTopics = 26;
-
-    TopicMetaInfo TopicMeta = 27;
 }
 
 
