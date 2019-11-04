@@ -146,6 +146,8 @@ func (p *Service) GetTopic(c context.Context, topicID int64, include string) (it
 		}
 	}
 
+	p.d.GetTopicMembersPaged(c, &topic.ArgTopicMembers{TopicID: t.ID, Page: 1, PageSize: 10})
+
 	if t.Members != nil {
 		for _, v := range t.Members {
 			item.Members = append(item.Members, &model.TopicMemberResp{
