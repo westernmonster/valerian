@@ -239,10 +239,26 @@ func (p *Service) AddComment(c context.Context, arg *model.ArgAddComment) (id in
 				item.ReplyTo = comment.CreatedBy
 			}
 			item.ResourceID = comment.ResourceID
+
+			if err = p.d.IncrCommentStat(c, tx, &model.CommentStat{
+				CommentID:     comment.ResourceID,
+				ChildrenCount: 1,
+			}); err != nil {
+				return
+			}
+
 		} else {
 			// 如果被回复对象是回复  则直接设置当前的资源ID为被回复的ID
 			item.ResourceID = comment.ID
+
+			if err = p.d.IncrCommentStat(c, tx, &model.CommentStat{
+				CommentID:     comment.ID,
+				ChildrenCount: 1,
+			}); err != nil {
+				return
+			}
 		}
+
 	}
 
 	if err = p.d.AddComment(c, tx, item); err != nil {
