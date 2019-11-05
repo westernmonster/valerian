@@ -45,7 +45,7 @@ const (
 	MsgTextFollowed            = "关注了你"
 	MsgTextJoined              = "加入了话题"
 	MsgTextApply               = "申请加入话题"
-	MsgTextApplyRejected       = "加入话题申请被拒绝"
-	MsgTextApplyApproved       = "你已经成功加入话题"
+	MsgTextApplyRejected       = "你加入话题「%s」的申请被拒绝，原因是：%s"
+	MsgTextApplyApproved       = "你已经成功加入话题「%s」"
 	MsgTextInvite              = "邀请你加入话题"
 )

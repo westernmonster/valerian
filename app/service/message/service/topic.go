@@ -224,10 +224,16 @@ func (p *Service) onTopicFollowApproved(m *stan.Msg) {
 		return
 	}
 
+	var topic *topic.TopicInfo
+	if topic, err = p.d.GetTopic(c, req.TopicID); err != nil {
+		log.For(c).Error(fmt.Sprintf("service.onTopicFollowApproved GetTopic failed %#v", err))
+		return
+	}
+
 	msg := &model.Message{
 		ID:         gid.NewID(),
 		AccountID:  req.AccountID,
-		ActionType: model.MsgApplyApproved,
+		ActionType: fmt.Sprintf(model.MsgApplyApproved, topic.Name),
 		ActionTime: time.Now().Unix(),
 		ActionText: model.MsgTextApplyApproved,
 		Actors:     strconv.FormatInt(info.ActorID, 10),
@@ -304,12 +310,18 @@ func (p *Service) onTopicFollowRejected(m *stan.Msg) {
 		return
 	}
 
+	var topic *topic.TopicInfo
+	if topic, err = p.d.GetTopic(c, req.TopicID); err != nil {
+		log.For(c).Error(fmt.Sprintf("service.onTopicFollowRejected GetTopic failed %#v", err))
+		return
+	}
+
 	msg := &model.Message{
 		ID:         gid.NewID(),
 		AccountID:  req.AccountID,
 		ActionType: model.MsgApplyRejected,
 		ActionTime: time.Now().Unix(),
-		ActionText: model.MsgTextApplyRejected,
+		ActionText: fmt.Sprintf(model.MsgTextApplyRejected, topic.Name, req.RejectReason),
 		Actors:     strconv.FormatInt(info.ActorID, 10),
 		MergeCount: 1,
 		ActorType:  model.ActorTypeUser,
