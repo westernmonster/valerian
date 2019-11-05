@@ -11,7 +11,6 @@ import (
 	"valerian/library/gid"
 	"valerian/library/log"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/nats-io/stan.go"
 )
 
@@ -96,8 +95,6 @@ func (p *Service) onTopicTaxonomyCatalogDeleted(m *stan.Msg) {
 		return
 	}
 
-	spew.Dump(info)
-
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
@@ -113,25 +110,15 @@ func (p *Service) onTopicTaxonomyCatalogDeleted(m *stan.Msg) {
 		}
 	}()
 
-	var catalog *model.TopicCatalog
-	if catalog, err = p.getTopicCatalog(c, tx, info.CatalogID); err != nil {
-		if ecode.Cause(err) == ecode.TopicCatalogNotExist {
-			fmt.Println(11111111111111)
-			fmt.Println(err)
-			m.Ack()
-		}
-		return
-	}
-
 	feed := &model.TopicFeed{
 		ID:         gid.NewID(),
-		TopicID:    catalog.TopicID,
+		TopicID:    info.TopicID,
 		ActionType: def.ActionTypeTopicTaxonomyCatalogDeleted,
 		ActionTime: time.Now().Unix(),
 		ActionText: fmt.Sprintf(def.ActionTextTopicTaxonomyCatalogDeleted, info.Name),
 		ActorID:    info.ActorID,
 		ActorType:  def.ActorTypeUser,
-		TargetID:   catalog.ID,
+		TargetID:   info.CatalogID,
 		TargetType: def.TargetTypeTopicCatalog,
 		CreatedAt:  time.Now().Unix(),
 		UpdatedAt:  time.Now().Unix(),
