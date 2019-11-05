@@ -18,7 +18,7 @@ func (p *Service) GetTopicMeta(c context.Context, aid, topicID int64) (meta *mod
 		CanEdit:      m.CanEdit,
 		Fav:          m.Fav,
 		CanView:      m.CanView,
-		FollowStatus: int(m.FollowStatus),
+		FollowStatus: (m.FollowStatus),
 		IsMember:     m.CanView,
 		MemberRole:   m.MemberRole,
 	}

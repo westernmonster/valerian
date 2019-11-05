@@ -79,9 +79,10 @@ const (
 )
 
 const (
-	TargetTypeTopic      = "topic"
-	TargetTypeDiscussion = "discussion"
-	TargetTypeRevise     = "revise"
-	TargetTypeArticle    = "article"
-	TargetTypeMember     = "member"
+	TargetTypeTopic          = "topic"
+	TargetTypeDiscussion     = "discussion"
+	TargetTypeRevise         = "revise"
+	TargetTypeArticle        = "article"
+	TargetTypeArticleHistory = "article_history"
+	TargetTypeMember         = "member"
 )

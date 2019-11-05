@@ -9,7 +9,6 @@ import (
 	account "valerian/app/service/account/api"
 	article "valerian/app/service/article/api"
 	discuss "valerian/app/service/discuss/api"
-	fav "valerian/app/service/fav/api"
 	relation "valerian/app/service/relation/api"
 	search "valerian/app/service/search/api"
 	topicFeed "valerian/app/service/topic-feed/api"
@@ -36,7 +35,6 @@ type Dao struct {
 	topicRPC     stopic.TopicClient
 	relationRPC  relation.RelationClient
 	searchRPC    search.SearchClient
-	favRPC       fav.FavClient
 
 	esClient *elastic.Client
 }
@@ -53,12 +51,6 @@ func New(c *conf.Config) (dao *Dao) {
 		panic(errors.WithMessage(err, "Failed to dial relation service"))
 	} else {
 		dao.relationRPC = relationRPC
-	}
-
-	if favRPC, err := fav.NewClient(c.FavRPC); err != nil {
-		panic(errors.WithMessage(err, "Failed to dial fav service"))
-	} else {
-		dao.favRPC = favRPC
 	}
 
 	if accountRPC, err := account.NewClient(c.AccountRPC); err != nil {

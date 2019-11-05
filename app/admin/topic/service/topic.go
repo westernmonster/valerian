@@ -4,13 +4,14 @@ import (
 	"context"
 
 	"valerian/app/admin/topic/model"
+	discuss "valerian/app/service/discuss/api"
 	topic "valerian/app/service/topic/api"
 	"valerian/library/ecode"
 	"valerian/library/net/metadata"
 )
 
 func (p *Service) CreateTopic(c context.Context, arg *model.ArgCreateTopic) (topicID int64, err error) {
-	aid, ok := metadata.Value(c, metadata.Uid).(int64)
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed
 		return
@@ -38,7 +39,7 @@ func (p *Service) CreateTopic(c context.Context, arg *model.ArgCreateTopic) (top
 }
 
 func (p *Service) UpdateTopic(c context.Context, arg *model.ArgUpdateTopic) (err error) {
-	aid, ok := metadata.Value(c, metadata.Uid).(int64)
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed
 		return
@@ -102,7 +103,7 @@ func (p *Service) UpdateTopic(c context.Context, arg *model.ArgUpdateTopic) (err
 }
 
 func (p *Service) GetTopic(c context.Context, topicID int64, include string) (item *model.TopicResp, err error) {
-	aid, ok := metadata.Value(c, metadata.Uid).(int64)
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed
 		return
@@ -138,63 +139,102 @@ func (p *Service) GetTopic(c context.Context, topicID int64, include string) (it
 		DiscussCategories:  make([]*model.DiscussCategoryResp, 0),
 	}
 
-	if t.Creator != nil {
-		item.Creator = &model.Creator{
-			ID:           t.Creator.ID,
-			Avatar:       t.Creator.Avatar,
-			UserName:     t.Creator.UserName,
-			Introduction: t.Creator.Introduction,
+	inc := includeParam(include)
+
+	if inc["creator"] {
+		if t.Creator != nil {
+			item.Creator = &model.Creator{
+				ID:           t.Creator.ID,
+				Avatar:       t.Creator.Avatar,
+				UserName:     t.Creator.UserName,
+				Introduction: t.Creator.Introduction,
+			}
 		}
 	}
 
-	if t.Members != nil {
-		for _, v := range t.Members {
-			item.Members = append(item.Members, &model.TopicMemberResp{
-				AccountID: v.AccountID,
-				Role:      v.Role,
-				Avatar:    v.Avatar,
-				UserName:  v.UserName,
-			})
+	if inc["members"] {
+		var data *topic.TopicMembersPagedResp
+		if data, err = p.d.GetTopicMembersPaged(c, &topic.ArgTopicMembers{TopicID: topicID, Page: 1, PageSize: 10}); err != nil {
+			return
+		}
+
+		if data.Data != nil {
+			for _, v := range data.Data {
+				item.Members = append(item.Members, &model.TopicMemberResp{
+					AccountID: v.AccountID,
+					Role:      v.Role,
+					Avatar:    v.Avatar,
+					UserName:  v.UserName,
+				})
+			}
 		}
 	}
 
-	if t.Catalogs != nil {
-		item.Catalogs = p.FromCatalogs(t.Catalogs)
+	if inc["catalogs"] {
+		var resp *topic.CatalogsResp
+		if resp, err = p.d.GetCatalogsHierarchy(c, &topic.IDReq{ID: topicID, Aid: aid}); err != nil {
+			return
+		}
+
+		item.Catalogs = p.FromCatalogs(resp.Items)
 	}
 
-	if t.AuthTopics != nil {
-		for _, v := range t.AuthTopics {
-			item.AuthTopics = append(item.AuthTopics, &model.AuthTopicResp{
-				ToTopicID:      v.ToTopicID,
-				EditPermission: v.EditPermission,
-				Permission:     v.Permission,
-				MemberCount:    v.MemberCount,
-				Avatar:         v.Avatar,
-				Name:           v.Name,
-			})
+	if inc["auth_topics"] {
+		var resp *topic.AuthTopicsResp
+		if resp, err = p.d.GetAuthTopics(c, &topic.IDReq{ID: topicID, Aid: aid}); err != nil {
+			return
 		}
+
+		if resp.Items == nil {
+			for _, v := range resp.Items {
+				item.AuthTopics = append(item.AuthTopics, &model.AuthTopicResp{
+					ToTopicID:      v.ToTopicID,
+					EditPermission: v.EditPermission,
+					Permission:     v.Permission,
+					MemberCount:    v.MemberCount,
+					Avatar:         v.Avatar,
+					Name:           v.Name,
+				})
+			}
+		}
+
 	}
 
-	if t.DiscussCategories != nil {
-		for _, v := range t.DiscussCategories {
-			item.DiscussCategories = append(item.DiscussCategories, &model.DiscussCategoryResp{
-				ID:      v.ID,
-				TopicID: v.TopicID,
-				Name:    v.Name,
-				Seq:     v.Seq,
-			})
+	if inc["discuss_categories"] {
+		var resp *discuss.CategoriesResp
+		if resp, err = p.d.GetDiscussionCategories(c, topicID); err != nil {
+			return
 		}
+
+		if resp.Items != nil {
+			for _, v := range resp.Items {
+				item.DiscussCategories = append(item.DiscussCategories, &model.DiscussCategoryResp{
+					ID:      v.ID,
+					TopicID: v.TopicID,
+					Name:    v.Name,
+					Seq:     v.Seq,
+				})
+			}
+		}
+
 	}
 
-	if t.Members != nil {
-		for _, v := range t.Members {
-			item.Members = append(item.Members, &model.TopicMemberResp{
-				AccountID: v.AccountID,
-				Role:      v.Role,
-				UserName:  v.UserName,
-				Avatar:    v.Avatar,
-			})
+	if inc["meta"] {
+		var m *topic.TopicMetaInfo
+		if m, err = p.d.GetTopicMeta(c, aid, topicID); err != nil {
+			return
 		}
+
+		item.TopicMeta = &model.TopicMeta{
+			CanFollow:    m.CanFollow,
+			CanEdit:      m.CanEdit,
+			Fav:          m.Fav,
+			CanView:      m.CanView,
+			FollowStatus: (m.FollowStatus),
+			IsMember:     m.CanView,
+			MemberRole:   m.MemberRole,
+		}
+
 	}
 
 	return
@@ -204,17 +244,19 @@ func (p *Service) FromCatalogs(items []*topic.TopicRootCatalogInfo) (resp []*mod
 	resp = make([]*model.TopicRootCatalog, 0)
 	for _, v := range items {
 		root := &model.TopicRootCatalog{
-			ID:       &v.ID,
-			Name:     v.Name,
-			Type:     v.Type,
-			RefID:    v.RefID,
-			Children: make([]*model.TopicParentCatalog, 0),
+			ID:        &v.ID,
+			Name:      v.Name,
+			Type:      v.Type,
+			RefID:     v.RefID,
+			IsPrimary: v.IsPrimary,
+			Children:  make([]*model.TopicParentCatalog, 0),
 		}
 		if v.Article != nil {
 			root.Article = &model.TargetArticle{
 				ID:           v.Article.ID,
 				Title:        v.Article.Title,
 				Excerpt:      v.Article.Excerpt,
+				ChangeDesc:   v.Article.ChangeDesc,
 				LikeCount:    v.Article.LikeCount,
 				DislikeCount: v.Article.DislikeCount,
 				ReviseCount:  v.Article.ReviseCount,
@@ -233,17 +275,19 @@ func (p *Service) FromCatalogs(items []*topic.TopicRootCatalogInfo) (resp []*mod
 		if v.Children != nil {
 			for _, x := range v.Children {
 				parent := &model.TopicParentCatalog{
-					ID:       &x.ID,
-					Name:     x.Name,
-					Type:     x.Type,
-					RefID:    x.RefID,
-					Children: make([]*model.TopicChildCatalog, 0),
+					ID:        &x.ID,
+					Name:      x.Name,
+					Type:      x.Type,
+					RefID:     x.RefID,
+					IsPrimary: v.IsPrimary,
+					Children:  make([]*model.TopicChildCatalog, 0),
 				}
 				if x.Article != nil {
-					root.Article = &model.TargetArticle{
+					parent.Article = &model.TargetArticle{
 						ID:           x.Article.ID,
 						Title:        x.Article.Title,
 						Excerpt:      x.Article.Excerpt,
+						ChangeDesc:   x.Article.ChangeDesc,
 						LikeCount:    x.Article.LikeCount,
 						DislikeCount: x.Article.DislikeCount,
 						ReviseCount:  x.Article.ReviseCount,
@@ -261,16 +305,18 @@ func (p *Service) FromCatalogs(items []*topic.TopicRootCatalogInfo) (resp []*mod
 				if x.Children != nil {
 					for _, j := range x.Children {
 						child := &model.TopicChildCatalog{
-							ID:    &j.ID,
-							Name:  j.Name,
-							Type:  j.Type,
-							RefID: j.RefID,
+							ID:        &j.ID,
+							Name:      j.Name,
+							Type:      j.Type,
+							RefID:     j.RefID,
+							IsPrimary: v.IsPrimary,
 						}
 						if j.Article != nil {
 							child.Article = &model.TargetArticle{
 								ID:           j.Article.ID,
 								Title:        j.Article.Title,
 								Excerpt:      j.Article.Excerpt,
+								ChangeDesc:   j.Article.ChangeDesc,
 								LikeCount:    j.Article.LikeCount,
 								DislikeCount: j.Article.DislikeCount,
 								ReviseCount:  j.Article.ReviseCount,
@@ -297,7 +343,7 @@ func (p *Service) FromCatalogs(items []*topic.TopicRootCatalogInfo) (resp []*mod
 }
 
 func (p *Service) DelTopic(c context.Context, topicID int64) (err error) {
-	aid, ok := metadata.Value(c, metadata.Uid).(int64)
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed
 		return

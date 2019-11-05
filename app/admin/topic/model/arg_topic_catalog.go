@@ -40,6 +40,8 @@ type TopicRootCatalog struct {
 	// required: true
 	Type string `json:"type"`
 
+	IsPrimary bool `json:"is_primary"`
+
 	// 引用ID
 	RefID int64 `json:"ref_id,string,omitempty" swaggertype:"string"`
 
@@ -170,6 +172,8 @@ type TopicParentCatalog struct {
 	// required: true
 	Seq int `json:"seq"`
 
+	IsPrimary bool `json:"is_primary"`
+
 	// 类型
 	// required: true
 	Type string `json:"type"`
@@ -209,6 +213,8 @@ type TopicChildCatalog struct {
 	// 类型
 	// required: true
 	Type string `json:"type"`
+
+	IsPrimary bool `json:"is_primary"`
 
 	// 引用ID
 	RefID int64 `json:"ref_id,string,omitempty" swaggertype:"string"`

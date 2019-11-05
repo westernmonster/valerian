@@ -102,7 +102,7 @@ type TopicMeta struct {
 	CanView bool `json:"can_view"`
 
 	// 关注状态
-	FollowStatus int `json:"follow_status"`
+	FollowStatus int32 `json:"follow_status"`
 
 	IsMember bool `json:"is_member"`
 

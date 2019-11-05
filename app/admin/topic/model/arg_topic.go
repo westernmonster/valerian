@@ -122,15 +122,6 @@ func (p *ArgUpdateTopic) Validate() error {
 	)
 }
 
-type ArgReportTopic struct {
-	// 话题ID
-	ID int64 `json:"id,string"  swaggertype:"string"`
-	// 举报类型
-	Type int `json:"type"`
-	// 补充信息
-	Desc *string `json:"desc"`
-}
-
 type ArgDelete struct {
 	ID int64 `json:"id,string,omitempty" swaggertype:"string"`
 }

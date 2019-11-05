@@ -5,7 +5,6 @@ import (
 
 	"valerian/app/interface/topic/model"
 	discuss "valerian/app/service/discuss/api"
-	stopic "valerian/app/service/topic/api"
 	topic "valerian/app/service/topic/api"
 	"valerian/library/ecode"
 	"valerian/library/net/metadata"
@@ -221,7 +220,7 @@ func (p *Service) GetTopic(c context.Context, topicID int64, include string) (it
 	}
 
 	if inc["meta"] {
-		var m *stopic.TopicMetaInfo
+		var m *topic.TopicMetaInfo
 		if m, err = p.d.GetTopicMeta(c, aid, topicID); err != nil {
 			return
 		}
