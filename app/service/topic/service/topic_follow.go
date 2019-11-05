@@ -183,6 +183,7 @@ func (p *Service) AuditFollow(c context.Context, arg *api.ArgAuditFollow) (err e
 		}
 	} else {
 		req.Status = model.FollowRequestStatusRejected
+		req.RejectReason = arg.Reason
 		req.UpdatedAt = time.Now().Unix()
 	}
 

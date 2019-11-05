@@ -331,6 +331,7 @@ func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, o
 				ID:            req.ID,
 				Status:        req.Status,
 				Reason:        req.Reason,
+				RejectReason:  req.RejectReason,
 				CreatedAt:     req.CreatedAt,
 				AllowViewCert: bool(req.AllowViewCert),
 			}

@@ -58,4 +58,5 @@ type TopicFollowRequest struct {
 	UpdatedAt     int64         `db:"updated_at" json:"updated_at"`           // UpdatedAt 更新时间
 	Reason        string        `db:"reason" json:"reason"`                   // Reason 原因
 	AllowViewCert types.BitBool `db:"allow_view_cert" json:"allow_view_cert"` // AllowViewCert 允许查看认证
+	RejectReason  string        `db:"reject_reason" json:"reject_reason"`     // RejectReason 原因
 }

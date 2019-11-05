@@ -258,6 +258,9 @@ type TargetTopicFollowRequest struct {
 	// 申请理由
 	Reason string `json:"reason"`
 
+	// 拒绝理由
+	RejectReason string `json:"reject_reason"`
+
 	// 状态
 	// 0 请求已经发送
 	// 1 审批通过
