@@ -303,18 +303,21 @@ func (p *Service) saveCatalogs(c context.Context, node sqalx.Node, aid int64, re
 			return
 		}
 
+		// 如果该条目是从别的地方移动过来的
 		if item.ParentID != req.ParentID {
-			var parent *model.TopicCatalog
-			if parent, err = p.d.GetTopicCatalogByCond(c, node, map[string]interface{}{"topic_id": req.TopicID, "id": req.ParentID}); err != nil {
-				return
-			} else if parent == nil {
-				err = ecode.TopicCatalogNotExist
-				return
-			}
+			if req.ParentID != 0 {
+				var parent *model.TopicCatalog
+				if parent, err = p.d.GetTopicCatalogByCond(c, node, map[string]interface{}{"topic_id": req.TopicID, "id": req.ParentID}); err != nil {
+					return
+				} else if parent == nil {
+					err = ecode.TopicCatalogNotExist
+					return
+				}
 
-			if item.Type == model.TopicCatalogTaxonomy && parent.ParentID != 0 {
-				err = ecode.InvalidCatalog
-				return
+				if item.Type == model.TopicCatalogTaxonomy && parent.ParentID != 0 {
+					err = ecode.InvalidCatalog
+					return
+				}
 			}
 
 			if v.Type == model.TopicCatalogTaxonomy {
