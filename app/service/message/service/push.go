@@ -18,7 +18,7 @@ func (p *Service) pushSingleUser(c context.Context, aid int64, msg *jpush.Messag
 		Message: msg,
 		Options: &jpush.Options{
 			TimeLive:       60,
-			ApnsProduction: false,
+			ApnsProduction: true,
 		},
 	}
 	return p.jp.Push(payload)
