@@ -235,7 +235,9 @@ func (p *Service) AddComment(c context.Context, arg *model.ArgAddComment) (id in
 
 		// 如果对象是子回复，则添加被回复人
 		if comment.TargetType == model.TargetTypeComment {
-			item.ReplyTo = comment.CreatedBy
+			if aid != comment.CreatedBy {
+				item.ReplyTo = comment.CreatedBy
+			}
 			item.ResourceID = comment.ResourceID
 		} else {
 			// 如果被回复对象是回复  则直接设置当前的资源ID为被回复的ID
