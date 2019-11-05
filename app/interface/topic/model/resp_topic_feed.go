@@ -83,6 +83,8 @@ type TargetArticle struct {
 	// 评论数
 	CommentCount int32 `json:"comment_count"`
 
+	RelationsCount int32 `json:"relations_count"`
+
 	// 创建时间
 	CreatedAt int64 `json:"created_at"`
 	// 更新时间
