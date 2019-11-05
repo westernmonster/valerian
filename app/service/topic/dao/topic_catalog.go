@@ -7,6 +7,7 @@ import (
 
 	"valerian/app/service/topic/model"
 	"valerian/library/database/sqalx"
+	"valerian/library/database/sqlx"
 	"valerian/library/log"
 )
 
@@ -23,11 +24,29 @@ func (p *Dao) HasTaxonomy(c context.Context, node sqalx.Node, topicID int64) (ha
 	return
 }
 
-func (p *Dao) GetArticleRelationsCount(c context.Context, node sqalx.Node, articleID int64) (count int32, err error) {
-	sqlSelect := "SELECT COUNT(1) as count FROM topic_catalogs a WHERE a.ref_id=? AND a.`type` = ? AND a.deleted=0"
-	if err = node.GetContext(c, &count, sqlSelect, articleID, model.TopicCatalogArticle); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.GetArticleRelationsCount error(%+v), article_id(%d) ", err, articleID))
+func (p *Dao) GetArticleRelationIDs(c context.Context, node sqalx.Node, articleID int64) (items []int64, err error) {
+	items = make([]int64, 0)
+	sqlSelect := "SELECT a.topic_id FROM topic_catalogs a WHERE a.ref_id=? AND a.`type` = ? AND a.deleted=0"
+
+	var rows *sqlx.Rows
+	if rows, err = node.QueryxContext(c, sqlSelect, articleID, model.TopicCatalogArticle); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetArticleRelationIDs err(%+v)", err))
+		return
 	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var (
+			targetID int64
+		)
+		if err = rows.Scan(&targetID); err != nil {
+			log.For(c).Error(fmt.Sprintf("dao.GetArticleRelationIDs err(%+v)", err))
+			return
+		}
+		items = append(items, targetID)
+	}
+
+	err = rows.Err()
 	return
 }
 

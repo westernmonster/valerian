@@ -107,7 +107,7 @@ message TargetArticle {
     int64 UpdatedAt = 10;
     Creator Creator = 11;
     string ChangeDesc = 12;
-    int32 RelationsCount  = 13;
+    repeated int64 RelationIDs  = 13;
 }
 
 
