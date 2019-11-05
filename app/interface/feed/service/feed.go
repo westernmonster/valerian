@@ -99,11 +99,13 @@ func (p *Service) FromTopic(v *topic.TopicInfo) (item *model.TargetTopic) {
 
 func (p *Service) FromComment(v *comment.CommentInfo) (item *model.TargetComment) {
 	item = &model.TargetComment{
-		ID:         v.ID,
-		Type:       v.TargetType,
-		Excerpt:    v.Content,
-		CreatedAt:  v.CreatedAt,
-		ResourceID: v.ResourceID,
+		ID:            v.ID,
+		Type:          v.TargetType,
+		Excerpt:       v.Content,
+		CreatedAt:     v.CreatedAt,
+		ResourceID:    v.ResourceID,
+		ChildrenCount: v.Stat.ChildrenCount,
+		LikeCount:     v.Stat.LikeCount,
 	}
 
 	return

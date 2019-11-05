@@ -158,6 +158,12 @@ type TargetComment struct {
 	// 这是一个interface，包含比较全的对面具体信息，例如文章、话题等
 	// 业务处理判断主要根据这个对象来
 	Target interface{} `json:"target"`
+
+	// 喜欢数
+	LikeCount int32 `json:"like_count"`
+
+	// 子评论数
+	ChildrenCount int32 `json:"children_count"`
 }
 
 type TargetArticle struct {
