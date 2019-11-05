@@ -75,23 +75,24 @@ func editArticle(c *mars.Context) {
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param id query string true "ID"
+// @Param req body  app.interface.article.model.ArgDelete true "请求"
 // @Success 200 "成功"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /article/del [post]
 func delArticle(c *mars.Context) {
-	idStr := c.Request.Form.Get("id")
-	if id, err := strconv.ParseInt(idStr, 10, 64); err != nil {
-		c.JSON(nil, ecode.RequestErr)
+	arg := new(model.ArgDelete)
+	if e := c.Bind(arg); e != nil {
 		return
-	} else if id == 0 {
-		c.JSON(nil, ecode.RequestErr)
-		return
-	} else {
-		c.JSON(nil, srv.DelArticle(c, id))
 	}
+
+	if e := arg.Validate(); e != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+
+	c.JSON(nil, srv.DelArticle(c, arg.ID))
 }
 
 // @Summary 获取文章
