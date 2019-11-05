@@ -5,9 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	account "valerian/app/service/account/api"
 	article "valerian/app/service/article/api"
-	discuss "valerian/app/service/discuss/api"
 	search "valerian/app/service/search/api"
 	"valerian/app/service/topic/conf"
 	"valerian/library/cache/memcache"
@@ -24,8 +22,6 @@ type Dao struct {
 	mc         *memcache.Pool
 	mcExpire   int32
 	c          *conf.Config
-	accountRPC account.AccountClient
-	discussRPC discuss.DiscussionClient
 	articleRPC article.ArticleClient
 	searchRPC  search.SearchClient
 }

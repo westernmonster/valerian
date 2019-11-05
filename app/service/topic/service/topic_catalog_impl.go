@@ -17,30 +17,6 @@ type dicItem struct {
 	Item *model.TopicCatalog
 }
 
-func (p *Service) FromArticle(v *article.ArticleInfo) (item *api.TargetArticle) {
-	item = &api.TargetArticle{
-		ID:           v.ID,
-		Title:        v.Title,
-		Excerpt:      v.Excerpt,
-		ChangeDesc:   v.ChangeDesc,
-		ImageUrls:    v.ImageUrls,
-		ReviseCount:  (v.Stat.ReviseCount),
-		CommentCount: (v.Stat.CommentCount),
-		LikeCount:    (v.Stat.LikeCount),
-		DislikeCount: (v.Stat.DislikeCount),
-		CreatedAt:    v.CreatedAt,
-		UpdatedAt:    v.CreatedAt,
-		Creator: &api.Creator{
-			ID:           v.Creator.ID,
-			Avatar:       v.Creator.Avatar,
-			UserName:     v.Creator.UserName,
-			Introduction: v.Creator.Introduction,
-		},
-	}
-
-	return
-}
-
 func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, topicID int64) (items []*api.TopicRootCatalogInfo, err error) {
 	items = make([]*api.TopicRootCatalogInfo, 0)
 
@@ -70,6 +46,9 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 				return
 			}
 			parent.Article = p.FromArticle(article)
+			if parent.Article.RelationsCount, err = p.d.GetArticleRelationsCount(c, node, article.ID); err != nil {
+				return
+			}
 		case model.TopicCatalogTestSet:
 		}
 
@@ -100,6 +79,9 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 					return
 				}
 				child.Article = p.FromArticle(article)
+				if parent.Article.RelationsCount, err = p.d.GetArticleRelationsCount(c, node, article.ID); err != nil {
+					return
+				}
 			case model.TopicCatalogTestSet:
 			}
 
@@ -129,6 +111,9 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 						return
 					}
 					subItem.Article = p.FromArticle(article)
+					if parent.Article.RelationsCount, err = p.d.GetArticleRelationsCount(c, node, article.ID); err != nil {
+						return
+					}
 				case model.TopicCatalogTestSet:
 				}
 

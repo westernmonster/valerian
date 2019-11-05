@@ -23,6 +23,14 @@ func (p *Dao) HasTaxonomy(c context.Context, node sqalx.Node, topicID int64) (ha
 	return
 }
 
+func (p *Dao) GetArticleRelationsCount(c context.Context, node sqalx.Node, articleID int64) (count int32, err error) {
+	sqlSelect := "SELECT COUNT(1) as count FROM topic_catalogs a WHERE a.ref_id=? AND a.`type` = ? AND a.deleted=0"
+	if err = node.GetContext(c, &count, sqlSelect, articleID, model.TopicCatalogArticle); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetArticleRelationsCount error(%+v), article_id(%d) ", err, articleID))
+	}
+	return
+}
+
 func (p *Dao) GetTopicCatalogChildrenCount(c context.Context, node sqalx.Node, topicID, parentID int64) (count int, err error) {
 	sqlSelect := "SELECT COUNT(1) as count FROM topic_catalogs a WHERE a.topic_id=? AND a.parent_id = ? AND a.deleted=0"
 	if err = node.GetContext(c, &count, sqlSelect, topicID, parentID); err != nil {
