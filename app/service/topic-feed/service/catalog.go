@@ -116,6 +116,8 @@ func (p *Service) onTopicTaxonomyCatalogDeleted(m *stan.Msg) {
 	var catalog *model.TopicCatalog
 	if catalog, err = p.getTopicCatalog(c, tx, info.CatalogID); err != nil {
 		if ecode.Cause(err) == ecode.TopicCatalogNotExist {
+			fmt.Println(11111111111111)
+			fmt.Println(err)
 			m.Ack()
 		}
 		return
