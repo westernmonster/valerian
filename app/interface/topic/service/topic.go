@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"strconv"
 
 	"valerian/app/interface/topic/model"
 	discuss "valerian/app/service/discuss/api"
@@ -240,6 +241,34 @@ func (p *Service) GetTopic(c context.Context, topicID int64, include string) (it
 	return
 }
 
+func (p *Service) FromCatalogArticle(v *topic.TargetArticle) (resp *model.TargetArticle) {
+	resp = &model.TargetArticle{
+		ID:           v.ID,
+		Title:        v.Title,
+		Excerpt:      v.Excerpt,
+		ChangeDesc:   v.ChangeDesc,
+		LikeCount:    v.LikeCount,
+		DislikeCount: v.DislikeCount,
+		ReviseCount:  v.ReviseCount,
+		CommentCount: v.CommentCount,
+		RelationIDs:  make([]string, 0),
+		CreatedAt:    v.CreatedAt,
+		UpdatedAt:    v.UpdatedAt,
+		Creator: &model.Creator{
+			ID:           v.Creator.ID,
+			Avatar:       v.Creator.Avatar,
+			UserName:     v.Creator.UserName,
+			Introduction: v.Creator.Introduction,
+		},
+	}
+	if v.RelationIDs != nil {
+		for _, x := range v.RelationIDs {
+			resp.RelationIDs = append(resp.RelationIDs, strconv.FormatInt(x, 10))
+		}
+	}
+	return
+}
+
 func (p *Service) FromCatalogs(items []*topic.TopicRootCatalogInfo) (resp []*model.TopicRootCatalog) {
 	resp = make([]*model.TopicRootCatalog, 0)
 	for _, v := range items {
@@ -252,25 +281,7 @@ func (p *Service) FromCatalogs(items []*topic.TopicRootCatalogInfo) (resp []*mod
 			Children:  make([]*model.TopicParentCatalog, 0),
 		}
 		if v.Article != nil {
-			root.Article = &model.TargetArticle{
-				ID:             v.Article.ID,
-				Title:          v.Article.Title,
-				Excerpt:        v.Article.Excerpt,
-				ChangeDesc:     v.Article.ChangeDesc,
-				LikeCount:      v.Article.LikeCount,
-				DislikeCount:   v.Article.DislikeCount,
-				ReviseCount:    v.Article.ReviseCount,
-				CommentCount:   v.Article.CommentCount,
-				RelationsCount: v.Article.RelationsCount,
-				CreatedAt:      v.Article.CreatedAt,
-				UpdatedAt:      v.Article.UpdatedAt,
-				Creator: &model.Creator{
-					ID:           v.Article.Creator.ID,
-					Avatar:       v.Article.Creator.Avatar,
-					UserName:     v.Article.Creator.UserName,
-					Introduction: v.Article.Creator.Introduction,
-				},
-			}
+			root.Article = p.FromCatalogArticle(v.Article)
 		}
 
 		if v.Children != nil {
@@ -284,25 +295,7 @@ func (p *Service) FromCatalogs(items []*topic.TopicRootCatalogInfo) (resp []*mod
 					Children:  make([]*model.TopicChildCatalog, 0),
 				}
 				if x.Article != nil {
-					parent.Article = &model.TargetArticle{
-						ID:             x.Article.ID,
-						Title:          x.Article.Title,
-						Excerpt:        x.Article.Excerpt,
-						ChangeDesc:     x.Article.ChangeDesc,
-						LikeCount:      x.Article.LikeCount,
-						DislikeCount:   x.Article.DislikeCount,
-						ReviseCount:    x.Article.ReviseCount,
-						CommentCount:   x.Article.CommentCount,
-						RelationsCount: x.Article.RelationsCount,
-						CreatedAt:      x.Article.CreatedAt,
-						UpdatedAt:      x.Article.UpdatedAt,
-						Creator: &model.Creator{
-							ID:           x.Article.Creator.ID,
-							Avatar:       x.Article.Creator.Avatar,
-							UserName:     x.Article.Creator.UserName,
-							Introduction: x.Article.Creator.Introduction,
-						},
-					}
+					parent.Article = p.FromCatalogArticle(x.Article)
 				}
 				if x.Children != nil {
 					for _, j := range x.Children {
@@ -314,25 +307,7 @@ func (p *Service) FromCatalogs(items []*topic.TopicRootCatalogInfo) (resp []*mod
 							IsPrimary: v.IsPrimary,
 						}
 						if j.Article != nil {
-							child.Article = &model.TargetArticle{
-								ID:             j.Article.ID,
-								Title:          j.Article.Title,
-								Excerpt:        j.Article.Excerpt,
-								ChangeDesc:     j.Article.ChangeDesc,
-								LikeCount:      j.Article.LikeCount,
-								DislikeCount:   j.Article.DislikeCount,
-								RelationsCount: j.Article.RelationsCount,
-								ReviseCount:    j.Article.ReviseCount,
-								CommentCount:   j.Article.CommentCount,
-								CreatedAt:      j.Article.CreatedAt,
-								UpdatedAt:      j.Article.UpdatedAt,
-								Creator: &model.Creator{
-									ID:           j.Article.Creator.ID,
-									Avatar:       j.Article.Creator.Avatar,
-									UserName:     j.Article.Creator.UserName,
-									Introduction: j.Article.Creator.Introduction,
-								},
-							}
+							child.Article = p.FromCatalogArticle(j.Article)
 						}
 						parent.Children = append(parent.Children, child)
 					}
