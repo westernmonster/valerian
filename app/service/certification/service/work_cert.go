@@ -43,33 +43,50 @@ func (p *Service) RequestWorkCert(c context.Context, arg *model.ArgAddWorkCert) 
 	var item *model.WorkCertification
 	if item, err = p.d.GetWorkCertificationByCond(c, tx, map[string]interface{}{"account_id": arg.AccountID}); err != nil {
 		return
-	} else if item != nil {
-		err = ecode.WorkCertExist
-		return
-	}
+	} else if item == nil {
+		item = &model.WorkCertification{
+			ID:         gid.NewID(),
+			AccountID:  arg.AccountID,
+			Status:     model.WorkCertificationInProgress,
+			WorkPic:    arg.WorkPic,
+			OtherPic:   arg.OtherPic,
+			Company:    arg.Company,
+			Department: arg.Department,
+			Position:   arg.Position,
+			ExpiresAt:  arg.ExpiresAt,
+			CreatedAt:  time.Now().Unix(),
+			UpdatedAt:  time.Now().Unix(),
+		}
 
-	item = &model.WorkCertification{
-		ID:         gid.NewID(),
-		AccountID:  arg.AccountID,
-		Status:     model.WorkCertificationInProgress,
-		WorkPic:    arg.WorkPic,
-		OtherPic:   arg.OtherPic,
-		Company:    arg.Company,
-		Department: arg.Department,
-		Position:   arg.Position,
-		ExpiresAt:  arg.ExpiresAt,
-		CreatedAt:  time.Now().Unix(),
-		UpdatedAt:  time.Now().Unix(),
-	}
+		if err = p.d.AddWorkCertification(c, tx, item); err != nil {
+			return
+		}
+	} else {
+		item.Status = model.WorkCertificationInProgress
+		item.WorkPic = arg.WorkPic
+		item.OtherPic = arg.OtherPic
+		item.Company = arg.Company
+		item.Department = arg.Department
+		item.Position = arg.Position
+		item.ExpiresAt = arg.ExpiresAt
+		item.UpdatedAt = time.Now().Unix()
+		if err = p.d.UpdateWorkCertification(c, tx, item); err != nil {
+			return
+		}
 
-	if err = p.d.AddWorkCertification(c, tx, item); err != nil {
-		return
+		if err = p.d.UpdateAccountWorkCert(c, tx, arg.AccountID, false); err != nil {
+			return
+		}
 	}
 
 	if err = tx.Commit(); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 		return
 	}
+
+	p.addCache(func() {
+		p.d.DelAccountCache(context.TODO(), item.AccountID)
+	})
 
 	return
 }
