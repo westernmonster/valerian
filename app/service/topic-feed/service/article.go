@@ -107,22 +107,6 @@ func (p *Service) onArticleUpdated(m *stan.Msg) {
 		return
 	}
 
-	var history *model.ArticleHistory
-	if history, err = p.getArticleHistory(c, p.d.DB(), info.ArticleHistoryID); err != nil {
-		if ecode.Cause(err) == ecode.ArticleHistoryNotExist {
-			m.Ack()
-		}
-		return
-	}
-
-	var article *model.Article
-	if article, err = p.getArticle(c, p.d.DB(), info.ArticleID); err != nil {
-		if ecode.Cause(err) == ecode.ArticleNotExist {
-			m.Ack()
-		}
-		return
-	}
-
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
@@ -138,11 +122,30 @@ func (p *Service) onArticleUpdated(m *stan.Msg) {
 		}
 	}()
 
+	var history *model.ArticleHistory
+	if history, err = p.getArticleHistory(c, tx, info.ArticleHistoryID); err != nil {
+		if ecode.Cause(err) == ecode.ArticleHistoryNotExist {
+			m.Ack()
+		}
+		fmt.Println(1111111)
+		return
+	}
+
+	var article *model.Article
+	if article, err = p.getArticle(c, tx, info.ArticleID); err != nil {
+		if ecode.Cause(err) == ecode.ArticleNotExist {
+			m.Ack()
+		}
+		fmt.Println(2222222)
+		return
+	}
+
 	var catalogs []*model.TopicCatalog
 	if catalogs, err = p.d.GetTopicCatalogsByCond(c, tx, map[string]interface{}{
 		"type":   model.TopicCatalogArticle,
 		"ref_id": article.ID,
 	}); err != nil {
+		fmt.Println(3333333)
 		return
 	}
 
@@ -161,7 +164,7 @@ func (p *Service) onArticleUpdated(m *stan.Msg) {
 			UpdatedAt:  time.Now().Unix(),
 		}
 
-		if err = p.d.AddTopicFeed(context.Background(), p.d.DB(), feed); err != nil {
+		if err = p.d.AddTopicFeed(context.Background(), tx, feed); err != nil {
 			log.Errorf("service.onArticleUpdated() failed %#v", err)
 			return
 		}
