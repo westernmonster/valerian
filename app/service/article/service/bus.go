@@ -66,7 +66,7 @@ func (p *Service) onArticleAdded(c context.Context, articleID, aid, actionTime i
 }
 
 func (p *Service) onArticleUpdated(c context.Context, articleID, historyID, aid, actionTime int64) {
-	msg := &def.MsgArticleUpdated{ArticleID: articleID, ActorID: aid, ActionTime: actionTime}
+	msg := &def.MsgArticleUpdated{ArticleID: articleID, ActorID: aid, ArticleHistoryID: historyID, ActionTime: actionTime}
 
 	var data []byte
 	var err error
