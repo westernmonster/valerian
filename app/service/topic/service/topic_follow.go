@@ -7,6 +7,7 @@ import (
 	"valerian/app/service/topic/api"
 	"valerian/app/service/topic/model"
 	"valerian/library/database/sqalx"
+	"valerian/library/database/sqlx/types"
 	"valerian/library/ecode"
 	"valerian/library/gid"
 	"valerian/library/log"
@@ -66,13 +67,14 @@ func (p *Service) Follow(c context.Context, arg *api.ArgTopicFollow) (status int
 	}
 
 	item := &model.TopicFollowRequest{
-		ID:        gid.NewID(),
-		Status:    model.FollowRequestStatusCommited,
-		TopicID:   arg.TopicID,
-		Reason:    arg.Reason,
-		AccountID: arg.Aid,
-		CreatedAt: time.Now().Unix(),
-		UpdatedAt: time.Now().Unix(),
+		ID:            gid.NewID(),
+		Status:        model.FollowRequestStatusCommited,
+		TopicID:       arg.TopicID,
+		Reason:        arg.Reason,
+		AccountID:     arg.Aid,
+		AllowViewCert: types.BitBool(arg.AllowViewCert),
+		CreatedAt:     time.Now().Unix(),
+		UpdatedAt:     time.Now().Unix(),
 	}
 
 	sentRequest := false
