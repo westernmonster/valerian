@@ -58,8 +58,22 @@ func (p *Service) onArticleAdded(m *stan.Msg) {
 		return
 	}
 
+	var tx sqalx.Node
+	if tx, err = p.d.DB().Beginx(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		return
+	}
+
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+			}
+			return
+		}
+	}()
 	var history *model.ArticleHistory
-	if history, err = p.getArticleHistory(c, p.d.DB(), info.ArticleHistoryID); err != nil {
+	if history, err = p.getArticleHistory(c, tx, info.ArticleHistoryID); err != nil {
 		if ecode.Cause(err) == ecode.ArticleHistoryNotExist {
 			m.Ack()
 		}
@@ -67,7 +81,7 @@ func (p *Service) onArticleAdded(m *stan.Msg) {
 	}
 
 	var article *model.Article
-	if article, err = p.getArticle(c, p.d.DB(), info.ArticleID); err != nil {
+	if article, err = p.getArticle(c, tx, info.ArticleID); err != nil {
 		if ecode.Cause(err) == ecode.ArticleNotExist {
 			m.Ack()
 		}
@@ -88,8 +102,13 @@ func (p *Service) onArticleAdded(m *stan.Msg) {
 		UpdatedAt:  time.Now().Unix(),
 	}
 
-	if err = p.d.AddTopicFeed(context.Background(), p.d.DB(), feed); err != nil {
+	if err = p.d.AddTopicFeed(context.Background(), tx, feed); err != nil {
 		log.Errorf("service.onArticleAdded() failed %#v", err)
+		return
+	}
+
+	if err = tx.Commit(); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 		return
 	}
 
@@ -127,7 +146,6 @@ func (p *Service) onArticleUpdated(m *stan.Msg) {
 		if ecode.Cause(err) == ecode.ArticleHistoryNotExist {
 			m.Ack()
 		}
-		fmt.Println(1111111)
 		return
 	}
 
@@ -136,7 +154,6 @@ func (p *Service) onArticleUpdated(m *stan.Msg) {
 		if ecode.Cause(err) == ecode.ArticleNotExist {
 			m.Ack()
 		}
-		fmt.Println(2222222)
 		return
 	}
 
@@ -145,7 +162,6 @@ func (p *Service) onArticleUpdated(m *stan.Msg) {
 		"type":   model.TopicCatalogArticle,
 		"ref_id": article.ID,
 	}); err != nil {
-		fmt.Println(3333333)
 		return
 	}
 
