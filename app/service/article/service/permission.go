@@ -56,7 +56,7 @@ func (p *Service) checkEditPermission(c context.Context, node sqalx.Node, articl
 		//     话题的编辑权限为管理员，则检查当前用户是否是管理员
 		//     话题的编辑权限为成员，则检查当前用户是否是成员
 		//
-		if !v.IsPrimary && v.Permission == model.AuthPermissionEdit {
+		if v.Permission == model.AuthPermissionEdit {
 			var topicEditPermission string
 			if topicEditPermission, err = p.d.GetTopicEditPermissionByID(c, node, v.TopicID); err != nil {
 				return
@@ -84,7 +84,6 @@ func (p *Service) checkEditPermission(c context.Context, node sqalx.Node, articl
 				break
 			}
 
-			continue
 		}
 
 		// 如果是主关联话题
