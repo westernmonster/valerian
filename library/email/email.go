@@ -44,7 +44,7 @@ func (p *EmailClient) SendRegisterEmail(c context.Context, email string, valcode
 
 	body := &tmpl.RegisterValcodeBody{
 		Head: &layouts.EmailPageHead{
-			Title:     "飞行百科注册验证码",
+			Title:     "他石笔记注册验证码",
 			BodyClass: "",
 		},
 		Valcode: valcode,
@@ -59,8 +59,8 @@ func (p *EmailClient) SendRegisterEmail(c context.Context, email string, valcode
 	request.QueryParams["AddressType"] = "1"
 	request.QueryParams["ReplyToAddress"] = "false"
 	request.QueryParams["ToAddress"] = email
-	request.QueryParams["FromAlias"] = "飞行百科"
-	request.QueryParams["Subject"] = "飞行百科注册验证码"
+	request.QueryParams["FromAlias"] = "他石笔记"
+	request.QueryParams["Subject"] = "他石笔记注册验证码"
 	request.QueryParams["HtmlBody"] = body.EmailHTML()
 
 	response, err := p.Client.ProcessCommonRequest(request)
@@ -116,7 +116,7 @@ func (p *EmailClient) SendResetPasswordValcode(c context.Context, email string, 
 
 	body := &tmpl.RegisterValcodeBody{
 		Head: &layouts.EmailPageHead{
-			Title:     "飞行百科安全验证码",
+			Title:     "他石笔记安全验证码",
 			BodyClass: "",
 		},
 		Valcode: valcode,
@@ -131,8 +131,8 @@ func (p *EmailClient) SendResetPasswordValcode(c context.Context, email string, 
 	request.QueryParams["AddressType"] = "1"
 	request.QueryParams["ReplyToAddress"] = "false"
 	request.QueryParams["ToAddress"] = email
-	request.QueryParams["FromAlias"] = "飞行百科"
-	request.QueryParams["Subject"] = "飞行百科安全验证码"
+	request.QueryParams["FromAlias"] = "他石笔记"
+	request.QueryParams["Subject"] = "他石笔记安全验证码"
 	request.QueryParams["HtmlBody"] = body.EmailHTML()
 
 	response, err := p.Client.ProcessCommonRequest(request)

@@ -1,8 +1,8 @@
 package main
 
-// @title 飞行百科 API
+// @title 他石笔记 API
 // @version 1.0
-// @description 飞行百科 API
+// @description 他石笔记 API
 // @description 所有返回结果以如下JSON对象返回
 // @description <pre>
 // @description {

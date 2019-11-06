@@ -14,11 +14,11 @@ import (
 )
 
 const (
-	SignName                       = "飞行百科"          // 短信签名
+	SignName                       = "他石笔记"          // 短信签名
 	RegisterTemplateCode           = "SMS_166865016" // 注册验证码模板
 	ResetPasswordTemplateCode      = "SMS_166865016" // 重置密码模板
 	LoginTemplateCode              = "SMS_166776690" // 注册验证码模板
-	ChinaSignName                  = "飞行百科"          // 短信签名
+	ChinaSignName                  = "他石笔记"          // 短信签名
 	ChinaRegisterTemplateCode      = "SMS_161380530" // 注册验证码模板
 	ChinaResetPasswordTemplateCode = "SMS_161380531" // 重置密码模板
 	ChinaLoginTemplateCode         = "SMS_166690586" // 注册验证码模板

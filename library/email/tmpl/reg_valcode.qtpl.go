@@ -43,7 +43,7 @@ func (p *RegisterValcodeBody) StreamEmailHTML(qw422016 *qt422016.Writer) {
   <tr>
     <td>
       <p>你好</p>
-      <p>欢迎使用飞行百科，你的注册验证码如下，请在 5 分钟内输入进行下一步操作。</p>
+      <p>欢迎使用他石笔记，你的注册验证码如下，请在 5 分钟内输入进行下一步操作。</p>
 
       <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="document-item">
         <tbody>
