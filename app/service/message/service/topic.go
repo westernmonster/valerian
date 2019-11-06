@@ -233,9 +233,9 @@ func (p *Service) onTopicFollowApproved(m *stan.Msg) {
 	msg := &model.Message{
 		ID:         gid.NewID(),
 		AccountID:  req.AccountID,
-		ActionType: fmt.Sprintf(model.MsgApplyApproved, topic.Name),
+		ActionType: model.MsgApplyApproved,
 		ActionTime: time.Now().Unix(),
-		ActionText: model.MsgTextApplyApproved,
+		ActionText: fmt.Sprintf(model.MsgTextApplyApproved, topic.Name),
 		Actors:     strconv.FormatInt(info.ActorID, 10),
 		MergeCount: 1,
 		ActorType:  model.ActorTypeUser,
