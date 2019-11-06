@@ -350,7 +350,7 @@ func (p *Service) onTopicFollowed(m *stan.Msg) {
 		return
 	}
 
-	if !t.IsPrivate {
+	if t.JoinPermission == model.JoinPermissionMember {
 		return
 	}
 
