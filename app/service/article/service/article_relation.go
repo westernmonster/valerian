@@ -130,21 +130,24 @@ func (p *Service) checkTopicCatalogTaxonomy(c context.Context, node sqalx.Node, 
 	return nil
 }
 
-func (p *Service) bulkCreateArticleRelations(c context.Context, node sqalx.Node, articleID int64, title string, relations []*api.ArgArticleRelation) (err error) {
+func (p *Service) bulkCreateArticleRelations(c context.Context, node sqalx.Node, articleID int64, title string, relations []*api.ArgArticleRelation) (ids []int64, err error) {
+	ids = make([]int64, 0)
 	if err = p.checkArticleRelations(c, node, relations); err != nil {
 		return
 	}
 
 	for _, v := range relations {
-		if err = p.addArticleRelation(c, node, articleID, title, v); err != nil {
+		var id int64
+		if id, err = p.addArticleRelation(c, node, articleID, title, v); err != nil {
 			return
 		}
+		ids = append(ids, id)
 	}
 
 	return
 }
 
-func (p *Service) addArticleRelation(c context.Context, node sqalx.Node, articleID int64, title string, item *api.ArgArticleRelation) (err error) {
+func (p *Service) addArticleRelation(c context.Context, node sqalx.Node, articleID int64, title string, item *api.ArgArticleRelation) (id int64, err error) {
 	var checkExist *model.TopicCatalog
 	if checkExist, err = p.d.GetTopicCatalogByCond(c, node, map[string]interface{}{
 		"topic_id": item.TopicID,
@@ -204,6 +207,8 @@ func (p *Service) addArticleRelation(c context.Context, node sqalx.Node, article
 	if err = p.d.IncrTopicStat(c, node, &model.TopicStat{TopicID: item.TopicID, ArticleCount: 1}); err != nil {
 		return
 	}
+
+	id = d.ID
 
 	return
 }
@@ -386,7 +391,7 @@ func (p *Service) AddArticleRelation(c context.Context, arg *api.ArgAddArticleRe
 		return
 	}
 
-	if err = p.addArticleRelation(c, tx, article.ID, article.Title, &api.ArgArticleRelation{
+	if _, err = p.addArticleRelation(c, tx, article.ID, article.Title, &api.ArgArticleRelation{
 		TopicID:    arg.TopicID,
 		Permission: arg.Permission,
 		ParentID:   arg.ParentID,

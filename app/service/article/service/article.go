@@ -394,7 +394,8 @@ func (p *Service) AddArticle(c context.Context, arg *api.ArgAddArticle) (id int6
 		return
 	}
 
-	if err = p.bulkCreateArticleRelations(c, tx, item.ID, item.Title, arg.Relations); err != nil {
+	var ids []int64
+	if ids, err = p.bulkCreateArticleRelations(c, tx, item.ID, item.Title, arg.Relations); err != nil {
 		return
 	}
 
@@ -402,8 +403,10 @@ func (p *Service) AddArticle(c context.Context, arg *api.ArgAddArticle) (id int6
 		return
 	}
 
-	if err = p.d.IncrTopicStat(c, tx, &model.TopicStat{ArticleCount: 1}); err != nil {
-		return
+	for _, v := range ids {
+		if err = p.d.IncrTopicStat(c, tx, &model.TopicStat{TopicID: v, ArticleCount: 1}); err != nil {
+			return
+		}
 	}
 
 	if err = tx.Commit(); err != nil {
