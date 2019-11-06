@@ -25,6 +25,7 @@ func (p *Service) GetArticleRelations(c context.Context, articleID int64) (items
 		for _, v := range data.Items {
 			items = append(items, &model.ArticleRelationResp{
 				ID:              v.ID,
+				ToTopicID:       v.ToTopicID,
 				CatalogFullPath: v.CatalogFullPath,
 				Primary:         v.Primary,
 				Name:            v.Name,
