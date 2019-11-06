@@ -367,9 +367,6 @@ func (p *Service) saveCatalogs(c context.Context, node sqalx.Node, aid int64, re
 				err = ecode.MustDeleteChildrenCatalogFirst
 				return
 			}
-		} else if v.Item.IsPrimary == true {
-			err = ecode.NeedPrimaryTopic
-			return
 		}
 
 		if err = p.d.DelTopicCatalog(c, node, k); err != nil {
