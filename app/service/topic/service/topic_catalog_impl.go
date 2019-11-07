@@ -111,7 +111,7 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 						return
 					}
 					subItem.Article = p.FromArticle(article)
-					if parent.Article.RelationIDs, err = p.d.GetArticleRelationIDs(c, node, article.ID); err != nil {
+					if subItem.Article.RelationIDs, err = p.d.GetArticleRelationIDs(c, node, article.ID); err != nil {
 						return
 					}
 				case model.TopicCatalogTestSet:
