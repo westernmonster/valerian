@@ -41,8 +41,9 @@ const (
 )
 
 const (
-	AuthPermissionView = "view"
-	AuthPermissionEdit = "edit"
+	AuthPermissionView      = "view"
+	AuthPermissionAdminEdit = "admin_edit"
+	AuthPermissionEdit      = "edit"
 )
 
 const (
