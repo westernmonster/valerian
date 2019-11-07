@@ -22,6 +22,7 @@ func (p *Service) Invite(c context.Context, arg *api.ArgTopicInvite) (err error)
 	if req, err = p.d.GetTopicInviteRequestByCond(c, p.d.DB(), map[string]interface{}{
 		"topic_id":   arg.TopicID,
 		"account_id": arg.AccountID,
+		"status":     model.InviteStatusSent,
 	}); err != nil {
 		return
 	} else if req != nil {
