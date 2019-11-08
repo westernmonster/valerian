@@ -3,19 +3,34 @@ package service
 import (
 	"context"
 	"fmt"
+	"strconv"
 
 	"valerian/library/jpush"
 )
 
-func (p *Service) pushSingleUser(c context.Context, aid int64, msg *jpush.Message) (msgID string, err error) {
-	fmt.Printf("push to alias(%d)  message(%+v) \n", aid, msg)
+func (p *Service) pushSingleUser(c context.Context, aid int64, msgID int64, title, content, link string) (pushID string, err error) {
 	payload := &jpush.Payload{
 		Platform: jpush.NewPlatform().All(),
 		Audience: jpush.NewAudience().SetAlias(fmt.Sprintf("%d", aid)),
 		Notification: &jpush.Notification{
-			Alert: msg.Content,
+			Alert: title,
+			Android: &jpush.AndroidNotification{
+				Alert: title,
+				Extras: map[string]interface{}{
+					"id":   strconv.FormatInt(msgID, 10),
+					"type": "link",
+					"url":  link,
+				},
+			},
+			Ios: &jpush.IosNotification{
+				Alert: title,
+				Extras: map[string]interface{}{
+					"id":   strconv.FormatInt(msgID, 10),
+					"type": "link",
+					"url":  link,
+				},
+			},
 		},
-		Message: msg,
 		Options: &jpush.Options{
 			TimeLive:       60,
 			ApnsProduction: true,

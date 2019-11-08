@@ -13,7 +13,6 @@ import (
 	"valerian/app/service/message/model"
 	"valerian/library/database/sqalx"
 	"valerian/library/gid"
-	"valerian/library/jpush"
 	"valerian/library/log"
 
 	"github.com/kamilsk/retry/v4"
@@ -85,16 +84,13 @@ func (p *Service) onArticleCommented(m *stan.Msg) {
 	m.Ack()
 
 	p.addCache(func() {
-		if _, err := p.pushSingleUser(context.Background(), msg.AccountID, &jpush.Message{
-			Title:       def.PushMsgTitleArticleCommented,
-			Content:     def.PushMsgTitleArticleCommented,
-			ContentType: "text",
-			Extras: map[string]interface{}{
-				"id":   strconv.FormatInt(msg.ID, 10),
-				"type": "link",
-				"url":  fmt.Sprintf(def.LinkComment, model.TargetTypeArticle, comment.OwnerID, comment.ID),
-			},
-		}); err != nil {
+		if _, err := p.pushSingleUser(context.Background(),
+			msg.AccountID,
+			msg.ID,
+			def.PushMsgTitleArticleCommented,
+			def.PushMsgTitleArticleCommented,
+			fmt.Sprintf(def.LinkComment, model.TargetTypeArticle, comment.OwnerID, comment.ID),
+		); err != nil {
 			log.For(context.Background()).Error(fmt.Sprintf("service.onArticleCommented Push message failed %#v", err))
 		}
 	})
@@ -145,16 +141,13 @@ func (p *Service) onReviseCommented(m *stan.Msg) {
 	m.Ack()
 
 	p.addCache(func() {
-		if _, err := p.pushSingleUser(context.Background(), msg.AccountID, &jpush.Message{
-			Title:       def.PushMsgTitleReviseCommented,
-			Content:     def.PushMsgTitleReviseCommented,
-			ContentType: "text",
-			Extras: map[string]interface{}{
-				"id":   strconv.FormatInt(msg.ID, 10),
-				"type": "link",
-				"url":  fmt.Sprintf(def.LinkComment, model.TargetTypeRevise, comment.OwnerID, comment.ID),
-			},
-		}); err != nil {
+		if _, err := p.pushSingleUser(context.Background(),
+			msg.AccountID,
+			msg.ID,
+			def.PushMsgTitleReviseCommented,
+			def.PushMsgTitleReviseCommented,
+			fmt.Sprintf(def.LinkComment, model.TargetTypeRevise, comment.OwnerID, comment.ID),
+		); err != nil {
 			log.For(context.Background()).Error(fmt.Sprintf("service.onReviseCommented Push message failed %#v", err))
 		}
 	})
@@ -228,16 +221,13 @@ func (p *Service) onDiscussionCommented(m *stan.Msg) {
 	m.Ack()
 
 	p.addCache(func() {
-		if _, err := p.pushSingleUser(context.Background(), msg.AccountID, &jpush.Message{
-			Title:       def.PushMsgTitleDiscussionCommented,
-			Content:     def.PushMsgTitleDiscussionCommented,
-			ContentType: "text",
-			Extras: map[string]interface{}{
-				"id":   strconv.FormatInt(msg.ID, 10),
-				"type": "link",
-				"url":  fmt.Sprintf(def.LinkComment, model.TargetTypeRevise, comment.OwnerID, comment.ID),
-			},
-		}); err != nil {
+		if _, err := p.pushSingleUser(context.Background(),
+			msg.AccountID,
+			msg.ID,
+			def.PushMsgTitleDiscussionCommented,
+			def.PushMsgTitleDiscussionCommented,
+			fmt.Sprintf(def.LinkComment, model.TargetTypeRevise, comment.OwnerID, comment.ID),
+		); err != nil {
 			log.For(context.Background()).Error(fmt.Sprintf("service.onDiscussionCommented Push message failed %#v", err))
 		}
 	})
@@ -292,16 +282,13 @@ func (p *Service) onCommentReplied(m *stan.Msg) {
 	m.Ack()
 
 	p.addCache(func() {
-		if _, err := p.pushSingleUser(context.Background(), msg.AccountID, &jpush.Message{
-			Title:       def.PushMsgTitleCommentReplied,
-			Content:     def.PushMsgTitleCommentReplied,
-			ContentType: "text",
-			Extras: map[string]interface{}{
-				"id":   strconv.FormatInt(msg.ID, 10),
-				"type": "link",
-				"url":  fmt.Sprintf(def.LinkSubComment, comment.OwnerType, comment.OwnerID, comment.ResourceID, comment.ID),
-			},
-		}); err != nil {
+		if _, err := p.pushSingleUser(context.Background(),
+			msg.AccountID,
+			msg.ID,
+			def.PushMsgTitleCommentReplied,
+			def.PushMsgTitleCommentReplied,
+			fmt.Sprintf(def.LinkSubComment, comment.OwnerType, comment.OwnerID, comment.ResourceID, comment.ID),
+		); err != nil {
 			log.For(context.Background()).Error(fmt.Sprintf("service.onCommentReplied Push message failed %#v", err))
 		}
 	})
