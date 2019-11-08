@@ -6,6 +6,8 @@ import (
 	"strconv"
 
 	"valerian/library/jpush"
+
+	"github.com/davecgh/go-spew/spew"
 )
 
 func (p *Service) pushSingleUser(c context.Context, aid int64, msgID int64, title, content, link string) (pushID string, err error) {
@@ -36,5 +38,7 @@ func (p *Service) pushSingleUser(c context.Context, aid int64, msgID int64, titl
 			ApnsProduction: true,
 		},
 	}
+
+	spew.Dump(payload)
 	return p.jp.Push(payload)
 }
