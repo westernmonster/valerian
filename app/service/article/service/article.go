@@ -484,6 +484,15 @@ func (p *Service) DelArticle(c context.Context, arg *api.IDReq) (err error) {
 		return
 	}
 
+	var histories []*model.ArticleHistory
+	if histories, err = p.d.GetArticleHistoriesByCond(c, tx, map[string]interface{}{}); err != nil {
+		return
+	}
+	for _, v := range histories {
+		if err = p.d.DelTopicFeedByCond(c, tx, v.ID, model.TargetTypeArticleHistory); err != nil {
+			return
+		}
+	}
 	if err = p.d.DelArticleHistories(c, tx, arg.ID); err != nil {
 		return
 	}

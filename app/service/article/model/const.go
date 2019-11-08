@@ -71,11 +71,12 @@ const (
 )
 
 const (
-	TargetTypeTopic      = "topic"
-	TargetTypeDiscussion = "discussion"
-	TargetTypeRevise     = "revise"
-	TargetTypeArticle    = "article"
-	TargetTypeComment    = "comment"
+	TargetTypeTopic          = "topic"
+	TargetTypeDiscussion     = "discussion"
+	TargetTypeRevise         = "revise"
+	TargetTypeArticle        = "article"
+	TargetTypeArticleHistory = "article_history"
+	TargetTypeComment        = "comment"
 )
 
 const (
