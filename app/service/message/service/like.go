@@ -308,7 +308,7 @@ func (p *Service) onCommentLiked(m *stan.Msg) {
 			msg.ID,
 			def.PushMsgTitleCommentLiked,
 			def.PushMsgTitleCommentLiked,
-			fmt.Sprintf(def.LinkComment, comment.ID),
+			fmt.Sprintf(def.LinkComment, comment.OwnerType, comment.OwnerID, comment.ID),
 		); err != nil {
 			log.For(context.Background()).Error(fmt.Sprintf("service.onCommentLiked Push message failed %#v", err))
 		}
