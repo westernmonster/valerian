@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"valerian/app/service/topic/api"
 	topic "valerian/app/service/topic/api"
 	"valerian/library/log"
 )
@@ -59,70 +60,70 @@ func (p *Dao) SaveAuthTopics(c context.Context, arg *topic.ArgSaveAuthTopics) (e
 	return
 }
 
-func (p *Dao) GetAuthTopics(c context.Context, arg *topic.IDReq) (resp *topic.AuthTopicsResp, err error) {
+func (p *Dao) GetAuthTopics(c context.Context, arg *api.IDReq) (resp *api.AuthTopicsResp, err error) {
 	if resp, err = p.topicRPC.GetAuthTopics(c, arg); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetAuthTopics err(%+v) arg(%+v)", err, arg))
 	}
 	return
 }
 
-func (p *Dao) FollowTopic(c context.Context, arg *topic.ArgTopicFollow) (resp *topic.StatusResp, err error) {
+func (p *Dao) FollowTopic(c context.Context, arg *api.ArgTopicFollow) (resp *api.StatusResp, err error) {
 	if resp, err = p.topicRPC.FollowTopic(c, arg); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetAuthTopics err(%+v) arg(%+v)", err, arg))
 	}
 	return
 }
 
-func (p *Dao) AuditFollow(c context.Context, arg *topic.ArgAuditFollow) (err error) {
+func (p *Dao) AuditFollow(c context.Context, arg *api.ArgAuditFollow) (err error) {
 	if _, err = p.topicRPC.AuditFollow(c, arg); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.AuditFollow err(%+v) arg(%+v)", err, arg))
 	}
 	return
 }
 
-func (p *Dao) GetCatalogTaxonomiesHierarchy(c context.Context, arg *topic.IDReq) (resp *topic.CatalogsResp, err error) {
+func (p *Dao) GetCatalogTaxonomiesHierarchy(c context.Context, arg *api.IDReq) (resp *api.CatalogsResp, err error) {
 	if resp, err = p.topicRPC.GetCatalogTaxonomiesHierarchy(c, arg); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetCatalogTaxonomiesHierarchy err(%+v) arg(%+v)", err, arg))
 	}
 	return
 }
 
-func (p *Dao) GetCatalogsHierarchy(c context.Context, arg *topic.IDReq) (resp *topic.CatalogsResp, err error) {
+func (p *Dao) GetCatalogsHierarchy(c context.Context, arg *api.IDReq) (resp *api.CatalogsResp, err error) {
 	if resp, err = p.topicRPC.GetCatalogsHierarchy(c, arg); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetCatalogsHierarchy err(%+v) arg(%+v)", err, arg))
 	}
 	return
 }
 
-func (p *Dao) SaveCatalogs(c context.Context, arg *topic.ArgSaveCatalogs) (err error) {
+func (p *Dao) SaveCatalogs(c context.Context, arg *api.ArgSaveCatalogs) (err error) {
 	if _, err = p.topicRPC.SaveCatalogs(c, arg); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.SaveCatalogs err(%+v) arg(%+v)", err, arg))
 	}
 	return
 }
 
-func (p *Dao) GetUserCanEditTopicIDs(c context.Context, arg *topic.AidReq) (resp *topic.IDsResp, err error) {
+func (p *Dao) GetUserCanEditTopicIDs(c context.Context, arg *api.AidReq) (resp *api.IDsResp, err error) {
 	if resp, err = p.topicRPC.GetUserCanEditTopicIDs(c, arg); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetUserCanEditTopicIDs err(%+v) arg(%+v)", err, arg))
 	}
 	return
 }
 
-func (p *Dao) GetFollowedTopicsIDs(c context.Context, arg *topic.AidReq) (resp *topic.IDsResp, err error) {
+func (p *Dao) GetFollowedTopicsIDs(c context.Context, arg *api.AidReq) (resp *api.IDsResp, err error) {
 	if resp, err = p.topicRPC.GetFollowedTopicsIDs(c, arg); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetFollowedTopicsIDs err(%+v) arg(%+v)", err, arg))
 	}
 	return
 }
 
-func (p *Dao) GetTopicStat(c context.Context, arg *topic.TopicReq) (info *topic.TopicStat, err error) {
+func (p *Dao) GetTopicStat(c context.Context, arg *api.TopicReq) (info *topic.TopicStat, err error) {
 	if info, err = p.topicRPC.GetTopicStat(c, arg); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetTopicStat err(%+v)", err))
 	}
 	return
 }
 
-func (p *Dao) HasTaxonomy(c context.Context, arg *topic.TopicReq) (has bool, err error) {
+func (p *Dao) HasTaxonomy(c context.Context, arg *api.TopicReq) (has bool, err error) {
 	var resp *topic.BoolResp
 	if resp, err = p.topicRPC.HasTaxonomy(c, arg); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.HasTaxonomy err(%+v)", err))
@@ -132,7 +133,7 @@ func (p *Dao) HasTaxonomy(c context.Context, arg *topic.TopicReq) (has bool, err
 	return
 }
 
-func (p *Dao) IsTopicMember(c context.Context, arg *topic.ArgIsTopicMember) (has bool, err error) {
+func (p *Dao) IsTopicMember(c context.Context, arg *api.ArgIsTopicMember) (has bool, err error) {
 	var resp *topic.BoolResp
 	if resp, err = p.topicRPC.IsTopicMember(c, arg); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.HasTaxonomy err(%+v)", err))
@@ -142,7 +143,7 @@ func (p *Dao) IsTopicMember(c context.Context, arg *topic.ArgIsTopicMember) (has
 	return
 }
 
-func (p *Dao) HasInvite(c context.Context, arg *topic.ArgHasInvite) (has bool, err error) {
+func (p *Dao) HasInvite(c context.Context, arg *api.ArgHasInvite) (has bool, err error) {
 	var resp *topic.BoolResp
 	if resp, err = p.topicRPC.HasInvite(c, arg); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.HasInvite err(%+v)", err))
@@ -152,7 +153,7 @@ func (p *Dao) HasInvite(c context.Context, arg *topic.ArgHasInvite) (has bool, e
 	return
 }
 
-func (p *Dao) Invite(c context.Context, arg *topic.ArgTopicInvite) (err error) {
+func (p *Dao) Invite(c context.Context, arg *api.ArgTopicInvite) (err error) {
 	if _, err = p.topicRPC.Invite(c, arg); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.Invite err(%+v)", err))
 	}
@@ -160,7 +161,7 @@ func (p *Dao) Invite(c context.Context, arg *topic.ArgTopicInvite) (err error) {
 	return
 }
 
-func (p *Dao) ProcessInvite(c context.Context, arg *topic.ArgProcessInvite) (err error) {
+func (p *Dao) ProcessInvite(c context.Context, arg *api.ArgProcessInvite) (err error) {
 	if _, err = p.topicRPC.ProcessInvite(c, arg); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.ProcessInvite err(%+v)", err))
 	}
@@ -168,7 +169,7 @@ func (p *Dao) ProcessInvite(c context.Context, arg *topic.ArgProcessInvite) (err
 	return
 }
 
-func (p *Dao) Leave(c context.Context, arg *topic.TopicReq) (err error) {
+func (p *Dao) Leave(c context.Context, arg *api.TopicReq) (err error) {
 	if _, err = p.topicRPC.Leave(c, arg); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.Leave err(%+v)", err))
 	}
@@ -176,7 +177,7 @@ func (p *Dao) Leave(c context.Context, arg *topic.TopicReq) (err error) {
 	return
 }
 
-func (p *Dao) BulkSaveMembers(c context.Context, arg *topic.ArgBatchSavedTopicMember) (err error) {
+func (p *Dao) BulkSaveMembers(c context.Context, arg *api.ArgBatchSavedTopicMember) (err error) {
 	if _, err = p.topicRPC.BulkSaveMembers(c, arg); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.BulkSaveMembers err(%+v)", err))
 	}
@@ -184,7 +185,7 @@ func (p *Dao) BulkSaveMembers(c context.Context, arg *topic.ArgBatchSavedTopicMe
 	return
 }
 
-func (p *Dao) GetTopicMembersPaged(c context.Context, arg *topic.ArgTopicMembers) (resp *topic.TopicMembersPagedResp, err error) {
+func (p *Dao) GetTopicMembersPaged(c context.Context, arg *api.ArgTopicMembers) (resp *api.TopicMembersPagedResp, err error) {
 	if resp, err = p.topicRPC.GetTopicMembersPaged(c, arg); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetTopicMembersPaged err(%+v) arg(%+v)", err, arg))
 	}

@@ -249,7 +249,7 @@ func followedTopics(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /admin/topic/meta [get]
 func topicMeta(c *mars.Context) {
-	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	aid, ok := metadata.Value(c, metadata.Uid).(int64)
 	if !ok {
 		c.JSON(nil, ecode.AcquireAccountIDFailed)
 		return

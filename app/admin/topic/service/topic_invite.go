@@ -15,7 +15,7 @@ import (
 )
 
 func (p *Service) GetMemberFansList(c context.Context, topicID int64, query string, pn, ps int) (resp *model.TopicMemberFansResp, err error) {
-	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	aid, ok := metadata.Value(c, metadata.Uid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed
 		return
@@ -104,7 +104,7 @@ func (p *Service) GetMemberFansList(c context.Context, topicID int64, query stri
 }
 
 func (p *Service) Invite(c context.Context, arg *model.ArgTopicInvite) (err error) {
-	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	aid, ok := metadata.Value(c, metadata.Uid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed
 		return
@@ -116,7 +116,7 @@ func (p *Service) Invite(c context.Context, arg *model.ArgTopicInvite) (err erro
 }
 
 func (p *Service) ProcessInvite(c context.Context, arg *model.ArgProcessInvite) (err error) {
-	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	aid, ok := metadata.Value(c, metadata.Uid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed
 		return
