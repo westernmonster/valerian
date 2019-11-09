@@ -9,7 +9,7 @@ import (
 
 // @Summary 新增关联话题
 // @Description 新增关联话题
-// @Tags article
+// @Tags admin
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer"
@@ -37,7 +37,7 @@ func addArticleRelation(c *mars.Context) {
 
 // @Summary 更改关联话题
 // @Description 更改关联话题
-// @Tags article
+// @Tags admin
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer"
@@ -65,7 +65,7 @@ func editArticleRelation(c *mars.Context) {
 
 // @Summary 删除关联话题
 // @Description 删除关联话题
-// @Tags article
+// @Tags admin
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer"
@@ -93,7 +93,7 @@ func delArticleRelation(c *mars.Context) {
 
 // @Summary 设置主话题
 // @Description 设置主话题
-// @Tags article
+// @Tags admin
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer"
@@ -121,7 +121,7 @@ func setArticleRelationPrimary(c *mars.Context) {
 
 // @Summary 获取关联话题列表
 // @Description 获取关联话题列表
-// @Tags article
+// @Tags admin
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer"

@@ -9,7 +9,7 @@ import (
 
 // @Summary 获取文章补充列表
 // @Description 获取文章补充列表
-// @Tags article
+// @Tags admin
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer"
@@ -72,7 +72,7 @@ func getRevises(c *mars.Context) {
 
 // @Summary 新增文章补充
 // @Description 新增文章补充
-// @Tags article
+// @Tags admin
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer"
@@ -104,7 +104,7 @@ func addRevise(c *mars.Context) {
 
 // @Summary 删除文章补充
 // @Description 删除文章补充
-// @Tags article
+// @Tags admin
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer"
@@ -132,7 +132,7 @@ func delRevise(c *mars.Context) {
 
 // @Summary 更新文章补充
 // @Description 更新文章补充
-// @Tags article
+// @Tags admin
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer"
@@ -160,7 +160,7 @@ func updateRevise(c *mars.Context) {
 
 // @Summary 获取文章补充详情
 // @Description 获取文章补充详情
-// @Tags article
+// @Tags admin
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer"

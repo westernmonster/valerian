@@ -9,7 +9,7 @@ import (
 
 // @Summary 批量更新文件
 // @Description 批量更新文件
-// @Tags article
+// @Tags admin
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer"
@@ -37,7 +37,7 @@ func editArticleFiles(c *mars.Context) {
 
 // @Summary 获取文件列表
 // @Description 获取文件列表
-// @Tags article
+// @Tags admin
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer"

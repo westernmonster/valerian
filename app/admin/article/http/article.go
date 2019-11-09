@@ -9,7 +9,7 @@ import (
 
 // @Summary 新增文章
 // @Description 新增文章
-// @Tags article
+// @Tags admin
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer"
@@ -41,7 +41,7 @@ func addArticle(c *mars.Context) {
 
 // @Summary 更新文章
 // @Description 更新文章
-// @Tags article
+// @Tags admin
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer"
@@ -69,7 +69,7 @@ func editArticle(c *mars.Context) {
 
 // @Summary 删除文章
 // @Description 删除文章
-// @Tags article
+// @Tags admin
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer"
@@ -97,7 +97,7 @@ func delArticle(c *mars.Context) {
 
 // @Summary 获取文章
 // @Description 获取文章
-// @Tags article
+// @Tags admin
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer"
@@ -126,7 +126,7 @@ func getArticle(c *mars.Context) {
 
 // @Summary 有编辑权限的文章列表
 // @Description 有编辑权限的文章列表
-// @Tags article
+// @Tags admin
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer"

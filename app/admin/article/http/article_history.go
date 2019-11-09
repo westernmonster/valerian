@@ -8,7 +8,7 @@ import (
 
 // @Summary 获取历史记录列表
 // @Description 获取历史记录列表
-// @Tags article
+// @Tags admin
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer"
@@ -54,7 +54,7 @@ func articleHistories(c *mars.Context) {
 
 // @Summary 获取历史记录
 // @Description 获取历史记录
-// @Tags article
+// @Tags admin
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer"
