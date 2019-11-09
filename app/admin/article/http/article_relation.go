@@ -2,7 +2,7 @@ package http
 
 import (
 	"strconv"
-	"valerian/app/admin/admin/article/model"
+	"valerian/app/admin/article/model"
 	"valerian/library/ecode"
 	"valerian/library/net/http/mars"
 )
