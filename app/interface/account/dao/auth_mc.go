@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strconv"
+	"valerian/app/service/feed/def"
 	"valerian/library/cache/memcache"
 	"valerian/library/log"
 )
@@ -11,21 +12,6 @@ import (
 const (
 	sessionExpires = 60 * 5
 )
-
-func akKey(token string) string {
-	return fmt.Sprintf("ak_%s", token)
-}
-func vcMobileKey(vtype int32, mobile string) string {
-	return fmt.Sprintf("rc_%d_%s", vtype, mobile)
-}
-
-func vcEmailKey(vtype int32, email string) string {
-	return fmt.Sprintf("rc_%d_%s", vtype, email)
-}
-
-func srpKey(sessionID string) string {
-	return fmt.Sprintf("srp_%s", sessionID)
-}
 
 // pingMC ping memcache.
 func (p *Dao) pingAuthMC(c context.Context) (err error) {
@@ -42,7 +28,7 @@ func (p *Dao) pingAuthMC(c context.Context) (err error) {
 }
 
 func (p *Dao) SetSessionResetPasswordCache(c context.Context, sessionID string, accountID int64) (err error) {
-	key := srpKey(sessionID)
+	key := def.ResetPasswordKey(sessionID)
 	conn := p.authMC.Get(c)
 	defer conn.Close()
 
@@ -55,7 +41,7 @@ func (p *Dao) SetSessionResetPasswordCache(c context.Context, sessionID string, 
 }
 
 func (p *Dao) SessionResetPasswordCache(c context.Context, sessionID string) (aid int64, err error) {
-	key := srpKey(sessionID)
+	key := def.ResetPasswordKey(sessionID)
 	conn := p.authMC.Get(c)
 	defer conn.Close()
 	var item *memcache.Item
@@ -81,7 +67,7 @@ func (p *Dao) SessionResetPasswordCache(c context.Context, sessionID string) (ai
 }
 
 func (p *Dao) DelResetPasswordCache(c context.Context, sessionID string) (err error) {
-	key := srpKey(sessionID)
+	key := def.ResetPasswordKey(sessionID)
 	conn := p.authMC.Get(c)
 	defer conn.Close()
 	if err = conn.Delete(key); err != nil {
@@ -96,7 +82,7 @@ func (p *Dao) DelResetPasswordCache(c context.Context, sessionID string) (err er
 }
 
 func (p *Dao) MobileValcodeCache(c context.Context, vtype int32, mobile string) (code string, err error) {
-	key := vcMobileKey(vtype, mobile)
+	key := def.MobileValcodeKey(vtype, mobile)
 	conn := p.authMC.Get(c)
 	defer conn.Close()
 	var item *memcache.Item
@@ -116,7 +102,7 @@ func (p *Dao) MobileValcodeCache(c context.Context, vtype int32, mobile string) 
 }
 
 func (p *Dao) DelMobileCache(c context.Context, vtype int32, mobile string) (err error) {
-	key := vcMobileKey(vtype, mobile)
+	key := def.MobileValcodeKey(vtype, mobile)
 	conn := p.authMC.Get(c)
 	defer conn.Close()
 	if err = conn.Delete(key); err != nil {
@@ -131,7 +117,7 @@ func (p *Dao) DelMobileCache(c context.Context, vtype int32, mobile string) (err
 }
 
 func (p *Dao) EmailValcodeCache(c context.Context, vtype int32, mobile string) (code string, err error) {
-	key := vcEmailKey(vtype, mobile)
+	key := def.EmailValcodeKey(vtype, mobile)
 	conn := p.authMC.Get(c)
 	defer conn.Close()
 	var item *memcache.Item
@@ -152,7 +138,7 @@ func (p *Dao) EmailValcodeCache(c context.Context, vtype int32, mobile string) (
 }
 
 func (p *Dao) DelEmailCache(c context.Context, vtype int32, mobile string) (err error) {
-	key := vcEmailKey(vtype, mobile)
+	key := def.EmailValcodeKey(vtype, mobile)
 	conn := p.authMC.Get(c)
 	defer conn.Close()
 	if err = conn.Delete(key); err != nil {
@@ -167,7 +153,7 @@ func (p *Dao) DelEmailCache(c context.Context, vtype int32, mobile string) (err 
 }
 
 func (p *Dao) DelAccessTokenCache(c context.Context, token string) (err error) {
-	key := akKey(token)
+	key := def.RefreshTokenKey(token)
 	conn := p.authMC.Get(c)
 	defer conn.Close()
 	if err = conn.Delete(key); err != nil {

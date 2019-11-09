@@ -89,3 +89,15 @@ func TopicMembersKey(topicID int64, page, pageSize int32, version string) string
 func TopicMemberVersionKey(topicID int64) string {
 	return fmt.Sprintf("tmv_%d", topicID)
 }
+
+func DiscussionFileKey(discussionID int64) string {
+	return fmt.Sprintf("d_files_%d", discussionID)
+}
+
+func ResetPasswordKey(sessionID string) string {
+	return fmt.Sprintf("srp_%s", sessionID)
+}
+
+func SessionKey(sid string) string {
+	return fmt.Sprintf("sess_%d", sid)
+}

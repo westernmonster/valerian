@@ -3,21 +3,10 @@ package dao
 import (
 	"context"
 	"fmt"
+	"valerian/app/service/feed/def"
 	"valerian/library/cache/memcache"
 	"valerian/library/log"
 )
-
-func akKey(token string) string {
-	return fmt.Sprintf("ak_%s", token)
-}
-
-func vcMobileKey(vtype int32, mobile string) string {
-	return fmt.Sprintf("rc_%d_%s", vtype, mobile)
-}
-
-func vcEmailKey(vtype int32, email string) string {
-	return fmt.Sprintf("rc_%d_%s", vtype, email)
-}
 
 // pingMC ping memcache.
 func (p *Dao) pingAuthMC(c context.Context) (err error) {
@@ -34,7 +23,7 @@ func (p *Dao) pingAuthMC(c context.Context) (err error) {
 }
 
 func (p *Dao) MobileValcodeCache(c context.Context, vtype int32, mobile string) (code string, err error) {
-	key := vcMobileKey(vtype, mobile)
+	key := def.MobileValcodeKey(vtype, mobile)
 	conn := p.authMC.Get(c)
 	defer conn.Close()
 	var item *memcache.Item
@@ -54,7 +43,7 @@ func (p *Dao) MobileValcodeCache(c context.Context, vtype int32, mobile string) 
 }
 
 func (p *Dao) DelMobileValcodeCache(c context.Context, vtype int32, mobile string) (err error) {
-	key := vcMobileKey(vtype, mobile)
+	key := def.MobileValcodeKey(vtype, mobile)
 	conn := p.authMC.Get(c)
 	defer conn.Close()
 	if err = conn.Delete(key); err != nil {
@@ -69,7 +58,7 @@ func (p *Dao) DelMobileValcodeCache(c context.Context, vtype int32, mobile strin
 }
 
 func (p *Dao) EmailValcodeCache(c context.Context, vtype int32, mobile string) (code string, err error) {
-	key := vcEmailKey(vtype, mobile)
+	key := def.EmailValcodeKey(vtype, mobile)
 	conn := p.authMC.Get(c)
 	defer conn.Close()
 	var item *memcache.Item
@@ -90,7 +79,7 @@ func (p *Dao) EmailValcodeCache(c context.Context, vtype int32, mobile string) (
 }
 
 func (p *Dao) DelEmailValcideCache(c context.Context, vtype int32, mobile string) (err error) {
-	key := vcEmailKey(vtype, mobile)
+	key := def.EmailValcodeKey(vtype, mobile)
 	conn := p.authMC.Get(c)
 	defer conn.Close()
 	if err = conn.Delete(key); err != nil {

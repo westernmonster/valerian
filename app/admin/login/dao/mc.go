@@ -5,13 +5,10 @@ import (
 	"fmt"
 
 	"valerian/app/admin/login/model"
+	"valerian/app/service/feed/def"
 	"valerian/library/cache/memcache"
 	"valerian/library/log"
 )
-
-func accountKey(aid int64) string {
-	return fmt.Sprintf("account_%d", aid)
-}
 
 // pingMC ping memcache.
 func (p *Dao) pingMC(c context.Context) (err error) {
@@ -28,7 +25,7 @@ func (p *Dao) pingMC(c context.Context) (err error) {
 }
 
 func (p *Dao) SetAccountCache(c context.Context, m *model.Account) (err error) {
-	key := accountKey(m.ID)
+	key := def.AccountKey(m.ID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 
@@ -40,7 +37,7 @@ func (p *Dao) SetAccountCache(c context.Context, m *model.Account) (err error) {
 }
 
 func (p *Dao) AccountCache(c context.Context, accountID int64) (m *model.Account, err error) {
-	key := accountKey(accountID)
+	key := def.AccountKey(accountID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	var item *memcache.Item
@@ -61,7 +58,7 @@ func (p *Dao) AccountCache(c context.Context, accountID int64) (m *model.Account
 }
 
 func (p *Dao) DelAccountCache(c context.Context, accountID int64) (err error) {
-	key := accountKey(accountID)
+	key := def.AccountKey(accountID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	if err = conn.Delete(key); err != nil {

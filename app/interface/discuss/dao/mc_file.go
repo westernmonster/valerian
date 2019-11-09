@@ -4,16 +4,13 @@ import (
 	"context"
 	"fmt"
 	"valerian/app/interface/discuss/model"
+	"valerian/app/service/feed/def"
 	"valerian/library/cache/memcache"
 	"valerian/library/log"
 )
 
-func discussionFileKey(discussionID int64) string {
-	return fmt.Sprintf("d_files_%d", discussionID)
-}
-
 func (p *Dao) SetDiscussionFilesCache(c context.Context, discussionID int64, m []*model.DiscussionFileResp) (err error) {
-	key := discussionFileKey(discussionID)
+	key := def.DiscussionFileKey(discussionID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 
@@ -25,7 +22,7 @@ func (p *Dao) SetDiscussionFilesCache(c context.Context, discussionID int64, m [
 }
 
 func (p *Dao) DiscussionFilesCache(c context.Context, discussionID int64) (m []*model.DiscussionFileResp, err error) {
-	key := discussionFileKey(discussionID)
+	key := def.DiscussionFileKey(discussionID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	var item *memcache.Item
@@ -45,7 +42,7 @@ func (p *Dao) DiscussionFilesCache(c context.Context, discussionID int64) (m []*
 }
 
 func (p *Dao) DelDiscussionFilesCache(c context.Context, discussionID int64) (err error) {
-	key := discussionFileKey(discussionID)
+	key := def.DiscussionFileKey(discussionID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	if err = conn.Delete(key); err != nil {

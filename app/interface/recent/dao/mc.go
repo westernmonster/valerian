@@ -8,10 +8,6 @@ import (
 	"valerian/library/log"
 )
 
-func accountKey(aid int64) string {
-	return fmt.Sprintf("account_%d", aid)
-}
-
 // pingMC ping memcache.
 func (p *Dao) pingMC(c context.Context) (err error) {
 	conn := p.mc.Get(c)
