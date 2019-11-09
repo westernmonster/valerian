@@ -46,10 +46,6 @@ func (p *Service) EmailLogin(ctx context.Context, req *model.ArgEmailLogin) (res
 		return
 	}
 
-	p.addCache(func() {
-		p.d.SetProfileCache(context.TODO(), resp.Profile)
-	})
-
 	return
 }
 
@@ -90,10 +86,6 @@ func (p *Service) MobileLogin(ctx context.Context, req *model.ArgMobileLogin) (r
 	if resp.Profile, err = p.GetProfile(ctx, account.ID); err != nil {
 		return
 	}
-
-	p.addCache(func() {
-		p.d.SetProfileCache(context.TODO(), resp.Profile)
-	})
 
 	return
 }
@@ -140,7 +132,6 @@ func (p *Service) DigitLogin(ctx context.Context, req *model.ArgDigitLogin) (res
 	}
 
 	p.addCache(func() {
-		p.d.SetProfileCache(context.TODO(), resp.Profile)
 		p.d.DelMobileValcodeCache(context.TODO(), model.ValcodeLogin, mobile)
 	})
 

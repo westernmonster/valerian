@@ -6,8 +6,6 @@ import (
 	"valerian/app/interface/passport-login/conf"
 	"valerian/app/interface/passport-login/dao"
 	"valerian/app/interface/passport-login/model"
-	account "valerian/app/service/account/api"
-	"valerian/library/database/sqalx"
 	"valerian/library/log"
 )
 
@@ -19,47 +17,8 @@ var (
 
 // Service struct of service
 type Service struct {
-	c *conf.Config
-	d interface {
-		GetClient(c context.Context, node sqalx.Node, clientID string) (item *model.Client, err error)
-
-		GetArea(ctx context.Context, node sqalx.Node, id int64) (item *model.Area, err error)
-
-		GetAccessToken(c context.Context, node sqalx.Node, token string) (item *model.AccessToken, err error)
-		AddAccessToken(c context.Context, node sqalx.Node, t *model.AccessToken) (affected int64, err error)
-		DelExpiredAccessToken(c context.Context, node sqalx.Node, clientID string, accountID int64) (affected int64, err error)
-		GetClientAccessTokens(c context.Context, node sqalx.Node, aid int64, clientID string) (tokens []string, err error)
-
-		AddRefreshToken(c context.Context, node sqalx.Node, t *model.RefreshToken) (affected int64, err error)
-		DelRefreshToken(c context.Context, node sqalx.Node, token string) (affected int64, err error)
-		DelExpiredRefreshToken(c context.Context, node sqalx.Node, clientID string, accountID int64) (affected int64, err error)
-		GetClientRefreshTokens(c context.Context, node sqalx.Node, aid int64, clientID string) (tokens []string, err error)
-
-		GetAccountByID(c context.Context, node sqalx.Node, id int64) (item *model.Account, err error)
-		GetAccountByEmail(c context.Context, node sqalx.Node, email string) (item *model.Account, err error)
-		GetAccountByMobile(c context.Context, node sqalx.Node, mobile string) (item *model.Account, err error)
-
-		GetAccountBaseInfo(c context.Context, aid int64) (info *account.BaseInfoReply, err error)
-		GetMemberInfo(c context.Context, aid int64) (info *account.MemberInfoReply, err error)
-		GetSelfProfile(c context.Context, aid int64) (info *account.SelfProfile, err error)
-		GetAccountStat(c context.Context, aid int64) (info *account.AccountStatInfo, err error)
-
-		AccessTokenCache(c context.Context, token string) (res *model.AccessToken, err error)
-		SetAccessTokenCache(c context.Context, m *model.AccessToken) (err error)
-		DelAccessTokenCache(c context.Context, token string) (err error)
-
-		MobileValcodeCache(c context.Context, vtype int32, mobile string) (code string, err error)
-		DelMobileValcodeCache(c context.Context, vtype int32, mobile string) (err error)
-		EmailValcodeCache(c context.Context, vtype int32, mobile string) (code string, err error)
-		DelEmailValcideCache(c context.Context, vtype int32, mobile string) (err error)
-
-		SetProfileCache(c context.Context, m *model.Profile) (err error)
-
-		Ping(c context.Context) (err error)
-		Close()
-		DB() sqalx.Node
-		AuthDB() sqalx.Node
-	}
+	c      *conf.Config
+	d      *dao.Dao
 	missch chan func()
 }
 
