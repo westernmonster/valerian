@@ -3,6 +3,7 @@ package dao
 import (
 	"context"
 	"fmt"
+	"valerian/app/service/feed/def"
 	"valerian/app/service/relation/model"
 	"valerian/library/cache/memcache"
 	"valerian/library/log"
@@ -14,16 +15,8 @@ type FollowingPagedData struct {
 	Data []*model.AccountFollowing `json:"data"`
 }
 
-func followingsKey(aid int64, page, pageSize int, version string) string {
-	return fmt.Sprintf("fll_%d_%d_%d_%s", aid, page, pageSize, version)
-}
-
-func followingVersionKey(aid int64) string {
-	return fmt.Sprintf("fllv_%d", aid)
-}
-
 func (p *Dao) setFollowingVersionCache(c context.Context, aid int64, version string) (err error) {
-	key := followingVersionKey(aid)
+	key := def.FollowingVersionKey(aid)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 
@@ -35,7 +28,7 @@ func (p *Dao) setFollowingVersionCache(c context.Context, aid int64, version str
 }
 
 func (p *Dao) followingVersionCache(c context.Context, aid int64) (version string, err error) {
-	key := followingVersionKey(aid)
+	key := def.FollowingVersionKey(aid)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	var item *memcache.Item
@@ -65,7 +58,7 @@ func (p *Dao) SetFollowingsCache(c context.Context, aid int64, page, pageSize in
 		}
 	}
 
-	key := followingsKey(aid, page, pageSize, version)
+	key := def.FollowingsKey(aid, page, pageSize, version)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 
@@ -91,7 +84,7 @@ func (p *Dao) FollowingsCache(c context.Context, aid int64, page, pageSize int) 
 		}
 	}
 
-	key := followingsKey(aid, page, pageSize, version)
+	key := def.FollowingsKey(aid, page, pageSize, version)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	var item *memcache.Item
@@ -115,7 +108,7 @@ func (p *Dao) FollowingsCache(c context.Context, aid int64, page, pageSize int) 
 }
 
 func (p *Dao) DelFollowingsCache(c context.Context, aid int64) (err error) {
-	key := followingVersionKey(aid)
+	key := def.FollowingVersionKey(aid)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	if err = conn.Delete(key); err != nil {

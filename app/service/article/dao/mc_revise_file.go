@@ -4,16 +4,13 @@ import (
 	"context"
 	"fmt"
 	"valerian/app/service/article/api"
+	"valerian/app/service/feed/def"
 	"valerian/library/cache/memcache"
 	"valerian/library/log"
 )
 
-func reviseFileKey(reviseID int64) string {
-	return fmt.Sprintf("rev_files_%d", reviseID)
-}
-
 func (p *Dao) SetReviseFileCache(c context.Context, reviseID int64, m []*api.ReviseFileResp) (err error) {
-	key := reviseFileKey(reviseID)
+	key := def.ReviseFileKey(reviseID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 
@@ -25,7 +22,7 @@ func (p *Dao) SetReviseFileCache(c context.Context, reviseID int64, m []*api.Rev
 }
 
 func (p *Dao) ReviseFileCache(c context.Context, reviseID int64) (m []*api.ReviseFileResp, err error) {
-	key := reviseFileKey(reviseID)
+	key := def.ReviseFileKey(reviseID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	var item *memcache.Item
@@ -45,7 +42,7 @@ func (p *Dao) ReviseFileCache(c context.Context, reviseID int64) (m []*api.Revis
 }
 
 func (p *Dao) DelReviseFileCache(c context.Context, reviseID int64) (err error) {
-	key := reviseFileKey(reviseID)
+	key := def.ReviseFileKey(reviseID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	if err = conn.Delete(key); err != nil {

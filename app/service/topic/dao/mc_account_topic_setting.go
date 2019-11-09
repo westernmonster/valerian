@@ -3,17 +3,14 @@ package dao
 import (
 	"context"
 	"fmt"
+	"valerian/app/service/feed/def"
 	"valerian/app/service/topic/model"
 	"valerian/library/cache/memcache"
 	"valerian/library/log"
 )
 
-func accountTopicSettingKey(aid int64, topicID int64) string {
-	return fmt.Sprintf("acc_topic_setting_%d_%d", aid, topicID)
-}
-
 func (p *Dao) SetAccountTopicSettingCache(c context.Context, m *model.AccountTopicSetting) (err error) {
-	key := accountTopicSettingKey(m.AccountID, m.TopicID)
+	key := def.AccountTopicSettingKey(m.AccountID, m.TopicID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 
@@ -25,7 +22,7 @@ func (p *Dao) SetAccountTopicSettingCache(c context.Context, m *model.AccountTop
 }
 
 func (p *Dao) AccountTopicSettingCache(c context.Context, aid, topicID int64) (m *model.AccountTopicSetting, err error) {
-	key := accountTopicSettingKey(aid, topicID)
+	key := def.AccountTopicSettingKey(aid, topicID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	var item *memcache.Item
@@ -46,7 +43,7 @@ func (p *Dao) AccountTopicSettingCache(c context.Context, aid, topicID int64) (m
 }
 
 func (p *Dao) DelAccountTopicSettingCache(c context.Context, aid, topicID int64) (err error) {
-	key := accountTopicSettingKey(aid, topicID)
+	key := def.AccountTopicSettingKey(aid, topicID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	if err = conn.Delete(key); err != nil {

@@ -3,17 +3,14 @@ package dao
 import (
 	"context"
 	"fmt"
+	"valerian/app/service/feed/def"
 	"valerian/app/service/topic/model"
 	"valerian/library/cache/memcache"
 	"valerian/library/log"
 )
 
-func authTopicsKey(topicID int64) string {
-	return fmt.Sprintf("auth_topics_%d", topicID)
-}
-
 func (p *Dao) SetAuthTopicsCache(c context.Context, topicID int64, m []*model.AuthTopic) (err error) {
-	key := authTopicsKey(topicID)
+	key := def.AuthTopicsKey(topicID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 
@@ -25,7 +22,7 @@ func (p *Dao) SetAuthTopicsCache(c context.Context, topicID int64, m []*model.Au
 }
 
 func (p *Dao) AuthTopicsCache(c context.Context, topicID int64) (m []*model.AuthTopic, err error) {
-	key := authTopicsKey(topicID)
+	key := def.AuthTopicsKey(topicID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	var item *memcache.Item
@@ -45,7 +42,7 @@ func (p *Dao) AuthTopicsCache(c context.Context, topicID int64) (m []*model.Auth
 }
 
 func (p *Dao) DelAuthTopicsCache(c context.Context, topicID int64) (err error) {
-	key := authTopicsKey(topicID)
+	key := def.AuthTopicsKey(topicID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	if err = conn.Delete(key); err != nil {

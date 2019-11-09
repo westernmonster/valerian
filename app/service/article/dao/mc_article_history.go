@@ -4,16 +4,13 @@ import (
 	"context"
 	"fmt"
 	"valerian/app/service/article/api"
+	"valerian/app/service/feed/def"
 	"valerian/library/cache/memcache"
 	"valerian/library/log"
 )
 
-func articleHistoryKey(articleVersionID int64) string {
-	return fmt.Sprintf("a_history_%d", articleVersionID)
-}
-
 func (p *Dao) SetArticleHistoryCache(c context.Context, articleVersionID int64, m []*api.ArticleHistoryResp) (err error) {
-	key := articleHistoryKey(articleVersionID)
+	key := def.ArticleHistoryKey(articleVersionID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 
@@ -25,7 +22,7 @@ func (p *Dao) SetArticleHistoryCache(c context.Context, articleVersionID int64, 
 }
 
 func (p *Dao) ArticleHistoryCache(c context.Context, articleVersionID int64) (m []*api.ArticleHistoryResp, err error) {
-	key := articleHistoryKey(articleVersionID)
+	key := def.ArticleHistoryKey(articleVersionID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	var item *memcache.Item
@@ -45,7 +42,7 @@ func (p *Dao) ArticleHistoryCache(c context.Context, articleVersionID int64) (m 
 }
 
 func (p *Dao) DelArticleHistoryCache(c context.Context, articleVersionID int64) (err error) {
-	key := articleHistoryKey(articleVersionID)
+	key := def.ArticleHistoryKey(articleVersionID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	if err = conn.Delete(key); err != nil {

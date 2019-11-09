@@ -472,15 +472,15 @@ func (p *Service) DelArticle(c context.Context, arg *api.IDReq) (err error) {
 		return
 	}
 
-	if err = p.d.DelTopicFeedByCond(c, tx, arg.ID, model.TargetTypeArticle); err != nil {
-		return
-	}
-
 	if err = p.d.DelRecentPubByCond(c, tx, arg.ID, model.TargetTypeArticle); err != nil {
 		return
 	}
 
 	if err = p.d.DelFeedbacksByCond(c, tx, arg.ID, model.TargetTypeArticle); err != nil {
+		return
+	}
+
+	if err = p.d.DelTopicFeedByCond(c, tx, arg.ID, model.TargetTypeArticle); err != nil {
 		return
 	}
 

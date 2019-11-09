@@ -5,16 +5,13 @@ import (
 	"fmt"
 
 	"valerian/app/service/certification/model"
+	"valerian/app/service/feed/def"
 	"valerian/library/cache/memcache"
 	"valerian/library/log"
 )
 
-func idcertKey(aid int64) string {
-	return fmt.Sprintf("idcert_%d", aid)
-}
-
 func (p *Dao) SetIDCertCache(c context.Context, m *model.IDCertification) (err error) {
-	key := idcertKey(m.AccountID)
+	key := def.IdcertKey(m.AccountID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 
@@ -26,7 +23,7 @@ func (p *Dao) SetIDCertCache(c context.Context, m *model.IDCertification) (err e
 }
 
 func (p *Dao) IDCertCache(c context.Context, aid int64) (m *model.IDCertification, err error) {
-	key := idcertKey(aid)
+	key := def.IdcertKey(aid)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	var item *memcache.Item
@@ -47,7 +44,7 @@ func (p *Dao) IDCertCache(c context.Context, aid int64) (m *model.IDCertificatio
 }
 
 func (p *Dao) DelIDCertCache(c context.Context, aid int64) (err error) {
-	key := idcertKey(aid)
+	key := def.IdcertKey(aid)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	if err = conn.Delete(key); err != nil {

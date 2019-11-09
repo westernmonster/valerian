@@ -3,17 +3,14 @@ package dao
 import (
 	"context"
 	"fmt"
+	"valerian/app/service/feed/def"
 	"valerian/app/service/topic/model"
 	"valerian/library/cache/memcache"
 	"valerian/library/log"
 )
 
-func topicKey(topicID int64) string {
-	return fmt.Sprintf("t_%d", topicID)
-}
-
 func (p *Dao) SetTopicCache(c context.Context, m *model.Topic) (err error) {
-	key := topicKey(m.ID)
+	key := def.TopicKey(m.ID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 
@@ -25,7 +22,7 @@ func (p *Dao) SetTopicCache(c context.Context, m *model.Topic) (err error) {
 }
 
 func (p *Dao) TopicCache(c context.Context, topicID int64) (m *model.Topic, err error) {
-	key := topicKey(topicID)
+	key := def.TopicKey(topicID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	var item *memcache.Item
@@ -46,7 +43,7 @@ func (p *Dao) TopicCache(c context.Context, topicID int64) (m *model.Topic, err 
 }
 
 func (p *Dao) DelTopicCache(c context.Context, topicID int64) (err error) {
-	key := topicKey(topicID)
+	key := def.TopicKey(topicID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	if err = conn.Delete(key); err != nil {

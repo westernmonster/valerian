@@ -4,16 +4,13 @@ import (
 	"context"
 	"fmt"
 	"valerian/app/service/article/model"
+	"valerian/app/service/feed/def"
 	"valerian/library/cache/memcache"
 	"valerian/library/log"
 )
 
-func reviseKey(reviseID int64) string {
-	return fmt.Sprintf("revise_%d", reviseID)
-}
-
 func (p *Dao) SetReviseCache(c context.Context, m *model.Revise) (err error) {
-	key := reviseKey(m.ID)
+	key := def.ReviseKey(m.ID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 
@@ -25,7 +22,7 @@ func (p *Dao) SetReviseCache(c context.Context, m *model.Revise) (err error) {
 }
 
 func (p *Dao) ReviseCache(c context.Context, reviseID int64) (m *model.Revise, err error) {
-	key := reviseKey(reviseID)
+	key := def.ReviseKey(reviseID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	var item *memcache.Item
@@ -46,7 +43,7 @@ func (p *Dao) ReviseCache(c context.Context, reviseID int64) (m *model.Revise, e
 }
 
 func (p *Dao) DelReviseCache(c context.Context, reviseID int64) (err error) {
-	key := reviseKey(reviseID)
+	key := def.ReviseKey(reviseID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	if err = conn.Delete(key); err != nil {

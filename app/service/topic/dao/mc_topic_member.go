@@ -3,6 +3,7 @@ package dao
 import (
 	"context"
 	"fmt"
+	"valerian/app/service/feed/def"
 	"valerian/app/service/topic/model"
 	"valerian/library/cache/memcache"
 	"valerian/library/log"
@@ -15,16 +16,8 @@ type TopicMemberPagedData struct {
 	Data  []*model.TopicMember `json:"data"`
 }
 
-func topicMembersKey(topicID int64, page, pageSize int32, version string) string {
-	return fmt.Sprintf("tms_%d_%d_%d_%s", topicID, page, pageSize, version)
-}
-
-func topicMemberVersionKey(topicID int64) string {
-	return fmt.Sprintf("tmv_%d", topicID)
-}
-
 func (p *Dao) setTopicMemberVersionCache(c context.Context, topicID int64, version string) (err error) {
-	key := topicMemberVersionKey(topicID)
+	key := def.TopicMemberVersionKey(topicID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 
@@ -36,7 +29,7 @@ func (p *Dao) setTopicMemberVersionCache(c context.Context, topicID int64, versi
 }
 
 func (p *Dao) topicMemberVersionCache(c context.Context, topicID int64) (version string, err error) {
-	key := topicMemberVersionKey(topicID)
+	key := def.TopicMemberVersionKey(topicID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	var item *memcache.Item
@@ -66,7 +59,7 @@ func (p *Dao) SetTopicMembersCache(c context.Context, topicID int64, count, page
 		}
 	}
 
-	key := topicMembersKey(topicID, page, pageSize, version)
+	key := def.TopicMembersKey(topicID, page, pageSize, version)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 
@@ -93,7 +86,7 @@ func (p *Dao) TopicMembersCache(c context.Context, topicID int64, page, pageSize
 		}
 	}
 
-	key := topicMembersKey(topicID, page, pageSize, version)
+	key := def.TopicMembersKey(topicID, page, pageSize, version)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	var item *memcache.Item
@@ -118,7 +111,7 @@ func (p *Dao) TopicMembersCache(c context.Context, topicID int64, page, pageSize
 }
 
 func (p *Dao) DelTopicMembersCache(c context.Context, topicID int64) (err error) {
-	key := topicMemberVersionKey(topicID)
+	key := def.TopicMemberVersionKey(topicID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	if err = conn.Delete(key); err != nil {

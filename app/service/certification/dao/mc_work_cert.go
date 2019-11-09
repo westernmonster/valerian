@@ -5,16 +5,13 @@ import (
 	"fmt"
 
 	"valerian/app/service/certification/model"
+	"valerian/app/service/feed/def"
 	"valerian/library/cache/memcache"
 	"valerian/library/log"
 )
 
-func workcertKey(aid int64) string {
-	return fmt.Sprintf("workcert_%d", aid)
-}
-
 func (p *Dao) SetWorkCertCache(c context.Context, m *model.WorkCertification) (err error) {
-	key := workcertKey(m.AccountID)
+	key := def.WorkcertKey(m.AccountID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 
@@ -26,7 +23,7 @@ func (p *Dao) SetWorkCertCache(c context.Context, m *model.WorkCertification) (e
 }
 
 func (p *Dao) WorkCertCache(c context.Context, aid int64) (m *model.WorkCertification, err error) {
-	key := workcertKey(aid)
+	key := def.WorkcertKey(aid)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	var item *memcache.Item
@@ -47,7 +44,7 @@ func (p *Dao) WorkCertCache(c context.Context, aid int64) (m *model.WorkCertific
 }
 
 func (p *Dao) DelWorkCertCache(c context.Context, aid int64) (err error) {
-	key := workcertKey(aid)
+	key := def.WorkcertKey(aid)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	if err = conn.Delete(key); err != nil {

@@ -3,6 +3,7 @@ package dao
 import (
 	"context"
 	"fmt"
+	"valerian/app/service/feed/def"
 	"valerian/app/service/relation/model"
 	"valerian/library/cache/memcache"
 	"valerian/library/log"
@@ -14,16 +15,8 @@ type FansPagedData struct {
 	Data []*model.AccountFans `json:"data"`
 }
 
-func fansKey(aid int64, page, pageSize int, version string) string {
-	return fmt.Sprintf("fans_%d_%d_%d_%s", aid, page, pageSize, version)
-}
-
-func fansVersionKey(aid int64) string {
-	return fmt.Sprintf("fansv_%d", aid)
-}
-
 func (p *Dao) setFansVersionCache(c context.Context, aid int64, version string) (err error) {
-	key := fansVersionKey(aid)
+	key := def.FansVersionKey(aid)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 
@@ -35,7 +28,7 @@ func (p *Dao) setFansVersionCache(c context.Context, aid int64, version string) 
 }
 
 func (p *Dao) fansVersionCache(c context.Context, aid int64) (version string, err error) {
-	key := fansVersionKey(aid)
+	key := def.FansVersionKey(aid)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	var item *memcache.Item
@@ -65,7 +58,7 @@ func (p *Dao) SetFansCache(c context.Context, aid int64, page, pageSize int, dat
 		}
 	}
 
-	key := fansKey(aid, page, pageSize, version)
+	key := def.FansKey(aid, page, pageSize, version)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 
@@ -91,7 +84,7 @@ func (p *Dao) FansCache(c context.Context, aid int64, page, pageSize int) (data 
 		}
 	}
 
-	key := fansKey(aid, page, pageSize, version)
+	key := def.FansKey(aid, page, pageSize, version)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	var item *memcache.Item
@@ -115,7 +108,7 @@ func (p *Dao) FansCache(c context.Context, aid int64, page, pageSize int) (data 
 }
 
 func (p *Dao) DelFansCache(c context.Context, aid int64) (err error) {
-	key := fansVersionKey(aid)
+	key := def.FansVersionKey(aid)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	if err = conn.Delete(key); err != nil {

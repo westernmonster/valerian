@@ -143,10 +143,6 @@ func (p *Service) loginAccount(c context.Context, profile *account.SelfProfile, 
 
 	resp.Profile = p.FromProfile(profile)
 
-	p.addCache(func() {
-		p.d.SetProfileCache(context.TODO(), resp.Profile)
-	})
-
 	return
 
 }
