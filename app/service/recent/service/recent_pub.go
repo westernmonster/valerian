@@ -32,7 +32,7 @@ func (p *Service) onArticleAdded(m *stan.Msg) {
 
 	if _, err = p.d.GetArticle(c, info.ArticleID); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onArticleAdded GetArticle failed %#v", err))
-		if ecode.Cause(err) == ecode.ArticleNotExist {
+		if ecode.IsNotExistEcode(err) {
 			m.Ack()
 		}
 		return
@@ -94,7 +94,7 @@ func (p *Service) onReviseAdded(m *stan.Msg) {
 
 	if _, err = p.d.GetRevise(c, info.ReviseID); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onReviseAdded GetRevise failed %#v", err))
-		if ecode.Cause(err) == ecode.ReviseNotExist {
+		if ecode.IsNotExistEcode(err) {
 			m.Ack()
 		}
 		return
@@ -152,7 +152,7 @@ func (p *Service) onDiscussionAdded(m *stan.Msg) {
 
 	if _, err = p.d.GetDiscussion(c, info.DiscussionID); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onDiscussionAdded GetDiscussion failed %#v", err))
-		if ecode.Cause(err) == ecode.DiscussionNotExist {
+		if ecode.IsNotExistEcode(err) {
 			m.Ack()
 		}
 		return

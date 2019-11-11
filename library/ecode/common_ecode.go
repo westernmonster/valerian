@@ -1,5 +1,7 @@
 package ecode
 
+import "github.com/pkg/errors"
+
 // All common ecode
 var (
 	OK = add(200) // 正确
@@ -105,6 +107,7 @@ var (
 	HasDiscussionInCategory        = add(10057) // 该分类下已经有讨论了
 	NeedArticleEditPermission      = add(10058) // 需要文章编辑权限
 
+	// 90000 - 99999 属于 Not Exist 类错误
 	UserNotExist                  = add(90001) // 用户不存在
 	TagNotExist                   = add(90002) // Tag 不存在
 	ConfigIdsIsEmpty              = add(90003) // ConfigIds 不存在
@@ -140,3 +143,17 @@ var (
 	WorkCertificationNotExist     = add(90034) // 尚未发起工作认证
 
 )
+
+func IsNotExistEcode(e error) bool {
+	if e == nil {
+		return false
+	}
+	ec, ok := errors.Cause(e).(Codes)
+	if ok {
+		if ec.Code() > 90000 && ec.Code() < 99999 {
+			return true
+		}
+	}
+
+	return false
+}

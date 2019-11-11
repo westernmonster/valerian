@@ -24,7 +24,7 @@ func (p *Service) onMemberFollowed(m *stan.Msg) {
 
 	var member *account.BaseInfoReply
 	if member, err = p.d.GetAccountBaseInfo(context.Background(), info.TargetAccountID); err != nil {
-		if ecode.Cause(err) == ecode.UserNotExist {
+		if ecode.IsNotExistEcode(err) {
 			m.Ack()
 		}
 		return

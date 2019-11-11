@@ -403,35 +403,11 @@ func (p *Service) DelRevise(c context.Context, arg *api.IDReq) (err error) {
 		return
 	}
 
-	if err = p.d.DelFavByCond(c, tx, arg.ID, model.TargetTypeRevise); err != nil {
-		return
-	}
-
-	if err = p.d.DelAccountFeedByCond(c, tx, arg.ID, model.TargetTypeRevise); err != nil {
-		return
-	}
-
-	if err = p.d.DelFeedByCond(c, tx, arg.ID, model.TargetTypeRevise); err != nil {
-		return
-	}
-
-	if err = p.d.DelTopicFeedByCond(c, tx, arg.ID, model.TargetTypeRevise); err != nil {
-		return
-	}
-
-	if err = p.d.DelRecentPubByCond(c, tx, arg.ID, model.TargetTypeRevise); err != nil {
-		return
-	}
-
-	if err = p.d.DelFeedbacksByCond(c, tx, arg.ID, model.TargetTypeRevise); err != nil {
-		return
-	}
-
-	if err = p.d.DelMessageByCond(c, tx, arg.ID, model.TargetTypeRevise); err != nil {
-		return
-	}
-
 	if err = p.d.DelRevise(c, tx, arg.ID); err != nil {
+		return
+	}
+
+	if err = p.d.DelReviseFileByCond(c, tx, arg.ID); err != nil {
 		return
 	}
 

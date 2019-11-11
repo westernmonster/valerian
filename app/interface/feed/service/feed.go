@@ -160,6 +160,10 @@ func (p *Service) GetFeedPaged(c context.Context, limit, offset int) (resp *mode
 		case model.TargetTypeArticle:
 			var article *article.ArticleInfo
 			if article, err = p.d.GetArticle(c, v.TargetID); err != nil {
+				if ecode.IsNotExistEcode(err) {
+					item.Deleted = true
+					break
+				}
 				return
 			}
 
@@ -168,6 +172,10 @@ func (p *Service) GetFeedPaged(c context.Context, limit, offset int) (resp *mode
 		case model.TargetTypeRevise:
 			var revise *article.ReviseInfo
 			if revise, err = p.d.GetRevise(c, v.TargetID); err != nil {
+				if ecode.IsNotExistEcode(err) {
+					item.Deleted = true
+					break
+				}
 				return
 			}
 
@@ -176,6 +184,10 @@ func (p *Service) GetFeedPaged(c context.Context, limit, offset int) (resp *mode
 		case model.TargetTypeDiscussion:
 			var discuss *discuss.DiscussionInfo
 			if discuss, err = p.d.GetDiscussion(c, v.TargetID); err != nil {
+				if ecode.IsNotExistEcode(err) {
+					item.Deleted = true
+					break
+				}
 				return
 			}
 
@@ -185,6 +197,10 @@ func (p *Service) GetFeedPaged(c context.Context, limit, offset int) (resp *mode
 		case model.TargetTypeTopic:
 			var topic *topic.TopicInfo
 			if topic, err = p.d.GetTopic(c, v.TargetID); err != nil {
+				if ecode.IsNotExistEcode(err) {
+					item.Deleted = true
+					break
+				}
 				return
 			}
 
@@ -194,6 +210,10 @@ func (p *Service) GetFeedPaged(c context.Context, limit, offset int) (resp *mode
 		case model.TargetTypeMember:
 			var info *model.MemberInfo
 			if info, err = p.GetMemberInfo(c, v.TargetID); err != nil {
+				if ecode.IsNotExistEcode(err) {
+					item.Deleted = true
+					break
+				}
 				return
 			}
 
@@ -202,6 +222,10 @@ func (p *Service) GetFeedPaged(c context.Context, limit, offset int) (resp *mode
 		case model.TargetTypeComment:
 			var info *comment.CommentInfo
 			if info, err = p.d.GetComment(c, v.TargetID); err != nil {
+				if ecode.IsNotExistEcode(err) {
+					item.Deleted = true
+					break
+				}
 				return
 			}
 
@@ -211,6 +235,10 @@ func (p *Service) GetFeedPaged(c context.Context, limit, offset int) (resp *mode
 			case model.TargetTypeArticle:
 				var article *article.ArticleInfo
 				if article, err = p.d.GetArticle(c, info.ResourceID); err != nil {
+					if ecode.IsNotExistEcode(err) {
+						item.Deleted = true
+						break
+					}
 					return
 				}
 
@@ -219,6 +247,10 @@ func (p *Service) GetFeedPaged(c context.Context, limit, offset int) (resp *mode
 			case model.TargetTypeRevise:
 				var revise *article.ReviseInfo
 				if revise, err = p.d.GetRevise(c, info.ResourceID); err != nil {
+					if ecode.IsNotExistEcode(err) {
+						item.Deleted = true
+						break
+					}
 					return
 				}
 
@@ -227,6 +259,10 @@ func (p *Service) GetFeedPaged(c context.Context, limit, offset int) (resp *mode
 			case model.TargetTypeDiscussion:
 				var discuss *discuss.DiscussionInfo
 				if discuss, err = p.d.GetDiscussion(c, info.ResourceID); err != nil {
+					if ecode.IsNotExistEcode(err) {
+						item.Deleted = true
+						break
+					}
 					return
 				}
 

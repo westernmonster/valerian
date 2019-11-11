@@ -23,7 +23,7 @@ func (p *Service) onReviseAdded(m *stan.Msg) {
 
 	var article *article.ReviseInfo
 	if article, err = p.d.GetRevise(context.Background(), info.ReviseID); err != nil {
-		if ecode.Cause(err) == ecode.ReviseNotExist {
+		if ecode.IsNotExistEcode(err) {
 			m.Ack()
 		}
 		return
@@ -59,7 +59,7 @@ func (p *Service) onReviseUpdated(m *stan.Msg) {
 
 	var article *article.ReviseInfo
 	if article, err = p.d.GetRevise(context.Background(), info.ReviseID); err != nil {
-		if ecode.Cause(err) == ecode.ArticleNotExist {
+		if ecode.IsNotExistEcode(err) {
 			m.Ack()
 		}
 		return
@@ -131,7 +131,7 @@ func (p *Service) onReviseFaved(m *stan.Msg) {
 
 	var revise *article.ReviseInfo
 	if revise, err = p.d.GetRevise(context.Background(), info.ReviseID); err != nil {
-		if ecode.Cause(err) == ecode.ReviseNotExist {
+		if ecode.IsNotExistEcode(err) {
 			m.Ack()
 		}
 		return

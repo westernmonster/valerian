@@ -153,3 +153,15 @@ func (p *Dao) DelArticleFile(c context.Context, node sqalx.Node, id int64) (err 
 
 	return
 }
+
+// Delete logic delete a exist record
+func (p *Dao) DelArticleFileByCond(c context.Context, node sqalx.Node, articleID int64) (err error) {
+	sqlDelete := "UPDATE article_files SET deleted=1 WHERE article_id=? "
+
+	if _, err = node.ExecContext(c, sqlDelete, articleID); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.DelArticleFiles err(%+v), article_id(%+v)", err, articleID))
+		return
+	}
+
+	return
+}

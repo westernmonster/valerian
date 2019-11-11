@@ -152,3 +152,15 @@ func (p *Dao) DelReviseFile(c context.Context, node sqalx.Node, id int64) (err e
 
 	return
 }
+
+// Delete logic delete a exist record
+func (p *Dao) DelReviseFileByCond(c context.Context, node sqalx.Node, reviseID int64) (err error) {
+	sqlDelete := "UPDATE revise_files SET deleted=1 WHERE revise_id=? "
+
+	if _, err = node.ExecContext(c, sqlDelete, reviseID); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.DelReviseFiles err(%+v), revise_id(%+v)", err, reviseID))
+		return
+	}
+
+	return
+}
