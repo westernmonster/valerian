@@ -373,6 +373,10 @@ func (p *Service) UpdateRevise(c context.Context, arg *api.ArgUpdateRevise) (err
 }
 
 func (p *Service) DelRevise(c context.Context, arg *api.IDReq) (err error) {
+	return p.delRevise(c, arg.Aid, arg.ID)
+}
+
+func (p *Service) delRevise(c context.Context, aid, id int64) (err error) {
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
@@ -389,25 +393,25 @@ func (p *Service) DelRevise(c context.Context, arg *api.IDReq) (err error) {
 	}()
 
 	var item *model.Revise
-	if item, err = p.d.GetReviseByID(c, tx, arg.ID); err != nil {
+	if item, err = p.d.GetReviseByID(c, tx, id); err != nil {
 		return
 	} else if item == nil {
 		err = ecode.ReviseNotExist
 		return
 	}
 
-	if canEdit, e := p.checkEditPermission(c, tx, item.ArticleID, arg.Aid); e != nil {
+	if canEdit, e := p.checkEditPermission(c, tx, item.ArticleID, aid); e != nil {
 		return e
 	} else if !canEdit {
 		err = ecode.NeedArticleEditPermission
 		return
 	}
 
-	if err = p.d.DelRevise(c, tx, arg.ID); err != nil {
+	if err = p.d.DelRevise(c, tx, id); err != nil {
 		return
 	}
 
-	if err = p.d.DelReviseFileByCond(c, tx, arg.ID); err != nil {
+	if err = p.d.DelReviseFileByCond(c, tx, id); err != nil {
 		return
 	}
 
@@ -420,8 +424,8 @@ func (p *Service) DelRevise(c context.Context, arg *api.IDReq) (err error) {
 	}
 
 	p.addCache(func() {
-		p.d.DelReviseCache(context.TODO(), arg.ID)
-		p.onReviseDeleted(context.Background(), arg.ID, arg.Aid, time.Now().Unix())
+		p.d.DelReviseCache(context.TODO(), id)
+		p.onReviseDeleted(context.Background(), id, aid, time.Now().Unix())
 	})
 	return
 }

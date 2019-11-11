@@ -9,8 +9,8 @@ import (
 	"valerian/library/log"
 )
 
-func (p *Dao) SetArticleHistoryCache(c context.Context, articleVersionID int64, m []*api.ArticleHistoryResp) (err error) {
-	key := def.ArticleHistoryKey(articleVersionID)
+func (p *Dao) SetArticleHistoryCache(c context.Context, articleID int64, m []*api.ArticleHistoryResp) (err error) {
+	key := def.ArticleHistoryKey(articleID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 
@@ -21,8 +21,8 @@ func (p *Dao) SetArticleHistoryCache(c context.Context, articleVersionID int64, 
 	return
 }
 
-func (p *Dao) ArticleHistoryCache(c context.Context, articleVersionID int64) (m []*api.ArticleHistoryResp, err error) {
-	key := def.ArticleHistoryKey(articleVersionID)
+func (p *Dao) ArticleHistoryCache(c context.Context, articleID int64) (m []*api.ArticleHistoryResp, err error) {
+	key := def.ArticleHistoryKey(articleID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	var item *memcache.Item
@@ -41,8 +41,8 @@ func (p *Dao) ArticleHistoryCache(c context.Context, articleVersionID int64) (m 
 	return
 }
 
-func (p *Dao) DelArticleHistoryCache(c context.Context, articleVersionID int64) (err error) {
-	key := def.ArticleHistoryKey(articleVersionID)
+func (p *Dao) DelArticleHistoryCache(c context.Context, articleID int64) (err error) {
+	key := def.ArticleHistoryKey(articleID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	if err = conn.Delete(key); err != nil {

@@ -460,10 +460,6 @@ func (p *Service) DelArticle(c context.Context, arg *api.IDReq) (err error) {
 		return
 	}
 
-	if err = p.d.DelFavByCond(c, tx, arg.ID, model.TargetTypeArticle); err != nil {
-		return
-	}
-
 	if err = p.d.DelAccountFeedByCond(c, tx, arg.ID, model.TargetTypeArticle); err != nil {
 		return
 	}
@@ -472,15 +468,11 @@ func (p *Service) DelArticle(c context.Context, arg *api.IDReq) (err error) {
 		return
 	}
 
-	if err = p.d.DelRecentPubByCond(c, tx, arg.ID, model.TargetTypeArticle); err != nil {
-		return
-	}
-
-	if err = p.d.DelFeedbacksByCond(c, tx, arg.ID, model.TargetTypeArticle); err != nil {
-		return
-	}
-
 	if err = p.d.DelTopicFeedByCond(c, tx, arg.ID, model.TargetTypeArticle); err != nil {
+		return
+	}
+
+	if err = p.d.DelRecentPubByCond(c, tx, arg.ID, model.TargetTypeArticle); err != nil {
 		return
 	}
 
@@ -493,6 +485,7 @@ func (p *Service) DelArticle(c context.Context, arg *api.IDReq) (err error) {
 			return
 		}
 	}
+
 	if err = p.d.DelArticleHistories(c, tx, arg.ID); err != nil {
 		return
 	}
@@ -502,18 +495,6 @@ func (p *Service) DelArticle(c context.Context, arg *api.IDReq) (err error) {
 	}
 
 	if err = p.d.DelImageURLByCond(c, tx, model.TargetTypeArticle, arg.ID); err != nil {
-		return
-	}
-
-	if err = p.d.DelLikeByCond(c, tx, model.TargetTypeArticle, arg.ID); err != nil {
-		return
-	}
-
-	if err = p.d.DelRecentViewByCond(c, tx, arg.ID, model.TargetTypeArticle); err != nil {
-		return
-	}
-
-	if err = p.d.DelMessageByCond(c, tx, arg.ID, model.TargetTypeArticle); err != nil {
 		return
 	}
 
@@ -549,6 +530,13 @@ func (p *Service) DelArticle(c context.Context, arg *api.IDReq) (err error) {
 
 	p.addCache(func() {
 		p.d.DelArticleCache(context.TODO(), arg.ID)
+		p.d.DelArticleHistoryCache(context.TODO(), arg.ID)
+		p.d.DelArticleFileCache(context.TODO(), arg.ID)
+
+		for _, v := range catalogs {
+			p.d.DelTopicCatalogCache(context.TODO(), v.TopicID)
+		}
+
 		p.onArticleDeleted(context.Background(), arg.ID, arg.Aid, time.Now().Unix())
 	})
 	return
