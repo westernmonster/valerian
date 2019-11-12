@@ -8,6 +8,8 @@ type FeedItem struct {
 	TargetType string `json:"target_type"`
 	// 目标
 	Target *FeedTarget `json:"target"`
+
+	Deleted bool `json:"deleted"`
 }
 
 type FeedSource struct {

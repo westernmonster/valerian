@@ -82,6 +82,8 @@ type RecentItem struct {
 
 	// 文章
 	Article *ItemArticle `json:"article,omitempty"`
+
+	Deleted bool `json:"deleted"`
 }
 
 type RecentListResp struct {

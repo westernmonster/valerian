@@ -235,6 +235,10 @@ func (p *Service) GetFavsPaged(c context.Context, targetType string, limit, offs
 		case model.TargetTypeArticle:
 			var article *article.ArticleInfo
 			if article, err = p.d.GetArticle(c, v.TargetID); err != nil {
+				if ecode.IsNotExistEcode(err) {
+					item.Deleted = true
+					break
+				}
 				return
 			}
 
@@ -243,6 +247,10 @@ func (p *Service) GetFavsPaged(c context.Context, targetType string, limit, offs
 		case model.TargetTypeRevise:
 			var revise *article.ReviseInfo
 			if revise, err = p.d.GetRevise(c, v.TargetID); err != nil {
+				if ecode.IsNotExistEcode(err) {
+					item.Deleted = true
+					break
+				}
 				return
 			}
 
@@ -251,6 +259,10 @@ func (p *Service) GetFavsPaged(c context.Context, targetType string, limit, offs
 		case model.TargetTypeDiscussion:
 			var discuss *discuss.DiscussionInfo
 			if discuss, err = p.d.GetDiscussion(c, v.TargetID); err != nil {
+				if ecode.IsNotExistEcode(err) {
+					item.Deleted = true
+					break
+				}
 				return
 			}
 
@@ -260,6 +272,10 @@ func (p *Service) GetFavsPaged(c context.Context, targetType string, limit, offs
 		case model.TargetTypeTopic:
 			var topic *topic.TopicInfo
 			if topic, err = p.d.GetTopic(c, v.TargetID); err != nil {
+				if ecode.IsNotExistEcode(err) {
+					item.Deleted = true
+					break
+				}
 				return
 			}
 

@@ -87,6 +87,10 @@ func (p *Service) GetMemberRecentViewsPaged(c context.Context, atype string, lim
 		case model.TargetTypeArticle:
 			var article *article.ArticleInfo
 			if article, err = p.d.GetArticle(c, v.TargetID); err != nil {
+				if ecode.IsNotExistEcode(err) {
+					item.Deleted = true
+					break
+				}
 				return
 			}
 
@@ -95,6 +99,10 @@ func (p *Service) GetMemberRecentViewsPaged(c context.Context, atype string, lim
 		case model.TargetTypeTopic:
 			var topic *topic.TopicInfo
 			if topic, err = p.d.GetTopic(c, v.TargetID); err != nil {
+				if ecode.IsNotExistEcode(err) {
+					item.Deleted = true
+					break
+				}
 				return
 			}
 

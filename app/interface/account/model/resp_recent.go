@@ -16,6 +16,9 @@ type PublishItem struct {
 
 	// 讨论
 	Discussion *TargetDiscuss `json:"discussion,omitempty"`
+
+	// 是否删除
+	Deleted bool `json:"deleted"`
 }
 
 type RecentPublishResp struct {

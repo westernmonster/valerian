@@ -127,6 +127,8 @@ type FavItem struct {
 
 	// 讨论
 	Discussion *TargetDiscuss `json:"discussion,omitempty"`
+
+	Deleted bool `json:"deleted"`
 }
 
 type FavListResp struct {
