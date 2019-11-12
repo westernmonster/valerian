@@ -23,6 +23,7 @@ func (p *Service) pushSingleUser(c context.Context, aid int64, msgID int64, titl
 					"type": "link",
 					"url":  link,
 				},
+				AlertType: 1,
 			},
 			Ios: &jpush.IosNotification{
 				Alert: title,
