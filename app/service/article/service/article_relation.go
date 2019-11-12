@@ -74,7 +74,7 @@ func (p *Service) getCatalogFullPath(c context.Context, node sqalx.Node, article
 	}
 
 	var p2 *model.TopicCatalog
-	if p2, err = p.d.GetTopicCatalogByID(c, node, articleItem.ParentID); err != nil {
+	if p2, err = p.d.GetTopicCatalogByID(c, node, p1.ParentID); err != nil {
 		return
 	} else if p2 == nil {
 		err = ecode.TopicCatalogNotExist
