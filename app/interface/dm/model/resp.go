@@ -38,6 +38,8 @@ type MessageItem struct {
 	// 这是一个interface，包含比较全的对面具体信息，例如文章、话题等
 	// 业务处理判断主要根据这个对象来
 	Target interface{} `json:"target"`
+
+	Deleted bool `json:"deleted"`
 }
 
 type MessageContent struct {

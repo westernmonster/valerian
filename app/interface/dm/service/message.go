@@ -199,6 +199,10 @@ func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, o
 		case model.TargetTypeArticle:
 			var article *article.ArticleInfo
 			if article, err = p.d.GetArticle(c, v.TargetID); err != nil {
+				if ecode.IsNotExistEcode(err) {
+					item.Deleted = true
+					break
+				}
 				return
 			}
 
@@ -210,6 +214,10 @@ func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, o
 		case model.TargetTypeRevise:
 			var revise *article.ReviseInfo
 			if revise, err = p.d.GetRevise(c, v.TargetID); err != nil {
+				if ecode.IsNotExistEcode(err) {
+					item.Deleted = true
+					break
+				}
 				return
 			}
 
@@ -220,6 +228,10 @@ func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, o
 		case model.TargetTypeDiscussion:
 			var discuss *discuss.DiscussionInfo
 			if discuss, err = p.d.GetDiscussion(c, v.TargetID); err != nil {
+				if ecode.IsNotExistEcode(err) {
+					item.Deleted = true
+					break
+				}
 				return
 			}
 
@@ -231,6 +243,10 @@ func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, o
 		case model.TargetTypeTopic:
 			var topic *topic.TopicInfo
 			if topic, err = p.d.GetTopic(c, v.TargetID); err != nil {
+				if ecode.IsNotExistEcode(err) {
+					item.Deleted = true
+					break
+				}
 				return
 			}
 
@@ -242,6 +258,10 @@ func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, o
 		case model.TargetTypeMember:
 			var info *model.MemberInfo
 			if info, err = p.GetMemberInfo(c, v.TargetID); err != nil {
+				if ecode.IsNotExistEcode(err) {
+					item.Deleted = true
+					break
+				}
 				return
 			}
 
@@ -253,12 +273,20 @@ func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, o
 		case model.TargetTypeComment:
 			var ct *comment.CommentInfo
 			if ct, err = p.d.GetComment(c, v.TargetID); err != nil {
+				if ecode.IsNotExistEcode(err) {
+					item.Deleted = true
+					break
+				}
 				return
 			}
 
 			switch ct.TargetType {
 			case model.TargetTypeArticle:
 				if item.Target, err = p.GetCommentTarget(c, ct); err != nil {
+					if ecode.IsNotExistEcode(err) {
+						item.Deleted = true
+						break
+					}
 					return
 				}
 
@@ -267,6 +295,10 @@ func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, o
 				break
 			case model.TargetTypeRevise:
 				if item.Target, err = p.GetCommentTarget(c, ct); err != nil {
+					if ecode.IsNotExistEcode(err) {
+						item.Deleted = true
+						break
+					}
 					return
 				}
 				item.Content.Target.Link = fmt.Sprintf(def.LinkComment, model.TargetTypeRevise, ct.OwnerID, ct.ID)
@@ -274,6 +306,10 @@ func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, o
 				break
 			case model.TargetTypeDiscussion:
 				if item.Target, err = p.GetCommentTarget(c, ct); err != nil {
+					if ecode.IsNotExistEcode(err) {
+						item.Deleted = true
+						break
+					}
 					return
 				}
 				item.Content.Target.Link = fmt.Sprintf(def.LinkComment, model.TargetTypeDiscussion, ct.OwnerID, ct.ID)
@@ -282,6 +318,10 @@ func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, o
 			case model.TargetTypeComment:
 				var tg *model.TargetComment
 				if tg, err = p.GetCommentTarget(c, ct); err != nil {
+					if ecode.IsNotExistEcode(err) {
+						item.Deleted = true
+						break
+					}
 					return
 				}
 				item.Target = tg
@@ -323,8 +363,8 @@ func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, o
 			if req, err = p.d.GetTopicFollowRequestByID(c, p.d.DB(), v.TargetID); err != nil {
 				return
 			} else if req == nil {
-				err = ecode.TopicFollowRequestNotExist
-				return
+				item.Deleted = true
+				break
 			}
 
 			tg := &model.TargetTopicFollowRequest{
@@ -338,6 +378,10 @@ func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, o
 
 			var acc *account.BaseInfoReply
 			if acc, err = p.d.GetAccountBaseInfo(c, req.AccountID); err != nil {
+				if ecode.IsNotExistEcode(err) {
+					item.Deleted = true
+					break
+				}
 				return
 			}
 
@@ -350,6 +394,10 @@ func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, o
 
 			var topic *topic.TopicInfo
 			if topic, err = p.d.GetTopic(c, req.TopicID); err != nil {
+				if ecode.IsNotExistEcode(err) {
+					item.Deleted = true
+					break
+				}
 				return
 			}
 
@@ -362,8 +410,8 @@ func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, o
 			if req, err = p.d.GetTopicInviteRequestByID(c, p.d.DB(), v.TargetID); err != nil {
 				return
 			} else if req == nil {
-				err = ecode.TopicInviteRequestNotExist
-				return
+				item.Deleted = true
+				break
 			}
 
 			tg := &model.TargetTopicInviteRequest{
@@ -374,6 +422,10 @@ func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, o
 
 			var acc *account.BaseInfoReply
 			if acc, err = p.d.GetAccountBaseInfo(c, req.FromAccountID); err != nil {
+				if ecode.IsNotExistEcode(err) {
+					item.Deleted = true
+					break
+				}
 				return
 			}
 
@@ -386,6 +438,10 @@ func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, o
 
 			var topic *topic.TopicInfo
 			if topic, err = p.d.GetTopic(c, req.TopicID); err != nil {
+				if ecode.IsNotExistEcode(err) {
+					item.Deleted = true
+					break
+				}
 				return
 			}
 
