@@ -14,6 +14,7 @@ import (
 	"valerian/library/naming/discovery"
 	"valerian/library/net/http/mars"
 	"valerian/library/net/http/mars/middleware/auth"
+	"valerian/library/net/http/mars/middleware/permit"
 	"valerian/library/net/rpc/warden"
 	xtime "valerian/library/time"
 	"valerian/library/tracing"
@@ -44,6 +45,7 @@ type Config struct {
 	Memcache  *Memcache
 	Discovery *discovery.Config
 	Nats      *mq.Config
+	Session   *permit.SessionConfig
 }
 
 // DB db config.

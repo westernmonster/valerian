@@ -6,18 +6,20 @@ import (
 	"valerian/library/ecode"
 	"valerian/library/log"
 	"valerian/library/net/http/mars"
-	"valerian/library/net/http/mars/middleware/auth"
+	"valerian/library/net/http/mars/middleware/permit"
 )
 
 var (
-	srv     *service.Service
-	authSvc *auth.Auth
+	srv       *service.Service
+	permitSvc *permit.Permit
 )
 
 // Init init
 func Init(c *conf.Config, s *service.Service) {
 	srv = s
-	authSvc = auth.New(conf.Conf.Auth)
+	permitSvc = permit.New(&permit.Config{
+		Session: c.Session,
+	})
 
 	engine := mars.DefaultServer(c.Mars)
 	route(engine)
@@ -31,30 +33,30 @@ func Init(c *conf.Config, s *service.Service) {
 func route(e *mars.Engine) {
 	e.Ping(ping)
 	e.Register(register)
-	g := e.Group("/api/v1/admin/article")
+	g := e.Group("/api/v1/admin/article", permitSvc.Verify())
 	{
-		g.GET("/get", authSvc.User, getArticle)
-		g.POST("/add", authSvc.User, addArticle)
-		g.POST("/edit", authSvc.User, editArticle)
-		g.POST("/del", authSvc.User, delArticle)
+		g.GET("/get", getArticle)
+		g.POST("/add", addArticle)
+		g.POST("/edit", editArticle)
+		g.POST("/del", delArticle)
 
-		g.GET("/history/get", authSvc.User, articleHistory)
+		g.GET("/history/get", articleHistory)
 
-		g.POST("/files", authSvc.User, editArticleFiles)
-		g.POST("/relations/add", authSvc.User, addArticleRelation)
-		g.POST("/relations/edit", authSvc.User, editArticleRelation)
-		g.POST("/relations/del", authSvc.User, delArticleRelation)
-		g.POST("/relations/primary", authSvc.User, setArticleRelationPrimary)
+		g.POST("/files", editArticleFiles)
+		g.POST("/relations/add", addArticleRelation)
+		g.POST("/relations/edit", editArticleRelation)
+		g.POST("/relations/del", delArticleRelation)
+		g.POST("/relations/primary", setArticleRelationPrimary)
 
-		g.POST("/revise/add", authSvc.User, addRevise)
-		g.POST("/revise/edit", authSvc.User, updateRevise)
-		g.POST("/revise/del", authSvc.User, delRevise)
-		g.GET("/revise/get", authSvc.User, getRevise)
+		g.POST("/revise/add", addRevise)
+		g.POST("/revise/edit", updateRevise)
+		g.POST("/revise/del", delRevise)
+		g.GET("/revise/get", getRevise)
 
-		g.GET("/list/files", authSvc.User, articleFiles)
-		g.GET("/list/histories", authSvc.User, articleHistories)
-		g.GET("/list/relations", authSvc.User, articleRelations)
-		g.GET("/list/revises", authSvc.User, getRevises)
+		g.GET("/list/files", articleFiles)
+		g.GET("/list/histories", articleHistories)
+		g.GET("/list/relations", articleRelations)
+		g.GET("/list/revises", getRevises)
 	}
 
 }
