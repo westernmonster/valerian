@@ -155,7 +155,7 @@ func (p *Service) GetTopic(c context.Context, topicID int64, include string) (it
 
 	if inc["members"] {
 		var data *topic.TopicMembersPagedResp
-		if data, err = p.d.GetTopicMembersPaged(c, &topic.ArgTopicMembers{TopicID: topicID, Page: 1, PageSize: 10}); err != nil {
+		if data, err = p.d.GetTopicMembersPaged(c, &topic.ArgTopicMembers{TopicID: topicID, Page: 1, PageSize: 9}); err != nil {
 			return
 		}
 
