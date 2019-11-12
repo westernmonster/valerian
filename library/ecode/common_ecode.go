@@ -107,6 +107,8 @@ var (
 	HasDiscussionInCategory        = add(10057) // 该分类下已经有讨论了
 	NeedArticleEditPermission      = add(10058) // 需要文章编辑权限
 
+	// 89000 - 89999 属于 Permission 类错误
+
 	// 90000 - 99999 属于 Not Exist 类错误
 	UserNotExist                  = add(90001) // 用户不存在
 	TagNotExist                   = add(90002) // Tag 不存在
