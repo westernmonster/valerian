@@ -12,6 +12,7 @@ import (
 )
 
 func (p *Service) GetBelongsTopicIDs(c context.Context, aid int64) (ids []int64, err error) {
+
 	return p.d.GetMemberBelongsTopicIDs(c, p.d.DB(), aid)
 }
 

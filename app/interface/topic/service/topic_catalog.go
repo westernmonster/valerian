@@ -14,6 +14,10 @@ func (p *Service) GetCatalogsHierarchy(c context.Context, topicID int64) (items 
 		err = ecode.AcquireAccountIDFailed
 		return
 	}
+	// 检测查看权限
+	if err = p.checkViewPermission(c, aid, topicID); err != nil {
+		return
+	}
 	var resp *topic.CatalogsResp
 	if resp, err = p.d.GetCatalogsHierarchy(c, &topic.IDReq{ID: topicID, Aid: aid}); err != nil {
 		return
@@ -28,6 +32,10 @@ func (p *Service) GetCatalogTaxonomiesHierarchy(c context.Context, topicID int64
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed
+		return
+	}
+	// 检测查看权限
+	if err = p.checkViewPermission(c, aid, topicID); err != nil {
 		return
 	}
 	var resp *topic.CatalogsResp

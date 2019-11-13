@@ -336,3 +336,33 @@ func (s *server) GetTopicMemberIDs(ctx context.Context, req *api.TopicReq) (*api
 
 	return &api.IDsResp{IDs: ids}, nil
 }
+
+func (s *server) CanView(ctx context.Context, req *api.TopicReq) (*api.BoolResp, error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
+	ret, err := s.svr.CanView(ctx, req.Aid, req.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.BoolResp{Result: ret}, nil
+}
+
+func (s *server) CanEdit(ctx context.Context, req *api.TopicReq) (*api.BoolResp, error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
+	ret, err := s.svr.CanEdit(ctx, req.Aid, req.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.BoolResp{Result: ret}, nil
+}

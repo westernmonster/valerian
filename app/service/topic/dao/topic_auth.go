@@ -14,25 +14,29 @@ import (
 // GetAll get all records
 func (p *Dao) GetUserCanEditTopicIDs(c context.Context, node sqalx.Node, aid int64) (items []int64, err error) {
 	items = make([]int64, 0)
-	// 当前用户是管理员的话题
-	// 用户所在话题角色是普通用户，该话题被授权为edit，找出授权话题
-	// 用户所在话题角色是管理员，该话题被授权为admin_edit，找出授权话题
+	// 1. 编辑权限为管理员，且用户是管理员
+	// 2. 编辑权限为成员，且用户为成员
+	// 3. 授权话题，授权为可编辑，用户是授权话题成员
+	// 4. 授权话题，授权为管理员可编辑，用户是授权话题管理员
 	sqlSelect := `
-SELECT topic_id
-FROM topic_members
-WHERE account_id = ? AND role IN ( 'owner', 'admin' )
+SELECT v1.topic_id FROM ( SELECT a.topic_id FROM topic_members a WHERE a.deleted = 0 AND a.account_id = ? AND a.role IN ( 'owner', 'admin' ) ) v1
+	LEFT JOIN topics b ON v1.topic_id = b.id
+WHERE b.deleted = 0 AND b.edit_permission = 'admin'
 UNION
-SELECT b.topic_id
-FROM topic_members a JOIN auth_topics b ON a.topic_id = b.to_topic_id
-WHERE a.account_id = ? AND a.role = 'user' AND b.permission = 'edit'
+SELECT v2.topic_id FROM ( SELECT a.topic_id FROM topic_members a WHERE a.deleted = 0 AND a.account_id = ? ) v2
+    LEFT JOIN topics b ON v2.topic_id = b.id
+WHERE b.deleted = 0 AND b.edit_permission = 'member'
 UNION
-SELECT b.topic_id
-FROM topic_members a JOIN auth_topics b ON a.topic_id = b.to_topic_id
-WHERE a.account_id = ? AND a.role IN ( 'owner', 'admin' ) AND b.permission = 'admin_edit'
+SELECT v3.topic_id FROM ( SELECT a.topic_id FROM topic_members a WHERE a.deleted = 0 AND a.account_id = ? AND a.role IN ( 'owner', 'admin' ) ) v3
+	LEFT JOIN auth_topics b ON v3.topic_id = b.to_topic_id
+WHERE b.deleted = 0 AND b.permission = 'admin_edit' UNION
+SELECT v4.topic_id FROM ( SELECT a.topic_id FROM topic_members a WHERE a.deleted = 0 AND a.account_id = ? ) v4
+	LEFT JOIN auth_topics b ON v4.topic_id = b.to_topic_id
+WHERE b.deleted = 0 AND b.permission = 'edit'
 `
 
 	var rows *sqlx.Rows
-	if rows, err = node.QueryxContext(c, sqlSelect, aid, aid, aid); err != nil {
+	if rows, err = node.QueryxContext(c, sqlSelect, aid, aid, aid, aid); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetUserCanEditTopicIDs err(%+v)", err))
 		return
 	}
@@ -44,6 +48,32 @@ WHERE a.account_id = ? AND a.role IN ( 'owner', 'admin' ) AND b.permission = 'ad
 		)
 		if err = rows.Scan(&targetID); err != nil {
 			log.For(c).Error(fmt.Sprintf("dao.GetUserCanEditTopicIDs err(%+v)", err))
+			return
+		}
+		items = append(items, targetID)
+	}
+
+	err = rows.Err()
+	return
+}
+
+func (p *Dao) GetAuthTopicIDs(c context.Context, node sqalx.Node, topicID int64) (items []int64, err error) {
+	items = make([]int64, 0)
+	sqlSelect := "SELECT a.to_topic_id FROM auth_topics a WHERE a.deleted=0 AND a.topic_id=?"
+
+	var rows *sqlx.Rows
+	if rows, err = node.QueryxContext(c, sqlSelect, topicID); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetAuthTopicIDs err(%+v)", err))
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var (
+			targetID int64
+		)
+		if err = rows.Scan(&targetID); err != nil {
+			log.For(c).Error(fmt.Sprintf("dao.GetAuthTopicIDs err(%+v)", err))
 			return
 		}
 		items = append(items, targetID)
@@ -137,7 +167,7 @@ func (p *Dao) GetAuthTopicByCond(c context.Context, node sqalx.Node, cond map[st
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.* FROM auth_topics a WHERE a.deleted=0 %s", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.id,a.topic_id,a.to_topic_id,a.permission,a.deleted,a.created_at,a.updated_at FROM auth_topics a WHERE a.deleted=0 %s", clause)
 
 	if err = node.GetContext(c, item, sqlSelect, condition...); err != nil {
 		if err == sql.ErrNoRows {

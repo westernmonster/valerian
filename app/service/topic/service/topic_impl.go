@@ -89,40 +89,43 @@ func (p *Service) createTopic(c context.Context, node sqalx.Node, aid int64, arg
 }
 
 func (p *Service) updateTopic(c context.Context, node sqalx.Node, aid int64, arg *api.ArgUpdateTopic) (err error) {
-	var isAdmin bool
-	if isAdmin, err = p.isTopicMemberAdmin(c, node, arg.ID, aid); err != nil {
-		return
-	}
-
 	var t *model.Topic
-	if t, err = p.d.GetTopicByID(c, node, arg.ID); err != nil {
-		return
-	} else if t == nil {
-		return ecode.TopicNotExist
-	}
-
-	var s *model.AccountTopicSetting
-	if s, err = p.d.GetAccountTopicSettingByCond(c, node, map[string]interface{}{"account_id": aid, "topic_id": t.ID}); err != nil {
-		return
-	} else if s == nil {
-		err = ecode.AccountTopicSettingNotExist
+	if t, err = p.getTopic(c, node, arg.ID); err != nil {
 		return
 	}
 
-	if arg.Important != nil {
-		s.Important = types.BitBool(arg.GetImportantValue())
-	}
-
-	if arg.MuteNotification != nil {
-		s.MuteNotification = types.BitBool(arg.GetMuteNotificationValue())
-	}
-
-	if err = p.d.UpdateAccountTopicSetting(c, node, s); err != nil {
+	var isTopicMember bool
+	if isTopicMember, err = p.isTopicMember(c, node, aid, arg.ID); err != nil {
 		return
+	}
+
+	if isTopicMember {
+		var s *model.AccountTopicSetting
+		if s, err = p.d.GetAccountTopicSettingByCond(c, node, map[string]interface{}{"account_id": aid, "topic_id": t.ID}); err != nil {
+			return
+		} else if s == nil {
+			err = ecode.AccountTopicSettingNotExist
+			return
+		}
+
+		if arg.Important != nil {
+			s.Important = types.BitBool(arg.GetImportantValue())
+		}
+
+		if arg.MuteNotification != nil {
+			s.MuteNotification = types.BitBool(arg.GetMuteNotificationValue())
+		}
+
+		if err = p.d.UpdateAccountTopicSetting(c, node, s); err != nil {
+			return
+		}
 	}
 
 	// 如果不是管理员，则不更新话题内容
-	if !isAdmin {
+	var hasTopicManagePermission bool
+	if hasTopicManagePermission, err = p.hasTopicManagePermission(c, node, aid, arg.ID); err != nil {
+		return
+	} else if !hasTopicManagePermission {
 		return
 	}
 

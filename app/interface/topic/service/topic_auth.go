@@ -46,6 +46,11 @@ func (p *Service) GetAuthTopics(c context.Context, topicID int64) (items []*mode
 		err = ecode.AcquireAccountIDFailed
 		return
 	}
+
+	// 检测查看权限
+	if err = p.checkViewPermission(c, aid, topicID); err != nil {
+		return
+	}
 	var resp *topic.AuthTopicsResp
 	if resp, err = p.d.GetAuthTopics(c, &topic.IDReq{ID: topicID, Aid: aid}); err != nil {
 		return

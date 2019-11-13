@@ -163,6 +163,11 @@ func (p *Service) AuditFollow(c context.Context, arg *api.ArgAuditFollow) (err e
 		return
 	}
 
+	// 检测是否系统管理员或者话题管理员
+	if err = p.checkTopicManagePermission(c, arg.Aid, req.TopicID); err != nil {
+		return
+	}
+
 	var member *model.TopicMember
 	if member, err = p.d.GetTopicMemberByCond(c, tx, map[string]interface{}{"account_id": req.AccountID, "topic_id": req.TopicID}); err != nil {
 		return

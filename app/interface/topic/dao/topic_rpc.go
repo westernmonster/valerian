@@ -191,3 +191,26 @@ func (p *Dao) GetTopicMembersPaged(c context.Context, arg *api.ArgTopicMembers) 
 	}
 	return
 }
+
+func (p *Dao) CanView(c context.Context, arg *api.TopicReq) (canView bool, err error) {
+	var resp *topic.BoolResp
+	if resp, err = p.topicRPC.CanView(c, arg); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.CanView err(%+v)", err))
+		return
+	}
+
+	canView = resp.Result
+
+	return
+}
+
+func (p *Dao) CanEdit(c context.Context, arg *api.TopicReq) (canEdit bool, err error) {
+	var resp *topic.BoolResp
+	if resp, err = p.topicRPC.CanEdit(c, arg); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.CanEdit err(%+v)", err))
+		return
+	}
+
+	canEdit = resp.Result
+	return
+}

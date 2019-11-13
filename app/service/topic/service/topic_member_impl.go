@@ -40,18 +40,6 @@ func (p *Service) leave(c context.Context, node sqalx.Node, aid, topicID int64) 
 	return
 }
 
-// isTopicMember 是否话题成员
-func (p *Service) isTopicMember(c context.Context, node sqalx.Node, accountID, topicID int64) (isMember bool, err error) {
-	var member *model.TopicMember
-	if member, err = p.d.GetTopicMemberByCond(c, node, map[string]interface{}{"account_id": accountID, "topic_id": topicID}); err != nil {
-		return
-	} else if member != nil {
-		isMember = true
-	}
-
-	return
-}
-
 func (p *Service) getTopicMembers(c context.Context, node sqalx.Node, topicID int64, limit int32) (total int32, resp []*api.TopicMemberInfo, err error) {
 	resp = make([]*api.TopicMemberInfo, 0)
 
@@ -130,38 +118,6 @@ func (p *Service) createOwner(c context.Context, node sqalx.Node, aid, topicID i
 	return
 }
 
-func (p *Service) isTopicMemberAdmin(c context.Context, node sqalx.Node, topicID, aid int64) (isAdmin bool, err error) {
-	var member *model.TopicMember
-	if member, err = p.d.GetTopicMemberByCond(c, node, map[string]interface{}{"account_id": aid, "topic_id": topicID}); err != nil {
-		return
-	} else if member == nil {
-		err = ecode.NotTopicMember
-		return
-	} else if member.Role == model.MemberRoleUser {
-		isAdmin = false
-		return
-	}
-
-	isAdmin = true
-
-	return
-}
-
-func (p *Service) checkTopicMemberAdmin(c context.Context, node sqalx.Node, topicID, aid int64) (err error) {
-	var member *model.TopicMember
-	if member, err = p.d.GetTopicMemberByCond(c, node, map[string]interface{}{"account_id": aid, "topic_id": topicID}); err != nil {
-		return
-	} else if member == nil {
-		err = ecode.NotTopicMember
-		return
-	} else if member.Role == model.MemberRoleUser {
-		err = ecode.NotTopicAdmin
-		return
-	}
-
-	return nil
-}
-
 // addMember 添加成员
 func (p *Service) addMember(c context.Context, node sqalx.Node, topicID, aid int64, role string) (err error) {
 	if _, err = p.getAccount(c, node, aid); err != nil {
@@ -216,9 +172,6 @@ func (p *Service) bulkSaveMembers(c context.Context, node sqalx.Node, req *api.A
 	}
 
 	if err = p.checkTopic(c, node, req.TopicID); err != nil {
-		return
-	}
-	if err = p.checkTopicMemberAdmin(c, node, req.TopicID, req.Aid); err != nil {
 		return
 	}
 

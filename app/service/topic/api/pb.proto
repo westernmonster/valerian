@@ -541,6 +541,10 @@ service Topic {
 
     rpc  IsTopicMember(ArgIsTopicMember) returns (BoolResp);
 
+    rpc  CanView(TopicReq) returns(BoolResp);
+
+    rpc  CanEdit(TopicReq) returns(BoolResp);
+
     rpc  Invite(ArgTopicInvite) returns (EmptyStruct);
     rpc  ProcessInvite(ArgProcessInvite) returns (EmptyStruct);
     rpc  HasInvite(ArgHasInvite) returns (BoolResp);

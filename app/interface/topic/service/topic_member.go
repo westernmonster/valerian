@@ -24,6 +24,15 @@ func (p *Service) Leave(c context.Context, topicID int64) (err error) {
 
 //  GetTopicMembersPaged 分页获取话题成员
 func (p *Service) GetTopicMembersPaged(c context.Context, topicID int64, page, pageSize int32) (resp *model.TopicMembersPagedResp, err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+	// 检测查看权限
+	if err = p.checkViewPermission(c, aid, topicID); err != nil {
+		return
+	}
 	var data *topic.TopicMembersPagedResp
 	if data, err = p.d.GetTopicMembersPaged(c, &topic.ArgTopicMembers{TopicID: topicID, Page: page, PageSize: pageSize}); err != nil {
 		return

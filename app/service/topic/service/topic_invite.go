@@ -18,6 +18,10 @@ func (p *Service) Invite(c context.Context, arg *api.ArgTopicInvite) (err error)
 		return
 	}
 
+	if err = p.checkIsMember(c, arg.Aid, arg.TopicID); err != nil {
+		return
+	}
+
 	var req *model.TopicInviteRequest
 	if req, err = p.d.GetTopicInviteRequestByCond(c, p.d.DB(), map[string]interface{}{
 		"topic_id":   arg.TopicID,

@@ -249,18 +249,6 @@ func (p *Service) saveCatalogs(c context.Context, node sqalx.Node, aid int64, re
 		return
 	}
 
-	var isAdmin bool
-	if isAdmin, err = p.IsSystemAdmin(c, node, aid); err != nil {
-		return
-	}
-
-	if !isAdmin {
-		// check admin role
-		if err = p.checkTopicMemberAdmin(c, node, req.TopicID, aid); err != nil {
-			return
-		}
-	}
-
 	var dic map[int64]dicItem
 	if dic, err = p.getTopicCatalogsMap(c, node, req.TopicID, req.ParentID); err != nil {
 		return
@@ -385,19 +373,5 @@ func (p *Service) saveCatalogs(c context.Context, node sqalx.Node, aid int64, re
 				Name:     v.Item.Name})
 		}
 	}
-	return
-}
-
-func (p *Service) IsSystemAdmin(c context.Context, node sqalx.Node, aid int64) (ret bool, err error) {
-	var acc *model.Account
-	if acc, err = p.getAccount(c, node, aid); err != nil {
-		return
-	}
-
-	if acc.Role == "admin" || acc.Role == "superadmin" {
-		ret = true
-		return
-	}
-
 	return
 }

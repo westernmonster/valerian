@@ -12,17 +12,93 @@ import (
 
 const (
 	_getTopicMembersCountSQL = "SELECT COUNT(1) as count FROM topic_members a WHERE a.deleted=0 AND a.topic_id=?"
-	_getTopicMembersPagedSQL = "SELECT a.* FROM topic_members a WHERE a.deleted=0 AND a.topic_id=? ORDER BY a.role,a.id DESC limit ?,?"
+	_getTopicMembersPagedSQL = "SELECT a.id,a.topic_id,a.account_id,a.role,a.deleted,a.created_at,a.updated_at FROM topic_members a WHERE a.deleted=0 AND a.topic_id=? ORDER BY a.role,a.id DESC limit ?,?"
 )
 
 func (p *Dao) GetFollowedTopicsPaged(c context.Context, node sqalx.Node, aid int64, query string, limit, offset int) (items []*model.Topic, err error) {
 	items = make([]*model.Topic, 0)
-	sqlSelect := "SELECT b.* FROM topic_members a LEFT JOIN topics b ON a.topic_id=b.id WHERE a.deleted=0 AND a.account_id=? ORDER BY b.id DESC LIMIT ?,?"
+	sqlSelect := `SELECT b.id,b.name,b.avatar,b.bg,b.introduction,b.allow_discuss,b.allow_chat,b.is_private,b.view_permission,b.edit_permission,b.join_permission,b.catalog_view_type,b.topic_home,b.created_by,b.deleted,b.created_at,b.updated_at
+	FROM topic_members a LEFT JOIN topics b ON a.topic_id=b.id
+	WHERE a.deleted=0 AND a.account_id=?
+	ORDER BY b.id DESC LIMIT ?,?`
 
 	if err = node.SelectContext(c, &items, sqlSelect, aid, offset, limit); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetFollowedTopicsPaged err(%+v) aid(%d) limit(%d) offset(%d)", err, aid, limit, offset))
 		return
 	}
+	return
+}
+
+func (p *Dao) IsAllowedEditMember(c context.Context, node sqalx.Node, aid int64, topicID int64) (ret bool, err error) {
+	// 逻辑
+	// 1. 当前话题编辑权限为管理员，且用户是管理员
+	// 2. 当前话题编辑权限为成员，且用户为成员
+	// 3. 授权话题，授权为可编辑，用户是授权话题成员
+	// 4. 授权话题，授权为管理员可编辑，用户是授权话题管理员
+	sqlSelect := `
+SELECT a.id FROM topic_members a WHERE a.deleted = 0 AND a.account_id = ? AND a.role IN ( 'owner', 'admin' ) AND a.topic_id IN (
+	SELECT a.id FROM topics a WHERE a.id = ? AND a.deleted = 0 AND a.edit_permission = 'admin' )
+UNION
+SELECT a.id FROM topic_members a WHERE a.deleted = 0 AND a.account_id = ? AND a.topic_id IN (
+	SELECT a.id FROM topics a WHERE a.id = ? AND a.deleted = 0 AND a.edit_permission = 'member' )
+UNION
+SELECT a.id FROM topic_members a WHERE a.deleted = 0 AND a.account_id = ? AND a.topic_id IN (
+	SELECT a.to_topic_id FROM auth_topics a WHERE a.deleted = 0 AND a.topic_id = ? AND a.permission = 'edit' )
+UNION
+SELECT a.id FROM topic_members a WHERE a.deleted = 0 AND a.account_id = ? AND a.role IN ( 'owner', 'admin' ) AND a.topic_id IN (
+	SELECT a.to_topic_id FROM auth_topics a WHERE a.deleted = 0 AND a.topic_id = ? AND a.permission = 'admin_edit')
+`
+	ids := make([]int64, 0)
+
+	var rows *sqlx.Rows
+	if rows, err = node.QueryxContext(c, sqlSelect, aid, topicID, aid, topicID, aid, topicID, aid, topicID); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.IsAllowedEditMember err(%+v)", err))
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var (
+			targetID int64
+		)
+		if err = rows.Scan(&targetID); err != nil {
+			log.For(c).Error(fmt.Sprintf("dao.IsAllowedEditMember err(%+v)", err))
+			return
+		}
+		ids = append(ids, targetID)
+	}
+
+	if err = rows.Err(); err != nil {
+		return
+	}
+
+	if len(ids) > 0 {
+		ret = true
+	}
+
+	return
+}
+
+func (p *Dao) IsAllowedViewMember(c context.Context, node sqalx.Node, aid int64, topicID int64) (ret bool, err error) {
+	// 逻辑
+	// 1. 用户为当前话题成员
+	// 2. 用户为授权话题成员
+	sqlSelect := `
+   SELECT * FROM topic_members a WHERE a.deleted= 0 AND a.account_id= ?
+   AND a.topic_id IN (SELECT a.to_topic_id FROM auth_topics a WHERE a.deleted= 0 AND a.topic_id= ? UNION SELECT ? AS to_topic_id)`
+
+	item := new(model.TopicMember)
+	if err = node.GetContext(c, item, sqlSelect, aid, topicID, topicID); err != nil {
+		if err == sql.ErrNoRows {
+			ret = false
+			return
+		}
+		log.For(c).Error(fmt.Sprintf("dao.IsAllowedViewMember err(%+v), aid(%+v) topic_id(%d)", err, aid, topicID))
+		return
+	}
+
+	ret = true
+
 	return
 }
 

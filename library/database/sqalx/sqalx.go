@@ -128,6 +128,8 @@ type Node interface {
 	QueryxContext(ctx context.Context, query string, args ...interface{}) (*sqlx.Rows, error)
 
 	Ping(c context.Context) (err error)
+
+	Rebind(query string) string
 }
 
 // A Driver can query the database. It can either be a *sqlx.DB or a *sqlx.Tx
@@ -140,6 +142,8 @@ type Driver interface {
 	GetContext(ctx context.Context, dest interface{}, query string, args ...interface{}) error
 	PreparexContext(ctx context.Context, query string) (*sqlx.Stmt, error)
 	SelectContext(ctx context.Context, dest interface{}, query string, args ...interface{}) error
+
+	Rebind(query string) string
 }
 
 type node struct {
@@ -292,6 +296,10 @@ func (n *node) GetContext(ctx context.Context, dest interface{}, query string, a
 		}
 	}
 	return n.Driver.GetContext(ctx, dest, query, args...)
+}
+
+func (n *node) Rebind(query string) string {
+	return n.Driver.Rebind(query)
 }
 
 func (n *node) QueryxContext(ctx context.Context, query string, args ...interface{}) (rows *sqlx.Rows, err error) {

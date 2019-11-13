@@ -110,6 +110,11 @@ func (p *Service) GetTopic(c context.Context, topicID int64, include string) (it
 		return
 	}
 
+	// 检测查看权限
+	if err = p.checkViewPermission(c, aid, topicID); err != nil {
+		return
+	}
+
 	var t *topic.TopicResp
 	if t, err = p.d.GetTopicResp(c, &topic.IDReq{ID: topicID, Aid: aid, Include: include}); err != nil {
 		return

@@ -92,6 +92,11 @@ func (p *Service) GetTopicMembersPaged(c context.Context, arg *api.ArgTopicMembe
 }
 
 func (p *Service) BulkSaveMembers(c context.Context, req *api.ArgBatchSavedTopicMember) (err error) {
+	// 检测是否系统管理员或者话题管理员
+	if err = p.checkTopicManagePermission(c, req.Aid, req.TopicID); err != nil {
+		return
+	}
+
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
@@ -161,15 +166,5 @@ func (p *Service) ChangeOwner(c context.Context, arg *api.ArgChangeOwner) (err e
 		p.d.DelTopicMembersCache(context.TODO(), arg.TopicID)
 	})
 
-	return
-}
-
-func (p *Service) IsTopicMember(c context.Context, aid int64, topicID int64) (ret bool, err error) {
-	var member *model.TopicMember
-	if member, err = p.d.GetTopicMemberByCond(c, p.d.DB(), map[string]interface{}{"account_id": aid, "topic_id": topicID}); err != nil {
-		return
-	} else if member != nil {
-		ret = true
-	}
 	return
 }

@@ -9,6 +9,7 @@ import (
 	article "valerian/app/service/article/api"
 	topicFeed "valerian/app/service/topic-feed/api"
 	"valerian/library/ecode"
+	"valerian/library/net/metadata"
 )
 
 func (p *Service) FromArticle(v *article.ArticleInfo) (item *model.TargetArticle) {
@@ -36,6 +37,16 @@ func (p *Service) FromArticle(v *article.ArticleInfo) (item *model.TargetArticle
 }
 
 func (p *Service) GetTopicFeedPaged(c context.Context, topicID int64, limit, offset int) (resp *model.FeedResp, err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+
+	// 检测查看权限
+	if err = p.checkViewPermission(c, aid, topicID); err != nil {
+		return
+	}
 	var data *topicFeed.TopicFeedResp
 	if data, err = p.d.GetTopicFeedPaged(c, topicID, limit, offset); err != nil {
 		return

@@ -11,6 +11,11 @@ import (
 
 // SaveAuthTopics  保存授权话题
 func (p *Service) SaveAuthTopics(c context.Context, arg *api.ArgSaveAuthTopics) (err error) {
+	// 检测是否系统管理员或者话题管理员
+	if err = p.checkTopicManagePermission(c, arg.Aid, arg.TopicID); err != nil {
+		return
+	}
+
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))

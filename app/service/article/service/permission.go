@@ -17,7 +17,6 @@ func (p *Service) CanEdit(c context.Context, arg *api.IDReq) (canEdit bool, err 
 }
 
 // 检查编辑权限
-// TODO：这里会成为性能瓶颈，业务目前是这么制定的，我也没辙，后续人员请持续优化
 func (p *Service) checkEditPermission(c context.Context, node sqalx.Node, articleID, aid int64) (canEdit bool, err error) {
 	var acc *model.Account
 	if acc, err = p.getAccount(c, node, aid); err != nil {
@@ -44,9 +43,8 @@ func (p *Service) checkEditPermission(c context.Context, node sqalx.Node, articl
 	// 所有关联话题列表
 	var relatedTopics []*model.TopicCatalog
 	if relatedTopics, err = p.d.GetTopicCatalogsByCond(c, node, map[string]interface{}{
-		"type":       model.TopicCatalogArticle,
-		"ref_id":     articleID,
-		"permission": model.AuthPermissionEdit,
+		"type":   model.TopicCatalogArticle,
+		"ref_id": articleID,
 	}); err != nil {
 		return
 	}
