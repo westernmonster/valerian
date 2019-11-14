@@ -107,10 +107,7 @@ func (p *Service) SaveArticleFiles(c context.Context, arg *api.ArgSaveArticleFil
 		}
 	}()
 
-	if canEdit, e := p.checkEditPermission(c, tx, arg.ArticleID, arg.Aid); e != nil {
-		return e
-	} else if !canEdit {
-		err = ecode.NeedArticleEditPermission
+	if err = p.checkEditPermission(c, tx, arg.Aid, arg.ArticleID); err != nil {
 		return
 	}
 

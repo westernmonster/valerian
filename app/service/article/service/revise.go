@@ -222,11 +222,7 @@ func (p *Service) AddRevise(c context.Context, arg *api.ArgAddRevise) (id int64,
 		return
 	}
 
-	if canEdit, e := p.checkEditPermission(c, tx, arg.ArticleID, arg.Aid); e != nil {
-		err = e
-		return
-	} else if !canEdit {
-		err = ecode.NeedArticleEditPermission
+	if err = p.checkEditPermission(c, tx, arg.Aid, arg.ArticleID); err != nil {
 		return
 	}
 
@@ -319,10 +315,7 @@ func (p *Service) UpdateRevise(c context.Context, arg *api.ArgUpdateRevise) (err
 		return
 	}
 
-	if canEdit, e := p.checkEditPermission(c, tx, item.ArticleID, arg.Aid); e != nil {
-		return e
-	} else if !canEdit {
-		err = ecode.NeedArticleEditPermission
+	if err = p.checkEditPermission(c, tx, arg.Aid, item.ArticleID); err != nil {
 		return
 	}
 
@@ -400,10 +393,7 @@ func (p *Service) delRevise(c context.Context, aid, id int64) (err error) {
 		return
 	}
 
-	if canEdit, e := p.checkEditPermission(c, tx, item.ArticleID, aid); e != nil {
-		return e
-	} else if !canEdit {
-		err = ecode.NeedArticleEditPermission
+	if err = p.checkEditPermission(c, tx, aid, item.ArticleID); err != nil {
 		return
 	}
 

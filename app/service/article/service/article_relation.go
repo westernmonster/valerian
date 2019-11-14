@@ -86,22 +86,23 @@ func (p *Service) getCatalogFullPath(c context.Context, node sqalx.Node, article
 	return
 }
 
-func (p *Service) checkArticleRelations(c context.Context, node sqalx.Node, items []*api.ArgArticleRelation) (err error) {
+func (p *Service) checkArticleRelations(c context.Context, node sqalx.Node, aid int64, items []*api.ArgArticleRelation) (err error) {
 	if len(items) == 0 {
 		return ecode.NeedPrimaryTopic
 	}
 
-	primary := false
 	dic := make(map[int64]bool)
 	for _, v := range items {
 		if _, err = p.getTopic(c, node, v.TopicID); err != nil {
 			return
 		}
-		if primary == true && v.Primary {
-			return ecode.OnlyAllowOnePrimaryTopic
-		}
-		if v.Primary {
-			primary = true
+
+		var canEdit bool
+		if canEdit, err = p.d.IsCanEditTopic(c, node, aid, v.TopicID); err != nil {
+			return
+		} else if !canEdit {
+			err = ecode.NoTopicEditPermission
+			return
 		}
 
 		if _, ok := dic[v.TopicID]; ok {
@@ -130,9 +131,9 @@ func (p *Service) checkTopicCatalogTaxonomy(c context.Context, node sqalx.Node, 
 	return nil
 }
 
-func (p *Service) bulkCreateArticleRelations(c context.Context, node sqalx.Node, articleID int64, title string, relations []*api.ArgArticleRelation) (ids []int64, err error) {
+func (p *Service) bulkCreateArticleRelations(c context.Context, node sqalx.Node, aid, articleID int64, title string, relations []*api.ArgArticleRelation) (ids []int64, err error) {
 	ids = make([]int64, 0)
-	if err = p.checkArticleRelations(c, node, relations); err != nil {
+	if err = p.checkArticleRelations(c, node, aid, relations); err != nil {
 		return
 	}
 
@@ -237,10 +238,7 @@ func (p *Service) UpdateArticleRelation(c context.Context, arg *api.ArgUpdateArt
 		return
 	}
 
-	if canEdit, e := p.checkEditPermission(c, tx, catalog.RefID, arg.Aid); e != nil {
-		return e
-	} else if !canEdit {
-		err = ecode.NeedArticleEditPermission
+	if err = p.checkEditPermission(c, tx, arg.Aid, catalog.RefID); err != nil {
 		return
 	}
 
@@ -296,10 +294,7 @@ func (p *Service) SetPrimary(c context.Context, arg *api.ArgSetPrimaryArticleRel
 		}
 	}()
 
-	if canEdit, e := p.checkEditPermission(c, tx, arg.ArticleID, arg.Aid); e != nil {
-		return e
-	} else if !canEdit {
-		err = ecode.NeedArticleEditPermission
+	if err = p.checkEditPermission(c, tx, arg.Aid, arg.ArticleID); err != nil {
 		return
 	}
 
@@ -384,10 +379,7 @@ func (p *Service) AddArticleRelation(c context.Context, arg *api.ArgAddArticleRe
 		return ecode.ArticleNotExist
 	}
 
-	if canEdit, e := p.checkEditPermission(c, tx, arg.ArticleID, arg.Aid); e != nil {
-		return e
-	} else if !canEdit {
-		err = ecode.NeedArticleEditPermission
+	if err = p.checkEditPermission(c, tx, arg.Aid, arg.ArticleID); err != nil {
 		return
 	}
 
@@ -435,10 +427,7 @@ func (p *Service) DelArticleRelation(c context.Context, arg *api.ArgDelArticleRe
 		return ecode.ArticleNotExist
 	}
 
-	if canEdit, e := p.checkEditPermission(c, tx, arg.ArticleID, arg.Aid); e != nil {
-		return e
-	} else if !canEdit {
-		err = ecode.NeedArticleEditPermission
+	if err = p.checkEditPermission(c, tx, arg.Aid, arg.ArticleID); err != nil {
 		return
 	}
 

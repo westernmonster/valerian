@@ -106,11 +106,14 @@ var (
 	IDCertFirst                    = add(10056) // 首选需要通过身份认证
 	HasDiscussionInCategory        = add(10057) // 该分类下已经有讨论了
 	NeedArticleEditPermission      = add(10058) // 需要文章编辑权限
+	NeedArticleRelation            = add(10059) // 需要设置关联话题
 
 	// 89000 - 89999 属于 Permission 类错误
 	NoTopicViewPermission   = add(89001) // 没有话题查看权限
 	NoTopicEditPermission   = add(89002) // 没有话题编辑权限
 	NoTopicManagePermission = add(89003) // 没有话题管理权限
+	NoArticleViewPermission = add(89004) // 没有文章查看权限
+	NoArticleEditPermission = add(89005) // 没有文章编辑权限
 
 	// 90000 - 99999 属于 Not Exist 类错误
 	UserNotExist                  = add(90001) // 用户不存在

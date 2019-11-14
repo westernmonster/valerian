@@ -55,7 +55,7 @@ func (p *ArgAddArticleRelation) Validate() error {
 		validation.Field(&p.ArticleID, validation.Required),
 		validation.Field(&p.ParentID),
 		validation.Field(&p.TopicID, validation.Required),
-		validation.Field(&p.Permission, validation.Required, validation.In(AuthPermissionEdit, AuthPermissionAdminEdit, AuthPermissionView)),
+		validation.Field(&p.Permission, validation.Required, validation.In(AuthPermissionEdit, AuthPermissionView)),
 	)
 }
 
@@ -79,7 +79,7 @@ func (p *AddArticleRelation) Validate() error {
 	return validation.ValidateStruct(
 		p,
 		validation.Field(&p.TopicID, validation.Required),
-		validation.Field(&p.Permission, validation.Required, validation.In(AuthPermissionEdit, AuthPermissionAdminEdit, AuthPermissionView)),
+		validation.Field(&p.Permission, validation.Required, validation.In(AuthPermissionEdit, AuthPermissionView)),
 	)
 }
 
@@ -99,6 +99,6 @@ func (p *ArgUpdateArticleRelation) Validate() error {
 	return validation.ValidateStruct(
 		p,
 		validation.Field(&p.ID, validation.Required),
-		validation.Field(&p.Permission, validation.Required, validation.In(AuthPermissionEdit, AuthPermissionAdminEdit, AuthPermissionView)),
+		validation.Field(&p.Permission, validation.Required, validation.In(AuthPermissionEdit, AuthPermissionView)),
 	)
 }

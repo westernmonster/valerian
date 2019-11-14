@@ -190,12 +190,12 @@ func (p *Service) checkViewPermission(c context.Context, aid, topicID int64) (er
 }
 
 func (p *Service) checkEditPermission(c context.Context, aid, topicID int64) (err error) {
-	var CanEdit bool
-	if CanEdit, err = p.d.IsAllowedEditMember(c, p.d.DB(), aid, topicID); err != nil {
+	var canEdit bool
+	if canEdit, err = p.d.IsAllowedEditMember(c, p.d.DB(), aid, topicID); err != nil {
 		return
 	}
 
-	if !CanEdit {
+	if !canEdit {
 		err = ecode.NoTopicEditPermission
 		return
 	}

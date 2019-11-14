@@ -323,6 +323,11 @@ func (p *Service) AddArticle(c context.Context, arg *api.ArgAddArticle) (id int6
 		}
 	}()
 
+	if arg.Relations == nil || len(arg.Relations) == 0 {
+		err = ecode.NeedArticleRelation
+		return
+	}
+
 	item := &model.Article{
 		ID:             gid.NewID(),
 		Title:          arg.Title,
@@ -395,7 +400,7 @@ func (p *Service) AddArticle(c context.Context, arg *api.ArgAddArticle) (id int6
 	}
 
 	var ids []int64
-	if ids, err = p.bulkCreateArticleRelations(c, tx, item.ID, item.Title, arg.Relations); err != nil {
+	if ids, err = p.bulkCreateArticleRelations(c, tx, arg.Aid, item.ID, item.Title, arg.Relations); err != nil {
 		return
 	}
 
@@ -453,10 +458,7 @@ func (p *Service) DelArticle(c context.Context, arg *api.IDReq) (err error) {
 		return
 	}
 
-	if canEdit, e := p.checkEditPermission(c, tx, arg.ID, arg.Aid); e != nil {
-		return e
-	} else if !canEdit {
-		err = ecode.NeedArticleEditPermission
+	if err = p.checkEditPermission(c, tx, arg.Aid, arg.ID); err != nil {
 		return
 	}
 
@@ -566,11 +568,7 @@ func (p *Service) UpdateArticle(c context.Context, arg *api.ArgUpdateArticle) (e
 		return
 	}
 
-	if canEdit, e := p.checkEditPermission(c, tx, arg.ID, arg.Aid); e != nil {
-		err = e
-		return
-	} else if !canEdit {
-		err = ecode.NeedArticleEditPermission
+	if err = p.checkEditPermission(c, tx, arg.Aid, arg.ID); err != nil {
 		return
 	}
 

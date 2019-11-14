@@ -116,11 +116,7 @@ func (p *Service) SaveReviseFiles(c context.Context, arg *api.ArgSaveReviseFiles
 		return ecode.ReviseNotExist
 	}
 
-	if canEdit, e := p.checkEditPermission(c, tx, article.ArticleID, arg.Aid); e != nil {
-		err = e
-		return
-	} else if !canEdit {
-		err = ecode.NeedArticleEditPermission
+	if err = p.checkEditPermission(c, tx, arg.Aid, article.ArticleID); err != nil {
 		return
 	}
 
