@@ -217,3 +217,20 @@ func (p *Dao) CanEdit(c context.Context, req *article.IDReq) (canEdit bool, err 
 	canEdit = resp.Result
 	return
 }
+
+func (p *Dao) CanView(c context.Context, req *article.IDReq) (canView bool, err error) {
+	var resp *article.BoolResp
+	if resp, err = p.articleRPC.CanView(c, req); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.CanView() error(%+v), req(%+v)", err, req))
+		return
+	}
+	canView = resp.Result
+	return
+}
+
+func (p *Dao) GetUserCanEditArticleIDs(c context.Context, arg *article.AidReq) (resp *article.IDsResp, err error) {
+	if resp, err = p.articleRPC.GetUserCanEditArticleIDs(c, arg); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetUserCanEditArticleIDs err(%+v) arg(%+v)", err, arg))
+	}
+	return
+}

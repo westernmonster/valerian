@@ -141,4 +141,25 @@ func getArticle(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /article/list/has_edit_permission [get]
 func getHasEditPermissionArticles(c *mars.Context) {
+	var (
+		err error
+		pn  int
+		ps  int
+	)
+
+	params := c.Request.Form
+
+	if pn, err = strconv.Atoi(params.Get("pn")); err != nil {
+		pn = 1
+	} else if pn < 0 {
+		pn = 1
+	}
+
+	if ps, err = strconv.Atoi(params.Get("ps")); err != nil {
+		ps = 10
+	} else if ps < 0 {
+		ps = 10
+	}
+
+	c.JSON(srv.GetUserCanEditArticles(c, params.Get("query"), pn, ps))
 }

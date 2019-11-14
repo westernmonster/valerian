@@ -17,6 +17,22 @@ func (p *Service) CanEdit(c context.Context, arg *api.IDReq) (canEdit bool, err 
 	return
 }
 
+func (p *Service) CanView(c context.Context, arg *api.IDReq) (canView bool, err error) {
+	if canView, err = p.canView(c, p.d.DB(), arg.Aid, arg.ID); err != nil {
+		return
+	}
+
+	return
+}
+
+func (p *Service) GetUserCanEditArticleIDs(c context.Context, aid int64) (ids []int64, err error) {
+	if ids, err = p.d.GetUserCanEditArticleIDs(c, p.d.DB(), aid); err != nil {
+		return
+	}
+
+	return
+}
+
 // 检查编辑权限
 func (p *Service) checkEditPermission(c context.Context, node sqalx.Node, aid, articleID int64) (err error) {
 	var canEdit bool

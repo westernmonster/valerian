@@ -56,6 +56,30 @@ func (s *server) CanEdit(ctx context.Context, req *api.IDReq) (*api.BoolResp, er
 	return &api.BoolResp{Result: canEdit}, nil
 }
 
+func (s *server) CanView(ctx context.Context, req *api.IDReq) (*api.BoolResp, error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
+
+	canView, err := s.svr.CanView(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.BoolResp{Result: canView}, nil
+}
+
+func (s *server) GetUserCanEditArticleIDs(ctx context.Context, arg *api.AidReq) (*api.IDsResp, error) {
+	ids, err := s.svr.GetUserCanEditArticleIDs(ctx, arg.AccountID)
+	if err != nil {
+		return nil, err
+	}
+	return &api.IDsResp{IDs: ids}, nil
+}
+
 func (s *server) GetArticleInfo(ctx context.Context, req *api.IDReq) (*api.ArticleInfo, error) {
 	if req.UseMaster {
 		ctx = sqalx.NewContext(ctx, true)

@@ -387,12 +387,23 @@ message BoolResp {
     bool Result = 1;
 }
 
+message IDsResp {
+    repeated int64 IDs = 1 [(gogoproto.jsontag) = 'ids'];
+}
+
+message AidReq {
+    int64 AccountID = 1 [(gogoproto.jsontag) = "account_id"];
+    bool UseMaster = 2;
+}
+
 service Article {
     rpc AddArticle(ArgAddArticle) returns (IDResp);
     rpc UpdateArticle(ArgUpdateArticle) returns (EmptyStruct);
     rpc DelArticle(IDReq) returns (EmptyStruct);
 
-    rpc CanEdit(IDReq) returns (BoolResp);
+    rpc  CanView(IDReq) returns(BoolResp);
+    rpc  CanEdit(IDReq) returns(BoolResp);
+    rpc  GetUserCanEditArticleIDs(AidReq) returns (IDsResp);
 
     rpc GetArticleFiles(IDReq) returns (ArticleFilesResp);
     rpc SaveArticleFiles(ArgSaveArticleFiles) returns (EmptyStruct);
