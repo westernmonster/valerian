@@ -90,6 +90,7 @@ func (p *Dao) IsAllowedViewMember(c context.Context, node sqalx.Node, aid int64,
 	item := new(model.TopicMember)
 	if err = node.GetContext(c, item, sqlSelect, aid, topicID, topicID); err != nil {
 		if err == sql.ErrNoRows {
+			err = nil
 			ret = false
 			return
 		}
