@@ -57,4 +57,6 @@ type MemberInfoStat struct {
 
 	// 讨论数
 	DiscussionCount int32 `json:"discussion_count"`
+
+	MsgCount int32 `json:"msg_count"`
 }
