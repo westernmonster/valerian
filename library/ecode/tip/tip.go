@@ -15,8 +15,6 @@ import (
 	"valerian/library/log"
 	xhttp "valerian/library/net/http/mars"
 	xtime "valerian/library/time"
-
-	"github.com/davecgh/go-spew/spew"
 )
 
 const (
@@ -164,7 +162,6 @@ func (e *ecodes) update(ver int64) (lver int64, err error) {
 		nCodes[k] = v
 	}
 	cmcd.Register(nCodes)
-	spew.Dump(nCodes)
 	e.codes.Store(nCodes)
 	return res.Result.Ver, nil
 }
