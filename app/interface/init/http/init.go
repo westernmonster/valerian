@@ -1,7 +1,9 @@
 package http
 
 import (
+	"valerian/library/ecode"
 	"valerian/library/net/http/mars"
+	"valerian/library/xstr"
 )
 
 // @Summary 冷启动(获取大分类)
@@ -18,6 +20,7 @@ import (
 // @Failure 500 "服务器端错误"
 // @Router /init/list/major [get]
 func getMajorData(c *mars.Context) {
+	c.JSON(srv.GetRecommendTopics(c))
 }
 
 // @Summary 冷启动(获取关联话题)
@@ -35,6 +38,18 @@ func getMajorData(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /init/list/related [get]
 func getRelatedData(c *mars.Context) {
+	param := c.Request.Form
+	majorIDs := make([]int64, 0)
+
+	if ids, err := xstr.SplitInts(param.Get("major_ids")); err != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	} else if ids != nil {
+		majorIDs = ids
+	}
+
+	c.JSON(srv.GetRecommendAuthTopics(c, majorIDs))
+
 }
 
 // @Summary 冷启动(获取成员)
@@ -53,4 +68,23 @@ func getRelatedData(c *mars.Context) {
 // @Failure 500 "服务器端错误"
 // @Router /init/list/members [get]
 func getMembersData(c *mars.Context) {
+	param := c.Request.Form
+	majorIDs := make([]int64, 0)
+	relatedIDs := make([]int64, 0)
+
+	if ids, err := xstr.SplitInts(param.Get("major_ids")); err != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	} else if ids != nil {
+		majorIDs = ids
+	}
+
+	if ids, err := xstr.SplitInts(param.Get("related_ids")); err != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	} else if ids != nil {
+		relatedIDs = ids
+	}
+
+	c.JSON(srv.GetRecommendMembers(c, majorIDs, relatedIDs))
 }

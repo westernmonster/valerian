@@ -31,18 +31,21 @@ type TargetTopic struct {
 	Avatar string `json:"avatar"`
 
 	// 成员数
-	MemberCount int `json:"member_count"`
+	MemberCount int32 `json:"member_count"`
 
 	// 成员数
-	ArticleCount int `json:"article_count"`
+	ArticleCount int32 `json:"article_count"`
 
 	// 讨论数
-	DiscussionCount int `json:"discussion_count"`
+	DiscussionCount int32 `json:"discussion_count"`
 
 	// 简介
 	Introduction string `json:"introduction"`
 
 	Creator *Creator `json:"creator,omitempty"`
+
+	CreatedAt int64 `json:"created_at"`
+	UpdatedAt int64 `json:"updated_at"`
 }
 
 type MemberInfo struct {
@@ -51,7 +54,7 @@ type MemberInfo struct {
 	// 用户名
 	UserName string `json:"user_name" format:"user_name"`
 	// 性别 1为男， 2为女
-	Gender int `json:"gender,omitempty"`
+	Gender int32 `json:"gender,omitempty"`
 
 	// 所在地区值
 	Location int64 `json:"location,string,omitempty"`
@@ -77,28 +80,28 @@ type MemberInfo struct {
 	// 是否VIP
 	IsVIP bool `json:"is_vip"`
 
+	Company  string `json:"company"`
+	Position string `json:"position"`
+
 	// 状态
 	Stat *MemberInfoStat `json:"stat"`
 }
 
 type MemberInfoStat struct {
-	// 是否关注
-	IsFollow bool `json:"is_follow"`
-
 	// 关注数
-	FollowingCount int `json:"following_count"`
+	FollowingCount int32 `json:"following_count"`
 
 	// 粉丝数
-	FansCount int `json:"fans_count"  db:"-"`
+	FansCount int32 `json:"fans_count"  db:"-"`
 
 	// 话题数
-	TopicCount int `json:"topic_count"`
+	TopicCount int32 `json:"topic_count"`
 
 	// 文章数
-	ArticleCount int `json:"article_count"`
+	ArticleCount int32 `json:"article_count"`
 
 	// 讨论数
-	DiscussionCount int `json:"discussion_count"`
+	DiscussionCount int32 `json:"discussion_count"`
 }
 
 type MajorListResp struct {
