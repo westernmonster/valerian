@@ -46,11 +46,6 @@ func (p *Service) CanView(c context.Context, aid int64, topicID int64) (canView 
 		return
 	}
 
-	if !canView {
-		err = ecode.NoTopicViewPermission
-		return
-	}
-
 	return
 }
 
@@ -64,11 +59,6 @@ func (p *Service) CanEdit(c context.Context, aid int64, topicID int64) (canEdit 
 	}
 
 	if canEdit, err = p.d.IsAllowedEditMember(c, p.d.DB(), aid, topicID); err != nil {
-		return
-	}
-
-	if !canEdit {
-		err = ecode.NoTopicEditPermission
 		return
 	}
 

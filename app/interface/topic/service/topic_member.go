@@ -33,6 +33,11 @@ func (p *Service) GetTopicMembersPaged(c context.Context, topicID int64, page, p
 	if err = p.checkViewPermission(c, aid, topicID); err != nil {
 		return
 	}
+
+	return p.getTopicMembersPaged(c, aid, topicID, page, pageSize)
+}
+
+func (p *Service) getTopicMembersPaged(c context.Context, aid, topicID int64, page, pageSize int32) (resp *model.TopicMembersPagedResp, err error) {
 	var data *topic.TopicMembersPagedResp
 	if data, err = p.d.GetTopicMembersPaged(c, &topic.ArgTopicMembers{TopicID: topicID, Page: page, PageSize: pageSize}); err != nil {
 		return

@@ -51,6 +51,11 @@ func (p *Service) GetAuthTopics(c context.Context, topicID int64) (items []*mode
 	if err = p.checkViewPermission(c, aid, topicID); err != nil {
 		return
 	}
+
+	return p.getAuthTopics(c, aid, topicID)
+}
+
+func (p *Service) getAuthTopics(c context.Context, aid, topicID int64) (items []*model.AuthTopicResp, err error) {
 	var resp *topic.AuthTopicsResp
 	if resp, err = p.d.GetAuthTopics(c, &topic.IDReq{ID: topicID, Aid: aid}); err != nil {
 		return
