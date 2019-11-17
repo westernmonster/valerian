@@ -92,7 +92,7 @@ func (p *Service) canView(c context.Context, node sqalx.Node, aid int64, topicID
 	}
 
 	if !canView {
-		err = ecode.NoTopicViewPermission
+		err = ecode.NoArticleViewPermission
 		return
 	}
 
@@ -113,7 +113,7 @@ func (p *Service) canEdit(c context.Context, node sqalx.Node, aid int64, topicID
 	}
 
 	if !canEdit {
-		err = ecode.NoTopicEditPermission
+		err = ecode.NoArticleEditPermission
 		return
 	}
 

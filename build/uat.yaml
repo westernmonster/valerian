@@ -120,6 +120,10 @@ spec:
         backend:
           serviceName: interface-dm
           servicePort: 8000
+      - path: /api/v1/init
+        backend:
+          serviceName: interface-init
+          servicePort: 8000
       - path: /api/v1/admin/login
         backend:
           serviceName: admin-login
