@@ -39,6 +39,8 @@ type TargetTopic struct {
 	// 讨论数
 	DiscussionCount int32 `json:"discussion_count"`
 
+	JoinPermission string `json:"join_permission"`
+
 	// 简介
 	Introduction string `json:"introduction"`
 

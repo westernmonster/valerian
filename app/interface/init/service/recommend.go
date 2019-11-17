@@ -17,6 +17,7 @@ func (p *Service) FromTopic(v *topic.TopicInfo) (item *model.TargetTopic) {
 		MemberCount:     (v.Stat.MemberCount),
 		DiscussionCount: (v.Stat.DiscussionCount),
 		ArticleCount:    (v.Stat.ArticleCount),
+		JoinPermission:  v.JoinPermission,
 		Creator: &model.Creator{
 			ID:           v.Creator.ID,
 			Avatar:       v.Creator.Avatar,
