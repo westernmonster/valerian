@@ -111,6 +111,14 @@ func (p *Service) GetArticle(c context.Context, id int64, include string) (item 
 		return
 	}
 
+	var canView bool
+	if canView, err = p.d.CanView(c, &article.IDReq{Aid: aid, ID: id}); err != nil {
+		return
+	} else if !canView {
+		err = ecode.NoArticleViewPermission
+		return
+	}
+
 	inc := includeParam(include)
 	var data *article.ArticleDetail
 	if data, err = p.d.GetArticleDetail(c, &article.IDReq{Aid: aid, ID: id, Include: include}); err != nil {
@@ -147,19 +155,19 @@ func (p *Service) GetArticle(c context.Context, id int64, include string) (item 
 	}
 
 	if inc["files"] {
-		if item.Files, err = p.GetArticleFiles(c, id); err != nil {
+		if item.Files, err = p.getArticleFiles(c, aid, id); err != nil {
 			return
 		}
 	}
 
 	if inc["relations"] {
-		if item.Relations, err = p.GetArticleRelations(c, id); err != nil {
+		if item.Relations, err = p.getArticleRelations(c, aid, id); err != nil {
 			return
 		}
 	}
 
 	if inc["meta"] {
-		if item.ArticleMeta, err = p.getArticleMeta(c, data); err != nil {
+		if item.ArticleMeta, err = p.getArticleMeta(c, aid, data); err != nil {
 			return
 		}
 	}
@@ -171,12 +179,7 @@ func (p *Service) GetArticle(c context.Context, id int64, include string) (item 
 	return
 }
 
-func (p *Service) getArticleMeta(c context.Context, data *article.ArticleDetail) (item *model.ArticleMeta, err error) {
-	aid, ok := metadata.Value(c, metadata.Aid).(int64)
-	if !ok {
-		err = ecode.AcquireAccountIDFailed
-		return
-	}
+func (p *Service) getArticleMeta(c context.Context, aid int64, data *article.ArticleDetail) (item *model.ArticleMeta, err error) {
 	item = new(model.ArticleMeta)
 
 	if item.CanEdit, err = p.d.CanEdit(c, &article.IDReq{Aid: aid, ID: data.ID}); err != nil {

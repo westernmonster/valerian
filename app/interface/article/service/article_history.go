@@ -17,6 +17,10 @@ func (p *Service) GetArticleHistoriesResp(c context.Context, articleID int64, li
 		err = ecode.AcquireAccountIDFailed
 		return
 	}
+	return p.getArticleHistoriesResp(c, aid, articleID, limit, offset)
+}
+
+func (p *Service) getArticleHistoriesResp(c context.Context, aid, articleID int64, limit, offset int) (resp *model.ArticleHistoryListResp, err error) {
 	var data *article.ArticleHistoryListResp
 	if data, err = p.d.GetArticleHistoriesPaged(c, &article.ArgArticleHistoriesPaged{
 		Aid:       aid,
@@ -85,11 +89,24 @@ func (p *Service) GetArticleHistoryResp(c context.Context, articleHistoryID int6
 		err = ecode.AcquireAccountIDFailed
 		return
 	}
+
+	return p.getArticleHistoryResp(c, aid, articleHistoryID)
+}
+
+func (p *Service) getArticleHistoryResp(c context.Context, aid, articleHistoryID int64) (item *model.ArticleHistoryResp, err error) {
 	var v *article.ArticleHistoryResp
 	if v, err = p.d.GetArticleHistory(c, &article.IDReq{ID: articleHistoryID, Aid: aid}); err != nil {
 		return
 	} else if v == nil {
 		err = ecode.ArticleHistoryNotExist
+		return
+	}
+
+	var canView bool
+	if canView, err = p.d.CanView(c, &article.IDReq{Aid: aid, ID: v.ArticleID}); err != nil {
+		return
+	} else if !canView {
+		err = ecode.NoArticleViewPermission
 		return
 	}
 

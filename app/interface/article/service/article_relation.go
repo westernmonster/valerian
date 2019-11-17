@@ -20,6 +20,18 @@ func (p *Service) GetArticleRelations(c context.Context, articleID int64) (items
 		err = ecode.AcquireAccountIDFailed
 		return
 	}
+	var canView bool
+	if canView, err = p.d.CanView(c, &article.IDReq{Aid: aid, ID: articleID}); err != nil {
+		return
+	} else if !canView {
+		err = ecode.NoArticleViewPermission
+		return
+	}
+
+	return p.getArticleRelations(c, aid, articleID)
+}
+
+func (p *Service) getArticleRelations(c context.Context, aid int64, articleID int64) (items []*model.ArticleRelationResp, err error) {
 	var data *article.ArticleRelationsResp
 	if data, err = p.d.GetArticleRelations(c, &article.IDReq{ID: articleID, Aid: aid}); err != nil {
 		return
