@@ -52,6 +52,7 @@ func route(e *mars.Engine) {
 		g.GET("/revise/get", authSvc.User, getRevise)
 
 		g.GET("/list/files", authSvc.User, articleFiles)
+		g.GET("/list/has_edit_permission", authSvc.User, getHasEditPermissionArticles)
 		g.GET("/list/histories", authSvc.User, articleHistories)
 		g.GET("/list/relations", authSvc.User, articleRelations)
 		g.GET("/list/revises", authSvc.User, getRevises)
