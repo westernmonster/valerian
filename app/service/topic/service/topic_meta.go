@@ -39,6 +39,13 @@ func (p *Service) GetTopicMeta(c context.Context, aid, topicID int64) (meta *api
 		meta.IsMember = isMember
 		meta.MemberRole = member.Role
 		meta.FollowStatus = model.FollowStatusFollowed
+	} else {
+		var req *model.TopicFollowRequest
+		if req, err = p.d.GetTopicFollowRequestByCond(c, p.d.DB(), map[string]interface{}{"topic_id": topicID, "account_id": aid}); err != nil {
+			return
+		} else if req != nil && req.Status == model.FollowRequestStatusCommited {
+			meta.FollowStatus = model.FollowStatusApproving
+		}
 	}
 
 	switch t.JoinPermission {
