@@ -112,10 +112,5 @@ func (p *Service) canEdit(c context.Context, node sqalx.Node, aid int64, topicID
 		return
 	}
 
-	if !canEdit {
-		err = ecode.NoArticleEditPermission
-		return
-	}
-
 	return
 }
