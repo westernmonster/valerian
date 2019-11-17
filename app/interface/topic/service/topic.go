@@ -147,6 +147,14 @@ func (p *Service) GetTopic(c context.Context, topicID int64, include string) (it
 
 	inc := includeParam(include)
 
+	if t.Stat != nil {
+		item.TopicStat = &model.TopicStatResp{
+			MemberCount:     t.Stat.MemberCount,
+			ArticleCount:    t.Stat.ArticleCount,
+			DiscussionCount: t.Stat.DiscussionCount,
+		}
+	}
+
 	if inc["creator"] {
 		if t.Creator != nil {
 			item.Creator = &model.Creator{
@@ -334,5 +342,107 @@ func (p *Service) DelTopic(c context.Context, topicID int64) (err error) {
 	if err = p.d.DelTopic(c, &topic.IDReq{ID: topicID, Aid: aid}); err != nil {
 		return
 	}
+	return
+}
+
+func (p *Service) GetTopicBasicInfo(c context.Context, topicID int64) (item *model.TopicBasicInfo, err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+
+	var t *topic.TopicResp
+	if t, err = p.d.GetTopicResp(c, &topic.IDReq{ID: topicID, Aid: aid, Include: "auth_topics,meta,members"}); err != nil {
+		return
+	}
+
+	item = &model.TopicBasicInfo{
+		ID:               t.ID,
+		Name:             t.Name,
+		Bg:               t.Bg,
+		Avatar:           t.Avatar,
+		Introduction:     t.Introduction,
+		CatalogViewType:  t.CatalogViewType,
+		TopicHome:        t.TopicHome,
+		IsPrivate:        t.IsPrivate,
+		AllowChat:        t.AllowChat,
+		AllowDiscuss:     t.AllowDiscuss,
+		MuteNotification: t.MuteNotification,
+		EditPermission:   t.EditPermission,
+		JoinPermission:   t.JoinPermission,
+		ViewPermission:   t.ViewPermission,
+		Important:        t.Important,
+		CreatedAt:        t.CreatedAt,
+		Members:          make([]*model.TopicMemberResp, 0),
+		AuthTopics:       make([]*model.AuthTopicResp, 0),
+	}
+
+	if t.Creator != nil {
+		item.Creator = &model.Creator{
+			ID:           t.Creator.ID,
+			Avatar:       t.Creator.Avatar,
+			UserName:     t.Creator.UserName,
+			Introduction: t.Creator.Introduction,
+		}
+	}
+
+	if t.Stat != nil {
+		item.TopicStat = &model.TopicStatResp{
+			MemberCount:     t.Stat.MemberCount,
+			ArticleCount:    t.Stat.ArticleCount,
+			DiscussionCount: t.Stat.DiscussionCount,
+		}
+	}
+
+	var data *topic.TopicMembersPagedResp
+	if data, err = p.d.GetTopicMembersPaged(c, &topic.ArgTopicMembers{TopicID: topicID, Page: 1, PageSize: 9}); err != nil {
+		return
+	}
+
+	if data.Data != nil {
+		for _, v := range data.Data {
+			item.Members = append(item.Members, &model.TopicMemberResp{
+				AccountID: v.AccountID,
+				Role:      v.Role,
+				Avatar:    v.Avatar,
+				UserName:  v.UserName,
+			})
+		}
+	}
+
+	var resp *topic.AuthTopicsResp
+	if resp, err = p.d.GetAuthTopics(c, &topic.IDReq{ID: topicID, Aid: aid}); err != nil {
+		return
+	}
+
+	if resp.Items == nil {
+		for _, v := range resp.Items {
+			item.AuthTopics = append(item.AuthTopics, &model.AuthTopicResp{
+				ToTopicID:      v.ToTopicID,
+				EditPermission: v.EditPermission,
+				Permission:     v.Permission,
+				MemberCount:    v.MemberCount,
+				Avatar:         v.Avatar,
+				Name:           v.Name,
+			})
+		}
+	}
+
+	var m *topic.TopicMetaInfo
+	if m, err = p.d.GetTopicMeta(c, aid, topicID); err != nil {
+		return
+	}
+
+	item.TopicMeta = &model.TopicMeta{
+		CanFollow:    m.CanFollow,
+		CanEdit:      m.CanEdit,
+		Fav:          m.Fav,
+		CanView:      m.CanView,
+		FollowStatus: (m.FollowStatus),
+		IsMember:     m.CanView,
+		MemberRole:   m.MemberRole,
+	}
+
 	return
 }

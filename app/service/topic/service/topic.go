@@ -271,6 +271,18 @@ func (p *Service) GetTopicResp(c context.Context, aid int64, topicID int64, incl
 		DiscussionCount: stat.DiscussionCount,
 	}
 
+	var acc *model.Account
+	if acc, err = p.getAccount(c, p.d.DB(), t.CreatedBy); err != nil {
+		return
+	}
+
+	item.Creator = &api.Creator{
+		ID:           acc.ID,
+		UserName:     acc.UserName,
+		Avatar:       acc.Avatar,
+		Introduction: acc.Introduction,
+	}
+
 	if item.HasCatalogTaxonomy, err = p.d.HasTaxonomy(c, p.d.DB(), topicID); err != nil {
 		return
 	}

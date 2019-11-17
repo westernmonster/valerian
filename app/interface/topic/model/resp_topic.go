@@ -83,7 +83,7 @@ type TopicResp struct {
 	// 是否有类目分类
 	HasCatalogTaxonomy bool `json:"has_catalog_taxonomy"`
 
-	TopicStat *TopicStat `json:"stat,omitempty"`
+	TopicStat *TopicStatResp `json:"stat,omitempty"`
 
 	Creator *Creator `json:"creator,omitempty"`
 }
@@ -135,4 +135,86 @@ type TopicItem struct {
 type TopicListResp struct {
 	Items  []*TopicItem `json:"items"`
 	Paging *Paging      `json:"paging"`
+}
+
+type TopicBasicInfo struct {
+	ID int64 `json:"id,string" swaggertype:"string"`
+
+	// 成员
+	Members []*TopicMemberResp `json:"members,omitempty"`
+
+	// 授权话题
+	AuthTopics []*AuthTopicResp `json:"auth_topics,omitempty"`
+
+	// 头像
+	// 必须为URL
+	Avatar string `json:"avatar,omitempty" extensions:"x-nullable,x-abc=def"`
+
+	// 背景图
+	// 必须为URL
+	Bg string `json:"bg"`
+
+	// 名称
+	Name string `json:"name"`
+
+	// 简介
+	Introduction string `json:"introduction"`
+
+	// 分类视图
+	// section 章节
+	// column 栏目
+	CatalogViewType string `json:"catalog_view_type"`
+
+	// 话题首页
+	// feed 动态
+	// catalog 目录
+	// discussion 讨论
+	TopicHome string `json:"topic_home"`
+
+	// 是否私密
+	IsPrivate bool `json:"is_private"`
+
+	// 开启群聊
+	AllowChat bool `json:"allow_chat"`
+
+	// 允许讨论
+	AllowDiscuss bool `json:"allow_discuss"`
+
+	// 消息免打扰
+	MuteNotification bool `db:"mute_notification" json:"mute_notification"`
+
+	// 编辑权限
+	// "member"
+	// "admin"
+	EditPermission string `json:"edit_permission"`
+
+	// 加入权限
+	// 默认为 member
+	// member 注册用户
+	// member_approve 用户需审批
+	// cert_approve 认证需审批
+	// manual_add 仅管理员手工添加
+	JoinPermission string `json:"join_permission"`
+
+	// 查看权限
+	// public 公开
+	// join 加入
+	ViewPermission string `json:"view_permission"`
+
+	// 重要标记
+	Important bool `db:"important" json:"important"`
+
+	CreatedAt int64 `json:"created_at" swaggertype:"integer"`
+
+	TopicMeta *TopicMeta `json:"meta,omitempty"`
+
+	TopicStat *TopicStatResp `json:"stat,omitempty"`
+
+	Creator *Creator `json:"creator,omitempty"`
+}
+
+type TopicStatResp struct {
+	MemberCount     int32 `json:"member_count"`     // MemberCount 成员数
+	ArticleCount    int32 `json:"article_count"`    // ArticleCount 文章数
+	DiscussionCount int32 `json:"discussion_count"` // DiscussionCount 讨论数
 }

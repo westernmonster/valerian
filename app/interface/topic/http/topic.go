@@ -97,6 +97,33 @@ func deleteTopic(c *mars.Context) {
 	c.JSON(nil, srv.DelTopic(c, arg.ID))
 }
 
+// @Summary 获取话题基本信息
+// @Description 获取话题基本信息
+// @Tags topic
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param id query string true "ID"
+// @Success 200 {object}  app.interface.topic.model.TopicBasicInfo "话题"
+// @Failure 400 "验证请求失败"
+// @Failure 401 "登录验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /topic/basic [get]
+func getTopicBasicInfo(c *mars.Context) {
+	idStr := c.Request.Form.Get("id")
+	if id, err := strconv.ParseInt(idStr, 10, 64); err != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	} else if id == 0 {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	} else {
+		c.JSON(srv.GetTopicBasicInfo(c, id))
+	}
+}
+
 // @Summary 获取话题
 // @Description 获取话题
 // @Tags topic

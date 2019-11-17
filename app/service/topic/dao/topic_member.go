@@ -216,6 +216,17 @@ func (p *Dao) GetTopicMembers(c context.Context, node sqalx.Node) (items []*mode
 	return
 }
 
+func (p *Dao) GetTopicAdminMembers(c context.Context, node sqalx.Node, topicID int64) (items []*model.TopicMember, err error) {
+	items = make([]*model.TopicMember, 0)
+	sqlSelect := "SELECT a.* FROM topic_members a WHERE a.deleted=0 AND a.topic_id=? AND a.role IN('owner', 'admin') ORDER BY a.id"
+
+	if err = node.SelectContext(c, &items, sqlSelect, topicID); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetTopicAdminMembers err(%+v), topic_id(%+v)", err, topicID))
+		return
+	}
+	return
+}
+
 // GetAllByCondition get records by condition
 func (p *Dao) GetTopicMembersByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.TopicMember, err error) {
 	items = make([]*model.TopicMember, 0)

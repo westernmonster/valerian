@@ -34,6 +34,7 @@ func route(e *mars.Engine) {
 	g := e.Group("/api/v1/topic")
 	{
 		g.GET("/get", authSvc.User, getTopic)
+		g.GET("/basic", authSvc.User, getTopicBasicInfo)
 		g.GET("/meta", authSvc.User, topicMeta)
 		g.POST("/add", authSvc.User, createTopic)
 		g.POST("/edit", authSvc.User, editTopic)

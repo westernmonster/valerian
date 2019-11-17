@@ -45,6 +45,10 @@ func (p *Service) Leave(c context.Context, aid, topicID int64) (err error) {
 	return
 }
 
+func (p *Service) GetTopicAdminMembers(c context.Context, arg *api.TopicReq) (err error) {
+	return
+}
+
 //  GetTopicMembersPaged 分页获取话题成员
 func (p *Service) GetTopicMembersPaged(c context.Context, arg *api.ArgTopicMembers) (resp *api.TopicMembersPagedResp, err error) {
 	resp = new(api.TopicMembersPagedResp)

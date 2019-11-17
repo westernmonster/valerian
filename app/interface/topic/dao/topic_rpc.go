@@ -9,6 +9,13 @@ import (
 	"valerian/library/log"
 )
 
+func (p *Dao) GetTopic(c context.Context, id int64) (info *topic.TopicInfo, err error) {
+	if info, err = p.topicRPC.GetTopicInfo(c, &topic.TopicReq{ID: id}); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetTopicInfo err(%+v) id(%d)", err, id))
+	}
+	return
+}
+
 func (p *Dao) GetTopicMeta(c context.Context, aid, topicID int64) (info *topic.TopicMetaInfo, err error) {
 	if info, err = p.topicRPC.GetTopicMeta(c, &topic.TopicMetaReq{AccountID: aid, TopicID: topicID}); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetTopicMeta err(%+v)", err))
