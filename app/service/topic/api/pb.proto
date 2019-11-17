@@ -186,6 +186,12 @@ message AidReq {
     bool UseMaster = 2;
 }
 
+message IDsReq {
+    repeated int64 IDs = 1 [(gogoproto.jsontag) = 'ids'];
+    bool UseMaster = 2;
+    int64 Aid = 3;
+}
+
 message IDsResp {
     repeated int64 IDs = 1 [(gogoproto.jsontag) = 'ids'];
 }
@@ -567,5 +573,11 @@ service Topic {
     rpc  GetBelongsTopicIDs(AidReq) returns (IDsResp);
 
     rpc  GetTopicMemberIDs(TopicReq) returns (IDsResp);
+
+    rpc  GetRecommendTopicsIDs(EmptyStruct) returns (IDsResp);
+
+    rpc  GetRecommendAuthTopicsIDs(IDsReq) returns (IDsResp);
+
+    rpc  GetRecommendMemberIDs(IDsReq) returns (IDsResp);
 }
 

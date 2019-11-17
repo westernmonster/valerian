@@ -366,3 +366,30 @@ func (s *server) CanEdit(ctx context.Context, req *api.TopicReq) (*api.BoolResp,
 
 	return &api.BoolResp{Result: ret}, nil
 }
+
+func (s *server) GetRecommendTopicsIDs(ctx context.Context, req *api.EmptyStruct) (*api.IDsResp, error) {
+	ids, err := s.svr.GetRecommendTopicsIDs(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.IDsResp{IDs: ids}, nil
+}
+
+func (s *server) GetRecommendAuthTopicsIDs(ctx context.Context, req *api.IDsReq) (*api.IDsResp, error) {
+	ids, err := s.svr.GetRecommendAuthTopicsIDs(ctx, req.IDs)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.IDsResp{IDs: ids}, nil
+}
+
+func (s *server) GetRecommendMemberIDs(ctx context.Context, req *api.IDsReq) (*api.IDsResp, error) {
+	ids, err := s.svr.GetRecommendMemberIDs(ctx, req.IDs)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.IDsResp{IDs: ids}, nil
+}

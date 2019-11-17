@@ -87,18 +87,22 @@ func (p *Service) GetTopic(c context.Context, topicID int64) (item *model.Topic,
 }
 
 func (p *Service) GetTopicInfo(c context.Context, topicID int64) (item *api.TopicInfo, err error) {
+	return p.getTopicInfo(c, p.d.DB(), topicID)
+}
+
+func (p *Service) getTopicInfo(c context.Context, node sqalx.Node, topicID int64) (item *api.TopicInfo, err error) {
 	var v *model.Topic
-	if v, err = p.getTopic(c, p.d.DB(), topicID); err != nil {
+	if v, err = p.getTopic(c, node, topicID); err != nil {
 		return
 	}
 
 	var stat *model.TopicStat
-	if stat, err = p.d.GetTopicStatByID(c, p.d.DB(), topicID); err != nil {
+	if stat, err = p.d.GetTopicStatByID(c, node, topicID); err != nil {
 		return
 	}
 
 	var acc *model.Account
-	if acc, err = p.getAccount(c, p.d.DB(), v.CreatedBy); err != nil {
+	if acc, err = p.getAccount(c, node, v.CreatedBy); err != nil {
 		return
 	}
 
