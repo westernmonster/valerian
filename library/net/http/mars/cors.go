@@ -11,8 +11,8 @@ import (
 
 var (
 	allowOriginHosts = []string{
-		".flywiki.com",
 		".flywk.com",
+		".stonote.cn",
 	}
 )
 

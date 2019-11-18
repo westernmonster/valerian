@@ -35,6 +35,8 @@ type Config struct {
 	Aliyun    *Aliyun
 	Memcache  *Memcache
 	Discovery *discovery.Config
+
+	OSS *OSS
 }
 
 type Aliyun struct {
@@ -52,6 +54,15 @@ type DB struct {
 type Memcache struct {
 	Auth *MC
 	Main *MC
+}
+
+type OSS struct {
+	Host             string
+	CallbackURL      string
+	ImageDir         string
+	FileDir          string
+	CertificationDir string
+	OtherDir         string
 }
 
 // MC .

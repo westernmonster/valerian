@@ -16,13 +16,13 @@ import (
 )
 
 const (
-	Host             = "https://flywiki.oss-cn-hangzhou.aliyuncs.com"
-	CallbackURL      = "https://dev.flywk.com/api/v1/files/callback"
-	ImageDir         = "images/"
-	FileDir          = "files/"
-	CertificationDir = "certifications/"
-	OtherDir         = "other/"
-	ExpireTime       = int64(30)
+	// Host             = "https://flywiki.oss-cn-hangzhou.aliyuncs.com"
+	// CallbackURL      = "https://dev.flywk.com/api/v1/files/callback"
+	// ImageDir         = "images/"
+	// FileDir          = "files/"
+	// CertificationDir = "certifications/"
+	// OtherDir         = "other/"
+	ExpireTime = int64(60)
 
 	base64Table = "123QRSTUabcdVWXYZHijKLAWDCABDstEFGuvwxyzGHIJklmnopqr234560178912"
 )
@@ -39,16 +39,16 @@ func get_gmt_iso8601(expire_end int64) string {
 }
 
 func (p *Service) GetPolicyToken(fileType, fileName string) (token model.PolicyToken, err error) {
-	dir := OtherDir
+	dir := p.c.OSS.OtherDir
 	switch fileType {
 	case "image":
-		dir = ImageDir
+		dir = p.c.OSS.ImageDir
 		break
 	case "certification":
-		dir = CertificationDir
+		dir = p.c.OSS.CertificationDir
 		break
 	case "file":
-		dir = FileDir
+		dir = p.c.OSS.FileDir
 		break
 	}
 
@@ -92,7 +92,7 @@ func (p *Service) GetPolicyToken(fileType, fileName string) (token model.PolicyT
 	signedStr := base64.StdEncoding.EncodeToString(h.Sum(nil))
 
 	var callbackParam model.CallbackParam
-	callbackParam.CallbackUrl = CallbackURL
+	callbackParam.CallbackUrl = p.c.OSS.CallbackURL
 	callbackParam.CallbackBody = "filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}"
 	callbackParam.CallbackBodyType = "application/x-www-form-urlencoded"
 	callback_str, err := json.Marshal(callbackParam)
@@ -103,7 +103,7 @@ func (p *Service) GetPolicyToken(fileType, fileName string) (token model.PolicyT
 
 	var policyToken model.PolicyToken
 	policyToken.AccessKeyId = p.c.Aliyun.AccessKeyID
-	policyToken.Host = Host
+	policyToken.Host = p.c.OSS.Host
 	policyToken.Expire = expire_end
 	policyToken.Signature = string(signedStr)
 	policyToken.Directory = dir

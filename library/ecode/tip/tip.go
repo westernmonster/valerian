@@ -26,7 +26,7 @@ const (
 var (
 	defualtEcodes = &ecodes{}
 	defaultConfig = &Config{
-		Domain: "uat.flywk.com",
+		Domain: "api.stonote.cn",
 		All:    xtime.Duration(time.Hour),
 		Diff:   xtime.Duration(time.Minute * 5),
 		ClientConfig: &xhttp.ClientConfig{
@@ -76,7 +76,7 @@ func Init(conf *Config) {
 		conf = defaultConfig
 	} else {
 		panic(`请删除配置文件内无用配置！！！perf、log、trace、report、ecode、httpServer
-			http://info.flywk.com/pages/viewpage.action?pageId=3671762
+			http://info.stonote.cn/pages/viewpage.action?pageId=3671762
 			`)
 	}
 	defualtEcodes.conf = conf

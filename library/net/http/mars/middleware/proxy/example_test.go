@@ -6,12 +6,12 @@ import (
 )
 
 // This example create several reverse proxy to show how to use proxy middleware.
-// We proxy three path to `api.flywk.com` and return response without any changes.
+// We proxy three path to `api.stonote.cn` and return response without any changes.
 func Example() {
 	proxies := map[string]string{
-		"/index":        "http://api.flywk.com/html/index",
-		"/ping":         "http://api.flywk.com/api/ping",
-		"/api/versions": "http://api.flywk.com/api/web/versions",
+		"/index":        "http://api.stonote.cn/html/index",
+		"/ping":         "http://api.stonote.cn/api/ping",
+		"/api/versions": "http://api.stonote.cn/api/web/versions",
 	}
 
 	engine := mars.Default()
@@ -25,9 +25,9 @@ func Example() {
 // The request will be proxied to destination only when request is from specified datacenter.
 func ExampleNewZoneProxy() {
 	proxies := map[string]string{
-		"/index":        "http://api.flywk.com/html/index",
-		"/ping":         "http://api.flywk.com/api/ping",
-		"/api/versions": "http://api.flywk.com/api/web/versions",
+		"/index":        "http://api.stonote.cn/html/index",
+		"/ping":         "http://api.stonote.cn/api/ping",
+		"/api/versions": "http://api.stonote.cn/api/web/versions",
 	}
 
 	engine := mars.Default()
@@ -38,7 +38,7 @@ func ExampleNewZoneProxy() {
 		})
 	}
 	// proxy with request path
-	ug := engine.Group("/update", proxy.NewZoneProxy("sh004", "http://sh001-api.flywk.com"))
+	ug := engine.Group("/update", proxy.NewZoneProxy("sh004", "http://sh001-api.stonote.cn"))
 	ug.POST("/name", func(ctx *mars.Context) {
 		ctx.String(500, "Should not be accessed")
 	})

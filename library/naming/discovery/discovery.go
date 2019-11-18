@@ -101,7 +101,7 @@ type appInfo struct {
 
 func fixConfig(c *Config) {
 	if len(c.Nodes) == 0 {
-		c.Nodes = []string{"api.flywk.com"}
+		c.Nodes = []string{"discovery.stonote.loc"}
 	}
 	if env.Region != "" {
 		c.Region = env.Region
@@ -150,7 +150,7 @@ func Build(id string) naming.Resolver {
 func New(c *Config) (d *Discovery) {
 	if c == nil {
 		c = &Config{
-			Nodes:  []string{"discovery.pronote.loc"},
+			Nodes:  []string{"discovery.stonote.loc"},
 			Key:    "discovery",
 			Secret: "discovery",
 		}

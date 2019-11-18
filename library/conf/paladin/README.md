@@ -7,7 +7,7 @@ paladin 是一个config SDK客户端，包括了sven、file、mock几个抽象�
 sven:
 ```
 caster配置项：
-配置地址（CONF_HOST: config.flywk.com）
+配置地址（CONF_HOST: config.stonote.loc）
 配置版本（CONF_VERSION: docker-1/server-1）
 配置路径（CONF_PATH: /data/conf/app）
 配置Token（CONF_TOKEN: token）
