@@ -22,11 +22,11 @@ func TestReplicate(t *testing.T) {
 			Sleep:   xtime.Duration(time.Millisecond * 100),
 			Bucket:  10,
 			Ratio:   0.5,
-			Request: 100}, Timeout: xtime.Duration(time.Second), App: &mars.App{Key: "0c4b8fe3ff35a4b6", Secret: "b370880d1aca7d3a289b9b9a7f4d6812"}}, Mars: &dc.HTTPServers{Inner: &mars.ServerConfig{Address: "127.0.0.1:7171"}}, Nodes: []string{"api.flywk.com", "uat-flywk.com", "127.0.0.1:7171"}})
+			Request: 100}, Timeout: xtime.Duration(time.Second), App: &mars.App{Key: "0c4b8fe3ff35a4b6", Secret: "b370880d1aca7d3a289b9b9a7f4d6812"}}, Mars: &dc.HTTPServers{Inner: &mars.ServerConfig{Address: "127.0.0.1:7171"}}, Nodes: []string{"api.stonote.loc", "uat-stonote.loc", "127.0.0.1:7171"}})
 		nodes.nodes[0].client.SetTransport(gock.DefaultTransport)
 		nodes.nodes[1].client.SetTransport(gock.DefaultTransport)
-		httpMock("POST", "http://api.flywk.com/discovery/register").Reply(200).JSON(`{"code":0}`)
-		httpMock("POST", "http://uat-flywk.com/discovery/register").Reply(200).JSON(`{"code":0}`)
+		httpMock("POST", "http://api.stonote.loc/discovery/register").Reply(200).JSON(`{"code":0}`)
+		httpMock("POST", "http://uat-stonote.loc/discovery/register").Reply(200).JSON(`{"code":0}`)
 		err := nodes.Replicate(context.TODO(), model.Register, i, false)
 		So(err, ShouldBeNil)
 	})
@@ -38,9 +38,9 @@ func TestReplicateSet(t *testing.T) {
 			Sleep:   xtime.Duration(time.Millisecond * 100),
 			Bucket:  10,
 			Ratio:   0.5,
-			Request: 100}, Timeout: xtime.Duration(time.Second), App: &mars.App{Key: "0c4b8fe3ff35a4b6", Secret: "b370880d1aca7d3a289b9b9a7f4d6812"}}, Mars: &dc.HTTPServers{Inner: &mars.ServerConfig{Address: "127.0.0.1:7171"}}, Nodes: []string{"api.flywk.com"}})
+			Request: 100}, Timeout: xtime.Duration(time.Second), App: &mars.App{Key: "0c4b8fe3ff35a4b6", Secret: "b370880d1aca7d3a289b9b9a7f4d6812"}}, Mars: &dc.HTTPServers{Inner: &mars.ServerConfig{Address: "127.0.0.1:7171"}}, Nodes: []string{"api.stonote.loc"}})
 		nodes.nodes[0].client.SetTransport(gock.DefaultTransport)
-		httpMock("POST", "http://api.flywk.com/discovery/set").Reply(200).JSON(`{"code":0}`)
+		httpMock("POST", "http://api.stonote.loc/discovery/set").Reply(200).JSON(`{"code":0}`)
 		set := &model.ArgSet{
 			Region:   "shsb",
 			Env:      "pre",
@@ -59,7 +59,7 @@ func TestNodes(t *testing.T) {
 			Sleep:   xtime.Duration(time.Millisecond * 100),
 			Bucket:  10,
 			Ratio:   0.5,
-			Request: 100}, Timeout: xtime.Duration(time.Second), App: &mars.App{Key: "0c4b8fe3ff35a4b6", Secret: "b370880d1aca7d3a289b9b9a7f4d6812"}}, Mars: &dc.HTTPServers{Inner: &mars.ServerConfig{Address: "127.0.0.1:7171"}}, Nodes: []string{"api.flywk.com", "uat-flywk.com", "127.0.0.1:7171"}})
+			Request: 100}, Timeout: xtime.Duration(time.Second), App: &mars.App{Key: "0c4b8fe3ff35a4b6", Secret: "b370880d1aca7d3a289b9b9a7f4d6812"}}, Mars: &dc.HTTPServers{Inner: &mars.ServerConfig{Address: "127.0.0.1:7171"}}, Nodes: []string{"api.stonote.loc", "uat-stonote.loc", "127.0.0.1:7171"}})
 		res := nodes.Nodes()
 		So(len(res), ShouldResemble, 3)
 	})
@@ -71,7 +71,7 @@ func TestUp(t *testing.T) {
 			Sleep:   xtime.Duration(time.Millisecond * 100),
 			Bucket:  10,
 			Ratio:   0.5,
-			Request: 100}, Timeout: xtime.Duration(time.Second), App: &mars.App{Key: "0c4b8fe3ff35a4b6", Secret: "b370880d1aca7d3a289b9b9a7f4d6812"}}, Mars: &dc.HTTPServers{Inner: &mars.ServerConfig{Address: "127.0.0.1:7171"}}, Nodes: []string{"api.flywk.com", "uat-flywk.com", "127.0.0.1:7171"}})
+			Request: 100}, Timeout: xtime.Duration(time.Second), App: &mars.App{Key: "0c4b8fe3ff35a4b6", Secret: "b370880d1aca7d3a289b9b9a7f4d6812"}}, Mars: &dc.HTTPServers{Inner: &mars.ServerConfig{Address: "127.0.0.1:7171"}}, Nodes: []string{"api.stonote.loc", "uat-stonote.loc", "127.0.0.1:7171"}})
 		nodes.UP()
 		for _, nd := range nodes.nodes {
 			if nd.addr == "127.0.0.1:7171" {

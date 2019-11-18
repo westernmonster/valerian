@@ -65,7 +65,7 @@ func (tomllint) Lint(r io.Reader) lint.Error {
 // noApp not allowed app section exists
 func noApp(metadata toml.MetaData) []lint.LineErr {
 	if metadata.IsDefined("app") {
-		return []lint.LineErr{{Line: -1, Message: "请删除无用 App 配置 see: http://git.flywk.com/platform/go-common/issues/310 (゜-゜)つロ"}}
+		return []lint.LineErr{{Line: -1, Message: "请删除无用 App 配置 see: http://git.stonote.loc/platform/go-common/issues/310 (゜-゜)つロ"}}
 	}
 	return nil
 }
@@ -73,7 +73,7 @@ func noApp(metadata toml.MetaData) []lint.LineErr {
 // noIdentify not allowed identify config
 func noIdentify(metadata toml.MetaData) []lint.LineErr {
 	if metadata.IsDefined("identify") {
-		return []lint.LineErr{{Line: -1, Message: "请删除无用 Identify 配置 see: http://git.flywk.com/platform/go-common/issues/310 (゜-゜)つロ"}}
+		return []lint.LineErr{{Line: -1, Message: "请删除无用 Identify 配置 see: http://git.stonote.loc/platform/go-common/issues/310 (゜-゜)つロ"}}
 	}
 	return nil
 }
@@ -88,7 +88,7 @@ func noCommon(metadata toml.MetaData) []lint.LineErr {
 		}
 	}
 	if count > 0 {
-		return []lint.LineErr{{Line: -1, Message: "请删除无用 Common 配置 see: http://git.flywk.com/platform/go-common/issues/310 (゜-゜)つロ"}}
+		return []lint.LineErr{{Line: -1, Message: "请删除无用 Common 配置 see: http://git.stonote.loc/platform/go-common/issues/310 (゜-゜)つロ"}}
 	}
 	return nil
 }

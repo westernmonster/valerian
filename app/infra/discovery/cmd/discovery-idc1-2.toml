@@ -17,8 +17,8 @@ dir = "/data/log/discovery/"
 
 [identify]
     [identify.host]
-    auth = "http://passport.flywk.com"
-    secret = "http://open.flywk.com"
+    auth = "http://passport.stonote.loc"
+    secret = "http://open.stonote.loc"
     [identify.httpClient]
     key = "0c4b8fe3ff35a4b6"
     secret = "b370880d1aca7d3a289b9b9a7f4d6812"
@@ -32,9 +32,9 @@ dir = "/data/log/discovery/"
     ratio   = 0.5
     request = 100
     [identify.httpClient.url]
-    "http://passport.flywk.com/intranet/auth/tokenInfo" = {timeout = "100ms"}
-    "http://passport.flywk.com/intranet/auth/cookieInfo" = {timeout = "100ms"}
-    "http://open.flywk.com/api/getsecret" = {timeout = "500ms"}
+    "http://passport.stonote.loc/intranet/auth/tokenInfo" = {timeout = "100ms"}
+    "http://passport.stonote.loc/intranet/auth/cookieInfo" = {timeout = "100ms"}
+    "http://open.stonote.loc/api/getsecret" = {timeout = "500ms"}
 
 [httpClient]
 key = "0c4b8fe3ff35a4b6"

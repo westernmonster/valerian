@@ -24,11 +24,11 @@ func TestCall(t *testing.T) {
 			Sleep:   xtime.Duration(time.Millisecond * 100),
 			Bucket:  10,
 			Ratio:   0.5,
-			Request: 100}, Timeout: xtime.Duration(time.Second), App: &mars.App{Key: "0c4b8fe3ff35a4b6", Secret: "b370880d1aca7d3a289b9b9a7f4d6812"}}, Mars: &dc.HTTPServers{Inner: &mars.ServerConfig{Address: "127.0.0.1:7171"}}, Nodes: []string{"127.0.0.1:7171"}}, "api.flywk.com")
+			Request: 100}, Timeout: xtime.Duration(time.Second), App: &mars.App{Key: "0c4b8fe3ff35a4b6", Secret: "b370880d1aca7d3a289b9b9a7f4d6812"}}, Mars: &dc.HTTPServers{Inner: &mars.ServerConfig{Address: "127.0.0.1:7171"}}, Nodes: []string{"127.0.0.1:7171"}}, "api.stonote.loc")
 		node.client.SetTransport(gock.DefaultTransport)
-		httpMock("POST", "http://api.flywk.com/discovery/register").Reply(200).JSON(`{"ts":1514341945,"code":409,"data":{"region":"shsb","zone":"fuck","appid":"main.arch.account-service","env":"pre","hostname":"cs4sq","http":"","rpc":"0.0.0.0:18888","weight":2}}`)
+		httpMock("POST", "http://api.stonote.loc/discovery/register").Reply(200).JSON(`{"ts":1514341945,"code":409,"data":{"region":"shsb","zone":"fuck","appid":"main.arch.account-service","env":"pre","hostname":"cs4sq","http":"","rpc":"0.0.0.0:18888","weight":2}}`)
 		i := model.NewInstance(reg)
-		err := node.call(context.TODO(), model.Register, i, "http://api.flywk.com/discovery/register", &res)
+		err := node.call(context.TODO(), model.Register, i, "http://api.stonote.loc/discovery/register", &res)
 		So(err, ShouldResemble, ecode.Conflict)
 		So(res.Appid, ShouldResemble, "main.arch.account-service")
 	})
@@ -41,10 +41,10 @@ func TestNodeCancel(t *testing.T) {
 			Sleep:   xtime.Duration(time.Millisecond * 100),
 			Bucket:  10,
 			Ratio:   0.5,
-			Request: 100}, Timeout: xtime.Duration(time.Second), App: &mars.App{Key: "0c4b8fe3ff35a4b6", Secret: "b370880d1aca7d3a289b9b9a7f4d6812"}}, Mars: &dc.HTTPServers{Inner: &mars.ServerConfig{Address: "127.0.0.1:7171"}}, Nodes: []string{"127.0.0.1:7171"}}, "api.flywk.com")
+			Request: 100}, Timeout: xtime.Duration(time.Second), App: &mars.App{Key: "0c4b8fe3ff35a4b6", Secret: "b370880d1aca7d3a289b9b9a7f4d6812"}}, Mars: &dc.HTTPServers{Inner: &mars.ServerConfig{Address: "127.0.0.1:7171"}}, Nodes: []string{"127.0.0.1:7171"}}, "api.stonote.loc")
 		node.pRegisterURL = "http://127.0.0.1:7171/discovery/register"
 		node.client.SetTransport(gock.DefaultTransport)
-		httpMock("POST", "http://api.flywk.com/discovery/cancel").Reply(200).JSON(`{"code":0}`)
+		httpMock("POST", "http://api.stonote.loc/discovery/cancel").Reply(200).JSON(`{"code":0}`)
 		err := node.Cancel(context.TODO(), i)
 		So(err, ShouldBeNil)
 	})
@@ -57,10 +57,10 @@ func TestNodeRenew(t *testing.T) {
 			Sleep:   xtime.Duration(time.Millisecond * 100),
 			Bucket:  10,
 			Ratio:   0.5,
-			Request: 100}, Timeout: xtime.Duration(time.Second), App: &mars.App{Key: "0c4b8fe3ff35a4b6", Secret: "b370880d1aca7d3a289b9b9a7f4d6812"}}, Mars: &dc.HTTPServers{Inner: &mars.ServerConfig{Address: "127.0.0.1:7171"}}, Nodes: []string{"127.0.0.1:7171"}}, "api.flywk.com")
+			Request: 100}, Timeout: xtime.Duration(time.Second), App: &mars.App{Key: "0c4b8fe3ff35a4b6", Secret: "b370880d1aca7d3a289b9b9a7f4d6812"}}, Mars: &dc.HTTPServers{Inner: &mars.ServerConfig{Address: "127.0.0.1:7171"}}, Nodes: []string{"127.0.0.1:7171"}}, "api.stonote.loc")
 		node.pRegisterURL = "http://127.0.0.1:7171/discovery/register"
 		node.client.SetTransport(gock.DefaultTransport)
-		httpMock("POST", "http://api.flywk.com/discovery/renew").Reply(200).JSON(`{"code":409,"data":{"region":"shsb","zone":"fuck","appid":"main.arch.account-service","env":"pre","hostname":"cs4sq","http":"","rpc":"0.0.0.0:18888","weight":2}}`)
+		httpMock("POST", "http://api.stonote.loc/discovery/renew").Reply(200).JSON(`{"code":409,"data":{"region":"shsb","zone":"fuck","appid":"main.arch.account-service","env":"pre","hostname":"cs4sq","http":"","rpc":"0.0.0.0:18888","weight":2}}`)
 		httpMock("POST", "http://127.0.0.1:7171/discovery/register").Reply(200).JSON(`{"code":0}`)
 		err := node.Renew(context.TODO(), i)
 		So(err, ShouldBeNil)
@@ -74,10 +74,10 @@ func TestNodeRenew2(t *testing.T) {
 			Sleep:   xtime.Duration(time.Millisecond * 100),
 			Bucket:  10,
 			Ratio:   0.5,
-			Request: 100}, Timeout: xtime.Duration(time.Second), App: &mars.App{Key: "0c4b8fe3ff35a4b6", Secret: "b370880d1aca7d3a289b9b9a7f4d6812"}}, Mars: &dc.HTTPServers{Inner: &mars.ServerConfig{Address: "127.0.0.1:7171"}}, Nodes: []string{"127.0.0.1:7171"}}, "api.flywk.com")
+			Request: 100}, Timeout: xtime.Duration(time.Second), App: &mars.App{Key: "0c4b8fe3ff35a4b6", Secret: "b370880d1aca7d3a289b9b9a7f4d6812"}}, Mars: &dc.HTTPServers{Inner: &mars.ServerConfig{Address: "127.0.0.1:7171"}}, Nodes: []string{"127.0.0.1:7171"}}, "api.stonote.loc")
 		node.client.SetTransport(gock.DefaultTransport)
-		httpMock("POST", "http://api.flywk.com/discovery/renew").Reply(200).JSON(`{"code":404}`)
-		httpMock("POST", "http://api.flywk.com/discovery/register").Reply(200).JSON(`{"code":0}`)
+		httpMock("POST", "http://api.stonote.loc/discovery/renew").Reply(200).JSON(`{"code":404}`)
+		httpMock("POST", "http://api.stonote.loc/discovery/register").Reply(200).JSON(`{"code":0}`)
 		err := node.Renew(context.TODO(), i)
 		So(err, ShouldBeNil)
 	})
@@ -89,9 +89,9 @@ func TestSet(t *testing.T) {
 			Sleep:   xtime.Duration(time.Millisecond * 100),
 			Bucket:  10,
 			Ratio:   0.5,
-			Request: 100}, Timeout: xtime.Duration(time.Second), App: &mars.App{Key: "0c4b8fe3ff35a4b6", Secret: "b370880d1aca7d3a289b9b9a7f4d6812"}}, Mars: &dc.HTTPServers{Inner: &mars.ServerConfig{Address: "127.0.0.1:7171"}}, Nodes: []string{"127.0.0.1:7171"}}, "api.flywk.com")
+			Request: 100}, Timeout: xtime.Duration(time.Second), App: &mars.App{Key: "0c4b8fe3ff35a4b6", Secret: "b370880d1aca7d3a289b9b9a7f4d6812"}}, Mars: &dc.HTTPServers{Inner: &mars.ServerConfig{Address: "127.0.0.1:7171"}}, Nodes: []string{"127.0.0.1:7171"}}, "api.stonote.loc")
 		node.client.SetTransport(gock.DefaultTransport)
-		httpMock("POST", "http://api.flywk.com/discovery/set").Reply(200).JSON(`{"ts":1514341945,"code":0}`)
+		httpMock("POST", "http://api.stonote.loc/discovery/set").Reply(200).JSON(`{"ts":1514341945,"code":0}`)
 		set := &model.ArgSet{
 			Region:   "shsb",
 			Env:      "pre",

@@ -19,7 +19,7 @@ package main
 // @in header
 // @name Authorization
 //
-// @host dev.flywk.com
+// @host uat.flywk.com
 // @BasePath /api/v1
 func main() {
 }
