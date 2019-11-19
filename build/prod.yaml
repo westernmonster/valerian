@@ -6,7 +6,7 @@ metadata:
 spec:
   tls:
     - hosts:
-      - uat.stonote.cn
+      - api.stonote.cn
       secretName: stonotecert
     - hosts:
       - web.stonote.cn
