@@ -25,13 +25,17 @@ func lintConfig(filename, content string) error {
 }
 
 func (p *Service) CreateConf(c context.Context, arg *model.ArgCreateConfig) (configID string, err error) {
+	return p.createConf(c, p.d.ConfigDB(), arg)
+}
+
+func (p *Service) createConf(c context.Context, node sqalx.Node, arg *model.ArgCreateConfig) (configID string, err error) {
 	// lint config
 	if !arg.SkipLint {
 		if err = lintConfig(arg.Name, arg.Comment); err != nil {
 			return
 		}
 	}
-	app, err := p.appByTree(c, p.d.ConfigDB(), arg.TreeID, arg.Env, arg.Zone)
+	app, err := p.appByTree(c, node, arg.TreeID, arg.Env, arg.Zone)
 	if err != nil {
 		return
 	}
@@ -49,12 +53,12 @@ func (p *Service) CreateConf(c context.Context, arg *model.ArgCreateConfig) (con
 		UpdatedAt: time.Now().Unix(),
 	}
 
-	if _, err = p.isConfiguring(c, p.d.ConfigDB(), arg.Name, app.ID); err == nil {
+	if _, err = p.isConfiguring(c, node, arg.Name, app.ID); err == nil {
 		err = ecode.TargetBlocked
 		return
 	}
 
-	if err = p.d.AddConfig(c, p.d.ConfigDB(), item); err != nil {
+	if err = p.d.AddConfig(c, node, item); err != nil {
 		return
 	}
 

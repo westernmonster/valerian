@@ -19,3 +19,7 @@ func createApp(c *mars.Context) {
 
 	c.JSON(nil, svr.CreateApp(c, arg))
 }
+
+func initProd(c *mars.Context) {
+	c.JSON(nil, svr.InitProd(c))
+}

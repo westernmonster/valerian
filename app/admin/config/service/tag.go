@@ -6,12 +6,17 @@ import (
 	"time"
 
 	"valerian/app/admin/config/model"
+	"valerian/library/database/sqalx"
 	"valerian/library/gid"
 )
 
 func (p *Service) CreateTag(c context.Context, arg *model.ArgCreateTag) (tagID string, err error) {
+	return p.createTag(c, p.d.ConfigDB(), arg)
+}
+
+func (p *Service) createTag(c context.Context, node sqalx.Node, arg *model.ArgCreateTag) (tagID string, err error) {
 	var app *model.App
-	if app, err = p.appByTree(c, p.d.ConfigDB(), arg.TreeID, arg.Env, arg.Zone); err != nil {
+	if app, err = p.appByTree(c, node, arg.TreeID, arg.Env, arg.Zone); err != nil {
 		return
 	}
 
@@ -26,7 +31,7 @@ func (p *Service) CreateTag(c context.Context, arg *model.ArgCreateTag) (tagID s
 		UpdatedAt: time.Now().Unix(),
 	}
 
-	if err = p.d.AddTag(c, p.d.ConfigDB(), item); err != nil {
+	if err = p.d.AddTag(c, node, item); err != nil {
 		return
 	}
 

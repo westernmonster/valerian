@@ -33,6 +33,8 @@ func innerRouter(e *mars.Engine) {
 	e.Register(register)
 	b := e.Group("/x/admin/config")
 	{
+
+		b.GET("/init", initProd)
 		app := b.Group("/app")
 		{
 			app.POST("/add", createApp)

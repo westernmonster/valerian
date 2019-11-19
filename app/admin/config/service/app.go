@@ -31,10 +31,14 @@ func (p *Service) appByTree(c context.Context, node sqalx.Node, treeID int, env,
 }
 
 func (p *Service) CreateApp(c context.Context, arg *model.ArgCreateApp) (err error) {
+	return p.createApp(c, p.d.ConfigDB(), arg)
+}
+
+func (p *Service) createApp(c context.Context, node sqalx.Node, arg *model.ArgCreateApp) (err error) {
 	creates := []string{"dev", "uat", "prod"}
 
 	var tx sqalx.Node
-	if tx, err = p.d.ConfigDB().Beginx(c); err != nil {
+	if tx, err = node.Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
 		return
 	}
