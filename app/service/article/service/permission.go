@@ -14,12 +14,30 @@ func (p *Service) CanEdit(c context.Context, arg *api.IDReq) (canEdit bool, err 
 		return
 	}
 
+	var article *model.Article
+	if article, err = p.getArticle(c, p.d.DB(), arg.ID); err != nil {
+		return
+	}
+
+	if article.CreatedBy == arg.Aid {
+		canEdit = true
+	}
+
 	return
 }
 
 func (p *Service) CanView(c context.Context, arg *api.IDReq) (canView bool, err error) {
 	if canView, err = p.canView(c, p.d.DB(), arg.Aid, arg.ID); err != nil {
 		return
+	}
+
+	var article *model.Article
+	if article, err = p.getArticle(c, p.d.DB(), arg.ID); err != nil {
+		return
+	}
+
+	if article.CreatedBy == arg.Aid {
+		canView = true
 	}
 
 	return
@@ -36,8 +54,17 @@ func (p *Service) GetUserCanEditArticleIDs(c context.Context, aid int64) (ids []
 // 检查编辑权限
 func (p *Service) checkEditPermission(c context.Context, node sqalx.Node, aid, articleID int64) (err error) {
 	var canEdit bool
-	if canEdit, err = p.canEdit(c, p.d.DB(), aid, articleID); err != nil {
+	if canEdit, err = p.canEdit(c, node, aid, articleID); err != nil {
 		return
+	}
+
+	var article *model.Article
+	if article, err = p.getArticle(c, node, articleID); err != nil {
+		return
+	}
+
+	if article.CreatedBy == aid {
+		canEdit = true
 	}
 
 	if !canEdit {
@@ -49,7 +76,7 @@ func (p *Service) checkEditPermission(c context.Context, node sqalx.Node, aid, a
 
 func (p *Service) checkViewPermission(c context.Context, node sqalx.Node, aid, articleID int64) (err error) {
 	var canView bool
-	if canView, err = p.canView(c, p.d.DB(), aid, articleID); err != nil {
+	if canView, err = p.canView(c, node, aid, articleID); err != nil {
 		return
 	}
 
@@ -78,7 +105,7 @@ func (p *Service) isSystemAdmin(c context.Context, node sqalx.Node, aid int64) (
 	return
 }
 
-func (p *Service) canView(c context.Context, node sqalx.Node, aid int64, topicID int64) (canView bool, err error) {
+func (p *Service) canView(c context.Context, node sqalx.Node, aid int64, articleID int64) (canView bool, err error) {
 	var isSystemAdmin bool
 	if isSystemAdmin, err = p.isSystemAdmin(c, node, aid); err != nil {
 		return
@@ -87,8 +114,17 @@ func (p *Service) canView(c context.Context, node sqalx.Node, aid int64, topicID
 		return
 	}
 
-	if canView, err = p.d.IsAllowedViewMember(c, node, aid, topicID); err != nil {
+	if canView, err = p.d.IsAllowedViewMember(c, node, aid, articleID); err != nil {
 		return
+	}
+
+	var article *model.Article
+	if article, err = p.getArticle(c, node, articleID); err != nil {
+		return
+	}
+
+	if article.CreatedBy == aid {
+		canView = true
 	}
 
 	if !canView {
@@ -99,7 +135,7 @@ func (p *Service) canView(c context.Context, node sqalx.Node, aid int64, topicID
 	return
 }
 
-func (p *Service) canEdit(c context.Context, node sqalx.Node, aid int64, topicID int64) (canEdit bool, err error) {
+func (p *Service) canEdit(c context.Context, node sqalx.Node, aid int64, articleID int64) (canEdit bool, err error) {
 	var isSystemAdmin bool
 	if isSystemAdmin, err = p.isSystemAdmin(c, node, aid); err != nil {
 		return
@@ -108,8 +144,17 @@ func (p *Service) canEdit(c context.Context, node sqalx.Node, aid int64, topicID
 		return
 	}
 
-	if canEdit, err = p.d.IsAllowedEditMember(c, node, aid, topicID); err != nil {
+	if canEdit, err = p.d.IsAllowedEditMember(c, node, aid, articleID); err != nil {
 		return
+	}
+
+	var article *model.Article
+	if article, err = p.getArticle(c, node, articleID); err != nil {
+		return
+	}
+
+	if article.CreatedBy == aid {
+		canEdit = true
 	}
 
 	return

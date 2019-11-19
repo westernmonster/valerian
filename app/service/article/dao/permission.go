@@ -32,10 +32,12 @@ SELECT v4.topic_id FROM ( SELECT a.topic_id FROM topic_members a WHERE a.deleted
 	LEFT JOIN auth_topics b ON v4.topic_id = b.to_topic_id
 WHERE b.deleted = 0 AND b.permission = 'edit'
     )
+UNION
+SELECT a.id as ref_id FROM articles a WHERE a.deleted=0 AND a.created_by == ?
 `
 
 	var rows *sqlx.Rows
-	if rows, err = node.QueryxContext(c, sqlSelect, aid, aid, aid, aid); err != nil {
+	if rows, err = node.QueryxContext(c, sqlSelect, aid, aid, aid, aid, aid); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetUserCanEditArticleIDs err(%+v)", err))
 		return
 	}
