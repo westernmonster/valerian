@@ -25,6 +25,14 @@ func (p *Service) GetMemberFansList(c context.Context, topicID int64, query stri
 		return
 	}
 
+	if idsResp.IDs == nil || len(idsResp.IDs) == 0 {
+		resp = &model.TopicMemberFansResp{
+			Items:  make([]*model.FollowItem, 0),
+			Paging: &model.Paging{IsEnd: true},
+		}
+		return
+	}
+
 	var data *search.SearchResult
 	if data, err = p.d.SearchAccount(c, &search.SearchParam{KW: query, Pn: int32(pn), Ps: int32(ps), IDs: idsResp.IDs}); err != nil {
 		err = ecode.SearchAccountFailed
