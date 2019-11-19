@@ -54,7 +54,7 @@ func (p *Service) loadAuthTopicsMap(c context.Context, node sqalx.Node, topicID 
 	}
 
 	for _, v := range dbItems {
-		dic[v.ToTopicID] = false
+		dic[v.ID] = false
 	}
 
 	return
