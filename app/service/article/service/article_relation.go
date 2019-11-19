@@ -87,10 +87,6 @@ func (p *Service) getCatalogFullPath(c context.Context, node sqalx.Node, article
 }
 
 func (p *Service) checkArticleRelations(c context.Context, node sqalx.Node, aid int64, items []*api.ArgArticleRelation) (err error) {
-	if len(items) == 0 {
-		return ecode.NeedPrimaryTopic
-	}
-
 	dic := make(map[int64]bool)
 	for _, v := range items {
 		if _, err = p.getTopic(c, node, v.TopicID); err != nil {
@@ -165,23 +161,6 @@ func (p *Service) addArticleRelation(c context.Context, node sqalx.Node, article
 		return
 	}
 
-	if item.Primary {
-		var catalog *model.TopicCatalog
-		if catalog, err = p.d.GetTopicCatalogByCond(c, node, map[string]interface{}{
-			"ref_id":  articleID,
-			"type":    model.TopicCatalogArticle,
-			"primary": 1,
-		}); err != nil {
-			return
-		}
-
-		if catalog != nil && catalog.IsPrimary == true {
-			err = ecode.OnlyAllowOnePrimaryTopic
-			return
-		}
-
-	}
-
 	var maxSeq int
 	if maxSeq, err = p.d.GetTopicCatalogMaxChildrenSeq(c, node, item.TopicID, item.ParentID); err != nil {
 		return
@@ -242,104 +221,9 @@ func (p *Service) UpdateArticleRelation(c context.Context, arg *api.ArgUpdateArt
 		return
 	}
 
-	if arg.Primary {
-		var cata *model.TopicCatalog
-		if cata, err = p.d.GetTopicCatalogByCond(c, tx, map[string]interface{}{
-			"ref_id":  catalog.RefID,
-			"type":    model.TopicCatalogArticle,
-			"primary": 1,
-		}); err != nil {
-			return
-		} else if cata != nil {
-			if cata.ID != arg.ID {
-				err = ecode.OnlyAllowOnePrimaryTopic
-				return
-			}
-		}
-
-	}
-
 	catalog.Permission = arg.Permission
 	catalog.IsPrimary = types.BitBool(arg.Primary)
 
-	if err = p.d.UpdateTopicCatalog(c, tx, catalog); err != nil {
-		return
-	}
-
-	if err = tx.Commit(); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
-		return
-	}
-
-	p.addCache(func() {
-		p.d.DelTopicCatalogCache(context.TODO(), catalog.TopicID)
-	})
-
-	return
-}
-
-func (p *Service) SetPrimary(c context.Context, arg *api.ArgSetPrimaryArticleRelation) (err error) {
-	var tx sqalx.Node
-	if tx, err = p.d.DB().Beginx(c); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
-		return
-	}
-
-	defer func() {
-		if err != nil {
-			if err1 := tx.Rollback(); err1 != nil {
-				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
-			}
-			return
-		}
-	}()
-
-	if err = p.checkEditPermission(c, tx, arg.Aid, arg.ArticleID); err != nil {
-		return
-	}
-
-	var article *model.Article
-	if article, err = p.d.GetArticleByID(c, tx, arg.ArticleID); err != nil {
-		return
-	} else if article == nil {
-		return ecode.ArticleNotExist
-	}
-
-	var orgPrimary *model.TopicCatalog
-	if orgPrimary, err = p.d.GetTopicCatalogByCond(c, tx, map[string]interface{}{
-		"type":       model.TopicCatalogArticle,
-		"ref_id":     arg.ArticleID,
-		"is_primary": 1,
-	}); err != nil {
-		return
-	} else if orgPrimary == nil {
-		err = ecode.TopicCatalogNotExist
-		return
-	}
-
-	if orgPrimary.ID == arg.ID {
-		return
-	}
-
-	orgPrimary.IsPrimary = false
-	if err = p.d.UpdateTopicCatalog(c, tx, orgPrimary); err != nil {
-		return
-	}
-
-	var catalog *model.TopicCatalog
-	if catalog, err = p.d.GetTopicCatalogByID(c, tx, arg.ID); err != nil {
-		return
-	} else if catalog == nil {
-		err = ecode.TopicCatalogNotExist
-		return
-	}
-
-	if catalog.Permission == model.AuthPermissionView {
-		editPermission := model.AuthPermissionEdit
-		catalog.Permission = editPermission
-	}
-
-	catalog.IsPrimary = true
 	if err = p.d.UpdateTopicCatalog(c, tx, catalog); err != nil {
 		return
 	}
@@ -439,8 +323,15 @@ func (p *Service) DelArticleRelation(c context.Context, arg *api.ArgDelArticleRe
 		return
 	}
 
-	if catalog.IsPrimary == true {
-		err = ecode.NeedPrimaryTopic
+	var existItems []*model.TopicCatalog
+	if existItems, err = p.d.GetTopicCatalogsByCond(c, tx, map[string]interface{}{
+		"ref_id": arg.ArticleID,
+		"type":   model.TopicCatalogArticle,
+	}); err != nil {
+		return
+	}
+	if len(existItems) == 1 {
+		err = ecode.NeedArticleRelation
 		return
 	}
 
