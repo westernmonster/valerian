@@ -93,6 +93,14 @@ func (p *Service) GetUserCanEditTopics(c context.Context, query string, pn, ps i
 		return
 	}
 
+	if idsResp.IDs == nil || len(idsResp.IDs) == 0 {
+		resp = &model.CanEditTopicsResp{
+			Items:  make([]*model.CanEditTopicItem, 0),
+			Paging: &model.Paging{IsEnd: true},
+		}
+		return
+	}
+
 	var data *search.SearchResult
 	if data, err = p.d.SearchTopic(c, &search.SearchParam{KW: query, Pn: int32(pn), Ps: int32(ps), IDs: idsResp.IDs}); err != nil {
 		err = ecode.SearchTopicFailed
