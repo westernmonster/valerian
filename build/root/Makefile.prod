@@ -527,7 +527,7 @@ docker-service-recent:
 push-service-recent:
 	docker push registry.cn-hangzhou.aliyuncs.com/valerian/service-recent:${DOCKER_TAG}
 deploy-service-recent:
-	helm upgrade --install --namespace prod --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/service-recent:${DOCKER_TAG} --set global.name=service-recent --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://api.stonote.cn  --set env.deployEnv=prod --set env.appId=service.recent --set env.trace=jaeger-prod-agent:6831 --set env.confPath=/go/bin --set env.confEnv=prod --set env.confToken=0aa27168e94511e9b6a00a58ac14002b  --set env.treeId=1310 --set env.confVersion=0.1 --set env.confHost=config.stonote.loc service-recent-prod ./build/k8s
+	helm upgrade --install --namespace prod --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/service-recent:${DOCKER_TAG} --set global.name=service-recent --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://api.stonote.cn  --set env.deployEnv=prod --set env.appId=service.recent --set env.trace=jaeger-prod-agent:6831 --set env.confPath=/go/bin --set env.confEnv=prod --set env.confToken=0aa27168e94511e9b6a00a58ac14002b  --set env.treeId=1311 --set env.confVersion=0.1 --set env.confHost=config.stonote.loc service-recent-prod ./build/k8s
 
 
 service-topic-feed: build-service-topic-feed docker-service-topic-feed push-service-topic-feed deploy-service-topic-feed
