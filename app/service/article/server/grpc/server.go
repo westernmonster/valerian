@@ -240,11 +240,6 @@ func (s *server) UpdateArticleRelation(ctx context.Context, req *api.ArgUpdateAr
 }
 
 func (s *server) SetPrimary(ctx context.Context, req *api.ArgSetPrimaryArticleRelation) (*api.EmptyStruct, error) {
-	err := s.svr.SetPrimary(ctx, req)
-	if err != nil {
-		return nil, err
-	}
-
 	resp := &api.EmptyStruct{}
 
 	return resp, nil
