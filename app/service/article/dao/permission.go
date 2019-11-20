@@ -33,7 +33,7 @@ SELECT v4.topic_id FROM ( SELECT a.topic_id FROM topic_members a WHERE a.deleted
 WHERE b.deleted = 0 AND b.permission = 'edit'
     )
 UNION
-SELECT a.id as ref_id FROM articles a WHERE a.deleted=0 AND a.created_by == ?
+SELECT a.id as ref_id FROM articles a WHERE a.deleted=0 AND a.created_by = ?
 `
 
 	var rows *sqlx.Rows
