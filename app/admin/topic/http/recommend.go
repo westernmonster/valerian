@@ -47,7 +47,7 @@ func addRecommendTopic(c *mars.Context) {
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /admin/topic/recommend/add [post]
+// @Router /admin/topic/recommend/del [post]
 func delRecommendTopic(c *mars.Context) {
 	arg := new(model.ArgDelete)
 	if e := c.Bind(arg); e != nil {
