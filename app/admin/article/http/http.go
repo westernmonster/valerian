@@ -33,31 +33,6 @@ func Init(c *conf.Config, s *service.Service) {
 func route(e *mars.Engine) {
 	e.Ping(ping)
 	e.Register(register)
-	g := e.Group("/api/v1/admin/article", permitSvc.Verify())
-	{
-		g.GET("/get", getArticle)
-		g.POST("/add", addArticle)
-		g.POST("/edit", editArticle)
-		g.POST("/del", delArticle)
-
-		g.GET("/history/get", articleHistory)
-
-		g.POST("/files", editArticleFiles)
-		g.POST("/relations/add", addArticleRelation)
-		g.POST("/relations/edit", editArticleRelation)
-		g.POST("/relations/del", delArticleRelation)
-		g.POST("/relations/primary", setArticleRelationPrimary)
-
-		g.POST("/revise/add", addRevise)
-		g.POST("/revise/edit", updateRevise)
-		g.POST("/revise/del", delRevise)
-		g.GET("/revise/get", getRevise)
-
-		g.GET("/list/files", articleFiles)
-		g.GET("/list/histories", articleHistories)
-		g.GET("/list/relations", articleRelations)
-		g.GET("/list/revises", getRevises)
-	}
 
 }
 
