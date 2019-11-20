@@ -126,6 +126,10 @@ spec:
         backend:
           serviceName: interface-init
           servicePort: 8000
+      - path: /static
+        backend:
+          serviceName: interface-init
+          servicePort: 8000
       - path: /api/v1/admin/topic
         backend:
           serviceName: admin-topic
