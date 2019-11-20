@@ -55,7 +55,7 @@ func (p *EmailClient) SendRegisterEmail(c context.Context, email string, valcode
 	request.Version = Version
 	request.ApiName = SingleSendMail
 	request.QueryParams["Action"] = SingleSendMail
-	request.QueryParams["AccountName"] = "noreply@stonote.cn"
+	request.QueryParams["AccountName"] = "noreply@flywki.com"
 	request.QueryParams["AddressType"] = "1"
 	request.QueryParams["ReplyToAddress"] = "false"
 	request.QueryParams["ToAddress"] = email
@@ -127,7 +127,7 @@ func (p *EmailClient) SendResetPasswordValcode(c context.Context, email string, 
 	request.Version = Version
 	request.ApiName = SingleSendMail
 	request.QueryParams["Action"] = SingleSendMail
-	request.QueryParams["AccountName"] = "noreply@stonote.cn"
+	request.QueryParams["AccountName"] = "noreply@flywki.com"
 	request.QueryParams["AddressType"] = "1"
 	request.QueryParams["ReplyToAddress"] = "false"
 	request.QueryParams["ToAddress"] = email
