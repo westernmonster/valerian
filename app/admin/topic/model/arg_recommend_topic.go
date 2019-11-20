@@ -3,7 +3,7 @@ package model
 import validation "github.com/go-ozzo/ozzo-validation"
 
 type ArgAddRecommendTopic struct {
-	TopicID int64 `json:"topic_id"`
+	TopicID int64 `json:"topic_id,string" swaggertype:"string"`
 }
 
 func (p *ArgAddRecommendTopic) Validate() error {
