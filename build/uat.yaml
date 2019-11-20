@@ -148,10 +148,6 @@ spec:
         backend:
           serviceName: admin-account
           servicePort: 8000
-      - path: /api/v1/admin/me
-        backend:
-          serviceName: admin-account
-          servicePort: 8000
   - host: web.flywk.com
     http:
       paths:
@@ -263,10 +259,6 @@ spec:
         backend:
           serviceName: interface-init
           servicePort: 8000
-      - path: /api/v1/admin/login
-        backend:
-          serviceName: admin-login
-          servicePort: 8000
       - path: /api/v1/admin/search
         backend:
           serviceName: admin-search
@@ -284,10 +276,6 @@ spec:
           serviceName: admin-discuss
           servicePort: 8000
       - path: /api/v1/admin/account
-        backend:
-          serviceName: admin-account
-          servicePort: 8000
-      - path: /api/v1/admin/me
         backend:
           serviceName: admin-account
           servicePort: 8000
