@@ -9,6 +9,14 @@ import (
 	"valerian/library/log"
 )
 
+func (p *Dao) GetTopic(c context.Context, id int64) (resp *topic.TopicInfo, err error) {
+	if resp, err = p.topicRPC.GetTopicInfo(c, &topic.TopicReq{ID: id}); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetUserTopicsPaged error(%+v), id(%d) ", err, id))
+	}
+
+	return
+}
+
 func (p *Dao) GetTopicMeta(c context.Context, aid, topicID int64) (info *topic.TopicMetaInfo, err error) {
 	if info, err = p.topicRPC.GetTopicMeta(c, &topic.TopicMetaReq{AccountID: aid, TopicID: topicID}); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetTopicMeta err(%+v)", err))
@@ -201,11 +209,17 @@ func (p *Dao) AddRecommendTopic(c context.Context, arg *api.TopicReq) (err error
 }
 
 func (p *Dao) DelRecommendTopic(c context.Context, arg *api.TopicReq) (err error) {
-	if _, err = p.topicRPC.AddRecommendTopic(c, arg); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.Leave err(%+v)", err))
+	if _, err = p.topicRPC.DelRecommendTopic(c, arg); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.DelRecommendTopic err(%+v) arg(%+v)", err, arg))
 	}
 
 	return
 }
 
-func (p
+func (p *Dao) GetRecommendTopicsIDs(c context.Context) (resp *api.IDsResp, err error) {
+	if resp, err = p.topicRPC.GetRecommendTopicsIDs(c, &api.EmptyStruct{}); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetRecommendTopicsIDs err(%+v)", err))
+	}
+
+	return
+}

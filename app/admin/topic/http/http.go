@@ -6,20 +6,18 @@ import (
 	"valerian/library/ecode"
 	"valerian/library/log"
 	"valerian/library/net/http/mars"
-	"valerian/library/net/http/mars/middleware/permit"
+	"valerian/library/net/http/mars/middleware/auth"
 )
 
 var (
-	srv       *service.Service
-	permitSvc *permit.Permit
+	srv     *service.Service
+	authSvc *auth.Auth
 )
 
 // Init init
 func Init(c *conf.Config, s *service.Service) {
 	srv = s
-	permitSvc = permit.New(&permit.Config{
-		Session: c.Session,
-	})
+	authSvc = auth.New(conf.Conf.Auth)
 
 	engine := mars.DefaultServer(c.Mars)
 	route(engine)
@@ -34,6 +32,12 @@ func route(e *mars.Engine) {
 	e.Ping(ping)
 	e.Register(register)
 
+	g := e.Group("/api/v1/admin/topic/recommend")
+	{
+		g.POST("/add", authSvc.User, addRecommendTopic)
+		g.POST("/del", authSvc.User, delRecommendTopic)
+		g.GET("/list", authSvc.User, getRecommendTopics)
+	}
 }
 
 // ping check server ok.

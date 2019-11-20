@@ -13,7 +13,7 @@ import (
 	"valerian/library/mq"
 	"valerian/library/naming/discovery"
 	"valerian/library/net/http/mars"
-	"valerian/library/net/http/mars/middleware/permit"
+	"valerian/library/net/http/mars/middleware/auth"
 	"valerian/library/net/rpc/warden"
 	xtime "valerian/library/time"
 	"valerian/library/tracing"
@@ -42,7 +42,7 @@ type Config struct {
 	ArticleRPC   *warden.ClientConfig
 	SearchRPC    *warden.ClientConfig
 
-	Session *permit.SessionConfig
+	Auth *auth.Config
 	// Auth
 	Memcache  *Memcache
 	Discovery *discovery.Config
