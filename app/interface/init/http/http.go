@@ -6,6 +6,8 @@ import (
 	"valerian/library/ecode"
 	"valerian/library/log"
 	"valerian/library/net/http/mars"
+
+	"github.com/gobuffalo/packr"
 )
 
 var (
@@ -35,6 +37,19 @@ func route(e *mars.Engine) {
 		g.GET("/list/members", getMembersData)
 	}
 
+	x := e.Group("/static")
+	{
+		x.GET("/user-agreement", agreement)
+	}
+
+}
+
+func agreement(c *mars.Context) {
+
+	data := packr.NewBox("./static").Bytes("user-agreement.html")
+
+	c.Writer.WriteHeader(200)
+	c.Writer.Write(data)
 }
 
 // ping check server ok.
