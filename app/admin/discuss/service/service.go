@@ -4,21 +4,16 @@ import (
 	"context"
 	"net/url"
 
-	"valerian/app/admin/login/conf"
-	"valerian/app/admin/login/dao"
+	"valerian/app/admin/discuss/conf"
+	"valerian/app/admin/discuss/dao"
 	"valerian/library/conf/env"
-	"valerian/library/database/sqalx"
 	"valerian/library/log"
 )
 
 // Service struct of service
 type Service struct {
-	c *conf.Config
-	d interface {
-		Ping(c context.Context) (err error)
-		Close()
-		DB() sqalx.Node
-	}
+	c      *conf.Config
+	d      *dao.Dao
 	missch chan func()
 }
 

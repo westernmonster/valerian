@@ -558,6 +558,11 @@ service Topic {
     rpc  GetTopicMembersPaged(ArgTopicMembers) returns (TopicMembersPagedResp);
 
 
+    rpc  AddRecommendTopic(TopicReq) returns (EmptyStruct);
+
+    rpc  DelRecommendTopic(TopicReq) returns (EmptyStruct);
+
+
     rpc  GetTopicInfo(TopicReq) returns (TopicInfo);
 
     rpc  GetTopicStat(TopicReq) returns (TopicStat);

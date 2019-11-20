@@ -191,3 +191,21 @@ func (p *Dao) GetTopicMembersPaged(c context.Context, arg *api.ArgTopicMembers) 
 	}
 	return
 }
+
+func (p *Dao) AddRecommendTopic(c context.Context, arg *api.TopicReq) (err error) {
+	if _, err = p.topicRPC.AddRecommendTopic(c, arg); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.AddRecommendTopic err(%+v) req(%+v)", err, arg))
+	}
+
+	return
+}
+
+func (p *Dao) DelRecommendTopic(c context.Context, arg *api.TopicReq) (err error) {
+	if _, err = p.topicRPC.AddRecommendTopic(c, arg); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.Leave err(%+v)", err))
+	}
+
+	return
+}
+
+func (p

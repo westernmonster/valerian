@@ -393,3 +393,21 @@ func (s *server) GetRecommendMemberIDs(ctx context.Context, req *api.IDsReq) (*a
 
 	return &api.IDsResp{IDs: ids}, nil
 }
+
+func (s *server) AddRecommendTopic(ctx context.Context, req *api.TopicReq) (*api.EmptyStruct, error) {
+	err := s.svr.AddRecommendTopic(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.EmptyStruct{}, nil
+}
+
+func (s *server) DelRecommendTopic(ctx context.Context, req *api.TopicReq) (*api.EmptyStruct, error) {
+	err := s.svr.DelRecommendTopic(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.EmptyStruct{}, nil
+}

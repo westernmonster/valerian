@@ -79,7 +79,6 @@ func (p *Service) bulkSaveAuthTopics(c context.Context, node sqalx.Node, topicID
 		if dItem, err = p.d.GetAuthTopicByCond(c, node, map[string]interface{}{"topic_id": topicID, "to_topic_id": v.TopicID}); err != nil {
 			return
 		}
-		dic[dItem.ID] = true
 
 		if dItem == nil {
 			item := &model.AuthTopic{
@@ -96,6 +95,8 @@ func (p *Service) bulkSaveAuthTopics(c context.Context, node sqalx.Node, topicID
 
 			continue
 		}
+
+		dic[dItem.ID] = true
 		dItem.Permission = v.Permission
 		if err = p.d.UpdateAuthTopic(c, node, dItem); err != nil {
 			return
