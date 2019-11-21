@@ -39,6 +39,7 @@ type Config struct {
 	CertificationRPC *warden.ClientConfig
 	DiscussRPC       *warden.ClientConfig
 	TopicRPC         *warden.ClientConfig
+	MessageRPC       *warden.ClientConfig
 	ArticleRPC       *warden.ClientConfig
 	RecentRPC        *warden.ClientConfig
 	Auth             *auth.Config

@@ -6,7 +6,7 @@ import (
 
 	"valerian/app/interface/account/model"
 	account "valerian/app/service/account/api"
-
+	message "valerian/app/service/message/api"
 	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
 
@@ -300,6 +300,12 @@ func (p *Service) GetProfile(c context.Context, aid int64) (item *model.Profile,
 			Language: profile.Setting.Language,
 		},
 	}
+
+	var msgStat *message.MessageStat
+	if msgStat, err = p.d.GetMessageStat(c, aid); err != nil {
+		return
+	}
+	item.Stat.MsgCount = msgStat.UnreadCount
 
 	return
 }
