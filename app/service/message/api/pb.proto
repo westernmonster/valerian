@@ -1,0 +1,27 @@
+syntax = "proto3";
+package service.message;
+option go_package = "api";
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+// EmptyStruct 空的message，对应真实service只返回error，没有具体返回值
+message EmptyStruct {
+}
+
+message AidReq {
+    int64 AccountID = 1 [(gogoproto.jsontag) = "account_id"];
+    bool UseMaster = 2;
+}
+
+message MessageStat {
+    int64 AccountID = 1;
+    int32 UnreadCount = 2;
+}
+
+
+
+service Message {
+    rpc  GetMessageStat(AidReq) returns (MessageStat);
+}
+
+
