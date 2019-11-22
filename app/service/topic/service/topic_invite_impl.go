@@ -10,6 +10,7 @@ func (p *Service) HasInvited(c context.Context, accountID, topicID int64) (hasIn
 	if req, err = p.d.GetTopicInviteRequestByCond(c, p.d.DB(), map[string]interface{}{
 		"topic_id":   topicID,
 		"account_id": accountID,
+		"status":     model.InviteStatusSent,
 	}); err != nil {
 		return
 	} else if req != nil {
