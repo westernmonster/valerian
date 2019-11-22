@@ -24,7 +24,7 @@ func (p *Service) CanEdit(c context.Context, arg *api.IDReq) (canEdit bool, err 
 	}
 
 	var isSystemAdmin bool
-	if isSystemAdmin, err = p.isSystemAdmin(c, p.d.DB(), aid); err != nil {
+	if isSystemAdmin, err = p.isSystemAdmin(c, p.d.DB(), arg.Aid); err != nil {
 		return
 	} else if isSystemAdmin {
 		canEdit = true
