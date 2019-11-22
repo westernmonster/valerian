@@ -10,6 +10,65 @@ import (
 	"valerian/library/log"
 )
 
+func (p *Dao) GetWorkCertificationsPaged(c context.Context, node sqalx.Node, cond map[string]interface{}, limit, offset int32) (items []*model.WorkCertification, err error) {
+	items = make([]*model.WorkCertification, 0)
+	condition := make([]interface{}, 0)
+	clause := ""
+
+	if val, ok := cond["id"]; ok {
+		clause += " AND a.id =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["account_id"]; ok {
+		clause += " AND a.account_id =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["status"]; ok {
+		clause += " AND a.status =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["work_pic"]; ok {
+		clause += " AND a.work_pic =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["other_pic"]; ok {
+		clause += " AND a.other_pic =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["company"]; ok {
+		clause += " AND a.company =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["department"]; ok {
+		clause += " AND a.department =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["position"]; ok {
+		clause += " AND a.position =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["expires_at"]; ok {
+		clause += " AND a.expires_at =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["audit_result"]; ok {
+		clause += " AND a.audit_result =?"
+		condition = append(condition, val)
+	}
+
+	sqlSelect := fmt.Sprintf("SELECT a.* FROM work_certifications a WHERE a.deleted=0 %s ORDER BY a.status ASC, a.id DESC LIMIT ?,?", clause)
+
+	condition = append(condition, offset)
+	condition = append(condition, limit)
+
+	if err = node.SelectContext(c, &items, sqlSelect, condition...); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetWorkCertificationsPaged err(%+v), condition(%+v)", err, cond))
+		return
+	}
+
+	return
+}
+
 // GetAll get all records
 func (p *Dao) GetWorkCertifications(c context.Context, node sqalx.Node) (items []*model.WorkCertification, err error) {
 	items = make([]*model.WorkCertification, 0)

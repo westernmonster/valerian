@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"time"
+	"valerian/app/service/certification/api"
 	"valerian/app/service/certification/model"
 	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
@@ -195,5 +196,42 @@ func (p *Service) getWorkCertByID(c context.Context, node sqalx.Node, aid int64)
 			p.d.SetWorkCertCache(context.TODO(), item)
 		})
 	}
+	return
+}
+
+func (p *Service) GetWorkCertificationsPaged(c context.Context, arg *api.WorkCertPagedReq) (resp *api.WorkCertPagedResp, err error) {
+	cond := make(map[string]interface{})
+	if arg.Status != nil {
+		cond["status"] = arg.GetStatusValue()
+	}
+
+	var items []*model.WorkCertification
+	if items, err = p.d.GetWorkCertificationsPaged(c, p.d.DB(), cond, arg.Limit, arg.Offset); err != nil {
+		return
+	}
+
+	resp = &api.WorkCertPagedResp{
+		Items: make([]*api.WorkCertItem, len(items)),
+	}
+
+	for i, v := range items {
+		item := &api.WorkCertItem{
+			ID:          v.ID,
+			AccountID:   v.AccountID,
+			Status:      v.Status,
+			WorkPic:     v.WorkPic,
+			OtherPic:    v.OtherPic,
+			Company:     v.Company,
+			Department:  v.Department,
+			Position:    v.Position,
+			ExpiresAt:   v.ExpiresAt,
+			AuditResult: v.AuditResult,
+			CreatedAt:   v.CreatedAt,
+			UpdatedAt:   v.UpdatedAt,
+		}
+
+		resp.Items[i] = item
+	}
+
 	return
 }

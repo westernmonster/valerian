@@ -107,6 +107,33 @@ message STSToken {
 	string Token = 7;
 }
 
+message WorkCertPagedReq {
+    oneof Status {
+        int32 StatusValue = 1;
+    }
+    int32 Limit = 2 [(gogoproto.jsontag) = "limit"];
+    int32 Offset = 3 [(gogoproto.jsontag) = "offset"];
+}
+
+message WorkCertItem {
+    int64 ID  = 1;
+    int64 AccountID   = 3;
+    int32  Status = 4;
+    string WorkPic     = 5;
+    string OtherPic    = 6;
+    string Company     = 7;
+    string Department  = 8;
+    string Position    = 9;
+    int64 ExpiresAt   = 10;
+    string AuditResult = 11;
+    int64 CreatedAt   = 12;
+    int64 UpdatedAt   = 13;
+}
+
+message WorkCertPagedResp {
+    repeated WorkCertItem Items = 1;
+}
+
 
 service Certification {
     rpc RequestIDCert(AidReq) returns (RequestIDCertResp);

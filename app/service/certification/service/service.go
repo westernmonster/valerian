@@ -18,7 +18,7 @@ import (
 // Service struct of service
 type Service struct {
 	c         *conf.Config
-	d         IDao
+	d         *dao.Dao
 	cloudauth interface {
 		GetVerifyToken(c context.Context, ticketID string) (resp *cloudauth.GetVerifyTokenResponse, err error)
 		GetStatus(c context.Context, ticketID string) (resp *cloudauth.GetStatusResponse, err error)
