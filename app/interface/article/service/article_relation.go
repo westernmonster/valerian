@@ -154,7 +154,7 @@ func (p *Service) GetUserCanEditArticles(c context.Context, query string, pn, ps
 
 	if idsResp.IDs == nil || len(idsResp.IDs) == 0 {
 		resp = &model.ArticleListResp{
-			Items:  make([]*model.ArticleItem, 1),
+			Items:  make([]*model.ArticleItem, 0),
 			Paging: &model.Paging{IsEnd: true},
 		}
 		return
