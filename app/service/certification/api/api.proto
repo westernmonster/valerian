@@ -145,6 +145,8 @@ service Certification {
     rpc AuditWorkCert(AuditWorkCertReq) returns (EmptyStruct);
     rpc GetWorkCert(AidReq) returns (WorkCertInfo);
 
+    rpc GetWorkCertsPaged(WorkCertPagedReq) returns (WorkCertPagedResp);
+
     rpc GetWorkCertStatus(AidReq) returns (WorkCertStatus);
 }
 

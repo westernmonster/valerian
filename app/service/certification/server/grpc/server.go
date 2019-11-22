@@ -206,3 +206,7 @@ func (p *server) GetWorkCertStatus(c context.Context, req *api.AidReq) (*api.Wor
 
 	return &api.WorkCertStatus{Status: int32(status)}, nil
 }
+
+func (p *server) GetWorkCertsPaged(c context.Context, req *api.WorkCertPagedReq) (*api.WorkCertPagedResp, error) {
+	return p.svr.GetWorkCertificationsPaged(c, req)
+}
