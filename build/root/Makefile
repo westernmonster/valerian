@@ -527,7 +527,7 @@ docker-service-recent:
 push-service-recent:
 	docker push registry.cn-hangzhou.aliyuncs.com/valerian/service-recent:${DOCKER_TAG}
 deploy-service-recent:
-	helm upgrade --install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/service-recent:${DOCKER_TAG} --set global.name=service-recent --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=service.recent --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=68fefc9de93811e986590a58ac140094  --set env.treeId=1311 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc service-recent-uat ./build/k8s
+	helm upgrade --install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/service-recent:${DOCKER_TAG} --set global.name=service-recent --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=service.recent --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=0aa2605ae94511e9b6a00a58ac14002b  --set env.treeId=1311 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc service-recent-uat ./build/k8s
 
 
 service-topic-feed: build-service-topic-feed docker-service-topic-feed push-service-topic-feed deploy-service-topic-feed
