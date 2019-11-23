@@ -64,9 +64,9 @@ func (p *Dao) GetWorkCertStatus(c context.Context, aid int64) (info *certificati
 	return
 }
 
-func (p *Dao) GetWorkCertsPaged(c context.Context, req *certification.WorkCertPagedReq) (info *certification.WorkCertPagedResp, err error) {
-	if info, err = p.certificationRPC.GetWorkCertsPaged(c, req); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.GetWorkCertsPaged err(%+v) req(%+v)", err, req))
+func (p *Dao) GetWorkCertP(c context.Context, aid int64) (info *certification.WorkCertStatus, err error) {
+	if info, err = p.certificationRPC.GetW(c, &certification.AidReq{Aid: aid}); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetWorkCertStatus err(%+v) aid(%d)", err, aid))
 	}
 	return
 }
