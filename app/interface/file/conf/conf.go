@@ -42,6 +42,9 @@ type Config struct {
 type Aliyun struct {
 	AccessKeyID     string
 	AccessKeySecret string
+	RegionID        string
+	RoleArn         string
+	RoleSessionName string
 }
 
 // DB db config.

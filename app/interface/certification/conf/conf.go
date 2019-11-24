@@ -37,6 +37,7 @@ type Config struct {
 	Discovery *discovery.Config
 	Aliyun    *Aliyun
 
+	AccountRPC       *warden.ClientConfig
 	CertificationRPC *warden.ClientConfig
 }
 

@@ -21,3 +21,10 @@ type CallbackParam struct {
 	CallbackBody     string `json:"callback_body"`
 	CallbackBodyType string `json:"callback_body_type"`
 }
+
+type STSResp struct {
+	AccessKeySecret string `json:"access_key_secret"`
+	Expiration      string `json:"expiration"`
+	AccessKeyId     string `json:"access_key_id"`
+	SecurityToken   string `json:"security_token"`
+}

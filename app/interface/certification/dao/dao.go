@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"valerian/app/interface/certification/conf"
+	account "valerian/app/service/account/api"
 	certification "valerian/app/service/certification/api"
 	"valerian/library/cache/memcache"
 	"valerian/library/database/sqalx"
@@ -22,6 +23,7 @@ type Dao struct {
 	mcExpire         int32
 	c                *conf.Config
 	certificationRPC certification.CertificationClient
+	accountRPC       account.AccountClient
 }
 
 func New(c *conf.Config) (dao *Dao) {
@@ -36,6 +38,12 @@ func New(c *conf.Config) (dao *Dao) {
 		panic(errors.WithMessage(err, "Failed to dial certification service"))
 	} else {
 		dao.certificationRPC = certificationRPC
+	}
+
+	if accountRPC, err := account.NewClient(c.AccountRPC); err != nil {
+		panic(errors.WithMessage(err, "Failed to dial account service"))
+	} else {
+		dao.accountRPC = accountRPC
 	}
 	return
 }
