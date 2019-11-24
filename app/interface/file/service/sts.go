@@ -46,6 +46,7 @@ func (p *Service) AssumeRole(c context.Context) (resp *model.STSResp, err error)
 	assumeRoleReq := sts.CreateAssumeRoleRequest()
 	assumeRoleReq.RoleArn = p.c.Aliyun.RoleArn
 	assumeRoleReq.RoleSessionName = p.c.Aliyun.RoleSessionName
+	assumeRoleReq.SetHTTPSInsecure(true)
 
 	if env.DeployEnv == env.DeployEnvProd {
 		assumeRoleReq.Policy = prodPolicy
