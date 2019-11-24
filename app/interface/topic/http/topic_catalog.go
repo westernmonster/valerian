@@ -1,9 +1,11 @@
 package http
 
 import (
+	"fmt"
 	"strconv"
 	"valerian/app/interface/topic/model"
 	"valerian/library/ecode"
+	"valerian/library/log"
 	"valerian/library/net/http/mars"
 )
 
@@ -86,6 +88,7 @@ func editTopicCatalogs(c *mars.Context) {
 	}
 
 	if e := arg.Validate(); e != nil {
+		log.For(c).Error(fmt.Sprintf("http.editTopicCatalogs(), error(%+v)", e))
 		c.JSON(nil, ecode.RequestErr)
 		return
 	}
