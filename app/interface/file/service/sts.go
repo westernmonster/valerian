@@ -15,10 +15,10 @@ const uatPolicy = `
      {
            "Effect": "Allow",
            "Action": [
-             "oss:*",
+             "oss:*"
            ],
            "Resource": [
-             "acs:oss:*:*:flywiki",
+             "acs:oss:*:*:flywiki"
            ]
      }
     ]
@@ -32,10 +32,10 @@ const prodPolicy = `
      {
            "Effect": "Allow",
            "Action": [
-             "oss:*",
+             "oss:*"
            ],
            "Resource": [
-             "acs:oss:*:*:stonote",
+             "acs:oss:*:*:stonote"
            ]
      }
     ]
@@ -52,6 +52,8 @@ func (p *Service) AssumeRole(c context.Context) (resp *model.STSResp, err error)
 	} else {
 		assumeRoleReq.Policy = uatPolicy
 	}
+
+	assumeRoleReq.SetScheme("https")
 
 	p.stsClient.SetHTTPSInsecure(true)
 	var ret *sts.AssumeRoleResponse
