@@ -108,6 +108,8 @@ var (
 	NeedArticleEditPermission      = add(10058) // 需要文章编辑权限
 	NeedArticleRelation            = add(10059) // 需要设置关联话题
 	RecommendTopicExist            = add(10060) // 推荐话题已经存在
+	CatalogNameRequired            = add(10061) // 请输入目录名称
+	CatalogNameInvalid             = add(10062) // 目录名称格式不正确
 
 	// 89000 - 89999 属于 Permission 类错误
 	NoTopicViewPermission   = add(89001) // 没有话题查看权限

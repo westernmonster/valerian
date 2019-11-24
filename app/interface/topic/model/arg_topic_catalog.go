@@ -54,28 +54,49 @@ type TopicRootCatalog struct {
 func (p *TopicRootCatalog) Validate() error {
 	return validation.ValidateStruct(
 		p,
-		validation.Field(&p.Name,
-			validation.Required.Error(`请输入名称`),
-			validation.RuneLength(0, 100).Error(`名称最大长度为100个字符`)),
-		validation.Field(&p.Type,
-			validation.Required.Error(`请输入类型`),
-			validation.In(TopicCatalogTaxonomy, TopicCatalogArticle, TopicCatalogTestSet).Error("类型不正确")),
+		validation.Field(&p.Name, ValidateCatalogName(p.Type)),
+		validation.Field(&p.Type, validation.Required, validation.In(TopicCatalogTaxonomy, TopicCatalogArticle, TopicCatalogTestSet)),
 		validation.Field(&p.Children, ValidateRootChildren(p.Type)),
 		validation.Field(&p.RefID, ValidateRefID(p.Type)),
 	)
 }
 
-func ValidateRefID(rtype string) *ValidateTypeRule {
-	return &ValidateTypeRule{
+func ValidateCatalogName(rtype string) *ValidateNameRule {
+	return &ValidateNameRule{
 		Type: rtype,
 	}
 }
 
-type ValidateTypeRule struct {
+type ValidateNameRule struct {
 	Type string
 }
 
-func (p *ValidateTypeRule) Validate(v interface{}) error {
+func (p *ValidateNameRule) Validate(v interface{}) error {
+	name := v.(string)
+	switch p.Type {
+	case TopicCatalogTaxonomy:
+		if name == "" {
+			return ecode.CatalogNameRequired
+		} else if len(name) > 100 {
+			return ecode.CatalogNameInvalid
+		}
+		break
+	}
+
+	return nil
+}
+
+func ValidateRefID(rtype string) *ValidateRefIDRule {
+	return &ValidateRefIDRule{
+		Type: rtype,
+	}
+}
+
+type ValidateRefIDRule struct {
+	Type string
+}
+
+func (p *ValidateRefIDRule) Validate(v interface{}) error {
 	refID := v.(int64)
 	switch p.Type {
 	case TopicCatalogTaxonomy:

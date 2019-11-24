@@ -272,6 +272,13 @@ func (p *Service) saveCatalogs(c context.Context, node sqalx.Node, aid int64, re
 			}
 
 			if v.Type == model.TopicCatalogArticle {
+				var article *article.ArticleInfo
+				if article, err = p.d.GetArticle(c, v.RefID); err != nil {
+					return
+				}
+
+				tc.Name = article.Title
+
 				change.NewArticles = append(change.NewArticles, &model.ArticleItem{TopicID: req.TopicID, ArticleID: v.RefID})
 			}
 
