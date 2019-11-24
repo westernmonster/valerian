@@ -15,10 +15,10 @@ const uatPolicy = `
      {
            "Effect": "Allow",
            "Action": [
-             "oss:*",
+             "oss:*"
            ],
            "Resource": [
-             "acs:oss:*:*:flywiki",
+             "acs:oss:*:*:flywiki"
            ]
      }
     ]
@@ -32,10 +32,10 @@ const prodPolicy = `
      {
            "Effect": "Allow",
            "Action": [
-             "oss:*",
+             "oss:*"
            ],
            "Resource": [
-             "acs:oss:*:*:stonote",
+             "acs:oss:*:*:stonote"
            ]
      }
     ]
