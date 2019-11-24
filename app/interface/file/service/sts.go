@@ -53,6 +53,8 @@ func (p *Service) AssumeRole(c context.Context) (resp *model.STSResp, err error)
 		assumeRoleReq.Policy = uatPolicy
 	}
 
+	assumeRoleReq.SetScheme("https")
+
 	p.stsClient.SetHTTPSInsecure(true)
 	var ret *sts.AssumeRoleResponse
 	if ret, err = p.stsClient.AssumeRole(assumeRoleReq); err != nil {
