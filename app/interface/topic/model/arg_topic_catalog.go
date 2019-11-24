@@ -210,12 +210,8 @@ type TopicParentCatalog struct {
 func (p *TopicParentCatalog) Validate() error {
 	return validation.ValidateStruct(
 		p,
-		validation.Field(&p.Name,
-			validation.Required.Error(`请输入名称`),
-			validation.RuneLength(0, 100).Error(`名称最大长度为100个字符`)),
-		validation.Field(&p.Type,
-			validation.Required.Error(`请输入类型`),
-			validation.In(TopicCatalogTaxonomy, TopicCatalogArticle, TopicCatalogTestSet).Error("类型不正确")),
+		validation.Field(&p.Name, ValidateCatalogName(p.Type)),
+		validation.Field(&p.Type, validation.Required, validation.In(TopicCatalogTaxonomy, TopicCatalogArticle, TopicCatalogTestSet)),
 		validation.Field(&p.Children, ValidateParentChildren(p.Type)),
 		validation.Field(&p.RefID, ValidateRefID(p.Type)),
 	)
@@ -246,12 +242,8 @@ type TopicChildCatalog struct {
 func (p *TopicChildCatalog) Validate() error {
 	return validation.ValidateStruct(
 		p,
-		validation.Field(&p.Name,
-			validation.Required.Error(`请输入名称`),
-			validation.RuneLength(0, 100).Error(`名称最大长度为100个字符`)),
-		validation.Field(&p.Type,
-			validation.Required.Error(`请输入类型`),
-			validation.In(TopicCatalogArticle, TopicCatalogTestSet).Error("类型不正确")),
+		validation.Field(&p.Name, ValidateCatalogName(p.Type)),
+		validation.Field(&p.Type, validation.Required, validation.In(TopicCatalogArticle, TopicCatalogTestSet)),
 		validation.Field(&p.RefID, ValidateRefID(p.Type)),
 	)
 }
@@ -296,7 +288,7 @@ type ArgTopicCatalog struct {
 func (p *ArgTopicCatalog) Validate() error {
 	return validation.ValidateStruct(
 		p,
-		validation.Field(&p.Name, validation.Required, validation.RuneLength(0, 100)),
+		validation.Field(&p.Name, ValidateCatalogName(p.Type)),
 		validation.Field(&p.Type, validation.Required, validation.In(TopicCatalogTaxonomy, TopicCatalogArticle, TopicCatalogTestSet)),
 		validation.Field(&p.RefID, ValidateRefID(p.Type)),
 	)
