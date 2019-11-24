@@ -15,7 +15,6 @@ require (
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/aliyun/alibaba-cloud-sdk-go v0.0.0-20190912105415-4fb175c277cc
 	github.com/asaskevich/govalidator v0.0.0-20190424111038-f61b66f89f4a
-	github.com/baiyubin/aliyun-sts-go-sdk v0.0.0-20180326062324-cfa1a18b161f
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/codahale/hdrhistogram v0.0.0-20161010025455-3a0bb77429bd // indirect
 	github.com/davecgh/go-spew v1.1.1
