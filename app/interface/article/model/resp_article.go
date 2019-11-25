@@ -96,6 +96,9 @@ type ArticleItem struct {
 	ReviseCount int `json:"revise_count"`
 	// 评论数
 	CommentCount int `json:"comment_count"`
+
+	CreatedAt int64 `json:"created_at"`
+	UpdatedAt int64 `json:"updated_at"`
 }
 
 type ArticleListResp struct {

@@ -182,6 +182,9 @@ func (p *Service) GetUserCanEditArticles(c context.Context, query string, pn, ps
 			Title: *t.Title,
 		}
 
+		item.CreatedAt = *t.CreatedAt
+		item.UpdatedAt = *t.UpdatedAt
+
 		if t.ContentText != nil {
 			item.Excerpt = xstr.Excerpt(*t.ContentText)
 		}
