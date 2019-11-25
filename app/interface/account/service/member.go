@@ -556,7 +556,7 @@ func (p *Service) GetMemberTopicsPaged(c context.Context, aid int64, limit, offs
 		resp.Paging.Prev = ""
 	}
 
-	spew.Dump(resp.Paging)
+	spew.Dump(resp)
 
 	return
 }
