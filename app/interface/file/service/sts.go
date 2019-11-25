@@ -67,5 +67,11 @@ func (p *Service) AssumeRole(c context.Context) (resp *model.STSResp, err error)
 		SecurityToken:   ret.Credentials.SecurityToken,
 	}
 
+	if env.DeployEnv == env.DeployEnvProd {
+		resp.BucketName = "stonote"
+	} else {
+		resp.BucketName = "flywiki"
+	}
+
 	return
 }
