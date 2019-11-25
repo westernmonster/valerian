@@ -6,6 +6,7 @@ import (
 	"valerian/app/interface/file/conf"
 	"valerian/library/log"
 
+	"github.com/aliyun/alibaba-cloud-sdk-go/services/imm"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/sts"
 	"github.com/pkg/errors"
 )
@@ -17,6 +18,7 @@ type Service struct {
 	}
 	missch    chan func()
 	stsClient *sts.Client
+	immClient *imm.Client
 }
 
 // New create new service
@@ -31,6 +33,12 @@ func New(c *conf.Config) (s *Service) {
 		panic(errors.WithMessage(err, "Failed to init Aliyun STS Client"))
 	} else {
 		s.stsClient = client
+	}
+
+	if client, err := imm.NewClientWithAccessKey(c.Aliyun.RegionID, c.Aliyun.AccessKeyID, c.Aliyun.AccessKeySecret); err != nil {
+		panic(errors.WithMessage(err, "Failed to init Aliyun IMM Client"))
+	} else {
+		s.immClient = client
 	}
 	return
 }
