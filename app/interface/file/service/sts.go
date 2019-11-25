@@ -47,11 +47,11 @@ func (p *Service) AssumeRole(c context.Context) (resp *model.STSResp, err error)
 	assumeRoleReq.RoleArn = p.c.Aliyun.RoleArn
 	assumeRoleReq.RoleSessionName = p.c.Aliyun.RoleSessionName
 
-	if env.DeployEnv == env.DeployEnvProd {
-		assumeRoleReq.Policy = prodPolicy
-	} else {
-		assumeRoleReq.Policy = uatPolicy
-	}
+	// if env.DeployEnv == env.DeployEnvProd {
+	// 	assumeRoleReq.Policy = prodPolicy
+	// } else {
+	// 	assumeRoleReq.Policy = uatPolicy
+	// }
 
 	assumeRoleReq.SetScheme("https")
 

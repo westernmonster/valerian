@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"log"
 	"net/url"
 	"strconv"
 
@@ -556,7 +557,8 @@ func (p *Service) GetMemberTopicsPaged(c context.Context, aid int64, limit, offs
 		resp.Paging.Prev = ""
 	}
 
-	spew.Dump(resp)
+	log.Printf("item size %d \n", len(resp.Items))
+	spew.Dump(resp.Paging)
 
 	return
 }
