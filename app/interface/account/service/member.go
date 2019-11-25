@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"log"
 	"net/url"
 	"strconv"
 
@@ -16,8 +15,6 @@ import (
 	topic "valerian/app/service/topic/api"
 	"valerian/library/ecode"
 	"valerian/library/net/metadata"
-
-	"github.com/davecgh/go-spew/spew"
 )
 
 func (p *Service) FromDiscussion(v *discuss.DiscussionInfo) (item *model.TargetDiscuss) {
@@ -556,9 +553,6 @@ func (p *Service) GetMemberTopicsPaged(c context.Context, aid int64, limit, offs
 	if offset == 0 {
 		resp.Paging.Prev = ""
 	}
-
-	log.Printf("item size %d \n", len(resp.Items))
-	spew.Dump(resp.Paging)
 
 	return
 }
