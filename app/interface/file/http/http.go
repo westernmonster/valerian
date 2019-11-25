@@ -50,7 +50,7 @@ func route(e *mars.Engine) {
 // @Failure 400 "验证失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /file/sts_cred [post]
+// @Router /file/sts_cred [get]
 func stsCred(c *mars.Context) {
 	c.JSON(srv.AssumeRole(c))
 }
