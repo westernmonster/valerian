@@ -584,5 +584,7 @@ service Topic {
     rpc  GetRecommendAuthTopicsIDs(IDsReq) returns (IDsResp);
 
     rpc  GetRecommendMemberIDs(IDsReq) returns (IDsResp);
+
+    rpc  GetAuthed2CurrentTopicIDs(TopicReq) returns (IDsResp);
 }
 

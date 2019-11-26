@@ -169,3 +169,24 @@ func (p *Service) getAuthTopics(c context.Context, node sqalx.Node, topicID int6
 	}
 	return
 }
+
+// 获取授权了当前话题的话题ID
+func (p *Service) GetAuthed2CurrentTopicIDs(c context.Context, topicID int64) (ids []int64, err error) {
+	var data []*model.AuthTopic
+	if data, err = p.d.GetAuthTopicsByCond(c, p.d.DB(), map[string]interface{}{"to_topic_id": topicID}); err != nil {
+		return
+	}
+
+	ids = make([]int64, 0)
+	dic := make(map[int64]bool)
+	// 排重
+	for _, v := range data {
+		dic[v.TopicID] = true
+	}
+
+	for k, _ := range dic {
+		ids = append(ids, k)
+	}
+
+	return
+}

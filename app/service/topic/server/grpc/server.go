@@ -411,3 +411,12 @@ func (s *server) DelRecommendTopic(ctx context.Context, req *api.TopicReq) (*api
 
 	return &api.EmptyStruct{}, nil
 }
+
+func (s *server) GetAuthed2CurrentTopicIDs(ctx context.Context, req *api.TopicReq) (*api.IDsResp, error) {
+	ids, err := s.svr.GetAuthed2CurrentTopicIDs(ctx, req.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.IDsResp{IDs: ids}, nil
+}
