@@ -13,6 +13,26 @@ import (
 	"valerian/library/net/metadata"
 )
 
+func (p *Service) FromTopic(v *topic.TopicInfo) (item *model.TargetTopic) {
+	item = &model.TargetTopic{
+		ID:              v.ID,
+		Name:            v.Name,
+		Introduction:    v.Introduction,
+		MemberCount:     (v.Stat.MemberCount),
+		DiscussionCount: (v.Stat.DiscussionCount),
+		ArticleCount:    (v.Stat.ArticleCount),
+		Creator: &model.Creator{
+			ID:           v.Creator.ID,
+			Avatar:       v.Creator.Avatar,
+			UserName:     v.Creator.UserName,
+			Introduction: v.Creator.Introduction,
+		},
+		Avatar: v.Avatar,
+	}
+
+	return
+}
+
 func (p *Service) SaveAuthTopics(c context.Context, arg *model.ArgSaveAuthTopics) (err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
@@ -36,6 +56,28 @@ func (p *Service) SaveAuthTopics(c context.Context, arg *model.ArgSaveAuthTopics
 
 	if err = p.d.SaveAuthTopics(c, item); err != nil {
 		return
+	}
+	return
+}
+
+func (p *Service) GetAuthed2CurrentTopics(c context.Context, topicID int64) (resp []*model.TargetTopic, err error) {
+	var ret *topic.IDsResp
+	if ret, err = p.d.GetAuthed2CurrentTopicIDs(c, &topic.TopicReq{ID: topicID}); err != nil {
+		return
+	}
+
+	resp = make([]*model.TargetTopic, 0)
+	if ret.IDs == nil {
+		return
+	}
+
+	for _, v := range ret.IDs {
+		var t *topic.TopicInfo
+		if t, err = p.d.GetTopic(c, v); err != nil {
+			return
+		}
+
+		resp = append(resp, p.FromTopic(t))
 	}
 	return
 }

@@ -49,6 +49,7 @@ func route(e *mars.Engine) {
 		g.POST("/audit_follow", authSvc.User, auditFollow)
 		g.POST("/process_invite", authSvc.User, processInvite)
 
+		g.GET("/list/auth_to_current_topics", authSvc.User, auth2CurrentTopics)
 		g.GET("/list/followed", authSvc.User, followedTopics)
 		g.GET("/list/has_edit_permission", authSvc.User, topicsWithEditPermission)
 		g.GET("/list/activities", authSvc.User, getActivites)

@@ -37,6 +37,36 @@ func authTopics(c *mars.Context) {
 	c.JSON(srv.GetAuthTopics(c, id))
 }
 
+// @Summary 获取授权了当前话题的话题列表
+// @Description 获取授权了当前话题的话题列表
+// @Tags topic
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param topic_id query string true "话题ID"
+// @Success 200 {array}  app.interface.topic.model.TargetTopic "话题"
+// @Failure 400 "请求验证失败"
+// @Failure 401 "登录验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /topic/list/auth_to_current_topics [get]
+func auth2CurrentTopics(c *mars.Context) {
+	var (
+		id  int64
+		err error
+	)
+
+	params := c.Request.Form
+
+	if id, err = strconv.ParseInt(params.Get("topic_id"), 10, 64); err != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+
+	c.JSON(srv.GetAuthed2CurrentTopics(c, id))
+}
+
 // @Summary 批量更新授权话题
 // @Description 批量更新授权话题
 // @Tags topic
