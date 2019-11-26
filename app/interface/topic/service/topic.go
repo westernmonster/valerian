@@ -199,7 +199,7 @@ func (p *Service) GetTopic(c context.Context, topicID int64, include string) (it
 			return
 		}
 
-		if resp.Items == nil {
+		if resp.Items != nil {
 			for _, v := range resp.Items {
 				item.AuthTopics = append(item.AuthTopics, &model.AuthTopicResp{
 					ToTopicID:      v.ToTopicID,
@@ -416,7 +416,7 @@ func (p *Service) GetTopicBasicInfo(c context.Context, topicID int64) (item *mod
 		return
 	}
 
-	if resp.Items == nil {
+	if resp.Items != nil {
 		for _, v := range resp.Items {
 			item.AuthTopics = append(item.AuthTopics, &model.AuthTopicResp{
 				ToTopicID:      v.ToTopicID,
