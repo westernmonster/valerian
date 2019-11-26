@@ -353,7 +353,7 @@ func (p *Service) GetTopicBasicInfo(c context.Context, topicID int64) (item *mod
 	}
 
 	var t *topic.TopicResp
-	if t, err = p.d.GetTopicResp(c, &topic.IDReq{ID: topicID, Aid: aid, Include: "auth_topics,meta,members"}); err != nil {
+	if t, err = p.d.GetTopicResp(c, &topic.IDReq{ID: topicID, Aid: aid, Include: ""}); err != nil {
 		return
 	}
 
