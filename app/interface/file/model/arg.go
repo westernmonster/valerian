@@ -25,3 +25,16 @@ func (p *ArgOSSToken) Validate() error {
 			validation.Required.Error(`请输入文件名`)),
 	)
 }
+
+type ArgConvertOfficeTask struct {
+	SrcUri string `json:"src_uri"`
+	TgtUri string `json:"tgt_uri"`
+}
+
+func (p *ArgConvertOfficeTask) Validate() error {
+	return validation.ValidateStruct(
+		p,
+		validation.Field(&p.SrcUri, validation.Required),
+		validation.Field(&p.TgtUri, validation.Required),
+	)
+}

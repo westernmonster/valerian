@@ -20,13 +20,13 @@ import (
 const (
 	_codeOk          = 200
 	_codeNotModified = 304
-	_checkURL        = "https://%s/x/internal/msm/codes"
+	_checkURL        = "http://%s/x/internal/msm/codes"
 )
 
 var (
 	defualtEcodes = &ecodes{}
 	defaultConfig = &Config{
-		Domain: "api.stonote.cn",
+		Domain: "internal.stonote.loc",
 		All:    xtime.Duration(time.Hour),
 		Diff:   xtime.Duration(time.Minute * 5),
 		ClientConfig: &xhttp.ClientConfig{

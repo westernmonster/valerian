@@ -27,4 +27,5 @@ type STSResp struct {
 	Expiration      string `json:"expiration"`
 	AccessKeyId     string `json:"access_key_id"`
 	SecurityToken   string `json:"security_token"`
+	BucketName      string `json:"bucket_name"`
 }

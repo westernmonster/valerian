@@ -45,6 +45,7 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 			if article, err = p.d.GetArticle(c, lvl1.RefID); err != nil {
 				return
 			}
+			parent.Name = article.Title
 			parent.Article = p.FromArticle(article)
 			if parent.Article.RelationIDs, err = p.d.GetArticleRelationIDs(c, node, article.ID); err != nil {
 				return
@@ -78,6 +79,7 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 				if article, err = p.d.GetArticle(c, lvl2.RefID); err != nil {
 					return
 				}
+				child.Name = article.Title
 				child.Article = p.FromArticle(article)
 				if child.Article.RelationIDs, err = p.d.GetArticleRelationIDs(c, node, article.ID); err != nil {
 					return
@@ -110,6 +112,7 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 					if article, err = p.d.GetArticle(c, lvl3.RefID); err != nil {
 						return
 					}
+					subItem.Name = article.Title
 					subItem.Article = p.FromArticle(article)
 					if subItem.Article.RelationIDs, err = p.d.GetArticleRelationIDs(c, node, article.ID); err != nil {
 						return
@@ -266,6 +269,15 @@ func (p *Service) saveCatalogs(c context.Context, node sqalx.Node, aid int64, re
 				TopicID:   req.TopicID,
 				CreatedAt: time.Now().Unix(),
 				UpdatedAt: time.Now().Unix(),
+			}
+
+			if v.Type == model.TopicCatalogArticle {
+				var article *article.ArticleInfo
+				if article, err = p.d.GetArticle(c, v.RefID); err != nil {
+					return
+				}
+
+				tc.Name = article.Title
 			}
 			if _, err = p.createCatalog(c, node, tc); err != nil {
 				return
