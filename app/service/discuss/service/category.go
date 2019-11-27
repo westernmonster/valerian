@@ -8,9 +8,21 @@ import (
 )
 
 func (p *Service) getDiscussCategories(c context.Context, node sqalx.Node, topicID int64) (items []*model.DiscussCategory, err error) {
-	items = make([]*model.DiscussCategory, 0)
+	var addCache = true
+	if items, err = p.d.DiscussionCategoriesCache(c, topicID); err != nil {
+		addCache = false
+	} else if items != nil {
+		return
+	}
+
 	if items, err = p.d.GetDiscussCategoriesByCond(c, p.d.DB(), map[string]interface{}{"topic_id": topicID}); err != nil {
 		return
+	}
+
+	if addCache {
+		p.addCache(func() {
+			p.d.SetDiscussionCategoriesCache(context.TODO(), topicID, items)
+		})
 	}
 
 	return
@@ -27,6 +39,5 @@ func (p *Service) GetDiscussCategory(c context.Context, categoryID int64) (item 
 		err = ecode.DiscussCategoryNotExist
 		return
 	}
-
 	return
 }

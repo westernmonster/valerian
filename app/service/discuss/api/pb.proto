@@ -98,6 +98,54 @@ message CategoriesReq {
     bool UseMaster = 2;
 }
 
+message ArgDisucssCategory {
+    oneof ID {
+        int64 IDValue = 1;
+    }
+
+    string Name = 2;
+    int32 Seq = 3;
+}
+
+message ArgSaveDiscussCategories {
+    int64 TopicID = 1;
+    repeated ArgDisucssCategory Items = 2;
+}
+
+message ArgAddDiscuss {
+    int64 TopicID = 1;
+    int64 CategoryID = 2;
+    oneof Title {
+        string TitleValue = 3;
+    }
+    string Content = 4;
+    repeated  ArgDiscussionFile Files = 5;
+}
+
+message ArgDiscussionFile {
+    oneof ID {
+        int64 IDValue = 1;
+    }
+    string FileName  = 2;
+    string FileType  = 3;
+    string FileURL  = 4;
+    int32 Seq = 5;
+}
+
+message ArgUpdateDiscuss {
+    int64 ID = 1;
+    oneof Title {
+        string TitleValue = 2;
+    }
+    string Content = 3;
+    repeated  ArgDiscussionFile Files = 5;
+}
+
+message ArgSaveDiscussFiles {
+    int64 DiscussionID = 1;
+    repeated ArgDiscussionFile Items = 5;
+}
+
 
 service Discussion {
     rpc GetDiscussionInfo(IDReq) returns (DiscussionInfo);

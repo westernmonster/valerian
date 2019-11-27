@@ -94,6 +94,10 @@ func DiscussionFileKey(discussionID int64) string {
 	return fmt.Sprintf("d_files_%d", discussionID)
 }
 
+func DiscussionCategoriesKey(topicID int64) string {
+	return fmt.Sprintf("d_cates_%d", topicID)
+}
+
 func ResetPasswordKey(sessionID string) string {
 	return fmt.Sprintf("srp_%s", sessionID)
 }
