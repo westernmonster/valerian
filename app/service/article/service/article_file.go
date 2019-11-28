@@ -15,6 +15,27 @@ import (
 	"github.com/jinzhu/copier"
 )
 
+func (p *Service) GetArticleFile(c context.Context, id int64) (item *api.ArticleFileResp, err error) {
+	var data *model.ArticleFile
+	if data, err = p.d.GetArticleFileByID(c, p.d.DB(), id); err != nil {
+		return
+	} else if data == nil {
+		err = ecode.ArticleFileNotExist
+		return
+	}
+
+	item = &api.ArticleFileResp{
+		ID:       data.ID,
+		FileName: data.FileName,
+		FileURL:  data.FileURL,
+		PdfURL:   data.PdfURL,
+		FileType: data.FileType,
+		Seq:      data.Seq,
+	}
+
+	return
+}
+
 func (p *Service) GetArticleFiles(c context.Context, articleID int64) (items []*api.ArticleFileResp, err error) {
 	return p.getArticleFiles(c, p.d.DB(), articleID)
 }

@@ -181,6 +181,15 @@ func (s *server) DelArticle(ctx context.Context, req *api.IDReq) (*api.EmptyStru
 	return resp, nil
 }
 
+func (s *server) GetArticleFile(ctx context.Context, req *api.IDReq) (*api.ArticleFileResp, error) {
+	data, err := s.svr.GetArticleFile(ctx, req.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
 func (s *server) GetArticleFiles(ctx context.Context, req *api.IDReq) (*api.ArticleFilesResp, error) {
 	data, err := s.svr.GetArticleFiles(ctx, req.ID)
 	if err != nil {

@@ -411,6 +411,7 @@ service Article {
     rpc  CanEdit(IDReq) returns(BoolResp);
     rpc  GetUserCanEditArticleIDs(AidReq) returns (IDsResp);
 
+    rpc GetArticleFile(IDReq) returns (ArticleFileResp);
     rpc GetArticleFiles(IDReq) returns (ArticleFilesResp);
     rpc SaveArticleFiles(ArgSaveArticleFiles) returns (EmptyStruct);
 
