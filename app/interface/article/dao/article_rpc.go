@@ -6,6 +6,8 @@ import (
 
 	article "valerian/app/service/article/api"
 	"valerian/library/log"
+
+	"github.com/davecgh/go-spew/spew"
 )
 
 func (p *Dao) GetArticleInfo(c context.Context, req *article.IDReq) (resp *article.ArticleInfo, err error) {
@@ -81,6 +83,7 @@ func (p *Dao) GetArticleFiles(c context.Context, req *article.IDReq) (resp *arti
 }
 
 func (p *Dao) SaveArticleFiles(c context.Context, req *article.ArgSaveArticleFiles) (err error) {
+	spew.Dump(req)
 	if _, err = p.articleRPC.SaveArticleFiles(c, req); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.SaveArticleFiles() error(%+v), req(%+v)", err, req))
 		return
