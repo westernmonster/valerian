@@ -34,8 +34,8 @@ var (
 				Key:    "3c4e41f926e51656",
 				Secret: "26a2095b60c24154521d24ae62b885bb",
 			},
-			Dial:    xtime.Duration(time.Second),
-			Timeout: xtime.Duration(time.Second),
+			Dial:    xtime.Duration(5 * time.Second),
+			Timeout: xtime.Duration(5 * time.Second),
 		},
 	}
 )
