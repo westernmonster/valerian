@@ -74,7 +74,7 @@ func (p *Service) getArticleFiles(c context.Context, aid int64, articleID int64)
 	items = make([]*model.ArticleFileResp, 0)
 
 	if data.Items != nil {
-		for _, v := range items {
+		for _, v := range data.Items {
 			items = append(items, &model.ArticleFileResp{
 				ID:       v.ID,
 				FileName: v.FileName,
