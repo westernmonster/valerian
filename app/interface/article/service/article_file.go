@@ -34,12 +34,13 @@ func (p *Service) getArticleFile(c context.Context, aid int64, fileID int64) (it
 	}
 
 	item = &model.ArticleFileResp{
-		ID:       data.ID,
-		FileName: data.FileName,
-		FileURL:  data.FileURL,
-		FileType: data.FileType,
-		PdfURL:   data.PdfURL,
-		Seq:      int(data.Seq),
+		ID:        data.ID,
+		FileName:  data.FileName,
+		FileURL:   data.FileURL,
+		FileType:  data.FileType,
+		PdfURL:    data.PdfURL,
+		Seq:       int(data.Seq),
+		CreatedAt: data.CreatedAt,
 	}
 
 	return

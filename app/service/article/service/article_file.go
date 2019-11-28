@@ -25,12 +25,13 @@ func (p *Service) GetArticleFile(c context.Context, id int64) (item *api.Article
 	}
 
 	item = &api.ArticleFileResp{
-		ID:       data.ID,
-		FileName: data.FileName,
-		FileURL:  data.FileURL,
-		PdfURL:   data.PdfURL,
-		FileType: data.FileType,
-		Seq:      data.Seq,
+		ID:        data.ID,
+		FileName:  data.FileName,
+		FileURL:   data.FileURL,
+		PdfURL:    data.PdfURL,
+		FileType:  data.FileType,
+		Seq:       data.Seq,
+		CreatedAt: data.CreatedAt,
 	}
 
 	return

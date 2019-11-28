@@ -219,6 +219,7 @@ message ArticleFileResp {
     int32 Seq = 4;
     string FileType = 5;
     string PdfURL = 6;
+    int64 CreatedAt = 7;
 }
 
 message ArticleFilesResp {

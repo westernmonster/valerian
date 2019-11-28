@@ -38,12 +38,13 @@ type ArticleResp struct {
 }
 
 type ArticleFileResp struct {
-	ID       int64  `json:"id,string" swaggertype:"string"`
-	FileName string `json:"file_name"` // FileName 文件名
-	FileURL  string `json:"file_url"`  // FileURL 文件地址
-	FileType string `json:"file_type"` // 文件类型
-	PdfURL   string `json:"pdf_url"`   // PDF地址
-	Seq      int    `json:"seq"`       // Seq 文件顺序
+	ID        int64  `json:"id,string" swaggertype:"string"`
+	FileName  string `json:"file_name"` // FileName 文件名
+	FileURL   string `json:"file_url"`  // FileURL 文件地址
+	FileType  string `json:"file_type"` // 文件类型
+	PdfURL    string `json:"pdf_url"`   // PDF地址
+	Seq       int    `json:"seq"`       // Seq 文件顺序
+	CreatedAt int64  `json:"created_at"`
 }
 
 type ArticleMeta struct {
