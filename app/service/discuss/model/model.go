@@ -45,12 +45,14 @@ type TopicResStat struct {
 type DiscussionFile struct {
 	ID           int64         `db:"id" json:"id,string"`                       // ID ID
 	FileName     string        `db:"file_name" json:"file_name"`                // FileName 文件名
-	FileURL      string        `db:"file_url" json:"file_url,omitempty"`        // FileURL 文件地址
+	FileURL      string        `db:"file_url" json:"file_url"`                  // FileURL 文件地址
 	Seq          int32         `db:"seq" json:"seq"`                            // Seq 文件顺序
 	DiscussionID int64         `db:"discussion_id" json:"discussion_id,string"` // DiscussionID 讨论ID
 	Deleted      types.BitBool `db:"deleted" json:"deleted"`                    // Deleted 是否删除
 	CreatedAt    int64         `db:"created_at" json:"created_at"`              // CreatedAt 创建时间
 	UpdatedAt    int64         `db:"updated_at" json:"updated_at"`              // UpdatedAt 更新时间
+	FileType     string        `db:"file_type" json:"file_type"`                // FileType 文件类型
+	PdfURL       string        `db:"pdf_url" json:"pdf_url"`                    // PdfURL PDF文件
 }
 
 type DiscussionStat struct {
