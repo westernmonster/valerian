@@ -32,6 +32,7 @@ func (p *Service) AddArticle(c context.Context, arg *model.ArgAddArticle) (id in
 			item.Files = append(item.Files, &article.ArgArticleFile{
 				FileName: v.FileName,
 				FileURL:  v.FileURL,
+				FileType: v.FileType,
 				Seq:      int32(v.Seq),
 			})
 		}

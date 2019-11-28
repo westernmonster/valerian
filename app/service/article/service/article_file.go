@@ -15,6 +15,28 @@ import (
 	"github.com/jinzhu/copier"
 )
 
+func (p *Service) GetArticleFile(c context.Context, id int64) (item *api.ArticleFileResp, err error) {
+	var data *model.ArticleFile
+	if data, err = p.d.GetArticleFileByID(c, p.d.DB(), id); err != nil {
+		return
+	} else if data == nil {
+		err = ecode.ArticleFileNotExist
+		return
+	}
+
+	item = &api.ArticleFileResp{
+		ID:        data.ID,
+		FileName:  data.FileName,
+		FileURL:   data.FileURL,
+		PdfURL:    data.PdfURL,
+		FileType:  data.FileType,
+		Seq:       data.Seq,
+		CreatedAt: data.CreatedAt,
+	}
+
+	return
+}
+
 func (p *Service) GetArticleFiles(c context.Context, articleID int64) (items []*api.ArticleFileResp, err error) {
 	return p.getArticleFiles(c, p.d.DB(), articleID)
 }
@@ -68,6 +90,7 @@ func (p *Service) bulkCreateFiles(c context.Context, node sqalx.Node, articleID 
 			ID:        gid.NewID(),
 			FileName:  v.FileName,
 			FileURL:   v.FileURL,
+			FileType:  v.FileType,
 			Seq:       v.Seq,
 			ArticleID: articleID,
 			CreatedAt: time.Now().Unix(),
@@ -131,6 +154,7 @@ func (p *Service) SaveArticleFiles(c context.Context, arg *api.ArgSaveArticleFil
 				ID:        gid.NewID(),
 				FileName:  v.FileName,
 				FileURL:   v.FileURL,
+				FileType:  v.FileType,
 				Seq:       v.Seq,
 				ArticleID: arg.ArticleID,
 				CreatedAt: time.Now().Unix(),
@@ -155,6 +179,7 @@ func (p *Service) SaveArticleFiles(c context.Context, arg *api.ArgSaveArticleFil
 
 		file.FileName = v.FileName
 		file.FileURL = v.FileURL
+		file.FileType = v.FileType
 		file.Seq = v.Seq
 
 		if err = p.d.UpdateArticleFile(c, tx, file); err != nil {

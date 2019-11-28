@@ -593,6 +593,8 @@ func (p *Service) UpdateArticle(c context.Context, arg *api.ArgUpdateArticle) (e
 	}
 	item.ContentText = doc.Text()
 
+	item.UpdatedAt = time.Now().Unix()
+
 	if err = p.d.DelImageURLByCond(c, tx, model.TargetTypeArticle, item.ID); err != nil {
 		return
 	}

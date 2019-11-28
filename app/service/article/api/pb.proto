@@ -180,6 +180,7 @@ message ArgArticleFile {
     string FileName  = 1;
     string FileURL  = 2;
     int32 Seq = 3;
+    string FileType = 4;
 }
 
 
@@ -216,6 +217,9 @@ message ArticleFileResp {
     string FileName = 2;
     string FileURL = 3;
     int32 Seq = 4;
+    string FileType = 5;
+    string PdfURL = 6;
+    int64 CreatedAt = 7;
 }
 
 message ArticleFilesResp {
@@ -271,6 +275,7 @@ message ArgUpdateArticleFile {
     string FileName  = 2;
     string FileURL  = 3;
     int32 Seq      = 4;
+    string FileType  = 5;
 }
 
 message ArgSaveArticleFiles {
@@ -363,6 +368,8 @@ message ReviseFileResp {
     string FileName  = 2;
     string FileURL  = 3;
     int32 Seq      = 4;
+    string FileType = 5;
+    string PdfURL = 6;
 }
 
 
@@ -405,6 +412,7 @@ service Article {
     rpc  CanEdit(IDReq) returns(BoolResp);
     rpc  GetUserCanEditArticleIDs(AidReq) returns (IDsResp);
 
+    rpc GetArticleFile(IDReq) returns (ArticleFileResp);
     rpc GetArticleFiles(IDReq) returns (ArticleFilesResp);
     rpc SaveArticleFiles(ArgSaveArticleFiles) returns (EmptyStruct);
 
