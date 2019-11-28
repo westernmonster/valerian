@@ -41,6 +41,7 @@ func route(e *mars.Engine) {
 		g.GET("/history/get", authSvc.User, articleHistory)
 
 		g.POST("/files", authSvc.User, editArticleFiles)
+		g.GET("/file/get", authSvc.User, getArticleFile)
 		g.POST("/relations/add", authSvc.User, addArticleRelation)
 		g.POST("/relations/edit", authSvc.User, editArticleRelation)
 		g.POST("/relations/del", authSvc.User, delArticleRelation)

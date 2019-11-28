@@ -9,6 +9,42 @@ import (
 	"valerian/library/net/metadata"
 )
 
+func (p *Service) GetArticleFile(c context.Context, fileID int64) (item *model.ArticleFileResp, err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+
+	var canView bool
+	if canView, err = p.d.CanView(c, &article.IDReq{Aid: aid, ID: fileID}); err != nil {
+		return
+	} else if !canView {
+		err = ecode.NoArticleViewPermission
+		return
+	}
+
+	return p.getArticleFile(c, aid, fileID)
+}
+
+func (p *Service) getArticleFile(c context.Context, aid int64, fileID int64) (item *model.ArticleFileResp, err error) {
+	var data *article.ArticleFileResp
+	if data, err = p.d.GetArticleFile(c, &article.IDReq{Aid: aid, ID: fileID}); err != nil {
+		return
+	}
+
+	item = &model.ArticleFileResp{
+		ID:       data.ID,
+		FileName: data.FileName,
+		FileURL:  data.FileURL,
+		FileType: data.FileType,
+		PdfURL:   data.PdfURL,
+		Seq:      int(data.Seq),
+	}
+
+	return
+}
+
 func (p *Service) GetArticleFiles(c context.Context, articleID int64) (items []*model.ArticleFileResp, err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {

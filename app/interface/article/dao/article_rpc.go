@@ -64,6 +64,14 @@ func (p *Dao) DelArticle(c context.Context, req *article.IDReq) (err error) {
 	return
 }
 
+func (p *Dao) GetArticleFile(c context.Context, req *article.IDReq) (resp *article.ArticleFileResp, err error) {
+	if resp, err = p.articleRPC.GetArticleFile(c, req); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetArticleFile() error(%+v), req(%+v)", err, req))
+		return
+	}
+	return resp, err
+}
+
 func (p *Dao) GetArticleFiles(c context.Context, req *article.IDReq) (resp *article.ArticleFilesResp, err error) {
 	if resp, err = p.articleRPC.GetArticleFiles(c, req); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetArticleFiles() error(%+v), req(%+v)", err, req))
