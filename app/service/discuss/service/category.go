@@ -2,10 +2,15 @@ package service
 
 import (
 	"context"
+
+	"valerian/app/service/discuss/api"
 	"valerian/app/service/discuss/model"
 	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
 )
+
+func (p *Service) SaveDiscussCategories(c context.Context, arg *api.ArgSaveDiscussCategories) (err error) {
+}
 
 func (p *Service) getDiscussCategories(c context.Context, node sqalx.Node, topicID int64) (items []*model.DiscussCategory, err error) {
 	var addCache = true

@@ -109,7 +109,8 @@ message ArgDisucssCategory {
 
 message ArgSaveDiscussCategories {
     int64 TopicID = 1;
-    repeated ArgDisucssCategory Items = 2;
+    int64 Aid = 2;
+    repeated ArgDisucssCategory Items = 3;
 }
 
 message ArgAddDiscuss {
@@ -143,8 +144,10 @@ message ArgUpdateDiscuss {
 
 message ArgSaveDiscussFiles {
     int64 DiscussionID = 1;
+    int64 Aid = 2;
     repeated ArgDiscussionFile Items = 5;
 }
+
 
 
 service Discussion {

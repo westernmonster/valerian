@@ -135,11 +135,6 @@ func (p *Service) canView(c context.Context, node sqalx.Node, aid int64, article
 		canView = true
 	}
 
-	if !canView {
-		err = ecode.NoArticleViewPermission
-		return
-	}
-
 	return
 }
 
