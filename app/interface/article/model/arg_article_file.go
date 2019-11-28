@@ -18,7 +18,7 @@ func (p *ArgArticleFile) Validate() error {
 		p,
 		validation.Field(&p.FileName, validation.Required),
 		validation.Field(&p.FileURL, validation.Required, is.URL),
-		validation.Field(&p.FileType, validation.Required, validation.In(FileTypeDoc, FileTypeDocx, FileTypePPT, FileTypePPTX, FileTypeXLS, FileTypeXLSX, FileTypePDF)),
+		validation.Field(&p.FileType, validation.Required, validation.In(FileTypeWord, FileTypePPT, FileTypeExcel, FileTypePDF)),
 	)
 }
 

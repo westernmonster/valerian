@@ -19,13 +19,10 @@ const (
 )
 
 const (
-	FileTypeDoc  = "doc"
-	FileTypeDocx = "docx"
-	FileTypePPT  = "ppt"
-	FileTypePPTX = "pptx"
-	FileTypeXLS  = "xls"
-	FileTypeXLSX = "xlsx"
-	FileTypePDF  = "pdf"
+	FileTypeWord  = "word"
+	FileTypePPT   = "ppt"
+	FileTypeExcel = "excel"
+	FileTypePDF   = "pdf"
 )
 
 const (
