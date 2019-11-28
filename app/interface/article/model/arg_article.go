@@ -48,6 +48,7 @@ func (p *AddArticleFile) Validate() error {
 		p,
 		validation.Field(&p.FileName, validation.Required, validation.RuneLength(0, 250)),
 		validation.Field(&p.FileURL, validation.Required, is.URL),
+		validation.Field(&p.FileType, validation.Required, validation.In(FileTypeWord, FileTypePPT, FileTypeExcel, FileTypePDF)),
 	)
 }
 
