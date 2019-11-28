@@ -7,8 +7,6 @@ import (
 	article "valerian/app/service/article/api"
 	"valerian/library/ecode"
 	"valerian/library/net/metadata"
-
-	"github.com/davecgh/go-spew/spew"
 )
 
 func (p *Service) GetArticleFile(c context.Context, fileID int64) (item *model.ArticleFileResp, err error) {
@@ -90,7 +88,6 @@ func (p *Service) getArticleFiles(c context.Context, aid int64, articleID int64)
 }
 
 func (p *Service) SaveArticleFiles(c context.Context, arg *model.ArgSaveArticleFiles) (err error) {
-	spew.Dump(arg)
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed
