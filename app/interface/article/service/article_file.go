@@ -41,6 +41,8 @@ func (p *Service) getArticleFiles(c context.Context, aid int64, articleID int64)
 				ID:       v.ID,
 				FileName: v.FileName,
 				FileURL:  v.FileURL,
+				FileType: v.FileType,
+				PdfURL:   v.PdfURL,
 				Seq:      int(v.Seq),
 			})
 		}
@@ -67,6 +69,7 @@ func (p *Service) SaveArticleFiles(c context.Context, arg *model.ArgSaveArticleF
 			c := &article.ArgUpdateArticleFile{
 				FileName: v.FileName,
 				FileURL:  v.FileURL,
+				FileType: v.FileType,
 				Seq:      int32(v.Seq),
 			}
 			if v.ID != nil {

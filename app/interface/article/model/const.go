@@ -19,6 +19,16 @@ const (
 )
 
 const (
+	FileTypeDoc  = "doc"
+	FileTypeDocx = "docx"
+	FileTypePPT  = "ppt"
+	FileTypePPTX = "pptx"
+	FileTypeXLS  = "xls"
+	FileTypeXLSX = "xlsx"
+	FileTypePDF  = "pdf"
+)
+
+const (
 	EditPermissionMember = "member"
 	EditPermissionAdmin  = "admin"
 )

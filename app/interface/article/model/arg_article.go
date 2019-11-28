@@ -39,6 +39,7 @@ func (p *ArgAddArticle) Validate() error {
 type AddArticleFile struct {
 	FileName string `json:"file_name"`          // FileName 文件名
 	FileURL  string `json:"file_url,omitempty"` // FileURL 文件地址
+	FileType string `json:"file_type"`          // FileType 文件类型
 	Seq      int    `json:"seq"`                // Seq 文件顺序
 }
 
