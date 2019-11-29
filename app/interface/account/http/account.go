@@ -151,8 +151,8 @@ func resetPassword(c *mars.Context) {
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /account/list/topics [get]
-func memberTopics(c *mars.Context) {
+// @Router /account/list/my_topics [get]
+func accountTopics(c *mars.Context) {
 	var (
 		err    error
 		offset int

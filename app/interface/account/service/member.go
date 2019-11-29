@@ -686,3 +686,56 @@ func (p *Service) GetMemberCert(c context.Context, targetID int64) (resp *model.
 
 	return
 }
+
+func (p *Service) GetMemberTopicsPaged(c context.Context, aid int64, limit, offset int) (resp *model.MemberTopicResp, err error) {
+	var data *topic.UserTopicsResp
+	if data, err = p.d.GetUserTopicsPaged(c, aid, int32(limit), int32(offset)); err != nil {
+		return
+	}
+
+	resp = &model.MemberTopicResp{
+		Items:  make([]*model.TargetTopic, len(data.Items)),
+		Paging: &model.Paging{},
+	}
+
+	for i, v := range data.Items {
+		item := &model.TargetTopic{
+			ID:           v.ID,
+			Name:         v.Name,
+			MemberCount:  (v.Stat.MemberCount),
+			Introduction: v.Introduction,
+			CreatedAt:    v.CreatedAt,
+			UpdatedAt:    v.UpdatedAt,
+			Avatar:       v.Avatar,
+		}
+
+		resp.Items[i] = item
+	}
+
+	if resp.Paging.Prev, err = genURL("/api/v1/account/list/topics", url.Values{
+		"id":     []string{strconv.FormatInt(aid, 10)},
+		"limit":  []string{strconv.Itoa(limit)},
+		"offset": []string{strconv.Itoa(offset - limit)},
+	}); err != nil {
+		return
+	}
+
+	if resp.Paging.Next, err = genURL("/api/v1/account/list/topics", url.Values{
+		"id":     []string{strconv.FormatInt(aid, 10)},
+		"limit":  []string{strconv.Itoa(limit)},
+		"offset": []string{strconv.Itoa(offset + limit)},
+	}); err != nil {
+		return
+	}
+
+	if len(resp.Items) < limit {
+		resp.Paging.IsEnd = true
+		resp.Paging.Next = ""
+	}
+
+	if offset == 0 {
+		resp.Paging.Prev = ""
+	}
+
+	return
+}

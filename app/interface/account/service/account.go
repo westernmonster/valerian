@@ -2,6 +2,8 @@ package service
 
 import (
 	"context"
+	"net/url"
+	"strconv"
 	"time"
 
 	"valerian/app/interface/account/model"
@@ -314,7 +316,7 @@ func (p *Service) GetProfile(c context.Context, aid int64) (item *model.Profile,
 	return
 }
 
-func (p *Service) GetUserTopicsPaged(c context.Context, cate string, limit, offset int32) (resp *model.MemberTopicResp, err error) {
+func (p *Service) GetUserTopicsPaged(c context.Context, cate string, limit, offset int) (resp *model.MemberTopicResp, err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed
@@ -322,13 +324,14 @@ func (p *Service) GetUserTopicsPaged(c context.Context, cate string, limit, offs
 	}
 
 	resp = &model.MemberTopicResp{
-		Items: make([]*model.TargetTopic, 0),
+		Items:  make([]*model.TargetTopic, 0),
+		Paging: &model.Paging{},
 	}
 
 	switch cate {
 	case model.CateManaged:
 		var data *topic.IDsResp
-		if data, err = p.d.GetManageTopicIDsPaged(c, aid, limit, offset); err != nil {
+		if data, err = p.d.GetManageTopicIDsPaged(c, aid, int32(limit), int32(offset)); err != nil {
 			return
 		}
 		if data.IDs == nil || len(data.IDs) == 0 {
@@ -346,7 +349,7 @@ func (p *Service) GetUserTopicsPaged(c context.Context, cate string, limit, offs
 		break
 	case model.CateFollowed:
 		var data *topic.IDsResp
-		if data, err = p.d.GetFollowedTopicIDsPaged(c, aid, limit, offset); err != nil {
+		if data, err = p.d.GetFollowedTopicIDsPaged(c, aid, int32(limit), int32(offset)); err != nil {
 			return
 		}
 		if data.IDs == nil || len(data.IDs) == 0 {
@@ -364,7 +367,7 @@ func (p *Service) GetUserTopicsPaged(c context.Context, cate string, limit, offs
 		break
 	case model.CateFaved:
 		var data *fav.FavsResp
-		if data, err = p.d.GetUserFavsPaged(c, aid, model.TargetTypeTopic, limit, offset); err != nil {
+		if data, err = p.d.GetUserFavsPaged(c, aid, model.TargetTypeTopic, int32(limit), int32(offset)); err != nil {
 			return
 		}
 		if data.Items == nil || len(data.Items) == 0 {
@@ -382,7 +385,7 @@ func (p *Service) GetUserTopicsPaged(c context.Context, cate string, limit, offs
 		break
 	case model.CateRecentViewed:
 		var data *recent.RecentViewsResp
-		if data, err = p.d.GetRecentViewsPaged(c, aid, model.TargetTypeTopic, limit, offset); err != nil {
+		if data, err = p.d.GetRecentViewsPaged(c, aid, model.TargetTypeTopic, int32(limit), int32(offset)); err != nil {
 			return
 		}
 		if data.Items == nil || len(data.Items) == 0 {
@@ -398,6 +401,31 @@ func (p *Service) GetUserTopicsPaged(c context.Context, cate string, limit, offs
 			resp.Items = append(resp.Items, p.FromTopic(t))
 		}
 		break
+	}
+
+	if resp.Paging.Prev, err = genURL("/api/v1/account/list/my_topics", url.Values{
+		"cate":   []string{cate},
+		"limit":  []string{strconv.Itoa(limit)},
+		"offset": []string{strconv.Itoa(offset - limit)},
+	}); err != nil {
+		return
+	}
+
+	if resp.Paging.Next, err = genURL("/api/v1/account/list/my_topics", url.Values{
+		"cate":   []string{cate},
+		"limit":  []string{strconv.Itoa(limit)},
+		"offset": []string{strconv.Itoa(offset + limit)},
+	}); err != nil {
+		return
+	}
+
+	if len(resp.Items) < limit {
+		resp.Paging.IsEnd = true
+		resp.Paging.Next = ""
+	}
+
+	if offset == 0 {
+		resp.Paging.Prev = ""
 	}
 
 	return
