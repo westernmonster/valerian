@@ -205,6 +205,12 @@ message UserArticlesReq {
     int32 Offset = 3 [(gogoproto.jsontag) = "offset"];
 }
 
+message UserRevisesReq {
+    int64 AccountID = 1 [(gogoproto.jsontag) = "aid"];
+    int32 Limit = 2 [(gogoproto.jsontag) = "limit"];
+    int32 Offset = 3 [(gogoproto.jsontag) = "offset"];
+}
+
 message UserArticlesResp {
     repeated ArticleInfo Items = 1 [(gogoproto.jsontag) = 'items'];
 }
@@ -430,6 +436,7 @@ service Article {
     rpc UpdateRevise(ArgUpdateRevise) returns (EmptyStruct);
     rpc DelRevise(IDReq) returns (EmptyStruct);
 
+    rpc GetUserReviseIDsPaged(UserRevisesReq) returns(IDsResp);
     rpc GetArticleRevisesPaged(ArgArticleRevisesPaged) returns(ReviseListResp);
 
     rpc GetReviseFiles(IDReq) returns(ReviseFilesResp);
