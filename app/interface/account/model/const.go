@@ -42,4 +42,5 @@ const (
 	CateFollowed     = "followed"
 	CateFaved        = "faved"
 	CateRecentViewed = "viewed"
+	CateCreated      = "created"
 )
