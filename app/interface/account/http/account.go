@@ -213,3 +213,42 @@ func accountArticles(c *mars.Context) {
 	}
 	c.JSON(srv.GetUserArticlesPaged(c, params.Get("cate"), (limit), (offset)))
 }
+
+// @Summary 获取当前用户补充
+// @Description 获取当前用户补充
+// @Tags account
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param cate query string true "类型：created, faved"
+// @Param limit query integer false "每页大小"
+// @Param offset query integer false "offset"
+// @Success 200 {object}  app.interface.account.model.MemberReviseResp "用户动态"
+// @Failure 400 "验证请求失败"
+// @Failure 401 "登录验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /account/list/my_revises [get]
+func accountRevises(c *mars.Context) {
+	var (
+		err    error
+		offset int
+		limit  int
+	)
+
+	params := c.Request.Form
+
+	if offset, err = strconv.Atoi(params.Get("offset")); err != nil {
+		offset = 0
+	} else if offset < 0 {
+		offset = 0
+	}
+
+	if limit, err = strconv.Atoi(params.Get("limit")); err != nil {
+		limit = 10
+	} else if limit < 0 {
+		limit = 10
+	}
+	c.JSON(srv.GetUserRevisesPaged(c, params.Get("cate"), (limit), (offset)))
+}

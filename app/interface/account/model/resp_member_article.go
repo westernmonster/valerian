@@ -30,3 +30,8 @@ type MemberArticleResp struct {
 	Items  []*MemberArticle `json:"items"`
 	Paging *Paging          `json:"paging"`
 }
+
+type MemberReviseResp struct {
+	Items  []*TargetRevise `json:"items"`
+	Paging *Paging         `json:"paging"`
+}

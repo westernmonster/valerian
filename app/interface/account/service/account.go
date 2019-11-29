@@ -576,3 +576,82 @@ func (p *Service) GetUserArticlesPaged(c context.Context, cate string, limit, of
 
 	return
 }
+
+func (p *Service) GetUserRevisesPaged(c context.Context, cate string, limit, offset int) (resp *model.MemberReviseResp, err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+
+	resp = &model.MemberReviseResp{
+		Items:  make([]*model.TargetRevise, 0),
+		Paging: &model.Paging{},
+	}
+
+	switch cate {
+	case model.CateCreated:
+		var data *article.IDsResp
+		if data, err = p.d.GetUserReviseIDsPaged(c, aid, limit, offset); err != nil {
+			return
+		}
+		if data.IDs == nil || len(data.IDs) == 0 {
+			return
+		}
+
+		for _, v := range data.IDs {
+			var t *article.ReviseInfo
+			if t, err = p.d.GetRevise(c, v); err != nil {
+				return
+			}
+			resp.Items = append(resp.Items, p.FromRevise(t))
+		}
+		break
+
+	case model.CateFaved:
+		var data *fav.FavsResp
+		if data, err = p.d.GetUserFavsPaged(c, aid, model.TargetTypeRevise, int32(limit), int32(offset)); err != nil {
+			return
+		}
+		if data.Items == nil || len(data.Items) == 0 {
+			return
+		}
+
+		for _, v := range data.Items {
+			var t *article.ReviseInfo
+			if t, err = p.d.GetRevise(c, v.TargetID); err != nil {
+				return
+			}
+
+			resp.Items = append(resp.Items, p.FromRevise(t))
+		}
+		break
+	}
+
+	if resp.Paging.Prev, err = genURL("/api/v1/account/list/my_revises", url.Values{
+		"cate":   []string{cate},
+		"limit":  []string{strconv.Itoa(limit)},
+		"offset": []string{strconv.Itoa(offset - limit)},
+	}); err != nil {
+		return
+	}
+
+	if resp.Paging.Next, err = genURL("/api/v1/account/list/my_revises", url.Values{
+		"cate":   []string{cate},
+		"limit":  []string{strconv.Itoa(limit)},
+		"offset": []string{strconv.Itoa(offset + limit)},
+	}); err != nil {
+		return
+	}
+
+	if len(resp.Items) < limit {
+		resp.Paging.IsEnd = true
+		resp.Paging.Next = ""
+	}
+
+	if offset == 0 {
+		resp.Paging.Prev = ""
+	}
+
+	return
+}
