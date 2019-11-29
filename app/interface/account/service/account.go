@@ -476,31 +476,25 @@ func (p *Service) GetUserArticlesPaged(c context.Context, cate string, limit, of
 
 	switch cate {
 	case model.CateCreated:
-		var data *article.UserArticlesResp
-		if data, err = p.d.GetUserArticlesPaged(c, aid, limit, offset); err != nil {
+		var data *article.IDsResp
+		if data, err = p.d.GetUserArticleIDsPaged(c, aid, limit, offset); err != nil {
 			return
 		}
-		if data.Items == nil || len(data.Items) == 0 {
+		if data.IDs == nil || len(data.IDs) == 0 {
 			return
 		}
 
-		for _, v := range data.Items {
-			item := &model.ArticleItem{
-				ID:           v.ID,
-				Title:        v.Title,
-				Excerpt:      v.Excerpt,
-				ChangeDesc:   v.ChangeDesc,
-				LikeCount:    (v.Stat.LikeCount),
-				DislikeCount: (v.Stat.DislikeCount),
-				CommentCount: (v.Stat.CommentCount),
-				CreatedAt:    v.CreatedAt,
-				UpdatedAt:    v.UpdatedAt,
-			}
-
-			if v.ImageUrls == nil {
-				item.ImageUrls = make([]string, 0)
+		for _, v := range data.IDs {
+			item := &model.ArticleItem{}
+			var t *article.ArticleInfo
+			if t, err = p.d.GetArticle(c, v); err != nil {
+				if ecode.IsNotExistEcode(err) {
+					item.Deleted = true
+				} else {
+					return
+				}
 			} else {
-				item.ImageUrls = v.ImageUrls
+				item.Target = p.FromArticle(t)
 			}
 
 			resp.Items = append(resp.Items, item)
@@ -517,26 +511,16 @@ func (p *Service) GetUserArticlesPaged(c context.Context, cate string, limit, of
 		}
 
 		for _, v := range data.Items {
+			item := &model.ArticleItem{}
 			var t *article.ArticleInfo
 			if t, err = p.d.GetArticle(c, v.TargetID); err != nil {
-				return
-			}
-			item := &model.AccountArticles{
-				ID:           t.ID,
-				Title:        t.Title,
-				Excerpt:      t.Excerpt,
-				ChangeDesc:   t.ChangeDesc,
-				LikeCount:    (t.Stat.LikeCount),
-				DislikeCount: (t.Stat.DislikeCount),
-				CommentCount: (t.Stat.CommentCount),
-				CreatedAt:    t.CreatedAt,
-				UpdatedAt:    t.UpdatedAt,
-			}
-
-			if t.ImageUrls == nil {
-				item.ImageUrls = make([]string, 0)
+				if ecode.IsNotExistEcode(err) {
+					item.Deleted = true
+				} else {
+					return
+				}
 			} else {
-				item.ImageUrls = t.ImageUrls
+				item.Target = p.FromArticle(t)
 			}
 
 			resp.Items = append(resp.Items, item)
@@ -552,26 +536,16 @@ func (p *Service) GetUserArticlesPaged(c context.Context, cate string, limit, of
 		}
 
 		for _, v := range data.Items {
+			item := &model.ArticleItem{}
 			var t *article.ArticleInfo
 			if t, err = p.d.GetArticle(c, v.TargetID); err != nil {
-				return
-			}
-			item := &model.AccountArticles{
-				ID:           t.ID,
-				Title:        t.Title,
-				Excerpt:      t.Excerpt,
-				ChangeDesc:   t.ChangeDesc,
-				LikeCount:    (t.Stat.LikeCount),
-				DislikeCount: (t.Stat.DislikeCount),
-				CommentCount: (t.Stat.CommentCount),
-				CreatedAt:    t.CreatedAt,
-				UpdatedAt:    t.UpdatedAt,
-			}
-
-			if t.ImageUrls == nil {
-				item.ImageUrls = make([]string, 0)
+				if ecode.IsNotExistEcode(err) {
+					item.Deleted = true
+				} else {
+					return
+				}
 			} else {
-				item.ImageUrls = t.ImageUrls
+				item.Target = p.FromArticle(t)
 			}
 
 			resp.Items = append(resp.Items, item)
@@ -607,15 +581,15 @@ func (p *Service) GetUserArticlesPaged(c context.Context, cate string, limit, of
 	return
 }
 
-func (p *Service) GetUserRevisesPaged(c context.Context, cate string, limit, offset int) (resp *model.MemberReviseResp, err error) {
+func (p *Service) GetUserRevisesPaged(c context.Context, cate string, limit, offset int) (resp *model.AccountRevisesResp, err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed
 		return
 	}
 
-	resp = &model.MemberReviseResp{
-		Items:  make([]*model.TargetRevise, 0),
+	resp = &model.AccountRevisesResp{
+		Items:  make([]*model.ReviseItem, 0),
 		Paging: &model.Paging{},
 	}
 
@@ -630,11 +604,19 @@ func (p *Service) GetUserRevisesPaged(c context.Context, cate string, limit, off
 		}
 
 		for _, v := range data.IDs {
+			item := &model.ReviseItem{}
 			var t *article.ReviseInfo
 			if t, err = p.d.GetRevise(c, v); err != nil {
-				return
+				if ecode.IsNotExistEcode(err) {
+					item.Deleted = true
+				} else {
+					return
+				}
+			} else {
+				item.Target = p.FromRevise(t)
 			}
-			resp.Items = append(resp.Items, p.FromRevise(t))
+
+			resp.Items = append(resp.Items, item)
 		}
 		break
 
@@ -648,12 +630,19 @@ func (p *Service) GetUserRevisesPaged(c context.Context, cate string, limit, off
 		}
 
 		for _, v := range data.Items {
+			item := &model.ReviseItem{}
 			var t *article.ReviseInfo
 			if t, err = p.d.GetRevise(c, v.TargetID); err != nil {
-				return
+				if ecode.IsNotExistEcode(err) {
+					item.Deleted = true
+				} else {
+					return
+				}
+			} else {
+				item.Target = p.FromRevise(t)
 			}
 
-			resp.Items = append(resp.Items, p.FromRevise(t))
+			resp.Items = append(resp.Items, item)
 		}
 		break
 	}
@@ -686,45 +675,41 @@ func (p *Service) GetUserRevisesPaged(c context.Context, cate string, limit, off
 	return
 }
 
-func (p *Service) GetUserDiscussionsPaged(c context.Context, cate string, limit, offset int) (resp *model.MemberDiscussResp, err error) {
+func (p *Service) GetUserDiscussionsPaged(c context.Context, cate string, limit, offset int) (resp *model.AccountDiscussionsResp, err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed
 		return
 	}
 
-	resp = &model.MemberDiscussResp{
-		Items:  make([]*model.MemberDiscuss, 0),
+	resp = &model.AccountDiscussionsResp{
+		Items:  make([]*model.DiscussItem, 0),
 		Paging: &model.Paging{},
 	}
 
 	switch cate {
 	case model.CateCreated:
-		var data *discuss.UserDiscussionsResp
-		if data, err = p.d.GetUserDiscussionsPaged(c, aid, limit, offset); err != nil {
+		var data *discuss.IDsResp
+		if data, err = p.d.GetUserDiscussionIDsPaged(c, aid, limit, offset); err != nil {
 			return
 		}
-		if data.Items == nil || len(data.Items) == 0 {
+		if data.IDs == nil || len(data.IDs) == 0 {
 			return
 		}
 
-		for _, v := range data.Items {
-			item := &model.MemberDiscuss{
-				ID:           v.ID,
-				Excerpt:      v.Excerpt,
-				LikeCount:    (v.Stat.LikeCount),
-				DislikeCount: (v.Stat.DislikeCount),
-				CommentCount: (v.Stat.CommentCount),
-				CreatedAt:    v.CreatedAt,
-				UpdatedAt:    v.UpdatedAt,
-				Title:        v.Title,
-			}
-
-			if v.ImageUrls == nil {
-				item.ImageUrls = make([]string, 0)
+		for _, v := range data.IDs {
+			item := &model.DiscussItem{}
+			var t *discuss.DiscussionInfo
+			if t, err = p.d.GetDiscussion(c, v); err != nil {
+				if ecode.IsNotExistEcode(err) {
+					item.Deleted = true
+				} else {
+					return
+				}
 			} else {
-				item.ImageUrls = v.ImageUrls
+				item.Target = p.FromDiscussion(t)
 			}
+
 			resp.Items = append(resp.Items, item)
 		}
 		break
@@ -739,26 +724,16 @@ func (p *Service) GetUserDiscussionsPaged(c context.Context, cate string, limit,
 		}
 
 		for _, v := range data.Items {
+			item := &model.DiscussItem{}
 			var t *discuss.DiscussionInfo
 			if t, err = p.d.GetDiscussion(c, v.TargetID); err != nil {
-				return
-			}
-
-			item := &model.MemberDiscuss{
-				ID:           t.ID,
-				Excerpt:      t.Excerpt,
-				LikeCount:    t.Stat.LikeCount,
-				DislikeCount: t.Stat.DislikeCount,
-				CommentCount: t.Stat.CommentCount,
-				CreatedAt:    t.CreatedAt,
-				UpdatedAt:    t.UpdatedAt,
-				Title:        t.Title,
-			}
-
-			if t.ImageUrls == nil {
-				item.ImageUrls = make([]string, 0)
+				if ecode.IsNotExistEcode(err) {
+					item.Deleted = true
+				} else {
+					return
+				}
 			} else {
-				item.ImageUrls = t.ImageUrls
+				item.Target = p.FromDiscussion(t)
 			}
 
 			resp.Items = append(resp.Items, item)
