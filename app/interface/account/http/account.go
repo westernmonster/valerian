@@ -190,7 +190,7 @@ func accountTopics(c *mars.Context) {
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /account/list/my_topics [get]
+// @Router /account/list/my_articles [get]
 func accountArticles(c *mars.Context) {
 	var (
 		err    error
