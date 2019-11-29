@@ -57,6 +57,10 @@ message RecentViewsResp {
     repeated RecentViewInfo Items = 1 [(gogoproto.jsontag) = 'items'];
 }
 
+message IDsResp {
+    repeated int64 IDs = 1 [(gogoproto.jsontag) = 'ids'];
+}
+
 
 service Recent {
     rpc GetRecentPubsPaged(RecentPubsReq) returns (RecentPubsResp);
