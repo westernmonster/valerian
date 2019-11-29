@@ -256,6 +256,140 @@ func (m *UserFavsReq) GetTargetType() string {
 	return ""
 }
 
+type FavItem struct {
+	ID                   int64    `protobuf:"varint,1,opt,name=ID,proto3" json:"ID,omitempty"`
+	TargetType           string   `protobuf:"bytes,2,opt,name=TargetType,proto3" json:"TargetType,omitempty"`
+	TargetID             int64    `protobuf:"varint,3,opt,name=TargetID,proto3" json:"TargetID,omitempty"`
+	CreatedAt            int64    `protobuf:"varint,4,opt,name=CreatedAt,proto3" json:"CreatedAt,omitempty"`
+	UpdatedAt            int64    `protobuf:"varint,5,opt,name=UpdatedAt,proto3" json:"UpdatedAt,omitempty"`
+	AccountID            int64    `protobuf:"varint,6,opt,name=AccountID,proto3" json:"AccountID,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *FavItem) Reset()         { *m = FavItem{} }
+func (m *FavItem) String() string { return proto.CompactTextString(m) }
+func (*FavItem) ProtoMessage()    {}
+func (*FavItem) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f80abaa17e25ccc8, []int{4}
+}
+func (m *FavItem) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *FavItem) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_FavItem.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *FavItem) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_FavItem.Merge(m, src)
+}
+func (m *FavItem) XXX_Size() int {
+	return m.Size()
+}
+func (m *FavItem) XXX_DiscardUnknown() {
+	xxx_messageInfo_FavItem.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_FavItem proto.InternalMessageInfo
+
+func (m *FavItem) GetID() int64 {
+	if m != nil {
+		return m.ID
+	}
+	return 0
+}
+
+func (m *FavItem) GetTargetType() string {
+	if m != nil {
+		return m.TargetType
+	}
+	return ""
+}
+
+func (m *FavItem) GetTargetID() int64 {
+	if m != nil {
+		return m.TargetID
+	}
+	return 0
+}
+
+func (m *FavItem) GetCreatedAt() int64 {
+	if m != nil {
+		return m.CreatedAt
+	}
+	return 0
+}
+
+func (m *FavItem) GetUpdatedAt() int64 {
+	if m != nil {
+		return m.UpdatedAt
+	}
+	return 0
+}
+
+func (m *FavItem) GetAccountID() int64 {
+	if m != nil {
+		return m.AccountID
+	}
+	return 0
+}
+
+type FavsResp struct {
+	Items                []*FavItem `protobuf:"bytes,1,rep,name=Items,proto3" json:"Items,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
+	XXX_unrecognized     []byte     `json:"-"`
+	XXX_sizecache        int32      `json:"-"`
+}
+
+func (m *FavsResp) Reset()         { *m = FavsResp{} }
+func (m *FavsResp) String() string { return proto.CompactTextString(m) }
+func (*FavsResp) ProtoMessage()    {}
+func (*FavsResp) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f80abaa17e25ccc8, []int{5}
+}
+func (m *FavsResp) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *FavsResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_FavsResp.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *FavsResp) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_FavsResp.Merge(m, src)
+}
+func (m *FavsResp) XXX_Size() int {
+	return m.Size()
+}
+func (m *FavsResp) XXX_DiscardUnknown() {
+	xxx_messageInfo_FavsResp.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_FavsResp proto.InternalMessageInfo
+
+func (m *FavsResp) GetItems() []*FavItem {
+	if m != nil {
+		return m.Items
+	}
+	return nil
+}
+
 type IDsResp struct {
 	IDs                  []int64  `protobuf:"varint,1,rep,packed,name=IDs,proto3" json:"ids"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -267,7 +401,7 @@ func (m *IDsResp) Reset()         { *m = IDsResp{} }
 func (m *IDsResp) String() string { return proto.CompactTextString(m) }
 func (*IDsResp) ProtoMessage()    {}
 func (*IDsResp) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f80abaa17e25ccc8, []int{4}
+	return fileDescriptor_f80abaa17e25ccc8, []int{6}
 }
 func (m *IDsResp) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -308,41 +442,49 @@ func init() {
 	proto.RegisterType((*FavInfo)(nil), "service.fav.FavInfo")
 	proto.RegisterType((*FavReq)(nil), "service.fav.FavReq")
 	proto.RegisterType((*UserFavsReq)(nil), "service.fav.UserFavsReq")
+	proto.RegisterType((*FavItem)(nil), "service.fav.FavItem")
+	proto.RegisterType((*FavsResp)(nil), "service.fav.FavsResp")
 	proto.RegisterType((*IDsResp)(nil), "service.fav.IDsResp")
 }
 
 func init() { proto.RegisterFile("pb.proto", fileDescriptor_f80abaa17e25ccc8) }
 
 var fileDescriptor_f80abaa17e25ccc8 = []byte{
-	// 440 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x92, 0xdf, 0x8a, 0xd3, 0x40,
-	0x14, 0xc6, 0x19, 0xb3, 0x69, 0x9b, 0x53, 0x56, 0x71, 0xf4, 0x22, 0x2e, 0xd2, 0x94, 0xa0, 0xb0,
-	0xa2, 0xa6, 0xb0, 0x8a, 0xf7, 0x86, 0x18, 0x09, 0x28, 0xca, 0xb8, 0xbd, 0xf1, 0x66, 0x99, 0xa6,
-	0x93, 0x38, 0x60, 0x3b, 0x31, 0x33, 0x1d, 0xe8, 0x2b, 0x79, 0xe5, 0x63, 0x78, 0xe9, 0x13, 0x04,
-	0xe9, 0x65, 0xc0, 0x77, 0x90, 0xcc, 0x74, 0xdd, 0xb6, 0x0a, 0xb2, 0x77, 0x33, 0xbf, 0xf3, 0x1d,
-	0xce, 0x77, 0xfe, 0xc0, 0xa0, 0x9a, 0x45, 0x55, 0x2d, 0x94, 0xc0, 0x43, 0xc9, 0x6a, 0xcd, 0x73,
-	0x16, 0x15, 0x54, 0x9f, 0x3c, 0x2d, 0xb9, 0xfa, 0xb4, 0x9a, 0x45, 0xb9, 0x58, 0x4c, 0x4a, 0x51,
-	0x8a, 0x89, 0xd1, 0xcc, 0x56, 0x85, 0xf9, 0x99, 0x8f, 0x79, 0xd9, 0xdc, 0xf0, 0x18, 0x86, 0xaf,
-	0x16, 0x95, 0x5a, 0x7f, 0x50, 0xf5, 0x2a, 0x57, 0xe1, 0x63, 0xe8, 0xa7, 0x54, 0x67, 0xcb, 0x42,
-	0xe0, 0x31, 0xb8, 0x99, 0x4c, 0xa9, 0xf6, 0xd1, 0x18, 0x9d, 0x0e, 0x62, 0x68, 0x9b, 0xa0, 0xc7,
-	0xe5, 0x45, 0x41, 0x35, 0xb1, 0x81, 0xf0, 0x1b, 0x82, 0x5e, 0x4a, 0x35, 0x61, 0x5f, 0xf0, 0x13,
-	0xf0, 0x5e, 0xe6, 0xb9, 0x58, 0x2d, 0x55, 0x96, 0x98, 0x04, 0x27, 0xbe, 0xd9, 0x36, 0x01, 0x50,
-	0x0b, 0x2f, 0xf8, 0x9c, 0x5c, 0x09, 0xf0, 0x23, 0x18, 0x9c, 0xd3, 0xba, 0x64, 0x9d, 0xf8, 0x86,
-	0x11, 0x1f, 0xb7, 0x4d, 0xe0, 0x29, 0xc3, 0x3a, 0xed, 0x9f, 0x30, 0x9e, 0x00, 0xd8, 0xf7, 0xf9,
-	0xba, 0x62, 0xbe, 0x33, 0x46, 0xa7, 0x5e, 0x7c, 0xab, 0x6d, 0x82, 0xe1, 0x56, 0xac, 0xd6, 0x15,
-	0x23, 0x3b, 0x12, 0x7c, 0x1f, 0xbc, 0xa9, 0x64, 0x6f, 0xa9, 0x54, 0xac, 0xf6, 0x8f, 0x3a, 0xeb,
-	0xe4, 0x0a, 0x84, 0x5f, 0x11, 0x0c, 0xa7, 0x92, 0xd5, 0x29, 0xd5, 0xb2, 0xf3, 0xfd, 0xf0, 0x6f,
-	0xdf, 0xfd, 0xb6, 0x09, 0x1c, 0xba, 0x6f, 0x38, 0x00, 0xf7, 0x0d, 0x5f, 0x70, 0x65, 0xdc, 0xba,
-	0xb1, 0xd7, 0x36, 0x81, 0xfb, 0xb9, 0x03, 0xc4, 0x72, 0x1c, 0x42, 0xef, 0x5d, 0x51, 0x48, 0xa6,
-	0x8c, 0x45, 0xd7, 0x4e, 0x4b, 0x18, 0x42, 0xb6, 0x91, 0x83, 0x56, 0x8e, 0xfe, 0xdb, 0x4a, 0xf8,
-	0x00, 0xfa, 0x59, 0x22, 0x09, 0x93, 0x15, 0xbe, 0x07, 0x4e, 0x96, 0x48, 0x1f, 0x8d, 0x9d, 0x4b,
-	0x87, 0x7c, 0x2e, 0x49, 0xc7, 0xce, 0x7e, 0x21, 0x70, 0x52, 0xaa, 0xf1, 0xd9, 0x76, 0x5f, 0xf8,
-	0x4e, 0xb4, 0x73, 0x0f, 0x91, 0x5d, 0xd0, 0xc9, 0xdd, 0x43, 0x68, 0x76, 0xfc, 0xdc, 0xa6, 0xfe,
-	0x33, 0xc3, 0xdf, 0x83, 0x3b, 0x47, 0x82, 0x13, 0xc0, 0xaf, 0x99, 0xda, 0x8e, 0x31, 0x4b, 0xe4,
-	0x7b, 0x5a, 0xb2, 0x39, 0xde, 0xd7, 0xef, 0x0c, 0xf9, 0xa0, 0xf6, 0x65, 0x4b, 0x2f, 0xc0, 0x9d,
-	0x2e, 0x8b, 0x6b, 0x57, 0x8f, 0x6f, 0x7f, 0xdf, 0x8c, 0xd0, 0x8f, 0xcd, 0x08, 0xfd, 0xdc, 0x8c,
-	0xd0, 0x47, 0x87, 0x56, 0x7c, 0xd6, 0x33, 0xb7, 0xfc, 0xec, 0x77, 0x00, 0x00, 0x00, 0xff, 0xff,
-	0xd9, 0x16, 0xad, 0x38, 0x13, 0x03, 0x00, 0x00,
+	// 538 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x53, 0x5d, 0x8b, 0xd3, 0x40,
+	0x14, 0x65, 0x9a, 0x4d, 0xb7, 0xb9, 0x65, 0x57, 0x1d, 0x15, 0x6a, 0x59, 0x9a, 0x12, 0x14, 0xea,
+	0x57, 0x0b, 0x55, 0xf6, 0x7d, 0xbb, 0xb1, 0x12, 0x50, 0x94, 0x71, 0xfb, 0xe2, 0xcb, 0x32, 0x6d,
+	0x27, 0x35, 0x60, 0x9b, 0x6c, 0x66, 0x1a, 0xe8, 0x5f, 0xf2, 0x45, 0xf1, 0x57, 0xf8, 0xe8, 0x2f,
+	0x08, 0xd2, 0xc7, 0xfc, 0x0a, 0x99, 0x99, 0x6c, 0x93, 0x74, 0x85, 0xc5, 0xb7, 0xe4, 0xdc, 0x73,
+	0xee, 0x9c, 0x7b, 0xe6, 0x0e, 0x34, 0xa2, 0x69, 0x3f, 0x8a, 0x43, 0x11, 0xe2, 0x26, 0x67, 0x71,
+	0x12, 0xcc, 0x58, 0xdf, 0xa7, 0x49, 0xfb, 0xe5, 0x22, 0x10, 0x5f, 0xd6, 0xd3, 0xfe, 0x2c, 0x5c,
+	0x0e, 0x16, 0xe1, 0x22, 0x1c, 0x28, 0xce, 0x74, 0xed, 0xab, 0x3f, 0xf5, 0xa3, 0xbe, 0xb4, 0xd6,
+	0x39, 0x82, 0xe6, 0x9b, 0x65, 0x24, 0x36, 0x9f, 0x44, 0xbc, 0x9e, 0x09, 0xe7, 0x39, 0x1c, 0x8e,
+	0x69, 0xe2, 0xad, 0xfc, 0x10, 0x77, 0xc1, 0xf4, 0xf8, 0x98, 0x26, 0x2d, 0xd4, 0x45, 0xbd, 0xc6,
+	0x08, 0xb2, 0xd4, 0xae, 0x07, 0xfc, 0xd2, 0xa7, 0x09, 0xd1, 0x05, 0xe7, 0x07, 0x82, 0xfa, 0x98,
+	0x26, 0x84, 0x5d, 0xe1, 0x17, 0x60, 0x9d, 0xcd, 0x66, 0xe1, 0x7a, 0x25, 0x3c, 0x57, 0x09, 0x8c,
+	0xd1, 0x71, 0x96, 0xda, 0x40, 0x35, 0x78, 0x19, 0xcc, 0x49, 0x41, 0xc0, 0x4f, 0xa1, 0x71, 0x41,
+	0xe3, 0x05, 0x93, 0xe4, 0x9a, 0x22, 0x1f, 0x65, 0xa9, 0x6d, 0x09, 0x85, 0x49, 0xee, 0xae, 0x8c,
+	0x07, 0x00, 0xfa, 0xfb, 0x62, 0x13, 0xb1, 0x96, 0xd1, 0x45, 0x3d, 0x6b, 0x74, 0x27, 0x4b, 0xed,
+	0x66, 0x4e, 0x16, 0x9b, 0x88, 0x91, 0x12, 0x05, 0x9f, 0x80, 0x35, 0xe1, 0xec, 0x3d, 0xe5, 0x82,
+	0xc5, 0xad, 0x03, 0x69, 0x9d, 0x14, 0x80, 0xf3, 0x0d, 0x41, 0x73, 0xc2, 0x59, 0x3c, 0xa6, 0x09,
+	0x97, 0xbe, 0x9f, 0xdc, 0xf4, 0x7d, 0x98, 0xa5, 0xb6, 0x41, 0xab, 0x86, 0x6d, 0x30, 0xdf, 0x05,
+	0xcb, 0x40, 0x28, 0xb7, 0xe6, 0xc8, 0xca, 0x52, 0xdb, 0xfc, 0x2a, 0x01, 0xa2, 0x71, 0xec, 0x40,
+	0xfd, 0x83, 0xef, 0x73, 0x26, 0x94, 0x45, 0x53, 0xa7, 0x15, 0x2a, 0x84, 0xe4, 0x95, 0xbd, 0x51,
+	0x0e, 0x6e, 0x1d, 0xc5, 0xf9, 0x8e, 0xf4, 0x6d, 0x08, 0xb6, 0xc4, 0xc7, 0x50, 0xbb, 0x76, 0x48,
+	0x6a, 0x9e, 0x8b, 0x3b, 0x95, 0x66, 0xd2, 0x96, 0x55, 0x89, 0xa1, 0x5d, 0x8a, 0xd8, 0x50, 0xaa,
+	0x22, 0xd3, 0x13, 0xb0, 0xce, 0x63, 0x46, 0x05, 0x9b, 0x9f, 0x09, 0xe5, 0xc3, 0x20, 0x05, 0xa0,
+	0x02, 0x8c, 0xe6, 0x79, 0xd5, 0xd4, 0xd5, 0x1d, 0x20, 0xab, 0x45, 0x60, 0x75, 0x5d, 0xdd, 0x01,
+	0xce, 0x29, 0x34, 0x74, 0xb2, 0x3c, 0xc2, 0xcf, 0xc0, 0x94, 0xce, 0x79, 0x0b, 0x75, 0x8d, 0x5e,
+	0x73, 0xf8, 0xa0, 0x5f, 0xda, 0xd2, 0x7e, 0x3e, 0x16, 0xd1, 0x14, 0xe7, 0x31, 0x1c, 0x7a, 0xae,
+	0x96, 0x3d, 0x02, 0xc3, 0x73, 0xb5, 0x28, 0xbf, 0x8b, 0x60, 0xce, 0x89, 0xc4, 0x86, 0x3f, 0x6b,
+	0x60, 0x8c, 0x69, 0x82, 0x87, 0xf9, 0x66, 0xe2, 0xfb, 0xfb, 0x3d, 0x09, 0xbb, 0x6a, 0xdf, 0x3c,
+	0x48, 0x6e, 0xf3, 0x6b, 0x2d, 0xfd, 0xa7, 0xa2, 0x55, 0x01, 0x4b, 0xcf, 0x01, 0xbb, 0x80, 0xdf,
+	0x32, 0x91, 0x2f, 0x8c, 0xe7, 0xf2, 0x8f, 0x74, 0xc1, 0xe6, 0xb8, 0xca, 0x2f, 0xad, 0xd3, 0xde,
+	0xd9, 0xd7, 0x23, 0x9d, 0xc3, 0xdd, 0xa2, 0xcb, 0xad, 0x3d, 0x1e, 0xee, 0x5b, 0xd4, 0x4d, 0x4e,
+	0xc1, 0x9c, 0xac, 0xfc, 0xff, 0x1e, 0x61, 0x74, 0xef, 0xd7, 0xb6, 0x83, 0x7e, 0x6f, 0x3b, 0xe8,
+	0xcf, 0xb6, 0x83, 0x3e, 0x1b, 0x34, 0x0a, 0xa6, 0x75, 0xf5, 0xf4, 0x5f, 0xfd, 0x0d, 0x00, 0x00,
+	0xff, 0xff, 0x13, 0x29, 0x39, 0x26, 0x42, 0x04, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -360,6 +502,7 @@ type FavClient interface {
 	IsFav(ctx context.Context, in *FavReq, opts ...grpc.CallOption) (*FavInfo, error)
 	Fav(ctx context.Context, in *FavReq, opts ...grpc.CallOption) (*EmptyStruct, error)
 	GetUserFavIDsPaged(ctx context.Context, in *UserFavsReq, opts ...grpc.CallOption) (*IDsResp, error)
+	GetUserFavsPaged(ctx context.Context, in *UserFavsReq, opts ...grpc.CallOption) (*FavsResp, error)
 	Unfav(ctx context.Context, in *FavReq, opts ...grpc.CallOption) (*EmptyStruct, error)
 }
 
@@ -398,6 +541,15 @@ func (c *favClient) GetUserFavIDsPaged(ctx context.Context, in *UserFavsReq, opt
 	return out, nil
 }
 
+func (c *favClient) GetUserFavsPaged(ctx context.Context, in *UserFavsReq, opts ...grpc.CallOption) (*FavsResp, error) {
+	out := new(FavsResp)
+	err := c.cc.Invoke(ctx, "/service.fav.Fav/GetUserFavsPaged", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *favClient) Unfav(ctx context.Context, in *FavReq, opts ...grpc.CallOption) (*EmptyStruct, error) {
 	out := new(EmptyStruct)
 	err := c.cc.Invoke(ctx, "/service.fav.Fav/Unfav", in, out, opts...)
@@ -412,6 +564,7 @@ type FavServer interface {
 	IsFav(context.Context, *FavReq) (*FavInfo, error)
 	Fav(context.Context, *FavReq) (*EmptyStruct, error)
 	GetUserFavIDsPaged(context.Context, *UserFavsReq) (*IDsResp, error)
+	GetUserFavsPaged(context.Context, *UserFavsReq) (*FavsResp, error)
 	Unfav(context.Context, *FavReq) (*EmptyStruct, error)
 }
 
@@ -427,6 +580,9 @@ func (*UnimplementedFavServer) Fav(ctx context.Context, req *FavReq) (*EmptyStru
 }
 func (*UnimplementedFavServer) GetUserFavIDsPaged(ctx context.Context, req *UserFavsReq) (*IDsResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserFavIDsPaged not implemented")
+}
+func (*UnimplementedFavServer) GetUserFavsPaged(ctx context.Context, req *UserFavsReq) (*FavsResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserFavsPaged not implemented")
 }
 func (*UnimplementedFavServer) Unfav(ctx context.Context, req *FavReq) (*EmptyStruct, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Unfav not implemented")
@@ -490,6 +646,24 @@ func _Fav_GetUserFavIDsPaged_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Fav_GetUserFavsPaged_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserFavsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FavServer).GetUserFavsPaged(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/service.fav.Fav/GetUserFavsPaged",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FavServer).GetUserFavsPaged(ctx, req.(*UserFavsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Fav_Unfav_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(FavReq)
 	if err := dec(in); err != nil {
@@ -523,6 +697,10 @@ var _Fav_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUserFavIDsPaged",
 			Handler:    _Fav_GetUserFavIDsPaged_Handler,
+		},
+		{
+			MethodName: "GetUserFavsPaged",
+			Handler:    _Fav_GetUserFavsPaged_Handler,
 		},
 		{
 			MethodName: "Unfav",
@@ -700,6 +878,106 @@ func (m *UserFavsReq) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *FavItem) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *FavItem) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *FavItem) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.AccountID != 0 {
+		i = encodeVarintPb(dAtA, i, uint64(m.AccountID))
+		i--
+		dAtA[i] = 0x30
+	}
+	if m.UpdatedAt != 0 {
+		i = encodeVarintPb(dAtA, i, uint64(m.UpdatedAt))
+		i--
+		dAtA[i] = 0x28
+	}
+	if m.CreatedAt != 0 {
+		i = encodeVarintPb(dAtA, i, uint64(m.CreatedAt))
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.TargetID != 0 {
+		i = encodeVarintPb(dAtA, i, uint64(m.TargetID))
+		i--
+		dAtA[i] = 0x18
+	}
+	if len(m.TargetType) > 0 {
+		i -= len(m.TargetType)
+		copy(dAtA[i:], m.TargetType)
+		i = encodeVarintPb(dAtA, i, uint64(len(m.TargetType)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.ID != 0 {
+		i = encodeVarintPb(dAtA, i, uint64(m.ID))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *FavsResp) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *FavsResp) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *FavsResp) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.Items) > 0 {
+		for iNdEx := len(m.Items) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Items[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintPb(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
 func (m *IDsResp) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -827,6 +1105,55 @@ func (m *UserFavsReq) Size() (n int) {
 	l = len(m.TargetType)
 	if l > 0 {
 		n += 1 + l + sovPb(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *FavItem) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.ID != 0 {
+		n += 1 + sovPb(uint64(m.ID))
+	}
+	l = len(m.TargetType)
+	if l > 0 {
+		n += 1 + l + sovPb(uint64(l))
+	}
+	if m.TargetID != 0 {
+		n += 1 + sovPb(uint64(m.TargetID))
+	}
+	if m.CreatedAt != 0 {
+		n += 1 + sovPb(uint64(m.CreatedAt))
+	}
+	if m.UpdatedAt != 0 {
+		n += 1 + sovPb(uint64(m.UpdatedAt))
+	}
+	if m.AccountID != 0 {
+		n += 1 + sovPb(uint64(m.AccountID))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *FavsResp) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Items) > 0 {
+		for _, e := range m.Items {
+			l = e.Size()
+			n += 1 + l + sovPb(uint64(l))
+		}
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
@@ -1248,6 +1575,275 @@ func (m *UserFavsReq) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.TargetType = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipPb(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *FavItem) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowPb
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: FavItem: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: FavItem: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ID", wireType)
+			}
+			m.ID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ID |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TargetType", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPb
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPb
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.TargetType = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TargetID", wireType)
+			}
+			m.TargetID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.TargetID |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CreatedAt", wireType)
+			}
+			m.CreatedAt = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.CreatedAt |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field UpdatedAt", wireType)
+			}
+			m.UpdatedAt = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.UpdatedAt |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 6:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AccountID", wireType)
+			}
+			m.AccountID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.AccountID |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipPb(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *FavsResp) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowPb
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: FavsResp: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: FavsResp: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Items", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthPb
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthPb
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Items = append(m.Items, &FavItem{})
+			if err := m.Items[len(m.Items)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

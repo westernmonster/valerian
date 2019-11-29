@@ -93,3 +93,7 @@ func (s *server) GetUserFavIDsPaged(ctx context.Context, req *api.UserFavsReq) (
 
 	return &api.IDsResp{IDs: ids}, nil
 }
+
+func (s *server) GetUserFavsPaged(ctx context.Context, req *api.UserFavsReq) (*api.FavsResp, error) {
+	return s.svr.GetFavsPaged(ctx, req)
+}

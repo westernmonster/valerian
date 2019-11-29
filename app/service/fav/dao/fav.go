@@ -38,7 +38,7 @@ func (p *Dao) GetFavIDsPaged(c context.Context, node sqalx.Node, aid int64, targ
 	return
 }
 
-func (p *Dao) GetFavsPaged(c context.Context, node sqalx.Node, aid int64, targetType string, limit, offset int) (items []*model.Fav, err error) {
+func (p *Dao) GetFavsPaged(c context.Context, node sqalx.Node, aid int64, targetType string, limit, offset int32) (items []*model.Fav, err error) {
 	items = make([]*model.Fav, 0)
 
 	if targetType == "all" {
