@@ -9,6 +9,7 @@ import (
 	"valerian/app/interface/account/model"
 	account "valerian/app/service/account/api"
 	article "valerian/app/service/article/api"
+	discuss "valerian/app/service/discuss/api"
 	fav "valerian/app/service/fav/api"
 	message "valerian/app/service/message/api"
 	recent "valerian/app/service/recent/api"
@@ -637,6 +638,114 @@ func (p *Service) GetUserRevisesPaged(c context.Context, cate string, limit, off
 	}
 
 	if resp.Paging.Next, err = genURL("/api/v1/account/list/my_revises", url.Values{
+		"cate":   []string{cate},
+		"limit":  []string{strconv.Itoa(limit)},
+		"offset": []string{strconv.Itoa(offset + limit)},
+	}); err != nil {
+		return
+	}
+
+	if len(resp.Items) < limit {
+		resp.Paging.IsEnd = true
+		resp.Paging.Next = ""
+	}
+
+	if offset == 0 {
+		resp.Paging.Prev = ""
+	}
+
+	return
+}
+
+func (p *Service) GetUserDiscussionsPaged(c context.Context, cate string, limit, offset int) (resp *model.MemberDiscussResp, err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+
+	resp = &model.MemberDiscussResp{
+		Items:  make([]*model.MemberDiscuss, 0),
+		Paging: &model.Paging{},
+	}
+
+	switch cate {
+	case model.CateCreated:
+		var data *discuss.UserDiscussionsResp
+		if data, err = p.d.GetUserDiscussionsPaged(c, aid, limit, offset); err != nil {
+			return
+		}
+		if data.Items == nil || len(data.Items) == 0 {
+			return
+		}
+
+		for _, v := range data.Items {
+			item := &model.MemberDiscuss{
+				ID:           v.ID,
+				Excerpt:      v.Excerpt,
+				LikeCount:    (v.Stat.LikeCount),
+				DislikeCount: (v.Stat.DislikeCount),
+				CommentCount: (v.Stat.CommentCount),
+				CreatedAt:    v.CreatedAt,
+				UpdatedAt:    v.UpdatedAt,
+				Title:        v.Title,
+			}
+
+			if v.ImageUrls == nil {
+				item.ImageUrls = make([]string, 0)
+			} else {
+				item.ImageUrls = v.ImageUrls
+			}
+			resp.Items = append(resp.Items, item)
+		}
+		break
+
+	case model.CateFaved:
+		var data *fav.FavsResp
+		if data, err = p.d.GetUserFavsPaged(c, aid, model.TargetTypeDiscussion, int32(limit), int32(offset)); err != nil {
+			return
+		}
+		if data.Items == nil || len(data.Items) == 0 {
+			return
+		}
+
+		for _, v := range data.Items {
+			var t *discuss.DiscussionInfo
+			if t, err = p.d.GetDiscussion(c, v.TargetID); err != nil {
+				return
+			}
+
+			item := &model.MemberDiscuss{
+				ID:           t.ID,
+				Excerpt:      t.Excerpt,
+				LikeCount:    t.Stat.LikeCount,
+				DislikeCount: t.Stat.DislikeCount,
+				CommentCount: t.Stat.CommentCount,
+				CreatedAt:    t.CreatedAt,
+				UpdatedAt:    t.UpdatedAt,
+				Title:        t.Title,
+			}
+
+			if t.ImageUrls == nil {
+				item.ImageUrls = make([]string, 0)
+			} else {
+				item.ImageUrls = t.ImageUrls
+			}
+
+			resp.Items = append(resp.Items, item)
+		}
+		break
+	}
+
+	if resp.Paging.Prev, err = genURL("/api/v1/account/list/my_discussions", url.Values{
+		"cate":   []string{cate},
+		"limit":  []string{strconv.Itoa(limit)},
+		"offset": []string{strconv.Itoa(offset - limit)},
+	}); err != nil {
+		return
+	}
+
+	if resp.Paging.Next, err = genURL("/api/v1/account/list/my_discussions", url.Values{
 		"cate":   []string{cate},
 		"limit":  []string{strconv.Itoa(limit)},
 		"offset": []string{strconv.Itoa(offset + limit)},
