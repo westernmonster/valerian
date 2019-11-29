@@ -11,6 +11,7 @@ import (
 	article "valerian/app/service/article/api"
 	certification "valerian/app/service/certification/api"
 	discuss "valerian/app/service/discuss/api"
+	fav "valerian/app/service/fav/api"
 	message "valerian/app/service/message/api"
 	recent "valerian/app/service/recent/api"
 	relation "valerian/app/service/relation/api"
@@ -39,6 +40,7 @@ type Dao struct {
 	accountFeedRPC   accountFeed.AccountFeedClient
 	recentRPC        recent.RecentClient
 	certificationRPC certification.CertificationClient
+	favRPC           fav.FavClient
 }
 
 func New(c *conf.Config) (dao *Dao) {
@@ -61,6 +63,12 @@ func New(c *conf.Config) (dao *Dao) {
 		panic(errors.WithMessage(err, "Failed to dial account service"))
 	} else {
 		dao.accountRPC = accountRPC
+	}
+
+	if favRPC, err := fav.NewClient(c.FavRPC); err != nil {
+		panic(errors.WithMessage(err, "Failed to fav relation service"))
+	} else {
+		dao.favRPC = favRPC
 	}
 
 	if relationRPC, err := relation.NewClient(c.RelationRPC); err != nil {

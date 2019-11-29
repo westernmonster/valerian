@@ -45,8 +45,12 @@ func (p *Service) Leave(c context.Context, aid, topicID int64) (err error) {
 	return
 }
 
-func (p *Service) GetTopicAdminMembers(c context.Context, arg *api.TopicReq) (err error) {
-	return
+func (p *Service) GetManageTopicIDsPaged(c context.Context, arg *api.UserTopicsReq) (ids []int64, err error) {
+	return p.d.GetManageTopicIDsPaged(c, p.d.DB(), arg.AccountID, arg.Limit, arg.Offset)
+}
+
+func (p *Service) GetFollowedTopicIDsPaged(c context.Context, arg *api.UserTopicsReq) (ids []int64, err error) {
+	return p.d.GetFollowedTopicIDsPaged(c, p.d.DB(), arg.AccountID, arg.Limit, arg.Offset)
 }
 
 //  GetTopicMembersPaged 分页获取话题成员

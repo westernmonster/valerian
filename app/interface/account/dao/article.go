@@ -27,3 +27,17 @@ func (p *Dao) GetUserArticlesPaged(c context.Context, aid int64, limit, offset i
 	}
 	return
 }
+
+func (p *Dao) GetUserReviseIDsPaged(c context.Context, aid int64, limit, offset int) (resp *article.IDsResp, err error) {
+	if resp, err = p.articleRPC.GetUserReviseIDsPaged(c, &article.UserRevisesReq{AccountID: aid, Limit: int32(limit), Offset: int32(offset)}); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetUserReviseIDsPaged, error(%+v), aid(%d), limit(%d), offset(%d)`", err, aid, limit, offset))
+	}
+	return
+}
+
+func (p *Dao) GetUserArticleIDsPaged(c context.Context, aid int64, limit, offset int) (resp *article.IDsResp, err error) {
+	if resp, err = p.articleRPC.GetUserArticleIDsPaged(c, &article.UserArticlesReq{AccountID: aid, Limit: int32(limit), Offset: int32(offset)}); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetUserArticleIDsPaged, error(%+v), aid(%d), limit(%d), offset(%d)`", err, aid, limit, offset))
+	}
+	return
+}

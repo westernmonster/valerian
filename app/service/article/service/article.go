@@ -247,6 +247,10 @@ func (p *Service) GetArticleStat(c context.Context, articleID int64) (stat *mode
 	return p.d.GetArticleStatByID(c, p.d.DB(), articleID)
 }
 
+func (p *Service) GetUserArticleIDsPaged(c context.Context, req *api.UserArticlesReq) (ids []int64, err error) {
+	return p.d.GetUserArticleIDsPaged(c, p.d.DB(), req.AccountID, int(req.Limit), int(req.Offset))
+}
+
 func (p *Service) GetUserArticlesPaged(c context.Context, req *api.UserArticlesReq) (resp *api.UserArticlesResp, err error) {
 	var data []*model.Article
 	if data, err = p.d.GetUserArticlesPaged(c, p.d.DB(), req.AccountID, int(req.Limit), int(req.Offset)); err != nil {

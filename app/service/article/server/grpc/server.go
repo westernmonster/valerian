@@ -362,6 +362,26 @@ func (s *server) GetArticleRevisesPaged(ctx context.Context, req *api.ArgArticle
 	return resp, nil
 }
 
+func (s *server) GetUserArticleIDsPaged(ctx context.Context, req *api.UserArticlesReq) (*api.IDsResp, error) {
+	var ids []int64
+	ids, err := s.svr.GetUserArticleIDsPaged(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.IDsResp{IDs: ids}, nil
+}
+
+func (s *server) GetUserReviseIDsPaged(ctx context.Context, req *api.UserRevisesReq) (*api.IDsResp, error) {
+	var ids []int64
+	ids, err := s.svr.GetUserReviseIDsPaged(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.IDsResp{IDs: ids}, nil
+}
+
 func (s *server) GetReviseFiles(ctx context.Context, req *api.IDReq) (*api.ReviseFilesResp, error) {
 	data, err := s.svr.GetReviseFiles(ctx, req)
 	if err != nil {

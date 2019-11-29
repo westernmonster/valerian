@@ -7,6 +7,7 @@ import (
 
 	"valerian/app/service/article/model"
 	"valerian/library/database/sqalx"
+	"valerian/library/database/sqlx"
 	"valerian/library/log"
 )
 
@@ -18,6 +19,32 @@ func (p *Dao) GetUserArticlesPaged(c context.Context, node sqalx.Node, aid int64
 		log.For(c).Error(fmt.Sprintf("dao.GetUserArticlesPaged err(%+v) aid(%d) limit(%d) offset(%d)", err, aid, limit, offset))
 		return
 	}
+	return
+}
+
+func (p *Dao) GetUserArticleIDsPaged(c context.Context, node sqalx.Node, aid int64, limit, offset int) (items []int64, err error) {
+	items = make([]int64, 0)
+	sqlSelect := "SELECT a.id FROM articles a WHERE a.deleted=0 AND a.created_by=? ORDER BY a.id DESC limit ?,?"
+
+	var rows *sqlx.Rows
+	if rows, err = node.QueryxContext(c, sqlSelect, aid, offset, limit); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetUserArticleIDsPaged err(%+v)", err))
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var (
+			targetID int64
+		)
+		if err = rows.Scan(&targetID); err != nil {
+			log.For(c).Error(fmt.Sprintf("dao.GetUserArticleIDsPaged err(%+v)", err))
+			return
+		}
+		items = append(items, targetID)
+	}
+
+	err = rows.Err()
 	return
 }
 

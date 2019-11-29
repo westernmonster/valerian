@@ -15,6 +15,59 @@ const (
 	_getTopicMembersPagedSQL = "SELECT a.id,a.topic_id,a.account_id,a.role,a.deleted,a.created_at,a.updated_at FROM topic_members a WHERE a.deleted=0 AND a.topic_id=? ORDER BY a.role,a.id DESC limit ?,?"
 )
 
+func (p *Dao) GetManageTopicIDsPaged(c context.Context, node sqalx.Node, aid int64, limit, offset int32) (items []int64, err error) {
+	items = make([]int64, 0)
+	sqlSelect := "SELECT a.topic_id FROM topic_members a WHERE a.deleted=0 AND a.account_id=? AND a.role IN ('owner', 'admin') ORDER BY a.topic_id DESC LIMIT ?,?"
+
+	var rows *sqlx.Rows
+	if rows, err = node.QueryxContext(c, sqlSelect, aid, offset, limit); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetManageTopicIDsPaged err(%+v)", err))
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var (
+			targetID int64
+		)
+		if err = rows.Scan(&targetID); err != nil {
+			log.For(c).Error(fmt.Sprintf("dao.GetManageTopicIDsPaged err(%+v)", err))
+			return
+		}
+		items = append(items, targetID)
+	}
+
+	err = rows.Err()
+	return
+}
+
+func (p *Dao) GetFollowedTopicIDsPaged(c context.Context, node sqalx.Node, aid int64, limit, offset int32) (items []int64, err error) {
+	items = make([]int64, 0)
+
+	sqlSelect := "SELECT a.topic_id FROM topic_members a WHERE a.deleted=0 AND a.account_id=? ORDER BY a.topic_id DESC LIMIT ?,?"
+
+	var rows *sqlx.Rows
+	if rows, err = node.QueryxContext(c, sqlSelect, aid, offset, limit); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetFollowedTopicIDsPaged err(%+v)", err))
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var (
+			targetID int64
+		)
+		if err = rows.Scan(&targetID); err != nil {
+			log.For(c).Error(fmt.Sprintf("dao.GetFollowedTopicIDsPaged err(%+v)", err))
+			return
+		}
+		items = append(items, targetID)
+	}
+
+	err = rows.Err()
+	return
+}
+
 func (p *Dao) GetFollowedTopicsPaged(c context.Context, node sqalx.Node, aid int64, query string, limit, offset int) (items []*model.Topic, err error) {
 	items = make([]*model.Topic, 0)
 	sqlSelect := `SELECT b.id,b.name,b.avatar,b.bg,b.introduction,b.allow_discuss,b.allow_chat,b.is_private,b.view_permission,b.edit_permission,b.join_permission,b.catalog_view_type,b.topic_home,b.created_by,b.deleted,b.created_at,b.updated_at

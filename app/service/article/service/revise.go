@@ -420,6 +420,10 @@ func (p *Service) delRevise(c context.Context, aid, id int64) (err error) {
 	return
 }
 
+func (p *Service) GetUserReviseIDsPaged(c context.Context, req *api.UserRevisesReq) (items []int64, err error) {
+	return p.d.GetUserReviseIDsPaged(c, p.d.DB(), req.AccountID, int(req.Limit), int(req.Offset))
+}
+
 func (p *Service) GetArticleRevisesPaged(c context.Context, req *api.ArgArticleRevisesPaged) (resp *api.ReviseListResp, err error) {
 	var data []*model.Revise
 	if data, err = p.d.GetArticleRevisesPaged(c, p.d.DB(), req.ArticleID, req.Sort, int(req.Limit), int(req.Offset)); err != nil {

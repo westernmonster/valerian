@@ -36,3 +36,11 @@ const (
 	TargetTypeArticle    = "article"
 	TargetTypeMember     = "member"
 )
+
+const (
+	CateManaged      = "managed"
+	CateFollowed     = "followed"
+	CateFaved        = "faved"
+	CateRecentViewed = "viewed"
+	CateCreated      = "created"
+)

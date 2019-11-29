@@ -72,3 +72,43 @@ type Profile struct {
 	Company  string `json:"company"`
 	Position string `json:"position"`
 }
+
+type AccountTopicsResp struct {
+	Items  []*TopicItem `json:"items"`
+	Paging *Paging      `json:"paging"`
+}
+
+type TopicItem struct {
+	Target  *TargetTopic `json:"target,omitempty"`
+	Deleted bool         `json:"deleted"`
+}
+
+type AccountArticlesResp struct {
+	Items  []*ArticleItem `json:"items"`
+	Paging *Paging        `json:"paging"`
+}
+
+type ArticleItem struct {
+	Target  *TargetArticle `json:"target,omitempty"`
+	Deleted bool           `json:"deleted"`
+}
+
+type AccountRevisesResp struct {
+	Items  []*ReviseItem `json:"items"`
+	Paging *Paging       `json:"paging"`
+}
+
+type ReviseItem struct {
+	Target  *TargetRevise `json:"target,omitempty"`
+	Deleted bool          `json:"deleted"`
+}
+
+type AccountDiscussionsResp struct {
+	Items  []*DiscussItem `json:"items"`
+	Paging *Paging        `json:"paging"`
+}
+
+type DiscussItem struct {
+	Target  *TargetDiscuss `json:"target,omitempty"`
+	Deleted bool           `json:"deleted"`
+}

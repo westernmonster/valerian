@@ -10,6 +10,7 @@ import (
 )
 
 func (p *Service) SaveDiscussCategories(c context.Context, arg *api.ArgSaveDiscussCategories) (err error) {
+	return
 }
 
 func (p *Service) getDiscussCategories(c context.Context, node sqalx.Node, topicID int64) (items []*model.DiscussCategory, err error) {

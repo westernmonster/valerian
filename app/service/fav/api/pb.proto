@@ -20,10 +20,36 @@ message FavReq {
     bool UseMaster = 4;
 }
 
+message UserFavsReq {
+    int64 AccountID = 1 [(gogoproto.jsontag) = "aid"];
+    int32 Limit = 2 [(gogoproto.jsontag) = "limit"];
+    int32 Offset = 3 [(gogoproto.jsontag) = "offset"];
+    string TargetType = 4 [(gogoproto.jsontag) = "target_type"];
+}
+
+message FavItem {
+    int64 ID = 1;
+    string TargetType  = 2;
+    int64 TargetID = 3;
+    int64 CreatedAt = 4;
+    int64 UpdatedAt = 5;
+    int64 AccountID = 6;
+}
+
+message FavsResp {
+    repeated FavItem Items = 1;
+}
+
+message IDsResp {
+    repeated int64 IDs = 1 [(gogoproto.jsontag) = 'ids'];
+}
+
 
 service Fav {
     rpc  IsFav(FavReq) returns (FavInfo);
     rpc  Fav(FavReq) returns (EmptyStruct);
+    rpc  GetUserFavIDsPaged(UserFavsReq) returns (IDsResp);
+    rpc  GetUserFavsPaged(UserFavsReq) returns (FavsResp);
     rpc  Unfav(FavReq) returns (EmptyStruct);
 }
 

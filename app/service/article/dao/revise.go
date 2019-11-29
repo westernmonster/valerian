@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"valerian/app/service/article/model"
 	"valerian/library/database/sqalx"
+	"valerian/library/database/sqlx"
 	"valerian/library/log"
 )
 
@@ -22,6 +23,33 @@ func (p *Dao) GetArticleRevisesPaged(c context.Context, node sqalx.Node, article
 	if err = node.SelectContext(c, &items, sqlSelect, articleID, offset, limit); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetArticleRevisesPaged err(%+v) article_id(%d) limit(%d) offset(%d)", err, articleID, limit, offset))
 	}
+	return
+}
+
+func (p *Dao) GetUserReviseIDsPaged(c context.Context, node sqalx.Node, aid int64, limit, offset int) (items []int64, err error) {
+	items = make([]int64, 0)
+	sqlSelect := "SELECT a.id FROM revises a WHERE a.deleted=0 AND a.created_by=? ORDER BY a.id DESC limit ?,?"
+
+	var rows *sqlx.Rows
+	if rows, err = node.QueryxContext(c, sqlSelect, aid, offset, limit); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetUserReviseIDsPaged err(%+v)", err))
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var (
+			targetID int64
+		)
+		if err = rows.Scan(&targetID); err != nil {
+			log.For(c).Error(fmt.Sprintf("dao.GetUserReviseIDsPaged err(%+v)", err))
+			return
+		}
+		items = append(items, targetID)
+	}
+
+	err = rows.Err()
+	return
 	return
 }
 

@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"time"
+	"valerian/app/service/fav/api"
 	"valerian/app/service/fav/model"
 	"valerian/library/gid"
 )
@@ -69,4 +70,33 @@ func (p *Service) Unfav(c context.Context, aid, targetID int64, targetType strin
 	}
 
 	return
+}
+
+func (p *Service) GetFavIDsPaged(c context.Context, arg *api.UserFavsReq) (ids []int64, err error) {
+	return p.d.GetFavIDsPaged(c, p.d.DB(), arg.AccountID, arg.TargetType, arg.Limit, arg.Offset)
+}
+
+func (p *Service) GetFavsPaged(c context.Context, arg *api.UserFavsReq) (resp *api.FavsResp, err error) {
+	resp = &api.FavsResp{
+		Items: make([]*api.FavItem, 0),
+	}
+
+	var data []*model.Fav
+	if data, err = p.d.GetFavsPaged(c, p.d.DB(), arg.AccountID, arg.TargetType, arg.Limit, arg.Offset); err != nil {
+		return
+	}
+
+	for _, v := range data {
+		resp.Items = append(resp.Items, &api.FavItem{
+			ID:         v.ID,
+			TargetID:   v.TargetID,
+			TargetType: v.TargetType,
+			AccountID:  v.AccountID,
+			CreatedAt:  v.CreatedAt,
+			UpdatedAt:  v.UpdatedAt,
+		})
+	}
+
+	return
+
 }

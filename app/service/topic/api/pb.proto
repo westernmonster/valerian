@@ -575,6 +575,9 @@ service Topic {
 
     rpc  GetUserTopicsPaged(UserTopicsReq) returns (UserTopicsResp);
 
+    rpc  GetFollowedTopicIDsPaged(UserTopicsReq) returns (IDsResp);
+    rpc  GetManageTopicIDsPaged(UserTopicsReq) returns (IDsResp);
+
     rpc  GetBelongsTopicIDs(AidReq) returns (IDsResp);
 
     rpc  GetTopicMemberIDs(TopicReq) returns (IDsResp);

@@ -7,10 +7,38 @@ import (
 
 	"valerian/app/service/fav/model"
 	"valerian/library/database/sqalx"
+	"valerian/library/database/sqlx"
 	"valerian/library/log"
 )
 
-func (p *Dao) GetFavsPaged(c context.Context, node sqalx.Node, aid int64, targetType string, limit, offset int) (items []*model.Fav, err error) {
+func (p *Dao) GetFavIDsPaged(c context.Context, node sqalx.Node, aid int64, targetType string, limit, offset int32) (items []int64, err error) {
+	items = make([]int64, 0)
+
+	sqlSelect := "SELECT a.target_id FROM favs a WHERE a.deleted=0 AND a.account_id=? AND target_type=? ORDER BY a.id DESC limit ?,?"
+
+	var rows *sqlx.Rows
+	if rows, err = node.QueryxContext(c, sqlSelect, aid, targetType, offset, limit); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetFavIDsPaged err(%+v)", err))
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var (
+			targetID int64
+		)
+		if err = rows.Scan(&targetID); err != nil {
+			log.For(c).Error(fmt.Sprintf("dao.GetFavIDsPaged err(%+v)", err))
+			return
+		}
+		items = append(items, targetID)
+	}
+
+	err = rows.Err()
+	return
+}
+
+func (p *Dao) GetFavsPaged(c context.Context, node sqalx.Node, aid int64, targetType string, limit, offset int32) (items []*model.Fav, err error) {
 	items = make([]*model.Fav, 0)
 
 	if targetType == "all" {

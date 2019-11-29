@@ -1,6 +1,7 @@
 package http
 
 import (
+	"strconv"
 	"valerian/app/interface/account/model"
 	"valerian/library/ecode"
 	"valerian/library/net/http/mars"
@@ -133,4 +134,160 @@ func resetPassword(c *mars.Context) {
 	}
 
 	c.JSON(nil, srv.ResetPassword(c, arg))
+}
+
+// @Summary 获取当前用户话题
+// @Description 获取当前用户话题
+// @Tags account
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param cate query string true "类型：managed, followed, faved, viewed"
+// @Param limit query integer false "每页大小"
+// @Param offset query integer false "offset"
+// @Success 200 {object}  app.interface.account.model.AccountTopicsResp "用户动态"
+// @Failure 400 "验证请求失败"
+// @Failure 401 "登录验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /account/list/my_topics [get]
+func accountTopics(c *mars.Context) {
+	var (
+		err    error
+		offset int
+		limit  int
+	)
+
+	params := c.Request.Form
+
+	if offset, err = strconv.Atoi(params.Get("offset")); err != nil {
+		offset = 0
+	} else if offset < 0 {
+		offset = 0
+	}
+
+	if limit, err = strconv.Atoi(params.Get("limit")); err != nil {
+		limit = 10
+	} else if limit < 0 {
+		limit = 10
+	}
+	c.JSON(srv.GetUserTopicsPaged(c, params.Get("cate"), (limit), (offset)))
+}
+
+// @Summary 获取当前用户文章
+// @Description 获取当前用户文章
+// @Tags account
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param cate query string true "类型：created, faved, viewed"
+// @Param limit query integer false "每页大小"
+// @Param offset query integer false "offset"
+// @Success 200 {object}  app.interface.account.model.AccountArticlesResp "用户动态"
+// @Failure 400 "验证请求失败"
+// @Failure 401 "登录验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /account/list/my_articles [get]
+func accountArticles(c *mars.Context) {
+	var (
+		err    error
+		offset int
+		limit  int
+	)
+
+	params := c.Request.Form
+
+	if offset, err = strconv.Atoi(params.Get("offset")); err != nil {
+		offset = 0
+	} else if offset < 0 {
+		offset = 0
+	}
+
+	if limit, err = strconv.Atoi(params.Get("limit")); err != nil {
+		limit = 10
+	} else if limit < 0 {
+		limit = 10
+	}
+	c.JSON(srv.GetUserArticlesPaged(c, params.Get("cate"), (limit), (offset)))
+}
+
+// @Summary 获取当前用户补充
+// @Description 获取当前用户补充
+// @Tags account
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param cate query string true "类型：created, faved"
+// @Param limit query integer false "每页大小"
+// @Param offset query integer false "offset"
+// @Success 200 {object}  app.interface.account.model.AccountRevisesResp "用户动态"
+// @Failure 400 "验证请求失败"
+// @Failure 401 "登录验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /account/list/my_revises [get]
+func accountRevises(c *mars.Context) {
+	var (
+		err    error
+		offset int
+		limit  int
+	)
+
+	params := c.Request.Form
+
+	if offset, err = strconv.Atoi(params.Get("offset")); err != nil {
+		offset = 0
+	} else if offset < 0 {
+		offset = 0
+	}
+
+	if limit, err = strconv.Atoi(params.Get("limit")); err != nil {
+		limit = 10
+	} else if limit < 0 {
+		limit = 10
+	}
+	c.JSON(srv.GetUserRevisesPaged(c, params.Get("cate"), (limit), (offset)))
+}
+
+// @Summary 获取当前用户讨论
+// @Description 获取当前用户讨论
+// @Tags account
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param cate query string true "类型：created, faved"
+// @Param limit query integer false "每页大小"
+// @Param offset query integer false "offset"
+// @Success 200 {object}  app.interface.account.model.AccountDiscussionsResp "用户动态"
+// @Failure 400 "验证请求失败"
+// @Failure 401 "登录验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /account/list/my_discussions [get]
+func accountDiscussions(c *mars.Context) {
+	var (
+		err    error
+		offset int
+		limit  int
+	)
+
+	params := c.Request.Form
+
+	if offset, err = strconv.Atoi(params.Get("offset")); err != nil {
+		offset = 0
+	} else if offset < 0 {
+		offset = 0
+	}
+
+	if limit, err = strconv.Atoi(params.Get("limit")); err != nil {
+		limit = 10
+	} else if limit < 0 {
+		limit = 10
+	}
+	c.JSON(srv.GetUserDiscussionsPaged(c, params.Get("cate"), (limit), (offset)))
 }
