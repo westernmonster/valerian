@@ -450,6 +450,7 @@ service Article {
     rpc GetReviseStat(IDReq) returns (ReviseStat);
     rpc GetArticleStat(IDReq) returns (ArticleStat);
     rpc GetUserArticlesPaged(UserArticlesReq) returns (UserArticlesResp);
+    rpc GetUserArticleIDsPaged(UserArticlesReq) returns (IDsResp);
 }
 
 

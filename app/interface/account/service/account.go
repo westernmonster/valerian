@@ -318,15 +318,15 @@ func (p *Service) GetProfile(c context.Context, aid int64) (item *model.Profile,
 	return
 }
 
-func (p *Service) GetUserTopicsPaged(c context.Context, cate string, limit, offset int) (resp *model.MemberTopicResp, err error) {
+func (p *Service) GetUserTopicsPaged(c context.Context, cate string, limit, offset int) (resp *model.AccountTopicsResp, err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed
 		return
 	}
 
-	resp = &model.MemberTopicResp{
-		Items:  make([]*model.TargetTopic, 0),
+	resp = &model.AccountTopicsResp{
+		Items:  make([]*model.TopicItem, 0),
 		Paging: &model.Paging{},
 	}
 
@@ -341,12 +341,20 @@ func (p *Service) GetUserTopicsPaged(c context.Context, cate string, limit, offs
 		}
 
 		for _, v := range data.IDs {
+			item := &model.TopicItem{}
+
 			var t *topic.TopicInfo
 			if t, err = p.d.GetTopic(c, v); err != nil {
-				return
+				if ecode.IsNotExistEcode(err) {
+					item.Deleted = true
+				} else {
+					return
+				}
+			} else {
+				item.Target = p.FromTopic(t)
 			}
 
-			resp.Items = append(resp.Items, p.FromTopic(t))
+			resp.Items = append(resp.Items, item)
 		}
 		break
 	case model.CateFollowed:
@@ -359,12 +367,19 @@ func (p *Service) GetUserTopicsPaged(c context.Context, cate string, limit, offs
 		}
 
 		for _, v := range data.IDs {
+			item := &model.TopicItem{}
 			var t *topic.TopicInfo
 			if t, err = p.d.GetTopic(c, v); err != nil {
-				return
+				if ecode.IsNotExistEcode(err) {
+					item.Deleted = true
+				} else {
+					return
+				}
+			} else {
+				item.Target = p.FromTopic(t)
 			}
 
-			resp.Items = append(resp.Items, p.FromTopic(t))
+			resp.Items = append(resp.Items, item)
 		}
 		break
 	case model.CateFaved:
@@ -377,12 +392,19 @@ func (p *Service) GetUserTopicsPaged(c context.Context, cate string, limit, offs
 		}
 
 		for _, v := range data.Items {
+			item := &model.TopicItem{}
 			var t *topic.TopicInfo
 			if t, err = p.d.GetTopic(c, v.TargetID); err != nil {
-				return
+				if ecode.IsNotExistEcode(err) {
+					item.Deleted = true
+				} else {
+					return
+				}
+			} else {
+				item.Target = p.FromTopic(t)
 			}
 
-			resp.Items = append(resp.Items, p.FromTopic(t))
+			resp.Items = append(resp.Items, item)
 		}
 		break
 	case model.CateRecentViewed:
@@ -395,12 +417,19 @@ func (p *Service) GetUserTopicsPaged(c context.Context, cate string, limit, offs
 		}
 
 		for _, v := range data.Items {
+			item := &model.TopicItem{}
 			var t *topic.TopicInfo
 			if t, err = p.d.GetTopic(c, v.TargetID); err != nil {
-				return
+				if ecode.IsNotExistEcode(err) {
+					item.Deleted = true
+				} else {
+					return
+				}
+			} else {
+				item.Target = p.FromTopic(t)
 			}
 
-			resp.Items = append(resp.Items, p.FromTopic(t))
+			resp.Items = append(resp.Items, item)
 		}
 		break
 	}
@@ -433,15 +462,15 @@ func (p *Service) GetUserTopicsPaged(c context.Context, cate string, limit, offs
 	return
 }
 
-func (p *Service) GetUserArticlesPaged(c context.Context, cate string, limit, offset int) (resp *model.MemberArticleResp, err error) {
+func (p *Service) GetUserArticlesPaged(c context.Context, cate string, limit, offset int) (resp *model.AccountArticlesResp, err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed
 		return
 	}
 
-	resp = &model.MemberArticleResp{
-		Items:  make([]*model.MemberArticle, 0),
+	resp = &model.AccountArticlesResp{
+		Items:  make([]*model.ArticleItem, 0),
 		Paging: &model.Paging{},
 	}
 
@@ -456,7 +485,7 @@ func (p *Service) GetUserArticlesPaged(c context.Context, cate string, limit, of
 		}
 
 		for _, v := range data.Items {
-			item := &model.MemberArticle{
+			item := &model.ArticleItem{
 				ID:           v.ID,
 				Title:        v.Title,
 				Excerpt:      v.Excerpt,
@@ -492,7 +521,7 @@ func (p *Service) GetUserArticlesPaged(c context.Context, cate string, limit, of
 			if t, err = p.d.GetArticle(c, v.TargetID); err != nil {
 				return
 			}
-			item := &model.MemberArticle{
+			item := &model.AccountArticles{
 				ID:           t.ID,
 				Title:        t.Title,
 				Excerpt:      t.Excerpt,
@@ -527,7 +556,7 @@ func (p *Service) GetUserArticlesPaged(c context.Context, cate string, limit, of
 			if t, err = p.d.GetArticle(c, v.TargetID); err != nil {
 				return
 			}
-			item := &model.MemberArticle{
+			item := &model.AccountArticles{
 				ID:           t.ID,
 				Title:        t.Title,
 				Excerpt:      t.Excerpt,
