@@ -506,7 +506,7 @@ func (p *Service) GetMemberDiscussionsPaged(c context.Context, aid int64, limit,
 
 func (p *Service) GetMemberManageTopicsPaged(c context.Context, aid int64, limit, offset int) (resp *model.MemberTopicResp, err error) {
 	var data *topic.IDsResp
-	if data, err = p.d.GetManageTopicIDsPaged(c, aid, limit, offset); err != nil {
+	if data, err = p.d.GetManageTopicIDsPaged(c, aid, int32(limit), int32(offset)); err != nil {
 		return
 	}
 
@@ -558,7 +558,7 @@ func (p *Service) GetMemberManageTopicsPaged(c context.Context, aid int64, limit
 
 func (p *Service) GetMemberFollowedTopicsPaged(c context.Context, aid int64, limit, offset int) (resp *model.MemberTopicResp, err error) {
 	var data *topic.IDsResp
-	if data, err = p.d.GetFollowedTopicIDsPaged(c, aid, limit, offset); err != nil {
+	if data, err = p.d.GetFollowedTopicIDsPaged(c, aid, int32(limit), int32(offset)); err != nil {
 		return
 	}
 

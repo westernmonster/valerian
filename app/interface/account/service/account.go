@@ -6,9 +6,13 @@ import (
 
 	"valerian/app/interface/account/model"
 	account "valerian/app/service/account/api"
+	fav "valerian/app/service/fav/api"
 	message "valerian/app/service/message/api"
+	recent "valerian/app/service/recent/api"
+	topic "valerian/app/service/topic/api"
 	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
+	"valerian/library/net/metadata"
 
 	"github.com/asaskevich/govalidator"
 	uuid "github.com/satori/go.uuid"
@@ -306,6 +310,95 @@ func (p *Service) GetProfile(c context.Context, aid int64) (item *model.Profile,
 		return
 	}
 	item.Stat.MsgCount = msgStat.UnreadCount
+
+	return
+}
+
+func (p *Service) GetUserTopicsPaged(c context.Context, cate string, limit, offset int32) (resp *model.MemberTopicResp, err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+
+	resp = &model.MemberTopicResp{
+		Items: make([]*model.TargetTopic, 0),
+	}
+
+	switch cate {
+	case model.CateManaged:
+		var data *topic.IDsResp
+		if data, err = p.d.GetManageTopicIDsPaged(c, aid, limit, offset); err != nil {
+			return
+		}
+		if data.IDs == nil || len(data.IDs) == 0 {
+			return
+		}
+
+		for _, v := range data.IDs {
+			var t *topic.TopicInfo
+			if t, err = p.d.GetTopic(c, v); err != nil {
+				return
+			}
+
+			resp.Items = append(resp.Items, p.FromTopic(t))
+		}
+		break
+	case model.CateFollowed:
+		var data *topic.IDsResp
+		if data, err = p.d.GetFollowedTopicIDsPaged(c, aid, limit, offset); err != nil {
+			return
+		}
+		if data.IDs == nil || len(data.IDs) == 0 {
+			return
+		}
+
+		for _, v := range data.IDs {
+			var t *topic.TopicInfo
+			if t, err = p.d.GetTopic(c, v); err != nil {
+				return
+			}
+
+			resp.Items = append(resp.Items, p.FromTopic(t))
+		}
+		break
+	case model.CateFaved:
+		var data *fav.FavsResp
+		if data, err = p.d.GetUserFavsPaged(c, aid, model.TargetTypeTopic, limit, offset); err != nil {
+			return
+		}
+		if data.Items == nil || len(data.Items) == 0 {
+			return
+		}
+
+		for _, v := range data.Items {
+			var t *topic.TopicInfo
+			if t, err = p.d.GetTopic(c, v.TargetID); err != nil {
+				return
+			}
+
+			resp.Items = append(resp.Items, p.FromTopic(t))
+		}
+		break
+	case model.CateRecentViewed:
+		var data *recent.RecentViewsResp
+		if data, err = p.d.GetRecentViewsPaged(c, aid, model.TargetTypeTopic, limit, offset); err != nil {
+			return
+		}
+		if data.Items == nil || len(data.Items) == 0 {
+			return
+		}
+
+		for _, v := range data.Items {
+			var t *topic.TopicInfo
+			if t, err = p.d.GetTopic(c, v.TargetID); err != nil {
+				return
+			}
+
+			resp.Items = append(resp.Items, p.FromTopic(t))
+		}
+		break
+	}
 
 	return
 }

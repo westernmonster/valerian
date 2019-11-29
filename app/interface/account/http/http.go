@@ -51,6 +51,7 @@ func route(e *mars.Engine) {
 		x.GET("/cert", authSvc.User, memberCert)
 
 		x.GET("/list/recent", authSvc.User, recent)
+		x.GET("/list/topics", authSvc.User, memberTopics)
 		x.GET("/list/activities", authSvc.User, memberActivites)
 		x.GET("/list/followed_topics", authSvc.User, memberFollowedTopics)
 		x.GET("/list/managed_topics", authSvc.User, memberManagedTopics)
