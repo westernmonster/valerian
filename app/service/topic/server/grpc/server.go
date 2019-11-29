@@ -367,6 +367,24 @@ func (s *server) CanEdit(ctx context.Context, req *api.TopicReq) (*api.BoolResp,
 	return &api.BoolResp{Result: ret}, nil
 }
 
+func (s *server) GetManageTopicIDsPaged(ctx context.Context, req *api.UserTopicsReq) (*api.IDsResp, error) {
+	ids, err := s.svr.GetManageTopicIDsPaged(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.IDsResp{IDs: ids}, nil
+}
+
+func (s *server) GetFollowedTopicIDsPaged(ctx context.Context, req *api.UserTopicsReq) (*api.IDsResp, error) {
+	ids, err := s.svr.GetFollowedTopicIDsPaged(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.IDsResp{IDs: ids}, nil
+}
+
 func (s *server) GetRecommendTopicsIDs(ctx context.Context, req *api.EmptyStruct) (*api.IDsResp, error) {
 	ids, err := s.svr.GetRecommendTopicsIDs(ctx)
 	if err != nil {
