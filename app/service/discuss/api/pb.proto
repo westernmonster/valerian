@@ -148,6 +148,9 @@ message ArgSaveDiscussFiles {
     repeated ArgDiscussionFile Items = 5;
 }
 
+message IDsResp {
+    repeated int64 IDs = 1 [(gogoproto.jsontag) = 'ids'];
+}
 
 
 service Discussion {
@@ -155,6 +158,7 @@ service Discussion {
     rpc GetDiscussionStat(IDReq) returns (DiscussionStat);
     rpc GetDiscussionCategories(CategoriesReq) returns (CategoriesResp);
     rpc GetUserDiscussionsPaged(UserDiscussionsReq) returns (UserDiscussionsResp);
+    rpc GetUserDiscussionIDsPaged(UserDiscussionsReq) returns (IDsResp);
     rpc GetAllDiscussions(EmptyStruct) returns (AllDiscussionsResp);
 }
 

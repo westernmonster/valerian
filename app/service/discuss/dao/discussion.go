@@ -7,8 +7,35 @@ import (
 
 	"valerian/app/service/discuss/model"
 	"valerian/library/database/sqalx"
+	"valerian/library/database/sqlx"
 	"valerian/library/log"
 )
+
+func (p *Dao) GetUserDiscussionIDsPaged(c context.Context, node sqalx.Node, aid int64, limit, offset int) (items []int64, err error) {
+	items = make([]int64, 0)
+	sqlSelect := "SELECT a.id FROM discussions a WHERE a.deleted=0 AND a.created_by=? ORDER BY a.id DESC limit ?,?"
+
+	var rows *sqlx.Rows
+	if rows, err = node.QueryxContext(c, sqlSelect, aid, offset, limit); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetUserDiscussionIDsPaged err(%+v)", err))
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var (
+			targetID int64
+		)
+		if err = rows.Scan(&targetID); err != nil {
+			log.For(c).Error(fmt.Sprintf("dao.GetUserDiscussionIDsPaged err(%+v)", err))
+			return
+		}
+		items = append(items, targetID)
+	}
+
+	err = rows.Err()
+	return
+}
 
 func (p *Dao) GetUserDiscussionsPaged(c context.Context, node sqalx.Node, aid int64, limit, offset int) (items []*model.Discussion, err error) {
 	items = make([]*model.Discussion, 0)

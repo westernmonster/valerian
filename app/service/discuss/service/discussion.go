@@ -16,6 +16,10 @@ func (p *Service) GetAccountBaseInfo(c context.Context, aid int64) (info *accoun
 	return p.d.GetAccountBaseInfo(c, aid)
 }
 
+func (p *Service) GetUserDiscussionIDsPaged(c context.Context, req *api.UserDiscussionsReq) (resp []int64, err error) {
+	return p.d.GetUserDiscussionIDsPaged(c, p.d.DB(), req.AccountID, int(req.Limit), int(req.Offset))
+}
+
 func (p *Service) GetUserDiscussionsPaged(c context.Context, aid int64, limit, offset int) (items []*api.DiscussionInfo, err error) {
 	var data []*model.Discussion
 	if data, err = p.d.GetUserDiscussionsPaged(c, p.d.DB(), aid, limit, offset); err != nil {
