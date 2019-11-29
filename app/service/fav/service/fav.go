@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"time"
+	"valerian/app/service/fav/api"
 	"valerian/app/service/fav/model"
 	"valerian/library/gid"
 )
@@ -69,4 +70,8 @@ func (p *Service) Unfav(c context.Context, aid, targetID int64, targetType strin
 	}
 
 	return
+}
+
+func (p *Service) GetFavIDsPaged(c context.Context, arg *api.UserFavsReq) (ids []int64, err error) {
+	return p.d.GetFavIDsPaged(c, p.d.DB(), arg.AccountID, arg.TargetType, arg.Limit, arg.Offset)
 }

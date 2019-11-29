@@ -84,3 +84,12 @@ func (s *server) Unfav(ctx context.Context, req *api.FavReq) (*api.EmptyStruct, 
 
 	return &api.EmptyStruct{}, nil
 }
+
+func (s *server) GetUserFavIDsPaged(ctx context.Context, req *api.UserFavsReq) (*api.IDsResp, error) {
+	ids, err := s.svr.GetFavIDsPaged(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.IDsResp{IDs: ids}, nil
+}
