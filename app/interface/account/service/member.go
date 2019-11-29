@@ -504,32 +504,31 @@ func (p *Service) GetMemberDiscussionsPaged(c context.Context, aid int64, limit,
 	return
 }
 
-func (p *Service) GetMemberTopicsPaged(c context.Context, aid int64, limit, offset int) (resp *model.MemberTopicResp, err error) {
-	var data *topic.UserTopicsResp
-	if data, err = p.d.GetUserTopicsPaged(c, aid, limit, offset); err != nil {
+func (p *Service) GetMemberManageTopicsPaged(c context.Context, aid int64, limit, offset int) (resp *model.MemberTopicResp, err error) {
+	var data *topic.IDsResp
+	if data, err = p.d.GetManageTopicIDsPaged(c, aid, limit, offset); err != nil {
 		return
 	}
 
 	resp = &model.MemberTopicResp{
-		Items:  make([]*model.MemberTopic, len(data.Items)),
+		Items:  make([]*model.TargetTopic, 0),
 		Paging: &model.Paging{},
 	}
 
-	for i, v := range data.Items {
-		item := &model.MemberTopic{
-			ID:           v.ID,
-			Name:         v.Name,
-			MemberCount:  (v.Stat.MemberCount),
-			Introduction: v.Introduction,
-			CreatedAt:    v.CreatedAt,
-			UpdatedAt:    v.UpdatedAt,
-			Avatar:       v.Avatar,
-		}
-
-		resp.Items[i] = item
+	if data.IDs == nil || len(data.IDs) == 0 {
+		resp.Paging.IsEnd = true
+		return
 	}
 
-	if resp.Paging.Prev, err = genURL("/api/v1/account/list/topics", url.Values{
+	for _, v := range data.IDs {
+		var t *topic.TopicInfo
+		if t, err = p.d.GetTopic(c, v); err != nil {
+			return
+		}
+		resp.Items = append(resp.Items, p.FromTopic(t))
+	}
+
+	if resp.Paging.Prev, err = genURL("/api/v1/account/list/managed_topics", url.Values{
 		"id":     []string{strconv.FormatInt(aid, 10)},
 		"limit":  []string{strconv.Itoa(limit)},
 		"offset": []string{strconv.Itoa(offset - limit)},
@@ -537,7 +536,7 @@ func (p *Service) GetMemberTopicsPaged(c context.Context, aid int64, limit, offs
 		return
 	}
 
-	if resp.Paging.Next, err = genURL("/api/v1/account/list/topics", url.Values{
+	if resp.Paging.Next, err = genURL("/api/v1/account/list/managed_topics", url.Values{
 		"id":     []string{strconv.FormatInt(aid, 10)},
 		"limit":  []string{strconv.Itoa(limit)},
 		"offset": []string{strconv.Itoa(offset + limit)},
@@ -556,6 +555,59 @@ func (p *Service) GetMemberTopicsPaged(c context.Context, aid int64, limit, offs
 
 	return
 }
+
+func (p *Service) GetMemberFollowedTopicsPaged(c context.Context, aid int64, limit, offset int) (resp *model.MemberTopicResp, err error) {
+	var data *topic.IDsResp
+	if data, err = p.d.GetFollowedTopicIDsPaged(c, aid, limit, offset); err != nil {
+		return
+	}
+
+	resp = &model.MemberTopicResp{
+		Items:  make([]*model.TargetTopic, 0),
+		Paging: &model.Paging{},
+	}
+
+	if data.IDs == nil || len(data.IDs) == 0 {
+		resp.Paging.IsEnd = true
+		return
+	}
+
+	for _, v := range data.IDs {
+		var t *topic.TopicInfo
+		if t, err = p.d.GetTopic(c, v); err != nil {
+			return
+		}
+		resp.Items = append(resp.Items, p.FromTopic(t))
+	}
+
+	if resp.Paging.Prev, err = genURL("/api/v1/account/list/followed_topics", url.Values{
+		"id":     []string{strconv.FormatInt(aid, 10)},
+		"limit":  []string{strconv.Itoa(limit)},
+		"offset": []string{strconv.Itoa(offset - limit)},
+	}); err != nil {
+		return
+	}
+
+	if resp.Paging.Next, err = genURL("/api/v1/account/list/followed_topics", url.Values{
+		"id":     []string{strconv.FormatInt(aid, 10)},
+		"limit":  []string{strconv.Itoa(limit)},
+		"offset": []string{strconv.Itoa(offset + limit)},
+	}); err != nil {
+		return
+	}
+
+	if len(resp.Items) < limit {
+		resp.Paging.IsEnd = true
+		resp.Paging.Next = ""
+	}
+
+	if offset == 0 {
+		resp.Paging.Prev = ""
+	}
+
+	return
+}
+
 func (p *Service) GetMemberCert(c context.Context, targetID int64) (resp *model.MemberCertInfo, err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {

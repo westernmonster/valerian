@@ -20,6 +20,6 @@ type MemberTopic struct {
 }
 
 type MemberTopicResp struct {
-	Items  []*MemberTopic `json:"items"`
+	Items  []*TargetTopic `json:"items"`
 	Paging *Paging        `json:"paging"`
 }
