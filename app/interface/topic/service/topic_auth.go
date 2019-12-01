@@ -82,6 +82,32 @@ func (p *Service) GetAuthed2CurrentTopicsPaged(c context.Context, topicID int64,
 
 		resp.Items = append(resp.Items, p.FromTopic(t))
 	}
+
+	if resp.Paging.Prev, err = genURL("/api/v1/topic/list/auth_to_current_topics", url.Values{
+		"topic_id": []string{strconv.FormatInt(topicID, 10)},
+		"limit":    []string{strconv.Itoa(limit)},
+		"offset":   []string{strconv.Itoa(offset - limit)},
+	}); err != nil {
+		return
+	}
+
+	if resp.Paging.Next, err = genURL("/api/v1/topic/list/auth_to_current_topics", url.Values{
+		"topic_id": []string{strconv.FormatInt(topicID, 10)},
+		"limit":    []string{strconv.Itoa(limit)},
+		"offset":   []string{strconv.Itoa(offset + limit)},
+	}); err != nil {
+		return
+	}
+
+	if len(resp.Items) < limit {
+		resp.Paging.IsEnd = true
+		resp.Paging.Next = ""
+	}
+
+	if offset == 0 {
+		resp.Paging.Prev = ""
+	}
+
 	return
 }
 
