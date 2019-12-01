@@ -46,6 +46,8 @@ func authTopics(c *mars.Context) {
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param topic_id query string true "话题ID"
+// @Param limit query integer false "每页大小"
+// @Param offset query integer false "offset"
 // @Success 200 {array}  app.interface.topic.model.TargetTopic "话题"
 // @Failure 400 "请求验证失败"
 // @Failure 401 "登录验证失败"
@@ -53,8 +55,10 @@ func authTopics(c *mars.Context) {
 // @Router /topic/list/auth_to_current_topics [get]
 func auth2CurrentTopics(c *mars.Context) {
 	var (
-		id  int64
-		err error
+		id     int64
+		err    error
+		offset int
+		limit  int
 	)
 
 	params := c.Request.Form
@@ -64,7 +68,19 @@ func auth2CurrentTopics(c *mars.Context) {
 		return
 	}
 
-	c.JSON(srv.GetAuthed2CurrentTopics(c, id))
+	if offset, err = strconv.Atoi(params.Get("offset")); err != nil {
+		offset = 0
+	} else if offset < 0 {
+		offset = 0
+	}
+
+	if limit, err = strconv.Atoi(params.Get("limit")); err != nil {
+		limit = 10
+	} else if limit < 0 {
+		limit = 10
+	}
+
+	c.JSON(srv.GetAuthed2CurrentTopicsPaged(c, id, limit, offset))
 }
 
 // @Summary 批量更新授权话题

@@ -222,9 +222,9 @@ func (p *Dao) CanEdit(c context.Context, arg *api.TopicReq) (canEdit bool, err e
 	return
 }
 
-func (p *Dao) GetAuthed2CurrentTopicIDs(c context.Context, arg *api.TopicReq) (resp *api.IDsResp, err error) {
-	if resp, err = p.topicRPC.GetAuthed2CurrentTopicIDs(c, arg); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.GetAuthed2CurrentTopicIDs err(%+v) arg(%+v)", err, arg))
+func (p *Dao) GetAuthed2CurrentTopicIDsPaged(c context.Context, arg *api.AuthTopicsReq) (resp *api.IDsResp, err error) {
+	if resp, err = p.topicRPC.GetAuthed2CurrentTopicIDsPaged(c, arg); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetAuthed2CurrentTopicIDsPaged err(%+v) arg(%+v)", err, arg))
 	}
 	return
 }

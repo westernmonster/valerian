@@ -60,9 +60,9 @@ func (p *Service) SaveAuthTopics(c context.Context, arg *model.ArgSaveAuthTopics
 	return
 }
 
-func (p *Service) GetAuthed2CurrentTopics(c context.Context, topicID int64) (resp []*model.TargetTopic, err error) {
+func (p *Service) GetAuthed2CurrentTopicsPaged(c context.Context, topicID int64, limit, offset int) (resp []*model.TargetTopic, err error) {
 	var ret *topic.IDsResp
-	if ret, err = p.d.GetAuthed2CurrentTopicIDs(c, &topic.TopicReq{ID: topicID}); err != nil {
+	if ret, err = p.d.GetAuthed2CurrentTopicIDsPaged(c, &topic.AuthTopicsReq{TopicID: topicID, Limit: int32(limit), Offset: int32(offset)}); err != nil {
 		return
 	}
 
