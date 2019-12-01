@@ -326,9 +326,9 @@ func (p *Service) incrStat(c context.Context, node sqalx.Node, resourceID int64,
 			return
 		}
 
-		if err = p.d.IncrCommentStat(c, node, &model.CommentStat{CommentID: resourceID, ChildrenCount: 1}); err != nil {
-			return
-		}
+		// if err = p.d.IncrCommentStat(c, node, &model.CommentStat{CommentID: resourceID, ChildrenCount: 1}); err != nil {
+		// 	return
+		// }
 
 		targetType = comment.TargetType
 	}

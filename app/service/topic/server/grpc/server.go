@@ -430,8 +430,8 @@ func (s *server) DelRecommendTopic(ctx context.Context, req *api.TopicReq) (*api
 	return &api.EmptyStruct{}, nil
 }
 
-func (s *server) GetAuthed2CurrentTopicIDs(ctx context.Context, req *api.TopicReq) (*api.IDsResp, error) {
-	ids, err := s.svr.GetAuthed2CurrentTopicIDs(ctx, req.ID)
+func (s *server) GetAuthed2CurrentTopicIDsPaged(ctx context.Context, req *api.AuthTopicsReq) (*api.IDsResp, error) {
+	ids, err := s.svr.GetAuthed2CurrentTopicIDsPaged(ctx, req.TopicID, req.Limit, req.Offset)
 	if err != nil {
 		return nil, err
 	}

@@ -173,6 +173,12 @@ message UserTopicsReq {
     int32 Offset = 3 [(gogoproto.jsontag) = "offset"];
 }
 
+message AuthTopicsReq {
+    int64 TopicID = 1 [(gogoproto.jsontag) = "topic_id"];
+    int32 Limit = 2 [(gogoproto.jsontag) = "limit"];
+    int32 Offset = 3 [(gogoproto.jsontag) = "offset"];
+}
+
 
 message UserTopicsResp {
     repeated TopicInfo Items = 1 [(gogoproto.jsontag) = 'items'];
@@ -588,6 +594,6 @@ service Topic {
 
     rpc  GetRecommendMemberIDs(IDsReq) returns (IDsResp);
 
-    rpc  GetAuthed2CurrentTopicIDs(TopicReq) returns (IDsResp);
+    rpc  GetAuthed2CurrentTopicIDsPaged(AuthTopicsReq) returns (IDsResp);
 }
 

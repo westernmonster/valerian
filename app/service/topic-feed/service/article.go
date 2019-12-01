@@ -195,14 +195,58 @@ func (p *Service) onArticleUpdated(m *stan.Msg) {
 
 func (p *Service) onArticleDeleted(m *stan.Msg) {
 	var err error
+	c := context.Background()
+	c = sqalx.NewContext(c, true)
 	info := new(def.MsgCatalogArticleDeleted)
 	if err = info.Unmarshal(m.Data); err != nil {
 		log.Errorf("onReviseAdded Unmarshal failed %#v", err)
 		return
 	}
 
-	if err = p.d.DelTopicFeedByCond(context.Background(), p.d.DB(), info.TopicID, def.TargetTypeArticle, info.ArticleID); err != nil {
-		log.Errorf("service.DelTopicFeedByCond() failed %#v", err)
+	var tx sqalx.Node
+	if tx, err = p.d.DB().Beginx(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		return
+	}
+
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+			}
+			return
+		}
+	}()
+
+	var article *model.Article
+	if article, err = p.getArticle(c, tx, info.ArticleID); err != nil {
+		if ecode.Cause(err) == ecode.ArticleNotExist {
+			m.Ack()
+		}
+		return
+	}
+
+	feed := &model.TopicFeed{
+		ID:         gid.NewID(),
+		TopicID:    info.TopicID,
+		ActionType: def.ActionTypeDeleteArticle,
+		ActionTime: time.Now().Unix(),
+		ActionText: def.ActionTextDeleteArticle,
+		ActorID:    info.ActorID,
+		ActorType:  def.ActorTypeUser,
+		TargetID:   article.ID,
+		TargetType: def.TargetTypeArticle,
+		CreatedAt:  time.Now().Unix(),
+		UpdatedAt:  time.Now().Unix(),
+	}
+
+	if err = p.d.AddTopicFeed(context.Background(), tx, feed); err != nil {
+		log.Errorf("service.onArticleDeleted() failed %#v", err)
+		return
+	}
+
+	if err = tx.Commit(); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 		return
 	}
 

@@ -60,13 +60,16 @@ func (p *Service) SaveAuthTopics(c context.Context, arg *model.ArgSaveAuthTopics
 	return
 }
 
-func (p *Service) GetAuthed2CurrentTopics(c context.Context, topicID int64) (resp []*model.TargetTopic, err error) {
+func (p *Service) GetAuthed2CurrentTopicsPaged(c context.Context, topicID int64, limit, offset int) (resp *model.Auth2CurrentTopicsResp, err error) {
 	var ret *topic.IDsResp
-	if ret, err = p.d.GetAuthed2CurrentTopicIDs(c, &topic.TopicReq{ID: topicID}); err != nil {
+	if ret, err = p.d.GetAuthed2CurrentTopicIDsPaged(c, &topic.AuthTopicsReq{TopicID: topicID, Limit: int32(limit), Offset: int32(offset)}); err != nil {
 		return
 	}
 
-	resp = make([]*model.TargetTopic, 0)
+	resp = &model.Auth2CurrentTopicsResp{
+		Items:  make([]*model.TargetTopic, 0),
+		Paging: &model.Paging{},
+	}
 	if ret.IDs == nil {
 		return
 	}
@@ -77,8 +80,34 @@ func (p *Service) GetAuthed2CurrentTopics(c context.Context, topicID int64) (res
 			return
 		}
 
-		resp = append(resp, p.FromTopic(t))
+		resp.Items = append(resp.Items, p.FromTopic(t))
 	}
+
+	if resp.Paging.Prev, err = genURL("/api/v1/topic/list/auth_to_current_topics", url.Values{
+		"topic_id": []string{strconv.FormatInt(topicID, 10)},
+		"limit":    []string{strconv.Itoa(limit)},
+		"offset":   []string{strconv.Itoa(offset - limit)},
+	}); err != nil {
+		return
+	}
+
+	if resp.Paging.Next, err = genURL("/api/v1/topic/list/auth_to_current_topics", url.Values{
+		"topic_id": []string{strconv.FormatInt(topicID, 10)},
+		"limit":    []string{strconv.Itoa(limit)},
+		"offset":   []string{strconv.Itoa(offset + limit)},
+	}); err != nil {
+		return
+	}
+
+	if len(resp.Items) < limit {
+		resp.Paging.IsEnd = true
+		resp.Paging.Next = ""
+	}
+
+	if offset == 0 {
+		resp.Paging.Prev = ""
+	}
+
 	return
 }
 
