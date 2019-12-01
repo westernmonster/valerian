@@ -75,12 +75,13 @@ func (p *Service) getArticleFiles(c context.Context, aid int64, articleID int64)
 	if data.Items != nil {
 		for _, v := range data.Items {
 			items = append(items, &model.ArticleFileResp{
-				ID:       v.ID,
-				FileName: v.FileName,
-				FileURL:  v.FileURL,
-				FileType: v.FileType,
-				PdfURL:   v.PdfURL,
-				Seq:      int(v.Seq),
+				ID:        v.ID,
+				FileName:  v.FileName,
+				FileURL:   v.FileURL,
+				FileType:  v.FileType,
+				PdfURL:    v.PdfURL,
+				Seq:       int(v.Seq),
+				CreatedAt: v.CreatedAt,
 			})
 		}
 	}
