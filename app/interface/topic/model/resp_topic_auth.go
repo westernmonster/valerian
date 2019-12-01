@@ -17,3 +17,8 @@ type AuthTopicResp struct {
 	// 名称
 	Name string `json:"name"`
 }
+
+type Auth2CurrentTopicsResp struct {
+	Items  []*TargetTopic `json:"items"`
+	Paging *Paging        `json:"paging"`
+}

@@ -48,7 +48,7 @@ func authTopics(c *mars.Context) {
 // @Param topic_id query string true "话题ID"
 // @Param limit query integer false "每页大小"
 // @Param offset query integer false "offset"
-// @Success 200 {array}  app.interface.topic.model.TargetTopic "话题"
+// @Success 200 {object}  app.interface.topic.model.Auth2CurrentTopicsResp "话题"
 // @Failure 400 "请求验证失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
