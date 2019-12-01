@@ -218,3 +218,29 @@ func (p *Dao) DelAuthTopic(c context.Context, node sqalx.Node, id int64) (err er
 
 	return
 }
+
+func (p *Dao) GetAuthed2CurrentTopicIDsPaged(c context.Context, node sqalx.Node, topicID int64, limit, offset int32) (items []int64, err error) {
+	items = make([]int64, 0)
+	sqlSelect := "SELECT a.topic_id FROM auth_topics a WHERE a.deleted=0 AND a.to_topic_id=? ORDER BY a.topic_id DESC LIMIT ?,?"
+
+	var rows *sqlx.Rows
+	if rows, err = node.QueryxContext(c, sqlSelect, topicID, offset, limit); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetAuthed2CurrentTopicIDsPaged err(%+v) to_topic_id(%d), limit(%d), offset(%d)", err, topicID, limit, offset))
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var (
+			targetID int64
+		)
+		if err = rows.Scan(&targetID); err != nil {
+			log.For(c).Error(fmt.Sprintf("dao.GetAuthed2CurrentTopicIDsPaged err(%+v) to_topic_id(%d), limit(%d), offset(%d)", err, topicID, limit, offset))
+			return
+		}
+		items = append(items, targetID)
+	}
+
+	err = rows.Err()
+	return
+}
