@@ -138,7 +138,7 @@ func (p *Service) convertOfficeFiles(c context.Context, articleID int64) (err er
 				req.SrcUri = v.FileURL
 				req.TgtType = "pdf"
 
-				fName := strings.Split(path.Base(v.FileURL), ".")[0] + "pdf"
+				fName := strings.Split(path.Base(v.FileURL), ".")[0] + ".pdf"
 				fURL := strings.TrimRight(v.FileURL, path.Base(v.FileURL)) + fName
 				req.TgtUri = fURL
 
