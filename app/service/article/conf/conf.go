@@ -39,11 +39,20 @@ type Config struct {
 	Auth      *auth.Config
 	Memcache  *Memcache
 	Discovery *discovery.Config
+	Aliyun    *Aliyun
 
 	AccountRPC *warden.ClientConfig
 	TopicRPC   *warden.ClientConfig
 	ArticleRPC *warden.ClientConfig
 	DiscussRPC *warden.ClientConfig
+}
+
+type Aliyun struct {
+	AccessKeyID     string
+	AccessKeySecret string
+	RegionID        string
+	RoleArn         string
+	RoleSessionName string
 }
 
 // DB db config.

@@ -12,6 +12,7 @@ import (
 	"valerian/library/gid"
 	"valerian/library/log"
 
+	"github.com/aliyun/alibaba-cloud-sdk-go/services/imm"
 	"github.com/jinzhu/copier"
 )
 
@@ -110,6 +111,41 @@ func (p *Service) bulkCreateFiles(c context.Context, node sqalx.Node, articleID 
 	p.addCache(func() {
 		p.d.DelArticleFileCache(context.TODO(), articleID)
 	})
+
+	return
+}
+
+func (p *Service) convertOfficeFiles(c context.Context, articleID int64) (err error) {
+	var files []*model.ArticleFile
+	if files, err = p.d.GetArticleFilesByCond(c, p.d.DB(), map[string]interface{}{
+		"article_id": articleID,
+	}); err != nil {
+		return
+	}
+
+	for _, v := range files {
+		switch v.FileType {
+		case model.FileTypePPT:
+		case model.FileTypeExcel:
+		case model.FileTypeWord:
+			if v.PdfURL == "" {
+				req := imm.CreateCreateOfficeConversionTaskRequest()
+				req.Project = "stonote"
+				req.SrcUri = arg.SrcUri
+				req.TgtType = "pdf"
+				req.TgtUri = arg.TgtUri
+				req.SetScheme("https")
+
+				var ret *imm.CreateOfficeConversionTaskResponse
+				if ret, err = p.immClient.CreateOfficeConversionTask(req); err != nil {
+					log.For(c).Error(fmt.Sprintf("service.CreateOfficeConversionTask() error(%+v)", err))
+					return
+				}
+
+			}
+			break
+		}
+	}
 
 	return
 }

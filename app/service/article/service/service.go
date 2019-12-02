@@ -9,14 +9,18 @@ import (
 	"valerian/library/conf/env"
 	"valerian/library/log"
 	"valerian/library/mq"
+
+	"github.com/aliyun/alibaba-cloud-sdk-go/services/imm"
+	"github.com/pkg/errors"
 )
 
 // Service struct of service
 type Service struct {
-	c      *conf.Config
-	d      *dao.Dao
-	mq     *mq.MessageQueue
-	missch chan func()
+	c         *conf.Config
+	d         *dao.Dao
+	mq        *mq.MessageQueue
+	immClient *imm.Client
+	missch    chan func()
 }
 
 // New create new service
@@ -26,6 +30,12 @@ func New(c *conf.Config) (s *Service) {
 		d:      dao.New(c),
 		mq:     mq.New(env.Hostname, c.Nats),
 		missch: make(chan func(), 1024),
+	}
+
+	if client, err := imm.NewClientWithAccessKey(c.Aliyun.RegionID, c.Aliyun.AccessKeyID, c.Aliyun.AccessKeySecret); err != nil {
+		panic(errors.WithMessage(err, "Failed to init Aliyun IMM Client"))
+	} else {
+		s.immClient = client
 	}
 	go s.cacheproc()
 	return

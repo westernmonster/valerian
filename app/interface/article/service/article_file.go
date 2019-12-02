@@ -16,14 +16,6 @@ func (p *Service) GetArticleFile(c context.Context, fileID int64) (item *model.A
 		return
 	}
 
-	var canView bool
-	if canView, err = p.d.CanView(c, &article.IDReq{Aid: aid, ID: fileID}); err != nil {
-		return
-	} else if !canView {
-		err = ecode.NoArticleViewPermission
-		return
-	}
-
 	return p.getArticleFile(c, aid, fileID)
 }
 
