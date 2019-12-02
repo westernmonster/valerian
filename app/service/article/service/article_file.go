@@ -3,6 +3,8 @@ package service
 import (
 	"context"
 	"fmt"
+	"path"
+	"strings"
 	"time"
 
 	"valerian/app/service/article/api"
@@ -110,6 +112,7 @@ func (p *Service) bulkCreateFiles(c context.Context, node sqalx.Node, articleID 
 
 	p.addCache(func() {
 		p.d.DelArticleFileCache(context.TODO(), articleID)
+		p.convertOfficeFiles(context.TODO(), articleID)
 	})
 
 	return
@@ -120,6 +123,7 @@ func (p *Service) convertOfficeFiles(c context.Context, articleID int64) (err er
 	if files, err = p.d.GetArticleFilesByCond(c, p.d.DB(), map[string]interface{}{
 		"article_id": articleID,
 	}); err != nil {
+		log.Error(fmt.Sprintf("service.convertOfficeFiles() error(%+v)", err))
 		return
 	}
 
@@ -131,15 +135,48 @@ func (p *Service) convertOfficeFiles(c context.Context, articleID int64) (err er
 			if v.PdfURL == "" {
 				req := imm.CreateCreateOfficeConversionTaskRequest()
 				req.Project = "stonote"
-				req.SrcUri = arg.SrcUri
+				req.SrcUri = v.FileURL
 				req.TgtType = "pdf"
-				req.TgtUri = arg.TgtUri
+				targetFile := strings.Split(path.Base(v.FileURL), ".")[0] + "pdf"
+				req.TgtUri = targetFile
 				req.SetScheme("https")
 
 				var ret *imm.CreateOfficeConversionTaskResponse
 				if ret, err = p.immClient.CreateOfficeConversionTask(req); err != nil {
-					log.For(c).Error(fmt.Sprintf("service.CreateOfficeConversionTask() error(%+v)", err))
+					log.Error(fmt.Sprintf("service.convertOfficeFiles() error(%+v)", err))
 					return
+				}
+				maxGetCount := 30
+				getInternval := time.Second
+				getCount := 0
+				taskReq := imm.CreateGetOfficeConversionTaskRequest()
+				taskReq.Project = "stonote"
+				taskReq.TaskId = ret.TaskId
+				taskReq.SetScheme("https")
+				for {
+					time.Sleep(getInternval)
+					var taskResp *imm.GetOfficeConversionTaskResponse
+					if taskResp, err = p.immClient.GetOfficeConversionTask(taskReq); err != nil {
+						log.Error(fmt.Sprintf("service.convertOfficeFiles() error(%+v)", err))
+						return
+					}
+
+					if taskResp.Status == "Finished" {
+						v.PdfURL = taskResp.TgtUri
+						if err = p.d.UpdateArticleFile(c, p.d.DB(), v); err != nil {
+							log.Error(fmt.Sprintf("service.convertOfficeFiles() error(%+v)", err))
+							return
+						}
+						break
+					}
+					if taskResp.Status != "Running" {
+						break
+					}
+					getCount++
+					if getCount >= maxGetCount {
+						fmt.Println("OfficeConversion Timeout for 30 seconds")
+						break
+					}
 				}
 
 			}
@@ -213,6 +250,9 @@ func (p *Service) SaveArticleFiles(c context.Context, arg *api.ArgSaveArticleFil
 			return
 		}
 
+		if file.FileURL != v.FileURL {
+			file.PdfURL = ""
+		}
 		file.FileName = v.FileName
 		file.FileURL = v.FileURL
 		file.FileType = v.FileType
@@ -240,6 +280,7 @@ func (p *Service) SaveArticleFiles(c context.Context, arg *api.ArgSaveArticleFil
 
 	p.addCache(func() {
 		p.d.DelArticleFileCache(context.TODO(), arg.ArticleID)
+		p.convertOfficeFiles(context.TODO(), arg.ArticleID)
 	})
 	return
 }
