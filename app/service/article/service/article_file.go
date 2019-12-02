@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
+	"net/url"
 	"path"
 	"strings"
 	"time"
@@ -135,14 +136,19 @@ func (p *Service) convertOfficeFiles(c context.Context, articleID int64) (err er
 			if v.PdfURL == "" {
 				req := imm.CreateCreateOfficeConversionTaskRequest()
 				req.Project = "stonote"
-				req.SrcUri = v.FileURL
+
+				var u *url.URL
+				if u, err = url.Parse(v.FileURL); err != nil {
+					log.Error(fmt.Sprintf("service.convertOfficeFiles() error(%+v)", err))
+					return
+				}
+				req.SrcUri = "oss://" + p.c.Aliyun.BucketName + u.Path
 				req.TgtType = "pdf"
 
-				fName := strings.Split(path.Base(v.FileURL), ".")[0] + ".pdf"
-				fURL := strings.TrimRight(v.FileURL, path.Base(v.FileURL)) + fName
-				req.TgtUri = fURL
+				fName := strings.Split(path.Base(u.Path), ".")[0] + ".pdf"
+				fURL := strings.TrimRight(u.Path, path.Base(u.Path)) + fName
+				req.TgtUri = "oss://" + p.c.Aliyun.BucketName + fURL
 
-				fmt.Println(fURL)
 				req.SetScheme("https")
 
 				var ret *imm.CreateOfficeConversionTaskResponse

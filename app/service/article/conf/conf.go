@@ -53,6 +53,7 @@ type Aliyun struct {
 	RegionID        string
 	RoleArn         string
 	RoleSessionName string
+	BucketName      string
 }
 
 // DB db config.
