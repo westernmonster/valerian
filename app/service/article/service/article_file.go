@@ -137,8 +137,10 @@ func (p *Service) convertOfficeFiles(c context.Context, articleID int64) (err er
 				req.Project = "stonote"
 				req.SrcUri = v.FileURL
 				req.TgtType = "pdf"
-				targetFile := strings.Split(path.Base(v.FileURL), ".")[0] + "pdf"
-				req.TgtUri = targetFile
+
+				fName := strings.Split(path.Base(v.FileURL), ".")[0] + "pdf"
+				fURL := strings.TrimRight(v.FileURL, path.Base(v.FileURL)) + fName
+				req.TgtUri = fURL
 				req.SetScheme("https")
 
 				var ret *imm.CreateOfficeConversionTaskResponse
