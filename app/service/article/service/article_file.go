@@ -15,6 +15,7 @@ import (
 	"valerian/library/gid"
 	"valerian/library/log"
 
+	"github.com/aliyun/alibaba-cloud-sdk-go/sdk/requests"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/imm"
 	"github.com/jinzhu/copier"
 )
@@ -136,6 +137,12 @@ func (p *Service) convertOfficeFiles(c context.Context, articleID int64) (err er
 			if v.PdfURL == "" {
 				req := imm.CreateCreateOfficeConversionTaskRequest()
 				req.Project = "stonote"
+				req.StartPage = requests.NewInteger(1)
+				req.EndPage = requests.NewInteger(-1)
+				req.MaxSheetRow = requests.NewInteger(-1)
+				req.MaxSheetCol = requests.NewInteger(-1)
+				req.MaxSheetCount = requests.NewInteger(-1)
+				req.MaxSheetCount = requests.NewInteger(-1)
 
 				var u *url.URL
 				if u, err = url.Parse(v.FileURL); err != nil {
@@ -145,10 +152,9 @@ func (p *Service) convertOfficeFiles(c context.Context, articleID int64) (err er
 				req.SrcUri = "oss://" + p.c.Aliyun.BucketName + u.Path
 				req.TgtType = "pdf"
 
-				fName := strings.Split(path.Base(u.Path), ".")[0] + ".pdf"
+				fName := strings.Split(path.Base(u.Path), ".")[0]
 				fURL := strings.TrimRight(u.Path, path.Base(u.Path)) + fName
 				req.TgtUri = "oss://" + p.c.Aliyun.BucketName + fURL
-
 				req.SetScheme("https")
 
 				var ret *imm.CreateOfficeConversionTaskResponse
