@@ -172,6 +172,7 @@ func (p *Service) convertOfficeFiles(c context.Context, articleID int64) (err er
 					}
 
 					if taskResp.Status == "Finished" {
+						fmt.Printf("%+v\n", taskResp)
 						v.PdfURL = taskResp.TgtUri
 						if err = p.d.UpdateArticleFile(c, p.d.DB(), v); err != nil {
 							log.Error(fmt.Sprintf("service.convertOfficeFiles() error(%+v)", err))
