@@ -85,3 +85,10 @@ const (
 	UserRoleUser       = "user"
 	UserRoleOrg        = "org"
 )
+
+const (
+	FileTypeWord  = "word"
+	FileTypePPT   = "ppt"
+	FileTypeExcel = "excel"
+	FileTypePDF   = "pdf"
+)
