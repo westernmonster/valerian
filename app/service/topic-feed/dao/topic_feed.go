@@ -12,7 +12,7 @@ import (
 func (p *Dao) GetTopicFeedPaged(c context.Context, node sqalx.Node, topicID int64, limit, offset int) (items []*model.TopicFeed, err error) {
 	items = make([]*model.TopicFeed, 0)
 
-	sql := "SELECT a.* FROM topic_feeds a WHERE a.deleted=0 AND a.topic_id=? ORDER BY a.id DESC limit ?,?"
+	sql := "SELECT a.id,a.topic_id,a.action_type,a.action_time,a.action_text,a.actor_id,a.actor_type,a.target_id,a.target_type,a.deleted,a.created_at,a.updated_at FROM topic_feeds a WHERE a.deleted=0 AND a.topic_id=? ORDER BY a.id DESC limit ?,?"
 
 	if err = node.SelectContext(c, &items, sql, topicID, offset, limit); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetTopicFeedPaged error(%+v), topic_id(%d) limit(%d) offset(%d)", err, topicID, limit, offset))

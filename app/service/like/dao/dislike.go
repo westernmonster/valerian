@@ -13,7 +13,7 @@ import (
 // GetAll get all records
 func (p *Dao) GetDislikes(c context.Context, node sqalx.Node) (items []*model.Dislike, err error) {
 	items = make([]*model.Dislike, 0)
-	sqlSelect := "SELECT a.* FROM dislikes a WHERE a.deleted=0 ORDER BY a.id DESC "
+	sqlSelect := "SELECT a.id,a.account_id,a.target_id,a.target_type,a.deleted,a.created_at,a.updated_at FROM dislikes a WHERE a.deleted=0 ORDER BY a.id DESC "
 
 	if err = node.SelectContext(c, &items, sqlSelect); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetDislikes err(%+v)", err))
@@ -45,7 +45,7 @@ func (p *Dao) GetDislikesByCond(c context.Context, node sqalx.Node, cond map[str
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.* FROM dislikes a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.id,a.account_id,a.target_id,a.target_type,a.deleted,a.created_at,a.updated_at FROM dislikes a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
 
 	if err = node.SelectContext(c, &items, sqlSelect, condition...); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetDislikesByCond err(%+v), condition(%+v)", err, cond))
@@ -57,7 +57,7 @@ func (p *Dao) GetDislikesByCond(c context.Context, node sqalx.Node, cond map[str
 // GetByID get a record by ID
 func (p *Dao) GetDislikeByID(c context.Context, node sqalx.Node, id int64) (item *model.Dislike, err error) {
 	item = new(model.Dislike)
-	sqlSelect := "SELECT a.* FROM dislikes a WHERE a.id=? AND a.deleted=0"
+	sqlSelect := "SELECT a.id,a.account_id,a.target_id,a.target_type,a.deleted,a.created_at,a.updated_at FROM dislikes a WHERE a.id=? AND a.deleted=0"
 
 	if err = node.GetContext(c, item, sqlSelect, id); err != nil {
 		if err == sql.ErrNoRows {
@@ -94,7 +94,7 @@ func (p *Dao) GetDislikeByCond(c context.Context, node sqalx.Node, cond map[stri
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.* FROM dislikes a WHERE a.deleted=0 %s", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.id,a.account_id,a.target_id,a.target_type,a.deleted,a.created_at,a.updated_at FROM dislikes a WHERE a.deleted=0 %s", clause)
 
 	if err = node.GetContext(c, item, sqlSelect, condition...); err != nil {
 		if err == sql.ErrNoRows {

@@ -12,7 +12,7 @@ import (
 func (p *Dao) GetFeedPaged(c context.Context, node sqalx.Node, accountID int64, limit, offset int) (items []*model.Feed, err error) {
 	items = make([]*model.Feed, 0)
 
-	sql := "SELECT a.* FROM feeds a WHERE a.deleted=0 AND a.account_id=? ORDER BY a.id DESC limit ?,?"
+	sql := "SELECT a.id,a.account_id,a.action_type,a.action_time,a.action_text,a.actor_id,a.actor_type,a.target_id,a.target_type,a.deleted,a.created_at,a.updated_at FROM feeds a WHERE a.deleted=0 AND a.account_id=? ORDER BY a.id DESC limit ?,?"
 
 	if err = node.SelectContext(c, &items, sql, accountID, offset, limit); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetFeedPaged error(%+v), account_id(%d) limit(%d) offset(%d)", err, accountID, limit, offset))
@@ -23,7 +23,7 @@ func (p *Dao) GetFeedPaged(c context.Context, node sqalx.Node, accountID int64, 
 // GetAll get all records
 func (p *Dao) GetFeeds(c context.Context, node sqalx.Node) (items []*model.Feed, err error) {
 	items = make([]*model.Feed, 0)
-	sqlSelect := "SELECT a.* FROM feeds a WHERE a.deleted=0 ORDER BY a.id DESC "
+	sqlSelect := "SELECT a.id,a.account_id,a.action_type,a.action_time,a.action_text,a.actor_id,a.actor_type,a.target_id,a.target_type,a.deleted,a.created_at,a.updated_at FROM feeds a WHERE a.deleted=0 ORDER BY a.id DESC "
 
 	if err = node.SelectContext(c, &items, sqlSelect); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetFeeds err(%+v)", err))
@@ -74,7 +74,7 @@ func (p *Dao) GetFeedByCond(c context.Context, node sqalx.Node, cond map[string]
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.* FROM feeds a WHERE a.deleted=0 %s", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.id,a.account_id,a.action_type,a.action_time,a.action_text,a.actor_id,a.actor_type,a.target_id,a.target_type,a.deleted,a.created_at,a.updated_at FROM feeds a WHERE a.deleted=0 %s", clause)
 
 	if err = node.GetContext(c, item, sqlSelect, condition...); err != nil {
 		if err == sql.ErrNoRows {
@@ -131,7 +131,7 @@ func (p *Dao) GetFeedsByCond(c context.Context, node sqalx.Node, cond map[string
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.* FROM feeds a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.id,a.account_id,a.action_type,a.action_time,a.action_text,a.actor_id,a.actor_type,a.target_id,a.target_type,a.deleted,a.created_at,a.updated_at FROM feeds a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
 
 	if err = node.SelectContext(c, &items, sqlSelect, condition...); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetFeedsByCond err(%+v), condition(%+v)", err, cond))

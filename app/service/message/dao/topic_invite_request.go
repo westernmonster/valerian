@@ -13,7 +13,7 @@ import (
 // GetAll get all records
 func (p *Dao) GetTopicInviteRequests(c context.Context, node sqalx.Node) (items []*model.TopicInviteRequest, err error) {
 	items = make([]*model.TopicInviteRequest, 0)
-	sqlSelect := "SELECT a.* FROM topic_invite_requests a WHERE a.deleted=0 ORDER BY a.id DESC "
+	sqlSelect := "SELECT a.id,a.account_id,a.topic_id,a.status,a.deleted,a.created_at,a.updated_at,a.from_account_id FROM topic_invite_requests a WHERE a.deleted=0 ORDER BY a.id DESC "
 
 	if err = node.SelectContext(c, &items, sqlSelect); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetTopicInviteRequests err(%+v)", err))
@@ -49,7 +49,7 @@ func (p *Dao) GetTopicInviteRequestsByCond(c context.Context, node sqalx.Node, c
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.* FROM topic_invite_requests a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.id,a.account_id,a.topic_id,a.status,a.deleted,a.created_at,a.updated_at,a.from_account_id FROM topic_invite_requests a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
 
 	if err = node.SelectContext(c, &items, sqlSelect, condition...); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetTopicInviteRequestsByCond err(%+v), condition(%+v)", err, cond))
@@ -61,7 +61,7 @@ func (p *Dao) GetTopicInviteRequestsByCond(c context.Context, node sqalx.Node, c
 // GetByID get a record by ID
 func (p *Dao) GetTopicInviteRequestByID(c context.Context, node sqalx.Node, id int64) (item *model.TopicInviteRequest, err error) {
 	item = new(model.TopicInviteRequest)
-	sqlSelect := "SELECT a.* FROM topic_invite_requests a WHERE a.id=? AND a.deleted=0"
+	sqlSelect := "SELECT a.id,a.account_id,a.topic_id,a.status,a.deleted,a.created_at,a.updated_at,a.from_account_id FROM topic_invite_requests a WHERE a.id=? AND a.deleted=0"
 
 	if err = node.GetContext(c, item, sqlSelect, id); err != nil {
 		if err == sql.ErrNoRows {
@@ -102,7 +102,7 @@ func (p *Dao) GetTopicInviteRequestByCond(c context.Context, node sqalx.Node, co
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.* FROM topic_invite_requests a WHERE a.deleted=0 %s", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.id,a.account_id,a.topic_id,a.status,a.deleted,a.created_at,a.updated_at,a.from_account_id FROM topic_invite_requests a WHERE a.deleted=0 %s", clause)
 
 	if err = node.GetContext(c, item, sqlSelect, condition...); err != nil {
 		if err == sql.ErrNoRows {

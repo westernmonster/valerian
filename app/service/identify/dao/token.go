@@ -10,18 +10,18 @@ import (
 )
 
 const (
-	_getClientSQL              = `SELECT a.* FROM clients a WHERE a.deleted=0 AND a.client_Id=? `
+	_getClientSQL              = `SELECT a.id,a.client_id,a.client_secret,a.extra,a.redirect_uri,a.deleted,a.created_at,a.updated_at FROM clients a WHERE a.deleted=0 AND a.client_Id=? `
 	_addAccessTokenSQL         = `INSERT INTO access_tokens(id, client_id, account_id, token, expires_at, scope, deleted, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?,?)`
 	_delExpiredAccessTokenSQL  = `DELETE FROM access_tokens WHERE client_id=? AND account_id=? `
-	_getClientAccessTokensSQL  = "SELECT * FROM access_tokens WHERE client_id=? AND account_id=? AND deleted=0"
-	_getClientRefreshTokensSQL = "SELECT * FROM refresh_tokens WHERE client_id=? AND account_id=? AND deleted=0"
+	_getClientAccessTokensSQL  = "SELECT a.id,a.client_id,a.account_id,a.token,a.expires_at,a.scope,a.deleted,a.created_at,a.updated_at FROM access_tokens a WHERE a.client_id=? AND a.account_id=? AND a.deleted=0"
+	_getClientRefreshTokensSQL = "SELECT a.id,a.client_id,a.account_id,a.token,a.expires_at,a.scope,a.deleted,a.created_at,a.updated_at FROM refresh_tokens a WHERE a.client_id=? AND a.account_id=? AND a.deleted=0"
 	_delAccessTokenSQL         = `DELETE FROM access_tokens WHERE token=?`
-	_getAccessTokenSQL         = "SELECT * FROM access_tokens WHERE token=? AND deleted=0 LIMIT 1"
+	_getAccessTokenSQL         = "SELECT a.id,a.client_id,a.account_id,a.token,a.expires_at,a.scope,a.deleted,a.created_at,a.updated_at FROM access_tokens a WHERE a.token=? AND a.deleted=0 LIMIT 1"
 
 	_delExpiredRefreshTokenSQL = `DELETE FROM refresh_tokens WHERE client_id=? AND account_id=? `
 	_addRefreshTokenSQL        = `INSERT INTO refresh_tokens(id, client_id, account_id, token, expires_at, scope, deleted, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?,?)`
 	_delRefreshTokenSQL        = `DELETE refresh_tokens WHERE token=?`
-	_getRefreshTokenSQL        = "SELECT * FROM refresh_tokens WHERE token=? AND deleted=0 LIMIT 1"
+	_getRefreshTokenSQL        = "SELECT a.id,a.client_id,a.account_id,a.token,a.expires_at,a.scope,a.deleted,a.created_at,a.updated_at FROM refresh_tokens a WHERE a.token=? AND a.deleted=0 LIMIT 1"
 )
 
 func (p *Dao) GetClient(c context.Context, node sqalx.Node, clientID string) (item *model.Client, err error) {

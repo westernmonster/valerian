@@ -88,7 +88,7 @@ func (p *Dao) GetAuthTopicIDs(c context.Context, node sqalx.Node, topicIDs []int
 // GetAll get all records
 func (p *Dao) GetAuthTopics(c context.Context, node sqalx.Node) (items []*model.AuthTopic, err error) {
 	items = make([]*model.AuthTopic, 0)
-	sqlSelect := "SELECT a.* FROM auth_topics a WHERE a.deleted=0 ORDER BY a.id DESC "
+	sqlSelect := "SELECT a.id,a.topic_id,a.to_topic_id,a.permission,a.deleted,a.created_at,a.updated_at  FROM auth_topics a WHERE a.deleted=0 ORDER BY a.id DESC "
 
 	if err = node.SelectContext(c, &items, sqlSelect); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetAuthTopics err(%+v)", err))
@@ -120,7 +120,7 @@ func (p *Dao) GetAuthTopicsByCond(c context.Context, node sqalx.Node, cond map[s
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.* FROM auth_topics a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.id,a.topic_id,a.to_topic_id,a.permission,a.deleted,a.created_at,a.updated_at FROM auth_topics a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
 
 	if err = node.SelectContext(c, &items, sqlSelect, condition...); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetAuthTopicsByCond err(%+v), condition(%+v)", err, cond))
@@ -132,7 +132,7 @@ func (p *Dao) GetAuthTopicsByCond(c context.Context, node sqalx.Node, cond map[s
 // GetByID get a record by ID
 func (p *Dao) GetAuthTopicByID(c context.Context, node sqalx.Node, id int64) (item *model.AuthTopic, err error) {
 	item = new(model.AuthTopic)
-	sqlSelect := "SELECT a.* FROM auth_topics a WHERE a.id=? AND a.deleted=0"
+	sqlSelect := "SELECT a.id,a.topic_id,a.to_topic_id,a.permission,a.deleted,a.created_at,a.updated_at FROM auth_topics a WHERE a.id=? AND a.deleted=0"
 
 	if err = node.GetContext(c, item, sqlSelect, id); err != nil {
 		if err == sql.ErrNoRows {
