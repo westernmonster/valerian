@@ -35,7 +35,7 @@ func route(e *mars.Engine) {
 	e.Register(register)
 	g := e.Group("/api/v1/admin/feedback", permitSvc.Verify())
 	{
-		g.GET("/verify",  verifyFeedback)
+		g.POST("/verify", verifyFeedback)
 	}
 }
 
