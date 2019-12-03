@@ -14,7 +14,7 @@ import (
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body  app.admin.account.model.ArgVerifyFeedback true "请求"
+// @Param req body  app.admin.feedback.model.ArgVerifyFeedback true "请求"
 // @Success 200 "成功"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"

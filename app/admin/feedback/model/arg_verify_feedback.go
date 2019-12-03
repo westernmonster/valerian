@@ -3,7 +3,7 @@ package model
 import validation "github.com/go-ozzo/ozzo-validation"
 
 type ArgVerifyFeedback struct {
-	FeedbackID   int64 `json:"topic_id,string" swaggertype:"string"`
+	FeedbackID   int64 `json:"feedback_id,string" swaggertype:"string"`
 	VerifyStatus int32 `json:"verify_status,string" swaggertype:"string"`
 	VerifyDesc   int64 `json:"verify_desc,string" swaggertype:"string"`
 }
