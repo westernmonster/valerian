@@ -57,12 +57,14 @@ WHERE b.deleted = 0 AND b.permission = 'edit'
 	return
 }
 
-func (p *Dao) GetAuthTopicIDs(c context.Context, node sqalx.Node, topicID int64) (items []int64, err error) {
+func (p *Dao) GetAuthTopicIDs(c context.Context, node sqalx.Node, topicIDs []int64) (items []int64, err error) {
 	items = make([]int64, 0)
-	sqlSelect := "SELECT a.to_topic_id FROM auth_topics a WHERE a.deleted=0 AND a.topic_id=?"
+	sqlSelect := "SELECT DISTINCT a.to_topic_id FROM auth_topics a WHERE a.deleted=0 AND a.topic_id IN(?) limit 20"
+	query, args, err := sqlx.In(sqlSelect, topicIDs)
+	query = node.Rebind(query)
 
 	var rows *sqlx.Rows
-	if rows, err = node.QueryxContext(c, sqlSelect, topicID); err != nil {
+	if rows, err = node.QueryxContext(c, sqlSelect, args...); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetAuthTopicIDs err(%+v)", err))
 		return
 	}

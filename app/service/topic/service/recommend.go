@@ -27,22 +27,8 @@ func (p *Service) GetRecommendTopicsIDs(c context.Context) (ids []int64, err err
 }
 
 func (p *Service) GetRecommendAuthTopicsIDs(c context.Context, topicIDs []int64) (ids []int64, err error) {
-	dic := make(map[int64]bool)
-
-	for _, v := range topicIDs {
-		authIDs := make([]int64, 0)
-		if authIDs, err = p.d.GetAuthTopicIDs(c, p.d.DB(), v); err != nil {
-			return
-		}
-
-		for _, t := range authIDs {
-			dic[t] = true
-		}
-	}
-
-	ids = make([]int64, 0)
-	for k, _ := range dic {
-		ids = append(ids, k)
+	if ids, err = p.d.GetAuthTopicIDs(c, p.d.DB(), topicIDs); err != nil {
+		return
 	}
 
 	return
