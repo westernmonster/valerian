@@ -33,9 +33,10 @@ func Init(c *conf.Config, s *service.Service) {
 func route(e *mars.Engine) {
 	e.Ping(ping)
 	e.Register(register)
-	g := e.Group("/api/v1/admin/me", permitSvc.Verify())
+	g := e.Group("/api/v1/admin/account", permitSvc.Verify())
 	{
-		g.GET("/profile", getProfile)
+		g.GET("/lock", setAccountLock)
+		g.GET("/unlock", setAccountUnlock)
 	}
 }
 

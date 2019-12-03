@@ -266,4 +266,7 @@ service Account {
     rpc AccountStat(AidReq) returns (AccountStatInfo);
 
     rpc BaseInfos(AidsReq) returns (BaseInfosReply);
+
+    rpc AccountLock(AidReq) returns (EmptyStruct);
+    rpc AccountUnlock(AidReq) returns (EmptyStruct);
 }
