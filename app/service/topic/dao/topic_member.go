@@ -137,7 +137,7 @@ func (p *Dao) IsAllowedViewMember(c context.Context, node sqalx.Node, aid int64,
 	// 1. 用户为当前话题成员
 	// 2. 用户为授权话题成员
 	sqlSelect := `
-   SELECT * FROM topic_members a WHERE a.deleted= 0 AND a.account_id= ?
+   SELECT a.id,a.topic_id,a.account_id,a.role,a.deleted,a.created_at,a.updated_at FROM topic_members a WHERE a.deleted= 0 AND a.account_id= ?
    AND a.topic_id IN (SELECT a.to_topic_id FROM auth_topics a WHERE a.deleted= 0 AND a.topic_id= ? UNION SELECT ? AS to_topic_id)`
 
 	item := new(model.TopicMember)
