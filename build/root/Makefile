@@ -393,6 +393,18 @@ push-admin-discuss:
 deploy-admin-discuss:
 	helm upgrade --install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/admin-discuss:${DOCKER_TAG} --set global.name=admin-discuss --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=admin.discuss --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=9b241ed7f60411e991b00a58ac14002b  --set env.treeId=1107 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc admin-discuss-uat ./build/k8s
 
+admin-feedback: build-admin-feedback docker-admin-feedback push-admin-feedback deploy-admin-feedback
+
+build-admin-feedback:
+	go env -w GOPROXY=https://goproxy.cn,direct
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/admin/feedback/cmd/cmd"   app/admin/feedback/cmd/main.go
+docker-admin-feedback:
+	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/admin-feedback:${DOCKER_TAG} ./app/admin/feedback/cmd/
+push-admin-feedback:
+	docker push registry.cn-hangzhou.aliyuncs.com/valerian/admin-feedback:${DOCKER_TAG}
+deploy-admin-feedback:
+	helm upgrade --install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/admin-feedback:${DOCKER_TAG} --set global.name=admin-feedback --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=admin.feedback --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=9b241ed7f60411e991b00a58ac14002b  --set env.treeId=1108 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc admin-feedback-uat ./build/k8s
+
 
 service-msm: build-service-msm docker-service-msm push-service-msm deploy-service-msm
 
