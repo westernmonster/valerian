@@ -205,7 +205,7 @@ func (c *Client) SetConfig(conf *ClientConfig) (err error) {
 		conf.Dial = xtime.Duration(time.Second * 10)
 	}
 	if conf.Timeout <= 0 {
-		conf.Timeout = xtime.Duration(time.Millisecond * 250)
+		conf.Timeout = xtime.Duration(time.Second * 1)
 	}
 	if conf.Subset <= 0 {
 		conf.Subset = 50
