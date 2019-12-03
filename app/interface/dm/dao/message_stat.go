@@ -12,7 +12,7 @@ import (
 // GetByID get a record by ID
 func (p *Dao) GetMessageStatByID(c context.Context, node sqalx.Node, aid int64) (item *model.MessageStat, err error) {
 	item = new(model.MessageStat)
-	sqlSelect := "SELECT a.* FROM message_stats a WHERE a.account_id=? "
+	sqlSelect := "SELECT a.account_id,a.unread_count,a.created_at,a.updated_at FROM message_stats a WHERE a.account_id=? "
 
 	if err = node.GetContext(c, item, sqlSelect, aid); err != nil {
 		if err == sql.ErrNoRows {
@@ -28,7 +28,7 @@ func (p *Dao) GetMessageStatByID(c context.Context, node sqalx.Node, aid int64) 
 
 func (p *Dao) GetMessageStatForUpdate(c context.Context, node sqalx.Node, aid int64) (item *model.MessageStat, err error) {
 	item = new(model.MessageStat)
-	sqlSelect := "SELECT a.* FROM message_stats a WHERE a.account_id=? FOR UPDATE"
+	sqlSelect := "SELECT a.account_id,a.unread_count,a.created_at,a.updated_at FROM message_stats a WHERE a.account_id=? FOR UPDATE"
 
 	if err = node.GetContext(c, item, sqlSelect, aid); err != nil {
 		if err == sql.ErrNoRows {

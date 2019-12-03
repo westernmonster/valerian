@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	_getLocalesSQL = "SELECT a.* FROM locales a WHERE a.deleted=0 ORDER BY a.id "
+	_getLocalesSQL = "SELECT a.id,a.locale,a.name,a.deleted,a.created_at,a.updated_at FROM locales a WHERE a.deleted=0 ORDER BY a.id "
 )
 
 func (p *Dao) GetAllLocales(c context.Context, node sqalx.Node) (items []*model.Locale, err error) {

@@ -21,7 +21,7 @@ func (p *Dao) GetTopicCatalogChildrenCount(c context.Context, node sqalx.Node, t
 // GetAll get all records
 func (p *Dao) GetTopicCatalogs(c context.Context, node sqalx.Node) (items []*model.TopicCatalog, err error) {
 	items = make([]*model.TopicCatalog, 0)
-	sqlSelect := "SELECT a.* FROM topic_catalogs a WHERE a.deleted=0 ORDER BY a.seq "
+	sqlSelect := "SELECT a.id,a.name,a.seq,a.type,a.parent_id,a.ref_id,a.topic_id,a.is_primary,a.permission,a.deleted,a.created_at,a.updated_at FROM topic_catalogs a WHERE a.deleted=0 ORDER BY a.seq "
 
 	if err = node.SelectContext(c, &items, sqlSelect); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetTopicCatalogs err(%+v)", err))
@@ -73,7 +73,7 @@ func (p *Dao) GetTopicCatalogsByCond(c context.Context, node sqalx.Node, cond ma
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.* FROM topic_catalogs a WHERE a.deleted=0 %s ORDER BY a.seq", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.id,a.name,a.seq,a.type,a.parent_id,a.ref_id,a.topic_id,a.is_primary,a.permission,a.deleted,a.created_at,a.updated_at FROM topic_catalogs a WHERE a.deleted=0 %s ORDER BY a.seq", clause)
 
 	if err = node.SelectContext(c, &items, sqlSelect, condition...); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetTopicCatalogsByCond err(%+v), condition(%+v)", err, cond))
@@ -85,7 +85,7 @@ func (p *Dao) GetTopicCatalogsByCond(c context.Context, node sqalx.Node, cond ma
 // GetByID get a record by ID
 func (p *Dao) GetTopicCatalogByID(c context.Context, node sqalx.Node, id int64) (item *model.TopicCatalog, err error) {
 	item = new(model.TopicCatalog)
-	sqlSelect := "SELECT a.* FROM topic_catalogs a WHERE a.id=? AND a.deleted=0"
+	sqlSelect := "SELECT a.id,a.name,a.seq,a.type,a.parent_id,a.ref_id,a.topic_id,a.is_primary,a.permission,a.deleted,a.created_at,a.updated_at FROM topic_catalogs a WHERE a.id=? AND a.deleted=0"
 
 	if err = node.GetContext(c, item, sqlSelect, id); err != nil {
 		if err == sql.ErrNoRows {
@@ -142,7 +142,7 @@ func (p *Dao) GetTopicCatalogByCond(c context.Context, node sqalx.Node, cond map
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.* FROM topic_catalogs a WHERE a.deleted=0 %s", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.id,a.name,a.seq,a.type,a.parent_id,a.ref_id,a.topic_id,a.is_primary,a.permission,a.deleted,a.created_at,a.updated_at FROM topic_catalogs a WHERE a.deleted=0 %s", clause)
 
 	if err = node.GetContext(c, item, sqlSelect, condition...); err != nil {
 		if err == sql.ErrNoRows {
