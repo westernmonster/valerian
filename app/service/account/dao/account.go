@@ -11,9 +11,9 @@ import (
 )
 
 const (
-	_getAccountByEmailSQL  = "SELECT a.* FROM accounts a WHERE a.deleted=0 AND a.email=?"
-	_getAccountByMobileSQL = "SELECT a.* FROM accounts a WHERE a.deleted=0 AND a.mobile=?"
-	_getAccountByIDSQL     = "SELECT a.* FROM accounts a WHERE a.deleted=0 AND a.id=?"
+	_getAccountByEmailSQL  = "SELECT a.id,a.mobile,a.user_name,a.email,a.password,a.role,a.salt,a.gender,a.birth_year,a.birth_month,a.birth_day,a.location,a.introduction,a.avatar,a.source,a.ip,a.id_cert,a.work_cert,a.is_org,a.is_vip,a.deleted,a.created_at,a.updated_at,a.prefix FROM accounts a WHERE a.deleted=0 AND a.email=?"
+	_getAccountByMobileSQL = "SELECT a.id,a.mobile,a.user_name,a.email,a.password,a.role,a.salt,a.gender,a.birth_year,a.birth_month,a.birth_day,a.location,a.introduction,a.avatar,a.source,a.ip,a.id_cert,a.work_cert,a.is_org,a.is_vip,a.deleted,a.created_at,a.updated_at,a.prefix  FROM accounts a WHERE a.deleted=0 AND a.mobile=?"
+	_getAccountByIDSQL     = "SELECT a.id,a.mobile,a.user_name,a.email,a.password,a.role,a.salt,a.gender,a.birth_year,a.birth_month,a.birth_day,a.location,a.introduction,a.avatar,a.source,a.ip,a.id_cert,a.work_cert,a.is_org,a.is_vip,a.deleted,a.created_at,a.updated_at,a.prefix FROM accounts a WHERE a.deleted=0 AND a.id=?"
 	_changePasswordSQL     = "UPDATE accounts SET password=?, salt =? WHERE id=? AND deleted=0"
 )
 
@@ -93,7 +93,7 @@ func (p *Dao) UpdateAccount(c context.Context, node sqalx.Node, item *model.Acco
 
 func (p *Dao) GetAccounts(c context.Context, node sqalx.Node) (items []*model.Account, err error) {
 	items = make([]*model.Account, 0)
-	sqlSelect := "SELECT a.* FROM accounts a WHERE a.deleted=0 ORDER BY a.id DESC "
+	sqlSelect := "SELECT a.id,a.mobile,a.user_name,a.email,a.password,a.role,a.salt,a.gender,a.birth_year,a.birth_month,a.birth_day,a.location,a.introduction,a.avatar,a.source,a.ip,a.id_cert,a.work_cert,a.is_org,a.is_vip,a.deleted,a.created_at,a.updated_at,a.prefix FROM accounts a WHERE a.deleted=0 ORDER BY a.id DESC "
 
 	if err = node.SelectContext(c, &items, sqlSelect); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetAccounts err(%+v)", err))
