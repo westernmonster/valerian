@@ -110,7 +110,6 @@ func (s *Server) handle() grpc.UnaryServerInterceptor {
 				timeout = ctimeout
 			}
 		}
-		fmt.Println(timeout)
 		ctx, cancel = context.WithTimeout(ctx, timeout)
 		defer cancel()
 
