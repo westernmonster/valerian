@@ -11,7 +11,7 @@ import (
 
 func (p *Dao) GetTopicStatForUpdate(c context.Context, node sqalx.Node, topicID int64) (item *model.TopicStat, err error) {
 	item = new(model.TopicStat)
-	sqlSelect := "SELECT a.* FROM topic_stats a WHERE a.topic_id=? FOR UPDATE"
+	sqlSelect := "SELECT  a.topic_id,a.member_count,a.article_count,a.discussion_count,a.created_at,a.updated_at FROM topic_stats a WHERE a.topic_id=? FOR UPDATE"
 
 	if err = node.GetContext(c, item, sqlSelect, topicID); err != nil {
 		if err == sql.ErrNoRows {

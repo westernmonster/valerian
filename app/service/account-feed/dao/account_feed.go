@@ -12,7 +12,7 @@ import (
 func (p *Dao) GetAccountFeedPaged(c context.Context, node sqalx.Node, accountID int64, limit, offset int) (items []*model.AccountFeed, err error) {
 	items = make([]*model.AccountFeed, 0)
 
-	sql := "SELECT a.* FROM account_feeds a WHERE a.deleted=0 AND a.account_id=? ORDER BY a.id DESC limit ?,?"
+	sql := "SELECT a.id,a.account_id,a.action_type,a.action_time,a.action_text,a.target_id,a.target_type,a.deleted,a.created_at,a.updated_at  FROM account_feeds a WHERE a.deleted=0 AND a.account_id=? ORDER BY a.id DESC limit ?,?"
 
 	if err = node.SelectContext(c, &items, sql, accountID, offset, limit); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetAccountFeedPaged error(%+v), account_id(%d) limit(%d) offset(%d)", err, accountID, limit, offset))
