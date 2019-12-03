@@ -71,7 +71,7 @@ func (p *Service) GetAuthed2CurrentTopicsPaged(c context.Context, topicID int64,
 		Paging: &model.Paging{},
 	}
 	if ret.IDs == nil {
-		resp.IsEnd = true
+		resp.Paging.IsEnd = true
 		return
 	}
 
