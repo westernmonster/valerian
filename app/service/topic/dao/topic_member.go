@@ -185,7 +185,7 @@ func (p *Dao) GetFollowedTopicsIDs(c context.Context, node sqalx.Node, aid int64
 func (p *Dao) GetSpecificTopicsMemberIDs(c context.Context, node sqalx.Node, topicIDs []int64) (items []int64, err error) {
 	items = make([]int64, 0)
 
-	sqlSelect := "SELECT DISTINCT a.account_id FROM topic_members a WHERE a.deleted=0 AND a.topic_id IN(?) LIMIT 20"
+	sqlSelect := "SELECT DISTINCT a.account_id FROM topic_members a WHERE a.deleted=0 AND a.topic_id IN(?) ORDER BY a.account_id LIMIT 20"
 	query, args, err := sqlx.In(sqlSelect, topicIDs)
 	query = node.Rebind(query)
 
