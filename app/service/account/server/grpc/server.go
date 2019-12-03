@@ -42,6 +42,16 @@ type server struct {
 	svr *service.Service
 }
 
+func (s *server) AccountLock(context.Context, *api.AidReq) (*api.EmptyStruct, error) {
+
+	return &api.EmptyStruct{}, nil
+}
+
+func (s *server) AccountUnlock(context.Context, *api.AidReq) (*api.EmptyStruct, error) {
+
+	return &api.EmptyStruct{}, nil
+}
+
 func (s *server) AllAccounts(ctx context.Context, req *api.EmptyStruct) (*api.AllAccountsResp, error) {
 	items, err := s.svr.GetAllAccounts(ctx)
 	if err != nil {
