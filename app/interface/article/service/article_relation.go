@@ -153,7 +153,7 @@ func (p *Service) GetUserCanEditArticles(c context.Context, query string, pn, ps
 	}
 
 	var data *search.SearchResult
-	if data, err = p.d.SearchArticle(c, &search.SearchParam{KW: query, Pn: int32(pn), Ps: int32(ps), IDs: idsResp.IDs}); err != nil {
+	if data, err = p.d.SearchArticle(c, &search.SearchParam{KW: query, Sort: []string{"updated_at"}, Order: []string{"desc"}, Pn: int32(pn), Ps: int32(ps), IDs: idsResp.IDs}); err != nil {
 		err = ecode.SearchArticleFailed
 		return
 	}
