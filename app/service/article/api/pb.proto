@@ -272,6 +272,8 @@ message ArticleRelationResp {
 	string Avatar = 6;
 	string Permission = 7;
 	string EditPermission = 8;
+	string Introduction = 9;
+	TopicStat Stat = 10;
 }
 
 message ArgUpdateArticleFile {
@@ -407,6 +409,12 @@ message IDsResp {
 message AidReq {
     int64 AccountID = 1 [(gogoproto.jsontag) = "account_id"];
     bool UseMaster = 2;
+}
+
+message TopicStat {
+    int32 MemberCount = 1 [(gogoproto.jsontag) = "member_count"];
+    int32 ArticleCount = 2 [(gogoproto.jsontag) = "article_count"];
+    int32 DiscussionCount = 3 [(gogoproto.jsontag) = "discussion_count"];
 }
 
 service Article {
