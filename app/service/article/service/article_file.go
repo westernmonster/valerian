@@ -113,8 +113,8 @@ func (p *Service) bulkCreateFiles(c context.Context, node sqalx.Node, articleID 
 	}
 
 	p.addCache(func() {
-		p.d.DelArticleFileCache(context.TODO(), articleID)
 		p.convertOfficeFiles(context.TODO(), articleID)
+		p.d.DelArticleFileCache(context.TODO(), articleID)
 	})
 
 	return
@@ -295,8 +295,8 @@ func (p *Service) SaveArticleFiles(c context.Context, arg *api.ArgSaveArticleFil
 	}
 
 	p.addCache(func() {
-		p.d.DelArticleFileCache(context.TODO(), arg.ArticleID)
 		p.convertOfficeFiles(context.TODO(), arg.ArticleID)
+		p.d.DelArticleFileCache(context.TODO(), arg.ArticleID)
 	})
 	return
 }
