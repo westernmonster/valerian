@@ -403,7 +403,7 @@ docker-admin-feedback:
 push-admin-feedback:
 	docker push registry.cn-hangzhou.aliyuncs.com/valerian/admin-feedback:${DOCKER_TAG}
 deploy-admin-feedback:
-	helm upgrade --install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/admin-feedback:${DOCKER_TAG} --set global.name=admin-feedback --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=admin.feedback --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=6745ff2e15d811ea9ae60a58ac14009e  --set env.treeId=1108 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc admin-feedback-uat ./build/k8s
+	helm upgrade --install --namespace uat --set global.image=registry.cn-hangzhou.aliyuncs.com/valerian/admin-feedback:${DOCKER_TAG} --set global.name=admin-feedback --set env.region=hz --set env.zone=hz001 --set env.siteUrl=https://uat.flywk.com  --set env.deployEnv=uat --set env.appId=admin.feedback --set env.trace=jaeger-uat-agent:6831 --set env.confPath=/go/bin --set env.confEnv=uat --set env.confToken=8affd20615d811ea9ae60a58ac14009e  --set env.treeId=1108 --set env.confVersion=0.1 --set env.confHost=config.pronote.loc admin-feedback-uat ./build/k8s
 
 
 service-msm: build-service-msm docker-service-msm push-service-msm deploy-service-msm
