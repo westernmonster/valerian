@@ -41,6 +41,10 @@ func (p *Service) getArticleRelations(c context.Context, aid int64, articleID in
 				Avatar:          v.Avatar,
 				Permission:      v.Permission,
 				EditPermission:  v.EditPermission,
+				Introduction:    v.Introduction,
+				MemberCount:     v.Stat.MemberCount,
+				ArticleCount:    v.Stat.ArticleCount,
+				DiscussionCount: v.Stat.DiscussionCount,
 			})
 		}
 	}
