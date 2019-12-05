@@ -22,7 +22,10 @@ func (p *Service) EmailLogin(ctx context.Context, req *model.ArgEmailLogin) (res
 		err = ecode.UserNotExist
 		return
 	}
-
+	if account.IsLock {
+		err = ecode.UserDisabled
+		return
+	}
 	if err = p.checkPassword(req.Password, account.Password, account.Salt); err != nil {
 		return
 	}
@@ -63,7 +66,10 @@ func (p *Service) MobileLogin(ctx context.Context, req *model.ArgMobileLogin) (r
 		err = ecode.UserNotExist
 		return
 	}
-
+	if account.IsLock {
+		err = ecode.UserDisabled
+		return
+	}
 	if err = p.checkPassword(req.Password, account.Password, account.Salt); err != nil {
 		return
 	}
