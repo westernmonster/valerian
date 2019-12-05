@@ -27,10 +27,10 @@ SELECT v2.topic_id FROM ( SELECT a.topic_id FROM topic_members a WHERE a.deleted
     LEFT JOIN topics b ON v2.topic_id = b.id
 WHERE b.deleted = 0 AND b.edit_permission = 'member'
 UNION
-SELECT v3.topic_id FROM ( SELECT a.topic_id FROM topic_members a WHERE a.deleted = 0 AND a.account_id = ? AND a.role IN ( 'owner', 'admin' ) ) v3
+SELECT b.topic_id FROM ( SELECT a.topic_id FROM topic_members a WHERE a.deleted = 0 AND a.account_id = ? AND a.role IN ( 'owner', 'admin' ) ) v3
 	LEFT JOIN auth_topics b ON v3.topic_id = b.to_topic_id
 WHERE b.deleted = 0 AND b.permission = 'admin_edit' UNION
-SELECT v4.topic_id FROM ( SELECT a.topic_id FROM topic_members a WHERE a.deleted = 0 AND a.account_id = ? ) v4
+SELECT b.topic_id FROM ( SELECT a.topic_id FROM topic_members a WHERE a.deleted = 0 AND a.account_id = ? ) v4
 	LEFT JOIN auth_topics b ON v4.topic_id = b.to_topic_id
 WHERE b.deleted = 0 AND b.permission = 'edit'
 `

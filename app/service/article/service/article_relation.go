@@ -43,6 +43,18 @@ func (p *Service) getArticleRelations(c context.Context, node sqalx.Node, articl
 
 		item.Name = t.Name
 		item.Avatar = t.Avatar
+		item.Introduction = t.Introduction
+
+		var stat *model.TopicStat
+		if stat, err = p.d.GetTopicStatByID(c, p.d.DB(), v.TopicID); err != nil {
+			return
+		}
+
+		item.Stat = &api.TopicStat{
+			MemberCount:     stat.MemberCount,
+			ArticleCount:    stat.ArticleCount,
+			DiscussionCount: stat.DiscussionCount,
+		}
 
 		if item.CatalogFullPath, err = p.getCatalogFullPath(c, node, v); err != nil {
 			return
