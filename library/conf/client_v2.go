@@ -202,7 +202,6 @@ func (c *Client) checkVersion2(reqVer *ver) (ver *ver, err error) {
 		return
 	}
 
-	fmt.Println(url)
 	// http
 	if req, err = http.NewRequest("GET", url, nil); err != nil {
 		return
