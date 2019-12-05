@@ -150,6 +150,10 @@ spec:
         backend:
           serviceName: admin-account
           servicePort: 8000
+      - path: /api/v1/admin/feedback
+        backend:
+          serviceName: admin-feedback
+          servicePort: 8000
   - host: web.flywk.com
     http:
       paths:
