@@ -12,7 +12,7 @@ type Feedback struct {
 	Deleted      types.BitBool `db:"deleted" json:"deleted"`              // Deleted 是否删除
 	CreatedAt    int64         `db:"created_at" json:"created_at"`        // CreatedAt 创建时间
 	UpdatedAt    int64         `db:"updated_at" json:"updated_at"`        // UpdatedAt 更新时间
-	VerifyStatus int32         `db:"verify_status" json:"verify_status"`  // VerifyStatus 审核状态
+	VerifyStatus int32         `db:"verify_status" json:"verify_status"`  // VerifyStatus 审核状态 0-未审核，1-审核通过，2 审核不通过
 	VerifyDesc   string        `db:"verify_desc" json:"verify_desc"`      // VerifyDesc 审核结果/原因
 }
 type FeedbackType struct {
