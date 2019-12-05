@@ -33,7 +33,7 @@ func Init(c *conf.Config, s *service.Service) {
 func route(e *mars.Engine) {
 	e.Ping(ping)
 	e.Register(register)
-	g := e.Group("/api/v1/admin/account", permitSvc.Verify())
+	g := e.Group("/api/v1/admin/account")
 	{
 		g.POST("/lock", setAccountLock)
 		g.POST("/unlock", setAccountUnlock)

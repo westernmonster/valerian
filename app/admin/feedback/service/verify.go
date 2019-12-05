@@ -6,5 +6,7 @@ import (
 )
 
 func (s *Service) VerifyFeedback(c *mars.Context, feedback *model.ArgVerifyFeedback) (err error) {
+
+	//if err s.d.UpdateFeedbackVerify(c,)
 	return
 }
