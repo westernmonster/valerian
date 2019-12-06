@@ -1,6 +1,9 @@
 package model
 
-import validation "github.com/go-ozzo/ozzo-validation"
+import (
+	validation "github.com/go-ozzo/ozzo-validation"
+	"github.com/go-ozzo/ozzo-validation/is"
+)
 
 type ArgOSSToken struct {
 	// 文件类型
@@ -37,4 +40,13 @@ func (p *ArgConvertOfficeTask) Validate() error {
 		validation.Field(&p.SrcUri, validation.Required),
 		validation.Field(&p.TgtUri, validation.Required),
 	)
+}
+
+type ArgUploadURL struct {
+	// 文件名
+	FileURL string `json:"file_url"`
+}
+
+func (p *ArgUploadURL) Validate() error {
+	return validation.ValidateStruct(p, validation.Field(&p.FileURL, validation.Required, is.URL))
 }

@@ -29,3 +29,7 @@ type STSResp struct {
 	SecurityToken   string `json:"security_token"`
 	BucketName      string `json:"bucket_name"`
 }
+
+type UploadURLResp struct {
+	FileURL string `json:"file_url"`
+}
