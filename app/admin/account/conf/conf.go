@@ -36,6 +36,7 @@ type Config struct {
 	Discovery *discovery.Config
 	Auth *auth.Config
 	AccountRPC *warden.ClientConfig
+	CertificationRPC *warden.ClientConfig
 }
 
 // DB db config.

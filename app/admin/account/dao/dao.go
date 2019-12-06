@@ -41,6 +41,12 @@ func New(c *conf.Config) (dao *Dao) {
 		dao.accountRPC = accountRPC
 	}
 
+	if certificationRPC, err := certification.NewClient(c.CertificationRPC); err != nil {
+		panic(errors.WithMessage(err, "Failed to dial certification service"))
+	} else {
+		dao.certificationRPC = certificationRPC
+	}
+
 	return
 }
 
