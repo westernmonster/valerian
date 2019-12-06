@@ -24,6 +24,8 @@ github.com/aliyun/alibaba-cloud-sdk-go/sdk/responses
 github.com/aliyun/alibaba-cloud-sdk-go/sdk/utils
 github.com/aliyun/alibaba-cloud-sdk-go/services/imm
 github.com/aliyun/alibaba-cloud-sdk-go/services/sts
+# github.com/aliyun/aliyun-oss-go-sdk v0.0.0-20190307165228-86c17b95fcd5
+github.com/aliyun/aliyun-oss-go-sdk/oss
 # github.com/andybalholm/cascadia v1.0.0
 github.com/andybalholm/cascadia
 # github.com/asaskevich/govalidator v0.0.0-20190424111038-f61b66f89f4a
@@ -61,7 +63,7 @@ github.com/gobuffalo/packd
 github.com/gobuffalo/packd/internal/takeon/github.com/markbates/errx
 # github.com/gobuffalo/packr v1.30.1
 github.com/gobuffalo/packr
-# github.com/gogo/protobuf v1.3.0
+# github.com/gogo/protobuf v1.3.1
 github.com/gogo/protobuf/gogoproto
 github.com/gogo/protobuf/jsonpb
 github.com/gogo/protobuf/proto
@@ -79,6 +81,11 @@ github.com/golang/protobuf/ptypes/timestamp
 github.com/google/go-querystring/query
 # github.com/gopherjs/gopherjs v0.0.0-20181017120253-0766667cb4d1
 github.com/gopherjs/gopherjs/js
+# github.com/h2non/filetype v1.0.10
+github.com/h2non/filetype
+github.com/h2non/filetype/matchers
+github.com/h2non/filetype/matchers/isobmff
+github.com/h2non/filetype/types
 # github.com/h2non/parth v0.0.0-20190131123155-b4df798d6542
 github.com/h2non/parth
 # github.com/jinzhu/copier v0.0.0-20190625015134-976e0346caa8
@@ -258,7 +265,7 @@ golang.org/x/text/unicode/norm
 golang.org/x/text/width
 # golang.org/x/time v0.0.0-20190308202827-9d24e82272b4
 golang.org/x/time/rate
-# golang.org/x/tools v0.0.0-20190624180213-70d37148ca0c
+# golang.org/x/tools v0.0.0-20191205012623-e84277c2c008
 golang.org/x/tools/go/ast/astutil
 golang.org/x/tools/go/buildutil
 golang.org/x/tools/go/internal/cgo
