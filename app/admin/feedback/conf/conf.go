@@ -2,6 +2,7 @@ package conf
 
 import (
 	"errors"
+	"valerian/library/net/http/mars/middleware/auth"
 
 	flag "github.com/spf13/pflag"
 
@@ -11,7 +12,6 @@ import (
 	"valerian/library/log"
 	"valerian/library/naming/discovery"
 	"valerian/library/net/http/mars"
-	"valerian/library/net/http/mars/middleware/permit"
 	"valerian/library/net/rpc/warden"
 	xtime "valerian/library/time"
 	"valerian/library/tracing"
@@ -33,9 +33,8 @@ type Config struct {
 	// Auth
 	Memcache *Memcache
 
-	Discovery *discovery.Config
-	Session   *permit.SessionConfig
-
+	Discovery  *discovery.Config
+	Auth       *auth.Config
 	AccountRPC *warden.ClientConfig
 }
 

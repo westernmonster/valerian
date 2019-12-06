@@ -6,21 +6,19 @@ import (
 	"valerian/library/ecode"
 	"valerian/library/log"
 	"valerian/library/net/http/mars"
-	"valerian/library/net/http/mars/middleware/permit"
+	"valerian/library/net/http/mars/middleware/auth"
 )
 
 var (
-	srv       *service.Service
-	permitSvc *permit.Permit
+	srv     *service.Service
+	authSvc *auth.Auth
 )
 
 // Init init
 func Init(c *conf.Config, s *service.Service) {
 	srv = s
+	authSvc = auth.New(conf.Conf.Auth)
 
-	permitSvc = permit.New(&permit.Config{
-		Session: c.Session,
-	})
 	engine := mars.DefaultServer(c.Mars)
 	route(engine)
 
@@ -35,8 +33,8 @@ func route(e *mars.Engine) {
 	e.Register(register)
 	g := e.Group("/api/v1/admin/account")
 	{
-		g.POST("/lock", setAccountLock)
-		g.POST("/unlock", setAccountUnlock)
+		g.POST("/lock", authSvc.User, setAccountLock)
+		g.POST("/unlock", authSvc.User, setAccountUnlock)
 	}
 }
 
