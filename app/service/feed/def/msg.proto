@@ -289,7 +289,7 @@ message MsgFeedbackAccuseSuit {
     int64 ActionTime = 4 [(gogoproto.jsontag) = "action_time"];
 }
 
-message MsgFeedbackVerifyNotSuit {
+message MsgFeedbackAccuseNotSuit {
     int64 FeedbackID = 1 [(gogoproto.jsontag) = "feedback_id"];
     int64 ActionTime = 4 [(gogoproto.jsontag) = "action_time"];
 }
