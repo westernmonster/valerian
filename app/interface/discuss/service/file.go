@@ -67,7 +67,7 @@ func (p *Service) bulkCreateFiles(c context.Context, node sqalx.Node, discussion
 			ID:           gid.NewID(),
 			FileName:     v.FileName,
 			FileURL:      v.FileURL,
-			Seq:          v.Seq,
+			Seq:          int32(v.Seq),
 			DiscussionID: discussionID,
 			CreatedAt:    time.Now().Unix(),
 			UpdatedAt:    time.Now().Unix(),
@@ -128,7 +128,7 @@ func (p *Service) SaveDiscussionFiles(c context.Context, arg *model.ArgSaveDiscu
 				ID:           gid.NewID(),
 				FileName:     v.FileName,
 				FileURL:      v.FileURL,
-				Seq:          v.Seq,
+				Seq:          int32(v.Seq),
 				DiscussionID: arg.DiscussionID,
 				CreatedAt:    time.Now().Unix(),
 				UpdatedAt:    time.Now().Unix(),
@@ -152,7 +152,7 @@ func (p *Service) SaveDiscussionFiles(c context.Context, arg *model.ArgSaveDiscu
 
 		file.FileName = v.FileName
 		file.FileURL = v.FileURL
-		file.Seq = v.Seq
+		file.Seq = int32(v.Seq)
 
 		if err = p.d.UpdateDiscussionFile(c, tx, file); err != nil {
 			return

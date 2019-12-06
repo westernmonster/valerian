@@ -12,7 +12,7 @@ import (
 // GetAll get all records
 func (p *Dao) GetDiscussCategories(c context.Context, node sqalx.Node) (items []*model.DiscussCategory, err error) {
 	items = make([]*model.DiscussCategory, 0)
-	sqlSelect := "SELECT a.* FROM discuss_categories a WHERE a.deleted=0 ORDER BY a.seq "
+	sqlSelect := "SELECT a.id,a.topic_id,a.seq,a.name,a.deleted,a.created_at,a.updated_at FROM discuss_categories a WHERE a.deleted=0 ORDER BY a.seq "
 
 	if err = node.SelectContext(c, &items, sqlSelect); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetDiscussCategories err(%+v)", err))
@@ -44,7 +44,7 @@ func (p *Dao) GetDiscussCategoriesByCond(c context.Context, node sqalx.Node, con
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.* FROM discuss_categories a WHERE a.deleted=0 %s ORDER BY a.seq", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.id,a.topic_id,a.seq,a.name,a.deleted,a.created_at,a.updated_at FROM discuss_categories a WHERE a.deleted=0 %s ORDER BY a.seq", clause)
 
 	if err = node.SelectContext(c, &items, sqlSelect, condition...); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetDiscussCategoriesByCond err(%+v), condition(%+v)", err, cond))
@@ -56,7 +56,7 @@ func (p *Dao) GetDiscussCategoriesByCond(c context.Context, node sqalx.Node, con
 // GetByID get a record by ID
 func (p *Dao) GetDiscussCategoryByID(c context.Context, node sqalx.Node, id int64) (item *model.DiscussCategory, err error) {
 	item = new(model.DiscussCategory)
-	sqlSelect := "SELECT a.* FROM discuss_categories a WHERE a.id=? AND a.deleted=0"
+	sqlSelect := "SELECT a.id,a.topic_id,a.seq,a.name,a.deleted,a.created_at,a.updated_at FROM discuss_categories a WHERE a.id=? AND a.deleted=0"
 
 	if err = node.GetContext(c, item, sqlSelect, id); err != nil {
 		if err == sql.ErrNoRows {
@@ -93,7 +93,7 @@ func (p *Dao) GetDiscussCategoryByCond(c context.Context, node sqalx.Node, cond 
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.* FROM discuss_categories a WHERE a.deleted=0 %s", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.id,a.topic_id,a.seq,a.name,a.deleted,a.created_at,a.updated_at FROM discuss_categories a WHERE a.deleted=0 %s", clause)
 
 	if err = node.GetContext(c, item, sqlSelect, condition...); err != nil {
 		if err == sql.ErrNoRows {

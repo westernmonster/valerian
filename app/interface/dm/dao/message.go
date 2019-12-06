@@ -13,7 +13,7 @@ import (
 
 func (p *Dao) GetUserMessagesPaged(c context.Context, node sqalx.Node, aid int64, limit, offset int) (items []*model.Message, err error) {
 	items = make([]*model.Message, 0)
-	sqlSelect := "SELECT a.* FROM messages a WHERE a.deleted=0 AND a.account_id=? ORDER BY a.id DESC limit ?,?"
+	sqlSelect := "SELECT a.id,a.account_id,a.action_type,a.action_time,a.action_text,a.actors,a.extend,a.merge_count,a.actor_type,a.target_id,a.target_type,a.is_read,a.deleted,a.created_at,a.updated_at FROM messages a WHERE a.deleted=0 AND a.account_id=? ORDER BY a.id DESC limit ?,?"
 
 	if err = node.SelectContext(c, &items, sqlSelect, aid, offset, limit); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetUserMessagesPaged err(%+v) aid(%d) limit(%d) offset(%d)", err, aid, limit, offset))
@@ -24,7 +24,7 @@ func (p *Dao) GetUserMessagesPaged(c context.Context, node sqalx.Node, aid int64
 // GetAll get all records
 func (p *Dao) GetMessages(c context.Context, node sqalx.Node) (items []*model.Message, err error) {
 	items = make([]*model.Message, 0)
-	sqlSelect := "SELECT a.* FROM messages a WHERE a.deleted=0 ORDER BY a.id DESC "
+	sqlSelect := "SELECT a.id,a.account_id,a.action_type,a.action_time,a.action_text,a.actors,a.extend,a.merge_count,a.actor_type,a.target_id,a.target_type,a.is_read,a.deleted,a.created_at,a.updated_at FROM messages a WHERE a.deleted=0 ORDER BY a.id DESC "
 
 	if err = node.SelectContext(c, &items, sqlSelect); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetMessages err(%+v)", err))
@@ -88,7 +88,7 @@ func (p *Dao) GetMessagesByCond(c context.Context, node sqalx.Node, cond map[str
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.* FROM messages a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.id,a.account_id,a.action_type,a.action_time,a.action_text,a.actors,a.extend,a.merge_count,a.actor_type,a.target_id,a.target_type,a.is_read,a.deleted,a.created_at,a.updated_at FROM messages a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
 
 	if err = node.SelectContext(c, &items, sqlSelect, condition...); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetMessagesByCond err(%+v), condition(%+v)", err, cond))
@@ -100,7 +100,7 @@ func (p *Dao) GetMessagesByCond(c context.Context, node sqalx.Node, cond map[str
 // GetByID get a record by ID
 func (p *Dao) GetMessageByID(c context.Context, node sqalx.Node, id int64) (item *model.Message, err error) {
 	item = new(model.Message)
-	sqlSelect := "SELECT a.* FROM messages a WHERE a.id=? AND a.deleted=0"
+	sqlSelect := "SELECT a.id,a.account_id,a.action_type,a.action_time,a.action_text,a.actors,a.extend,a.merge_count,a.actor_type,a.target_id,a.target_type,a.is_read,a.deleted,a.created_at,a.updated_at FROM messages a WHERE a.id=? AND a.deleted=0"
 
 	if err = node.GetContext(c, item, sqlSelect, id); err != nil {
 		if err == sql.ErrNoRows {
@@ -169,7 +169,7 @@ func (p *Dao) GetMessageByCond(c context.Context, node sqalx.Node, cond map[stri
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.* FROM messages a WHERE a.deleted=0 %s", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.id,a.account_id,a.action_type,a.action_time,a.action_text,a.actors,a.extend,a.merge_count,a.actor_type,a.target_id,a.target_type,a.is_read,a.deleted,a.created_at,a.updated_at FROM messages a WHERE a.deleted=0 %s", clause)
 
 	if err = node.GetContext(c, item, sqlSelect, condition...); err != nil {
 		if err == sql.ErrNoRows {

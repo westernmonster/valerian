@@ -13,7 +13,7 @@ import (
 // GetByID get a record by Account ID
 func (p *Dao) GetReviseStatByID(c context.Context, node sqalx.Node, reviseID int64) (item *model.ReviseStat, err error) {
 	item = new(model.ReviseStat)
-	sqlSelect := "SELECT a.* FROM revise_stats a WHERE a.revise_id=?"
+	sqlSelect := "SELECT a.revise_id,a.like_count,a.dislike_count,a.comment_count,a.created_at,a.updated_at FROM revise_stats a WHERE a.revise_id=?"
 
 	if err = node.GetContext(c, item, sqlSelect, reviseID); err != nil {
 		if err == sql.ErrNoRows {

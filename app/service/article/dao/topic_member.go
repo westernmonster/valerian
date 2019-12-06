@@ -39,7 +39,7 @@ func (p *Dao) GetMemberBelongsTopicIDs(c context.Context, node sqalx.Node, accou
 
 func (p *Dao) IsTopicAdmin(c context.Context, node sqalx.Node, topicID, aid int64) (isAdmin bool, err error) {
 	item := new(model.TopicMember)
-	sqlSelect := "SELECT * FROM topic_members a WHERE a.deleted=0 AND a.account_id=? AND a.topic_id=? AND a.role IN(?,?) LIMIT 1"
+	sqlSelect := "SELECT a.id,a.topic_id,a.account_id,a.role,a.deleted,a.created_at,a.updated_at FROM topic_members a WHERE a.deleted=0 AND a.account_id=? AND a.topic_id=? AND a.role IN(?,?) LIMIT 1"
 
 	if err = node.GetContext(c, item, sqlSelect, aid, topicID, model.MemberRoleAdmin, model.MemberRoleOwner); err != nil {
 		if err == sql.ErrNoRows {
@@ -60,7 +60,7 @@ func (p *Dao) IsTopicAdmin(c context.Context, node sqalx.Node, topicID, aid int6
 
 func (p *Dao) IsTopicMember(c context.Context, node sqalx.Node, topicID, aid int64) (isMember bool, err error) {
 	item := new(model.TopicMember)
-	sqlSelect := "SELECT * FROM topic_members a WHERE a.deleted=0 AND a.account_id=? AND a.topic_id=? LIMIT 1"
+	sqlSelect := "SELECT a.id,a.topic_id,a.account_id,a.role,a.deleted,a.created_at,a.updated_at FROM topic_members a WHERE a.deleted=0 AND a.account_id=? AND a.topic_id=? LIMIT 1"
 
 	if err = node.GetContext(c, item, sqlSelect, aid, topicID, model.MemberRoleAdmin, model.MemberRoleOwner); err != nil {
 		if err == sql.ErrNoRows {

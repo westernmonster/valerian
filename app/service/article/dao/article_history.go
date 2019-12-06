@@ -12,7 +12,7 @@ import (
 
 func (p *Dao) GetArticleHistoriesPaged(c context.Context, node sqalx.Node, articleID int64, limit, offset int) (items []*model.ArticleHistory, err error) {
 	items = make([]*model.ArticleHistory, 0)
-	sqlSelect := "SELECT a.* FROM article_histories a WHERE a.deleted=0 AND a.article_id=? ORDER BY a.id DESC limit ?,?"
+	sqlSelect := "SELECT a.id,a.article_id,a.content,a.content_text,a.seq,a.diff,a.updated_by,a.change_desc,a.deleted,a.created_at,a.updated_at FROM article_histories a WHERE a.deleted=0 AND a.article_id=? ORDER BY a.id DESC limit ?,?"
 
 	if err = node.SelectContext(c, &items, sqlSelect, articleID, offset, limit); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetArticleHistoriesPaged err(%+v) article_id(%d) limit(%d) offset(%d)", err, articleID, limit, offset))
@@ -38,7 +38,7 @@ func (p *Dao) GetArticleHistoriesMaxSeq(c context.Context, node sqalx.Node, arti
 
 func (p *Dao) GetLastArticleHistory(c context.Context, node sqalx.Node, articleID int64) (item *model.ArticleHistory, err error) {
 	item = new(model.ArticleHistory)
-	sqlSelect := "SELECT a.* FROM article_histories a WHERE a.article_id=? AND a.deleted=0 ORDER BY a.id DESC LIMIT 1"
+	sqlSelect := "SELECT a.id,a.article_id,a.content,a.content_text,a.seq,a.diff,a.updated_by,a.change_desc,a.deleted,a.created_at,a.updated_at FROM article_histories a WHERE a.article_id=? AND a.deleted=0 ORDER BY a.id DESC LIMIT 1"
 
 	if err = node.GetContext(c, item, sqlSelect, articleID); err != nil {
 		if err == sql.ErrNoRows {
@@ -55,7 +55,7 @@ func (p *Dao) GetLastArticleHistory(c context.Context, node sqalx.Node, articleI
 // GetAll get all records
 func (p *Dao) GetArticleHistories(c context.Context, node sqalx.Node) (items []*model.ArticleHistory, err error) {
 	items = make([]*model.ArticleHistory, 0)
-	sqlSelect := "SELECT a.* FROM article_histories a WHERE a.deleted=0 ORDER BY a.id DESC "
+	sqlSelect := "SELECT a.id,a.article_id,a.content,a.content_text,a.seq,a.diff,a.updated_by,a.change_desc,a.deleted,a.created_at,a.updated_at FROM article_histories a WHERE a.deleted=0 ORDER BY a.id DESC "
 
 	if err = node.SelectContext(c, &items, sqlSelect); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetArticleHistories err(%+v)", err))
@@ -103,7 +103,7 @@ func (p *Dao) GetArticleHistoriesByCond(c context.Context, node sqalx.Node, cond
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.* FROM article_histories a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.id,a.article_id,a.content,a.content_text,a.seq,a.diff,a.updated_by,a.change_desc,a.deleted,a.created_at,a.updated_at FROM article_histories a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
 
 	if err = node.SelectContext(c, &items, sqlSelect, condition...); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetArticleHistoriesByCond err(%+v), condition(%+v)", err, cond))
@@ -115,7 +115,7 @@ func (p *Dao) GetArticleHistoriesByCond(c context.Context, node sqalx.Node, cond
 // GetByID get a record by ID
 func (p *Dao) GetArticleHistoryByID(c context.Context, node sqalx.Node, id int64) (item *model.ArticleHistory, err error) {
 	item = new(model.ArticleHistory)
-	sqlSelect := "SELECT a.* FROM article_histories a WHERE a.id=? AND a.deleted=0"
+	sqlSelect := "SELECT a.id,a.article_id,a.content,a.content_text,a.seq,a.diff,a.updated_by,a.change_desc,a.deleted,a.created_at,a.updated_at FROM article_histories a WHERE a.id=? AND a.deleted=0"
 
 	if err = node.GetContext(c, item, sqlSelect, id); err != nil {
 		if err == sql.ErrNoRows {
@@ -168,7 +168,7 @@ func (p *Dao) GetArticleHistoryByCond(c context.Context, node sqalx.Node, cond m
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.* FROM article_histories a WHERE a.deleted=0 %s", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.id,a.article_id,a.content,a.content_text,a.seq,a.diff,a.updated_by,a.change_desc,a.deleted,a.created_at,a.updated_at FROM article_histories a WHERE a.deleted=0 %s", clause)
 
 	if err = node.GetContext(c, item, sqlSelect, condition...); err != nil {
 		if err == sql.ErrNoRows {

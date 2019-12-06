@@ -12,7 +12,7 @@ import (
 // GetAll get all records
 func (p *Dao) GetDiscussionFiles(c context.Context, node sqalx.Node) (items []*model.DiscussionFile, err error) {
 	items = make([]*model.DiscussionFile, 0)
-	sqlSelect := "SELECT a.* FROM discussion_files a WHERE a.deleted=0 ORDER BY a.id DESC "
+	sqlSelect := "SELECT a.id,a.file_name,a.file_url,a.seq,a.discussion_id,a.deleted,a.created_at,a.updated_at,a.file_type,a.pdf_url FROM discussion_files a WHERE a.deleted=0 ORDER BY a.id DESC "
 
 	if err = node.SelectContext(c, &items, sqlSelect); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetDiscussionFiles err(%+v)", err))
@@ -48,7 +48,7 @@ func (p *Dao) GetDiscussionFilesByCond(c context.Context, node sqalx.Node, cond 
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.* FROM discussion_files a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.id,a.file_name,a.file_url,a.seq,a.discussion_id,a.deleted,a.created_at,a.updated_at,a.file_type,a.pdf_url FROM discussion_files a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
 
 	if err = node.SelectContext(c, &items, sqlSelect, condition...); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetDiscussionFilesByCond err(%+v), condition(%+v)", err, cond))
@@ -60,7 +60,7 @@ func (p *Dao) GetDiscussionFilesByCond(c context.Context, node sqalx.Node, cond 
 // GetByID get a record by ID
 func (p *Dao) GetDiscussionFileByID(c context.Context, node sqalx.Node, id int64) (item *model.DiscussionFile, err error) {
 	item = new(model.DiscussionFile)
-	sqlSelect := "SELECT a.* FROM discussion_files a WHERE a.id=? AND a.deleted=0"
+	sqlSelect := "SELECT a.id,a.file_name,a.file_url,a.seq,a.discussion_id,a.deleted,a.created_at,a.updated_at,a.file_type,a.pdf_url FROM discussion_files a WHERE a.id=? AND a.deleted=0"
 
 	if err = node.GetContext(c, item, sqlSelect, id); err != nil {
 		if err == sql.ErrNoRows {
@@ -101,7 +101,7 @@ func (p *Dao) GetDiscussionFileByCond(c context.Context, node sqalx.Node, cond m
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.* FROM discussion_files a WHERE a.deleted=0 %s", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.id,a.file_name,a.file_url,a.seq,a.discussion_id,a.deleted,a.created_at,a.updated_at,a.file_type,a.pdf_url FROM discussion_files a WHERE a.deleted=0 %s", clause)
 
 	if err = node.GetContext(c, item, sqlSelect, condition...); err != nil {
 		if err == sql.ErrNoRows {

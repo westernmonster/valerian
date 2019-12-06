@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	_getCountryCodesSQL = "SELECT a.* FROM country_codes a WHERE a.deleted=0 ORDER BY a.id "
+	_getCountryCodesSQL = "SELECT a.id,a.name,a.cn_name,a.code,a.emoji,a.prefix,a.deleted,a.created_at,a.updated_at  FROM country_codes a WHERE a.deleted=0 ORDER BY a.id "
 )
 
 func (p *Dao) GetAllCountryCodes(c context.Context, node sqalx.Node) (items []*model.CountryCode, err error) {

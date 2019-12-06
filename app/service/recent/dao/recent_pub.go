@@ -11,7 +11,7 @@ import (
 
 func (p *Dao) GetUserRecentPubsPaged(c context.Context, node sqalx.Node, aid int64, targetType string, limit, offset int) (items []*model.RecentPub, err error) {
 	items = make([]*model.RecentPub, 0)
-	sqlSelect := "SELECT a.* FROM recent_pubs a WHERE a.deleted=0 AND a.account_id=? %s ORDER BY a.id DESC limit ?,?"
+	sqlSelect := "SELECT a.id,a.account_id,a.target_id,a.target_type,a.deleted,a.created_at,a.updated_at FROM recent_pubs a WHERE a.deleted=0 AND a.account_id=? %s ORDER BY a.id DESC limit ?,?"
 
 	clause := ""
 	switch targetType {
@@ -40,7 +40,7 @@ func (p *Dao) GetUserRecentPubsPaged(c context.Context, node sqalx.Node, aid int
 // GetAll get all records
 func (p *Dao) GetRecentPubs(c context.Context, node sqalx.Node) (items []*model.RecentPub, err error) {
 	items = make([]*model.RecentPub, 0)
-	sqlSelect := "SELECT a.* FROM recent_pubs a WHERE a.deleted=0 ORDER BY a.id DESC "
+	sqlSelect := "SELECT a.id,a.account_id,a.target_id,a.target_type,a.deleted,a.created_at,a.updated_at FROM recent_pubs a WHERE a.deleted=0 ORDER BY a.id DESC "
 
 	if err = node.SelectContext(c, &items, sqlSelect); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetRecentPubs err(%+v)", err))
@@ -72,7 +72,7 @@ func (p *Dao) GetRecentPubsByCond(c context.Context, node sqalx.Node, cond map[s
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.* FROM recent_pubs a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.id,a.account_id,a.target_id,a.target_type,a.deleted,a.created_at,a.updated_at FROM recent_pubs a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
 
 	if err = node.SelectContext(c, &items, sqlSelect, condition...); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetRecentPubsByCond err(%+v), condition(%+v)", err, cond))
@@ -84,7 +84,7 @@ func (p *Dao) GetRecentPubsByCond(c context.Context, node sqalx.Node, cond map[s
 // GetByID get a record by ID
 func (p *Dao) GetRecentPubByID(c context.Context, node sqalx.Node, id int64) (item *model.RecentPub, err error) {
 	item = new(model.RecentPub)
-	sqlSelect := "SELECT a.* FROM recent_pubs a WHERE a.id=? AND a.deleted=0"
+	sqlSelect := "SELECT a.id,a.account_id,a.target_id,a.target_type,a.deleted,a.created_at,a.updated_at FROM recent_pubs a WHERE a.id=? AND a.deleted=0"
 
 	if err = node.GetContext(c, item, sqlSelect, id); err != nil {
 		if err == sql.ErrNoRows {
@@ -121,7 +121,7 @@ func (p *Dao) GetRecentPubByCond(c context.Context, node sqalx.Node, cond map[st
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.* FROM recent_pubs a WHERE a.deleted=0 %s", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.id,a.account_id,a.target_id,a.target_type,a.deleted,a.created_at,a.updated_at FROM recent_pubs a WHERE a.deleted=0 %s", clause)
 
 	if err = node.GetContext(c, item, sqlSelect, condition...); err != nil {
 		if err == sql.ErrNoRows {

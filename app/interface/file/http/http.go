@@ -35,6 +35,7 @@ func route(e *mars.Engine) {
 	{
 		g.POST("/oss_token", authSvc.User, ossToken)
 		g.POST("/office_convert", authSvc.User, officeConvert)
+		g.POST("/url_upload", authSvc.User, urlUpload)
 		g.GET("/sts_cred", authSvc.User, stsCred)
 	}
 }
@@ -110,6 +111,34 @@ func ossToken(c *mars.Context) {
 	}
 
 	c.JSON(srv.GetPolicyToken(arg.FileType, arg.FileName))
+}
+
+// @Summary 图片URL上传到OSS
+// @Description 图片URL上传到OSS
+// @Tags common
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param req body  app.interface.file.model.ArgUploadURL true "请求"
+// @Success 200 {object}  app.interface.file.model.UploadURLResp "File"
+// @Failure 400 "验证失败"
+// @Failure 401 "登录验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /file/url_upload [post]
+func urlUpload(c *mars.Context) {
+	arg := new(model.ArgUploadURL)
+	if e := c.Bind(arg); e != nil {
+		return
+	}
+
+	if e := arg.Validate(); e != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+
+	c.JSON(srv.UploadImageURL(c, arg))
 }
 
 // ping check server ok.

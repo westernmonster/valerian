@@ -12,7 +12,7 @@ import (
 
 func (p *Dao) GetCommentStatByID(c context.Context, node sqalx.Node, id int64) (item *model.CommentStat, err error) {
 	item = new(model.CommentStat)
-	sqlSelect := "SELECT a.* FROM comment_stats a WHERE a.comment_id=?"
+	sqlSelect := "SELECT a.comment_id,a.like_count,a.dislike_count,a.children_count,a.created_at,a.updated_at FROM comment_stats a WHERE a.comment_id=?"
 
 	if err = node.GetContext(c, item, sqlSelect, id); err != nil {
 		if err == sql.ErrNoRows {

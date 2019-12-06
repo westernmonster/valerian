@@ -39,7 +39,7 @@ var (
 	_once           sync.Once
 	_defaultCliConf = &ClientConfig{
 		Dial:    xtime.Duration(time.Second * 10),
-		Timeout: xtime.Duration(time.Millisecond * 250),
+		Timeout: xtime.Duration(time.Second * 1),
 		Subset:  50,
 	}
 	_defaultClient *Client
@@ -205,7 +205,7 @@ func (c *Client) SetConfig(conf *ClientConfig) (err error) {
 		conf.Dial = xtime.Duration(time.Second * 10)
 	}
 	if conf.Timeout <= 0 {
-		conf.Timeout = xtime.Duration(time.Millisecond * 250)
+		conf.Timeout = xtime.Duration(time.Second * 1)
 	}
 	if conf.Subset <= 0 {
 		conf.Subset = 50

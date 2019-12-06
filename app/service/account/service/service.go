@@ -44,6 +44,8 @@ type Service struct {
 		BatchAccountCache(c context.Context, aids []int64) (cached map[int64]*model.Account, missed []int64, err error)
 		SetBatchAccountCache(c context.Context, bs []*model.Account) (err error)
 
+		AccountSetLock(c context.Context, node sqalx.Node, accountID int64, isLock bool) (err error)
+
 		Ping(c context.Context) (err error)
 		Close()
 		DB() sqalx.Node

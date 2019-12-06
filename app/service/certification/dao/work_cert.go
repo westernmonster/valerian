@@ -56,7 +56,7 @@ func (p *Dao) GetWorkCertificationsPaged(c context.Context, node sqalx.Node, con
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.* FROM work_certifications a WHERE a.deleted=0 %s ORDER BY a.status ASC, a.id DESC LIMIT ?,?", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.id,a.account_id,a.status,a.work_pic,a.other_pic,a.company,a.department,a.position,a.expires_at,a.audit_result,a.deleted,a.created_at,a.updated_at  FROM work_certifications a WHERE a.deleted=0 %s ORDER BY a.status ASC, a.id DESC LIMIT ?,?", clause)
 
 	condition = append(condition, offset)
 	condition = append(condition, limit)
@@ -72,7 +72,7 @@ func (p *Dao) GetWorkCertificationsPaged(c context.Context, node sqalx.Node, con
 // GetAll get all records
 func (p *Dao) GetWorkCertifications(c context.Context, node sqalx.Node) (items []*model.WorkCertification, err error) {
 	items = make([]*model.WorkCertification, 0)
-	sqlSelect := "SELECT a.* FROM work_certifications a WHERE a.deleted=0 ORDER BY a.id DESC "
+	sqlSelect := "SELECT a.id,a.account_id,a.status,a.work_pic,a.other_pic,a.company,a.department,a.position,a.expires_at,a.audit_result,a.deleted,a.created_at,a.updated_at  FROM work_certifications a WHERE a.deleted=0 ORDER BY a.id DESC "
 
 	if err = node.SelectContext(c, &items, sqlSelect); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetWorkCertifications err(%+v)", err))
@@ -128,7 +128,7 @@ func (p *Dao) GetWorkCertificationsByCond(c context.Context, node sqalx.Node, co
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.* FROM work_certifications a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.id,a.account_id,a.status,a.work_pic,a.other_pic,a.company,a.department,a.position,a.expires_at,a.audit_result,a.deleted,a.created_at,a.updated_at FROM work_certifications a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
 
 	if err = node.SelectContext(c, &items, sqlSelect, condition...); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetWorkCertificationsByCond err(%+v), condition(%+v)", err, cond))
@@ -140,7 +140,7 @@ func (p *Dao) GetWorkCertificationsByCond(c context.Context, node sqalx.Node, co
 // GetByID get a record by ID
 func (p *Dao) GetWorkCertificationByID(c context.Context, node sqalx.Node, id int64) (item *model.WorkCertification, err error) {
 	item = new(model.WorkCertification)
-	sqlSelect := "SELECT a.* FROM work_certifications a WHERE a.id=? AND a.deleted=0"
+	sqlSelect := "SELECT a.id,a.account_id,a.status,a.work_pic,a.other_pic,a.company,a.department,a.position,a.expires_at,a.audit_result,a.deleted,a.created_at,a.updated_at  FROM work_certifications a WHERE a.id=? AND a.deleted=0"
 
 	if err = node.GetContext(c, item, sqlSelect, id); err != nil {
 		if err == sql.ErrNoRows {
@@ -201,7 +201,7 @@ func (p *Dao) GetWorkCertificationByCond(c context.Context, node sqalx.Node, con
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.* FROM work_certifications a WHERE a.deleted=0 %s", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.id,a.account_id,a.status,a.work_pic,a.other_pic,a.company,a.department,a.position,a.expires_at,a.audit_result,a.deleted,a.created_at,a.updated_at  FROM work_certifications a WHERE a.deleted=0 %s", clause)
 
 	if err = node.GetContext(c, item, sqlSelect, condition...); err != nil {
 		if err == sql.ErrNoRows {

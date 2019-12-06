@@ -13,7 +13,7 @@ import (
 // GetAll get all records
 func (p *Dao) GetTopics(c context.Context, node sqalx.Node) (items []*model.Topic, err error) {
 	items = make([]*model.Topic, 0)
-	sqlSelect := "SELECT a.* FROM topics a WHERE a.deleted=0 ORDER BY a.id DESC "
+	sqlSelect := "SELECT a.id,a.name,a.avatar,a.bg,a.introduction,a.allow_discuss,a.allow_chat,a.is_private,a.view_permission,a.edit_permission,a.join_permission,a.catalog_view_type,a.topic_home,a.created_by,a.deleted,a.created_at,a.updated_at FROM topics a WHERE a.deleted=0 ORDER BY a.id DESC "
 
 	if err = node.SelectContext(c, &items, sqlSelect); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetTopics err(%+v)", err))
@@ -85,7 +85,7 @@ func (p *Dao) GetTopicsByCond(c context.Context, node sqalx.Node, cond map[strin
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.* FROM topics a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.id,a.name,a.avatar,a.bg,a.introduction,a.allow_discuss,a.allow_chat,a.is_private,a.view_permission,a.edit_permission,a.join_permission,a.catalog_view_type,a.topic_home,a.created_by,a.deleted,a.created_at,a.updated_at FROM topics a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
 
 	if err = node.SelectContext(c, &items, sqlSelect, condition...); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetTopicsByCond err(%+v), condition(%+v)", err, cond))
@@ -97,7 +97,7 @@ func (p *Dao) GetTopicsByCond(c context.Context, node sqalx.Node, cond map[strin
 // GetByID get a record by ID
 func (p *Dao) GetTopicByID(c context.Context, node sqalx.Node, id int64) (item *model.Topic, err error) {
 	item = new(model.Topic)
-	sqlSelect := "SELECT a.* FROM topics a WHERE a.id=? AND a.deleted=0"
+	sqlSelect := "SELECT a.id,a.name,a.avatar,a.bg,a.introduction,a.allow_discuss,a.allow_chat,a.is_private,a.view_permission,a.edit_permission,a.join_permission,a.catalog_view_type,a.topic_home,a.created_by,a.deleted,a.created_at,a.updated_at FROM topics a WHERE a.id=? AND a.deleted=0"
 
 	if err = node.GetContext(c, item, sqlSelect, id); err != nil {
 		if err == sql.ErrNoRows {
@@ -174,7 +174,7 @@ func (p *Dao) GetTopicByCond(c context.Context, node sqalx.Node, cond map[string
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.* FROM topics a WHERE a.deleted=0 %s", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.id,a.name,a.avatar,a.bg,a.introduction,a.allow_discuss,a.allow_chat,a.is_private,a.view_permission,a.edit_permission,a.join_permission,a.catalog_view_type,a.topic_home,a.created_by,a.deleted,a.created_at,a.updated_at FROM topics a WHERE a.deleted=0 %s", clause)
 
 	if err = node.GetContext(c, item, sqlSelect, condition...); err != nil {
 		if err == sql.ErrNoRows {

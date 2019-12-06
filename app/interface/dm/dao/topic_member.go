@@ -13,7 +13,7 @@ import (
 // GetAll get all records
 func (p *Dao) GetTopicMembers(c context.Context, node sqalx.Node) (items []*model.TopicMember, err error) {
 	items = make([]*model.TopicMember, 0)
-	sqlSelect := "SELECT a.* FROM topic_members a WHERE a.deleted=0 ORDER BY a.id DESC "
+	sqlSelect := "SELECT a.id,a.topic_id,a.account_id,a.role,a.deleted,a.created_at,a.updated_at FROM topic_members a WHERE a.deleted=0 ORDER BY a.id DESC "
 
 	if err = node.SelectContext(c, &items, sqlSelect); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetTopicMembers err(%+v)", err))
@@ -45,7 +45,7 @@ func (p *Dao) GetTopicMembersByCond(c context.Context, node sqalx.Node, cond map
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.* FROM topic_members a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.id,a.topic_id,a.account_id,a.role,a.deleted,a.created_at,a.updated_at FROM topic_members a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
 
 	if err = node.SelectContext(c, &items, sqlSelect, condition...); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetTopicMembersByCond err(%+v), condition(%+v)", err, cond))
@@ -57,7 +57,7 @@ func (p *Dao) GetTopicMembersByCond(c context.Context, node sqalx.Node, cond map
 // GetByID get a record by ID
 func (p *Dao) GetTopicMemberByID(c context.Context, node sqalx.Node, id int64) (item *model.TopicMember, err error) {
 	item = new(model.TopicMember)
-	sqlSelect := "SELECT a.* FROM topic_members a WHERE a.id=? AND a.deleted=0"
+	sqlSelect := "SELECT a.id,a.topic_id,a.account_id,a.role,a.deleted,a.created_at,a.updated_at FROM topic_members a WHERE a.id=? AND a.deleted=0"
 
 	if err = node.GetContext(c, item, sqlSelect, id); err != nil {
 		if err == sql.ErrNoRows {
@@ -94,7 +94,7 @@ func (p *Dao) GetTopicMemberByCond(c context.Context, node sqalx.Node, cond map[
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.* FROM topic_members a WHERE a.deleted=0 %s", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.id,a.topic_id,a.account_id,a.role,a.deleted,a.created_at,a.updated_at FROM topic_members a WHERE a.deleted=0 %s", clause)
 
 	if err = node.GetContext(c, item, sqlSelect, condition...); err != nil {
 		if err == sql.ErrNoRows {

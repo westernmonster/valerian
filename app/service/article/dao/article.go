@@ -13,7 +13,7 @@ import (
 
 func (p *Dao) GetUserArticlesPaged(c context.Context, node sqalx.Node, aid int64, limit, offset int) (items []*model.Article, err error) {
 	items = make([]*model.Article, 0)
-	sqlSelect := "SELECT a.* FROM articles a WHERE a.deleted=0 AND a.created_by=? ORDER BY a.id DESC limit ?,?"
+	sqlSelect := "SELECT a.id,a.title,a.content,a.content_text,a.disable_revise,a.disable_comment,a.created_by,a.deleted,a.created_at,a.updated_at FROM articles a WHERE a.deleted=0 AND a.created_by=? ORDER BY a.id DESC limit ?,?"
 
 	if err = node.SelectContext(c, &items, sqlSelect, aid, offset, limit); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetUserArticlesPaged err(%+v) aid(%d) limit(%d) offset(%d)", err, aid, limit, offset))
@@ -51,7 +51,7 @@ func (p *Dao) GetUserArticleIDsPaged(c context.Context, node sqalx.Node, aid int
 // GetAll get all records
 func (p *Dao) GetArticles(c context.Context, node sqalx.Node) (items []*model.Article, err error) {
 	items = make([]*model.Article, 0)
-	sqlSelect := "SELECT a.* FROM articles a WHERE a.deleted=0 ORDER BY a.id DESC "
+	sqlSelect := "SELECT  a.id,a.title,a.content,a.content_text,a.disable_revise,a.disable_comment,a.created_by,a.deleted,a.created_at,a.updated_at  FROM articles a WHERE a.deleted=0 ORDER BY a.id DESC "
 
 	if err = node.SelectContext(c, &items, sqlSelect); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetArticles err(%+v)", err))
@@ -95,7 +95,7 @@ func (p *Dao) GetArticlesByCond(c context.Context, node sqalx.Node, cond map[str
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.* FROM articles a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.id,a.title,a.content,a.content_text,a.disable_revise,a.disable_comment,a.created_by,a.deleted,a.created_at,a.updated_at  FROM articles a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
 
 	if err = node.SelectContext(c, &items, sqlSelect, condition...); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetArticlesByCond err(%+v), condition(%+v)", err, cond))
@@ -107,7 +107,7 @@ func (p *Dao) GetArticlesByCond(c context.Context, node sqalx.Node, cond map[str
 // GetByID get a record by ID
 func (p *Dao) GetArticleByID(c context.Context, node sqalx.Node, id int64) (item *model.Article, err error) {
 	item = new(model.Article)
-	sqlSelect := "SELECT a.* FROM articles a WHERE a.id=? AND a.deleted=0"
+	sqlSelect := "SELECT a.id,a.title,a.content,a.content_text,a.disable_revise,a.disable_comment,a.created_by,a.deleted,a.created_at,a.updated_at  FROM articles a WHERE a.id=? AND a.deleted=0"
 
 	if err = node.GetContext(c, item, sqlSelect, id); err != nil {
 		if err == sql.ErrNoRows {
@@ -156,7 +156,7 @@ func (p *Dao) GetArticleByCond(c context.Context, node sqalx.Node, cond map[stri
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.* FROM articles a WHERE a.deleted=0 %s", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.id,a.title,a.content,a.content_text,a.disable_revise,a.disable_comment,a.created_by,a.deleted,a.created_at,a.updated_at  FROM articles a WHERE a.deleted=0 %s", clause)
 
 	if err = node.GetContext(c, item, sqlSelect, condition...); err != nil {
 		if err == sql.ErrNoRows {

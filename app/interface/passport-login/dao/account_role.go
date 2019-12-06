@@ -13,7 +13,7 @@ import (
 // GetAll get all records
 func (p *Dao) GetAccountRoles(c context.Context, node sqalx.Node) (items []*model.AccountRole, err error) {
 	items = make([]*model.AccountRole, 0)
-	sqlSelect := "SELECT a.* FROM account_roles a WHERE a.deleted=0 ORDER BY a.id DESC "
+	sqlSelect := "SELECT a.id,a.name,a.perms,a.deleted,a.created_at,a.updated_at FROM account_roles a WHERE a.deleted=0 ORDER BY a.id DESC "
 
 	if err = node.SelectContext(c, &items, sqlSelect); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetAccountRoles err(%+v)", err))
@@ -41,7 +41,7 @@ func (p *Dao) GetAccountRolesByCond(c context.Context, node sqalx.Node, cond map
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.* FROM account_roles a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.id,a.name,a.perms,a.deleted,a.created_at,a.updated_at FROM account_roles a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
 
 	if err = node.SelectContext(c, &items, sqlSelect, condition...); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetAccountRolesByCond err(%+v), condition(%+v)", err, cond))
@@ -53,7 +53,7 @@ func (p *Dao) GetAccountRolesByCond(c context.Context, node sqalx.Node, cond map
 // GetByID get a record by ID
 func (p *Dao) GetAccountRoleByID(c context.Context, node sqalx.Node, id string) (item *model.AccountRole, err error) {
 	item = new(model.AccountRole)
-	sqlSelect := "SELECT a.* FROM account_roles a WHERE a.id=? AND a.deleted=0"
+	sqlSelect := "SELECT a.id,a.name,a.perms,a.deleted,a.created_at,a.updated_at FROM account_roles a WHERE a.id=? AND a.deleted=0"
 
 	if err = node.GetContext(c, item, sqlSelect, id); err != nil {
 		if err == sql.ErrNoRows {
@@ -86,7 +86,7 @@ func (p *Dao) GetAccountRoleByCond(c context.Context, node sqalx.Node, cond map[
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.* FROM account_roles a WHERE a.deleted=0 %s", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.id,a.name,a.perms,a.deleted,a.created_at,a.updated_at FROM account_roles a WHERE a.deleted=0 %s", clause)
 
 	if err = node.GetContext(c, item, sqlSelect, condition...); err != nil {
 		if err == sql.ErrNoRows {

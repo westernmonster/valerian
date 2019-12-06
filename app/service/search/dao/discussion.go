@@ -11,7 +11,7 @@ import (
 
 func (p *Dao) GetDiscussCategoryByID(c context.Context, node sqalx.Node, id int64) (item *model.DiscussCategory, err error) {
 	item = new(model.DiscussCategory)
-	sqlSelect := "SELECT a.* FROM discuss_categories a WHERE a.id=? AND a.deleted=0"
+	sqlSelect := "SELECT a.id,a.topic_id,a.seq,a.name,a.deleted,a.created_at,a.updated_at FROM discuss_categories a WHERE a.id=? AND a.deleted=0"
 
 	if err = node.GetContext(c, item, sqlSelect, id); err != nil {
 		if err == sql.ErrNoRows {
@@ -28,7 +28,7 @@ func (p *Dao) GetDiscussCategoryByID(c context.Context, node sqalx.Node, id int6
 // GetAll get all records
 func (p *Dao) GetDiscussions(c context.Context, node sqalx.Node) (items []*model.Discussion, err error) {
 	items = make([]*model.Discussion, 0)
-	sqlSelect := "SELECT a.* FROM discussions a WHERE a.deleted=0 ORDER BY a.id DESC "
+	sqlSelect := "SELECT a.id,a.topic_id,a.category_id,a.created_by,a.title,a.content,a.content_text,a.deleted,a.created_at,a.updated_at FROM discussions a WHERE a.deleted=0 ORDER BY a.id DESC "
 
 	if err = node.SelectContext(c, &items, sqlSelect); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetDiscussions err(%+v)", err))
@@ -72,7 +72,7 @@ func (p *Dao) GetDiscussionsByCond(c context.Context, node sqalx.Node, cond map[
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.* FROM discussions a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.id,a.topic_id,a.category_id,a.created_by,a.title,a.content,a.content_text,a.deleted,a.created_at,a.updated_at FROM discussions a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
 
 	if err = node.SelectContext(c, &items, sqlSelect, condition...); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetDiscussionsByCond err(%+v), condition(%+v)", err, cond))
@@ -84,7 +84,7 @@ func (p *Dao) GetDiscussionsByCond(c context.Context, node sqalx.Node, cond map[
 // GetByID get a record by ID
 func (p *Dao) GetDiscussionByID(c context.Context, node sqalx.Node, id int64) (item *model.Discussion, err error) {
 	item = new(model.Discussion)
-	sqlSelect := "SELECT a.* FROM discussions a WHERE a.id=? AND a.deleted=0"
+	sqlSelect := "SELECT a.id,a.topic_id,a.category_id,a.created_by,a.title,a.content,a.content_text,a.deleted,a.created_at,a.updated_at FROM discussions a WHERE a.id=? AND a.deleted=0"
 
 	if err = node.GetContext(c, item, sqlSelect, id); err != nil {
 		if err == sql.ErrNoRows {
@@ -133,7 +133,7 @@ func (p *Dao) GetDiscussionByCond(c context.Context, node sqalx.Node, cond map[s
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.* FROM discussions a WHERE a.deleted=0 %s", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.id,a.topic_id,a.category_id,a.created_by,a.title,a.content,a.content_text,a.deleted,a.created_at,a.updated_at FROM discussions a WHERE a.deleted=0 %s", clause)
 
 	if err = node.GetContext(c, item, sqlSelect, condition...); err != nil {
 		if err == sql.ErrNoRows {

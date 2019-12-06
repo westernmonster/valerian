@@ -14,10 +14,10 @@ require (
 	github.com/PuerkitoBio/goquery v1.5.0
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/aliyun/alibaba-cloud-sdk-go v0.0.0-20190912105415-4fb175c277cc
+	github.com/aliyun/aliyun-oss-go-sdk v0.0.0-20190307165228-86c17b95fcd5
 	github.com/asaskevich/govalidator v0.0.0-20190424111038-f61b66f89f4a
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/codahale/hdrhistogram v0.0.0-20161010025455-3a0bb77429bd // indirect
-	github.com/davecgh/go-spew v1.1.1
 	github.com/dgryski/go-farm v0.0.0-20190423205320-6a90982ecee2
 	github.com/fortytw2/leaktest v1.3.0 // indirect
 	github.com/go-openapi/validate v0.19.3 // indirect
@@ -26,8 +26,9 @@ require (
 	github.com/go-playground/universal-translator v0.16.0 // indirect
 	github.com/go-sql-driver/mysql v1.4.1
 	github.com/gobuffalo/packr v1.30.1
-	github.com/gogo/protobuf v1.3.0
+	github.com/gogo/protobuf v1.3.1
 	github.com/golang/protobuf v1.3.2
+	github.com/h2non/filetype v1.0.10
 	github.com/jinzhu/copier v0.0.0-20190625015134-976e0346caa8
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/kamilsk/retry/v4 v4.3.1
@@ -35,6 +36,7 @@ require (
 	github.com/leodido/go-urn v1.1.0 // indirect
 	github.com/levigross/grequests v0.0.0-20190908174114-253788527a1a
 	github.com/mattn/go-sqlite3 v1.11.0 // indirect
+	github.com/mgechev/revive v0.0.0-20191205034650-1560db494303 // indirect
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
 	github.com/montanaflynn/stats v0.5.0
 	github.com/naoina/go-stringutil v0.1.0 // indirect

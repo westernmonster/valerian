@@ -14,12 +14,12 @@ func (p *Dao) GetFavsPaged(c context.Context, node sqalx.Node, aid int64, target
 	items = make([]*model.Fav, 0)
 
 	if targetType == "all" {
-		sql := "SELECT a.* FROM favs a WHERE a.deleted=0 AND a.account_id=? ORDER BY a.id DESC limit ?,?"
+		sql := "SELECT a.id,a.account_id,a.target_id,a.target_type,a.deleted,a.created_at,a.updated_at FROM favs a WHERE a.deleted=0 AND a.account_id=? ORDER BY a.id DESC limit ?,?"
 		if err = node.SelectContext(c, &items, sql, aid, offset, limit); err != nil {
 			log.For(c).Error(fmt.Sprintf("dao.GetFavsPaged error(%+v), aid(%d) limit(%d) offset(%d)", err, aid, limit, offset))
 		}
 	} else {
-		sql := "SELECT a.* FROM favs a WHERE a.deleted=0 AND a.account_id=? AND target_type=? ORDER BY a.id DESC limit ?,?"
+		sql := "SELECT a.id,a.account_id,a.target_id,a.target_type,a.deleted,a.created_at,a.updated_at FROM favs a WHERE a.deleted=0 AND a.account_id=? AND target_type=? ORDER BY a.id DESC limit ?,?"
 		if err = node.SelectContext(c, &items, sql, aid, targetType, offset, limit); err != nil {
 			log.For(c).Error(fmt.Sprintf("dao.GetFavsPaged error(%+v), aid(%d) target_type(%s) limit(%d) offset(%d)", err, aid, targetType, limit, offset))
 		}
@@ -30,7 +30,7 @@ func (p *Dao) GetFavsPaged(c context.Context, node sqalx.Node, aid int64, target
 // GetAll get all records
 func (p *Dao) GetFavs(c context.Context, node sqalx.Node) (items []*model.Fav, err error) {
 	items = make([]*model.Fav, 0)
-	sqlSelect := "SELECT a.* FROM favs a WHERE a.deleted=0 ORDER BY a.id DESC "
+	sqlSelect := "SELECT a.id,a.account_id,a.target_id,a.target_type,a.deleted,a.created_at,a.updated_at FROM favs a WHERE a.deleted=0 ORDER BY a.id DESC "
 
 	if err = node.SelectContext(c, &items, sqlSelect); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetFavs err(%+v)", err))
@@ -62,7 +62,7 @@ func (p *Dao) GetFavsByCond(c context.Context, node sqalx.Node, cond map[string]
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.* FROM favs a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.id,a.account_id,a.target_id,a.target_type,a.deleted,a.created_at,a.updated_at FROM favs a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
 
 	if err = node.SelectContext(c, &items, sqlSelect, condition...); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetFavsByCond err(%+v), condition(%+v)", err, cond))
@@ -74,7 +74,7 @@ func (p *Dao) GetFavsByCond(c context.Context, node sqalx.Node, cond map[string]
 // GetByID get a record by ID
 func (p *Dao) GetFavByID(c context.Context, node sqalx.Node, id int64) (item *model.Fav, err error) {
 	item = new(model.Fav)
-	sqlSelect := "SELECT a.* FROM favs a WHERE a.id=? AND a.deleted=0"
+	sqlSelect := "SELECT a.id,a.account_id,a.target_id,a.target_type,a.deleted,a.created_at,a.updated_at FROM favs a WHERE a.id=? AND a.deleted=0"
 
 	if err = node.GetContext(c, item, sqlSelect, id); err != nil {
 		if err == sql.ErrNoRows {
@@ -111,7 +111,7 @@ func (p *Dao) GetFavByCond(c context.Context, node sqalx.Node, cond map[string]i
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.* FROM favs a WHERE a.deleted=0 %s", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.id,a.account_id,a.target_id,a.target_type,a.deleted,a.created_at,a.updated_at FROM favs a WHERE a.deleted=0 %s", clause)
 
 	if err = node.GetContext(c, item, sqlSelect, condition...); err != nil {
 		if err == sql.ErrNoRows {

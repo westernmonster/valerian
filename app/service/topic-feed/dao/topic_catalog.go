@@ -73,7 +73,7 @@ func (p *Dao) GetTopicCatalogsByCond(c context.Context, node sqalx.Node, cond ma
 // GetByID get a record by ID
 func (p *Dao) GetTopicCatalogByID(c context.Context, node sqalx.Node, id int64) (item *model.TopicCatalog, err error) {
 	item = new(model.TopicCatalog)
-	sqlSelect := "SELECT a.* FROM topic_catalogs a WHERE a.id=? AND a.deleted=0"
+	sqlSelect := "SELECT a.id,a.name,a.seq,a.type,a.parent_id,a.ref_id,a.topic_id,a.is_primary,a.permission,a.deleted,a.created_at,a.updated_at FROM topic_catalogs a WHERE a.id=? AND a.deleted=0"
 
 	if err = node.GetContext(c, item, sqlSelect, id); err != nil {
 		if err == sql.ErrNoRows {

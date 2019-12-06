@@ -56,10 +56,12 @@ func (p *Service) Init(c context.Context) (err error) {
 		workCert := bool(v.WorkCert)
 		isOrg := bool(v.IsOrg)
 		isVIP := bool(v.IsVip)
+		isLock := bool(v.IsLock)
 		item.IDCert = &idCert
 		item.WorkCert = &workCert
 		item.IsVIP = &isVIP
 		item.IsOrg = &isOrg
+		item.IsLock = &isLock
 
 		iAcc[i] = item
 	}

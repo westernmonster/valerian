@@ -283,3 +283,13 @@ message MsgAccountDeleted {
     int64 AccountID = 1 [(gogoproto.jsontag) = "account_id"] ;
     int64 ActionTime = 4 [(gogoproto.jsontag) = "action_time"] ;
 }
+
+message MsgFeedbackAccuseSuit {
+    int64 FeedbackID = 1 [(gogoproto.jsontag) = "feedback_id"];
+    int64 ActionTime = 4 [(gogoproto.jsontag) = "action_time"];
+}
+
+message MsgFeedbackAccuseNotSuit {
+    int64 FeedbackID = 1 [(gogoproto.jsontag) = "feedback_id"];
+    int64 ActionTime = 4 [(gogoproto.jsontag) = "action_time"];
+}

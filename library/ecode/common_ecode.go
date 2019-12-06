@@ -110,6 +110,8 @@ var (
 	RecommendTopicExist            = add(10060) // 推荐话题已经存在
 	CatalogNameRequired            = add(10061) // 请输入目录名称
 	CatalogNameInvalid             = add(10062) // 目录名称格式不正确
+	DownloadImageFailed            = add(10063) // 下载图片失败
+	InvalidImage                   = add(10064) // 图片格式不正确
 
 	// 89000 - 89999 属于 Permission 类错误
 	NoTopicViewPermission   = add(89001) // 没有话题查看权限

@@ -13,7 +13,7 @@ import (
 // GetAll get all records
 func (p *Dao) GetIDCertifications(c context.Context, node sqalx.Node) (items []*model.IDCertification, err error) {
 	items = make([]*model.IDCertification, 0)
-	sqlSelect := "SELECT a.* FROM id_certifications a WHERE a.deleted=0 ORDER BY a.id DESC "
+	sqlSelect := "SELECT a.id,a.account_id,a.status,a.audit_conclusions,a.name,a.identification_number,a.id_card_type,a.id_card_start_date,a.id_card_expiry,a.address,a.sex,a.id_card_front_pic,a.id_card_back_pic,a.face_pic,a.ethnic_group,a.deleted,a.created_at,a.updated_at FROM id_certifications a WHERE a.deleted=0 ORDER BY a.id DESC "
 
 	if err = node.SelectContext(c, &items, sqlSelect); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetIDCertifications err(%+v)", err))
@@ -89,7 +89,7 @@ func (p *Dao) GetIDCertificationsByCond(c context.Context, node sqalx.Node, cond
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.* FROM id_certifications a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.id,a.account_id,a.status,a.audit_conclusions,a.name,a.identification_number,a.id_card_type,a.id_card_start_date,a.id_card_expiry,a.address,a.sex,a.id_card_front_pic,a.id_card_back_pic,a.face_pic,a.ethnic_group,a.deleted,a.created_at,a.updated_at FROM id_certifications a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
 
 	if err = node.SelectContext(c, &items, sqlSelect, condition...); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetIDCertificationsByCond err(%+v), condition(%+v)", err, cond))
@@ -101,7 +101,7 @@ func (p *Dao) GetIDCertificationsByCond(c context.Context, node sqalx.Node, cond
 // GetByID get a record by ID
 func (p *Dao) GetIDCertificationByID(c context.Context, node sqalx.Node, id int64) (item *model.IDCertification, err error) {
 	item = new(model.IDCertification)
-	sqlSelect := "SELECT a.* FROM id_certifications a WHERE a.id=? AND a.deleted=0"
+	sqlSelect := "SELECT a.id,a.account_id,a.status,a.audit_conclusions,a.name,a.identification_number,a.id_card_type,a.id_card_start_date,a.id_card_expiry,a.address,a.sex,a.id_card_front_pic,a.id_card_back_pic,a.face_pic,a.ethnic_group,a.deleted,a.created_at,a.updated_at FROM id_certifications a WHERE a.id=? AND a.deleted=0"
 
 	if err = node.GetContext(c, item, sqlSelect, id); err != nil {
 		if err == sql.ErrNoRows {
@@ -182,7 +182,7 @@ func (p *Dao) GetIDCertificationByCond(c context.Context, node sqalx.Node, cond 
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.* FROM id_certifications a WHERE a.deleted=0 %s", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.id,a.account_id,a.status,a.audit_conclusions,a.name,a.identification_number,a.id_card_type,a.id_card_start_date,a.id_card_expiry,a.address,a.sex,a.id_card_front_pic,a.id_card_back_pic,a.face_pic,a.ethnic_group,a.deleted,a.created_at,a.updated_at FROM id_certifications a WHERE a.deleted=0 %s", clause)
 
 	if err = node.GetContext(c, item, sqlSelect, condition...); err != nil {
 		if err == sql.ErrNoRows {

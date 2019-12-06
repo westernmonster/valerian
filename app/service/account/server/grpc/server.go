@@ -307,3 +307,19 @@ func (s *server) AddAccount(ctx context.Context, req *api.AddAccountReq) (*api.S
 
 	return v, nil
 }
+
+func (s *server) AccountLock(ctx context.Context, req *api.AidReq) (*api.EmptyStruct, error) {
+	err := s.svr.AccountLock(ctx, req.Aid)
+	if err != nil {
+		return nil, err
+	}
+	return &api.EmptyStruct{}, nil
+}
+
+func (s *server) AccountUnlock(ctx context.Context, req *api.AidReq) (*api.EmptyStruct, error) {
+	err := s.svr.AccountUnlock(ctx, req.Aid)
+	if err != nil {
+		return nil, err
+	}
+	return &api.EmptyStruct{}, nil
+}
