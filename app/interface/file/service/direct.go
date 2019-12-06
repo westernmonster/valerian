@@ -56,9 +56,9 @@ func (p *Service) UploadImageURL(c context.Context, arg *model.ArgUploadURL) (re
 
 	resp = &model.UploadURLResp{}
 	if env.DeployEnv == env.DeployEnvProd {
-		resp.FileURL = "https://res.stonote.cn/" + p.c.OSS.ImageDir + name
+		resp.FileURL = "https://res.stonote.cn/" + p.c.OSS.ImageDir + name + "?x-oss-process=style/valerian"
 	} else {
-		resp.FileURL = "https://res.flywk.com/" + p.c.OSS.ImageDir + name
+		resp.FileURL = "https://res.flywk.com/" + p.c.OSS.ImageDir + name + "?x-oss-process=style/valerian"
 	}
 	return
 }
