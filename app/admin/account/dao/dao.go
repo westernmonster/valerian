@@ -7,6 +7,7 @@ import (
 
 	"valerian/app/admin/account/conf"
 	account "valerian/app/service/account/api"
+	certification "valerian/app/service/certification/api"
 	"valerian/library/cache/memcache"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
@@ -16,13 +17,14 @@ import (
 
 // Dao dao struct
 type Dao struct {
-	mc           *memcache.Pool
-	mcExpire     int32
-	authMC       *memcache.Pool
-	authMCExpire int32
-	db           sqalx.Node
-	c            *conf.Config
-	accountRPC   account.AccountClient
+	mc               *memcache.Pool
+	mcExpire         int32
+	authMC           *memcache.Pool
+	authMCExpire     int32
+	db               sqalx.Node
+	c                *conf.Config
+	accountRPC       account.AccountClient
+	certificationRPC certification.CertificationClient
 }
 
 func New(c *conf.Config) (dao *Dao) {
