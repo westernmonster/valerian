@@ -35,6 +35,7 @@ require (
 	github.com/leodido/go-urn v1.1.0 // indirect
 	github.com/levigross/grequests v0.0.0-20190908174114-253788527a1a
 	github.com/mattn/go-sqlite3 v1.11.0 // indirect
+	github.com/mgechev/revive v0.0.0-20191205034650-1560db494303 // indirect
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
 	github.com/montanaflynn/stats v0.5.0
 	github.com/naoina/go-stringutil v0.1.0 // indirect

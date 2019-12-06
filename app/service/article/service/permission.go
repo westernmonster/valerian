@@ -39,15 +39,6 @@ func (p *Service) CanView(c context.Context, arg *api.IDReq) (canView bool, err 
 		return
 	}
 
-	var article *model.Article
-	if article, err = p.getArticle(c, p.d.DB(), arg.ID); err != nil {
-		return
-	}
-
-	if article.CreatedBy == arg.Aid {
-		canView = true
-	}
-
 	return
 }
 
@@ -124,6 +115,25 @@ func (p *Service) canView(c context.Context, node sqalx.Node, aid int64, article
 
 	if canView, err = p.d.IsAllowedViewMember(c, node, aid, articleID); err != nil {
 		return
+	}
+
+	var catalogs []*model.TopicCatalog
+	if catalogs, err = p.d.GetTopicCatalogsByCond(c, node, map[string]interface{}{
+		"ref_id": articleID,
+		"type":   model.TopicCatalogArticle,
+	}); err != nil {
+		return
+	}
+
+	for _, v := range catalogs {
+		var viewPermission string
+		if viewPermission, err = p.d.GetTopicViewPermissionByID(c, node, v.TopicID); err != nil {
+			return
+		}
+		if viewPermission == model.ViewPermissionPublic {
+			canView = true
+			return
+		}
 	}
 
 	var article *model.Article

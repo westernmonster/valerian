@@ -44,3 +44,22 @@ func (p *Dao) GetTopicEditPermissionByID(c context.Context, node sqalx.Node, id 
 
 	return
 }
+
+func (p *Dao) GetTopicViewPermissionByID(c context.Context, node sqalx.Node, id int64) (viewPermission string, err error) {
+	item := new(model.Topic)
+	sqlSelect := "SELECT a.id,a.name,a.avatar,a.bg,a.introduction,a.allow_discuss,a.allow_chat,a.is_private,a.view_permission,a.edit_permission,a.join_permission,a.catalog_view_type,a.topic_home,a.created_by,a.deleted,a.created_at,a.updated_at FROM topics a WHERE a.id=? AND a.deleted=0"
+
+	if err = node.GetContext(c, item, sqlSelect, id); err != nil {
+		if err == sql.ErrNoRows {
+			viewPermission = ""
+			err = nil
+			return
+		}
+		log.For(c).Error(fmt.Sprintf("dao.GetTopicViewPermissionByID err(%+v), id(%+v)", err, id))
+		return
+	}
+
+	viewPermission = item.ViewPermission
+
+	return
+}
