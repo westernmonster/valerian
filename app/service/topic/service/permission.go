@@ -26,8 +26,12 @@ func (p *Service) isSystemAdmin(c context.Context, node sqalx.Node, aid int64) (
 }
 
 func (p *Service) CanView(c context.Context, aid int64, topicID int64) (canView bool, err error) {
+	return p.canView(c, p.d.DB(), aid, topicID)
+}
+
+func (p *Service) canView(c context.Context, node sqalx.Node, aid int64, topicID int64) (canView bool, err error) {
 	var isSystemAdmin bool
-	if isSystemAdmin, err = p.isSystemAdmin(c, p.d.DB(), aid); err != nil {
+	if isSystemAdmin, err = p.isSystemAdmin(c, node, aid); err != nil {
 		return
 	} else if isSystemAdmin {
 		canView = true
@@ -35,14 +39,14 @@ func (p *Service) CanView(c context.Context, aid int64, topicID int64) (canView 
 	}
 
 	var t *model.Topic
-	if t, err = p.getTopic(c, p.d.DB(), topicID); err != nil {
+	if t, err = p.getTopic(c, node, topicID); err != nil {
 		return
 	} else if t.ViewPermission == model.ViewPermissionPublic {
 		canView = true
 		return
 	}
 
-	if canView, err = p.d.IsAllowedViewMember(c, p.d.DB(), aid, topicID); err != nil {
+	if canView, err = p.d.IsAllowedViewMember(c, node, aid, topicID); err != nil {
 		return
 	}
 
@@ -50,15 +54,19 @@ func (p *Service) CanView(c context.Context, aid int64, topicID int64) (canView 
 }
 
 func (p *Service) CanEdit(c context.Context, aid int64, topicID int64) (canEdit bool, err error) {
+	return p.canEdit(c, p.d.DB(), aid, topicID)
+}
+
+func (p *Service) canEdit(c context.Context, node sqalx.Node, aid int64, topicID int64) (canEdit bool, err error) {
 	var isSystemAdmin bool
-	if isSystemAdmin, err = p.isSystemAdmin(c, p.d.DB(), aid); err != nil {
+	if isSystemAdmin, err = p.isSystemAdmin(c, node, aid); err != nil {
 		return
 	} else if isSystemAdmin {
 		canEdit = true
 		return
 	}
 
-	if canEdit, err = p.d.IsAllowedEditMember(c, p.d.DB(), aid, topicID); err != nil {
+	if canEdit, err = p.d.IsAllowedEditMember(c, node, aid, topicID); err != nil {
 		return
 	}
 
@@ -167,7 +175,7 @@ func (p *Service) checkIsMember(c context.Context, aid, topicID int64) (err erro
 
 func (p *Service) checkViewPermission(c context.Context, aid, topicID int64) (err error) {
 	var canView bool
-	if canView, err = p.d.IsAllowedViewMember(c, p.d.DB(), aid, topicID); err != nil {
+	if canView, err = p.canView(c, p.d.DB(), aid, topicID); err != nil {
 		return
 	}
 
@@ -181,7 +189,7 @@ func (p *Service) checkViewPermission(c context.Context, aid, topicID int64) (er
 
 func (p *Service) checkEditPermission(c context.Context, aid, topicID int64) (err error) {
 	var canEdit bool
-	if canEdit, err = p.d.IsAllowedEditMember(c, p.d.DB(), aid, topicID); err != nil {
+	if canEdit, err = p.canEdit(c, p.d.DB(), aid, topicID); err != nil {
 		return
 	}
 
