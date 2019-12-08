@@ -7,6 +7,8 @@ import (
 	"valerian/app/service/article/model"
 	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
+
+	"github.com/davecgh/go-spew/spew"
 )
 
 func (p *Service) CanEdit(c context.Context, arg *api.IDReq) (canEdit bool, err error) {
@@ -124,6 +126,8 @@ func (p *Service) canView(c context.Context, node sqalx.Node, aid int64, article
 	}); err != nil {
 		return
 	}
+
+	spew.Dump(catalogs)
 
 	for _, v := range catalogs {
 		var viewPermission string
