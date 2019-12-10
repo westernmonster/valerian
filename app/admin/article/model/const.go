@@ -4,6 +4,7 @@ const (
 	TopicCatalogTaxonomy = "taxonomy"
 	TopicCatalogArticle  = "article"
 	TopicCatalogTestSet  = "test_set"
+	TopicCatalogTopic    = "topic"
 )
 
 const (

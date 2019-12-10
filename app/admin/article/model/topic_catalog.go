@@ -54,7 +54,7 @@ func (p *TopicLevel1Catalog) Validate() error {
 			validation.RuneLength(0, 100).Error(`名称最大长度为100个字符`)),
 		validation.Field(&p.Type,
 			validation.Required.Error(`请输入类型`),
-			validation.In(TopicCatalogTaxonomy, TopicCatalogArticle, TopicCatalogTestSet).Error("类型不正确")),
+			validation.In(TopicCatalogTaxonomy, TopicCatalogArticle, TopicCatalogTopic, TopicCatalogTestSet).Error("类型不正确")),
 		validation.Field(&p.Children, ValidateLevel1Children(p.Type)),
 		validation.Field(&p.RefID, ValidateRefID(p.Type)),
 	)
@@ -84,6 +84,11 @@ func (p *ValidateTypeRule) Validate(v interface{}) error {
 		}
 		break
 	case TopicCatalogTestSet:
+		if refID == nil {
+			return ecode.RefIDRequired
+		}
+		break
+	case TopicCatalogTopic:
 		if refID == nil {
 			return ecode.RefIDRequired
 		}

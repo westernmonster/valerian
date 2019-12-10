@@ -71,6 +71,7 @@ message TopicRootCatalogInfo {
     TargetArticle Article = 7;
     repeated  TopicParentCatalogInfo Children = 8;
     bool IsPrimary = 9;
+    TopicInfo topic = 10;
 }
 
 message TopicParentCatalogInfo {
