@@ -49,6 +49,9 @@ type TopicRootCatalog struct {
 
 	// 文章
 	Article *TargetArticle `json:"article,omitempty"`
+
+	// 主题 Topic
+	Topic *TargetTopic `json:"topic,omitempty"`
 }
 
 func (p *TopicRootCatalog) Validate() error {
@@ -210,6 +213,10 @@ type TopicParentCatalog struct {
 	Children []*TopicChildCatalog `json:"children"`
 
 	Article *TargetArticle `json:"article,omitempty"`
+
+	// 主题 Topic
+	Topic *TargetTopic `json:"topic,omitempty"`
+
 }
 
 func (p *TopicParentCatalog) Validate() error {
@@ -242,6 +249,10 @@ type TopicChildCatalog struct {
 	RefID int64 `json:"ref_id,string,omitempty" swaggertype:"string"`
 
 	Article *TargetArticle `json:"article,omitempty"`
+
+	// 主题 Topic
+	Topic *TargetTopic `json:"topic,omitempty"`
+
 }
 
 func (p *TopicChildCatalog) Validate() error {

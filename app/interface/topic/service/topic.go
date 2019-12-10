@@ -260,6 +260,21 @@ func (p *Service) GetTopic(c context.Context, topicID int64, include string) (it
 	return
 }
 
+func (p *Service) FormCatelogTopic(v *topic.TopicInfo) (resp *model.TargetTopic) {
+	resp = &model.TargetTopic{
+		ID:           v.ID,
+		Name:         v.Name,
+		Introduction: v.Introduction,
+		Avatar:       v.Avatar,
+	}
+	if v.Creator != nil {
+		resp.Creator = &model.Creator{
+			ID: v.Creator.ID,
+		}
+	}
+	return
+}
+
 func (p *Service) FromCatalogArticle(v *topic.TargetArticle) (resp *model.TargetArticle) {
 	resp = &model.TargetArticle{
 		ID:           v.ID,
@@ -303,6 +318,10 @@ func (p *Service) FromCatalogs(items []*topic.TopicRootCatalogInfo) (resp []*mod
 			root.Article = p.FromCatalogArticle(v.Article)
 		}
 
+		if v.Topic != nil {
+			root.Topic = p.FormCatelogTopic(v.Topic)
+		}
+
 		if v.Children != nil {
 			for _, x := range v.Children {
 				parent := &model.TopicParentCatalog{
@@ -316,6 +335,9 @@ func (p *Service) FromCatalogs(items []*topic.TopicRootCatalogInfo) (resp []*mod
 				if x.Article != nil {
 					parent.Article = p.FromCatalogArticle(x.Article)
 				}
+				if x.Topic != nil {
+					parent.Topic = p.FormCatelogTopic(v.Topic)
+				}
 				if x.Children != nil {
 					for _, j := range x.Children {
 						child := &model.TopicChildCatalog{
@@ -327,6 +349,9 @@ func (p *Service) FromCatalogs(items []*topic.TopicRootCatalogInfo) (resp []*mod
 						}
 						if j.Article != nil {
 							child.Article = p.FromCatalogArticle(j.Article)
+						}
+						if j.Topic != nil {
+							child.Topic = p.FormCatelogTopic(v.Topic)
 						}
 						parent.Children = append(parent.Children, child)
 					}
