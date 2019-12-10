@@ -55,7 +55,7 @@ func (p *TopicRootCatalog) Validate() error {
 	return validation.ValidateStruct(
 		p,
 		validation.Field(&p.Name, ValidateCatalogName(p.Type)),
-		validation.Field(&p.Type, validation.Required, validation.In(TopicCatalogTaxonomy, TopicCatalogArticle, TopicCatalogTestSet)),
+		validation.Field(&p.Type, validation.Required, validation.In(TopicCatalogTaxonomy, TopicCatalogArticle, TopicCatalogTestSet, TopicCatalogTopic)),
 		validation.Field(&p.Children, ValidateRootChildren(p.Type)),
 		validation.Field(&p.RefID, ValidateRefID(p.Type)),
 	)
@@ -110,6 +110,11 @@ func (p *ValidateRefIDRule) Validate(v interface{}) error {
 		}
 		break
 	case TopicCatalogTestSet:
+		if refID == 0 {
+			return ecode.RefIDRequired
+		}
+		break
+	case TopicCatalogTopic:
 		if refID == 0 {
 			return ecode.RefIDRequired
 		}
@@ -211,7 +216,7 @@ func (p *TopicParentCatalog) Validate() error {
 	return validation.ValidateStruct(
 		p,
 		validation.Field(&p.Name, ValidateCatalogName(p.Type)),
-		validation.Field(&p.Type, validation.Required, validation.In(TopicCatalogTaxonomy, TopicCatalogArticle, TopicCatalogTestSet)),
+		validation.Field(&p.Type, validation.Required, validation.In(TopicCatalogTaxonomy, TopicCatalogArticle, TopicCatalogTestSet, TopicCatalogTopic)),
 		validation.Field(&p.Children, ValidateParentChildren(p.Type)),
 		validation.Field(&p.RefID, ValidateRefID(p.Type)),
 	)
@@ -243,7 +248,7 @@ func (p *TopicChildCatalog) Validate() error {
 	return validation.ValidateStruct(
 		p,
 		validation.Field(&p.Name, ValidateCatalogName(p.Type)),
-		validation.Field(&p.Type, validation.Required, validation.In(TopicCatalogArticle, TopicCatalogTestSet)),
+		validation.Field(&p.Type, validation.Required, validation.In(TopicCatalogArticle, TopicCatalogTestSet, TopicCatalogTopic)),
 		validation.Field(&p.RefID, ValidateRefID(p.Type)),
 	)
 }
@@ -289,7 +294,7 @@ func (p *ArgTopicCatalog) Validate() error {
 	return validation.ValidateStruct(
 		p,
 		validation.Field(&p.Name, ValidateCatalogName(p.Type)),
-		validation.Field(&p.Type, validation.Required, validation.In(TopicCatalogTaxonomy, TopicCatalogArticle, TopicCatalogTestSet)),
+		validation.Field(&p.Type, validation.Required, validation.In(TopicCatalogTaxonomy, TopicCatalogArticle, TopicCatalogTestSet, TopicCatalogTopic)),
 		validation.Field(&p.RefID, ValidateRefID(p.Type)),
 	)
 }
