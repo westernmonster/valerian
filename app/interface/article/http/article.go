@@ -105,6 +105,7 @@ func delArticle(c *mars.Context) {
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param id query string true "ID"
 // @Param include query string true  "目前支持：files,relations,histories,meta"
+// @Param updated_at query string false  "缓存的更新时间戳"
 // @Success 200 {object}  app.interface.article.model.ArticleResp "文章"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
