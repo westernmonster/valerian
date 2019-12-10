@@ -261,8 +261,9 @@ func (p *Service) saveCatalogs(c context.Context, node sqalx.Node, aid int64, re
 	for _, dbVal := range dic {
 		for _, reqVal := range req.Items {
 			if dbVal.Item.TopicID == req.TopicID && dbVal.Item.RefID == reqVal.RefID &&
-				dbVal.Item.Type == reqVal.Type && dbVal.Item.ParentID == req.ParentID {
-				return nil, ecode.Error(ecode.RequestErr, "添加的条目已经存在。")
+				dbVal.Item.Type == reqVal.Type && dbVal.Item.ParentID == req.ParentID &&
+				reqVal.Type == model.TopicCatalogArticle {
+				return nil, ecode.Error(ecode.RequestErr, "添加的文章已经存在。")
 			}
 		}
 	}
