@@ -52,7 +52,7 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 			}
 		case model.TopicCatalogTopic:
 			var t *model.Topic
-			if t, err = p.getTopic(c, p.d.DB(), topicID); err != nil {
+			if t, err = p.getTopic(c, p.d.DB(), lvl1.RefID); err != nil {
 				return
 			}
 			parent.Name = t.Name
@@ -93,7 +93,7 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 				}
 			case model.TopicCatalogTopic:
 				var t *model.Topic
-				if t, err = p.getTopic(c, p.d.DB(), topicID); err != nil {
+				if t, err = p.getTopic(c, p.d.DB(), lvl2.RefID); err != nil {
 					return
 				}
 				parent.Name = t.Name
@@ -133,7 +133,7 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 					}
 				case model.TopicCatalogTopic:
 					var t *model.Topic
-					if t, err = p.getTopic(c, p.d.DB(), topicID); err != nil {
+					if t, err = p.getTopic(c, p.d.DB(), lvl3.RefID); err != nil {
 						return
 					}
 					parent.Name = t.Name
