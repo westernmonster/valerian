@@ -18,7 +18,7 @@ func (s *Service) AppArticleCachePull(c *mars.Context, arg *model.ArgArticleAppC
 	}
 	resp = []model.Article{}
 	if results, err := s.d.PullArticleAppCache(c, &article.IdUpdatedReq{Items: reqItems}); err != nil {
-		return
+		return resp, err
 	} else {
 		for _, result := range results.Items {
 			article := model.Article{
@@ -47,8 +47,9 @@ func (s *Service) AppReviseCachePull(c *mars.Context, arg *model.ArgReviseAppCac
 		}
 		reqItems = append(reqItems, &reqItem)
 	}
+	resp = []model.Revise{}
 	if results, err := s.d.PullReviseAppCache(c, &article.IdUpdatedReq{Items: reqItems}); err != nil {
-		return
+		return resp, err
 	} else {
 		for _, result := range results.Items {
 			revise := model.Revise{
