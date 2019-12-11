@@ -143,6 +143,7 @@ func (p *Service) GetTopic(c context.Context, topicID int64, include string) (it
 		ViewPermission:     t.ViewPermission,
 		Important:          t.Important,
 		CreatedAt:          t.CreatedAt,
+		UpdatedAt:          t.UpdatedAt,
 		HasCatalogTaxonomy: t.HasCatalogTaxonomy,
 		MemberCount:        t.Stat.MemberCount,
 		Members:            make([]*model.TopicMemberResp, 0),

@@ -78,6 +78,8 @@ type TopicResp struct {
 
 	CreatedAt int64 `json:"created_at" swaggertype:"integer"`
 
+	UpdatedAt int64 `json:"updated_at" swaggertype:"integer"`
+
 	TopicMeta *TopicMeta `json:"meta,omitempty"`
 
 	// 是否有类目分类

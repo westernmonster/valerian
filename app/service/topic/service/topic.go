@@ -255,6 +255,7 @@ func (p *Service) GetTopicResp(c context.Context, aid int64, topicID int64, incl
 		EditPermission:  t.EditPermission,
 		JoinPermission:  t.JoinPermission,
 		CreatedAt:       t.CreatedAt,
+		UpdatedAt:       t.UpdatedAt,
 	}
 
 	var s *model.AccountTopicSetting
