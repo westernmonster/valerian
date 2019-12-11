@@ -400,12 +400,20 @@ func (s *server) SaveReviseFiles(ctx context.Context, req *api.ArgSaveReviseFile
 	return &api.EmptyStruct{}, nil
 }
 
-func (s *server) PullArticleAppCache(context.Context, *api.IdUpdatedReq) (*api.ArticlesResp, error) {
-	panic("implement me")
+func (s *server) PullArticleAppCache(ctx context.Context, req *api.IdUpdatedReq) (*api.ArticlesResp, error) {
+	data, err := s.svr.PullArticleAppCache(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return &api.ArticlesResp{Items: data}, nil
 }
 
-func (s *server) PullReviseAppCache(context.Context, *api.IdUpdatedReq) (*api.ArticlesResp, error) {
-	panic("implement me")
+func (s *server) PullReviseAppCache(ctx context.Context, req *api.IdUpdatedReq) (*api.ReviseDetailList, error) {
+	data, err := s.svr.PullReviseAppCache(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return &api.ReviseDetailList{Items: data}, nil
 }
 
 func includeParam(include string) (dic map[string]bool) {

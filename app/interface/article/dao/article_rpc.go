@@ -3,7 +3,6 @@ package dao
 import (
 	"context"
 	"fmt"
-
 	article "valerian/app/service/article/api"
 	"valerian/library/log"
 )
@@ -239,6 +238,20 @@ func (p *Dao) CanView(c context.Context, req *article.IDReq) (canView bool, err 
 func (p *Dao) GetUserCanEditArticleIDs(c context.Context, arg *article.AidReq) (resp *article.IDsResp, err error) {
 	if resp, err = p.articleRPC.GetUserCanEditArticleIDs(c, arg); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetUserCanEditArticleIDs err(%+v) arg(%+v)", err, arg))
+	}
+	return
+}
+
+func (p *Dao) PullArticleAppCache(c context.Context, arg *article.IdUpdatedReq) (resp *article.ArticlesResp, err error) {
+	if resp, err = p.articleRPC.PullArticleAppCache(c, arg); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.PullArticleAppCache err(%+v) arg(%+v)", err, arg))
+	}
+	return
+}
+
+func (p *Dao) PullReviseAppCache(c context.Context, arg *article.IdUpdatedReq) (resp *article.ReviseDetailList, err error) {
+	if resp, err = p.articleRPC.PullReviseAppCache(c, arg); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.PullReviseAppCache err(%+v) arg(%+v)", err, arg))
 	}
 	return
 }

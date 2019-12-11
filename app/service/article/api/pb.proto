@@ -147,6 +147,10 @@ message ReviseDetail {
     repeated ReviseFileResp Files = 12;
 }
 
+message ReviseDetailList {
+    repeated ReviseDetail items = 1;
+}
+
 message ArgAddArticle {
     string Title = 1;
     string Content = 2;
@@ -467,7 +471,7 @@ service Article {
     rpc GetUserArticleIDsPaged (UserArticlesReq) returns (IDsResp);
 
     rpc PullArticleAppCache (IdUpdatedReq) returns (ArticlesResp);
-    rpc PullReviseAppCache (IdUpdatedReq) returns (ArticlesResp);
+    rpc PullReviseAppCache (IdUpdatedReq) returns (ReviseDetailList);
 }
 
 

@@ -26,7 +26,7 @@ func appArticleCachePull(c *mars.Context) {
 	}
 
 
-	//c.JSON(nil, srv.AddArticleRelation(c, arg))
+	c.JSON( srv.AppArticleCachePull(c, arg))
 }
 
 
@@ -49,5 +49,5 @@ func appReviseCachePull(c *mars.Context) {
 	if e := c.Bind(arg); e != nil {
 		return
 	}
-	//c.JSON(nil, srv.AddArticleRelation(c, arg))
+	c.JSON(srv.AppReviseCachePull(c, arg))
 }

@@ -195,3 +195,15 @@ func (p *Dao) UpdateArticle(c context.Context, node sqalx.Node, item *model.Arti
 
 	return
 }
+
+// GetArticlesByIDs get all records by ids
+func (p *Dao) GetArticlesByIDs(c context.Context, node sqalx.Node, ids []int64) (items []*model.Article, err error) {
+	items = make([]*model.Article, 0)
+	sqlSelect := "SELECT  a.id,a.title,a.content,a.content_text,a.disable_revise,a.disable_comment,a.created_by,a.deleted,a.created_at,a.updated_at  FROM articles a WHERE a.deleted=0 AND a.di in ? ORDER BY a.id DESC "
+
+	if err = node.SelectContext(c, &items, sqlSelect, ids); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetArticlesByIDs err(%+v)", err))
+		return
+	}
+	return
+}

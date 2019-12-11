@@ -192,3 +192,15 @@ func (p *Dao) UpdateRevise(c context.Context, node sqalx.Node, item *model.Revis
 
 	return
 }
+
+// GetAll get all records
+func (p *Dao) GetRevisesByIDs(c context.Context, node sqalx.Node, ids []int64) (items []*model.Revise, err error) {
+	items = make([]*model.Revise, 0)
+	sqlSelect := "SELECT a.id,a.article_id,a.title,a.content,a.content_text,a.created_by,a.deleted,a.created_at,a.updated_at   FROM revises a WHERE a.deleted=0 AND a.id IN ? ORDER BY a.id DESC "
+
+	if err = node.SelectContext(c, &items, sqlSelect, ids); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetRevisesByIDs err(%+v)", err))
+		return
+	}
+	return
+}

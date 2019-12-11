@@ -5,12 +5,12 @@ type ArgArticleAppCache struct {
 	Items []*AppCacheReqItem `json:"items"`
 }
 
-type AppCacheReqItem struct{
+type AppCacheReqItem struct {
 	// 文章 ID
 	// required: true
 	ID int64 `json:"id,string" swaggertype:"string"`
 	// 更新时间戳
-	UpdatedAt string `json:"updated_at"`
+	UpdatedAt int64 `json:"updated_at,string" swaggertype:"string"`
 }
 
 type ArgReviseAppCache struct {
