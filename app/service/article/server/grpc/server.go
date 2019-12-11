@@ -400,6 +400,14 @@ func (s *server) SaveReviseFiles(ctx context.Context, req *api.ArgSaveReviseFile
 	return &api.EmptyStruct{}, nil
 }
 
+func (s *server) PullArticleAppCache(context.Context, *api.IdUpdatedReq) (*api.ArticlesResp, error) {
+	panic("implement me")
+}
+
+func (s *server) PullReviseAppCache(context.Context, *api.IdUpdatedReq) (*api.ArticlesResp, error) {
+	panic("implement me")
+}
+
 func includeParam(include string) (dic map[string]bool) {
 	arr := strings.Split(include, ",")
 	dic = make(map[string]bool)

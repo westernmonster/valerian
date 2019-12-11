@@ -12,80 +12,79 @@ message EmptyStruct {
 message Creator {
     int64 ID = 1 [(gogoproto.jsontag) = "id"];
 
-    string  UserName = 2 [(gogoproto.jsontag) = "user_name"];
+    string UserName = 2 [(gogoproto.jsontag) = "user_name"];
 
-    string Avatar   = 3 [(gogoproto.jsontag) = "avatar"];
+    string Avatar = 3 [(gogoproto.jsontag) = "avatar"];
 
-    string  Introduction = 4 [(gogoproto.jsontag) = "introduction"] ;
+    string Introduction = 4 [(gogoproto.jsontag) = "introduction"];
 }
 
 message DBArticle {
     int64 ID = 1;
-    string  Title = 2;
-    string  Content = 3;
-    string  ContentText = 4;
-    bool  DisableRevise = 5;
-    bool  DisableComment = 6;
-    int64  CreatedBy = 7;
+    string Title = 2;
+    string Content = 3;
+    string ContentText = 4;
+    bool DisableRevise = 5;
+    bool DisableComment = 6;
+    int64 CreatedBy = 7;
     int64 CreatedAt = 8;
     int64 UpdatedAt = 9;
 }
 
 message ArticlesResp {
-    repeated DBArticle Items  = 1;
+    repeated DBArticle Items = 1;
 }
 
 
 message ArticleDetail {
     int64 ID = 1 [(gogoproto.jsontag) = "id"];
-    string  Title = 2 [(gogoproto.jsontag) = "title"];
-    repeated string ImageUrls  = 4 [(gogoproto.jsontag) = "image_urls"];
+    string Title = 2 [(gogoproto.jsontag) = "title"];
+    repeated string ImageUrls = 4 [(gogoproto.jsontag) = "image_urls"];
 
-    Creator  Creator  = 5 [(gogoproto.jsontag) = "creator"];
+    Creator Creator = 5 [(gogoproto.jsontag) = "creator"];
 
     // unix timestamp
     int64 CreatedAt = 6 [(gogoproto.jsontag) = "created_at"];
     // unix timestamp
     int64 UpdatedAt = 7 [(gogoproto.jsontag) = "updated_at"];
 
-    ArticleStat  Stat = 8 [(gogoproto.jsontag) = "stat"];
+    ArticleStat Stat = 8 [(gogoproto.jsontag) = "stat"];
 
-    string  Content = 9 [(gogoproto.jsontag) = "content"];
+    string Content = 9 [(gogoproto.jsontag) = "content"];
 
-    string  ContentText = 10 [(gogoproto.jsontag) = "content_text"];
+    string ContentText = 10 [(gogoproto.jsontag) = "content_text"];
 
-    bool  DisableRevise = 11 [(gogoproto.jsontag) = "disable_revise"];
+    bool DisableRevise = 11 [(gogoproto.jsontag) = "disable_revise"];
 
-    bool  DisableComment = 12 [(gogoproto.jsontag) = "disable_comment"];
+    bool DisableComment = 12 [(gogoproto.jsontag) = "disable_comment"];
 
-    ArticleHistoryResp LastHistory  = 13;
+    ArticleHistoryResp LastHistory = 13;
 
 }
 
 
-
 message ArticleInfo {
     int64 ID = 1 [(gogoproto.jsontag) = "id"];
-    string  Title = 2 [(gogoproto.jsontag) = "title"];
-    string  Excerpt = 3 [(gogoproto.jsontag) = "excerpt"];
-    repeated string ImageUrls  = 4 [(gogoproto.jsontag) = "image_urls"];
+    string Title = 2 [(gogoproto.jsontag) = "title"];
+    string Excerpt = 3 [(gogoproto.jsontag) = "excerpt"];
+    repeated string ImageUrls = 4 [(gogoproto.jsontag) = "image_urls"];
 
-    Creator  Creator  = 5 [(gogoproto.jsontag) = "creator"];
+    Creator Creator = 5 [(gogoproto.jsontag) = "creator"];
 
     // unix timestamp
     int64 CreatedAt = 6 [(gogoproto.jsontag) = "created_at"];
     // unix timestamp
     int64 UpdatedAt = 7 [(gogoproto.jsontag) = "updated_at"];
 
-    ArticleStat  Stat = 8 [(gogoproto.jsontag) = "stat"];
+    ArticleStat Stat = 8 [(gogoproto.jsontag) = "stat"];
 
-    string  Content = 9 [(gogoproto.jsontag) = "content"];
+    string Content = 9 [(gogoproto.jsontag) = "content"];
 
-    string  ContentText = 10 [(gogoproto.jsontag) = "content_text"];
+    string ContentText = 10 [(gogoproto.jsontag) = "content_text"];
 
-    bool  DisableRevise = 11 [(gogoproto.jsontag) = "disable_revise"];
+    bool DisableRevise = 11 [(gogoproto.jsontag) = "disable_revise"];
 
-    bool  DisableComment = 12 [(gogoproto.jsontag) = "disable_comment"];
+    bool DisableComment = 12 [(gogoproto.jsontag) = "disable_comment"];
 
     string ChangeDesc = 13;
 }
@@ -105,45 +104,45 @@ message ReviseStat {
 }
 message ReviseInfo {
     int64 ID = 1 [(gogoproto.jsontag) = "id"];
-    string  Title = 2 [(gogoproto.jsontag) = "title"];
-    string  Excerpt = 3 [(gogoproto.jsontag) = "excerpt"];
-    repeated string ImageUrls  = 4 [(gogoproto.jsontag) = "image_urls"];
+    string Title = 2 [(gogoproto.jsontag) = "title"];
+    string Excerpt = 3 [(gogoproto.jsontag) = "excerpt"];
+    repeated string ImageUrls = 4 [(gogoproto.jsontag) = "image_urls"];
 
-    Creator  Creator  = 5 [(gogoproto.jsontag) = "creator"];
+    Creator Creator = 5 [(gogoproto.jsontag) = "creator"];
 
     // unix timestamp
     int64 CreatedAt = 6 [(gogoproto.jsontag) = "created_at"];
     // unix timestamp
     int64 UpdatedAt = 7 [(gogoproto.jsontag) = "updated_at"];
 
-    ReviseStat  Stat = 8 [(gogoproto.jsontag) = "stat"];
+    ReviseStat Stat = 8 [(gogoproto.jsontag) = "stat"];
 
     int64 ArticleID = 9 [(gogoproto.jsontag) = "article_id"];
 
-    string  Content = 10 [(gogoproto.jsontag) = "content"];
+    string Content = 10 [(gogoproto.jsontag) = "content"];
 
-    string  ContentText = 11 [(gogoproto.jsontag) = "content_text"];
+    string ContentText = 11 [(gogoproto.jsontag) = "content_text"];
 }
 
 message ReviseDetail {
     int64 ID = 1 [(gogoproto.jsontag) = "id"];
-    string  Title = 2 [(gogoproto.jsontag) = "title"];
-    repeated string ImageUrls  = 4 [(gogoproto.jsontag) = "image_urls"];
+    string Title = 2 [(gogoproto.jsontag) = "title"];
+    repeated string ImageUrls = 4 [(gogoproto.jsontag) = "image_urls"];
 
-    Creator  Creator  = 5 [(gogoproto.jsontag) = "creator"];
+    Creator Creator = 5 [(gogoproto.jsontag) = "creator"];
 
     // unix timestamp
     int64 CreatedAt = 6 [(gogoproto.jsontag) = "created_at"];
     // unix timestamp
     int64 UpdatedAt = 7 [(gogoproto.jsontag) = "updated_at"];
 
-    ReviseStat  Stat = 8 [(gogoproto.jsontag) = "stat"];
+    ReviseStat Stat = 8 [(gogoproto.jsontag) = "stat"];
 
     int64 ArticleID = 9 [(gogoproto.jsontag) = "article_id"];
 
-    string  Content = 10 [(gogoproto.jsontag) = "content"];
+    string Content = 10 [(gogoproto.jsontag) = "content"];
 
-    string  ContentText = 11 [(gogoproto.jsontag) = "content_text"];
+    string ContentText = 11 [(gogoproto.jsontag) = "content_text"];
 
     repeated ReviseFileResp Files = 12;
 }
@@ -165,11 +164,11 @@ message ArgUpdateArticle {
     }
     string Content = 3;
 
-    oneof DisableRevise{
+    oneof DisableRevise {
         bool DisableReviseValue = 4;
 
     }
-    oneof DisableComment{
+    oneof DisableComment {
         bool DisableCommentValue = 5;
     }
     string ChangeDesc = 6;
@@ -177,8 +176,8 @@ message ArgUpdateArticle {
 }
 
 message ArgArticleFile {
-    string FileName  = 1;
-    string FileURL  = 2;
+    string FileName = 1;
+    string FileURL = 2;
     int32 Seq = 3;
     string FileType = 4;
 }
@@ -214,8 +213,6 @@ message UserRevisesReq {
 message UserArticlesResp {
     repeated ArticleInfo Items = 1 [(gogoproto.jsontag) = 'items'];
 }
-
-
 
 
 message ArticleFileResp {
@@ -260,73 +257,73 @@ message ArticleHistoryItem {
 }
 
 message ArticleHistoryListResp {
-	repeated ArticleHistoryItem Items = 1;
+    repeated ArticleHistoryItem Items = 1;
 }
 
 message ArticleRelationResp {
-	int64 ID = 1;
-	string CatalogFullPath = 2;
-	bool Primary = 3;
-	int64 ToTopicID = 4;
-	string Name = 5;
-	string Avatar = 6;
-	string Permission = 7;
-	string EditPermission = 8;
-	string Introduction = 9;
-	TopicStat Stat = 10;
+    int64 ID = 1;
+    string CatalogFullPath = 2;
+    bool Primary = 3;
+    int64 ToTopicID = 4;
+    string Name = 5;
+    string Avatar = 6;
+    string Permission = 7;
+    string EditPermission = 8;
+    string Introduction = 9;
+    TopicStat Stat = 10;
 }
 
 message ArgUpdateArticleFile {
     oneof ID {
         int64 IDValue = 1;
     }
-    string FileName  = 2;
-    string FileURL  = 3;
-    int32 Seq      = 4;
-    string FileType  = 5;
+    string FileName = 2;
+    string FileURL = 3;
+    int32 Seq = 4;
+    string FileType = 5;
 }
 
 message ArgSaveArticleFiles {
-	repeated ArgUpdateArticleFile Items = 1;
-	int64 ArticleID  = 2;
-	int64 Aid  = 3;
+    repeated ArgUpdateArticleFile Items = 1;
+    int64 ArticleID = 2;
+    int64 Aid = 3;
 }
 
 message ArgSetPrimaryArticleRelation {
-	int64 ID  = 1;
-	int64 ArticleID  = 2;
-	int64 Aid  = 3;
+    int64 ID = 1;
+    int64 ArticleID = 2;
+    int64 Aid = 3;
 }
 
 message ArgDelArticleRelation {
-	int64 ID  = 1;
-	int64 ArticleID  = 2;
-	int64 Aid  = 3;
+    int64 ID = 1;
+    int64 ArticleID = 2;
+    int64 Aid = 3;
 }
 
 message ArgAddArticleRelation {
-	int64 ArticleID  = 1;
-	int64 ParentID  = 2;
-	int64 TopicID  = 3;
-	bool Primary  = 4;
+    int64 ArticleID = 1;
+    int64 ParentID = 2;
+    int64 TopicID = 3;
+    bool Primary = 4;
     string Permission = 5;
-	int64 Aid  = 6;
+    int64 Aid = 6;
 }
 
 message AddArticleRelation {
-	int64 ParentID  = 2;
-	int64 TopicID  = 3;
-	bool Primary  = 4;
+    int64 ParentID = 2;
+    int64 TopicID = 3;
+    bool Primary = 4;
     string Permission = 5;
-	int64 Aid  = 6;
+    int64 Aid = 6;
 }
 
 
 message ArgUpdateArticleRelation {
-	int64 ID  = 1;
-	bool Primary  = 4;
+    int64 ID = 1;
+    bool Primary = 4;
     string Permission = 5;
-	int64 Aid  = 6;
+    int64 Aid = 6;
 }
 
 message IDResp {
@@ -343,7 +340,7 @@ message ArgArticleHistoriesPaged {
 message ArgAddRevise {
     int64 ArticleID = 1;
     string Content = 2;
-    int64 Aid  = 3;
+    int64 Aid = 3;
     repeated AddReviseFile Files = 4;
 }
 
@@ -351,15 +348,15 @@ message AddReviseFile {
     oneof ID {
         int64 IDValue = 1;
     }
-    string FileName  = 2;
-    string FileURL  = 3;
-    int32 Seq      = 4;
+    string FileName = 2;
+    string FileURL = 3;
+    int32 Seq = 4;
 }
 
 message ArgUpdateRevise {
     int64 ID = 1;
     string Content = 2;
-    int64 Aid  = 3;
+    int64 Aid = 3;
     repeated AddReviseFile Files = 4;
 }
 
@@ -368,14 +365,14 @@ message ArgSaveReviseFiles {
     int64 ReviseID = 1;
     string Content = 2;
     repeated AddReviseFile Items = 4;
-    int64 Aid  = 5;
+    int64 Aid = 5;
 }
 
 message ReviseFileResp {
     int64 ID = 1;
-    string FileName  = 2;
-    string FileURL  = 3;
-    int32 Seq      = 4;
+    string FileName = 2;
+    string FileURL = 3;
+    int32 Seq = 4;
     string FileType = 5;
     string PdfURL = 6;
 }
@@ -394,8 +391,8 @@ message ReviseListResp {
 message ArgArticleRevisesPaged {
     int64 ArticleID = 1;
     string Sort = 2;
-    int32 Limit = 3 ;
-    int32 Offset = 4 ;
+    int32 Limit = 3;
+    int32 Offset = 4;
 }
 
 message BoolResp {
@@ -417,48 +414,60 @@ message TopicStat {
     int32 DiscussionCount = 3 [(gogoproto.jsontag) = "discussion_count"];
 }
 
+message IdUpdatedItem {
+    int64 ID = 1 [(gogoproto.jsontag) = "account_id"];
+    int64 UpdatedAt = 2 [(gogoproto.jsontag) = "updated_at"];
+}
+
+message IdUpdatedReq {
+    repeated IdUpdatedItem Items = 1;
+}
+
 service Article {
-    rpc AddArticle(ArgAddArticle) returns (IDResp);
-    rpc UpdateArticle(ArgUpdateArticle) returns (EmptyStruct);
-    rpc DelArticle(IDReq) returns (EmptyStruct);
+    rpc AddArticle (ArgAddArticle) returns (IDResp);
+    rpc UpdateArticle (ArgUpdateArticle) returns (EmptyStruct);
+    rpc DelArticle (IDReq) returns (EmptyStruct);
 
-    rpc  CanView(IDReq) returns(BoolResp);
-    rpc  CanEdit(IDReq) returns(BoolResp);
-    rpc  GetUserCanEditArticleIDs(AidReq) returns (IDsResp);
+    rpc CanView (IDReq) returns (BoolResp);
+    rpc CanEdit (IDReq) returns (BoolResp);
+    rpc GetUserCanEditArticleIDs (AidReq) returns (IDsResp);
 
-    rpc GetArticleFile(IDReq) returns (ArticleFileResp);
-    rpc GetArticleFiles(IDReq) returns (ArticleFilesResp);
-    rpc SaveArticleFiles(ArgSaveArticleFiles) returns (EmptyStruct);
+    rpc GetArticleFile (IDReq) returns (ArticleFileResp);
+    rpc GetArticleFiles (IDReq) returns (ArticleFilesResp);
+    rpc SaveArticleFiles (ArgSaveArticleFiles) returns (EmptyStruct);
 
-    rpc GetArticleHistoriesPaged(ArgArticleHistoriesPaged) returns (ArticleHistoryListResp);
-    rpc GetArticleHistory(IDReq) returns (ArticleHistoryResp);
+    rpc GetArticleHistoriesPaged (ArgArticleHistoriesPaged) returns (ArticleHistoryListResp);
+    rpc GetArticleHistory (IDReq) returns (ArticleHistoryResp);
 
-    rpc GetArticleRelations(IDReq) returns (ArticleRelationsResp);
+    rpc GetArticleRelations (IDReq) returns (ArticleRelationsResp);
 
-    rpc UpdateArticleRelation(ArgUpdateArticleRelation) returns (EmptyStruct);
-    rpc SetPrimary(ArgSetPrimaryArticleRelation) returns (EmptyStruct);
-    rpc AddArticleRelation(ArgAddArticleRelation) returns (EmptyStruct);
-    rpc DelArticleRelation(ArgDelArticleRelation) returns (EmptyStruct);
+    rpc UpdateArticleRelation (ArgUpdateArticleRelation) returns (EmptyStruct);
+    rpc SetPrimary (ArgSetPrimaryArticleRelation) returns (EmptyStruct);
+    rpc AddArticleRelation (ArgAddArticleRelation) returns (EmptyStruct);
+    rpc DelArticleRelation (ArgDelArticleRelation) returns (EmptyStruct);
 
-    rpc AddRevise(ArgAddRevise) returns (IDResp);
-    rpc UpdateRevise(ArgUpdateRevise) returns (EmptyStruct);
-    rpc DelRevise(IDReq) returns (EmptyStruct);
+    rpc AddRevise (ArgAddRevise) returns (IDResp);
+    rpc UpdateRevise (ArgUpdateRevise) returns (EmptyStruct);
+    rpc DelRevise (IDReq) returns (EmptyStruct);
 
-    rpc GetUserReviseIDsPaged(UserRevisesReq) returns(IDsResp);
-    rpc GetArticleRevisesPaged(ArgArticleRevisesPaged) returns(ReviseListResp);
+    rpc GetUserReviseIDsPaged (UserRevisesReq) returns (IDsResp);
+    rpc GetArticleRevisesPaged (ArgArticleRevisesPaged) returns (ReviseListResp);
 
-    rpc GetReviseFiles(IDReq) returns(ReviseFilesResp);
-    rpc SaveReviseFiles(ArgSaveReviseFiles) returns (EmptyStruct);
+    rpc GetReviseFiles (IDReq) returns (ReviseFilesResp);
+    rpc SaveReviseFiles (ArgSaveReviseFiles) returns (EmptyStruct);
 
-    rpc GetAllArticles(EmptyStruct) returns (ArticlesResp);
-    rpc GetArticleInfo(IDReq) returns (ArticleInfo);
-    rpc GetArticleDetail(IDReq) returns (ArticleDetail);
-    rpc GetReviseInfo(IDReq) returns (ReviseInfo);
-    rpc GetReviseDetail(IDReq) returns (ReviseDetail);
-    rpc GetReviseStat(IDReq) returns (ReviseStat);
-    rpc GetArticleStat(IDReq) returns (ArticleStat);
-    rpc GetUserArticlesPaged(UserArticlesReq) returns (UserArticlesResp);
-    rpc GetUserArticleIDsPaged(UserArticlesReq) returns (IDsResp);
+    rpc GetAllArticles (EmptyStruct) returns (ArticlesResp);
+    rpc GetArticleInfo (IDReq) returns (ArticleInfo);
+    rpc GetArticleDetail (IDReq) returns (ArticleDetail);
+    rpc GetReviseInfo (IDReq) returns (ReviseInfo);
+    rpc GetReviseDetail (IDReq) returns (ReviseDetail);
+    rpc GetReviseStat (IDReq) returns (ReviseStat);
+    rpc GetArticleStat (IDReq) returns (ArticleStat);
+    rpc GetUserArticlesPaged (UserArticlesReq) returns (UserArticlesResp);
+    rpc GetUserArticleIDsPaged (UserArticlesReq) returns (IDsResp);
+
+    rpc PullArticleAppCache (IdUpdatedReq) returns (ArticlesResp);
+    rpc PullReviseAppCache (IdUpdatedReq) returns (ArticlesResp);
 }
 
 
