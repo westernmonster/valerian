@@ -3,6 +3,7 @@ package dao
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"time"
 
 	account "valerian/app/service/account/api"
@@ -63,4 +64,14 @@ func (d *Dao) Close() {
 func PromError(c context.Context, name, format string, args ...interface{}) {
 	prom.BusinessErrCount.Incr(name)
 	log.For(c).Error(fmt.Sprintf(format, args...))
+}
+
+func Int64Array2StringArray(req []int64) (resp []string) {
+	resp = make([]string, 0)
+
+	for _, v := range req {
+		resp = append(resp, strconv.FormatInt(v, 10))
+	}
+
+	return
 }
