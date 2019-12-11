@@ -263,10 +263,16 @@ func (p *Service) GetTopic(c context.Context, topicID int64, include string) (it
 
 func (p *Service) FormCatelogTopic(v *topic.TopicInfo) (resp *model.TargetTopic) {
 	resp = &model.TargetTopic{
-		ID:           v.ID,
-		Name:         v.Name,
-		Introduction: v.Introduction,
-		Avatar:       v.Avatar,
+		ID:              v.ID,
+		Name:            v.Name,
+		Introduction:    v.Introduction,
+		Avatar:          v.Avatar,
+		Creator:         nil,
+	}
+	if v.Stat != nil {
+		resp.MemberCount = v.Stat.MemberCount
+		resp.ArticleCount = v.Stat.ArticleCount
+		resp.DiscussionCount = v.Stat.DiscussionCount
 	}
 	if v.Creator != nil {
 		resp.Creator = &model.Creator{

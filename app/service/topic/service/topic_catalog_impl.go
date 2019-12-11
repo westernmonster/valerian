@@ -55,8 +55,12 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 			if t, err = p.getTopic(c, p.d.DB(), lvl1.RefID); err != nil {
 				return
 			}
+			var topicStat *model.TopicStat
+			if topicStat, err = p.GetTopicStat(c, lvl1.RefID); err != nil {
+				return
+			}
 			parent.Name = t.Name
-			parent.Topic = modelCopyToPbTopic(t)
+			parent.Topic = modelCopyToPbTopic(t, topicStat)
 		case model.TopicCatalogTestSet:
 		}
 
@@ -96,8 +100,12 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 				if t, err = p.getTopic(c, p.d.DB(), lvl2.RefID); err != nil {
 					return
 				}
+				var topicStat *model.TopicStat
+				if topicStat, err = p.GetTopicStat(c, lvl1.RefID); err != nil {
+					return
+				}
 				parent.Name = t.Name
-				parent.Topic = modelCopyToPbTopic(t)
+				parent.Topic = modelCopyToPbTopic(t, topicStat)
 			case model.TopicCatalogTestSet:
 			}
 
@@ -136,8 +144,12 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 					if t, err = p.getTopic(c, p.d.DB(), lvl3.RefID); err != nil {
 						return
 					}
+					var topicStat *model.TopicStat
+					if topicStat, err = p.GetTopicStat(c, lvl1.RefID); err != nil {
+						return
+					}
 					parent.Name = t.Name
-					parent.Topic = modelCopyToPbTopic(t)
+					parent.Topic = modelCopyToPbTopic(t, topicStat)
 				case model.TopicCatalogTestSet:
 				}
 
@@ -154,7 +166,7 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 	return
 }
 
-func modelCopyToPbTopic(topic *model.Topic) (item *api.TopicInfo) {
+func modelCopyToPbTopic(topic *model.Topic, topicStat *model.TopicStat) (item *api.TopicInfo) {
 	item = &api.TopicInfo{
 		ID:              topic.ID,
 		Name:            topic.Name,
@@ -174,6 +186,13 @@ func modelCopyToPbTopic(topic *model.Topic) (item *api.TopicInfo) {
 		},
 		CreatedAt: topic.CreatedAt,
 		UpdatedAt: topic.CreatedAt,
+	}
+	if topicStat != nil {
+		item.Stat = &api.TopicStat{
+			MemberCount:     topicStat.MemberCount,
+			ArticleCount:    topicStat.ArticleCount,
+			DiscussionCount: topicStat.DiscussionCount,
+		}
 	}
 
 	return
