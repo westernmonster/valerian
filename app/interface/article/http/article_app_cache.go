@@ -1,6 +1,9 @@
 package http
 
-import "valerian/library/net/http/mars"
+import (
+	"valerian/app/interface/article/model"
+	"valerian/library/net/http/mars"
+)
 
 // @Summary app端缓存Aritcle数据拉取
 // @Description app端缓存Aritcle数据拉取
@@ -16,8 +19,14 @@ import "valerian/library/net/http/mars"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /article/app_cache/pull [post]
-func appArticleCachePull(context *mars.Context) {
+func appArticleCachePull(c *mars.Context) {
+	arg := new(model.ArgArticleAppCache)
+	if e := c.Bind(arg); e != nil {
+		return
+	}
 
+
+	c.JSON( srv.AppArticleCachePull(c, arg))
 }
 
 
@@ -35,6 +44,10 @@ func appArticleCachePull(context *mars.Context) {
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /article/revise/app_cache/pull [post]
-func appReviseCachePull(context *mars.Context) {
-
+func appReviseCachePull(c *mars.Context) {
+	arg := new(model.ArgReviseAppCache)
+	if e := c.Bind(arg); e != nil {
+		return
+	}
+	c.JSON(srv.AppReviseCachePull(c, arg))
 }

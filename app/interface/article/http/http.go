@@ -59,7 +59,7 @@ func route(e *mars.Engine) {
 		g.GET("/list/revises", authSvc.User, getRevises)
 
 		g.POST("/app_cache/pull", authSvc.User, appArticleCachePull)
-		g.POST("/revises/app_cache/pull", authSvc.User, appReviseCachePull)
+		g.POST("/revise/app_cache/pull", authSvc.User, appReviseCachePull)
 
 	}
 

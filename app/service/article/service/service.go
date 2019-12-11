@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"strings"
+	"valerian/app/service/article/api"
 
 	"valerian/app/service/article/conf"
 	"valerian/app/service/article/dao"
@@ -65,6 +66,64 @@ func (s *Service) cacheproc() {
 		f := <-s.missch
 		f()
 	}
+}
+
+func (s *Service) PullArticleAppCache(ctx context.Context, req *api.IdUpdatedReq) (results []*api.DBArticle, err error) {
+	var ids []int64
+	for _, idUpdated := range req.Items {
+		ids = append(ids, idUpdated.ID)
+	}
+	items, err := s.d.GetArticlesByIDs(ctx, s.d.DB(), ids)
+	if err != nil {
+		return nil, err
+	}
+	for _, item := range items {
+		for _, idUpdate := range req.Items {
+			if item.ID == idUpdate.ID && item.UpdatedAt != idUpdate.UpdatedAt {
+				article := api.DBArticle{
+					ID:             item.ID,
+					Title:          item.Title,
+					Content:        item.Content,
+					ContentText:    item.ContentText,
+					DisableRevise:  bool(item.DisableRevise),
+					DisableComment: bool(item.DisableComment),
+					CreatedBy:      item.CreatedBy,
+					CreatedAt:      item.CreatedAt,
+					UpdatedAt:      item.UpdatedAt,
+				}
+				results = append(results, &article)
+			}
+		}
+	}
+	return
+}
+
+func (s *Service) PullReviseAppCache(ctx context.Context, req *api.IdUpdatedReq) (results []*api.ReviseDetail, err error) {
+	var ids []int64
+	for _, idUpdated := range req.Items {
+		ids = append(ids, idUpdated.ID)
+	}
+	items, err := s.d.GetRevisesByIDs(ctx, s.d.DB(), ids)
+	if err != nil {
+		return nil, err
+	}
+	for _, item := range items {
+		for _, idUpdate := range req.Items {
+			if item.ID == idUpdate.ID && item.UpdatedAt != idUpdate.UpdatedAt {
+				revise := api.ReviseDetail{
+					ID:          item.ID,
+					Title:       item.Title,
+					CreatedAt:   item.CreatedAt,
+					UpdatedAt:   item.UpdatedAt,
+					ArticleID:   item.ArticleID,
+					Content:     item.Content,
+					ContentText: item.ContentText,
+				}
+				results = append(results, &revise)
+			}
+		}
+	}
+	return
 }
 
 func includeParam(include string) (dic map[string]bool) {
