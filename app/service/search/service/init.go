@@ -27,6 +27,10 @@ func (p *Service) Init(c context.Context) (err error) {
 		return
 	}
 
+	if err = p.d.CreateSearchStatIndices(c); err != nil {
+		return
+	}
+
 	var accounts []*model.Account
 	if accounts, err = p.d.GetAccounts(c, p.d.DB()); err != nil {
 		return

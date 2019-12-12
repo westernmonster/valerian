@@ -111,3 +111,13 @@ type Discussion struct {
 	CreatedAt   int64         `db:"created_at" json:"created_at"`          // CreatedAt 创建时间
 	UpdatedAt   int64         `db:"updated_at" json:"updated_at"`          // UpdatedAt 更新时间
 }
+
+type SearchStat struct {
+	ID         int64  `db:"id" json:"id,string"`                 // ID ID
+	Keywords   string `db:"keywords" json:"keywords"`            // Keywords 关键字
+	CreatedBy  int64  `db:"created_by" json:"created_by,string"` // CreatedBy 创建人
+	Hits       int64  `db:"hits" json:"hits,string"`             // Hits 命中数量
+	Enterpoint string `db:"enterpoint" json:"enterpoint"`        // Enterpoint 搜索入口
+	CreatedAt  int64  `db:"created_at" json:"created_at"`        // CreatedAt 创建时间(搜索时间)
+	UpdatedAt  int64  `db:"updated_at" json:"updated_at"`        // UpdatedAt 更新时间
+}

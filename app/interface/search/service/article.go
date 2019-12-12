@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"net/url"
 	"strconv"
+	"valerian/library/net/metadata"
 
 	"valerian/app/interface/search/model"
 	"valerian/library/ecode"
@@ -106,6 +107,13 @@ func (p *Service) ArticleSearch(c context.Context, arg *model.ArticleSearchParam
 	if arg.Pn == 1 {
 		resp.Paging.Prev = ""
 	}
+
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		//err = ecode.AcquireAccountIDFailed
+		//return
+	}
+	p.triggerSearchStatAdded(context.Background(), arg.KW, "article", aid, data.Page.Total)
 
 	return
 }

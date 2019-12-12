@@ -135,6 +135,8 @@ const (
 
 	BusCommentLiked   = "comment.liked"
 	BusCommentReplied = "comment.replied"
+
+	BusSearchStatAdded = "search_stat.added"
 )
 
 const (

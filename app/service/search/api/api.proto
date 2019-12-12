@@ -40,5 +40,8 @@ service Search {
     rpc SearchTopic(SearchParam) returns (SearchResult);
     rpc SearchArticle(SearchParam) returns (SearchResult);
     rpc SearchDiscussion(SearchParam) returns (SearchResult);
+
+
+//    rpc SearchStat
 }
 

@@ -89,6 +89,11 @@ func New(c *conf.Config) (s *Service) {
 		panic(err)
 	}
 
+	if err := s.mq.QueueSubscribe(def.BusSearchStatAdded, "search", s.onSearchStatAdded); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusSearchStatAdded, "search")
+		panic(err)
+	}
+
 	go s.cacheproc()
 	return
 }
