@@ -7,6 +7,7 @@ import (
 	"valerian/app/service/feed/def"
 	"valerian/app/service/search/model"
 	"valerian/library/database/sqalx"
+	"valerian/library/gid"
 	"valerian/library/log"
 )
 
@@ -21,7 +22,7 @@ func (p *Service) onSearchStatAdded(m *stan.Msg) {
 	}
 
 	item := &model.ESSearchStat{
-		ID:         info.ID,
+		ID:         gid.NewID(),
 		Keywords:   info.Keywords,
 		CreatedBy:  info.CreatedBy,
 		Hits:       info.Hits,

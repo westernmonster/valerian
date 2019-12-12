@@ -150,7 +150,7 @@ func (p *Service) AllSearch(c context.Context, kw string) (resp *model.AllSearch
 		//err = ecode.AcquireAccountIDFailed
 		//return
 	}
-	p.triggerSearchStatAdded(context.Background(), kw, "all", aid, discussionData.Page.Total)
+	p.emitSearchStatAdded(context.Background(), kw, "all", aid, discussionData.Page.Total)
 
 	return
 }
