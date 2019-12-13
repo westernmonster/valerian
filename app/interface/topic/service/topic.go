@@ -343,7 +343,7 @@ func (p *Service) FromCatalogs(items []*topic.TopicRootCatalogInfo) (resp []*mod
 					parent.Article = p.FromCatalogArticle(x.Article)
 				}
 				if x.Topic != nil {
-					parent.Topic = p.FormCatelogTopic(v.Topic)
+					parent.Topic = p.FormCatelogTopic(x.Topic)
 				}
 				if x.Children != nil {
 					for _, j := range x.Children {
@@ -358,7 +358,7 @@ func (p *Service) FromCatalogs(items []*topic.TopicRootCatalogInfo) (resp []*mod
 							child.Article = p.FromCatalogArticle(j.Article)
 						}
 						if j.Topic != nil {
-							child.Topic = p.FormCatelogTopic(v.Topic)
+							child.Topic = p.FormCatelogTopic(j.Topic)
 						}
 						parent.Children = append(parent.Children, child)
 					}
