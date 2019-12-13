@@ -104,7 +104,7 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 				if topicStat, err = p.GetTopicStat(c, lvl1.RefID); err != nil {
 					return
 				}
-				parent.Name = t.Name
+				child.Name = t.Name
 				parent.Topic = modelCopyToPbTopic(t, topicStat)
 			case model.TopicCatalogTestSet:
 			}
@@ -148,8 +148,8 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 					if topicStat, err = p.GetTopicStat(c, lvl1.RefID); err != nil {
 						return
 					}
-					parent.Name = t.Name
-					parent.Topic = modelCopyToPbTopic(t, topicStat)
+					subItem.Name = t.Name
+					subItem.Topic = modelCopyToPbTopic(t, topicStat)
 				case model.TopicCatalogTestSet:
 				}
 
