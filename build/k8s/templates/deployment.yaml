@@ -8,7 +8,6 @@ metadata:
     heritage: {{ .Release.Service }}
     release: {{ .Values.global.name }}
 spec:
-  serviceName: {{ .Values.global.name }}
   replicas: {{ .Values.server.replicas }}
   selector:
     matchLabels:
