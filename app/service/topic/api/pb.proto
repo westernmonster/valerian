@@ -71,6 +71,7 @@ message TopicRootCatalogInfo {
     TargetArticle Article = 7;
     repeated  TopicParentCatalogInfo Children = 8;
     bool IsPrimary = 9;
+    TopicInfo topic = 10;
 }
 
 message TopicParentCatalogInfo {
@@ -82,6 +83,7 @@ message TopicParentCatalogInfo {
     TargetArticle Article = 7;
     repeated  TopicChildCatalogInfo Children = 8;
     bool IsPrimary = 9;
+    TopicInfo topic = 10;
 }
 
 message TopicChildCatalogInfo {
@@ -92,6 +94,7 @@ message TopicChildCatalogInfo {
     int64 RefID = 5;
     TargetArticle Article = 7;
     bool IsPrimary = 8;
+    TopicInfo topic = 10;
 }
 
 message TargetArticle {

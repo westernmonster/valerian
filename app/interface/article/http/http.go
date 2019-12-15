@@ -57,6 +57,10 @@ func route(e *mars.Engine) {
 		g.GET("/list/histories", authSvc.User, articleHistories)
 		g.GET("/list/relations", authSvc.User, articleRelations)
 		g.GET("/list/revises", authSvc.User, getRevises)
+
+		g.POST("/app_cache/pull", authSvc.User, appArticleCachePull)
+		g.POST("/revise/app_cache/pull", authSvc.User, appReviseCachePull)
+
 	}
 
 }

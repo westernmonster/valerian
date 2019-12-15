@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strings"
 
 	"valerian/app/service/article/model"
 	"valerian/library/database/sqalx"
@@ -193,5 +194,18 @@ func (p *Dao) UpdateArticle(c context.Context, node sqalx.Node, item *model.Arti
 		return
 	}
 
+	return
+}
+
+// GetArticlesByIDs get all records by ids
+func (p *Dao) GetArticlesByIDs(c context.Context, node sqalx.Node, ids []int64) (items []*model.Article, err error) {
+	items = make([]*model.Article, 0)
+	strIDs := Int64Array2StringArray(ids)
+	sqlSelect := "SELECT  a.id,a.title,a.content,a.content_text,a.disable_revise,a.disable_comment,a.created_by,a.deleted,a.created_at,a.updated_at  FROM articles a WHERE a.deleted=0 AND a.id IN (?) ORDER BY a.id DESC "
+
+	if err = node.SelectContext(c, &items, sqlSelect, strings.Join(strIDs, ",")); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetArticlesByIDs err(%+v)", err))
+		return
+	}
 	return
 }

@@ -70,6 +70,11 @@ const (
 	ActionTextCommentArticle    = "评论了文章"
 	ActionTextCommentRevise     = "评论了补充"
 	ActionTextCommentDiscussion = "评论了讨论"
+
+	// 举报提示语
+	//ActionTextArticleSuit  = "文章被举报已处理"
+	//ActionTextArticleSuit  = "文章被举报已处理"
+	//ActionTextArticleNotSuit  = "文章被举报不成立"
 )
 
 const (
@@ -130,6 +135,8 @@ const (
 
 	BusCommentLiked   = "comment.liked"
 	BusCommentReplied = "comment.replied"
+
+	BusSearchStatAdded = "search_stat.added"
 )
 
 const (

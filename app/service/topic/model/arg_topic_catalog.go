@@ -57,7 +57,7 @@ func (p *TopicLevel1Catalog) Validate() error {
 			validation.RuneLength(0, 100).Error(`名称最大长度为100个字符`)),
 		validation.Field(&p.Type,
 			validation.Required.Error(`请输入类型`),
-			validation.In(TopicCatalogTaxonomy, TopicCatalogArticle, TopicCatalogTestSet).Error("类型不正确")),
+			validation.In(TopicCatalogTaxonomy, TopicCatalogArticle, TopicCatalogTestSet, TopicCatalogTopic).Error("类型不正确")),
 		validation.Field(&p.Children, ValidateLevel1Children(p.Type)),
 		validation.Field(&p.RefID, ValidateRefID(p.Type)),
 	)
@@ -87,6 +87,11 @@ func (p *ValidateTypeRule) Validate(v interface{}) error {
 		}
 		break
 	case TopicCatalogTestSet:
+		if refID == 0 {
+			return ecode.RefIDRequired
+		}
+		break
+	case TopicCatalogTopic:
 		if refID == 0 {
 			return ecode.RefIDRequired
 		}
@@ -190,7 +195,7 @@ func (p *TopicLevel2Catalog) Validate() error {
 			validation.RuneLength(0, 100).Error(`名称最大长度为100个字符`)),
 		validation.Field(&p.Type,
 			validation.Required.Error(`请输入类型`),
-			validation.In(TopicCatalogTaxonomy, TopicCatalogArticle, TopicCatalogTestSet).Error("类型不正确")),
+			validation.In(TopicCatalogTaxonomy, TopicCatalogArticle, TopicCatalogTestSet, TopicCatalogTopic).Error("类型不正确")),
 		validation.Field(&p.Children, ValidateLevel2Children(p.Type)),
 		validation.Field(&p.RefID, ValidateRefID(p.Type)),
 	)
@@ -224,7 +229,7 @@ func (p *TopicChildCatalog) Validate() error {
 			validation.RuneLength(0, 100).Error(`名称最大长度为100个字符`)),
 		validation.Field(&p.Type,
 			validation.Required.Error(`请输入类型`),
-			validation.In(TopicCatalogArticle, TopicCatalogTestSet).Error("类型不正确")),
+			validation.In(TopicCatalogArticle, TopicCatalogTestSet, TopicCatalogTopic).Error("类型不正确")),
 		validation.Field(&p.RefID, ValidateRefID(p.Type)),
 	)
 }
@@ -270,7 +275,7 @@ func (p *ArgTopicCatalog) Validate() error {
 	return validation.ValidateStruct(
 		p,
 		validation.Field(&p.Name, validation.Required, validation.RuneLength(0, 100)),
-		validation.Field(&p.Type, validation.Required, validation.In(TopicCatalogTaxonomy, TopicCatalogArticle, TopicCatalogTestSet)),
+		validation.Field(&p.Type, validation.Required, validation.In(TopicCatalogTaxonomy, TopicCatalogArticle, TopicCatalogTestSet, TopicCatalogTopic)),
 		validation.Field(&p.RefID, ValidateRefID(p.Type)),
 	)
 }

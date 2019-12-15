@@ -49,13 +49,16 @@ type TopicRootCatalog struct {
 
 	// 文章
 	Article *TargetArticle `json:"article,omitempty"`
+
+	// 主题 Topic
+	Topic *TargetTopic `json:"topic,omitempty"`
 }
 
 func (p *TopicRootCatalog) Validate() error {
 	return validation.ValidateStruct(
 		p,
 		validation.Field(&p.Name, ValidateCatalogName(p.Type)),
-		validation.Field(&p.Type, validation.Required, validation.In(TopicCatalogTaxonomy, TopicCatalogArticle, TopicCatalogTestSet)),
+		validation.Field(&p.Type, validation.Required, validation.In(TopicCatalogTaxonomy, TopicCatalogArticle, TopicCatalogTestSet, TopicCatalogTopic)),
 		validation.Field(&p.Children, ValidateRootChildren(p.Type)),
 		validation.Field(&p.RefID, ValidateRefID(p.Type)),
 	)
@@ -110,6 +113,11 @@ func (p *ValidateRefIDRule) Validate(v interface{}) error {
 		}
 		break
 	case TopicCatalogTestSet:
+		if refID == 0 {
+			return ecode.RefIDRequired
+		}
+		break
+	case TopicCatalogTopic:
 		if refID == 0 {
 			return ecode.RefIDRequired
 		}
@@ -205,13 +213,17 @@ type TopicParentCatalog struct {
 	Children []*TopicChildCatalog `json:"children"`
 
 	Article *TargetArticle `json:"article,omitempty"`
+
+	// 主题 Topic
+	Topic *TargetTopic `json:"topic,omitempty"`
+
 }
 
 func (p *TopicParentCatalog) Validate() error {
 	return validation.ValidateStruct(
 		p,
 		validation.Field(&p.Name, ValidateCatalogName(p.Type)),
-		validation.Field(&p.Type, validation.Required, validation.In(TopicCatalogTaxonomy, TopicCatalogArticle, TopicCatalogTestSet)),
+		validation.Field(&p.Type, validation.Required, validation.In(TopicCatalogTaxonomy, TopicCatalogArticle, TopicCatalogTestSet, TopicCatalogTopic)),
 		validation.Field(&p.Children, ValidateParentChildren(p.Type)),
 		validation.Field(&p.RefID, ValidateRefID(p.Type)),
 	)
@@ -237,13 +249,17 @@ type TopicChildCatalog struct {
 	RefID int64 `json:"ref_id,string,omitempty" swaggertype:"string"`
 
 	Article *TargetArticle `json:"article,omitempty"`
+
+	// 主题 Topic
+	Topic *TargetTopic `json:"topic,omitempty"`
+
 }
 
 func (p *TopicChildCatalog) Validate() error {
 	return validation.ValidateStruct(
 		p,
 		validation.Field(&p.Name, ValidateCatalogName(p.Type)),
-		validation.Field(&p.Type, validation.Required, validation.In(TopicCatalogArticle, TopicCatalogTestSet)),
+		validation.Field(&p.Type, validation.Required, validation.In(TopicCatalogArticle, TopicCatalogTestSet, TopicCatalogTopic)),
 		validation.Field(&p.RefID, ValidateRefID(p.Type)),
 	)
 }
@@ -289,7 +305,7 @@ func (p *ArgTopicCatalog) Validate() error {
 	return validation.ValidateStruct(
 		p,
 		validation.Field(&p.Name, ValidateCatalogName(p.Type)),
-		validation.Field(&p.Type, validation.Required, validation.In(TopicCatalogTaxonomy, TopicCatalogArticle, TopicCatalogTestSet)),
+		validation.Field(&p.Type, validation.Required, validation.In(TopicCatalogTaxonomy, TopicCatalogArticle, TopicCatalogTestSet, TopicCatalogTopic)),
 		validation.Field(&p.RefID, ValidateRefID(p.Type)),
 	)
 }

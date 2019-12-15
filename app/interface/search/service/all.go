@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"valerian/app/interface/search/model"
 	"valerian/library/ecode"
+	"valerian/library/net/metadata"
 	"valerian/library/xstr"
 )
 
@@ -143,6 +144,13 @@ func (p *Service) AllSearch(c context.Context, kw string) (resp *model.AllSearch
 
 	resp.Discussions = discussions
 	resp.DiscussionsCount = discussionData.Page.Total
+
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		//err = ecode.AcquireAccountIDFailed
+		//return
+	}
+	p.emitSearchStatAdded(context.Background(), kw, "all", aid, discussionData.Page.Total)
 
 	return
 }

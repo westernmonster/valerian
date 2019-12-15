@@ -26,7 +26,6 @@ type CanEditTopicItem struct {
 
 	HasCatalogTaxonomy bool `json:"has_catalog_taxonomy"`
 	// 是否有二级目录
-
 }
 
 type CanEditTopicsResp struct {
@@ -38,9 +37,9 @@ type Creator struct {
 	// 用户ID
 	ID int64 `json:"id,string" swaggertype:"string"`
 	// 用户名
-	UserName string `json:"user_name"`
+	UserName string `json:"user_name,omitempty"`
 	// 头像
-	Avatar string `json:"avatar"`
+	Avatar string `json:"avatar,omitempty"`
 
 	// 自我介绍
 	Introduction string `json:"introduction,omitempty"`

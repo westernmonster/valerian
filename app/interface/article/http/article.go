@@ -105,6 +105,7 @@ func delArticle(c *mars.Context) {
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param id query string true "ID"
 // @Param include query string true  "目前支持：files,relations,histories,meta"
+// @Param updated_at query string false  "app缓存的更新时间戳"
 // @Success 200 {object}  app.interface.article.model.ArticleResp "文章"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
@@ -113,6 +114,9 @@ func delArticle(c *mars.Context) {
 func getArticle(c *mars.Context) {
 	include := c.Request.Form.Get("include")
 	idStr := c.Request.Form.Get("id")
+	updatedAt := c.Request.Form.Get("updated_at")
+	updatedAtTimeStamp, _ := strconv.ParseInt(updatedAt, 10, 64)
+
 	if id, err := strconv.ParseInt(idStr, 10, 64); err != nil {
 		c.JSON(nil, ecode.RequestErr)
 		return
@@ -120,7 +124,13 @@ func getArticle(c *mars.Context) {
 		c.JSON(nil, ecode.RequestErr)
 		return
 	} else {
-		c.JSON(srv.GetArticle(c, id, include))
+		articleResp, err := srv.GetArticle(c, id, include)
+		// 传入updatedAtTimeStamp 的时候判断是否已经修改过用于更新 app 的缓存
+		if err == nil && updatedAtTimeStamp == articleResp.UpdatedAt {
+			c.JSON(nil, ecode.NotModified )
+			return
+		}
+		c.JSON(articleResp, err)
 	}
 }
 

@@ -50,6 +50,17 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 			if parent.Article.RelationIDs, err = p.d.GetArticleRelationIDs(c, node, article.ID); err != nil {
 				return
 			}
+		case model.TopicCatalogTopic:
+			var t *model.Topic
+			if t, err = p.getTopic(c, p.d.DB(), lvl1.RefID); err != nil {
+				return
+			}
+			var topicStat *model.TopicStat
+			if topicStat, err = p.GetTopicStat(c, lvl1.RefID); err != nil {
+				return
+			}
+			parent.Name = t.Name
+			parent.Topic = modelCopyToPbTopic(t, topicStat)
 		case model.TopicCatalogTestSet:
 		}
 
@@ -84,6 +95,17 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 				if child.Article.RelationIDs, err = p.d.GetArticleRelationIDs(c, node, article.ID); err != nil {
 					return
 				}
+			case model.TopicCatalogTopic:
+				var t *model.Topic
+				if t, err = p.getTopic(c, p.d.DB(), lvl2.RefID); err != nil {
+					return
+				}
+				var topicStat *model.TopicStat
+				if topicStat, err = p.GetTopicStat(c, lvl1.RefID); err != nil {
+					return
+				}
+				child.Name = t.Name
+				parent.Topic = modelCopyToPbTopic(t, topicStat)
 			case model.TopicCatalogTestSet:
 			}
 
@@ -117,6 +139,17 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 					if subItem.Article.RelationIDs, err = p.d.GetArticleRelationIDs(c, node, article.ID); err != nil {
 						return
 					}
+				case model.TopicCatalogTopic:
+					var t *model.Topic
+					if t, err = p.getTopic(c, p.d.DB(), lvl3.RefID); err != nil {
+						return
+					}
+					var topicStat *model.TopicStat
+					if topicStat, err = p.GetTopicStat(c, lvl1.RefID); err != nil {
+						return
+					}
+					subItem.Name = t.Name
+					subItem.Topic = modelCopyToPbTopic(t, topicStat)
 				case model.TopicCatalogTestSet:
 				}
 
@@ -128,6 +161,38 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 
 		items = append(items, parent)
 
+	}
+
+	return
+}
+
+func modelCopyToPbTopic(topic *model.Topic, topicStat *model.TopicStat) (item *api.TopicInfo) {
+	item = &api.TopicInfo{
+		ID:              topic.ID,
+		Name:            topic.Name,
+		Avatar:          topic.Avatar,
+		Bg:              topic.Bg,
+		Introduction:    topic.Introduction,
+		AllowDiscuss:    bool(topic.AllowDiscuss),
+		AllowChat:       bool(topic.AllowChat),
+		IsPrivate:       bool(topic.IsPrivate),
+		ViewPermission:  topic.ViewPermission,
+		EditPermission:  topic.EditPermission,
+		JoinPermission:  topic.JoinPermission,
+		CatalogViewType: topic.CatalogViewType,
+		TopicHome:       topic.TopicHome,
+		Creator: &api.Creator{
+			ID: topic.CreatedBy,
+		},
+		CreatedAt: topic.CreatedAt,
+		UpdatedAt: topic.CreatedAt,
+	}
+	if topicStat != nil {
+		item.Stat = &api.TopicStat{
+			MemberCount:     topicStat.MemberCount,
+			ArticleCount:    topicStat.ArticleCount,
+			DiscussionCount: topicStat.DiscussionCount,
+		}
 	}
 
 	return
@@ -256,6 +321,17 @@ func (p *Service) saveCatalogs(c context.Context, node sqalx.Node, aid int64, re
 	if dic, err = p.getTopicCatalogsMap(c, node, req.TopicID, req.ParentID); err != nil {
 		return
 	}
+
+	// 如果已经存在则报错
+	//for _, dbVal := range dic {
+	//	for _, reqVal := range req.Items {
+	//		if dbVal.Item.TopicID == req.TopicID && dbVal.Item.RefID == reqVal.RefID &&
+	//			dbVal.Item.Type == reqVal.Type && dbVal.Item.ParentID == req.ParentID &&
+	//			dbVal.Item.ID <= 0 {
+	//			return nil, ecode.Error(ecode.RequestErr, "添加的文章已经存在。")
+	//		}
+	//	}
+	//}
 
 	for _, v := range req.Items {
 		if v.ID == nil {
