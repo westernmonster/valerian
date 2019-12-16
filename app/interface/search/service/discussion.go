@@ -92,7 +92,9 @@ func (p *Service) DiscussionSearch(c context.Context, arg *model.DiscussionSearc
 		//err = ecode.AcquireAccountIDFailed
 		//return
 	}
-	go p.emitSearchStatAdded(context.Background(), arg.KW, "discussion", aid, data.Page.Total)
+	p.addCache(func() {
+		p.emitSearchStatAdded(context.Background(), arg.KW, "discussion", aid, data.Page.Total)
+	})
 
 	return
 }

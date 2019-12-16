@@ -84,7 +84,9 @@ func (p *Service) AccountSearch(c context.Context, arg *model.AccountSearchParam
 		//err = ecode.AcquireAccountIDFailed
 		//return
 	}
-	go p.emitSearchStatAdded(context.Background(), arg.KW, "account", aid, data.Page.Total)
+	p.addCache(func() {
+		p.emitSearchStatAdded(context.Background(), arg.KW, "account", aid, data.Page.Total)
+	})
 
 	return
 }
