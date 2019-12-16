@@ -113,7 +113,7 @@ func (p *Service) ArticleSearch(c context.Context, arg *model.ArticleSearchParam
 		//err = ecode.AcquireAccountIDFailed
 		//return
 	}
-	p.emitSearchStatAdded(context.Background(), arg.KW, "article", aid, data.Page.Total)
+	go p.emitSearchStatAdded(context.Background(), arg.KW, "article", aid, data.Page.Total)
 
 	return
 }
