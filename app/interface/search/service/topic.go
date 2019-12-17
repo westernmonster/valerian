@@ -85,7 +85,10 @@ func (p *Service) TopicSearch(c context.Context, arg *model.TopicSearchParams) (
 		//err = ecode.AcquireAccountIDFailed
 		//return
 	}
-	p.emitSearchStatAdded(context.Background(), arg.KW, "topic", aid, data.Page.Total)
+
+	p.addCache(func() {
+		p.emitSearchStatAdded(context.Background(), arg.KW, "topic", aid, data.Page.Total)
+	})
 
 	return
 }

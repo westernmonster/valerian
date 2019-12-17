@@ -149,6 +149,7 @@ func (p *Service) onArticleDeleted(m *stan.Msg) {
 	}
 
 	if err = p.d.DelESArticle(c, info.ArticleID); err != nil {
+		m.Ack()
 		return
 	}
 
