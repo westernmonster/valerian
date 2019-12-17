@@ -6,6 +6,7 @@ type Feedback struct {
 	ID           int64         `db:"id" json:"id,string"`                 // ID ID
 	TargetID     int64         `db:"target_id" json:"target_id,string"`   // TargetID 目标ID
 	TargetType   int32         `db:"target_type" json:"target_type"`      // TargetType 目标类型
+	TargetDesc   string        `db:"target_desc" json:"target_desc"`      // TargetDesc 目标描述（用于通知）
 	FeedbackType int32         `db:"feedback_type" json:"feedback_type"`  // FeedbackType 举报类型
 	FeedbackDesc string        `db:"feedback_desc" json:"feedback_desc"`  // FeedbackDesc 备注
 	CreatedBy    int64         `db:"created_by" json:"created_by,string"` // CreatedBy 举报人

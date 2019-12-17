@@ -2,6 +2,7 @@ package conf
 
 import (
 	"errors"
+	"valerian/library/mq"
 	"valerian/library/net/http/mars/middleware/auth"
 
 	flag "github.com/spf13/pflag"
@@ -32,6 +33,7 @@ type Config struct {
 	DB     *DB
 	// Auth
 	Memcache *Memcache
+	Nats      *mq.Config
 
 	Discovery  *discovery.Config
 	Auth       *auth.Config

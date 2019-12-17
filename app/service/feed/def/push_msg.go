@@ -15,6 +15,10 @@ const (
 	PushMsgTitleTopicFollowApproved  = "你的加入话题请求被通过了"
 	PushMsgTitleTopicFollowRejected  = "你的加入话题请求被拒绝了"
 	PushMsgTitleTopicFollowInvited   = "你有一条加入话题邀请"
+
+	PushMsgFeedBackAccuseSuitToAuthor   = "经查您的「%s」存在违规行为，已做「%s」处理，希望您共同营造良好的社区氛围，多次违规将造成您的账号被限制"
+	PushMsgFeedBackAccuseSuitToReporter = "您举报的「%s」经审核有效，处理结果「%s」，感谢您为良好的社区氛围作出贡献"
+	PushMsgFeedBackAccuseNotSuit        = "您举报的「%s」经审核不存在违规信息，「%s」，感谢您为良好的社区氛围作出贡献"
 )
 
 const (
