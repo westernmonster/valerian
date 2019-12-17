@@ -5,6 +5,7 @@ import (
 	"time"
 	"valerian/app/admin/feedback/model"
 	"valerian/library/ecode"
+	"valerian/library/net/http/mars"
 )
 
 func (s *Service) VerifyFeedback(c context.Context, feedback *model.ArgVerifyFeedback) (err error) {
@@ -25,4 +26,8 @@ func (s *Service) VerifyFeedback(c context.Context, feedback *model.ArgVerifyFee
 	})
 
 	return
+}
+
+func (s *Service) GetFeedbacksByCondPaged(c *mars.Context, cond map[string]interface{}, limit int, offset int) (items []*model.Feedback, err error) {
+	return s.d.GetFeedbacksByCondPaged(c, s.d.DB(), cond, limit, offset)
 }
