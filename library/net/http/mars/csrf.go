@@ -10,6 +10,8 @@ var (
 	_allowHosts = []string{
 		".stonote.cn",
 		".flywk.com",
+		"stonote.cn",
+		"flywk.com",
 	}
 	_allowPatterns = []string{
 		// match by wechat appid
