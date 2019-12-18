@@ -31,3 +31,25 @@ func setWorkCert(c *mars.Context) {
 	}
 	c.JSON(nil, srv.WorkCert(c, arg))
 }
+
+// @Summary 工作认证列表
+// @Description 工作认证列表
+// @Tags admin
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param target_type query string false "目标类型"
+// @Param feedback_type query string false "反馈类型"
+// @Param verify_status query string false "审核类型"
+// @Param limit query integer false "每页大小"
+// @Param offset query integer false "offset"
+// @Success 200 {object}  app.interface.comment.model.CommentListResp "评论列表"
+// @Failure 400 "请求验证失败"
+// @Failure 401 "登录验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /admin/workcert/list [get]
+func listWorkCert(context *mars.Context) {
+
+}
