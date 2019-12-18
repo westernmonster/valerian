@@ -81,6 +81,10 @@ type ReviseDetailResp struct {
 	UpdatedAt int64 `json:"updated_at"`
 }
 
+type ReviseDetailListCacheResp struct {
+	Items []*ReviseDetailResp `json:"items"`
+}
+
 type Paging struct {
 	// // 统计数量
 	// Total int `json:"total,omitempty"`

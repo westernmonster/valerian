@@ -2,7 +2,8 @@ package model
 
 type ArgArticleAppCache struct {
 	// required: true
-	Items []*AppCacheReqItem `json:"items"`
+	Items   []*AppCacheReqItem `json:"items"`
+	Include string             `json:"include"`
 }
 
 type AppCacheReqItem struct {

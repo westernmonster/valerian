@@ -3,11 +3,10 @@ package service
 import (
 	"valerian/app/interface/article/model"
 	article "valerian/app/service/article/api"
-	"valerian/library/database/sqlx/types"
 	"valerian/library/net/http/mars"
 )
 
-func (s *Service) AppArticleCachePull(c *mars.Context, arg *model.ArgArticleAppCache) (resp []model.Article, err error) {
+func (s *Service) AppArticleCachePull(c *mars.Context, arg *model.ArgArticleAppCache) (resp *model.ArticleListCacheResp, err error) {
 	var reqItems []*article.IdUpdatedItem
 	for _, item := range arg.Items {
 		reqItem := article.IdUpdatedItem{
@@ -16,29 +15,18 @@ func (s *Service) AppArticleCachePull(c *mars.Context, arg *model.ArgArticleAppC
 		}
 		reqItems = append(reqItems, &reqItem)
 	}
-	resp = []model.Article{}
-	if results, err := s.d.PullArticleAppCache(c, &article.IdUpdatedReq{Items: reqItems}); err != nil {
-		return resp, err
-	} else {
-		for _, result := range results.Items {
-			article := model.Article{
-				ID:             result.ID,
-				Title:          result.Title,
-				Content:        result.Content,
-				ContentText:    result.ContentText,
-				DisableRevise:  types.BitBool(result.DisableRevise),
-				DisableComment: types.BitBool(result.DisableComment),
-				CreatedBy:      result.CreatedBy,
-				CreatedAt:      result.CreatedAt,
-				UpdatedAt:      result.UpdatedAt,
-			}
-			resp = append(resp, article)
+	resp = &model.ArticleListCacheResp{}
+
+	for _, argItem := range arg.Items {
+		article, _ := s.GetArticle(c, argItem.ID, arg.Include)
+		if article != nil && article.UpdatedAt != argItem.UpdatedAt {
+			resp.Items = append(resp.Items, article)
 		}
-		return resp, err
 	}
+	return
 }
 
-func (s *Service) AppReviseCachePull(c *mars.Context, arg *model.ArgReviseAppCache) (resp []model.Revise, err error) {
+func (s *Service) AppReviseCachePull(c *mars.Context, arg *model.ArgReviseAppCache) (resp *model.ReviseDetailListCacheResp, err error) {
 	var reqItems []*article.IdUpdatedItem
 	for _, item := range arg.Items {
 		reqItem := article.IdUpdatedItem{
@@ -47,27 +35,12 @@ func (s *Service) AppReviseCachePull(c *mars.Context, arg *model.ArgReviseAppCac
 		}
 		reqItems = append(reqItems, &reqItem)
 	}
-	resp = []model.Revise{}
-	if results, err := s.d.PullReviseAppCache(c, &article.IdUpdatedReq{Items: reqItems}); err != nil {
-		return resp, err
-	} else {
-		for _, result := range results.Items {
-			revise := model.Revise{
-				ID:          result.ID,
-				ArticleID:   result.ArticleID,
-				Title:       result.Title,
-				Content:     result.Content,
-				ContentText: result.ContentText,
-
-				CreatedAt: result.CreatedAt,
-				UpdatedAt: result.UpdatedAt,
-			}
-			if result.Creator != nil {
-				revise.CreatedBy = result.Creator.ID
-			}
-			resp = append(resp, revise)
+	resp = &model.ReviseDetailListCacheResp{}
+	for _, item := range arg.Items {
+		revise, _ := s.GetRevise(c, item.ID)
+		if revise != nil && revise.UpdatedAt != item.UpdatedAt {
+			resp.Items = append(resp.Items, revise)
 		}
-		return resp, err
 	}
-
+	return
 }

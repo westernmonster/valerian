@@ -37,6 +37,10 @@ type ArticleResp struct {
 	ChangeDesc string `json:"change_desc"` // ChangeDesc 修订说明
 }
 
+type ArticleListCacheResp struct {
+	Items  []*ArticleResp `json:"items"`
+}
+
 type ArticleFileResp struct {
 	ID        int64  `json:"id,string" swaggertype:"string"`
 	FileName  string `json:"file_name"` // FileName 文件名

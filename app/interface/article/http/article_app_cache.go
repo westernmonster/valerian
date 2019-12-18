@@ -14,7 +14,7 @@ import (
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param req body  app.interface.article.model.ArgArticleAppCache true "请求"
-// @Success 200 "成功"
+// @Success 200 {object}  app.interface.article.model.ArticleListCacheResp "文章列表"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
@@ -39,7 +39,7 @@ func appArticleCachePull(c *mars.Context) {
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param req body  app.interface.article.model.ArgArticleAppCache true "请求"
-// @Success 200 "成功"
+// @Success 200 {object}  app.interface.article.model.ReviseDetailListCacheResp "文章补充列表"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
