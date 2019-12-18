@@ -3,6 +3,7 @@ package model
 type ArgArticleAppCache struct {
 	// required: true
 	Items   []*AppCacheReqItem `json:"items"`
+	// 参照文章获取 "目前支持：files,relations,histories,meta" (Revise 忽略这个参数）
 	Include string             `json:"include"`
 }
 
