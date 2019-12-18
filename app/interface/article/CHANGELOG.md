@@ -1,5 +1,8 @@
 # interface-article
 
+## 1.0.3
+1.fix:缓存数据格式返回修改。
+
 ## 1.0.2
 1.feature:下载缓存列表拉去 api
 

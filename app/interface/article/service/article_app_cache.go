@@ -16,7 +16,7 @@ func (s *Service) AppArticleCachePull(c *mars.Context, arg *model.ArgArticleAppC
 		reqItems = append(reqItems, &reqItem)
 	}
 	resp = &model.ArticleListCacheResp{}
-
+	resp.Items = []*model.ArticleResp{}
 	for _, argItem := range arg.Items {
 		article, _ := s.GetArticle(c, argItem.ID, arg.Include)
 		if article != nil && article.UpdatedAt != argItem.UpdatedAt {
@@ -36,6 +36,7 @@ func (s *Service) AppReviseCachePull(c *mars.Context, arg *model.ArgReviseAppCac
 		reqItems = append(reqItems, &reqItem)
 	}
 	resp = &model.ReviseDetailListCacheResp{}
+	resp.Items = []*model.ReviseDetailResp{}
 	for _, item := range arg.Items {
 		revise, _ := s.GetRevise(c, item.ID)
 		if revise != nil && revise.UpdatedAt != item.UpdatedAt {
