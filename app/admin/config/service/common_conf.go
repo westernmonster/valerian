@@ -36,6 +36,7 @@ func (p *Service) CreateCommonConf(c context.Context, arg *model.ArgCreateCommon
 }
 
 // 获取通用配置文件
+// 系统
 func (p *Service) GetCommonConf(c context.Context, id int64) (resp *model.CommonConfigResp, err error) {
 	var item *model.CommonConfig
 	if item, err = p.d.GetCommonConfigByID(c, p.d.ConfigDB(), id); err != nil {
