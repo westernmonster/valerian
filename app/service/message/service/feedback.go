@@ -45,7 +45,7 @@ func (p *Service) onFeedBackAccuseSuit(m *stan.Msg) {
 		AccountID:  fb.CreatedBy,
 		ActionType: model.MsgFeedbackAccuseSuit,
 		ActionTime: time.Now().Unix(),
-		ActionText: fmt.Sprintf(model.MsgTextFeedBackAccuseSuitToReporter, targetDesc+":"+fb.TargetDesc, "删除"),
+		ActionText: fmt.Sprintf(model.MsgTextFeedBackAccuseSuitToReporter, targetDesc+":"+fb.TargetDesc, fb.VerifyDesc),
 		MergeCount: 1,
 		TargetID:   fb.TargetID,
 		TargetType: msgTargetType,
@@ -60,8 +60,8 @@ func (p *Service) onFeedBackAccuseSuit(m *stan.Msg) {
 		if _, err := p.pushSingleUser(context.Background(),
 			msg.AccountID,
 			msg.ID,
-			fmt.Sprintf(def.PushMsgFeedBackAccuseSuitToReporter, targetDesc+":"+fb.TargetDesc, "删除"),
-			fmt.Sprintf(def.PushMsgFeedBackAccuseSuitToReporter, targetDesc+":"+fb.TargetDesc, "删除"),
+			fmt.Sprintf(def.PushMsgFeedBackAccuseSuitToReporter, targetDesc+":"+fb.TargetDesc, fb.VerifyDesc),
+			fmt.Sprintf(def.PushMsgFeedBackAccuseSuitToReporter, targetDesc+":"+fb.TargetDesc, fb.VerifyDesc),
 			"",
 		); err != nil {
 			log.For(context.Background()).Error(fmt.Sprintf("service.onCommentReplied Push message failed %#v", err))
@@ -104,9 +104,9 @@ func (p *Service) sendToBeReported(c context.Context, fb *model.Feedback) {
 			accountId = revise.Creator.ID
 		}
 	} else if msgTargetType == model.TargetTypeArticle {
-		if article ,err := p.d.GetArticle(c,fb.TargetID,false);err != nil{
+		if article, err := p.d.GetArticle(c, fb.TargetID, false); err != nil {
 			return
-		}else {
+		} else {
 			accountId = article.Creator.ID
 		}
 	} else {
@@ -130,7 +130,7 @@ func (p *Service) publishToBeReported(c context.Context, accountId int64, fb *mo
 		AccountID:  accountId,
 		ActionType: model.MsgFeedbackAccuseSuit,
 		ActionTime: time.Now().Unix(),
-		ActionText: fmt.Sprintf(model.MsgTextFeedBackAccuseSuitToAuthor, targetDesc+":"+fb.TargetDesc, "删除"),
+		ActionText: fmt.Sprintf(model.MsgTextFeedBackAccuseSuitToAuthor, targetDesc+":"+fb.TargetDesc, fb.VerifyDesc),
 		MergeCount: 1,
 		TargetID:   fb.TargetID,
 		TargetType: msgTargetType,
@@ -145,8 +145,8 @@ func (p *Service) publishToBeReported(c context.Context, accountId int64, fb *mo
 		if _, err := p.pushSingleUser(context.Background(),
 			msg.AccountID,
 			msg.ID,
-			fmt.Sprintf(def.PushMsgFeedBackAccuseSuitToAuthor, targetDesc+":"+fb.TargetDesc, "删除"),
-			fmt.Sprintf(def.PushMsgFeedBackAccuseSuitToAuthor, targetDesc+":"+fb.TargetDesc, "删除"),
+			fmt.Sprintf(def.PushMsgFeedBackAccuseSuitToAuthor, targetDesc+":"+fb.TargetDesc, fb.VerifyDesc),
+			fmt.Sprintf(def.PushMsgFeedBackAccuseSuitToAuthor, targetDesc+":"+fb.TargetDesc, fb.VerifyDesc),
 			"",
 		); err != nil {
 			log.For(context.Background()).Error(fmt.Sprintf("service.onCommentReplied Push message failed %#v", err))
@@ -214,7 +214,7 @@ func (p *Service) onFeedBackAccuseNotSuit(m *stan.Msg) {
 		AccountID:  fb.CreatedBy,
 		ActionType: model.MsgFeedbackAccuseNotSuit,
 		ActionTime: time.Now().Unix(),
-		ActionText: fmt.Sprintf(model.MsgTextFeedBackAccuseNotSuit, targetDesc+":"+fb.TargetDesc, "删除"),
+		ActionText: fmt.Sprintf(model.MsgTextFeedBackAccuseNotSuit, targetDesc+":"+fb.TargetDesc, fb.VerifyDesc),
 		MergeCount: 1,
 		TargetID:   fb.TargetID,
 		TargetType: msgTargetType,
@@ -229,8 +229,8 @@ func (p *Service) onFeedBackAccuseNotSuit(m *stan.Msg) {
 		if _, err := p.pushSingleUser(context.Background(),
 			msg.AccountID,
 			msg.ID,
-			fmt.Sprintf(def.PushMsgFeedBackAccuseNotSuit, targetDesc+":"+fb.TargetDesc, "删除"),
-			fmt.Sprintf(def.PushMsgFeedBackAccuseNotSuit, targetDesc+":"+fb.TargetDesc, "删除"),
+			fmt.Sprintf(def.PushMsgFeedBackAccuseNotSuit, targetDesc+":"+fb.TargetDesc, fb.VerifyDesc),
+			fmt.Sprintf(def.PushMsgFeedBackAccuseNotSuit, targetDesc+":"+fb.TargetDesc, fb.VerifyDesc),
 			"",
 		); err != nil {
 			log.For(context.Background()).Error(fmt.Sprintf("service.onCommentReplied Push message failed %#v", err))
