@@ -137,6 +137,9 @@ const (
 	BusCommentReplied = "comment.replied"
 
 	BusSearchStatAdded = "search_stat.added"
+
+	BusFeedBackAccuseSuit = "feedback_accuse_suit"
+	BusFeedBackAccuseNotSuit = "feedback_accuse_not_suit"
 )
 
 const (

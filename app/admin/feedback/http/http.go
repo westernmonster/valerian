@@ -33,6 +33,7 @@ func route(e *mars.Engine) {
 	e.Register(register)
 	g := e.Group("/api/v1/admin/feedback")
 	{
+		g.GET("/list", authSvc.User, listFeedback)
 		g.POST("/verify", authSvc.User, verifyFeedback)
 	}
 }

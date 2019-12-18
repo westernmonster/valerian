@@ -117,7 +117,10 @@ func (p *Service) DigitLogin(ctx context.Context, req *model.ArgDigitLogin) (res
 		err = ecode.UserNotExist
 		return
 	}
-
+	if account.IsLock {
+		err = ecode.UserDisabled
+		return
+	}
 	accessToken, refreshToken, err := p.grantToken(ctx, req.ClientID, account.ID)
 	if err != nil {
 		return

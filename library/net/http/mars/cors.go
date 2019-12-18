@@ -13,6 +13,8 @@ var (
 	allowOriginHosts = []string{
 		".flywk.com",
 		".stonote.cn",
+		"flywk.com",
+		"stonote.cn",
 	}
 )
 

@@ -54,7 +54,8 @@ const accountMapping = `
         "is_org": { "type": "boolean" },
         "is_vip": { "type": "boolean" },
         "created_at": { "type": "integer" },
-        "updated_at": { "type": "integer" }
+        "updated_at": { "type": "integer" },
+		"is_lock": { "type": "boolean" }
       }
     }
   }

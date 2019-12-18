@@ -8,6 +8,7 @@ import (
 	"valerian/app/admin/feedback/dao"
 	"valerian/library/conf/env"
 	"valerian/library/log"
+	"valerian/library/mq"
 )
 
 // Service struct of service
@@ -15,6 +16,8 @@ type Service struct {
 	c      *conf.Config
 	d      *dao.Dao
 	missch chan func()
+	mq     *mq.MessageQueue
+
 }
 
 // New create new service
@@ -22,6 +25,7 @@ func New(c *conf.Config) (s *Service) {
 	s = &Service{
 		c:      c,
 		d:      dao.New(c),
+		mq:     mq.New(env.Hostname, c.Nats),
 		missch: make(chan func(), 1024),
 	}
 	go s.cacheproc()
