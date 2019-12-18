@@ -92,13 +92,12 @@ func (p *Dao) GetFeedbacksByCondPaged(c context.Context, node sqalx.Node, cond m
 		condition = append(condition, val)
 	}
 
-	condition = append(condition, limit)
 	condition = append(condition, offset)
+	condition = append(condition, limit)
 
-	sqlSelect := fmt.Sprintf("SELECT a.id,a.target_id,a.target_type,a.target_desc,a.feedback_type,a.feedback_desc," +
-		"a.created_by,a.deleted,a.created_at,a.updated_at,a.verify_status,a.verify_desc FROM feedbacks a " +
+	sqlSelect := fmt.Sprintf("SELECT a.id,a.target_id,a.target_type,a.target_desc,a.feedback_type,a.feedback_desc,"+
+		"a.created_by,a.deleted,a.created_at,a.updated_at,a.verify_status,a.verify_desc FROM feedbacks a "+
 		"WHERE a.deleted=0 %s ORDER BY a.id DESC  limit ?,?", clause)
-
 	if err = node.SelectContext(c, &items, sqlSelect, condition...); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetFeedbacksByCond err(%+v), condition(%+v)", err, cond))
 		return
