@@ -73,7 +73,7 @@ func listWorkCert(c *mars.Context) {
 	cond := map[string]interface{}{}
 	status := params.Get("status")
 	if len(status) > 0 {
-		cond["verify_status"] = status
+		cond["status"] = status
 	}
 	c.JSON(srv.GetWorkCertsByCondPaged(c, cond, limit, offset))
 }
