@@ -23,7 +23,7 @@ GIT_VERSION := $(shell git --no-pager describe --tags --always --dirty)
 GIT_COMMIT  := $(shell git rev-parse --verify HEAD)
 GIT_DATE    := $(firstword $(shell git --no-pager show --date=iso-strict --format="%ad" --name-only))
 BUILD_DATE=$(shell date -u '+%Y%m%d')
-DOCKER_TAG=${BUILD_DATE}-${GIT_VERSION}
+DOCKER_TAG=${BUILD_DATE}-${GIT_VERSION}L
 
 
 

@@ -6,6 +6,7 @@ import (
 	"github.com/kamilsk/retry/v4"
 	"github.com/kamilsk/retry/v4/strategy"
 	"github.com/nats-io/stan.go"
+	"strconv"
 	"time"
 	"valerian/app/service/feed/def"
 	"valerian/app/service/message/model"
@@ -31,9 +32,8 @@ func (p *Service) onFeedBackAccuseSuit(m *stan.Msg) {
 		fb = feedback
 		return nil
 	}
-
 	if err := retry.TryContext(c, action, strategy.Limit(3)); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onCommentReplied GetComment failed %#v", err))
+		log.For(c).Error(fmt.Sprintf("service.onFeedBackAccuseSuit GetComment failed %#v", err))
 		m.Ack()
 		return
 	}
@@ -45,8 +45,10 @@ func (p *Service) onFeedBackAccuseSuit(m *stan.Msg) {
 		AccountID:  fb.CreatedBy,
 		ActionType: model.MsgFeedbackAccuseSuit,
 		ActionTime: time.Now().Unix(),
-		ActionText: fmt.Sprintf(model.MsgTextFeedBackAccuseSuitToReporter, targetDesc+":"+fb.TargetDesc, fb.VerifyDesc),
+		ActionText: fmt.Sprintf(model.MsgTextFeedBackAccuseSuitToReporter, targetDesc+":"+fb.FeedbackDesc, fb.VerifyDesc),
 		MergeCount: 1,
+		ActorType:  model.ActorTypeUser,
+		Actors:     strconv.FormatInt(fb.CreatedBy, 10),
 		TargetID:   fb.TargetID,
 		TargetType: msgTargetType,
 		CreatedAt:  time.Now().Unix(),
@@ -60,8 +62,8 @@ func (p *Service) onFeedBackAccuseSuit(m *stan.Msg) {
 		if _, err := p.pushSingleUser(context.Background(),
 			msg.AccountID,
 			msg.ID,
-			fmt.Sprintf(def.PushMsgFeedBackAccuseSuitToReporter, targetDesc+":"+fb.TargetDesc, fb.VerifyDesc),
-			fmt.Sprintf(def.PushMsgFeedBackAccuseSuitToReporter, targetDesc+":"+fb.TargetDesc, fb.VerifyDesc),
+			fmt.Sprintf(def.PushMsgFeedBackAccuseSuitToReporter, targetDesc+":"+fb.FeedbackDesc, fb.VerifyDesc),
+			fmt.Sprintf(def.PushMsgFeedBackAccuseSuitToReporter, targetDesc+":"+fb.FeedbackDesc, fb.VerifyDesc),
 			"",
 		); err != nil {
 			log.For(context.Background()).Error(fmt.Sprintf("service.onCommentReplied Push message failed %#v", err))
@@ -130,8 +132,10 @@ func (p *Service) publishToBeReported(c context.Context, accountId int64, fb *mo
 		AccountID:  accountId,
 		ActionType: model.MsgFeedbackAccuseSuit,
 		ActionTime: time.Now().Unix(),
-		ActionText: fmt.Sprintf(model.MsgTextFeedBackAccuseSuitToAuthor, targetDesc+":"+fb.TargetDesc, fb.VerifyDesc),
+		ActionText: fmt.Sprintf(model.MsgTextFeedBackAccuseSuitToAuthor, targetDesc+":"+fb.FeedbackDesc, fb.VerifyDesc),
 		MergeCount: 1,
+		ActorType:  model.ActorTypeUser,
+		Actors:     strconv.FormatInt(fb.CreatedBy, 10),
 		TargetID:   fb.TargetID,
 		TargetType: msgTargetType,
 		CreatedAt:  time.Now().Unix(),
@@ -145,8 +149,8 @@ func (p *Service) publishToBeReported(c context.Context, accountId int64, fb *mo
 		if _, err := p.pushSingleUser(context.Background(),
 			msg.AccountID,
 			msg.ID,
-			fmt.Sprintf(def.PushMsgFeedBackAccuseSuitToAuthor, targetDesc+":"+fb.TargetDesc, fb.VerifyDesc),
-			fmt.Sprintf(def.PushMsgFeedBackAccuseSuitToAuthor, targetDesc+":"+fb.TargetDesc, fb.VerifyDesc),
+			fmt.Sprintf(def.PushMsgFeedBackAccuseSuitToAuthor, targetDesc+":"+fb.FeedbackDesc, fb.VerifyDesc),
+			fmt.Sprintf(def.PushMsgFeedBackAccuseSuitToAuthor, targetDesc+":"+fb.FeedbackDesc, fb.VerifyDesc),
 			"",
 		); err != nil {
 			log.For(context.Background()).Error(fmt.Sprintf("service.onCommentReplied Push message failed %#v", err))
@@ -189,7 +193,6 @@ func (p *Service) onFeedBackAccuseNotSuit(m *stan.Msg) {
 		log.For(c).Error(fmt.Sprintf("service.onFeedBackAccuseNotSuit Unmarshal failed %#v", err))
 		return
 	}
-
 	var fb *model.Feedback
 	action := func(c context.Context, _ uint) error {
 		feedback, err := p.d.GetFeedbackByID(c, p.d.DB(), info.FeedbackID)
@@ -202,38 +205,40 @@ func (p *Service) onFeedBackAccuseNotSuit(m *stan.Msg) {
 	}
 
 	if err := retry.TryContext(c, action, strategy.Limit(3)); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onCommentReplied GetComment failed %#v", err))
+		log.For(c).Error(fmt.Sprintf("service.onFeedBackAccuseNotSuit GetComment failed %#v", err))
 		m.Ack()
 		return
 	}
-
 	msgTargetType, targetDesc := convertFBTargetType(fb.TargetType)
+	actionText := fmt.Sprintf(model.MsgTextFeedBackAccuseNotSuit, targetDesc+":"+fb.FeedbackDesc, fb.VerifyDesc)
 	// 发送给举报人
 	msg := &model.Message{
 		ID:         gid.NewID(),
 		AccountID:  fb.CreatedBy,
 		ActionType: model.MsgFeedbackAccuseNotSuit,
 		ActionTime: time.Now().Unix(),
-		ActionText: fmt.Sprintf(model.MsgTextFeedBackAccuseNotSuit, targetDesc+":"+fb.TargetDesc, fb.VerifyDesc),
+		ActionText: actionText,
 		MergeCount: 1,
+		ActorType:  model.ActorTypeUser,
+		Actors:     strconv.FormatInt(fb.CreatedBy, 10),
 		TargetID:   fb.TargetID,
 		TargetType: msgTargetType,
 		CreatedAt:  time.Now().Unix(),
 		UpdatedAt:  time.Now().Unix(),
 	}
 	if err = p.d.AddMessage(c, p.d.DB(), msg); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onCommentReplied AddMessage failed %#v", err))
+		log.For(c).Error(fmt.Sprintf("service.onFeedBackAccuseNotSuit AddMessage failed %#v", err))
 		return
 	}
 	p.addCache(func() {
 		if _, err := p.pushSingleUser(context.Background(),
 			msg.AccountID,
 			msg.ID,
-			fmt.Sprintf(def.PushMsgFeedBackAccuseNotSuit, targetDesc+":"+fb.TargetDesc, fb.VerifyDesc),
-			fmt.Sprintf(def.PushMsgFeedBackAccuseNotSuit, targetDesc+":"+fb.TargetDesc, fb.VerifyDesc),
+			fmt.Sprintf(def.PushMsgFeedBackAccuseNotSuit, targetDesc+":"+fb.FeedbackDesc, fb.VerifyDesc),
+			fmt.Sprintf(def.PushMsgFeedBackAccuseNotSuit, targetDesc+":"+fb.FeedbackDesc, fb.VerifyDesc),
 			"",
 		); err != nil {
-			log.For(context.Background()).Error(fmt.Sprintf("service.onCommentReplied Push message failed %#v", err))
+			log.For(context.Background()).Error(fmt.Sprintf("service.onFeedBackAccuseNotSuit Push message failed %#v", err))
 		}
 	})
 	m.Ack()
