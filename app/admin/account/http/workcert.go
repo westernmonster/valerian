@@ -1,6 +1,7 @@
 package http
 
 import (
+	"strconv"
 	"valerian/app/admin/account/model"
 	"valerian/library/ecode"
 	"valerian/library/net/http/mars"
@@ -50,6 +51,28 @@ func setWorkCert(c *mars.Context) {
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /admin/workcert/list [get]
-func listWorkCert(context *mars.Context) {
+func listWorkCert(c *mars.Context) {
+	var (
+		err    error
+		offset int
+		limit  int
+	)
 
+	params := c.Request.Form
+
+	if offset, err = strconv.Atoi(params.Get("offset")); err != nil {
+		offset = 0
+	} else if offset < 0 {
+		offset = 0
+	}
+
+	if limit, err = strconv.Atoi(params.Get("limit")); err != nil {
+		limit = 10
+	} else if limit < 0 {
+		limit = 10
+	}
+
+	cond := map[string]interface{}{}
+	
+	c.JSON(srv.GetWorkCertsByCondPaged(c, cond, limit, offset))
 }
