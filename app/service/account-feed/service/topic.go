@@ -4,15 +4,12 @@ import (
 	"context"
 	"time"
 	"valerian/app/service/account-feed/model"
-	account "valerian/app/service/account/api"
 	"valerian/app/service/feed/def"
 	topic "valerian/app/service/topic/api"
 	"valerian/library/ecode"
 	"valerian/library/gid"
 	"valerian/library/log"
 
-	"github.com/kamilsk/retry/v4"
-	"github.com/kamilsk/retry/v4/strategy"
 	"github.com/nats-io/stan.go"
 )
 
@@ -69,19 +66,8 @@ func (p *Service) onTopicFollowed(m *stan.Msg) {
 		return
 	}
 
-	var v *account.BaseInfoReply
-	action := func(c context.Context, _ uint) error {
-		acc, e := p.d.GetAccountBaseInfo(c, info.ActorID)
-		if e != nil {
-			return e
-		}
-
-		v = acc
-		return nil
-	}
-
-	if err := retry.TryContext(c, action, strategy.Limit(3)); err != nil {
-		m.Ack()
+	// var v *model.Account
+	if _, err := p.getAccount(c, p.d.DB(), info.ActorID); err != nil {
 		return
 	}
 
