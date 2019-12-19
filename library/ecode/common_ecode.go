@@ -112,6 +112,7 @@ var (
 	CatalogNameInvalid             = add(10062) // 目录名称格式不正确
 	DownloadImageFailed            = add(10063) // 下载图片失败
 	InvalidImage                   = add(10064) // 图片格式不正确
+	TeamExist                      = add(10065) // Team已经存在
 
 	// 89000 - 89999 属于 Permission 类错误
 	NoTopicViewPermission   = add(89001) // 没有话题查看权限
@@ -154,6 +155,8 @@ var (
 	AdminNotExist                 = add(90032) // 管理员不存在
 	AccountRoleNotExist           = add(90033) // 用户角色不存在
 	WorkCertificationNotExist     = add(90034) // 尚未发起工作认证
+	TeamNotExist                  = add(90035) // Team 不存在
+	CommonConfNotExist            = add(90036) // CommonConf 不存在
 
 )
 

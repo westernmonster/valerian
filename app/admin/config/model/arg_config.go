@@ -7,7 +7,7 @@ type ArgCreateConfig struct {
 	Env     string `json:"env"`
 	Zone    string `json:"zone"`
 	Name    string `json:"name"`
-	State   int    `json:"state"`
+	State   int32  `json:"state"`
 	From    int64  `json:"from,string" swaggertype:"string"`
 	// 配置文件内容
 	Comment  string `json:"comment"`
