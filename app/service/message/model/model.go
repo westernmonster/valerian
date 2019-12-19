@@ -83,3 +83,18 @@ type FeedbackType struct {
 	CreatedAt int64         `db:"created_at" json:"created_at"` // CreatedAt 创建时间
 	UpdatedAt int64         `db:"updated_at" json:"updated_at"` // UpdatedAt 更新时间
 }
+
+type AccountSetting struct {
+	AccountID            int64         `db:"account_id" json:"account_id,string"`                  // AccountID 账户ID
+	ActivityLike         types.BitBool `db:"activity_like" json:"activity_like"`                   // ActivityLike 动态-赞
+	ActivityComment      types.BitBool `db:"activity_comment" json:"activity_comment"`             // ActivityComment 动态-评论
+	ActivityFollowTopic  types.BitBool `db:"activity_follow_topic" json:"activity_follow_topic"`   // ActivityFollowTopic 动态-关注话题
+	ActivityFollowMember types.BitBool `db:"activity_follow_member" json:"activity_follow_member"` // ActivityFollowMember 动态-关注成员
+	NotifyLike           types.BitBool `db:"notify_like" json:"notify_like"`                       // NotifyLike 通知-赞
+	NotifyComment        types.BitBool `db:"notify_comment" json:"notify_comment"`                 // NotifyComment 通知-评论
+	NotifyNewFans        types.BitBool `db:"notify_new_fans" json:"notify_new_fans"`               // NotifyNewFans 通知-新粉丝
+	NotifyNewMember      types.BitBool `db:"notify_new_member" json:"notify_new_member"`           // NotifyNewMember 通知-新成员
+	Language             string        `db:"language" json:"language"`                             // Language 语言
+	CreatedAt            int64         `db:"created_at" json:"created_at"`                         // CreatedAt 创建时间
+	UpdatedAt            int64         `db:"updated_at" json:"updated_at"`                         // UpdatedAt 更新时间
+}
