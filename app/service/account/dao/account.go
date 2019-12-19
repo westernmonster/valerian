@@ -105,8 +105,9 @@ func (p *Dao) GetAccounts(c context.Context, node sqalx.Node) (items []*model.Ac
 }
 
 func (p *Dao) AnnulAccount(c context.Context, node sqalx.Node, aid int64) (err error) {
-	if _, err = node.ExecContext(c, _annulAccountSQL,"已注销", types.BitBool(true), aid); err != nil {
+	if _, err = node.ExecContext(c, _annulAccountSQL, "已注销", types.BitBool(true), aid); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.AnnulAccount error(%+v), id(%d)", err, aid))
+		return
 	}
 	return
 }
