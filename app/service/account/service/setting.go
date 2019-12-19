@@ -3,6 +3,8 @@ package service
 import (
 	"context"
 	"fmt"
+	"strings"
+	"valerian/library/ecode"
 
 	"valerian/app/service/account/model"
 	"valerian/library/database/sqalx"
@@ -132,5 +134,42 @@ func (p *Service) UpdateAccountSetting(c context.Context, aid int64, req map[str
 		return
 	}
 
+	return
+}
+
+func (p *Service) AnnulAccount(ctx context.Context, aid int64, password string) (err error) {
+	account, err := p.d.GetAccountByID(ctx, p.d.DB(), aid)
+	if err != nil {
+		return
+	}
+	if account == nil {
+		err = ecode.UserNotExist
+		return
+	}
+	if account.IsLock {
+		err = ecode.UserDisabled
+		return
+	}
+
+	if err = p.checkPassword(password, account.Password, account.Salt); err != nil {
+		return
+	}
+
+	if err = p.d.AnnulAccount(ctx, p.d.DB(), aid); err != nil {
+		return
+	}
+	return
+}
+
+func (p *Service) checkPassword(password, dbPassword, dbSalt string) (err error) {
+	passwordHash, err := hashPassword(password, dbSalt)
+	if err != nil {
+		return
+	}
+
+	if !strings.EqualFold(dbPassword, passwordHash) {
+		err = ecode.PasswordErr
+		return
+	}
 	return
 }

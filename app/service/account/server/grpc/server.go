@@ -323,3 +323,11 @@ func (s *server) AccountUnlock(ctx context.Context, req *api.AidReq) (*api.Empty
 	}
 	return &api.EmptyStruct{}, nil
 }
+
+func (s *server) AnnulAccount(ctx context.Context, req *api.AnnulReq) (*api.EmptyStruct, error) {
+	err := s.svr.AnnulAccount(ctx, req.Aid, req.Password)
+	if err != nil {
+		return nil, err
+	}
+	return &api.EmptyStruct{}, nil
+}

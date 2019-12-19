@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"valerian/library/database/sqlx/types"
 
 	"valerian/app/service/account/model"
 	"valerian/library/database/sqalx"
@@ -11,10 +12,11 @@ import (
 )
 
 const (
-	_getAccountByEmailSQL  = "SELECT a.id,a.mobile,a.user_name,a.email,a.password,a.role,a.salt,a.gender,a.birth_year,a.birth_month,a.birth_day,a.location,a.introduction,a.avatar,a.source,a.ip,a.id_cert,a.work_cert,a.is_org,a.is_vip,a.deleted,a.created_at,a.updated_at,a.prefix FROM accounts a WHERE a.deleted=0 AND a.email=?"
-	_getAccountByMobileSQL = "SELECT a.id,a.mobile,a.user_name,a.email,a.password,a.role,a.salt,a.gender,a.birth_year,a.birth_month,a.birth_day,a.location,a.introduction,a.avatar,a.source,a.ip,a.id_cert,a.work_cert,a.is_org,a.is_vip,a.deleted,a.created_at,a.updated_at,a.prefix  FROM accounts a WHERE a.deleted=0 AND a.mobile=?"
-	_getAccountByIDSQL     = "SELECT a.id,a.mobile,a.user_name,a.email,a.password,a.role,a.salt,a.gender,a.birth_year,a.birth_month,a.birth_day,a.location,a.introduction,a.avatar,a.source,a.ip,a.id_cert,a.work_cert,a.is_org,a.is_vip,a.deleted,a.created_at,a.updated_at,a.prefix FROM accounts a WHERE a.deleted=0 AND a.id=?"
+	_getAccountByEmailSQL  = "SELECT a.id,a.mobile,a.user_name,a.email,a.password,a.role,a.salt,a.gender,a.birth_year,a.birth_month,a.birth_day,a.location,a.introduction,a.avatar,a.source,a.ip,a.id_cert,a.work_cert,a.is_org,a.is_vip,a.deleted,a.created_at,a.updated_at,a.prefix,a.is_lock,a.is_annul FROM accounts a WHERE a.deleted=0 AND a.email=?"
+	_getAccountByMobileSQL = "SELECT a.id,a.mobile,a.user_name,a.email,a.password,a.role,a.salt,a.gender,a.birth_year,a.birth_month,a.birth_day,a.location,a.introduction,a.avatar,a.source,a.ip,a.id_cert,a.work_cert,a.is_org,a.is_vip,a.deleted,a.created_at,a.updated_at,a.prefix,a.is_lock,a.is_annul FROM accounts a WHERE a.deleted=0 AND a.mobile=?"
+	_getAccountByIDSQL     = "SELECT a.id,a.mobile,a.user_name,a.email,a.password,a.role,a.salt,a.gender,a.birth_year,a.birth_month,a.birth_day,a.location,a.introduction,a.avatar,a.source,a.ip,a.id_cert,a.work_cert,a.is_org,a.is_vip,a.deleted,a.created_at,a.updated_at,a.prefix,a.is_lock,a.is_annul FROM accounts a WHERE a.deleted=0 AND a.id=?"
 	_changePasswordSQL     = "UPDATE accounts SET password=?, salt =? WHERE id=? AND deleted=0"
+	_annulAccountSQL       = "UPDATE accounts SET is_annul=?, WHERE id=? AND deleted=0"
 )
 
 func (p *Dao) GetAccountByEmail(c context.Context, node sqalx.Node, email string) (item *model.Account, err error) {
@@ -98,6 +100,13 @@ func (p *Dao) GetAccounts(c context.Context, node sqalx.Node) (items []*model.Ac
 	if err = node.SelectContext(c, &items, sqlSelect); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetAccounts err(%+v)", err))
 		return
+	}
+	return
+}
+
+func (p *Dao) AnnulAccount(c context.Context, node sqalx.Node, aid int64) (err error) {
+	if _, err = node.ExecContext(c, _annulAccountSQL, types.BitBool(true), aid); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.AnnulAccount error(%+v), id(%d)", err, aid))
 	}
 	return
 }
