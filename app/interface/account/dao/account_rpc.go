@@ -56,6 +56,7 @@ func (p *Dao) AnnulAccount(c context.Context, aid int64, password string) (err e
 		Password: password,
 	}); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.AnnulAccount err(%+v) aid(%d)", err, aid))
+		return
 	}
 	return
 }
