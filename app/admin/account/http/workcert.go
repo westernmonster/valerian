@@ -44,7 +44,7 @@ func setWorkCert(c *mars.Context) {
 // @Param status query string false "状态"
 // @Param limit query integer false "每页大小"
 // @Param offset query integer false "offset"
-// @Success 200 {object}  app.interface.comment.model.CommentListResp "评论列表"
+// @Success 200 {object}  app.admin.account.model.WorkCertListResp "工作认证列表"
 // @Failure 400 "请求验证失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
