@@ -50,7 +50,7 @@ func (s *Service) GetWorkCertsByCondPaged(c *mars.Context, cond map[string]inter
 
 	nextUrlVal := url.Values{
 		"limit":  []string{strconv.Itoa(limit)},
-		"offset": []string{strconv.Itoa(offset - limit)},
+		"offset": []string{strconv.Itoa(offset + limit)},
 	}
 	for k, v := range cond {
 		nextUrlVal.Add(k, fmt.Sprintf("%s", v))
@@ -60,5 +60,13 @@ func (s *Service) GetWorkCertsByCondPaged(c *mars.Context, cond map[string]inter
 		return
 	}
 
+	if len(resp.Items) < limit {
+		resp.Paging.IsEnd = true
+		resp.Paging.Next = ""
+	}
+
+	if offset == 0 {
+		resp.Paging.Prev = ""
+	}
 	return
 }
