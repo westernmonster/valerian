@@ -17,6 +17,7 @@ const (
 	_getAccountByIDSQL     = "SELECT a.id,a.mobile,a.user_name,a.email,a.password,a.role,a.salt,a.gender,a.birth_year,a.birth_month,a.birth_day,a.location,a.introduction,a.avatar,a.source,a.ip,a.id_cert,a.work_cert,a.is_org,a.is_vip,a.deleted,a.created_at,a.updated_at,a.prefix,a.is_lock,a.is_annul FROM accounts a WHERE a.deleted=0 AND a.id=?"
 	_changePasswordSQL     = "UPDATE accounts SET password=?, salt =? WHERE id=? AND deleted=0"
 	_annulAccountSQL       = "UPDATE accounts SET user_name=?, is_annul=? WHERE id=? AND deleted=0"
+	_unAnnulAccountSQL     = "UPDATE accounts SET user_name=?, is_annul=?, password=?, salt=? WHERE id=? AND deleted=0"
 )
 
 func (p *Dao) GetAccountByEmail(c context.Context, node sqalx.Node, email string) (item *model.Account, err error) {
@@ -107,6 +108,14 @@ func (p *Dao) GetAccounts(c context.Context, node sqalx.Node) (items []*model.Ac
 func (p *Dao) AnnulAccount(c context.Context, node sqalx.Node, aid int64) (err error) {
 	if _, err = node.ExecContext(c, _annulAccountSQL, "已注销", types.BitBool(true), aid); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.AnnulAccount error(%+v), id(%d)", err, aid))
+		return
+	}
+	return
+}
+
+func (p *Dao) UnAnnulAccount(c context.Context, node sqalx.Node, aid int64, username, password, salt string) (err error) {
+	if _, err = node.ExecContext(c, _unAnnulAccountSQL, username, types.BitBool(false), password, salt, aid); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.UnAnnulAccount error(%+v), id(%d)", err, aid))
 		return
 	}
 	return

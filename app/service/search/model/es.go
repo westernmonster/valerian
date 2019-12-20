@@ -64,6 +64,8 @@ type ESAccount struct {
 	FansCount int32 `json:"fans_count"`
 	// 是否已禁用
 	IsLock *bool `json:"is_lock,omitempty"`
+	// 是否已注销
+	IsAnnul *bool `json:"is_annul,omitempty"`
 }
 
 type ESCreator struct {
