@@ -277,4 +277,8 @@ service Account {
     rpc AccountUnlock(AidReq) returns (EmptyStruct);
 
     rpc AnnulAccount(AnnulReq) returns (EmptyStruct);
+
+    // 注销用户出了判断邮箱号码存在还要判断是不是注销用户
+    rpc EmailExistAndNotAnnul(EmailReq) returns (ExistResp);
+    rpc MobileExistAndNotAnnul(MobileReq) returns (ExistResp);
 }

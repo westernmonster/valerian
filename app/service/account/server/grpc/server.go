@@ -331,3 +331,34 @@ func (s *server) AnnulAccount(ctx context.Context, req *api.AnnulReq) (*api.Empt
 	}
 	return &api.EmptyStruct{}, nil
 }
+
+func (s *server) EmailExistAndNotAnnul(ctx context.Context,req  *api.EmailReq) (*api.ExistResp, error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
+	exist, err := s.svr.IsEmailExistAndNotAnnul(ctx, req.Email)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.ExistResp{Exist: exist}, nil
+}
+
+func (s *server) MobileExistAndNotAnnul(ctx context.Context,req *api.MobileReq) (*api.ExistResp, error) {
+
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
+	exist, err := s.svr.IsMobileExistAndNotAnnul(ctx, req.Prefix, req.Mobile)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.ExistResp{Exist: exist}, nil
+}
