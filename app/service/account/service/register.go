@@ -46,7 +46,7 @@ func (p *Service) AddAccount(c context.Context, item *model.Account) (resp *api.
 
 	// 如果是注销用户则设置 is_annul ，用户名 ,新的密码信息 即可
 	if account != nil && account.IsAnnul == true {
-		if err := p.d.UnAnnulAccount(c, tx, account.ID, item.UserName, item.Password, item.Salt); err != nil {
+		if err = p.d.UnAnnulAccount(c, tx, account.ID, item.UserName, item.Password, item.Salt); err != nil {
 			return
 		}
 	} else {
