@@ -140,6 +140,24 @@ func (p *Service) AuditWorkCert(c context.Context, arg *model.ArgAuditWorkCert) 
 	if err = p.d.UpdateWorkCertification(c, tx, item); err != nil {
 		return
 	}
+	// add result to history
+	if err = p.d.AddWorkCertHistory(c, tx, &model.WorkCertHistory{
+		ID:          gid.NewID(),
+		AccountID:   item.AccountID,
+		Status:      item.Status,
+		WorkPic:     item.WorkPic,
+		OtherPic:    item.OtherPic,
+		Company:     item.Company,
+		Department:  item.Department,
+		Position:    item.Position,
+		ExpiresAt:   item.ExpiresAt,
+		AuditResult: arg.AuditResult,
+		ManagerID:   arg.ManagerID,
+		CreatedAt:   time.Now().Unix(),
+		UpdatedAt:   time.Now().Unix(),
+	}); err != nil {
+		return
+	}
 
 	if err = tx.Commit(); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
