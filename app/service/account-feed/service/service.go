@@ -53,11 +53,6 @@ func New(c *conf.Config) (s *Service) {
 		panic(err)
 	}
 
-	if err := s.mq.QueueSubscribe(def.BusReviseDeleted, "account-feed", s.onReviseDeleted); err != nil {
-		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusReviseDeleted, "account-feed")
-		panic(err)
-	}
-
 	if err := s.mq.QueueSubscribe(def.BusDiscussionAdded, "account-feed", s.onDiscussionAdded); err != nil {
 		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusDiscussionAdded, "account-feed")
 		panic(err)
@@ -68,11 +63,6 @@ func New(c *conf.Config) (s *Service) {
 		panic(err)
 	}
 
-	if err := s.mq.QueueSubscribe(def.BusDiscussionDeleted, "account-feed", s.onDiscussionDeleted); err != nil {
-		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusDiscussionDeleted, "account-feed")
-		panic(err)
-	}
-
 	if err := s.mq.QueueSubscribe(def.BusTopicAdded, "account-feed", s.onTopicAdded); err != nil {
 		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusTopicAdded, "account-feed")
 		panic(err)
@@ -80,11 +70,6 @@ func New(c *conf.Config) (s *Service) {
 
 	if err := s.mq.QueueSubscribe(def.BusTopicFollowed, "account-feed", s.onTopicFollowed); err != nil {
 		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusTopicFollowed, "account-feed")
-		panic(err)
-	}
-
-	if err := s.mq.QueueSubscribe(def.BusTopicDeleted, "account-feed", s.onTopicDeleted); err != nil {
-		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusTopicDeleted, "account-feed")
 		panic(err)
 	}
 
