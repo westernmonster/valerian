@@ -90,6 +90,10 @@ func TopicMemberVersionKey(topicID int64) string {
 	return fmt.Sprintf("tmv_%d", topicID)
 }
 
+func DiscussionKey(discussionID int64) string {
+	return fmt.Sprintf("d_%d", discussionID)
+}
+
 func DiscussionFileKey(discussionID int64) string {
 	return fmt.Sprintf("d_files_%d", discussionID)
 }

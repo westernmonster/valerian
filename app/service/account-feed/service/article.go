@@ -89,6 +89,7 @@ func (p *Service) onArticleAdded(m *stan.Msg) {
 func (p *Service) onArticleUpdated(m *stan.Msg) {
 	var err error
 	c := context.Background()
+	// 强制使用Master库
 	c = sqalx.NewContext(c, true)
 	info := new(def.MsgArticleUpdated)
 	if err = info.Unmarshal(m.Data); err != nil {
@@ -125,7 +126,7 @@ func (p *Service) onArticleUpdated(m *stan.Msg) {
 		UpdatedAt:  time.Now().Unix(),
 	}
 
-	if err = p.d.AddAccountFeed(context.Background(), p.d.DB(), feed); err != nil {
+	if err = p.d.AddAccountFeed(c, p.d.DB(), feed); err != nil {
 		PromError("account-feed: AddAccountFeed", "AddAccountFeed(), feed(%+v),error(%+v)", feed, err)
 		return
 	}
@@ -136,6 +137,7 @@ func (p *Service) onArticleUpdated(m *stan.Msg) {
 func (p *Service) onArticleLiked(m *stan.Msg) {
 	var err error
 	c := context.Background()
+	// 强制使用Master库
 	c = sqalx.NewContext(c, true)
 	info := new(def.MsgArticleLiked)
 	if err = info.Unmarshal(m.Data); err != nil {
@@ -175,7 +177,7 @@ func (p *Service) onArticleLiked(m *stan.Msg) {
 		UpdatedAt:  time.Now().Unix(),
 	}
 
-	if err = p.d.AddAccountFeed(context.Background(), p.d.DB(), feed); err != nil {
+	if err = p.d.AddAccountFeed(c, p.d.DB(), feed); err != nil {
 		PromError("account-feed: AddAccountFeed", "AddAccountFeed(), feed(%+v),error(%+v)", feed, err)
 		return
 	}

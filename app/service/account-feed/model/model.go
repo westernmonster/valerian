@@ -83,3 +83,63 @@ type Account struct {
 	UpdatedAt    int64         `db:"updated_at" json:"updated_at"`     // UpdatedAt 更新时间
 	Prefix       string        `db:"prefix" json:"prefix"`             // Prefix 手机前缀
 }
+
+type Revise struct {
+	ID          int64         `db:"id" json:"id,string"`                 // ID ID
+	ArticleID   int64         `db:"article_id" json:"article_id,string"` // ArticleID 文章ID
+	Title       string        `db:"title" json:"title"`                  // Title 标题
+	Content     string        `db:"content" json:"content"`              // Content 内容
+	ContentText string        `db:"content_text" json:"content_text"`    // ContentText 内容纯文本
+	CreatedBy   int64         `db:"created_by" json:"created_by,string"` // CreatedBy 创建人
+	Deleted     types.BitBool `db:"deleted" json:"deleted"`              // Deleted 是否删除
+	CreatedAt   int64         `db:"created_at" json:"created_at"`        // CreatedAt 创建时间
+	UpdatedAt   int64         `db:"updated_at" json:"updated_at"`        // UpdatedAt 更新时间
+}
+
+type Discussion struct {
+	ID          int64         `db:"id" json:"id,string"`                   // ID ID
+	TopicID     int64         `db:"topic_id" json:"topic_id,string"`       // TopicID 话题ID
+	CategoryID  int64         `db:"category_id" json:"category_id,string"` // CategoryID 分类ID
+	CreatedBy   int64         `db:"created_by" json:"created_by,string"`   // CreatedBy 创建用户ID
+	Title       string        `db:"title" json:"title,omitempty"`          // Title 标题
+	Content     string        `db:"content" json:"content"`                // Content 内容HTML
+	ContentText string        `db:"content_text" json:"content_text"`      // ContentText 内容纯文本
+	Deleted     types.BitBool `db:"deleted" json:"deleted"`                // Deleted 是否删除
+	CreatedAt   int64         `db:"created_at" json:"created_at"`          // CreatedAt 创建时间
+	UpdatedAt   int64         `db:"updated_at" json:"updated_at"`          // UpdatedAt 更新时间
+}
+
+type Topic struct {
+	ID              int64         `db:"id" json:"id,string"`                        // ID ID
+	Name            string        `db:"name" json:"name"`                           // Name 话题名
+	Avatar          string        `db:"avatar" json:"avatar,omitempty"`             // Avatar 话题头像
+	Bg              string        `db:"bg" json:"bg,omitempty"`                     // Bg 背景图
+	Introduction    string        `db:"introduction" json:"introduction"`           // Introduction 话题简介
+	AllowDiscuss    types.BitBool `db:"allow_discuss" json:"allow_discuss"`         // AllowDiscuss 允许讨论
+	AllowChat       types.BitBool `db:"allow_chat" json:"allow_chat"`               // AllowChat 开启群聊
+	IsPrivate       types.BitBool `db:"is_private" json:"is_private"`               // IsPrivate 是否私密
+	ViewPermission  string        `db:"view_permission" json:"view_permission"`     // ViewPermission 查看权限
+	EditPermission  string        `db:"edit_permission" json:"edit_permission"`     // EditPermission 编辑权限
+	JoinPermission  string        `db:"join_permission" json:"join_permission"`     // JoinPermission 加入权限
+	CatalogViewType string        `db:"catalog_view_type" json:"catalog_view_type"` // CatalogViewType 分类视图
+	TopicHome       string        `db:"topic_home" json:"topic_home"`               // TopicHome 话题首页
+	CreatedBy       int64         `db:"created_by" json:"created_by,string"`        // CreatedBy 创建人
+	Deleted         types.BitBool `db:"deleted" json:"deleted"`                     // Deleted 是否删除
+	CreatedAt       int64         `db:"created_at" json:"created_at"`               // CreatedAt 创建时间
+	UpdatedAt       int64         `db:"updated_at" json:"updated_at"`               // UpdatedAt 更新时间
+}
+
+type Comment struct {
+	ID         int64         `db:"id" json:"id,string"`                   // ID ID
+	Content    string        `db:"content" json:"content"`                // Content 内容
+	TargetType string        `db:"target_type" json:"target_type"`        // TargetType 目标类型
+	OwnerID    int64         `db:"owner_id" json:"owner_id,string"`       // OwnerID 资源ID (discussion, article, revise)
+	ResourceID int64         `db:"resource_id" json:"resource_id,string"` // ResourceID 所属对象ID (discussion, article, revise, comment)
+	Featured   types.BitBool `db:"featured" json:"featured"`              // Featured 是否精选
+	Deleted    types.BitBool `db:"deleted" json:"deleted"`                // Deleted 是否删除
+	ReplyTo    int64         `db:"reply_to" json:"reply_to,string"`       // ReplyTo
+	CreatedBy  int64         `db:"created_by" json:"created_by,string"`   // CreatedBy 创建人
+	CreatedAt  int64         `db:"created_at" json:"created_at"`          // CreatedAt 创建时间
+	UpdatedAt  int64         `db:"updated_at" json:"updated_at"`          // UpdatedAt 更新时间
+	OwnerType  string        `db:"owner_type" json:"owner_type"`          // OwnerType 所有者类型
+}
