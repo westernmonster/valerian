@@ -1,5 +1,9 @@
 # service-account-feed
 
+## 1.1.1
+
+- 去除错误的Prometheus设置
+
 
 ## 1.1.0
 

@@ -19,7 +19,6 @@ type Service struct {
 	c      *conf.Config
 	d      *dao.Dao
 	mq     *mq.MessageQueue
-	prom   *prom.Prom
 	missch chan func()
 }
 
@@ -29,7 +28,6 @@ func New(c *conf.Config) (s *Service) {
 		c:      c,
 		d:      dao.New(c),
 		mq:     mq.New(env.Hostname, c.Nats),
-		prom:   prom.New().WithTimer("account-feed", []string{"method"}),
 		missch: make(chan func(), 1024),
 	}
 
