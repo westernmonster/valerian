@@ -1,6 +1,6 @@
 # interface-account
 
-## 1.0.1
+## 1.1.0
 
 - 增加 feed中 Comment 类型
 
