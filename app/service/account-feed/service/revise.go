@@ -66,6 +66,7 @@ func (p *Service) onReviseAdded(m *stan.Msg) {
 	if revise, err = p.getRevise(c, p.d.DB(), info.ReviseID); err != nil {
 		if ecode.IsNotExistEcode(err) {
 			m.Ack()
+			return
 		}
 		PromError("account-feed: GetRevise", "GetRevise(), id(%d),error(%+v)", info.ReviseID, err)
 		return
@@ -106,6 +107,7 @@ func (p *Service) onReviseUpdated(m *stan.Msg) {
 	if revise, err = p.getRevise(c, p.d.DB(), info.ReviseID); err != nil {
 		if ecode.IsNotExistEcode(err) {
 			m.Ack()
+			return
 		}
 		PromError("account-feed: GetRevise", "GetRevise(), id(%d),error(%+v)", info.ReviseID, err)
 		return

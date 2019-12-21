@@ -73,6 +73,31 @@ func New(c *conf.Config) (s *Service) {
 		panic(err)
 	}
 
+	if err := s.mq.QueueSubscribe(def.BusArticleCommented, "account-feed", s.onArticleCommented); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusArticleCommented, "account-feed")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusDiscussionCommented, "account-feed", s.onDiscussionCommented); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusDiscussionCommented, "account-feed")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusReviseCommented, "account-feed", s.onReviseCommented); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusReviseCommented, "account-feed")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusCommentLiked, "account-feed", s.onCommentLiked); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusCommentLiked, "account-feed")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusMemberFollowed, "account-feed", s.onMemberFollowed); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusMemberFollowed, "account-feed")
+		panic(err)
+	}
+
 	go s.cacheproc()
 	return
 }

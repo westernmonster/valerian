@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"time"
+
 	"valerian/app/service/account-feed/model"
 	"valerian/app/service/feed/def"
 	"valerian/library/database/sqalx"
@@ -61,6 +62,7 @@ func (p *Service) onArticleAdded(m *stan.Msg) {
 	if article, err = p.getArticle(c, p.d.DB(), info.ArticleID); err != nil {
 		if ecode.IsNotExistEcode(err) {
 			m.Ack()
+			return
 		}
 		PromError("account-feed: GetArticle", "GetArticle(), id(%d),error(%+v)", info.ArticleID, err)
 		return
@@ -101,6 +103,7 @@ func (p *Service) onArticleUpdated(m *stan.Msg) {
 	if history, err = p.getArticleHistory(c, p.d.DB(), info.ArticleHistoryID); err != nil {
 		if ecode.IsNotExistEcode(err) {
 			m.Ack()
+			return
 		}
 		PromError("account-feed: getArticleHistory", "getArticleHistory(), id(%d),error(%+v)", info.ArticleHistoryID, err)
 		return
@@ -109,6 +112,7 @@ func (p *Service) onArticleUpdated(m *stan.Msg) {
 	if _, err = p.getArticle(c, p.d.DB(), info.ArticleID); err != nil {
 		if ecode.IsNotExistEcode(err) {
 			m.Ack()
+			return
 		}
 		PromError("account-feed: GetArticle", "GetArticle(), id(%d),error(%+v)", info.ArticleID, err)
 		return
@@ -149,6 +153,7 @@ func (p *Service) onArticleLiked(m *stan.Msg) {
 	if article, err = p.getArticle(c, p.d.DB(), info.ArticleID); err != nil {
 		if ecode.IsNotExistEcode(err) {
 			m.Ack()
+			return
 		}
 		PromError("account-feed: GetArticle", "GetArticle(), id(%d),error(%+v)", info.ArticleID, err)
 		return
