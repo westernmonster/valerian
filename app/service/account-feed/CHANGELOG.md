@@ -14,6 +14,7 @@
 - 去除 revise.faved
 - 去除 article.faved
 - 根据用户设置决定哪些动态给予显示
+- 去除对其他service 的依赖
 
 ## 1.0.0
 1. 实现版本管理

@@ -39,11 +39,6 @@ type Config struct {
 	Auth      *auth.Config
 	Memcache  *Memcache
 	Discovery *discovery.Config
-
-	AccountRPC *warden.ClientConfig
-	TopicRPC   *warden.ClientConfig
-	ArticleRPC *warden.ClientConfig
-	DiscussRPC *warden.ClientConfig
 }
 
 // DB db config.
