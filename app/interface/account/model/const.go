@@ -35,6 +35,7 @@ const (
 	TargetTypeRevise     = "revise"
 	TargetTypeArticle    = "article"
 	TargetTypeMember     = "member"
+	TargetTypeComment    = "comment"
 )
 
 const (

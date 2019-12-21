@@ -76,6 +76,8 @@ type FeedTarget struct {
 	Member *MemberInfo `json:"member,omitempty"`
 	// 话题
 	Topic *TargetTopic `json:"topic,omitempty"`
+	// 评论
+	Comment *TargetComment `json:"comment,omitempty"`
 }
 
 type TargetArticle struct {
@@ -162,6 +164,39 @@ type TargetDiscuss struct {
 	CreatedAt int64 `json:"created_at"`
 
 	UpdatedAt int64 `json:"updated_at"`
+}
+
+type TargetComment struct {
+	// ID
+	ID int64 `json:"id,string" swaggertype:"string"`
+
+	// 类型
+	// revise 补充
+	// article 文章
+	// discussion 话题讨论
+	// comment 评论
+	Type string `json:"type"`
+
+	// 内容
+	Excerpt string `json:"excerpt"`
+
+	// 发布日期
+	CreatedAt int64 `json:"created_at"`
+
+	// 资源ID
+	// 表示话题、文章、讨论、评论的ID
+	ResourceID int64 `json:"resource_id,string" swaggertype:"string"`
+
+	// 对象
+	// 这是一个interface，包含比较全的对面具体信息，例如文章、话题等
+	// 业务处理判断主要根据这个对象来
+	Target interface{} `json:"target"`
+
+	// 喜欢数
+	LikeCount int32 `json:"like_count"`
+
+	// 子评论数
+	ChildrenCount int32 `json:"children_count"`
 }
 
 type TargetTopic struct {
