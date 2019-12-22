@@ -22,6 +22,7 @@ var (
 	UserIDCheckInvalidPhone = add(114) // 请先绑定手机
 	UserIDCheckInvalidCard  = add(115) // 请先完成实名认证
 	ClientNotExist          = add(116) // Client不存在
+	UserIsAnnulled          = add(117) // 账号已注销
 
 	NotModified         = add(304) // 木有改动
 	TemporaryRedirect   = add(307) // 撞车跳转

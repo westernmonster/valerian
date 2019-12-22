@@ -169,6 +169,12 @@ message AidResp {
     int64 aid = 1 ;
 }
 
+message AnnulReq {
+    int64 aid = 1 ;
+    string password = 2;
+    bool UseMaster = 3;
+}
+
 message EmailReq {
     string email = 1 ;
     bool UseMaster = 2;
@@ -269,4 +275,10 @@ service Account {
 
     rpc AccountLock(AidReq) returns (EmptyStruct);
     rpc AccountUnlock(AidReq) returns (EmptyStruct);
+
+    rpc AnnulAccount(AnnulReq) returns (EmptyStruct);
+
+    // 注销用户出了判断邮箱号码存在还要判断是不是注销用户
+    rpc EmailExistAndNotAnnul(EmailReq) returns (ExistResp);
+    rpc MobileExistAndNotAnnul(MobileReq) returns (ExistResp);
 }

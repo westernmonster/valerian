@@ -26,6 +26,10 @@ func (p *Service) EmailLogin(ctx context.Context, req *model.ArgEmailLogin) (res
 		err = ecode.UserDisabled
 		return
 	}
+	if account.IsAnnul {
+		err = ecode.UserIsAnnulled
+		return
+	}
 	if err = p.checkPassword(req.Password, account.Password, account.Salt); err != nil {
 		return
 	}
@@ -68,6 +72,10 @@ func (p *Service) MobileLogin(ctx context.Context, req *model.ArgMobileLogin) (r
 	}
 	if account.IsLock {
 		err = ecode.UserDisabled
+		return
+	}
+	if account.IsAnnul {
+		err = ecode.UserIsAnnulled
 		return
 	}
 	if err = p.checkPassword(req.Password, account.Password, account.Salt); err != nil {
@@ -119,6 +127,10 @@ func (p *Service) DigitLogin(ctx context.Context, req *model.ArgDigitLogin) (res
 	}
 	if account.IsLock {
 		err = ecode.UserDisabled
+		return
+	}
+	if account.IsAnnul {
+		err = ecode.UserIsAnnulled
 		return
 	}
 	accessToken, refreshToken, err := p.grantToken(ctx, req.ClientID, account.ID)

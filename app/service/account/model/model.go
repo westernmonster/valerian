@@ -27,6 +27,8 @@ type Account struct {
 	CreatedAt    int64         `db:"created_at" json:"created_at"`     // CreatedAt 创建时间
 	UpdatedAt    int64         `db:"updated_at" json:"updated_at"`     // UpdatedAt 更新时间
 	Prefix       string        `db:"prefix" json:"prefix"`             // Prefix 手机前缀
+	IsLock       types.BitBool `db:"is_lock" json:"is_lock"`           // IsLock 是否被禁用
+	IsAnnul      types.BitBool `db:"is_annul" json:"is_annul"`         // IsAnnul 是否已注销
 }
 
 type AccountStat struct {
@@ -73,3 +75,7 @@ type MessageStat struct {
 	CreatedAt   int64 `db:"created_at" json:"created_at"`        // CreatedAt 创建时间
 	UpdatedAt   int64 `db:"updated_at" json:"updated_at"`        // UpdatedAt 更新时间
 }
+
+const (
+	PasswordPepper = "8PrhfDL7Qr/G6%RbaiQouFfQ"
+)

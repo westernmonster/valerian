@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-
 	"valerian/app/interface/account/model"
 	account "valerian/app/service/account/api"
 	"valerian/library/database/sqalx"
@@ -181,5 +180,17 @@ func (p *Service) UpdateLanguageSetting(c context.Context, arg *model.ArgLanguag
 		return
 	}
 
+	return
+}
+
+func (p *Service) AnnulAccount(c context.Context, req *model.ArgAnnulAccount) (err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+	if err = p.d.AnnulAccount(c, aid, req.Password); err != nil {
+		return
+	}
 	return
 }

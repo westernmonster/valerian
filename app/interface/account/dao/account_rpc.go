@@ -49,3 +49,14 @@ func (p *Dao) UpdateAccountSetting(c context.Context, aid int64, boolVals map[st
 	}
 	return
 }
+
+func (p *Dao) AnnulAccount(c context.Context, aid int64, password string) (err error) {
+	if _, err = p.accountRPC.AnnulAccount(c, &account.AnnulReq{
+		Aid:      aid,
+		Password: password,
+	}); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.AnnulAccount err(%+v) aid(%d)", err, aid))
+		return
+	}
+	return
+}

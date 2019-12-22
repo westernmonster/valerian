@@ -45,6 +45,8 @@ type Service struct {
 		SetBatchAccountCache(c context.Context, bs []*model.Account) (err error)
 
 		AccountSetLock(c context.Context, node sqalx.Node, accountID int64, isLock bool) (err error)
+		AnnulAccount(c context.Context, node sqalx.Node, aid int64) (err error)
+		UnAnnulAccount(c context.Context, node sqalx.Node, aid int64, username, password, salt string) (err error)
 
 		Ping(c context.Context) (err error)
 		Close()

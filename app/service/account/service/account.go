@@ -57,6 +57,32 @@ func (p *Service) IsMobileExist(c context.Context, prefix, mobile string) (exist
 	return
 }
 
+func (p *Service) IsEmailExistAndNotAnnul(c context.Context, email string) (exist bool, err error) {
+	// mobile := arg.Prefix + arg.Mobile
+	if account, e := p.d.GetAccountByEmail(c, p.d.DB(), email); e != nil {
+		return false, e
+	} else if account != nil && account.IsAnnul == false {
+		exist = true
+		return
+	} else {
+		exist = false
+	}
+	return
+}
+
+func (p *Service) IsMobileExistAndNotAnnul(c context.Context, prefix, mobile string) (exist bool, err error) {
+	fullMobile := prefix + mobile
+	if account, e := p.d.GetAccountByMobile(c, p.d.DB(), fullMobile); e != nil {
+		return false, e
+	} else if account != nil && account.IsAnnul == false {
+		exist = true
+		return
+	} else {
+		exist = false
+	}
+	return
+}
+
 func (p *Service) BaseInfo(c context.Context, aid int64) (info *model.BaseInfo, err error) {
 	var account *model.Account
 	if account, err = p.getAccountByID(c, p.d.DB(), aid); err != nil {

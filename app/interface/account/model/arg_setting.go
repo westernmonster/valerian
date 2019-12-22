@@ -37,3 +37,9 @@ type ArgSetting struct {
 	// 通知设置
 	Notify *ArgNotifySetting `json:"notify,omitempty"`
 }
+
+// 注销账户
+// swagger:model
+type ArgAnnulAccount struct {
+	Password  string `json:"password"`
+}
