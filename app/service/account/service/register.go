@@ -50,6 +50,8 @@ func (p *Service) AddAccount(c context.Context, item *model.Account) (resp *api.
 			return
 		}
 		item.ID = account.ID
+		// 清理缓存
+		p.d.DelAccountCache(c, account.ID)
 	} else {
 		item.CreatedAt = time.Now().Unix()
 		item.UpdatedAt = time.Now().Unix()
