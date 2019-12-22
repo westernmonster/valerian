@@ -50,6 +50,7 @@ func (p *Service) onTopicAdded(m *stan.Msg) {
 	if topic, err = p.getTopic(c, p.d.DB(), info.TopicID); err != nil {
 		if ecode.IsNotExistEcode(err) {
 			m.Ack()
+			return
 		}
 		PromError("account-feed: GetTopic", "GetTopic(), id(%d),error(%+v)", info.TopicID, err)
 		return
@@ -90,6 +91,7 @@ func (p *Service) onTopicFollowed(m *stan.Msg) {
 	if topic, err = p.getTopic(c, p.d.DB(), info.TopicID); err != nil {
 		if ecode.IsNotExistEcode(err) {
 			m.Ack()
+			return
 		}
 		PromError("account-feed: GetTopic", "GetTopic(), id(%d),error(%+v)", info.TopicID, err)
 		return

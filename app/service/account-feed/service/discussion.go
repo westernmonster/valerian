@@ -49,6 +49,7 @@ func (p *Service) onDiscussionAdded(m *stan.Msg) {
 	if discuss, err = p.getDiscussion(c, p.d.DB(), info.DiscussionID); err != nil {
 		if ecode.IsNotExistEcode(err) {
 			m.Ack()
+			return
 		}
 		PromError("account-feed: GetDiscussion", "GetDiscussion(), id(%d),error(%+v)", info.DiscussionID, err)
 		return
@@ -88,6 +89,7 @@ func (p *Service) onDiscussionUpdated(m *stan.Msg) {
 	if discuss, err = p.getDiscussion(c, p.d.DB(), info.DiscussionID); err != nil {
 		if ecode.IsNotExistEcode(err) {
 			m.Ack()
+			return
 		}
 		PromError("account-feed: GetDiscussion", "GetDiscussion(), id(%d),error(%+v)", info.DiscussionID, err)
 		return
@@ -127,6 +129,7 @@ func (p *Service) onDiscussionLiked(m *stan.Msg) {
 	if discuss, err = p.getDiscussion(c, p.d.DB(), info.DiscussionID); err != nil {
 		if ecode.IsNotExistEcode(err) {
 			m.Ack()
+			return
 		}
 		PromError("account-feed: GetDiscussion", "GetDiscussion(), id(%d),error(%+v)", info.DiscussionID, err)
 		return

@@ -10,12 +10,27 @@ import (
 	account "valerian/app/service/account/api"
 	article "valerian/app/service/article/api"
 	certification "valerian/app/service/certification/api"
+	comment "valerian/app/service/comment/api"
 	discuss "valerian/app/service/discuss/api"
 	recent "valerian/app/service/recent/api"
 	topic "valerian/app/service/topic/api"
 	"valerian/library/ecode"
 	"valerian/library/net/metadata"
 )
+
+func (p *Service) FromComment(v *comment.CommentInfo) (item *model.TargetComment) {
+	item = &model.TargetComment{
+		ID:            v.ID,
+		Type:          v.TargetType,
+		Excerpt:       v.Content,
+		CreatedAt:     v.CreatedAt,
+		ResourceID:    v.ResourceID,
+		ChildrenCount: v.Stat.ChildrenCount,
+		LikeCount:     v.Stat.LikeCount,
+	}
+
+	return
+}
 
 func (p *Service) FromDiscussion(v *discuss.DiscussionInfo) (item *model.TargetDiscuss) {
 	item = &model.TargetDiscuss{
@@ -351,6 +366,58 @@ func (p *Service) GetMemberActivitiesPaged(c context.Context, aid int64, limit, 
 			}
 
 			item.Target.Member = info
+			break
+		case model.TargetTypeComment:
+			var info *comment.CommentInfo
+			if info, err = p.d.GetComment(c, v.TargetID); err != nil {
+				if ecode.IsNotExistEcode(err) {
+					item.Deleted = true
+					break
+				}
+				return
+			}
+
+			item.Target.Comment = p.FromComment(info)
+
+			switch info.TargetType {
+			case model.TargetTypeArticle:
+				var article *article.ArticleInfo
+				if article, err = p.d.GetArticle(c, info.ResourceID); err != nil {
+					if ecode.IsNotExistEcode(err) {
+						item.Deleted = true
+						break
+					}
+					return
+				}
+
+				item.Target.Article = p.FromArticle(article)
+				break
+			case model.TargetTypeRevise:
+				var revise *article.ReviseInfo
+				if revise, err = p.d.GetRevise(c, info.ResourceID); err != nil {
+					if ecode.IsNotExistEcode(err) {
+						item.Deleted = true
+						break
+					}
+					return
+				}
+
+				item.Target.Revise = p.FromRevise(revise)
+				break
+			case model.TargetTypeDiscussion:
+				var discuss *discuss.DiscussionInfo
+				if discuss, err = p.d.GetDiscussion(c, info.ResourceID); err != nil {
+					if ecode.IsNotExistEcode(err) {
+						item.Deleted = true
+						break
+					}
+					return
+				}
+
+				item.Target.Discussion = p.FromDiscussion(discuss)
+				break
+
+			}
 			break
 		}
 

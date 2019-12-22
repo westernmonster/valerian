@@ -12,8 +12,6 @@ import (
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
 	"valerian/library/stat/prom"
-
-	"github.com/pkg/errors"
 )
 
 // Dao dao struct
@@ -33,18 +31,6 @@ func New(c *conf.Config) (dao *Dao) {
 		db:       sqalx.NewMySQL(c.DB.Main),
 		mc:       memcache.NewPool(c.Memcache.Main.Config),
 		mcExpire: int32(time.Duration(c.Memcache.Main.Expire) / time.Second),
-	}
-
-	if topicRPC, err := topic.NewClient(c.TopicRPC); err != nil {
-		panic(errors.WithMessage(err, "Failed to dial topic service"))
-	} else {
-		dao.topicRPC = topicRPC
-	}
-
-	if discussRPC, err := discuss.NewClient(c.AccountRPC); err != nil {
-		panic(errors.WithMessage(err, "Failed to dial discuss service"))
-	} else {
-		dao.discussRPC = discussRPC
 	}
 
 	return

@@ -55,6 +55,7 @@ func (p *Service) onMemberFollowed(m *stan.Msg) {
 	if member, err = p.getAccount(c, p.d.DB(), info.TargetAccountID); err != nil {
 		if ecode.IsNotExistEcode(err) {
 			m.Ack()
+			return
 		}
 		PromError("account-feed: getAccount", "getAccount(), id(%d),error(%+v)", info.TargetAccountID, err)
 		return

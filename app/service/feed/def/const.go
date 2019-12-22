@@ -34,6 +34,7 @@ const (
 	ActionTypeCommentArticle    = "MEMBER_COMMENT_ARTICLE"
 	ActionTypeCommentRevise     = "MEMBER_COMMENT_REVISE"
 	ActionTypeCommentDiscussion = "MEMBER_COMMENT_DISCUSSION"
+	ActionTypeLikeComment       = "MEMBER_LIKE_COMMENT"
 )
 
 const (
@@ -57,7 +58,7 @@ const (
 	ActionTextCreateRevise = "添加了补充"
 	ActionTextUpdateRevise = "更新了补充"
 	ActionTextDeleteRevise = "删除了补充"
-	ActionTextLikeRevise   = "喜欢了补充"
+	ActionTextLikeRevise   = "点赞补充"
 	ActionTextFavRevise    = "收藏了补充"
 
 	ActionTextFollowMember = "关注了用户"
@@ -70,6 +71,7 @@ const (
 	ActionTextCommentArticle    = "评论了文章"
 	ActionTextCommentRevise     = "评论了补充"
 	ActionTextCommentDiscussion = "评论了讨论"
+	ActionTextLikeComment       = "点赞了评论"
 
 	// 举报提示语
 	//ActionTextArticleSuit  = "文章被举报已处理"
@@ -138,7 +140,7 @@ const (
 
 	BusSearchStatAdded = "search_stat.added"
 
-	BusFeedBackAccuseSuit = "feedback_accuse_suit"
+	BusFeedBackAccuseSuit    = "feedback_accuse_suit"
 	BusFeedBackAccuseNotSuit = "feedback_accuse_not_suit"
 )
 
