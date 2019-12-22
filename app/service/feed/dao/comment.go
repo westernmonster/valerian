@@ -2,14 +2,26 @@ package dao
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
-	comment "valerian/app/service/comment/api"
+
+	"valerian/app/service/feed/model"
+	"valerian/library/database/sqalx"
 	"valerian/library/log"
 )
 
-func (p *Dao) GetComment(c context.Context, id int64) (info *comment.CommentInfo, err error) {
-	if info, err = p.commentRPC.GetCommentInfo(c, &comment.IDReq{ID: id, UseMaster: true}); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.GetComment, error(%+v) id(%d)", err, id))
+func (p *Dao) GetCommentByID(c context.Context, node sqalx.Node, id int64) (item *model.Comment, err error) {
+	item = new(model.Comment)
+	sqlSelect := "SELECT a.id,a.content,a.target_type,a.owner_id,a.resource_id,a.featured,a.deleted,a.reply_to,a.created_by,a.created_at,a.updated_at,a.owner_type FROM comments a WHERE a.id=? AND a.deleted=0"
+
+	if err = node.GetContext(c, item, sqlSelect, id); err != nil {
+		if err == sql.ErrNoRows {
+			item = nil
+			err = nil
+			return
+		}
+		log.For(c).Error(fmt.Sprintf("dao.GetCommentByID err(%+v), id(%+v)", err, id))
 	}
+
 	return
 }

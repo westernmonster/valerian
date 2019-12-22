@@ -11,6 +11,7 @@ import (
 	"valerian/library/conf/env"
 	"valerian/library/log"
 	"valerian/library/mq"
+	"valerian/library/stat/prom"
 )
 
 // Service struct of service
@@ -40,11 +41,6 @@ func New(c *conf.Config) (s *Service) {
 		panic(err)
 	}
 
-	if err := s.mq.QueueSubscribe(def.BusArticleDeleted, "feed", s.onArticleDeleted); err != nil {
-		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusArticleDeleted, "feed")
-		panic(err)
-	}
-
 	if err := s.mq.QueueSubscribe(def.BusReviseAdded, "feed", s.onReviseAdded); err != nil {
 		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusReviseAdded, "feed")
 		panic(err)
@@ -52,11 +48,6 @@ func New(c *conf.Config) (s *Service) {
 
 	if err := s.mq.QueueSubscribe(def.BusReviseUpdated, "feed", s.onReviseUpdated); err != nil {
 		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusReviseUpdated, "feed")
-		panic(err)
-	}
-
-	if err := s.mq.QueueSubscribe(def.BusReviseDeleted, "feed", s.onReviseDeleted); err != nil {
-		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusReviseDeleted, "feed")
 		panic(err)
 	}
 
@@ -70,11 +61,6 @@ func New(c *conf.Config) (s *Service) {
 		panic(err)
 	}
 
-	if err := s.mq.QueueSubscribe(def.BusDiscussionDeleted, "feed", s.onDiscussionDeleted); err != nil {
-		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusDiscussionDeleted, "feed")
-		panic(err)
-	}
-
 	if err := s.mq.QueueSubscribe(def.BusTopicAdded, "feed", s.onTopicAdded); err != nil {
 		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusTopicAdded, "feed")
 		panic(err)
@@ -82,11 +68,6 @@ func New(c *conf.Config) (s *Service) {
 
 	if err := s.mq.QueueSubscribe(def.BusTopicFollowed, "feed", s.onTopicFollowed); err != nil {
 		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusTopicFollowed, "feed")
-		panic(err)
-	}
-
-	if err := s.mq.QueueSubscribe(def.BusTopicDeleted, "feed", s.onTopicDeleted); err != nil {
-		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusTopicDeleted, "feed")
 		panic(err)
 	}
 
@@ -133,6 +114,11 @@ func (s *Service) cacheproc() {
 		f := <-s.missch
 		f()
 	}
+}
+
+func PromError(name string, format string, args ...interface{}) {
+	prom.BusinessErrCount.Incr(name)
+	log.Errorf(format, args...)
 }
 
 func includeParam(include string) (dic map[string]bool) {
