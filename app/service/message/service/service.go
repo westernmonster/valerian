@@ -12,6 +12,7 @@ import (
 	"valerian/library/jpush"
 	"valerian/library/log"
 	"valerian/library/mq"
+	"valerian/library/stat/prom"
 )
 
 // Service struct of service
@@ -120,6 +121,11 @@ func New(c *conf.Config) (s *Service) {
 
 	go s.cacheproc()
 	return
+}
+
+func PromError(name string, format string, args ...interface{}) {
+	prom.BusinessErrCount.Incr(name)
+	log.Errorf(format, args...)
 }
 
 // Ping check server ok.

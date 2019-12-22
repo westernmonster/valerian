@@ -71,15 +71,24 @@ func (p *Service) onMemberFollowed(m *stan.Msg) {
 	m.Ack()
 
 	p.addCache(func() {
-		if _, err := p.pushSingleUser(context.Background(),
-			msg.AccountID,
-			msg.ID,
-			def.PushMsgTitleFollowed,
-			def.PushMsgTitleFollowed,
-			fmt.Sprintf(def.LinkUser, info.TargetAccountID),
-		); err != nil {
-			log.For(context.Background()).Error(fmt.Sprintf("service.onMemberFollowed Push message failed %#v", err))
+		var setting *model.SettingResp
+		if setting, err = p.getAccountSetting(context.Background(), p.d.DB(), msg.AccountID); err != nil {
+			PromError("message: getAccountSetting", "getAccountSetting(), id(%d),error(%+v)", msg.AccountID, err)
+			return
 		}
+
+		if setting.NotifyNewFans {
+			if _, err := p.pushSingleUser(context.Background(),
+				msg.AccountID,
+				msg.ID,
+				def.PushMsgTitleFollowed,
+				def.PushMsgTitleFollowed,
+				fmt.Sprintf(def.LinkUser, info.TargetAccountID),
+			); err != nil {
+				log.For(context.Background()).Error(fmt.Sprintf("service.onMemberFollowed Push message failed %#v", err))
+			}
+		}
+
 	})
 
 }

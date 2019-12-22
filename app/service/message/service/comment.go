@@ -84,14 +84,22 @@ func (p *Service) onArticleCommented(m *stan.Msg) {
 	m.Ack()
 
 	p.addCache(func() {
-		if _, err := p.pushSingleUser(context.Background(),
-			msg.AccountID,
-			msg.ID,
-			def.PushMsgTitleArticleCommented,
-			def.PushMsgTitleArticleCommented,
-			fmt.Sprintf(def.LinkComment, model.TargetTypeArticle, comment.OwnerID, comment.ID),
-		); err != nil {
-			log.For(context.Background()).Error(fmt.Sprintf("service.onArticleCommented Push message failed %#v", err))
+		var setting *model.SettingResp
+		if setting, err = p.getAccountSetting(context.Background(), p.d.DB(), msg.AccountID); err != nil {
+			PromError("message: getAccountSetting", "getAccountSetting(), id(%d),error(%+v)", msg.AccountID, err)
+			return
+		}
+
+		if setting.NotifyComment {
+			if _, err := p.pushSingleUser(context.Background(),
+				msg.AccountID,
+				msg.ID,
+				def.PushMsgTitleArticleCommented,
+				def.PushMsgTitleArticleCommented,
+				fmt.Sprintf(def.LinkComment, model.TargetTypeArticle, comment.OwnerID, comment.ID),
+			); err != nil {
+				log.For(context.Background()).Error(fmt.Sprintf("service.onArticleCommented Push message failed %#v", err))
+			}
 		}
 	})
 
@@ -141,14 +149,21 @@ func (p *Service) onReviseCommented(m *stan.Msg) {
 	m.Ack()
 
 	p.addCache(func() {
-		if _, err := p.pushSingleUser(context.Background(),
-			msg.AccountID,
-			msg.ID,
-			def.PushMsgTitleReviseCommented,
-			def.PushMsgTitleReviseCommented,
-			fmt.Sprintf(def.LinkComment, model.TargetTypeRevise, comment.OwnerID, comment.ID),
-		); err != nil {
-			log.For(context.Background()).Error(fmt.Sprintf("service.onReviseCommented Push message failed %#v", err))
+		var setting *model.SettingResp
+		if setting, err = p.getAccountSetting(context.Background(), p.d.DB(), msg.AccountID); err != nil {
+			PromError("message: getAccountSetting", "getAccountSetting(), id(%d),error(%+v)", msg.AccountID, err)
+			return
+		}
+		if setting.NotifyComment {
+			if _, err := p.pushSingleUser(context.Background(),
+				msg.AccountID,
+				msg.ID,
+				def.PushMsgTitleReviseCommented,
+				def.PushMsgTitleReviseCommented,
+				fmt.Sprintf(def.LinkComment, model.TargetTypeRevise, comment.OwnerID, comment.ID),
+			); err != nil {
+				log.For(context.Background()).Error(fmt.Sprintf("service.onReviseCommented Push message failed %#v", err))
+			}
 		}
 	})
 }
@@ -221,14 +236,21 @@ func (p *Service) onDiscussionCommented(m *stan.Msg) {
 	m.Ack()
 
 	p.addCache(func() {
-		if _, err := p.pushSingleUser(context.Background(),
-			msg.AccountID,
-			msg.ID,
-			def.PushMsgTitleDiscussionCommented,
-			def.PushMsgTitleDiscussionCommented,
-			fmt.Sprintf(def.LinkComment, model.TargetTypeRevise, comment.OwnerID, comment.ID),
-		); err != nil {
-			log.For(context.Background()).Error(fmt.Sprintf("service.onDiscussionCommented Push message failed %#v", err))
+		var setting *model.SettingResp
+		if setting, err = p.getAccountSetting(context.Background(), p.d.DB(), msg.AccountID); err != nil {
+			PromError("message: getAccountSetting", "getAccountSetting(), id(%d),error(%+v)", msg.AccountID, err)
+			return
+		}
+		if setting.NotifyComment {
+			if _, err := p.pushSingleUser(context.Background(),
+				msg.AccountID,
+				msg.ID,
+				def.PushMsgTitleDiscussionCommented,
+				def.PushMsgTitleDiscussionCommented,
+				fmt.Sprintf(def.LinkComment, model.TargetTypeRevise, comment.OwnerID, comment.ID),
+			); err != nil {
+				log.For(context.Background()).Error(fmt.Sprintf("service.onDiscussionCommented Push message failed %#v", err))
+			}
 		}
 	})
 }
@@ -282,14 +304,22 @@ func (p *Service) onCommentReplied(m *stan.Msg) {
 	m.Ack()
 
 	p.addCache(func() {
-		if _, err := p.pushSingleUser(context.Background(),
-			msg.AccountID,
-			msg.ID,
-			def.PushMsgTitleCommentReplied,
-			def.PushMsgTitleCommentReplied,
-			fmt.Sprintf(def.LinkSubComment, comment.OwnerType, comment.OwnerID, comment.ResourceID, comment.ID),
-		); err != nil {
-			log.For(context.Background()).Error(fmt.Sprintf("service.onCommentReplied Push message failed %#v", err))
+		var setting *model.SettingResp
+		if setting, err = p.getAccountSetting(context.Background(), p.d.DB(), msg.AccountID); err != nil {
+			PromError("message: getAccountSetting", "getAccountSetting(), id(%d),error(%+v)", msg.AccountID, err)
+			return
+		}
+
+		if setting.NotifyComment {
+			if _, err := p.pushSingleUser(context.Background(),
+				msg.AccountID,
+				msg.ID,
+				def.PushMsgTitleCommentReplied,
+				def.PushMsgTitleCommentReplied,
+				fmt.Sprintf(def.LinkSubComment, comment.OwnerType, comment.OwnerID, comment.ResourceID, comment.ID),
+			); err != nil {
+				log.For(context.Background()).Error(fmt.Sprintf("service.onCommentReplied Push message failed %#v", err))
+			}
 		}
 	})
 
