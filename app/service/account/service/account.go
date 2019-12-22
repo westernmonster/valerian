@@ -255,6 +255,8 @@ func (p *Service) GetMemberProfile(c context.Context, accountID int64) (profile 
 		Role:         item.Role,
 		CreatedAt:    item.CreatedAt,
 		UpdatedAt:    item.UpdatedAt,
+		IsLock:       bool(item.IsLock),
+		IsAnnul:      bool(item.IsAnnul),
 	}
 
 	var workCertStatus int32
@@ -326,7 +328,6 @@ func (p *Service) getAccountByID(c context.Context, node sqalx.Node, aid int64) 
 	} else if account != nil {
 		return
 	}
-
 	if account, err = p.d.GetAccountByID(c, node, aid); err != nil {
 		return
 	} else if account == nil {

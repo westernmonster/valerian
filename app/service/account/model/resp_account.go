@@ -96,4 +96,8 @@ type ProfileInfo struct {
 	CreatedAt int64 `json:"created_at"`
 	// 更新时间
 	UpdatedAt int64 `json:"updated_at"`
+	// 是否被禁用
+	IsLock bool `json:"is_lock"`
+	// 是否已注销
+	IsAnnul bool `json:"is_annul"`
 }

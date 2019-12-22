@@ -37,6 +37,11 @@ type MemberInfo struct {
 
 	// 状态
 	Stat *MemberInfoStat `json:"stat"`
+
+	//// 是否被禁用
+	//IsLock bool `json:"is_lock"`
+	//// 是否已注销
+	//IsAnnul bool `json:"is_annul"`
 }
 
 type MemberInfoStat struct {

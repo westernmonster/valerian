@@ -192,5 +192,6 @@ func (p *Service) AnnulAccount(c context.Context, req *model.ArgAnnulAccount) (e
 	if err = p.d.AnnulAccount(c, aid, req.Password); err != nil {
 		return
 	}
+	p.d.DelAccountCache(c, aid)
 	return
 }

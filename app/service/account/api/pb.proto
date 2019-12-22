@@ -155,6 +155,9 @@ message MemberInfoReply {
     string Company = 14;
 
     string Position = 15;
+
+    bool IsLock = 16;
+    bool IsAnnul = 17;
 }
 
 
