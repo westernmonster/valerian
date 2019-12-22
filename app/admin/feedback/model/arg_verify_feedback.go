@@ -13,5 +13,6 @@ func (p *ArgVerifyFeedback) Validate() error {
 	return validation.ValidateStruct(
 		p,
 		validation.Field(&p.FeedbackID, validation.Required),
+		validation.Field(&p.VerifyStatus, validation.Required, validation.In(int32(0), int32(1), int32(2))),
 	)
 }

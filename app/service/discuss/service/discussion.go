@@ -2,15 +2,37 @@ package service
 
 import (
 	"context"
-	"fmt"
 
 	account "valerian/app/service/account/api"
 	"valerian/app/service/discuss/api"
 	"valerian/app/service/discuss/model"
+	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
-	"valerian/library/log"
 	"valerian/library/xstr"
 )
+
+func (p *Service) getDiscussion(c context.Context, node sqalx.Node, articleID int64) (item *model.Discussion, err error) {
+	var addCache = true
+	if item, err = p.d.DiscussionCache(c, articleID); err != nil {
+		addCache = false
+	} else if item != nil {
+		return
+	}
+
+	if item, err = p.d.GetDiscussionByID(c, p.d.DB(), articleID); err != nil {
+		return
+	} else if item == nil {
+		err = ecode.DiscussionNotExist
+		return
+	}
+
+	if addCache {
+		p.addCache(func() {
+			p.d.SetDiscussionCache(context.TODO(), item)
+		})
+	}
+	return
+}
 
 func (p *Service) GetAccountBaseInfo(c context.Context, aid int64) (info *account.BaseInfoReply, err error) {
 	return p.d.GetAccountBaseInfo(c, aid)
@@ -184,11 +206,7 @@ func (p *Service) GetAllDiscussions(c context.Context) (items []*api.DiscussionI
 }
 
 func (p *Service) GetDiscussion(c context.Context, discussionID int64) (item *model.Discussion, imageUrls []string, err error) {
-	if item, err = p.d.GetDiscussionByID(c, p.d.DB(), discussionID); err != nil {
-		return
-	} else if item == nil {
-		log.For(c).Error(fmt.Sprintf("service.GetDiscussion, not exist. id(%+v)", discussionID))
-		err = ecode.DiscussionNotExist
+	if item, err = p.getDiscussion(c, p.d.DB(), discussionID); err != nil {
 		return
 	}
 

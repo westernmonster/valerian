@@ -13,3 +13,8 @@ type Paging struct {
 	// 上一页
 	Prev string `json:"prev"`
 }
+
+type WorkCertHistoryResp struct {
+	Items  []*WorkCertHistory `json:"items"`
+	Paging *Paging            `json:"paging"`
+}

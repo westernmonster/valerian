@@ -11,6 +11,7 @@ import (
 	"valerian/library/conf/env"
 	"valerian/library/log"
 	"valerian/library/mq"
+	"valerian/library/stat/prom"
 )
 
 // Service struct of service
@@ -18,6 +19,7 @@ type Service struct {
 	c      *conf.Config
 	d      *dao.Dao
 	mq     *mq.MessageQueue
+	prom   *prom.Prom
 	missch chan func()
 }
 
@@ -27,6 +29,7 @@ func New(c *conf.Config) (s *Service) {
 		c:      c,
 		d:      dao.New(c),
 		mq:     mq.New(env.Hostname, c.Nats),
+		prom:   prom.New().WithTimer("account-feed", []string{"method"}),
 		missch: make(chan func(), 1024),
 	}
 
@@ -40,11 +43,6 @@ func New(c *conf.Config) (s *Service) {
 		panic(err)
 	}
 
-	if err := s.mq.QueueSubscribe(def.BusArticleDeleted, "account-feed", s.onArticleDeleted); err != nil {
-		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusArticleDeleted, "account-feed")
-		panic(err)
-	}
-
 	if err := s.mq.QueueSubscribe(def.BusReviseAdded, "account-feed", s.onReviseAdded); err != nil {
 		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusReviseAdded, "account-feed")
 		panic(err)
@@ -52,11 +50,6 @@ func New(c *conf.Config) (s *Service) {
 
 	if err := s.mq.QueueSubscribe(def.BusReviseUpdated, "account-feed", s.onReviseUpdated); err != nil {
 		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusReviseUpdated, "account-feed")
-		panic(err)
-	}
-
-	if err := s.mq.QueueSubscribe(def.BusReviseDeleted, "account-feed", s.onReviseDeleted); err != nil {
-		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusReviseDeleted, "account-feed")
 		panic(err)
 	}
 
@@ -70,11 +63,6 @@ func New(c *conf.Config) (s *Service) {
 		panic(err)
 	}
 
-	if err := s.mq.QueueSubscribe(def.BusDiscussionDeleted, "account-feed", s.onDiscussionDeleted); err != nil {
-		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusDiscussionDeleted, "account-feed")
-		panic(err)
-	}
-
 	if err := s.mq.QueueSubscribe(def.BusTopicAdded, "account-feed", s.onTopicAdded); err != nil {
 		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusTopicAdded, "account-feed")
 		panic(err)
@@ -85,13 +73,13 @@ func New(c *conf.Config) (s *Service) {
 		panic(err)
 	}
 
-	if err := s.mq.QueueSubscribe(def.BusTopicDeleted, "account-feed", s.onTopicDeleted); err != nil {
-		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusTopicDeleted, "account-feed")
-		panic(err)
-	}
-
 	go s.cacheproc()
 	return
+}
+
+func PromError(name string, format string, args ...interface{}) {
+	prom.BusinessErrCount.Incr(name)
+	log.Errorf(format, args...)
 }
 
 // Ping check server ok.
