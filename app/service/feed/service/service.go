@@ -86,6 +86,16 @@ func New(c *conf.Config) (s *Service) {
 		panic(err)
 	}
 
+	if err := s.mq.QueueSubscribe(def.BusCommentLiked, "feed", s.onCommentLiked); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusCommentLiked, "feed")
+		panic(err)
+	}
+
+	if err := s.mq.QueueSubscribe(def.BusMemberFollowed, "feed", s.onMemberFollowed); err != nil {
+		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusMemberFollowed, "feed")
+		panic(err)
+	}
+
 	go s.cacheproc()
 	return
 }

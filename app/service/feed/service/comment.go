@@ -59,6 +59,17 @@ func (p *Service) onArticleCommented(m *stan.Msg) {
 		return
 	}
 
+	var setting *model.SettingResp
+	if setting, err = p.getAccountSetting(c, p.d.DB(), info.ActorID); err != nil {
+		PromError("feed: getAccountSetting", "getAccountSetting(), id(%d),error(%+v)", info.ActorID, err)
+		return
+	}
+
+	if !setting.ActivityComment {
+		m.Ack()
+		return
+	}
+
 	var ids []int64
 	if ids, err = p.d.GetFansIDs(c, tx, info.ActorID); err != nil {
 		PromError("feed: GetFansIDs", "GetFansIDs(), aid(%d),error(%+v)", info.ActorID, err)
@@ -129,6 +140,17 @@ func (p *Service) onReviseCommented(m *stan.Msg) {
 		return
 	}
 
+	var setting *model.SettingResp
+	if setting, err = p.getAccountSetting(c, p.d.DB(), info.ActorID); err != nil {
+		PromError("feed: getAccountSetting", "getAccountSetting(), id(%d),error(%+v)", info.ActorID, err)
+		return
+	}
+
+	if !setting.ActivityComment {
+		m.Ack()
+		return
+	}
+
 	var ids []int64
 	if ids, err = p.d.GetFansIDs(c, tx, info.ActorID); err != nil {
 		PromError("feed: GetFansIDs", "GetFansIDs(), aid(%d),error(%+v)", info.ActorID, err)
@@ -196,6 +218,99 @@ func (p *Service) onDiscussionCommented(m *stan.Msg) {
 			return
 		}
 		PromError("feed: GetComment", "GetComment(), id(%d),error(%+v)", info.CommentID, err)
+		return
+	}
+
+	var setting *model.SettingResp
+	if setting, err = p.getAccountSetting(c, p.d.DB(), info.ActorID); err != nil {
+		PromError("feed: getAccountSetting", "getAccountSetting(), id(%d),error(%+v)", info.ActorID, err)
+		return
+	}
+
+	if !setting.ActivityComment {
+		m.Ack()
+		return
+	}
+
+	var ids []int64
+	if ids, err = p.d.GetFansIDs(c, tx, info.ActorID); err != nil {
+		PromError("feed: GetFansIDs", "GetFansIDs(), aid(%d),error(%+v)", info.ActorID, err)
+		return
+	}
+
+	for _, v := range ids {
+		feed := &model.Feed{
+			ID:         gid.NewID(),
+			AccountID:  v,
+			ActionType: def.ActionTypeCommentDiscussion,
+			ActionTime: time.Now().Unix(),
+			ActionText: def.ActionTextCommentDiscussion,
+			ActorID:    info.ActorID,
+			ActorType:  def.ActorTypeUser,
+			TargetID:   info.CommentID,
+			TargetType: def.TargetTypeComment,
+			CreatedAt:  time.Now().Unix(),
+			UpdatedAt:  time.Now().Unix(),
+		}
+
+		if err = p.d.AddFeed(c, tx, feed); err != nil {
+			PromError("feed: AddFeed", "AddFeed(), feed(%+v),error(%+v)", feed, err)
+			return
+		}
+	}
+
+	if err = tx.Commit(); err != nil {
+		PromError("feed: tx.Commit", "tx.Commit(), error(%+v)", err)
+		return
+	}
+
+	m.Ack()
+}
+
+func (p *Service) onCommentLiked(m *stan.Msg) {
+	var err error
+	c := context.Background()
+	// 强制使用强制使用Master库
+	c = sqalx.NewContext(c, true)
+
+	info := new(def.MsgCommentLiked)
+	if err = info.Unmarshal(m.Data); err != nil {
+		PromError("feed: Unmarshal data", "info.Umarshal() ,error(%+v)", err)
+		return
+	}
+
+	var tx sqalx.Node
+	if tx, err = p.d.DB().Beginx(c); err != nil {
+		PromError("feed: tx.Beginx", "tx.Beginx(), error(%+v)", err)
+		return
+	}
+
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				PromError("feed: tx.Rollback", "tx.Rollback(), error(%+v)", err)
+			}
+			return
+		}
+	}()
+
+	if _, err = p.getComment(c, tx, info.CommentID); err != nil {
+		if ecode.IsNotExistEcode(err) {
+			m.Ack()
+			return
+		}
+		PromError("feed: GetComment", "GetComment(), id(%d),error(%+v)", info.CommentID, err)
+		return
+	}
+
+	var setting *model.SettingResp
+	if setting, err = p.getAccountSetting(c, tx, info.ActorID); err != nil {
+		PromError("feed: getAccountSetting", "getAccountSetting(), id(%d),error(%+v)", info.ActorID, err)
+		return
+	}
+
+	if !setting.ActivityLike {
+		m.Ack()
 		return
 	}
 

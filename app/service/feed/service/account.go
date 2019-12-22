@@ -76,6 +76,17 @@ func (p *Service) onMemberFollowed(m *stan.Msg) {
 		return
 	}
 
+	var setting *model.SettingResp
+	if setting, err = p.getAccountSetting(c, tx, info.AccountID); err != nil {
+		PromError("feed: getAccountSetting", "getAccountSetting(), id(%d),error(%+v)", info.AccountID, err)
+		return
+	}
+
+	if !setting.ActivityFollowMember {
+		m.Ack()
+		return
+	}
+
 	var ids []int64
 	if ids, err = p.d.GetFansIDs(c, tx, info.AccountID); err != nil {
 		PromError("feed: GetFansIDs", "GetFansIDs(), aid(%d),error(%+v)", info.AccountID, err)

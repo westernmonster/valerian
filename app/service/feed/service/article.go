@@ -308,6 +308,17 @@ func (p *Service) onArticleLiked(m *stan.Msg) {
 		return
 	}
 
+	var setting *model.SettingResp
+	if setting, err = p.getAccountSetting(c, tx, info.ActorID); err != nil {
+		PromError("feed: getAccountSetting", "getAccountSetting(), id(%d),error(%+v)", info.ActorID, err)
+		return
+	}
+
+	if !setting.ActivityLike {
+		m.Ack()
+		return
+	}
+
 	var ids []int64
 	if ids, err = p.d.GetFansIDs(c, tx, info.ActorID); err != nil {
 		PromError("feed: GetFansIDs", "GetFansIDs(), aid(%d),error(%+v)", info.ActorID, err)
