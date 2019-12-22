@@ -80,14 +80,21 @@ func (p *Service) onArticleLiked(m *stan.Msg) {
 	m.Ack()
 
 	p.addCache(func() {
-		if _, err := p.pushSingleUser(context.Background(),
-			msg.AccountID,
-			msg.ID,
-			def.PushMsgTitleArticleLiked,
-			def.PushMsgTitleArticleLiked,
-			fmt.Sprintf(def.LinkArticle, article.ID),
-		); err != nil {
-			log.For(context.Background()).Error(fmt.Sprintf("service.onArticleLiked Push message failed %#v", err))
+		var setting *model.SettingResp
+		if setting, err = p.getAccountSetting(context.Background(), p.d.DB(), msg.AccountID); err != nil {
+			PromError("message: getAccountSetting", "getAccountSetting(), id(%d),error(%+v)", msg.AccountID, err)
+			return
+		}
+		if setting.NotifyLike {
+			if _, err := p.pushSingleUser(context.Background(),
+				msg.AccountID,
+				msg.ID,
+				def.PushMsgTitleArticleLiked,
+				def.PushMsgTitleArticleLiked,
+				fmt.Sprintf(def.LinkArticle, article.ID),
+			); err != nil {
+				log.For(context.Background()).Error(fmt.Sprintf("service.onArticleLiked Push message failed %#v", err))
+			}
 		}
 	})
 
@@ -155,14 +162,21 @@ func (p *Service) onReviseLiked(m *stan.Msg) {
 	m.Ack()
 
 	p.addCache(func() {
-		if _, err := p.pushSingleUser(context.Background(),
-			msg.AccountID,
-			msg.ID,
-			def.PushMsgTitleReviseLiked,
-			def.PushMsgTitleReviseLiked,
-			fmt.Sprintf(def.LinkRevise, article.ID),
-		); err != nil {
-			log.For(context.Background()).Error(fmt.Sprintf("service.onReviseLiked Push message failed %#v", err))
+		var setting *model.SettingResp
+		if setting, err = p.getAccountSetting(context.Background(), p.d.DB(), msg.AccountID); err != nil {
+			PromError("message: getAccountSetting", "getAccountSetting(), id(%d),error(%+v)", msg.AccountID, err)
+			return
+		}
+		if setting.NotifyLike {
+			if _, err := p.pushSingleUser(context.Background(),
+				msg.AccountID,
+				msg.ID,
+				def.PushMsgTitleReviseLiked,
+				def.PushMsgTitleReviseLiked,
+				fmt.Sprintf(def.LinkRevise, article.ID),
+			); err != nil {
+				log.For(context.Background()).Error(fmt.Sprintf("service.onReviseLiked Push message failed %#v", err))
+			}
 		}
 	})
 
@@ -229,14 +243,21 @@ func (p *Service) onDiscussionLiked(m *stan.Msg) {
 	m.Ack()
 
 	p.addCache(func() {
-		if _, err := p.pushSingleUser(context.Background(),
-			msg.AccountID,
-			msg.ID,
-			def.PushMsgTitleDiscussionLiked,
-			def.PushMsgTitleDiscussionLiked,
-			fmt.Sprintf(def.LinkDiscussion, discuss.ID),
-		); err != nil {
-			log.For(context.Background()).Error(fmt.Sprintf("service.onDiscussionLiked Push message failed %#v", err))
+		var setting *model.SettingResp
+		if setting, err = p.getAccountSetting(context.Background(), p.d.DB(), msg.AccountID); err != nil {
+			PromError("message: getAccountSetting", "getAccountSetting(), id(%d),error(%+v)", msg.AccountID, err)
+			return
+		}
+		if setting.NotifyLike {
+			if _, err := p.pushSingleUser(context.Background(),
+				msg.AccountID,
+				msg.ID,
+				def.PushMsgTitleDiscussionLiked,
+				def.PushMsgTitleDiscussionLiked,
+				fmt.Sprintf(def.LinkDiscussion, discuss.ID),
+			); err != nil {
+				log.For(context.Background()).Error(fmt.Sprintf("service.onDiscussionLiked Push message failed %#v", err))
+			}
 		}
 	})
 }
@@ -303,14 +324,21 @@ func (p *Service) onCommentLiked(m *stan.Msg) {
 	m.Ack()
 
 	p.addCache(func() {
-		if _, err := p.pushSingleUser(context.Background(),
-			msg.AccountID,
-			msg.ID,
-			def.PushMsgTitleCommentLiked,
-			def.PushMsgTitleCommentLiked,
-			fmt.Sprintf(def.LinkComment, comment.OwnerType, comment.OwnerID, comment.ID),
-		); err != nil {
-			log.For(context.Background()).Error(fmt.Sprintf("service.onCommentLiked Push message failed %#v", err))
+		var setting *model.SettingResp
+		if setting, err = p.getAccountSetting(context.Background(), p.d.DB(), msg.AccountID); err != nil {
+			PromError("message: getAccountSetting", "getAccountSetting(), id(%d),error(%+v)", msg.AccountID, err)
+			return
+		}
+		if setting.NotifyLike {
+			if _, err := p.pushSingleUser(context.Background(),
+				msg.AccountID,
+				msg.ID,
+				def.PushMsgTitleCommentLiked,
+				def.PushMsgTitleCommentLiked,
+				fmt.Sprintf(def.LinkComment, comment.OwnerType, comment.OwnerID, comment.ID),
+			); err != nil {
+				log.For(context.Background()).Error(fmt.Sprintf("service.onCommentLiked Push message failed %#v", err))
+			}
 		}
 	})
 
