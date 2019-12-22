@@ -90,3 +90,95 @@ func listFeedback(c *mars.Context) {
 
 	c.JSON(srv.GetFeedbacksByCondPaged(c, cond, limit, offset))
 }
+
+// @Summary 举报历史
+// @Description 举报历史
+// @Tags admin
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param created_by query string true "选中用户的 id"
+// @Param limit query integer false "每页大小"
+// @Param offset query integer false "offset"
+// @Success 200 {object}  app.admin.feedback.model.FeedbackListResp "举报历史列表"
+// @Failure 400 "请求验证失败"
+// @Failure 401 "登录验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /admin/feedback/report/list [get]
+func reportHistory(c *mars.Context) {
+	var (
+		err    error
+		offset int
+		limit  int
+	)
+
+	params := c.Request.Form
+
+	if offset, err = strconv.Atoi(params.Get("offset")); err != nil {
+		offset = 0
+	} else if offset < 0 {
+		offset = 0
+	}
+
+	if limit, err = strconv.Atoi(params.Get("limit")); err != nil {
+		limit = 10
+	} else if limit < 0 {
+		limit = 10
+	}
+
+	cond := map[string]interface{}{}
+	createdBy := params.Get("created_by")
+	if len(createdBy) > 0 {
+		cond["created_by"] = createdBy
+	}
+
+	c.JSON(srv.GetReportByCondPaged(c, cond, limit, offset))
+}
+
+// @Summary 被举报历史
+// @Description 被举报历史
+// @Tags admin
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param target_user_id query string true "选中用户的 id"
+// @Param limit query integer false "每页大小"
+// @Param offset query integer false "offset"
+// @Success 200 {object}  app.admin.feedback.model.FeedbackListResp "被举报历史列表"
+// @Failure 400 "请求验证失败"
+// @Failure 401 "登录验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /admin/feedback/be-reported/list [get]
+func beReportedHistory(c *mars.Context) {
+	var (
+		err    error
+		offset int
+		limit  int
+	)
+
+	params := c.Request.Form
+
+	if offset, err = strconv.Atoi(params.Get("offset")); err != nil {
+		offset = 0
+	} else if offset < 0 {
+		offset = 0
+	}
+
+	if limit, err = strconv.Atoi(params.Get("limit")); err != nil {
+		limit = 10
+	} else if limit < 0 {
+		limit = 10
+	}
+
+	cond := map[string]interface{}{}
+	targetUserId := params.Get("target_user_id")
+	if len(targetUserId) > 0 {
+		cond["target_user_id"] = targetUserId
+	}
+
+	c.JSON(srv.GetBeReportedByCondPaged(c, cond, limit, offset))
+}

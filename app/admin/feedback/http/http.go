@@ -35,6 +35,9 @@ func route(e *mars.Engine) {
 	{
 		g.GET("/list", authSvc.User, listFeedback)
 		g.POST("/verify", authSvc.User, verifyFeedback)
+
+		g.GET("/report/list",authSvc.User,reportHistory)
+		g.GET("/be-reported/list",authSvc.User,beReportedHistory)
 	}
 }
 

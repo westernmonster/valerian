@@ -104,3 +104,67 @@ func (p *Dao) GetFeedbacksByCondPaged(c context.Context, node sqalx.Node, cond m
 	}
 	return
 }
+
+func (p *Dao) GetReportPaged(c context.Context, node sqalx.Node, cond map[string]interface{}, limit, offset int) (items []*model.Feedback, err error) {
+	items = make([]*model.Feedback, 0)
+	condition := make([]interface{}, 0)
+	clause := ""
+
+	// 非举报类型
+	notAccuseTypeList := []int{11, 12, 13}
+
+	for _, notAccuseType := range notAccuseTypeList {
+		clause += " AND a.feedback_type <>? "
+		condition = append(condition, notAccuseType)
+	}
+
+	if val, ok := cond["created_by"]; ok {
+		clause += " AND a.created_by =?"
+		condition = append(condition, val)
+	}
+
+	condition = append(condition, offset)
+	condition = append(condition, limit)
+
+	sqlSelect := fmt.Sprintf("SELECT a.id,a.target_id,a.target_type,a.target_desc,a.feedback_type,a.feedback_desc,"+
+		"a.created_by,a.deleted,a.created_at,a.updated_at,a.verify_status,a.verify_desc FROM feedbacks a "+
+		"WHERE a.deleted=0 %s "+
+		"ORDER BY a.created_at DESC  limit ?,?", clause)
+	if err = node.SelectContext(c, &items, sqlSelect, condition...); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetReportByCondPaged err(%+v), condition(%+v)", err, condition))
+		return
+	}
+	return
+}
+
+func (p *Dao) GetBeReportedPaged(c context.Context, node sqalx.Node, cond map[string]interface{}, limit, offset int) (items []*model.Feedback, err error) {
+	items = make([]*model.Feedback, 0)
+	condition := make([]interface{}, 0)
+	clause := ""
+
+	// 非举报类型
+	notAccuseTypeList := []int{11, 12, 13}
+
+	for _, notAccuseType := range notAccuseTypeList {
+		clause += " AND a.feedback_type <>? "
+		condition = append(condition, notAccuseType)
+	}
+
+	if val, ok := cond["target_user_id"]; ok {
+		clause += " AND a.target_user_id =?"
+		condition = append(condition, val)
+	}
+
+	condition = append(condition, offset)
+	condition = append(condition, limit)
+
+	sqlSelect := fmt.Sprintf("SELECT a.id,a.target_id,a.target_type,a.target_desc,a.feedback_type,a.feedback_desc,"+
+		"a.created_by,a.deleted,a.created_at,a.updated_at,a.verify_status,a.verify_desc FROM feedbacks a "+
+		"WHERE a.deleted=0 %s "+
+		"ORDER BY a.created_at DESC  limit ?,?", clause)
+	if err = node.SelectContext(c, &items, sqlSelect, condition...); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetBeReportedByCondPaged err(%+v), condition(%+v)", err, cond))
+		return
+	}
+	return
+}

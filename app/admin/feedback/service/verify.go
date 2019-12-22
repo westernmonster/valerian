@@ -48,7 +48,7 @@ func (s *Service) GetFeedbacksByCondPaged(c *mars.Context, cond map[string]inter
 		prevUrlVal.Add(k, fmt.Sprintf("%s", v))
 	}
 
-	if resp.Paging.Prev, err = genURL("/api/v1/admin/admin/feedback/list", prevUrlVal); err != nil {
+	if resp.Paging.Prev, err = genURL("/api/v1/admin/feedback/list", prevUrlVal); err != nil {
 		return
 	}
 
@@ -60,7 +60,106 @@ func (s *Service) GetFeedbacksByCondPaged(c *mars.Context, cond map[string]inter
 		nextUrlVal.Add(k, fmt.Sprintf("%s", v))
 	}
 
-	if resp.Paging.Next, err = genURL("/api/v1/admin/admin/feedback/list", nextUrlVal); err != nil {
+	if resp.Paging.Next, err = genURL("/api/v1/admin/feedback/list", nextUrlVal); err != nil {
+		return
+	}
+
+	if len(resp.Items) < limit {
+		resp.Paging.IsEnd = true
+		resp.Paging.Next = ""
+	}
+
+	if offset == 0 {
+		resp.Paging.Prev = ""
+	}
+
+	return
+}
+
+func (s *Service) GetReportByCondPaged(c *mars.Context, cond map[string]interface{}, limit int, offset int) (resp *model.FeedbackListResp, err error) {
+
+	fbs, err := s.d.GetFeedbacksByCondPaged(c, s.d.DB(), cond, limit, offset)
+
+	resp = &model.FeedbackListResp{
+		Items:  []*model.Feedback{},
+		Paging: &model.Paging{},
+	}
+	if len(fbs) > 0 {
+		for _, wc := range fbs {
+			resp.Items = append(resp.Items, wc)
+		}
+	}
+	prevUrlVal := url.Values{
+		"limit":  []string{strconv.Itoa(limit)},
+		"offset": []string{strconv.Itoa(offset - limit)},
+	}
+	for k, v := range cond {
+		prevUrlVal.Add(k, fmt.Sprintf("%s", v))
+	}
+
+	if resp.Paging.Prev, err = genURL("/api/v1/admin/report/list", prevUrlVal); err != nil {
+		return
+	}
+
+	nextUrlVal := url.Values{
+		"limit":  []string{strconv.Itoa(limit)},
+		"offset": []string{strconv.Itoa(offset + limit)},
+	}
+	for k, v := range cond {
+		nextUrlVal.Add(k, fmt.Sprintf("%s", v))
+	}
+
+	if resp.Paging.Next, err = genURL("/api/v1/admin/report/list", nextUrlVal); err != nil {
+		return
+	}
+
+	if len(resp.Items) < limit {
+		resp.Paging.IsEnd = true
+		resp.Paging.Next = ""
+	}
+
+	if offset == 0 {
+		resp.Paging.Prev = ""
+	}
+
+	return
+}
+
+
+func (s *Service) GetBeReportedByCondPaged(c *mars.Context, cond map[string]interface{}, limit int, offset int) (resp *model.FeedbackListResp, err error) {
+
+	fbs, err := s.d.GetBeReportedPaged(c, s.d.DB(), cond, limit, offset)
+
+	resp = &model.FeedbackListResp{
+		Items:  []*model.Feedback{},
+		Paging: &model.Paging{},
+	}
+	if len(fbs) > 0 {
+		for _, wc := range fbs {
+			resp.Items = append(resp.Items, wc)
+		}
+	}
+	prevUrlVal := url.Values{
+		"limit":  []string{strconv.Itoa(limit)},
+		"offset": []string{strconv.Itoa(offset - limit)},
+	}
+	for k, v := range cond {
+		prevUrlVal.Add(k, fmt.Sprintf("%s", v))
+	}
+
+	if resp.Paging.Prev, err = genURL("/api/v1/admin/be-reported/list", prevUrlVal); err != nil {
+		return
+	}
+
+	nextUrlVal := url.Values{
+		"limit":  []string{strconv.Itoa(limit)},
+		"offset": []string{strconv.Itoa(offset + limit)},
+	}
+	for k, v := range cond {
+		nextUrlVal.Add(k, fmt.Sprintf("%s", v))
+	}
+
+	if resp.Paging.Next, err = genURL("/api/v1/admin/be-reported/list", nextUrlVal); err != nil {
 		return
 	}
 
