@@ -49,6 +49,7 @@ func (p *Service) AddAccount(c context.Context, item *model.Account) (resp *api.
 		if err = p.d.UnAnnulAccount(c, tx, account.ID, item.UserName, item.Password, item.Salt); err != nil {
 			return
 		}
+		item.ID = account.ID
 	} else {
 		item.CreatedAt = time.Now().Unix()
 		item.UpdatedAt = time.Now().Unix()
