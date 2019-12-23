@@ -6,8 +6,6 @@ import (
 	"time"
 
 	"valerian/app/service/account-feed/conf"
-	discuss "valerian/app/service/discuss/api"
-	topic "valerian/app/service/topic/api"
 	"valerian/library/cache/memcache"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
@@ -20,9 +18,6 @@ type Dao struct {
 	mc       *memcache.Pool
 	mcExpire int32
 	c        *conf.Config
-
-	topicRPC   topic.TopicClient
-	discussRPC discuss.DiscussionClient
 }
 
 func New(c *conf.Config) (dao *Dao) {
