@@ -109,15 +109,15 @@ func New(c *conf.Config) (s *Service) {
 		panic(err)
 	}
 
-	if err := s.mq.QueueSubscribe(def.BusFeedBackAccuseSuit, "message", s.onFeedBackAccuseSuit); err != nil {
-		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusFeedBackAccuseSuit, "message")
-		panic(err)
-	}
+	// if err := s.mq.QueueSubscribe(def.BusFeedBackAccuseSuit, "message", s.onFeedBackAccuseSuit); err != nil {
+	// 	log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusFeedBackAccuseSuit, "message")
+	// 	panic(err)
+	// }
 
-	if err := s.mq.QueueSubscribe(def.BusFeedBackAccuseNotSuit, "message", s.onFeedBackAccuseNotSuit); err != nil {
-		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusFeedBackAccuseNotSuit, "message")
-		panic(err)
-	}
+	// if err := s.mq.QueueSubscribe(def.BusFeedBackAccuseNotSuit, "message", s.onFeedBackAccuseNotSuit); err != nil {
+	// 	log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusFeedBackAccuseNotSuit, "message")
+	// 	panic(err)
+	// }
 
 	go s.cacheproc()
 	return

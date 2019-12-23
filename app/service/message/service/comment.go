@@ -6,64 +6,73 @@ import (
 	"strconv"
 	"time"
 
-	article "valerian/app/service/article/api"
-	comment "valerian/app/service/comment/api"
-	discuss "valerian/app/service/discuss/api"
 	"valerian/app/service/feed/def"
 	"valerian/app/service/message/model"
 	"valerian/library/database/sqalx"
+	"valerian/library/ecode"
 	"valerian/library/gid"
 	"valerian/library/log"
 
-	"github.com/kamilsk/retry/v4"
-	"github.com/kamilsk/retry/v4/strategy"
 	"github.com/nats-io/stan.go"
 )
+
+func (p *Service) getComment(c context.Context, node sqalx.Node, commentID int64) (item *model.Comment, err error) {
+	if item, err = p.d.GetCommentByID(c, p.d.DB(), commentID); err != nil {
+		return
+	} else if item == nil {
+		err = ecode.CommentNotExist
+		return
+	}
+	return
+}
 
 func (p *Service) onArticleCommented(m *stan.Msg) {
 	var err error
 	c := context.Background()
 	info := new(def.MsgArticleCommented)
 	if err = info.Unmarshal(m.Data); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onArticleCommented Unmarshal failed %#v", err))
+		PromError("message: Unmarshal data", "info.Umarshal() ,error(%+v)", err)
 		return
 	}
 
-	var comment *comment.CommentInfo
-	action := func(c context.Context, _ uint) error {
-		ct, e := p.d.GetComment(c, info.CommentID, true)
-		if e != nil {
-			return e
-		}
-
-		comment = ct
-		return nil
-	}
-
-	if err := retry.TryContext(c, action, strategy.Limit(3)); err != nil {
-		m.Ack()
+	var tx sqalx.Node
+	if tx, err = p.d.DB().Beginx(c); err != nil {
+		PromError("message: tx.Beginx", "tx.Beginx(), error(%+v)", err)
 		return
 	}
 
-	var article *article.ArticleInfo
-	action = func(c context.Context, _ uint) error {
-		ct, e := p.d.GetArticle(c, comment.OwnerID, true)
-		if e != nil {
-			return e
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				PromError("message: tx.Rollback", "tx.Rollback(), error(%+v)", err)
+			}
+			return
 		}
+	}()
 
-		article = ct
-		return nil
+	var comment *model.Comment
+	if comment, err = p.getComment(c, tx, info.CommentID); err != nil {
+		if ecode.IsNotExistEcode(err) {
+			m.Ack()
+			return
+		}
+		PromError("message: GetComment", "GetComment(), id(%d),error(%+v)", info.CommentID, err)
+		return
 	}
 
-	if err := retry.TryContext(c, action, strategy.Limit(3)); err != nil {
-		m.Ack()
+	var article *model.Article
+	if article, err = p.getArticle(c, tx, comment.OwnerID); err != nil {
+		if ecode.IsNotExistEcode(err) {
+			m.Ack()
+			return
+		}
+		PromError("message: GetArticle", "GetArticle(), id(%d),error(%+v)", comment.OwnerID, err)
 		return
 	}
 
 	msg := &model.Message{
 		ID:         gid.NewID(),
-		AccountID:  article.Creator.ID,
+		AccountID:  article.CreatedBy,
 		ActionType: model.MsgArticleCommented,
 		ActionTime: time.Now().Unix(),
 		ActionText: model.MsgTextArticleCommented,
@@ -77,7 +86,12 @@ func (p *Service) onArticleCommented(m *stan.Msg) {
 	}
 
 	if err = p.d.AddMessage(c, p.d.DB(), msg); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onCommentAdded AddMessage failed %#v", err))
+		PromError("message: AddMessage", "AddMessage(), message(%+v),error(%+v)", msg, err)
+		return
+	}
+
+	if err = tx.Commit(); err != nil {
+		PromError("message: tx.Commit", "tx.Commit(), error(%+v)", err)
 		return
 	}
 
@@ -110,25 +124,47 @@ func (p *Service) onReviseCommented(m *stan.Msg) {
 	c := context.Background()
 	info := new(def.MsgReviseCommented)
 	if err = info.Unmarshal(m.Data); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onReviseCommented Unmarshal failed %#v", err))
+		PromError("message: Unmarshal data", "info.Umarshal() ,error(%+v)", err)
+		return
+	}
+	var tx sqalx.Node
+	if tx, err = p.d.DB().Beginx(c); err != nil {
+		PromError("message: tx.Beginx", "tx.Beginx(), error(%+v)", err)
 		return
 	}
 
-	var comment *comment.CommentInfo
-	if comment, err = p.d.GetComment(c, info.CommentID, true); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onReviseCommented GetComment failed %#v", err))
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				PromError("message: tx.Rollback", "tx.Rollback(), error(%+v)", err)
+			}
+			return
+		}
+	}()
+
+	var comment *model.Comment
+	if comment, err = p.getComment(c, tx, info.CommentID); err != nil {
+		if ecode.IsNotExistEcode(err) {
+			m.Ack()
+			return
+		}
+		PromError("message: GetComment", "GetComment(), id(%d),error(%+v)", info.CommentID, err)
 		return
 	}
 
-	var revise *article.ReviseInfo
-	if revise, err = p.d.GetRevise(c, comment.OwnerID, true); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onCommentAdded GetRevise failed %#v", err))
+	var revise *model.Revise
+	if revise, err = p.getRevise(c, tx, comment.OwnerID); err != nil {
+		if ecode.IsNotExistEcode(err) {
+			m.Ack()
+			return
+		}
+		PromError("message: GetRevise", "GetRevise(), id(%d),error(%+v)", comment.OwnerID, err)
 		return
 	}
 
 	msg := &model.Message{
 		ID:         gid.NewID(),
-		AccountID:  revise.Creator.ID,
+		AccountID:  revise.CreatedBy,
 		ActionType: model.MsgReviseCommented,
 		ActionTime: time.Now().Unix(),
 		ActionText: model.MsgTextReviseCommented,
@@ -143,6 +179,11 @@ func (p *Service) onReviseCommented(m *stan.Msg) {
 
 	if err = p.d.AddMessage(c, p.d.DB(), msg); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onCommentAdded AddMessage failed %#v", err))
+		return
+	}
+
+	if err = tx.Commit(); err != nil {
+		PromError("message: tx.Commit", "tx.Commit(), error(%+v)", err)
 		return
 	}
 
@@ -173,40 +214,47 @@ func (p *Service) onDiscussionCommented(m *stan.Msg) {
 	c := context.Background()
 	info := new(def.MsgDiscussionCommented)
 	if err = info.Unmarshal(m.Data); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onDiscussionCommented Unmarshal failed %#v", err))
+		PromError("message: Unmarshal data", "info.Umarshal() ,error(%+v)", err)
 		return
 	}
-
-	var comment *comment.CommentInfo
-	if comment, err = p.d.GetComment(c, info.CommentID, true); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onDiscussionCommented GetComment failed %#v", err))
-		return
-	}
-
-	var discussion *discuss.DiscussionInfo
-	if discussion, err = p.d.GetDiscussion(c, comment.OwnerID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onCommentAdded GetDiscussion failed %#v", err))
-		return
-	}
-
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		PromError("message: tx.Beginx", "tx.Beginx(), error(%+v)", err)
 		return
 	}
 
 	defer func() {
 		if err != nil {
 			if err1 := tx.Rollback(); err1 != nil {
-				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+				PromError("message: tx.Rollback", "tx.Rollback(), error(%+v)", err)
 			}
 			return
 		}
 	}()
 
+	var comment *model.Comment
+	if comment, err = p.getComment(c, tx, info.CommentID); err != nil {
+		if ecode.IsNotExistEcode(err) {
+			m.Ack()
+			return
+		}
+		PromError("message: GetComment", "GetComment(), id(%d),error(%+v)", info.CommentID, err)
+		return
+	}
+
+	var discussion *model.Discussion
+	if discussion, err = p.getDiscussion(c, tx, comment.OwnerID); err != nil {
+		if ecode.IsNotExistEcode(err) {
+			m.Ack()
+			return
+		}
+		PromError("message: GetDiscussion", "GetDiscussion(), id(%d),error(%+v)", comment.OwnerID, err)
+		return
+	}
+
 	msg := &model.Message{
 		ID:         gid.NewID(),
-		AccountID:  discussion.Creator.ID,
+		AccountID:  discussion.CreatedBy,
 		ActionType: model.MsgDiscussionCommented,
 		ActionTime: time.Now().Unix(),
 		ActionText: model.MsgTextDiscussionCommented,
@@ -229,7 +277,7 @@ func (p *Service) onDiscussionCommented(m *stan.Msg) {
 	}
 
 	if err = tx.Commit(); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		PromError("message: tx.Commit", "tx.Commit(), error(%+v)", err)
 		return
 	}
 
@@ -260,30 +308,37 @@ func (p *Service) onCommentReplied(m *stan.Msg) {
 	c := context.Background()
 	info := new(def.MsgCommentReplied)
 	if err = info.Unmarshal(m.Data); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onCommentReplied Unmarshal failed %#v", err))
+		PromError("message: Unmarshal data", "info.Umarshal() ,error(%+v)", err)
+		return
+	}
+	var tx sqalx.Node
+	if tx, err = p.d.DB().Beginx(c); err != nil {
+		PromError("message: tx.Beginx", "tx.Beginx(), error(%+v)", err)
 		return
 	}
 
-	var comment *comment.CommentInfo
-	action := func(c context.Context, _ uint) error {
-		ct, e := p.d.GetComment(c, info.CommentID, true)
-		if e != nil {
-			return e
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				PromError("message: tx.Rollback", "tx.Rollback(), error(%+v)", err)
+			}
+			return
 		}
+	}()
 
-		comment = ct
-		return nil
-	}
-
-	if err := retry.TryContext(c, action, strategy.Limit(3)); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onCommentReplied GetComment failed %#v", err))
-		m.Ack()
+	var comment *model.Comment
+	if comment, err = p.getComment(c, tx, info.CommentID); err != nil {
+		if ecode.IsNotExistEcode(err) {
+			m.Ack()
+			return
+		}
+		PromError("message: GetComment", "GetComment(), id(%d),error(%+v)", info.CommentID, err)
 		return
 	}
 
 	msg := &model.Message{
 		ID:         gid.NewID(),
-		AccountID:  comment.Creator.ID,
+		AccountID:  comment.CreatedBy,
 		ActionType: model.MsgCommentReplied,
 		ActionTime: time.Now().Unix(),
 		ActionText: model.MsgTextCommentReplied,
@@ -301,6 +356,10 @@ func (p *Service) onCommentReplied(m *stan.Msg) {
 		return
 	}
 
+	if err = tx.Commit(); err != nil {
+		PromError("message: tx.Commit", "tx.Commit(), error(%+v)", err)
+		return
+	}
 	m.Ack()
 
 	p.addCache(func() {

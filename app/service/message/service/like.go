@@ -6,12 +6,10 @@ import (
 	"strconv"
 	"time"
 
-	article "valerian/app/service/article/api"
-	comment "valerian/app/service/comment/api"
-	discuss "valerian/app/service/discuss/api"
 	"valerian/app/service/feed/def"
 	"valerian/app/service/message/model"
 	"valerian/library/database/sqalx"
+	"valerian/library/ecode"
 	"valerian/library/gid"
 	"valerian/library/log"
 
@@ -24,12 +22,6 @@ func (p *Service) onArticleLiked(m *stan.Msg) {
 	info := new(def.MsgArticleLiked)
 	if err = info.Unmarshal(m.Data); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onArticleLiked Unmarshal failed %#v", err))
-		return
-	}
-
-	var article *article.ArticleInfo
-	if article, err = p.d.GetArticle(c, info.ArticleID, true); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onArticleLiked GetArticle failed %#v", err))
 		return
 	}
 
@@ -48,9 +40,19 @@ func (p *Service) onArticleLiked(m *stan.Msg) {
 		}
 	}()
 
+	var article *model.Article
+	if article, err = p.getArticle(c, tx, info.ArticleID); err != nil {
+		if ecode.IsNotExistEcode(err) {
+			m.Ack()
+			return
+		}
+		PromError("message: GetArticle", "GetArticle(), id(%d),error(%+v)", info.ArticleID, err)
+		return
+	}
+
 	msg := &model.Message{
 		ID:         gid.NewID(),
-		AccountID:  article.Creator.ID,
+		AccountID:  article.CreatedBy,
 		ActionType: model.MsgLike,
 		ActionTime: time.Now().Unix(),
 		ActionText: model.MsgTextLikeArticle,
@@ -109,12 +111,6 @@ func (p *Service) onReviseLiked(m *stan.Msg) {
 		return
 	}
 
-	var article *article.ReviseInfo
-	if article, err = p.d.GetRevise(c, info.ReviseID, true); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onReviseLiked GetRevise failed %#v", err))
-		return
-	}
-
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
@@ -130,16 +126,26 @@ func (p *Service) onReviseLiked(m *stan.Msg) {
 		}
 	}()
 
+	var revise *model.Revise
+	if revise, err = p.getRevise(c, tx, info.ReviseID); err != nil {
+		if ecode.IsNotExistEcode(err) {
+			m.Ack()
+			return
+		}
+		PromError("message: GetRevise", "GetRevise(), id(%d),error(%+v)", info.ReviseID, err)
+		return
+	}
+
 	msg := &model.Message{
 		ID:         gid.NewID(),
-		AccountID:  article.Creator.ID,
+		AccountID:  revise.CreatedBy,
 		ActionType: model.MsgLike,
 		ActionTime: time.Now().Unix(),
 		ActionText: model.MsgTextLikeRevise,
 		Actors:     strconv.FormatInt(info.ActorID, 10),
 		MergeCount: 1,
 		ActorType:  model.ActorTypeUser,
-		TargetID:   article.ID,
+		TargetID:   revise.ID,
 		TargetType: model.TargetTypeRevise,
 		CreatedAt:  time.Now().Unix(),
 		UpdatedAt:  time.Now().Unix(),
@@ -173,7 +179,7 @@ func (p *Service) onReviseLiked(m *stan.Msg) {
 				msg.ID,
 				def.PushMsgTitleReviseLiked,
 				def.PushMsgTitleReviseLiked,
-				fmt.Sprintf(def.LinkRevise, article.ID),
+				fmt.Sprintf(def.LinkRevise, revise.ID),
 			); err != nil {
 				log.For(context.Background()).Error(fmt.Sprintf("service.onReviseLiked Push message failed %#v", err))
 			}
@@ -191,12 +197,6 @@ func (p *Service) onDiscussionLiked(m *stan.Msg) {
 		return
 	}
 
-	var discuss *discuss.DiscussionInfo
-	if discuss, err = p.d.GetDiscussion(c, info.DiscussionID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onDiscussionLiked GetDiscussion failed %#v", err))
-		return
-	}
-
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
@@ -211,9 +211,16 @@ func (p *Service) onDiscussionLiked(m *stan.Msg) {
 			return
 		}
 	}()
+
+	var discuss *model.Discussion
+	if discuss, err = p.getDiscussion(c, tx, info.DiscussionID); err != nil {
+		log.For(c).Error(fmt.Sprintf("service.onDiscussionLiked GetDiscussion failed %#v", err))
+		return
+	}
+
 	msg := &model.Message{
 		ID:         gid.NewID(),
-		AccountID:  discuss.Creator.ID,
+		AccountID:  discuss.CreatedBy,
 		ActionType: model.MsgLike,
 		ActionTime: time.Now().Unix(),
 		ActionText: model.MsgTextLikeDiscussion,
@@ -271,12 +278,6 @@ func (p *Service) onCommentLiked(m *stan.Msg) {
 		return
 	}
 
-	var comment *comment.CommentInfo
-	if comment, err = p.d.GetComment(c, info.CommentID, true); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onCommentLiked GetComment failed %#v", err))
-		return
-	}
-
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
@@ -292,9 +293,15 @@ func (p *Service) onCommentLiked(m *stan.Msg) {
 		}
 	}()
 
+	var comment *model.Comment
+	if comment, err = p.getComment(c, tx, info.CommentID); err != nil {
+		log.For(c).Error(fmt.Sprintf("service.onCommentLiked GetComment failed %#v", err))
+		return
+	}
+
 	msg := &model.Message{
 		ID:         gid.NewID(),
-		AccountID:  comment.Creator.ID,
+		AccountID:  comment.CreatedBy,
 		ActionType: model.MsgLike,
 		ActionTime: time.Now().Unix(),
 		ActionText: model.MsgTextLikeComment,

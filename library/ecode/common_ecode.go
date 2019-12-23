@@ -158,6 +158,7 @@ var (
 	WorkCertificationNotExist     = add(90034) // 尚未发起工作认证
 	TeamNotExist                  = add(90035) // Team 不存在
 	CommonConfNotExist            = add(90036) // CommonConf 不存在
+	FeedbackNotExist              = add(90037) // 未找到该反馈记录
 
 )
 

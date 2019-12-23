@@ -28,24 +28,11 @@ func (p *Service) GetRevise(c context.Context, reviseID int64) (item *model.Revi
 }
 
 func (p *Service) getRevise(c context.Context, node sqalx.Node, reviseID int64) (item *model.Revise, err error) {
-	var addCache = true
-	if item, err = p.d.ReviseCache(c, reviseID); err != nil {
-		addCache = false
-	} else if item != nil {
-		return
-	}
-
 	if item, err = p.d.GetReviseByID(c, p.d.DB(), reviseID); err != nil {
 		return
 	} else if item == nil {
 		err = ecode.ReviseNotExist
 		return
-	}
-
-	if addCache {
-		p.addCache(func() {
-			p.d.SetReviseCache(context.TODO(), item)
-		})
 	}
 	return
 }

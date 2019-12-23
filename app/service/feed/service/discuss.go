@@ -14,13 +14,6 @@ import (
 )
 
 func (p *Service) getDiscussion(c context.Context, node sqalx.Node, articleID int64) (item *model.Discussion, err error) {
-	var addCache = true
-	if item, err = p.d.DiscussionCache(c, articleID); err != nil {
-		addCache = false
-	} else if item != nil {
-		return
-	}
-
 	if item, err = p.d.GetDiscussionByID(c, p.d.DB(), articleID); err != nil {
 		return
 	} else if item == nil {
@@ -28,11 +21,6 @@ func (p *Service) getDiscussion(c context.Context, node sqalx.Node, articleID in
 		return
 	}
 
-	if addCache {
-		p.addCache(func() {
-			p.d.SetDiscussionCache(context.TODO(), item)
-		})
-	}
 	return
 }
 

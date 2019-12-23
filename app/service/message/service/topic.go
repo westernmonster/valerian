@@ -8,7 +8,6 @@ import (
 
 	"valerian/app/service/feed/def"
 	"valerian/app/service/message/model"
-	topic "valerian/app/service/topic/api"
 	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
 	"valerian/library/gid"
@@ -17,38 +16,64 @@ import (
 	"github.com/nats-io/stan.go"
 )
 
+func (p *Service) getTopic(c context.Context, node sqalx.Node, topicID int64) (item *model.Topic, err error) {
+	if item, err = p.d.GetTopicByID(c, node, topicID); err != nil {
+		return
+	} else if item == nil {
+		return nil, ecode.TopicNotExist
+	}
+	return
+}
+
+func (p *Service) getTopicFollowRequest(c context.Context, node sqalx.Node, id int64) (item *model.TopicFollowRequest, err error) {
+	var req *model.TopicFollowRequest
+	if req, err = p.d.GetTopicFollowRequestByID(c, node, id); err != nil {
+		return
+	} else if req == nil {
+		err = ecode.TopicFollowRequestNotExist
+		return
+	}
+
+	return
+}
+
 func (p *Service) onTopicFollowed(m *stan.Msg) {
 	var err error
 	c := context.Background()
 	info := new(def.MsgTopicFollowed)
 	if err = info.Unmarshal(m.Data); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onTopicFollowed Unmarshal failed %#v", err))
-		return
-	}
-
-	var topic *topic.TopicInfo
-	if topic, err = p.d.GetTopic(c, info.TopicID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onTopicFollowed GetTopic failed %#v", err))
+		PromError("message: Unmarshal data", "info.Umarshal() ,error(%+v)", err)
 		return
 	}
 
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		PromError("message: tx.Beginx", "tx.Beginx(), error(%+v)", err)
 		return
 	}
 
 	defer func() {
 		if err != nil {
 			if err1 := tx.Rollback(); err1 != nil {
-				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+				PromError("message: tx.Rollback", "tx.Rollback(), error(%+v)", err)
 			}
 			return
 		}
 	}()
 
+	var topic *model.Topic
+	if topic, err = p.getTopic(c, tx, info.TopicID); err != nil {
+		if ecode.IsNotExistEcode(err) {
+			m.Ack()
+			return
+		}
+		PromError("message: GetTopic", "GetTopic(), id(%d),error(%+v)", info.TopicID, err)
+		return
+	}
+
 	var admins []*model.TopicMember
 	if admins, err = p.d.GetAdminTopicMembers(c, tx, info.TopicID); err != nil {
+		PromError("message: GetAdminTopicMembers", "GetAdminTopicMembers(), topic_id(%d),error(%+v)", info.TopicID, err)
 		return
 	}
 
@@ -69,11 +94,13 @@ func (p *Service) onTopicFollowed(m *stan.Msg) {
 		}
 
 		if err = p.d.AddMessage(c, tx, msg); err != nil {
-			log.For(c).Error(fmt.Sprintf("service.onTopicFollowed AddMessage failed %#v", err))
+			PromError("message: AddMessage", "AddMessage(), message(%+v),error(%+v)", msg, err)
 			return
 		}
 
-		if err = p.d.IncrMessageStat(c, tx, &model.MessageStat{AccountID: v.AccountID, UnreadCount: 1}); err != nil {
+		stat := &model.MessageStat{AccountID: v.AccountID, UnreadCount: 1}
+		if err = p.d.IncrMessageStat(c, tx, stat); err != nil {
+			PromError("message: IncrMessageStat", "IncrMessageStat(), stat(%+v),error(%+v)", stat, err)
 			return
 		}
 
@@ -93,20 +120,20 @@ func (p *Service) onTopicFollowRequested(m *stan.Msg) {
 	c := context.Background()
 	info := new(def.MsgTopicFollowRequested)
 	if err = info.Unmarshal(m.Data); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onTopicFollowRequested Unmarshal failed %#v", err))
+		PromError("message: Unmarshal data", "info.Umarshal() ,error(%+v)", err)
 		return
 	}
 
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		PromError("message: tx.Beginx", "tx.Beginx(), error(%+v)", err)
 		return
 	}
 
 	defer func() {
 		if err != nil {
 			if err1 := tx.Rollback(); err1 != nil {
-				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+				PromError("message: tx.Rollback", "tx.Rollback(), error(%+v)", err)
 			}
 			return
 		}
@@ -114,14 +141,17 @@ func (p *Service) onTopicFollowRequested(m *stan.Msg) {
 
 	var admins []*model.TopicMember
 	if admins, err = p.d.GetAdminTopicMembers(c, tx, info.TopicID); err != nil {
+		PromError("message: GetAdminTopicMembers", "GetAdminTopicMembers(), topic_id(%d),error(%+v)", info.TopicID, err)
 		return
 	}
 
 	var req *model.TopicFollowRequest
-	if req, err = p.d.GetTopicFollowRequestByID(c, tx, info.RequestID); err != nil {
-		return
-	} else if req == nil {
-		err = ecode.TopicFollowRequestNotExist
+	if req, err = p.getTopicFollowRequest(c, tx, info.RequestID); err != nil {
+		if ecode.IsNotExistEcode(err) {
+			m.Ack()
+			return
+		}
+		PromError("message: GetTopicFollowRequest", "GetTopicFollowRequest(), id(%d),error(%+v)", info.RequestID, err)
 		return
 	}
 
@@ -153,11 +183,13 @@ func (p *Service) onTopicFollowRequested(m *stan.Msg) {
 		}
 
 		if err = p.d.AddMessage(c, tx, msg); err != nil {
-			log.For(c).Error(fmt.Sprintf("service.onTopicFollowRequested AddMessage failed %#v", err))
+			PromError("message: AddMessage", "AddMessage(), message(%+v),error(%+v)", msg, err)
 			return
 		}
 
-		if err = p.d.IncrMessageStat(c, tx, &model.MessageStat{AccountID: v.AccountID, UnreadCount: 1}); err != nil {
+		stat := &model.MessageStat{AccountID: v.AccountID, UnreadCount: 1}
+		if err = p.d.IncrMessageStat(c, tx, stat); err != nil {
+			PromError("message: IncrMessageStat", "IncrMessageStat(), stat(%+v),error(%+v)", stat, err)
 			return
 		}
 
@@ -172,7 +204,7 @@ func (p *Service) onTopicFollowRequested(m *stan.Msg) {
 	}
 
 	if err = tx.Commit(); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		PromError("message: tx.Commit", "tx.Commit(), error(%+v)", err)
 		return
 	}
 
@@ -213,16 +245,22 @@ func (p *Service) onTopicFollowApproved(m *stan.Msg) {
 	}()
 
 	var req *model.TopicFollowRequest
-	if req, err = p.d.GetTopicFollowRequestByID(c, tx, info.RequestID); err != nil {
-		return
-	} else if req == nil {
-		err = ecode.TopicFollowRequestNotExist
+	if req, err = p.getTopicFollowRequest(c, tx, info.RequestID); err != nil {
+		if ecode.IsNotExistEcode(err) {
+			m.Ack()
+			return
+		}
+		PromError("message: GetTopicFollowRequest", "GetTopicFollowRequest(), id(%d),error(%+v)", info.RequestID, err)
 		return
 	}
 
-	var topic *topic.TopicInfo
-	if topic, err = p.d.GetTopic(c, req.TopicID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onTopicFollowApproved GetTopic failed %#v", err))
+	var topic *model.Topic
+	if topic, err = p.getTopic(c, tx, req.TopicID); err != nil {
+		if ecode.IsNotExistEcode(err) {
+			m.Ack()
+			return
+		}
+		PromError("message: GetTopic", "GetTopic(), id(%d),error(%+v)", info.TopicID, err)
 		return
 	}
 
@@ -303,8 +341,8 @@ func (p *Service) onTopicFollowRejected(m *stan.Msg) {
 		return
 	}
 
-	var topic *topic.TopicInfo
-	if topic, err = p.d.GetTopic(c, req.TopicID); err != nil {
+	var topic *model.Topic
+	if topic, err = p.getTopic(c, tx, req.TopicID); err != nil {
 		log.For(c).Error(fmt.Sprintf("service.onTopicFollowRejected GetTopic failed %#v", err))
 		return
 	}

@@ -25,13 +25,6 @@ func (p *Service) getArticleHistory(c context.Context, node sqalx.Node, articleI
 }
 
 func (p *Service) getArticle(c context.Context, node sqalx.Node, articleID int64) (item *model.Article, err error) {
-	var addCache = true
-	if item, err = p.d.ArticleCache(c, articleID); err != nil {
-		addCache = false
-	} else if item != nil {
-		return
-	}
-
 	if item, err = p.d.GetArticleByID(c, p.d.DB(), articleID); err != nil {
 		return
 	} else if item == nil {
@@ -39,11 +32,6 @@ func (p *Service) getArticle(c context.Context, node sqalx.Node, articleID int64
 		return
 	}
 
-	if addCache {
-		p.addCache(func() {
-			p.d.SetArticleCache(context.TODO(), item)
-		})
-	}
 	return
 }
 
