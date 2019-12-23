@@ -50,6 +50,10 @@ func (p *Service) SaveCatalogs(c context.Context, req *api.ArgSaveCatalogs) (err
 		return
 	}
 
+	if err = p.d.SetTopicUpdatedAt(c, tx, req.TopicID, time.Now().Unix()); err != nil {
+		return
+	}
+
 	if err = tx.Commit(); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 		return
@@ -79,6 +83,8 @@ func (p *Service) SaveCatalogs(c context.Context, req *api.ArgSaveCatalogs) (err
 		for _, v := range change.DelTaxonomyItems {
 			p.onTopicTaxonomyCatalogDeleted(c, v, req.Aid, time.Now().Unix())
 		}
+
+		p.d.DelTopicCache(context.TODO(), req.TopicID)
 	})
 	return
 }

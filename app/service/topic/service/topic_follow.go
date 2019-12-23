@@ -110,6 +110,9 @@ func (p *Service) Follow(c context.Context, arg *api.ArgTopicFollow) (status int
 		err = ecode.OnlyAllowAdminAdded
 		return
 	}
+	if err = p.d.SetTopicUpdatedAt(c, tx, arg.TopicID, time.Now().Unix()); err != nil {
+		return
+	}
 
 	if err = tx.Commit(); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
@@ -125,6 +128,7 @@ func (p *Service) Follow(c context.Context, arg *api.ArgTopicFollow) (status int
 			p.onTopicFollowed(context.TODO(), arg.TopicID, arg.Aid, time.Now().Unix())
 		}
 		p.d.DelTopicMembersCache(context.TODO(), req.TopicID)
+		p.d.DelTopicCache(context.TODO(), req.TopicID)
 	})
 
 	return
@@ -198,6 +202,10 @@ func (p *Service) AuditFollow(c context.Context, arg *api.ArgAuditFollow) (err e
 		return
 	}
 
+	if err = p.d.SetTopicUpdatedAt(c, tx, req.TopicID, time.Now().Unix()); err != nil {
+		return
+	}
+
 	if err = tx.Commit(); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 		return
@@ -214,6 +222,7 @@ func (p *Service) AuditFollow(c context.Context, arg *api.ArgAuditFollow) (err e
 			break
 		}
 
+		p.d.DelTopicCache(context.TODO(), req.TopicID)
 		p.d.DelTopicMembersCache(context.TODO(), req.TopicID)
 	})
 

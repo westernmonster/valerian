@@ -32,6 +32,10 @@ func (p *Service) Leave(c context.Context, aid, topicID int64) (err error) {
 		return
 	}
 
+	if err = p.d.SetTopicUpdatedAt(c, tx, topicID, time.Now().Unix()); err != nil {
+		return
+	}
+
 	if err = tx.Commit(); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 		return
@@ -40,6 +44,7 @@ func (p *Service) Leave(c context.Context, aid, topicID int64) (err error) {
 	p.addCache(func() {
 		p.d.DelTopicMembersCache(context.TODO(), topicID)
 		p.onTopicLeaved(c, aid, topicID, time.Now().Unix())
+		p.d.DelTopicCache(context.TODO(), topicID)
 	})
 
 	return
@@ -125,6 +130,10 @@ func (p *Service) BulkSaveMembers(c context.Context, req *api.ArgBatchSavedTopic
 		return
 	}
 
+	if err = p.d.SetTopicUpdatedAt(c, tx, req.TopicID, time.Now().Unix()); err != nil {
+		return
+	}
+
 	if err = tx.Commit(); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 		return
@@ -165,6 +174,10 @@ func (p *Service) ChangeOwner(c context.Context, arg *api.ArgChangeOwner) (err e
 		return
 	}
 
+	if err = p.d.SetTopicUpdatedAt(c, tx, arg.TopicID, time.Now().Unix()); err != nil {
+		return
+	}
+
 	if err = tx.Commit(); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 		return
@@ -172,6 +185,7 @@ func (p *Service) ChangeOwner(c context.Context, arg *api.ArgChangeOwner) (err e
 
 	p.addCache(func() {
 		p.d.DelTopicMembersCache(context.TODO(), arg.TopicID)
+		p.d.DelTopicCache(context.TODO(), arg.TopicID)
 	})
 
 	return

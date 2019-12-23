@@ -173,6 +173,8 @@ func (p *Service) updateTopic(c context.Context, node sqalx.Node, aid int64, arg
 		t.AllowDiscuss = types.BitBool(arg.GetAllowDiscussValue())
 	}
 
+	t.UpdatedAt = time.Now().Unix()
+
 	if err = p.d.UpdateTopic(c, node, t); err != nil {
 		return
 	}

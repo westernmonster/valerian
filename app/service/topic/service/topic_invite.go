@@ -112,6 +112,10 @@ func (p *Service) ProcessInvite(c context.Context, arg *api.ArgProcessInvite) (e
 		return
 	}
 
+	if err = p.d.SetTopicUpdatedAt(c, tx, req.TopicID, time.Now().Unix()); err != nil {
+		return
+	}
+
 	if err = tx.Commit(); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 		return
@@ -122,6 +126,7 @@ func (p *Service) ProcessInvite(c context.Context, arg *api.ArgProcessInvite) (e
 		if req.Status == model.InviteStatusJoined {
 			p.onTopicFollowed(context.TODO(), req.TopicID, req.AccountID, time.Now().Unix())
 		}
+		p.d.DelTopicCache(context.TODO(), req.TopicID)
 	})
 
 	return
