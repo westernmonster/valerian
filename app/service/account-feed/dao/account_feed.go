@@ -24,7 +24,6 @@ func (p *Dao) GetAccountFeedPaged(c context.Context, node sqalx.Node, accountID 
 func (p *Dao) AddAccountFeed(c context.Context, node sqalx.Node, item *model.AccountFeed) (err error) {
 	sqlInsert := "INSERT INTO account_feeds( id,account_id,action_type,action_time,action_text,target_id,target_type,deleted,created_at,updated_at) VALUES ( ?,?,?,?,?,?,?,?,?,?)"
 
-	log.Infof("item(%+v), node(%+v)", item, node)
 	if _, err = node.ExecContext(c, sqlInsert, item.ID, item.AccountID, item.ActionType, item.ActionTime, item.ActionText, item.TargetID, item.TargetType, item.Deleted, item.CreatedAt, item.UpdatedAt); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.AddAccountFeeds err(%+v), item(%+v)", err, item))
 		return
