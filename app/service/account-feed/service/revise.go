@@ -9,6 +9,7 @@ import (
 	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
 	"valerian/library/gid"
+	"valerian/library/log"
 
 	"github.com/nats-io/stan.go"
 )
@@ -125,6 +126,7 @@ func (p *Service) onReviseUpdated(m *stan.Msg) {
 		UpdatedAt:  time.Now().Unix(),
 	}
 
+	log.Infof("feed(%+v)", feed)
 	if err = p.d.AddAccountFeed(c, p.d.DB(), feed); err != nil {
 		PromError("account-feed: AddAccountFeed", "AddAccountFeed(), feed(%+v),error(%+v)", feed, err)
 		return
