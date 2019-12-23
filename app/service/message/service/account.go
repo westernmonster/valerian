@@ -10,7 +10,6 @@ import (
 	"valerian/app/service/message/model"
 	"valerian/library/database/sqalx"
 	"valerian/library/gid"
-	"valerian/library/log"
 
 	"github.com/nats-io/stan.go"
 )
@@ -18,22 +17,24 @@ import (
 func (p *Service) onMemberFollowed(m *stan.Msg) {
 	var err error
 	c := context.Background()
+	// 强制使用Master库
+	c = sqalx.NewContext(c, true)
 	info := new(def.MsgMemberFollowed)
 	if err = info.Unmarshal(m.Data); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onMemberFollowed Unmarshal failed %#v", err))
+		PromError("message: Unmarshal data", "info.Umarshal() ,error(%+v)", err)
 		return
 	}
 
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		PromError("message: tx.Beginx", "tx.Beginx(), error(%+v)", err)
 		return
 	}
 
 	defer func() {
 		if err != nil {
 			if err1 := tx.Rollback(); err1 != nil {
-				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+				PromError("message: tx.Rollback", "tx.Rollback(), error(%+v)", err)
 			}
 			return
 		}
@@ -55,37 +56,43 @@ func (p *Service) onMemberFollowed(m *stan.Msg) {
 	}
 
 	if err = p.d.AddMessage(c, tx, msg); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onCommentAdded AddMessage failed %#v", err))
+		PromError("message: AddMessage", "AddMessage(), message(%+v),error(%+v)", msg, err)
 		return
 	}
 
-	if err = p.d.IncrMessageStat(c, tx, &model.MessageStat{AccountID: msg.AccountID, UnreadCount: 1}); err != nil {
+	stat := &model.MessageStat{AccountID: msg.AccountID, UnreadCount: 1}
+	if err = p.d.IncrMessageStat(c, tx, stat); err != nil {
+		PromError("message: AddMessage", "AddMessage(), message(%+v),error(%+v)", msg, err)
 		return
 	}
 
 	if err = tx.Commit(); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		PromError("message: tx.Commit", "tx.Commit(), error(%+v)", err)
 		return
 	}
 
 	m.Ack()
 
 	p.addCache(func() {
+		c := context.Background()
+		// 强制使用Master库
+		c = sqalx.NewContext(c, true)
 		var setting *model.SettingResp
-		if setting, err = p.getAccountSetting(context.Background(), p.d.DB(), msg.AccountID); err != nil {
+		if setting, err = p.getAccountSetting(c, p.d.DB(), msg.AccountID); err != nil {
 			PromError("message: getAccountSetting", "getAccountSetting(), id(%d),error(%+v)", msg.AccountID, err)
 			return
 		}
 
+		push := &model.PushMessage{
+			Aid:     msg.AccountID,
+			MsgID:   msg.ID,
+			Title:   def.PushMsgTitleFollowed,
+			Content: def.PushMsgTitleFollowed,
+			Link:    fmt.Sprintf(def.LinkUser, info.TargetAccountID),
+		}
 		if setting.NotifyNewFans {
-			if _, err := p.pushSingleUser(context.Background(),
-				msg.AccountID,
-				msg.ID,
-				def.PushMsgTitleFollowed,
-				def.PushMsgTitleFollowed,
-				fmt.Sprintf(def.LinkUser, info.TargetAccountID),
-			); err != nil {
-				log.For(context.Background()).Error(fmt.Sprintf("service.onMemberFollowed Push message failed %#v", err))
+			if _, err := p.pushSingleUser(c, push); err != nil {
+				PromError("message: pushSingleUser", "pushSingleUser(), push(%+v),error(%+v)", push, err)
 			}
 		}
 

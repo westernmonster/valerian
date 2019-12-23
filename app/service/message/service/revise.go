@@ -8,31 +8,33 @@ import (
 	"valerian/app/service/feed/def"
 	"valerian/app/service/message/model"
 	"valerian/library/database/sqalx"
+	"valerian/library/ecode"
 	"valerian/library/gid"
-	"valerian/library/log"
 
 	"github.com/nats-io/stan.go"
 )
 
 func (p *Service) onReviseAdded(m *stan.Msg) {
 	var err error
-	c := context.Background()
+	// 强制使用Master库
+	c := sqalx.NewContext(context.Background(), true)
+
 	info := new(def.MsgReviseAdded)
 	if err = info.Unmarshal(m.Data); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onReviseAdded Unmarshal failed %#v", err))
+		PromError("message: Unmarshal data", "info.Umarshal() ,error(%+v)", err)
 		return
 	}
 
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		PromError("message: tx.Beginx", "tx.Beginx(), error(%+v)", err)
 		return
 	}
 
 	defer func() {
 		if err != nil {
 			if err1 := tx.Rollback(); err1 != nil {
-				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+				PromError("message: tx.Rollback", "tx.Rollback(), error(%+v)", err)
 			}
 			return
 		}
@@ -40,13 +42,21 @@ func (p *Service) onReviseAdded(m *stan.Msg) {
 
 	var revise *model.Revise
 	if revise, err = p.getRevise(c, tx, info.ReviseID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onReviseAdded GetRevise failed %#v", err))
+		if ecode.IsNotExistEcode(err) {
+			m.Ack()
+			return
+		}
+		PromError("message: GetRevise", "GetRevise(), id(%d),error(%+v)", info.ReviseID, err)
 		return
 	}
 
 	var article *model.Article
 	if article, err = p.getArticle(c, tx, revise.ArticleID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onReviseAdded GetArticle failed %#v", err))
+		if ecode.IsNotExistEcode(err) {
+			m.Ack()
+			return
+		}
+		PromError("message: GetArticle", "GetArticle(), id(%d),error(%+v)", revise.ArticleID, err)
 		return
 	}
 
@@ -66,30 +76,33 @@ func (p *Service) onReviseAdded(m *stan.Msg) {
 	}
 
 	if err = p.d.AddMessage(c, tx, msg); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onCommentAdded AddMessage failed %#v", err))
+		PromError("message: AddMessage", "AddMessage(), message(%+v),error(%+v)", msg, err)
 		return
 	}
 
-	if err = p.d.IncrMessageStat(c, tx, &model.MessageStat{AccountID: msg.AccountID, UnreadCount: 1}); err != nil {
+	stat := &model.MessageStat{AccountID: msg.AccountID, UnreadCount: 1}
+	if err = p.d.IncrMessageStat(c, tx, stat); err != nil {
+		PromError("message: AddMessage", "AddMessage(), message(%+v),error(%+v)", msg, err)
 		return
 	}
 
 	if err = tx.Commit(); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		PromError("message: tx.Commit", "tx.Commit(), error(%+v)", err)
 		return
 	}
 
 	m.Ack()
 
 	p.addCache(func() {
-		if _, err := p.pushSingleUser(context.Background(),
-			msg.AccountID,
-			msg.ID,
-			def.PushMsgTitleReviseAdded,
-			def.PushMsgTitleReviseAdded,
-			fmt.Sprintf(def.LinkRevise, revise.ID),
-		); err != nil {
-			log.For(context.Background()).Error(fmt.Sprintf("service.onReviseAdded Push message failed %#v", err))
+		push := &model.PushMessage{
+			Aid:     msg.AccountID,
+			MsgID:   msg.ID,
+			Title:   def.PushMsgTitleReviseAdded,
+			Content: def.PushMsgTitleReviseAdded,
+			Link:    fmt.Sprintf(def.LinkRevise, revise.ID),
+		}
+		if _, err := p.pushSingleUser(context.Background(), push); err != nil {
+			PromError("message: pushSingleUser", "pushSingleUser(), push(%+v),error(%+v)", push, err)
 		}
 	})
 }

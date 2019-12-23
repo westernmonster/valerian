@@ -11,3 +11,11 @@ type SettingResp struct {
 	NotifyNewMember      bool   `json:"notify_new_member"`      // NotifyNewMember 通知-新成员
 	Language             string `json:"language"`               // Language 语言
 }
+
+type PushMessage struct {
+	Aid     int64
+	MsgID   int64
+	Title   string
+	Content string
+	Link    string
+}

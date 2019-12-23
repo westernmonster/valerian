@@ -5,30 +5,31 @@ import (
 	"fmt"
 	"strconv"
 
+	"valerian/app/service/message/model"
 	"valerian/library/jpush"
 )
 
-func (p *Service) pushSingleUser(c context.Context, aid int64, msgID int64, title, content, link string) (pushID string, err error) {
+func (p *Service) pushSingleUser(c context.Context, item *model.PushMessage) (pushID string, err error) {
 	payload := &jpush.Payload{
 		Platform: jpush.NewPlatform().All(),
-		Audience: jpush.NewAudience().SetAlias(fmt.Sprintf("%d", aid)),
+		Audience: jpush.NewAudience().SetAlias(fmt.Sprintf("%d", item.Aid)),
 		Notification: &jpush.Notification{
-			Alert: title,
+			Alert: item.Title,
 			Android: &jpush.AndroidNotification{
-				Alert: title,
+				Alert: item.Title,
 				Extras: map[string]interface{}{
-					"id":   strconv.FormatInt(msgID, 10),
+					"id":   strconv.FormatInt(item.MsgID, 10),
 					"type": "link",
-					"url":  link,
+					"url":  item.Link,
 				},
 				AlertType: 1,
 			},
 			Ios: &jpush.IosNotification{
-				Alert: title,
+				Alert: item.Title,
 				Extras: map[string]interface{}{
-					"id":   strconv.FormatInt(msgID, 10),
+					"id":   strconv.FormatInt(item.MsgID, 10),
 					"type": "link",
-					"url":  link,
+					"url":  item.Link,
 				},
 			},
 		},
