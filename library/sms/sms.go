@@ -18,10 +18,12 @@ const (
 	RegisterTemplateCode           = "SMS_166865016" // 注册验证码模板
 	ResetPasswordTemplateCode      = "SMS_166865016" // 重置密码模板
 	LoginTemplateCode              = "SMS_166776690" // 注册验证码模板
+	CloseTemplateCode              = "SMS_181196458" // 注销账户模板
 	ChinaSignName                  = "他石笔记"          // 短信签名
 	ChinaRegisterTemplateCode      = "SMS_161380530" // 注册验证码模板
 	ChinaResetPasswordTemplateCode = "SMS_161380531" // 重置密码模板
 	ChinaLoginTemplateCode         = "SMS_166690586" // 注册验证码模板
+	ChinaCloseTemplateCode         = "SMS_181201419" // 注销账户模板
 	SendSms                        = "SendSms"
 	SendBatchSms                   = "SendBatchSms"
 	QuerySendDetails               = "QuerySendDetails"
@@ -202,6 +204,60 @@ func (p *SMSClient) sendResetPasswordValcode(c context.Context, mobile string, v
 
 	if sr.Code != "OK" {
 		log.For(c).Error(fmt.Sprintf("SMSClient.SendResetPasswordValcode error(%+v), mobile(%s) resp(%+v, %+v)", err, mobile, response.GetHttpStatus(), response.GetHttpContentString()))
+		return
+
+	}
+
+	return
+}
+
+func (p *SMSClient) SendCloseValcode(c context.Context, prefix, mobile string, valcode string) (err error) {
+	if prefix == "86" {
+		return p.sendCloseValcode(c, mobile, valcode, ChinaSignName, ChinaCloseTemplateCode)
+	} else {
+		return p.sendCloseValcode(c, prefix+mobile, valcode, SignName, CloseTemplateCode)
+	}
+}
+func (p *SMSClient) sendCloseValcode(c context.Context, mobile string, valcode, signName, template string) (err error) {
+	if span := opentracing.SpanFromContext(c); span != nil {
+		span := tracing.StartSpan("sms", opentracing.ChildOf(span.Context()))
+		span.SetTag("param.mobile", mobile)
+		span.SetTag("param.type", "Close")
+		ext.SpanKindRPCClient.Set(span)
+		defer span.Finish()
+		c = opentracing.ContextWithSpan(c, span)
+	}
+	request := requests.NewCommonRequest()
+	request.Domain = EndPoint
+	request.Version = Version
+	request.ApiName = SendSms
+	request.QueryParams["PhoneNumbers"] = mobile
+	request.QueryParams["SignName"] = signName
+	request.QueryParams["TemplateCode"] = template
+	request.QueryParams["Action"] = SendSms
+	request.QueryParams["TemplateParam"] = fmt.Sprintf(`{"code":"%s"}`, valcode)
+
+	response, err := p.Client.ProcessCommonRequest(request)
+	if err != nil {
+		log.For(c).Error(fmt.Sprintf("SMSClient.SendCloseValcode error(%+v), mobile(%s)", err, mobile))
+		return
+	}
+
+	if !response.IsSuccess() {
+		log.For(c).Error(fmt.Sprintf("SMSClient.SendCloseValcode error(%+v), mobile(%s) resp(%+v, %+v)", err, mobile, response.GetHttpStatus(), response.GetHttpContentString()))
+		return
+	}
+	data := response.GetHttpContentBytes()
+	sr := new(smsResponse)
+	err = json.Unmarshal(data, sr)
+
+	if err != nil {
+		log.For(c).Error(fmt.Sprintf("SMSClient.SendCloseValcode error(%+v), mobile(%s) resp(%+v, %+v)", err, mobile, response.GetHttpStatus(), response.GetHttpContentString()))
+		return
+	}
+
+	if sr.Code != "OK" {
+		log.For(c).Error(fmt.Sprintf("SMSClient.SendCloseValcode error(%+v), mobile(%s) resp(%+v, %+v)", err, mobile, response.GetHttpStatus(), response.GetHttpContentString()))
 		return
 
 	}
