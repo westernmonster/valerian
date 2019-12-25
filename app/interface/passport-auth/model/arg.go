@@ -1,6 +1,10 @@
 package model
 
 import (
+	"regexp"
+	"valerian/library/ecode"
+
+	"github.com/asaskevich/govalidator"
 	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/go-ozzo/ozzo-validation/is"
 )
@@ -88,14 +92,57 @@ func (p *ArgLogout) Validate() error {
 
 }
 
+func ValidateIdentity(identityType int32, prefix string) *ValidateIdentityRule {
+	return &ValidateIdentityRule{
+		IdentityType: identityType,
+		Prefix:       prefix,
+	}
+}
+
+type ValidateIdentityRule struct {
+	IdentityType int32
+	Prefix       string
+}
+
+func (p *ValidateIdentityRule) Validate(v interface{}) error {
+	identity := v.(string)
+
+	if p.IdentityType == IdentityEmail {
+		if !govalidator.IsEmail(identity) {
+			return ecode.InvalidEmail
+		}
+	} else {
+		chinaRegex := regexp.MustCompile(ChinaMobileRegex)
+		otherRegex := regexp.MustCompile(OtherMobileRegex)
+
+		if p.Prefix == "86" {
+			if !chinaRegex.MatchString(identity) {
+				return ecode.InvalidMobile
+			}
+		} else { // China
+			if !otherRegex.MatchString(identity) {
+				return ecode.InvalidMobile
+			}
+		} // Other Country
+	}
+
+	return nil
+}
+
 type ArgCloseAccount struct {
 	// 验证码 6位数字
-	Valcode string `json:"valcode"`
+	Valcode  string `json:"valcode"`
+	Identity string `json:"identity"`
+	Prefix   string `json:"prefix"`
+	// 标识类型, 1手机, 2邮件
+	IdentityType int32 `json:"identity_type"`
 }
 
 func (p *ArgCloseAccount) Validate() error {
 	return validation.ValidateStruct(
 		p,
 		validation.Field(&p.Valcode, validation.Required, validation.RuneLength(6, 6), is.Digit),
+		validation.Field(&p.Identity, validation.Required, ValidateIdentity(p.IdentityType, p.Prefix)),
+		validation.Field(&p.IdentityType, validation.Required, validation.In(IdentityEmail, IdentityMobile)),
 	)
 }
