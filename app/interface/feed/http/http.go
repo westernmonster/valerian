@@ -34,6 +34,7 @@ func route(e *mars.Engine) {
 	g := e.Group("/api/v1/list")
 	{
 		g.GET("/activities", authSvc.User, getActivites)
+		g.GET("/hot", authSvc.User, getHot)
 	}
 
 }
