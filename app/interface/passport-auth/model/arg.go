@@ -1,6 +1,9 @@
 package model
 
-import validation "github.com/go-ozzo/ozzo-validation"
+import (
+	validation "github.com/go-ozzo/ozzo-validation"
+	"github.com/go-ozzo/ozzo-validation/is"
+)
 
 type ArgRenewToken struct {
 	RefreshToken string `json:"refresh_token"`
@@ -83,4 +86,16 @@ func (p *ArgLogout) Validate() error {
 		validation.Field(&p.ClientID, validation.Required),
 	)
 
+}
+
+type ArgCloseAccount struct {
+	// 验证码 6位数字
+	Valcode string `json:"valcode"`
+}
+
+func (p *ArgCloseAccount) Validate() error {
+	return validation.ValidateStruct(
+		p,
+		validation.Field(&p.Valcode, validation.Required, validation.RuneLength(6, 6), is.Digit),
+	)
 }

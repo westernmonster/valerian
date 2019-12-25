@@ -25,3 +25,7 @@ func (p *Service) Logout(c context.Context, arg *model.ArgLogout) (err error) {
 	}
 	return
 }
+
+func (p *Service) CloseAccount(c context.Context, arg *model.ArgCloseAccount) (err error) {
+	return
+}

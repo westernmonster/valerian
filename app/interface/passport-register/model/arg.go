@@ -25,21 +25,13 @@ type ArgEmail struct {
 func (p *ArgEmail) Validate() error {
 	return validation.ValidateStruct(
 		p,
-		validation.Field(&p.Email, validation.Required.Error(`请输入手机号或邮件地址`),
-			is.Email.Error("邮件格式不正确"),
+		validation.Field(&p.Email, validation.Required,
+			is.Email,
 		),
-		validation.Field(&p.Password,
-			validation.Required.Error(`"password" is required`),
-			validation.RuneLength(6, 50).Error(`"password" length must in 6-50 characters`)),
-		validation.Field(&p.Valcode,
-			validation.Required.Error(`请输入验证码`),
-			validation.RuneLength(6, 6).Error(`验证码必须为6位数字`),
-			is.Digit.Error("验证码必须为6位数字")),
-		validation.Field(&p.Source,
-			validation.Required.Error(`请输入来源`),
-			validation.In(SourceAndroid, SourceiOS, SourceWeb).Error("来源不在允许范围内")),
-		validation.Field(&p.ClientID,
-			validation.Required.Error(`"client_id" is required`)),
+		validation.Field(&p.Password, validation.Required, validation.RuneLength(6, 50)),
+		validation.Field(&p.Valcode, validation.Required, validation.RuneLength(6, 6), is.Digit),
+		validation.Field(&p.Source, validation.Required, validation.In(SourceAndroid, SourceiOS, SourceWeb)),
+		validation.Field(&p.ClientID, validation.Required),
 	)
 }
 
@@ -63,22 +55,11 @@ type ArgMobile struct {
 func (p *ArgMobile) Validate() error {
 	return validation.ValidateStruct(
 		p,
-		validation.Field(&p.Mobile,
-			validation.Required.Error(`请输入手机号码`),
-			ValidateMobile(p.Prefix),
-		),
-		validation.Field(&p.Password,
-			validation.Required.Error(`"password" is required`),
-			validation.RuneLength(6, 50).Error(`"password" length must in 6-50 characters`)),
-		validation.Field(&p.Valcode,
-			validation.Required.Error(`请输入验证码`),
-			validation.RuneLength(6, 6).Error(`验证码必须为6位数字`),
-			is.Digit.Error("验证码必须为6位数字")),
-		validation.Field(&p.Source,
-			validation.Required.Error(`请输入来源`),
-			validation.In(SourceAndroid, SourceiOS, SourceWeb).Error("来源不在允许范围内")),
-		validation.Field(&p.ClientID,
-			validation.Required.Error(`"client_id" is required`)),
+		validation.Field(&p.Mobile, validation.Required, ValidateMobile(p.Prefix)),
+		validation.Field(&p.Password, validation.Required, validation.RuneLength(6, 50)),
+		validation.Field(&p.Valcode, validation.Required, validation.RuneLength(6, 6), is.Digit),
+		validation.Field(&p.Source, validation.Required, validation.In(SourceAndroid, SourceiOS, SourceWeb)),
+		validation.Field(&p.ClientID, validation.Required),
 	)
 }
 
