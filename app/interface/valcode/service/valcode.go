@@ -48,6 +48,11 @@ func (p *Service) EmailValcode(c context.Context, req *model.ArgEmailValcode) (c
 			return
 		}
 		break
+	case model.ValcodeClose:
+		if err = p.email.SendCloseValcode(c, req.Email, code); err != nil {
+			return
+		}
+		break
 	}
 
 	if err = p.d.SetEmailValcodeCache(c, req.CodeType, req.Email, code); err != nil {

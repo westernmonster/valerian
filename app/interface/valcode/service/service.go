@@ -40,6 +40,7 @@ type Service struct {
 	email interface {
 		SendRegisterEmail(c context.Context, email string, valcode string) (err error)
 		SendResetPasswordValcode(c context.Context, email string, valcode string) (err error)
+		SendCloseValcode(c context.Context, email string, valcode string) (err error)
 	}
 	missch chan func()
 }
