@@ -349,6 +349,8 @@ func (p *Service) UpdateRevise(c context.Context, arg *api.ArgUpdateRevise) (err
 		}
 	})
 
+	item.UpdatedAt = time.Now().Unix()
+
 	if err = p.d.UpdateRevise(c, tx, item); err != nil {
 		return
 	}
