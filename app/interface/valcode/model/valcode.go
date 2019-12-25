@@ -23,7 +23,7 @@ func (p *ArgEmailValcode) Validate() error {
 		validation.Field(&p.Email, validation.Required.Error(`请输入邮件地址`), is.Email.Error("邮件地址格式不正确")),
 		validation.Field(&p.CodeType,
 			validation.Required.Error(`请输入验证码类型`),
-			validation.In(ValcodeRegister, ValcodeForgetPassword).Error("验证码类型不在允许范围内")),
+			validation.In(ValcodeRegister, ValcodeForgetPassword, ValcodeClose).Error("验证码类型不在允许范围内")),
 	)
 }
 
