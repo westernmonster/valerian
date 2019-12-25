@@ -35,7 +35,7 @@ type ArgMobileValcode struct {
 	// Prefix 电话号码前缀，例如86
 	Prefix string `json:"prefix"`
 
-	// 验证码类型, 1为注册验证码, 2为重置密码验证码, 3为登录验证码
+	// 验证码类型, 1为注册验证码, 2为重置密码验证码, 3为登录验证码, 4为注销账户
 	CodeType int32 `json:"code_type"`
 }
 
@@ -47,7 +47,7 @@ func (p *ArgMobileValcode) Validate() error {
 		),
 		validation.Field(&p.CodeType,
 			validation.Required.Error(`请输入验证码类型`),
-			validation.In(ValcodeLogin, ValcodeRegister, ValcodeForgetPassword).Error("验证码类型不在允许范围内")),
+			validation.In(ValcodeLogin, ValcodeRegister, ValcodeForgetPassword, ValcodeClose).Error("验证码类型不在允许范围内")),
 	)
 }
 

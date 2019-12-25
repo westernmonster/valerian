@@ -99,6 +99,11 @@ func (p *Service) MobileValcode(c context.Context, req *model.ArgMobileValcode) 
 			return
 		}
 		break
+	case model.ValcodeClose:
+		if err = p.sms.SendCloseValcode(c, req.Prefix, req.Mobile, code); err != nil {
+			return
+		}
+		break
 	}
 
 	if err = p.d.SetMobileValcodeCache(c, req.CodeType, req.Prefix+req.Mobile, code); err != nil {

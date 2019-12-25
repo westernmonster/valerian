@@ -35,6 +35,7 @@ type Service struct {
 		SendRegisterValcode(c context.Context, prefix, mobile string, valcode string) (err error)
 		SendResetPasswordValcode(c context.Context, prefix, mobile string, valcode string) (err error)
 		SendLoginValcode(c context.Context, prefix, mobile string, valcode string) (err error)
+		SendCloseValcode(c context.Context, prefix, mobile string, valcode string) (err error)
 	}
 	email interface {
 		SendRegisterEmail(c context.Context, email string, valcode string) (err error)
