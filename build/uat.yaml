@@ -53,6 +53,10 @@ spec:
         backend:
           serviceName: interface-passport-auth
           servicePort: 8000
+      - path: /api/v1/oauth/close
+        backend:
+          serviceName: interface-passport-auth
+          servicePort: 8000
       - path: /api/v1/certification
         backend:
           serviceName: interface-certification
@@ -192,6 +196,10 @@ spec:
         backend:
           serviceName: interface-passport-auth
           servicePort: 8000
+      - path: /api/v1/oauth/close
+        backend:
+          serviceName: interface-passport-auth
+          servicePort: 8000
       - path: /api/v1/certification
         backend:
           serviceName: interface-certification
@@ -324,6 +332,10 @@ spec:
           serviceName: interface-passport-register
           servicePort: 8000
       - path: /api/v1/oauth/logout
+        backend:
+          serviceName: interface-passport-auth
+          servicePort: 8000
+      - path: /api/v1/oauth/close
         backend:
           serviceName: interface-passport-auth
           servicePort: 8000
