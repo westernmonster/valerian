@@ -41,5 +41,5 @@ type ArgSetting struct {
 // 注销账户
 // swagger:model
 type ArgAnnulAccount struct {
-	Password  string `json:"password"`
+	Valcode string `json:"valcode"`
 }
