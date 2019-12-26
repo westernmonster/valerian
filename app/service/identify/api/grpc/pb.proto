@@ -73,6 +73,24 @@ message MobileRegisterReq {
 }
 
 
+message ForgetPasswordReq {
+	string Identity  = 1;
+	string Valcode  = 2;
+	string Prefix   = 3;
+	int32 IdentityType  = 4;
+}
+
+message ForgetPasswordResp {
+	string SessionID  = 1;
+}
+
+message ResetPasswordReq {
+	string SessionID  = 1;
+    string Password = 2;
+}
+
+
+
 message LogoutReq {
     int64 aid = 1;
     string client_id = 2;
@@ -132,6 +150,10 @@ service Identify {
     rpc MobileLogin(MobileLoginReq) returns (LoginResp);
 
     rpc DigitLogin(DigitLoginReq) returns (LoginResp);
+
+    rpc ForgetPassword(ForgetPasswordReq) returns (ForgetPasswordResp);
+
+    rpc ResetPassword(ResetPasswordReq) returns (EmptyStruct);
 
     rpc Logout(LogoutReq) returns (EmptyStruct);
 

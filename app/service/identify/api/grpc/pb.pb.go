@@ -632,6 +632,179 @@ func (m *MobileRegisterReq) GetClientID() string {
 	return ""
 }
 
+type ForgetPasswordReq struct {
+	Identity             string   `protobuf:"bytes,1,opt,name=Identity,proto3" json:"Identity,omitempty"`
+	Valcode              string   `protobuf:"bytes,2,opt,name=Valcode,proto3" json:"Valcode,omitempty"`
+	Prefix               string   `protobuf:"bytes,3,opt,name=Prefix,proto3" json:"Prefix,omitempty"`
+	IdentityType         int32    `protobuf:"varint,4,opt,name=IdentityType,proto3" json:"IdentityType,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ForgetPasswordReq) Reset()         { *m = ForgetPasswordReq{} }
+func (m *ForgetPasswordReq) String() string { return proto.CompactTextString(m) }
+func (*ForgetPasswordReq) ProtoMessage()    {}
+func (*ForgetPasswordReq) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f80abaa17e25ccc8, []int{9}
+}
+func (m *ForgetPasswordReq) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *ForgetPasswordReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_ForgetPasswordReq.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *ForgetPasswordReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ForgetPasswordReq.Merge(m, src)
+}
+func (m *ForgetPasswordReq) XXX_Size() int {
+	return m.Size()
+}
+func (m *ForgetPasswordReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_ForgetPasswordReq.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ForgetPasswordReq proto.InternalMessageInfo
+
+func (m *ForgetPasswordReq) GetIdentity() string {
+	if m != nil {
+		return m.Identity
+	}
+	return ""
+}
+
+func (m *ForgetPasswordReq) GetValcode() string {
+	if m != nil {
+		return m.Valcode
+	}
+	return ""
+}
+
+func (m *ForgetPasswordReq) GetPrefix() string {
+	if m != nil {
+		return m.Prefix
+	}
+	return ""
+}
+
+func (m *ForgetPasswordReq) GetIdentityType() int32 {
+	if m != nil {
+		return m.IdentityType
+	}
+	return 0
+}
+
+type ForgetPasswordResp struct {
+	SessionID            string   `protobuf:"bytes,1,opt,name=SessionID,proto3" json:"SessionID,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ForgetPasswordResp) Reset()         { *m = ForgetPasswordResp{} }
+func (m *ForgetPasswordResp) String() string { return proto.CompactTextString(m) }
+func (*ForgetPasswordResp) ProtoMessage()    {}
+func (*ForgetPasswordResp) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f80abaa17e25ccc8, []int{10}
+}
+func (m *ForgetPasswordResp) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *ForgetPasswordResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_ForgetPasswordResp.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *ForgetPasswordResp) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ForgetPasswordResp.Merge(m, src)
+}
+func (m *ForgetPasswordResp) XXX_Size() int {
+	return m.Size()
+}
+func (m *ForgetPasswordResp) XXX_DiscardUnknown() {
+	xxx_messageInfo_ForgetPasswordResp.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ForgetPasswordResp proto.InternalMessageInfo
+
+func (m *ForgetPasswordResp) GetSessionID() string {
+	if m != nil {
+		return m.SessionID
+	}
+	return ""
+}
+
+type ResetPasswordReq struct {
+	SessionID            string   `protobuf:"bytes,1,opt,name=SessionID,proto3" json:"SessionID,omitempty"`
+	Password             string   `protobuf:"bytes,2,opt,name=Password,proto3" json:"Password,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ResetPasswordReq) Reset()         { *m = ResetPasswordReq{} }
+func (m *ResetPasswordReq) String() string { return proto.CompactTextString(m) }
+func (*ResetPasswordReq) ProtoMessage()    {}
+func (*ResetPasswordReq) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f80abaa17e25ccc8, []int{11}
+}
+func (m *ResetPasswordReq) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *ResetPasswordReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_ResetPasswordReq.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *ResetPasswordReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ResetPasswordReq.Merge(m, src)
+}
+func (m *ResetPasswordReq) XXX_Size() int {
+	return m.Size()
+}
+func (m *ResetPasswordReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_ResetPasswordReq.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ResetPasswordReq proto.InternalMessageInfo
+
+func (m *ResetPasswordReq) GetSessionID() string {
+	if m != nil {
+		return m.SessionID
+	}
+	return ""
+}
+
+func (m *ResetPasswordReq) GetPassword() string {
+	if m != nil {
+		return m.Password
+	}
+	return ""
+}
+
 type LogoutReq struct {
 	Aid                  int64    `protobuf:"varint,1,opt,name=aid,proto3" json:"aid,omitempty"`
 	ClientId             string   `protobuf:"bytes,2,opt,name=client_id,json=clientId,proto3" json:"client_id,omitempty"`
@@ -644,7 +817,7 @@ func (m *LogoutReq) Reset()         { *m = LogoutReq{} }
 func (m *LogoutReq) String() string { return proto.CompactTextString(m) }
 func (*LogoutReq) ProtoMessage()    {}
 func (*LogoutReq) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f80abaa17e25ccc8, []int{9}
+	return fileDescriptor_f80abaa17e25ccc8, []int{12}
 }
 func (m *LogoutReq) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -702,7 +875,7 @@ func (m *RenewTokenResp) Reset()         { *m = RenewTokenResp{} }
 func (m *RenewTokenResp) String() string { return proto.CompactTextString(m) }
 func (*RenewTokenResp) ProtoMessage()    {}
 func (*RenewTokenResp) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f80abaa17e25ccc8, []int{10}
+	return fileDescriptor_f80abaa17e25ccc8, []int{13}
 }
 func (m *RenewTokenResp) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -777,7 +950,7 @@ func (m *AdminAuthReq) Reset()         { *m = AdminAuthReq{} }
 func (m *AdminAuthReq) String() string { return proto.CompactTextString(m) }
 func (*AdminAuthReq) ProtoMessage()    {}
 func (*AdminAuthReq) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f80abaa17e25ccc8, []int{11}
+	return fileDescriptor_f80abaa17e25ccc8, []int{14}
 }
 func (m *AdminAuthReq) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -826,7 +999,7 @@ func (m *AdminAuthResp) Reset()         { *m = AdminAuthResp{} }
 func (m *AdminAuthResp) String() string { return proto.CompactTextString(m) }
 func (*AdminAuthResp) ProtoMessage()    {}
 func (*AdminAuthResp) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f80abaa17e25ccc8, []int{12}
+	return fileDescriptor_f80abaa17e25ccc8, []int{15}
 }
 func (m *AdminAuthResp) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -887,7 +1060,7 @@ func (m *AdminPermissionReq) Reset()         { *m = AdminPermissionReq{} }
 func (m *AdminPermissionReq) String() string { return proto.CompactTextString(m) }
 func (*AdminPermissionReq) ProtoMessage()    {}
 func (*AdminPermissionReq) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f80abaa17e25ccc8, []int{13}
+	return fileDescriptor_f80abaa17e25ccc8, []int{16}
 }
 func (m *AdminPermissionReq) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -940,7 +1113,7 @@ func (m *LoginResp) Reset()         { *m = LoginResp{} }
 func (m *LoginResp) String() string { return proto.CompactTextString(m) }
 func (*LoginResp) ProtoMessage()    {}
 func (*LoginResp) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f80abaa17e25ccc8, []int{14}
+	return fileDescriptor_f80abaa17e25ccc8, []int{17}
 }
 func (m *LoginResp) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1030,7 +1203,7 @@ func (m *AdminPermissionResp) Reset()         { *m = AdminPermissionResp{} }
 func (m *AdminPermissionResp) String() string { return proto.CompactTextString(m) }
 func (*AdminPermissionResp) ProtoMessage()    {}
 func (*AdminPermissionResp) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f80abaa17e25ccc8, []int{15}
+	return fileDescriptor_f80abaa17e25ccc8, []int{18}
 }
 func (m *AdminPermissionResp) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1083,6 +1256,9 @@ func init() {
 	proto.RegisterType((*MobileLoginReq)(nil), "passport.service.identity.MobileLoginReq")
 	proto.RegisterType((*EmailRegisterReq)(nil), "passport.service.identity.EmailRegisterReq")
 	proto.RegisterType((*MobileRegisterReq)(nil), "passport.service.identity.MobileRegisterReq")
+	proto.RegisterType((*ForgetPasswordReq)(nil), "passport.service.identity.ForgetPasswordReq")
+	proto.RegisterType((*ForgetPasswordResp)(nil), "passport.service.identity.ForgetPasswordResp")
+	proto.RegisterType((*ResetPasswordReq)(nil), "passport.service.identity.ResetPasswordReq")
 	proto.RegisterType((*LogoutReq)(nil), "passport.service.identity.LogoutReq")
 	proto.RegisterType((*RenewTokenResp)(nil), "passport.service.identity.RenewTokenResp")
 	proto.RegisterType((*AdminAuthReq)(nil), "passport.service.identity.AdminAuthReq")
@@ -1095,62 +1271,69 @@ func init() {
 func init() { proto.RegisterFile("pb.proto", fileDescriptor_f80abaa17e25ccc8) }
 
 var fileDescriptor_f80abaa17e25ccc8 = []byte{
-	// 879 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x56, 0x4f, 0x8f, 0xdb, 0x44,
-	0x14, 0x97, 0xeb, 0x75, 0x12, 0xbf, 0x24, 0x55, 0x3b, 0x54, 0x55, 0x1a, 0x60, 0x37, 0xb8, 0x50,
-	0x52, 0x95, 0xa6, 0x12, 0xdc, 0x90, 0x38, 0x64, 0xe9, 0x0a, 0x45, 0x2a, 0x62, 0x99, 0x5d, 0x55,
-	0x02, 0x55, 0x8d, 0x1c, 0x7b, 0x92, 0x1d, 0x91, 0x78, 0xa6, 0x9e, 0x31, 0x6d, 0x3e, 0x04, 0x12,
-	0xe2, 0x53, 0x70, 0xe1, 0x7b, 0xc0, 0x8d, 0x03, 0xe7, 0x15, 0xda, 0xe3, 0x7e, 0x0a, 0xe4, 0x99,
-	0xf1, 0x9f, 0x24, 0x5b, 0x27, 0x8b, 0x7a, 0x49, 0xe6, 0xbd, 0x79, 0x7f, 0x7f, 0xf3, 0xfe, 0x18,
-	0x1a, 0x7c, 0x32, 0xe0, 0x31, 0x93, 0x0c, 0xdd, 0xe3, 0xbe, 0x10, 0x9c, 0xc5, 0x72, 0x20, 0x48,
-	0xfc, 0x33, 0x0d, 0xc8, 0x80, 0x86, 0x24, 0x92, 0x54, 0x2e, 0xbb, 0x8f, 0x67, 0x54, 0x9e, 0x25,
-	0x93, 0x41, 0xc0, 0x16, 0x4f, 0x66, 0x6c, 0xc6, 0x9e, 0x28, 0x8d, 0x49, 0x32, 0x55, 0x94, 0x22,
-	0xd4, 0x49, 0x5b, 0xf2, 0xda, 0xd0, 0x3c, 0x5a, 0x70, 0xb9, 0x3c, 0x91, 0x71, 0x12, 0x48, 0x2f,
-	0x02, 0x77, 0x98, 0xc8, 0x33, 0x4c, 0xf8, 0x7c, 0x89, 0x0e, 0xc0, 0x99, 0xb3, 0x19, 0x8d, 0x3a,
-	0x56, 0xcf, 0xea, 0x37, 0x0e, 0xdd, 0xcb, 0xf3, 0x03, 0xcd, 0xc0, 0xfa, 0x0f, 0xdd, 0x03, 0xdb,
-	0xa7, 0x61, 0xe7, 0x46, 0xcf, 0xea, 0xdb, 0x87, 0xf5, 0xcb, 0xf3, 0x83, 0x94, 0xc4, 0xe9, 0x0f,
-	0xfa, 0x04, 0xea, 0xe4, 0x0d, 0xa7, 0x31, 0x11, 0x9d, 0x3d, 0x75, 0xdd, 0xbc, 0x3c, 0x3f, 0xc8,
-	0x58, 0x38, 0x3b, 0x78, 0x8f, 0xa0, 0x71, 0xca, 0x7e, 0x22, 0x11, 0x26, 0xaf, 0x52, 0x77, 0x32,
-	0x3d, 0x2b, 0x77, 0xae, 0x76, 0xa7, 0x18, 0x58, 0xff, 0x79, 0xdf, 0x43, 0x1b, 0x93, 0x88, 0xbc,
-	0xce, 0x35, 0xee, 0x43, 0x3b, 0x26, 0xd3, 0x98, 0x88, 0xb3, 0x71, 0x49, 0x13, 0xb7, 0x0c, 0x53,
-	0xc9, 0xa1, 0xf7, 0xc1, 0x0d, 0xe6, 0x94, 0x44, 0x72, 0x6c, 0x42, 0x75, 0x71, 0x43, 0x33, 0x46,
-	0xa1, 0x97, 0x40, 0xfb, 0x68, 0xe1, 0xd3, 0xf9, 0x33, 0x95, 0x16, 0x79, 0x85, 0xee, 0x42, 0xed,
-	0x84, 0x25, 0x71, 0x40, 0x94, 0x2d, 0x07, 0x1b, 0x0a, 0xdd, 0x01, 0x47, 0x09, 0x1a, 0x0b, 0x9a,
-	0x40, 0x5d, 0x68, 0x1c, 0xfb, 0x42, 0xbc, 0x66, 0x71, 0xd8, 0xb1, 0xb5, 0xe9, 0x8c, 0x4e, 0xef,
-	0xbe, 0xd6, 0x6e, 0x9e, 0x2a, 0x08, 0x5c, 0x9c, 0xd3, 0xde, 0x2f, 0x16, 0xb4, 0x9f, 0xd2, 0x19,
-	0x95, 0x5b, 0xfd, 0xde, 0x85, 0xda, 0xb7, 0x6c, 0x42, 0xe7, 0xc4, 0x38, 0x36, 0x54, 0xca, 0x3f,
-	0x8e, 0xc9, 0x94, 0xbe, 0x31, 0x7e, 0x0d, 0x85, 0x3a, 0x50, 0x7f, 0xee, 0xcf, 0x03, 0x16, 0x12,
-	0xe3, 0x34, 0x23, 0x57, 0xe2, 0x71, 0xd6, 0xe2, 0xf9, 0xd5, 0x82, 0x9b, 0xda, 0xf0, 0x3b, 0x0f,
-	0xa8, 0x0c, 0xd1, 0x5e, 0x05, 0x44, 0xeb, 0x21, 0xfd, 0x66, 0xc1, 0x2d, 0x05, 0x32, 0x26, 0x33,
-	0x2a, 0x24, 0x89, 0xaf, 0xff, 0x3a, 0x25, 0x2c, 0xec, 0x0d, 0x2c, 0xfe, 0x57, 0x50, 0x7f, 0x58,
-	0x70, 0x5b, 0xe7, 0xbb, 0x4b, 0x54, 0xef, 0x12, 0xaa, 0x52, 0x2e, 0xce, 0xdb, 0xdf, 0xb5, 0xb6,
-	0x16, 0xef, 0x97, 0xe0, 0x3e, 0x63, 0x33, 0x96, 0xc8, 0x34, 0xcc, 0x5b, 0xba, 0x5b, 0xd3, 0x18,
-	0x6d, 0xdd, 0xa4, 0x95, 0xad, 0xf1, 0xbb, 0x05, 0x37, 0xcb, 0xed, 0x26, 0xf8, 0x15, 0x16, 0x3e,
-	0x82, 0x96, 0x1f, 0x04, 0x44, 0x08, 0xd3, 0x80, 0xda, 0x48, 0x53, 0xf3, 0x74, 0xff, 0x7d, 0x08,
-	0x60, 0xba, 0x7d, 0x4c, 0x23, 0x95, 0xb1, 0x83, 0x5d, 0xc3, 0x19, 0xa9, 0x6b, 0xa5, 0x3a, 0x96,
-	0x4b, 0x9e, 0xd5, 0xac, 0xab, 0x38, 0xa7, 0x4b, 0x4e, 0x36, 0x5b, 0xdc, 0xd9, 0x6c, 0x71, 0xaf,
-	0x07, 0xad, 0x61, 0xb8, 0xa0, 0x91, 0x1e, 0x5d, 0x2a, 0x53, 0x61, 0xe2, 0x74, 0x71, 0x7a, 0xf4,
-	0xbe, 0x83, 0x76, 0x49, 0x42, 0xa7, 0xb2, 0x2a, 0x92, 0xe2, 0x98, 0x08, 0x12, 0x47, 0xfe, 0x22,
-	0x7b, 0xaf, 0x9c, 0xce, 0x12, 0xb7, 0xf3, 0xc4, 0xbd, 0x07, 0x80, 0x94, 0xc1, 0x63, 0x12, 0x2f,
-	0xa8, 0x10, 0x94, 0x45, 0x57, 0x3b, 0xfe, 0xcb, 0x52, 0x4f, 0x40, 0x73, 0x00, 0x87, 0x05, 0x80,
-	0x43, 0x1a, 0x22, 0x04, 0x7b, 0x98, 0xe5, 0x15, 0xa2, 0xce, 0xa8, 0x07, 0xcd, 0x61, 0x01, 0xa0,
-	0x29, 0x92, 0x32, 0x0b, 0x7d, 0x00, 0xee, 0x51, 0x86, 0xa0, 0xc2, 0xcc, 0xc1, 0x05, 0x23, 0xbd,
-	0x3d, 0xcd, 0x00, 0x34, 0x78, 0x15, 0x8c, 0xb4, 0x57, 0x4e, 0x02, 0xc6, 0x89, 0x29, 0x16, 0x4d,
-	0x20, 0x0f, 0x5a, 0xb8, 0x04, 0x69, 0xa7, 0xae, 0x61, 0x2e, 0xf3, 0xbc, 0xaf, 0xe0, 0xbd, 0x8d,
-	0x9c, 0xaf, 0xac, 0x8a, 0x3b, 0xe0, 0x70, 0x12, 0x2f, 0x44, 0xe7, 0x46, 0xcf, 0x4e, 0x5d, 0x28,
-	0xe2, 0xf3, 0x7f, 0xea, 0xd0, 0x18, 0xa9, 0x35, 0x35, 0x5d, 0xa2, 0x1f, 0xa0, 0xf5, 0x0d, 0x91,
-	0xca, 0xee, 0x28, 0x9a, 0x32, 0x74, 0x7f, 0xf0, 0xd6, 0x95, 0x36, 0xc8, 0xe6, 0x7d, 0xf7, 0xe3,
-	0x0a, 0xa1, 0x62, 0x6d, 0xf9, 0x00, 0x45, 0xdd, 0xa2, 0x7e, 0x85, 0xce, 0xca, 0x36, 0xe9, 0x3e,
-	0xdc, 0x51, 0x52, 0x70, 0x34, 0x31, 0x6b, 0x23, 0x9b, 0x02, 0xe8, 0x51, 0x85, 0xee, 0xfa, 0x14,
-	0xab, 0x4c, 0xa3, 0xa8, 0x95, 0x30, 0x1b, 0xc9, 0xb9, 0x93, 0xcf, 0x2a, 0xf4, 0x36, 0xa6, 0xd2,
-	0x8e, 0x5e, 0x5e, 0x00, 0x14, 0x0b, 0xb0, 0x12, 0xac, 0x95, 0x3d, 0xb9, 0xa3, 0xf5, 0x97, 0xd0,
-	0x2c, 0xad, 0x15, 0xf4, 0x70, 0x6b, 0x02, 0xd7, 0xb4, 0xff, 0x02, 0xa0, 0x58, 0xa3, 0x95, 0xd1,
-	0xaf, 0x6c, 0xdb, 0x1d, 0xad, 0x3f, 0x87, 0x9a, 0x9e, 0x9e, 0x68, 0x8b, 0xbc, 0x1e, 0xb0, 0xdd,
-	0x07, 0x95, 0xe8, 0xe5, 0x1f, 0x59, 0xe8, 0x25, 0xb8, 0xf9, 0x30, 0x42, 0x9f, 0x56, 0xd5, 0x74,
-	0x69, 0xa8, 0x75, 0xfb, 0xbb, 0x09, 0x0a, 0x8e, 0xe6, 0xd0, 0x2c, 0x5a, 0x54, 0xa0, 0xc7, 0xdb,
-	0x14, 0x57, 0x66, 0x58, 0x77, 0x70, 0x1d, 0x71, 0xc1, 0x0f, 0x6f, 0xff, 0x79, 0xb1, 0x6f, 0xfd,
-	0x7d, 0xb1, 0x6f, 0xfd, 0x7b, 0xb1, 0x6f, 0xfd, 0x68, 0xfb, 0x9c, 0x4e, 0x6a, 0xea, 0xdb, 0xf2,
-	0x8b, 0xff, 0x02, 0x00, 0x00, 0xff, 0xff, 0x83, 0x02, 0xd0, 0x3b, 0xb1, 0x0a, 0x00, 0x00,
+	// 978 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x57, 0xdd, 0x6e, 0x1b, 0x45,
+	0x14, 0xd6, 0xc6, 0x59, 0xc7, 0x7b, 0x6c, 0x47, 0xc9, 0x50, 0x55, 0xee, 0x02, 0x89, 0xd9, 0x42,
+	0x49, 0x55, 0xe2, 0x4a, 0xe5, 0x0e, 0x89, 0x0b, 0x87, 0x04, 0x64, 0x29, 0x88, 0x30, 0x89, 0x2a,
+	0x81, 0xaa, 0x46, 0xeb, 0xf5, 0xd8, 0x19, 0x61, 0xef, 0x6c, 0x77, 0xc6, 0xb4, 0x7e, 0x00, 0x2e,
+	0x91, 0x10, 0x4f, 0x01, 0x17, 0xbc, 0x07, 0xdc, 0xf1, 0x04, 0x11, 0xca, 0x65, 0x9e, 0x02, 0xcd,
+	0xcf, 0xfe, 0xd9, 0xc9, 0xc6, 0xae, 0x7a, 0x13, 0xcf, 0x39, 0x3b, 0xe7, 0xef, 0x9b, 0x33, 0xdf,
+	0x99, 0x40, 0x2d, 0xea, 0x77, 0xa2, 0x98, 0x09, 0x86, 0x1e, 0x44, 0x3e, 0xe7, 0x11, 0x8b, 0x45,
+	0x87, 0x93, 0xf8, 0x67, 0x1a, 0x90, 0x0e, 0x1d, 0x90, 0x50, 0x50, 0x31, 0x73, 0xf7, 0x47, 0x54,
+	0x5c, 0x4c, 0xfb, 0x9d, 0x80, 0x4d, 0x9e, 0x8e, 0xd8, 0x88, 0x3d, 0x55, 0x16, 0xfd, 0xe9, 0x50,
+	0x49, 0x4a, 0x50, 0x2b, 0xed, 0xc9, 0x6b, 0x42, 0xfd, 0x68, 0x12, 0x89, 0xd9, 0xa9, 0x88, 0xa7,
+	0x81, 0xf0, 0x42, 0x70, 0xba, 0x53, 0x71, 0x81, 0x49, 0x34, 0x9e, 0xa1, 0x5d, 0xb0, 0xc7, 0x6c,
+	0x44, 0xc3, 0x96, 0xd5, 0xb6, 0xf6, 0x6a, 0x07, 0xce, 0xf5, 0xe5, 0xae, 0x56, 0x60, 0xfd, 0x83,
+	0x1e, 0x40, 0xc5, 0xa7, 0x83, 0xd6, 0x5a, 0xdb, 0xda, 0xab, 0x1c, 0x6c, 0x5c, 0x5f, 0xee, 0x4a,
+	0x11, 0xcb, 0x3f, 0xe8, 0x13, 0xd8, 0x20, 0x6f, 0x22, 0x1a, 0x13, 0xde, 0x5a, 0x57, 0x9f, 0xeb,
+	0xd7, 0x97, 0xbb, 0x89, 0x0a, 0x27, 0x0b, 0xef, 0x09, 0xd4, 0xce, 0xd8, 0x4f, 0x24, 0xc4, 0xe4,
+	0x95, 0x0c, 0x27, 0xe4, 0x5a, 0x85, 0x73, 0x74, 0x38, 0xa5, 0xc0, 0xfa, 0xc7, 0xfb, 0x1e, 0x9a,
+	0x98, 0x84, 0xe4, 0x75, 0x6a, 0xf1, 0x10, 0x9a, 0x31, 0x19, 0xc6, 0x84, 0x5f, 0x9c, 0xe7, 0x2c,
+	0x71, 0xc3, 0x28, 0xd5, 0x3e, 0xf4, 0x3e, 0x38, 0xc1, 0x98, 0x92, 0x50, 0x9c, 0x9b, 0x54, 0x1d,
+	0x5c, 0xd3, 0x8a, 0xde, 0xc0, 0x9b, 0x42, 0xf3, 0x68, 0xe2, 0xd3, 0xf1, 0xb1, 0x2a, 0x8b, 0xbc,
+	0x42, 0xf7, 0xa1, 0x7a, 0xca, 0xa6, 0x71, 0x40, 0x94, 0x2f, 0x1b, 0x1b, 0x09, 0xdd, 0x03, 0x5b,
+	0x6d, 0x34, 0x1e, 0xb4, 0x80, 0x5c, 0xa8, 0x9d, 0xf8, 0x9c, 0xbf, 0x66, 0xf1, 0xa0, 0x55, 0xd1,
+	0xae, 0x13, 0x59, 0x7e, 0xfb, 0x4a, 0x87, 0x39, 0x54, 0x10, 0x38, 0x38, 0x95, 0xbd, 0x5f, 0x2d,
+	0x68, 0x1e, 0xd2, 0x11, 0x15, 0x77, 0xc6, 0xbd, 0x0f, 0xd5, 0x6f, 0x59, 0x9f, 0x8e, 0x89, 0x09,
+	0x6c, 0x24, 0xa9, 0x3f, 0x89, 0xc9, 0x90, 0xbe, 0x31, 0x71, 0x8d, 0x84, 0x5a, 0xb0, 0xf1, 0xdc,
+	0x1f, 0x07, 0x6c, 0x40, 0x4c, 0xd0, 0x44, 0x2c, 0xe4, 0x63, 0xcf, 0xe5, 0xf3, 0x9b, 0x05, 0x9b,
+	0xda, 0xf1, 0x3b, 0x4f, 0x28, 0x0f, 0xd1, 0x7a, 0x09, 0x44, 0xf3, 0x29, 0xfd, 0x6e, 0xc1, 0x96,
+	0x02, 0x19, 0x93, 0x11, 0xe5, 0x82, 0xc4, 0xab, 0x9f, 0x4e, 0x0e, 0x8b, 0xca, 0x02, 0x16, 0x6f,
+	0x95, 0xd4, 0x5f, 0x16, 0x6c, 0xeb, 0x7a, 0x97, 0xc9, 0xea, 0x5d, 0x42, 0x95, 0xab, 0xc5, 0xbe,
+	0xfd, 0x5c, 0xab, 0x73, 0xf9, 0xfe, 0x62, 0xc1, 0xf6, 0xd7, 0x2c, 0x1e, 0x11, 0x91, 0x38, 0x92,
+	0xf9, 0xba, 0x50, 0xeb, 0x19, 0xba, 0x30, 0x37, 0x26, 0x95, 0xf3, 0x71, 0xd6, 0x8a, 0x71, 0x6e,
+	0xcb, 0xda, 0x83, 0x46, 0x62, 0x7d, 0x36, 0x8b, 0x74, 0xdb, 0xd9, 0xb8, 0xa0, 0xf3, 0x9e, 0x01,
+	0x9a, 0x4f, 0x83, 0x47, 0xe8, 0x03, 0x70, 0x4e, 0x09, 0xe7, 0x94, 0x85, 0xbd, 0x43, 0x93, 0x48,
+	0xa6, 0xf0, 0x8e, 0x61, 0x0b, 0x13, 0x5e, 0xcc, 0xbc, 0xd4, 0xa2, 0x80, 0xdf, 0x5a, 0x11, 0x3f,
+	0xef, 0x0b, 0x70, 0x8e, 0xd9, 0x88, 0x4d, 0x85, 0x74, 0xb3, 0xa5, 0x79, 0x4b, 0x3a, 0xa8, 0x68,
+	0xba, 0x2a, 0x25, 0x89, 0x3f, 0x2c, 0xd8, 0xcc, 0x13, 0x0f, 0x8f, 0x6e, 0xf0, 0xf0, 0x11, 0x34,
+	0xfc, 0x20, 0x20, 0x9c, 0x1b, 0x2a, 0xd2, 0x4e, 0xea, 0x5a, 0xa7, 0x99, 0xe8, 0x43, 0x00, 0xc3,
+	0x7b, 0xe7, 0x34, 0x54, 0x28, 0xda, 0xd8, 0x31, 0x9a, 0x9e, 0xfa, 0xac, 0x4c, 0xcf, 0x45, 0x02,
+	0xa3, 0x83, 0x1d, 0xa5, 0x91, 0x18, 0x2e, 0x92, 0x9d, 0xbd, 0x48, 0x76, 0x5e, 0x1b, 0x1a, 0xdd,
+	0xc1, 0x84, 0x86, 0x9a, 0xc4, 0x55, 0xa5, 0xdc, 0xe4, 0xe9, 0x60, 0xb9, 0xf4, 0xbe, 0x83, 0x66,
+	0x6e, 0x87, 0x2e, 0xa5, 0xb8, 0x45, 0xe2, 0x38, 0xe5, 0x24, 0x0e, 0xfd, 0x49, 0xd2, 0x04, 0xa9,
+	0x9c, 0x14, 0x5e, 0x49, 0x0b, 0xf7, 0x1e, 0x01, 0x52, 0x0e, 0x4f, 0x48, 0x3c, 0xa1, 0xea, 0x28,
+	0x6e, 0x0e, 0xfc, 0x8f, 0xa5, 0x8e, 0x80, 0xa6, 0x00, 0x76, 0x33, 0x00, 0xbb, 0x74, 0x80, 0x10,
+	0xac, 0x63, 0x96, 0xde, 0x15, 0xb5, 0x46, 0x6d, 0xa8, 0x77, 0x33, 0x00, 0x4d, 0xe3, 0xe5, 0x55,
+	0xb2, 0x23, 0x8e, 0x12, 0x04, 0x4d, 0xeb, 0x65, 0x0a, 0xf9, 0xf5, 0x2c, 0x01, 0xd0, 0xe0, 0x95,
+	0x29, 0x24, 0x6b, 0x9c, 0x06, 0x2c, 0x22, 0xe6, 0xda, 0x68, 0x41, 0xf6, 0x33, 0xce, 0x41, 0xda,
+	0xda, 0xd0, 0x30, 0xe7, 0x75, 0xde, 0x97, 0xf0, 0xde, 0x42, 0xcd, 0x37, 0x76, 0xc5, 0x3d, 0xb0,
+	0x23, 0x12, 0x4f, 0x78, 0x6b, 0xad, 0x5d, 0x91, 0x21, 0x94, 0xf0, 0xec, 0x4f, 0x27, 0xb9, 0x81,
+	0xc3, 0x19, 0xfa, 0x01, 0x1a, 0xdf, 0x10, 0xa1, 0xfc, 0xf6, 0xc2, 0x21, 0x43, 0x0f, 0x3b, 0xb7,
+	0x0e, 0xf7, 0x4e, 0x32, 0xf9, 0xdc, 0x8f, 0x4b, 0x36, 0x65, 0x03, 0xdc, 0x07, 0xc8, 0xfa, 0x16,
+	0xed, 0x95, 0xd8, 0x14, 0xe6, 0xaa, 0xfb, 0x78, 0xc9, 0x9d, 0x3c, 0x42, 0x7d, 0x33, 0x40, 0x13,
+	0x3e, 0x44, 0x4f, 0x4a, 0x6c, 0xe7, 0xf9, 0xbc, 0xb4, 0x8c, 0xac, 0x57, 0x06, 0xc9, 0x70, 0x4a,
+	0x83, 0x7c, 0x56, 0x62, 0xb7, 0xc0, 0xcf, 0x4b, 0x46, 0x79, 0x01, 0x90, 0x3d, 0x05, 0x4a, 0xc1,
+	0x2a, 0xbc, 0x18, 0x96, 0xf4, 0xfe, 0x12, 0xea, 0xb9, 0x01, 0x8b, 0x1e, 0xdf, 0x59, 0xc0, 0x8a,
+	0xfe, 0x5f, 0x00, 0x64, 0x0f, 0x8a, 0xd2, 0xec, 0x0b, 0xef, 0x8e, 0x25, 0xbd, 0x4f, 0x60, 0xb3,
+	0xc8, 0xdf, 0xa5, 0x27, 0xb0, 0x30, 0x71, 0xdc, 0xfd, 0x15, 0x76, 0xab, 0x03, 0x6f, 0x16, 0xa8,
+	0xbf, 0xb4, 0xa9, 0xe6, 0x87, 0x84, 0xfb, 0xa8, 0xf4, 0xe8, 0xd2, 0xb7, 0x2e, 0x7a, 0x0e, 0x55,
+	0x3d, 0x12, 0xd0, 0x1d, 0x20, 0xe8, 0xa9, 0xb1, 0xb4, 0xdf, 0x97, 0xe0, 0xa4, 0x0c, 0x8b, 0x3e,
+	0x2d, 0xbb, 0xa8, 0x39, 0xa6, 0x76, 0xf7, 0x96, 0xdb, 0xc8, 0x23, 0x34, 0x86, 0x7a, 0xc6, 0x3b,
+	0x1c, 0xed, 0xdf, 0x65, 0x58, 0x20, 0x66, 0xb7, 0xb3, 0xca, 0x76, 0x1e, 0x1d, 0x6c, 0xff, 0x7d,
+	0xb5, 0x63, 0xfd, 0x7b, 0xb5, 0x63, 0xfd, 0x77, 0xb5, 0x63, 0xfd, 0x58, 0xf1, 0x23, 0xda, 0xaf,
+	0xaa, 0x7f, 0x1d, 0x3e, 0xff, 0x3f, 0x00, 0x00, 0xff, 0xff, 0x56, 0xbe, 0x07, 0xe1, 0x90, 0x0c,
+	0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -1172,6 +1355,8 @@ type IdentifyClient interface {
 	EmailLogin(ctx context.Context, in *EmailLoginReq, opts ...grpc.CallOption) (*LoginResp, error)
 	MobileLogin(ctx context.Context, in *MobileLoginReq, opts ...grpc.CallOption) (*LoginResp, error)
 	DigitLogin(ctx context.Context, in *DigitLoginReq, opts ...grpc.CallOption) (*LoginResp, error)
+	ForgetPassword(ctx context.Context, in *ForgetPasswordReq, opts ...grpc.CallOption) (*ForgetPasswordResp, error)
+	ResetPassword(ctx context.Context, in *ResetPasswordReq, opts ...grpc.CallOption) (*EmptyStruct, error)
 	Logout(ctx context.Context, in *LogoutReq, opts ...grpc.CallOption) (*EmptyStruct, error)
 	AdminAuth(ctx context.Context, in *AdminAuthReq, opts ...grpc.CallOption) (*AdminAuthResp, error)
 	Permissions(ctx context.Context, in *AdminPermissionReq, opts ...grpc.CallOption) (*AdminPermissionResp, error)
@@ -1248,6 +1433,24 @@ func (c *identifyClient) DigitLogin(ctx context.Context, in *DigitLoginReq, opts
 	return out, nil
 }
 
+func (c *identifyClient) ForgetPassword(ctx context.Context, in *ForgetPasswordReq, opts ...grpc.CallOption) (*ForgetPasswordResp, error) {
+	out := new(ForgetPasswordResp)
+	err := c.cc.Invoke(ctx, "/passport.service.identity.Identify/ForgetPassword", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *identifyClient) ResetPassword(ctx context.Context, in *ResetPasswordReq, opts ...grpc.CallOption) (*EmptyStruct, error) {
+	out := new(EmptyStruct)
+	err := c.cc.Invoke(ctx, "/passport.service.identity.Identify/ResetPassword", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *identifyClient) Logout(ctx context.Context, in *LogoutReq, opts ...grpc.CallOption) (*EmptyStruct, error) {
 	out := new(EmptyStruct)
 	err := c.cc.Invoke(ctx, "/passport.service.identity.Identify/Logout", in, out, opts...)
@@ -1284,6 +1487,8 @@ type IdentifyServer interface {
 	EmailLogin(context.Context, *EmailLoginReq) (*LoginResp, error)
 	MobileLogin(context.Context, *MobileLoginReq) (*LoginResp, error)
 	DigitLogin(context.Context, *DigitLoginReq) (*LoginResp, error)
+	ForgetPassword(context.Context, *ForgetPasswordReq) (*ForgetPasswordResp, error)
+	ResetPassword(context.Context, *ResetPasswordReq) (*EmptyStruct, error)
 	Logout(context.Context, *LogoutReq) (*EmptyStruct, error)
 	AdminAuth(context.Context, *AdminAuthReq) (*AdminAuthResp, error)
 	Permissions(context.Context, *AdminPermissionReq) (*AdminPermissionResp, error)
@@ -1313,6 +1518,12 @@ func (*UnimplementedIdentifyServer) MobileLogin(ctx context.Context, req *Mobile
 }
 func (*UnimplementedIdentifyServer) DigitLogin(ctx context.Context, req *DigitLoginReq) (*LoginResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DigitLogin not implemented")
+}
+func (*UnimplementedIdentifyServer) ForgetPassword(ctx context.Context, req *ForgetPasswordReq) (*ForgetPasswordResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ForgetPassword not implemented")
+}
+func (*UnimplementedIdentifyServer) ResetPassword(ctx context.Context, req *ResetPasswordReq) (*EmptyStruct, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ResetPassword not implemented")
 }
 func (*UnimplementedIdentifyServer) Logout(ctx context.Context, req *LogoutReq) (*EmptyStruct, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
@@ -1454,6 +1665,42 @@ func _Identify_DigitLogin_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Identify_ForgetPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ForgetPasswordReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IdentifyServer).ForgetPassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/passport.service.identity.Identify/ForgetPassword",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IdentifyServer).ForgetPassword(ctx, req.(*ForgetPasswordReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Identify_ResetPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResetPasswordReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IdentifyServer).ResetPassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/passport.service.identity.Identify/ResetPassword",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IdentifyServer).ResetPassword(ctx, req.(*ResetPasswordReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Identify_Logout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(LogoutReq)
 	if err := dec(in); err != nil {
@@ -1539,6 +1786,14 @@ var _Identify_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DigitLogin",
 			Handler:    _Identify_DigitLogin_Handler,
+		},
+		{
+			MethodName: "ForgetPassword",
+			Handler:    _Identify_ForgetPassword_Handler,
+		},
+		{
+			MethodName: "ResetPassword",
+			Handler:    _Identify_ResetPassword_Handler,
 		},
 		{
 			MethodName: "Logout",
@@ -2002,6 +2257,134 @@ func (m *MobileRegisterReq) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i = encodeVarintPb(dAtA, i, uint64(m.Source))
 		i--
 		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *ForgetPasswordReq) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *ForgetPasswordReq) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ForgetPasswordReq) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.IdentityType != 0 {
+		i = encodeVarintPb(dAtA, i, uint64(m.IdentityType))
+		i--
+		dAtA[i] = 0x20
+	}
+	if len(m.Prefix) > 0 {
+		i -= len(m.Prefix)
+		copy(dAtA[i:], m.Prefix)
+		i = encodeVarintPb(dAtA, i, uint64(len(m.Prefix)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Valcode) > 0 {
+		i -= len(m.Valcode)
+		copy(dAtA[i:], m.Valcode)
+		i = encodeVarintPb(dAtA, i, uint64(len(m.Valcode)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Identity) > 0 {
+		i -= len(m.Identity)
+		copy(dAtA[i:], m.Identity)
+		i = encodeVarintPb(dAtA, i, uint64(len(m.Identity)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *ForgetPasswordResp) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *ForgetPasswordResp) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ForgetPasswordResp) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.SessionID) > 0 {
+		i -= len(m.SessionID)
+		copy(dAtA[i:], m.SessionID)
+		i = encodeVarintPb(dAtA, i, uint64(len(m.SessionID)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *ResetPasswordReq) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *ResetPasswordReq) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ResetPasswordReq) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.Password) > 0 {
+		i -= len(m.Password)
+		copy(dAtA[i:], m.Password)
+		i = encodeVarintPb(dAtA, i, uint64(len(m.Password)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.SessionID) > 0 {
+		i -= len(m.SessionID)
+		copy(dAtA[i:], m.SessionID)
+		i = encodeVarintPb(dAtA, i, uint64(len(m.SessionID)))
+		i--
+		dAtA[i] = 0xa
 	}
 	return len(dAtA) - i, nil
 }
@@ -2556,6 +2939,69 @@ func (m *MobileRegisterReq) Size() (n int) {
 		n += 1 + l + sovPb(uint64(l))
 	}
 	l = len(m.ClientID)
+	if l > 0 {
+		n += 1 + l + sovPb(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *ForgetPasswordReq) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Identity)
+	if l > 0 {
+		n += 1 + l + sovPb(uint64(l))
+	}
+	l = len(m.Valcode)
+	if l > 0 {
+		n += 1 + l + sovPb(uint64(l))
+	}
+	l = len(m.Prefix)
+	if l > 0 {
+		n += 1 + l + sovPb(uint64(l))
+	}
+	if m.IdentityType != 0 {
+		n += 1 + sovPb(uint64(m.IdentityType))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *ForgetPasswordResp) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.SessionID)
+	if l > 0 {
+		n += 1 + l + sovPb(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *ResetPasswordReq) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.SessionID)
+	if l > 0 {
+		n += 1 + l + sovPb(uint64(l))
+	}
+	l = len(m.Password)
 	if l > 0 {
 		n += 1 + l + sovPb(uint64(l))
 	}
@@ -4083,6 +4529,379 @@ func (m *MobileRegisterReq) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.ClientID = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipPb(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *ForgetPasswordReq) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowPb
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: ForgetPasswordReq: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: ForgetPasswordReq: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Identity", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPb
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPb
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Identity = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Valcode", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPb
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPb
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Valcode = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Prefix", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPb
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPb
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Prefix = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field IdentityType", wireType)
+			}
+			m.IdentityType = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.IdentityType |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipPb(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *ForgetPasswordResp) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowPb
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: ForgetPasswordResp: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: ForgetPasswordResp: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SessionID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPb
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPb
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SessionID = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipPb(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *ResetPasswordReq) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowPb
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: ResetPasswordReq: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: ResetPasswordReq: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SessionID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPb
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPb
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SessionID = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Password", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPb
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPb
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Password = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

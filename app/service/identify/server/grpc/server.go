@@ -105,3 +105,15 @@ func (s *server) EmailRegister(ctx context.Context, req *api.EmailRegisterReq) (
 func (s *server) MobileRegister(ctx context.Context, req *api.MobileRegisterReq) (*api.LoginResp, error) {
 	return s.svr.MobileRegister(ctx, req)
 }
+
+func (s *server) ForgetPassword(ctx context.Context, req *api.ForgetPasswordReq) (*api.ForgetPasswordResp, error) {
+	return s.svr.ForgetPassword(ctx, req)
+}
+
+func (s *server) ResetPassword(ctx context.Context, req *api.ResetPasswordReq) (*api.EmptyStruct, error) {
+	err := s.svr.ResetPassword(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return &api.EmptyStruct{}, nil
+}
