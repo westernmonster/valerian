@@ -14,6 +14,8 @@ import (
 	"valerian/library/log"
 )
 
+// RequestIDCert 申请身份认证
+// 使用阿里云实人认证
 func (p *Service) RequestIDCert(c context.Context, aid int64) (token cloudauth.VerifyTokenData, err error) {
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
@@ -64,6 +66,7 @@ func (p *Service) RequestIDCert(c context.Context, aid int64) (token cloudauth.V
 
 }
 
+// GetIDCertStatus 获取身份认证状态
 func (p *Service) GetIDCertStatus(c context.Context, aid int64) (status int32, err error) {
 	var item *model.IDCertification
 	if item, err = p.getIDCertByID(c, p.d.DB(), aid); err != nil {
@@ -76,7 +79,7 @@ func (p *Service) GetIDCertStatus(c context.Context, aid int64) (status int32, e
 	}
 }
 
-// 刷新认证状态
+// RefreshIDCertStatus 刷新认证状态
 func (p *Service) RefreshIDCertStatus(c context.Context, aid int64) (status int32, err error) {
 	var item *model.IDCertification
 	if item, err = p.getIDCertByID(c, p.d.DB(), aid); err != nil {
@@ -154,10 +157,12 @@ func (p *Service) RefreshIDCertStatus(c context.Context, aid int64) (status int3
 	return
 }
 
+// GetIDCert 通过ID获取身份认证
 func (p *Service) GetIDCert(c context.Context, aid int64) (item *model.IDCertification, err error) {
 	return p.getIDCertByID(c, p.d.DB(), aid)
 }
 
+// getIDCertByID 通过ID获取身份认证
 func (p *Service) getIDCertByID(c context.Context, node sqalx.Node, aid int64) (item *model.IDCertification, err error) {
 	var needCache = true
 

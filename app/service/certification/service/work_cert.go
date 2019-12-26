@@ -12,6 +12,7 @@ import (
 	"valerian/library/log"
 )
 
+// RequestWorkCert 申请工作认证
 func (p *Service) RequestWorkCert(c context.Context, arg *model.ArgAddWorkCert) (err error) {
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
@@ -92,6 +93,7 @@ func (p *Service) RequestWorkCert(c context.Context, arg *model.ArgAddWorkCert) 
 	return
 }
 
+// AuditWorkCert 审批工作认证
 func (p *Service) AuditWorkCert(c context.Context, arg *model.ArgAuditWorkCert) (err error) {
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
@@ -171,6 +173,7 @@ func (p *Service) AuditWorkCert(c context.Context, arg *model.ArgAuditWorkCert) 
 	return
 }
 
+// GetWorkCertStatus 获取工作认证状态
 func (p *Service) GetWorkCertStatus(c context.Context, aid int64) (status int32, err error) {
 	var item *model.WorkCertification
 	if item, err = p.getWorkCertByID(c, p.d.DB(), aid); err != nil {
@@ -183,10 +186,12 @@ func (p *Service) GetWorkCertStatus(c context.Context, aid int64) (status int32,
 	}
 }
 
+// GetWorkCert 获取工作认证
 func (p *Service) GetWorkCert(c context.Context, aid int64) (item *model.WorkCertification, err error) {
 	return p.getWorkCertByID(c, p.d.DB(), aid)
 }
 
+// getWorkCertByID 通过ID获取工作认证
 func (p *Service) getWorkCertByID(c context.Context, node sqalx.Node, aid int64) (item *model.WorkCertification, err error) {
 	var needCache = true
 
