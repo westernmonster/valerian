@@ -119,6 +119,12 @@ message AdminPermissionReq {
     string sid = 1;
 }
 
+message AidReq {
+    int64 aid = 1 ;
+    string remoteIP = 2 ;
+    bool UseMaster = 3;
+}
+
 
 message LoginResp {
     int64 Aid = 1;
@@ -160,4 +166,8 @@ service Identify {
     rpc AdminAuth(AdminAuthReq) returns(AdminAuthResp);
 
     rpc Permissions(AdminPermissionReq) returns(AdminPermissionResp);
+
+    rpc AccountLock(AidReq) returns (EmptyStruct);
+
+    rpc AccountUnlock(AidReq) returns (EmptyStruct);
 }

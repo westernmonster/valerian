@@ -117,3 +117,19 @@ func (s *server) ResetPassword(ctx context.Context, req *api.ResetPasswordReq) (
 	}
 	return &api.EmptyStruct{}, nil
 }
+
+func (s *server) AccountLock(ctx context.Context, req *api.AidReq) (*api.EmptyStruct, error) {
+	err := s.svr.AccountLock(ctx, req.Aid)
+	if err != nil {
+		return nil, err
+	}
+	return &api.EmptyStruct{}, nil
+}
+
+func (s *server) AccountUnlock(ctx context.Context, req *api.AidReq) (*api.EmptyStruct, error) {
+	err := s.svr.AccountUnlock(ctx, req.Aid)
+	if err != nil {
+		return nil, err
+	}
+	return &api.EmptyStruct{}, nil
+}
