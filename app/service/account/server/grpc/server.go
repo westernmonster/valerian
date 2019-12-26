@@ -182,6 +182,7 @@ func (s *server) GetAccountByEmail(ctx context.Context, req *api.EmailReq) (*api
 		UpdatedAt:    v.UpdatedAt,
 		IsLock:       bool(v.IsLock),
 		Deactive:     bool(v.Deactive),
+		Password:     v.Password,
 	}
 
 	return item, nil

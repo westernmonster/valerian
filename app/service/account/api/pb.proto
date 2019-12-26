@@ -27,6 +27,8 @@ message BaseInfoReply {
     bool IsVIP  = 9 ;
 
     string Role = 10;
+
+    AccountStatInfo Stat = 11 ;
 }
 
 message BaseInfosReply {
@@ -222,6 +224,7 @@ message DBAccount {
     bool     IsLock                 = 23;
     string   Prefix                 = 24;
     bool     Deactive               = 25;
+    string     Password               = 26;
 }
 
 message AddAccountReq {
