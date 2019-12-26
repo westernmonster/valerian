@@ -40,18 +40,25 @@ func validateBirthDay(arg *api.UpdateProfileReq) (err error) {
 	return
 }
 
-func baseInfoFromAccount(account *model.Account) (info *model.BaseInfo) {
-	info = &model.BaseInfo{
-		ID:           account.ID,
-		UserName:     account.UserName,
-		Gender:       account.Gender,
-		Avatar:       account.Avatar,
-		Introduction: account.Introduction,
-		IDCert:       bool(account.IDCert),
-		WorkCert:     bool(account.WorkCert),
-		IsOrg:        bool(account.IsOrg),
-		IsVIP:        bool(account.IsVip),
-		Role:         account.Role,
+func baseInfoFromAccount(acc *model.Account, stat *model.AccountStat) (info *api.BaseInfoReply) {
+	info = &api.BaseInfoReply{
+		ID:           acc.ID,
+		UserName:     acc.UserName,
+		Gender:       acc.Gender,
+		Avatar:       acc.Avatar,
+		Introduction: acc.Introduction,
+		IDCert:       bool(acc.IDCert),
+		WorkCert:     bool(acc.WorkCert),
+		IsOrg:        bool(acc.IsOrg),
+		IsVIP:        bool(acc.IsVip),
+		Role:         acc.Role,
+		Stat: &api.AccountStatInfo{
+			FollowingCount: stat.Following,
+			FansCount:      stat.Fans,
+			BlackCount:     stat.Black,
+			TopicCount:     stat.TopicCount,
+			ArticleCount:   stat.ArticleCount,
+		},
 	}
 	return
 }
@@ -113,18 +120,23 @@ func (p *Service) IsMobileExist(c context.Context, prefix, mobile string) (exist
 }
 
 // BaseInfo 获取账户基本信息
-func (p *Service) BaseInfo(c context.Context, aid int64) (info *model.BaseInfo, err error) {
+func (p *Service) BaseInfo(c context.Context, aid int64) (info *api.BaseInfoReply, err error) {
 	var account *model.Account
 	if account, err = p.getAccountByID(c, p.d.DB(), aid); err != nil {
 		return
 	}
 
-	info = baseInfoFromAccount(account)
+	var stat *model.AccountStat
+	if stat, err = p.getAccountStat(c, p.d.DB(), aid); err != nil {
+		return
+	}
+
+	info = baseInfoFromAccount(account, stat)
 	return
 }
 
 // BatchBaseInfo 批量获取账户基本信息
-func (p *Service) BatchBaseInfo(c context.Context, aids []int64) (data map[int64]*model.BaseInfo, err error) {
+func (p *Service) BatchBaseInfo(c context.Context, aids []int64) (data map[int64]*api.BaseInfoReply, err error) {
 	if len(aids) > 100 {
 		err = ecode.MemberOverLimit
 		return
@@ -153,9 +165,13 @@ func (p *Service) BatchBaseInfo(c context.Context, aids []int64) (data map[int64
 		}
 	}
 
-	data = make(map[int64]*model.BaseInfo)
+	data = make(map[int64]*api.BaseInfoReply)
 	for k, v := range res {
-		data[k] = baseInfoFromAccount(v)
+		var stat *model.AccountStat
+		if stat, err = p.getAccountStat(c, p.d.DB(), v.ID); err != nil {
+			return
+		}
+		data[k] = baseInfoFromAccount(v, stat)
 	}
 
 	if len(missA) == 0 {

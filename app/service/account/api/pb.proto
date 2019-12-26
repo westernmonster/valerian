@@ -225,6 +225,7 @@ message DBAccount {
     string   Prefix                 = 24;
     bool     Deactive               = 25;
     string     Password               = 26;
+    string     Salt               = 27;
 }
 
 message AddAccountReq {

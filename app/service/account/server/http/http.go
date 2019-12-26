@@ -28,10 +28,6 @@ func Init(c *conf.Config, s *service.Service) {
 func route(e *mars.Engine) {
 	e.Ping(ping)
 	e.Register(register)
-	g := e.Group("/x/internal/account")
-	{
-		g.GET("/base", base)
-	}
 }
 
 // ping check server ok.

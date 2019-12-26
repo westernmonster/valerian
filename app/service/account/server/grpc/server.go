@@ -145,6 +145,8 @@ func (s *server) GetAccountByMobile(ctx context.Context, req *api.MobileReq) (*a
 		UpdatedAt:    v.UpdatedAt,
 		IsLock:       bool(v.IsLock),
 		Deactive:     bool(v.Deactive),
+		Password:     v.Password,
+		Salt:         v.Salt,
 	}
 
 	return item, nil
@@ -183,6 +185,7 @@ func (s *server) GetAccountByEmail(ctx context.Context, req *api.EmailReq) (*api
 		IsLock:       bool(v.IsLock),
 		Deactive:     bool(v.Deactive),
 		Password:     v.Password,
+		Salt:         v.Salt,
 	}
 
 	return item, nil
@@ -197,7 +200,7 @@ func (s *server) BasicInfo(ctx context.Context, req *api.AidReq) (*api.BaseInfoR
 		return nil, err
 	}
 
-	return api.FromBaseInfo(resp), nil
+	return resp, nil
 }
 
 func (s *server) BaseInfos(ctx context.Context, req *api.AidsReq) (*api.BaseInfosReply, error) {
@@ -215,7 +218,7 @@ func (s *server) BaseInfos(ctx context.Context, req *api.AidsReq) (*api.BaseInfo
 	}
 
 	for k, v := range resp {
-		baseInfos[k] = api.FromBaseInfo(v)
+		baseInfos[k] = v
 	}
 
 	return baseInfosReply, nil
