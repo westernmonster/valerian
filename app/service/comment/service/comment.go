@@ -8,14 +8,17 @@ import (
 	"valerian/library/ecode"
 )
 
+// GetAccountBaseInfo 获取用户信息
 func (p *Service) GetAccountBaseInfo(c context.Context, aid int64) (info *account.BaseInfoReply, err error) {
 	return p.d.GetAccountBaseInfo(c, aid)
 }
 
+// GetComment 获取评论信息
 func (p *Service) GetComment(c context.Context, commentID int64) (item *model.Comment, err error) {
 	return p.getComment(c, p.d.DB(), commentID)
 }
 
+// getComment 获取评论信息
 func (p *Service) getComment(c context.Context, node sqalx.Node, commentID int64) (item *model.Comment, err error) {
 	// var addCache = true
 	// if item, err = p.d.CommentCache(c, commentID); err != nil {
@@ -39,6 +42,7 @@ func (p *Service) getComment(c context.Context, node sqalx.Node, commentID int64
 	return
 }
 
+// GetCommentStat 获取评论状态信息
 func (p *Service) GetCommentStat(c context.Context, commentID int64) (stat *model.CommentStat, err error) {
 	return p.d.GetCommentStatByID(c, p.d.DB(), commentID)
 }

@@ -8,6 +8,7 @@ import (
 	"valerian/library/log"
 )
 
+// onDiscussionAdded 新增讨论时发送消息到消息队列
 func (p *Service) onDiscussionAdded(c context.Context, discussionID, aid, actionTime int64) {
 	msg := &def.MsgDiscussionAdded{DiscussionID: discussionID, ActorID: aid, ActionTime: actionTime}
 
@@ -27,6 +28,7 @@ func (p *Service) onDiscussionAdded(c context.Context, discussionID, aid, action
 	return
 }
 
+// onDiscussionUpdated 更新讨论时发送消息到消息队列
 func (p *Service) onDiscussionUpdated(c context.Context, discussionID, aid, actionTime int64) {
 	msg := &def.MsgDiscussionUpdated{DiscussionID: discussionID, ActorID: aid, ActionTime: actionTime}
 
@@ -46,6 +48,7 @@ func (p *Service) onDiscussionUpdated(c context.Context, discussionID, aid, acti
 	return
 }
 
+// onDiscussionDeleted 删除讨论时发送消息到消息队列
 func (p *Service) onDiscussionDeleted(c context.Context, discussionID, aid, actionTime int64) {
 	msg := &def.MsgDiscussionDeleted{DiscussionID: discussionID, ActorID: aid, ActionTime: actionTime}
 

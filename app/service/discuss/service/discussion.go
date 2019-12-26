@@ -11,6 +11,7 @@ import (
 	"valerian/library/xstr"
 )
 
+// getDiscussion 获取讨论信息
 func (p *Service) getDiscussion(c context.Context, node sqalx.Node, articleID int64) (item *model.Discussion, err error) {
 	var addCache = true
 	if item, err = p.d.DiscussionCache(c, articleID); err != nil {
@@ -34,14 +35,17 @@ func (p *Service) getDiscussion(c context.Context, node sqalx.Node, articleID in
 	return
 }
 
+// GetAccountBaseInfo 获取用户信息
 func (p *Service) GetAccountBaseInfo(c context.Context, aid int64) (info *account.BaseInfoReply, err error) {
 	return p.d.GetAccountBaseInfo(c, aid)
 }
 
+// GetUserDiscussionIDsPaged 获取用户所有创建的讨论ID列表
 func (p *Service) GetUserDiscussionIDsPaged(c context.Context, req *api.UserDiscussionsReq) (resp []int64, err error) {
 	return p.d.GetUserDiscussionIDsPaged(c, p.d.DB(), req.AccountID, int(req.Limit), int(req.Offset))
 }
 
+// GetUserDiscussionsPaged 分页获取用户创建的讨论列表
 func (p *Service) GetUserDiscussionsPaged(c context.Context, aid int64, limit, offset int) (items []*api.DiscussionInfo, err error) {
 	var data []*model.Discussion
 	if data, err = p.d.GetUserDiscussionsPaged(c, p.d.DB(), aid, limit, offset); err != nil {
@@ -123,88 +127,7 @@ func (p *Service) GetUserDiscussionsPaged(c context.Context, aid int64, limit, o
 	return
 }
 
-func (p *Service) GetAllDiscussions(c context.Context) (items []*api.DiscussionInfo, err error) {
-	var data []*model.Discussion
-	if data, err = p.d.GetDiscussions(c, p.d.DB()); err != nil {
-		return
-	}
-
-	items = make([]*api.DiscussionInfo, len(data))
-
-	for i, v := range data {
-
-		imageUrls := make([]string, 0)
-		var imgs []*model.ImageURL
-		if imgs, err = p.d.GetImageUrlsByCond(c, p.d.DB(), map[string]interface{}{
-			"target_type": model.TargetTypeDiscussion,
-			"target_id":   v.ID,
-		}); err != nil {
-			return
-		}
-
-		for _, v := range imgs {
-			imageUrls = append(imageUrls, v.URL)
-		}
-
-		var stat *model.DiscussionStat
-		if stat, err = p.d.GetDiscussionStatByID(c, p.d.DB(), v.ID); err != nil {
-			return
-		}
-
-		item := &api.DiscussionInfo{
-			ID:         v.ID,
-			TopicID:    v.TopicID,
-			CategoryID: v.CategoryID,
-			// CreatedBy:   v.CreatedBy,
-			Excerpt:   xstr.Excerpt(v.ContentText),
-			CreatedAt: v.CreatedAt,
-			UpdatedAt: v.UpdatedAt,
-			ImageUrls: imageUrls,
-			Title:     v.Title,
-		}
-
-		item.Stat = &api.DiscussionStat{
-			DislikeCount: int32(stat.DislikeCount),
-			LikeCount:    int32(stat.LikeCount),
-			CommentCount: int32(stat.CommentCount),
-		}
-
-		if v.CategoryID != int64(-1) {
-			var cate *model.DiscussCategory
-			if cate, err = p.d.GetDiscussCategoryByID(c, p.d.DB(), v.CategoryID); err != nil {
-				return
-			} else if cate == nil {
-				err = ecode.DiscussCategoryNotExist
-				return
-			}
-
-			item.CategoryInfo = &api.CategoryInfo{
-				ID:      cate.ID,
-				TopicID: cate.TopicID,
-				Name:    cate.Name,
-				Seq:     cate.Seq,
-			}
-		}
-
-		var acc *account.BaseInfoReply
-		if acc, err = p.GetAccountBaseInfo(c, v.CreatedBy); err != nil {
-			return
-		}
-
-		item.Creator = &api.Creator{
-			ID:           acc.ID,
-			UserName:     acc.UserName,
-			Avatar:       acc.Avatar,
-			Introduction: acc.Introduction,
-		}
-
-		items[i] = item
-
-	}
-
-	return
-}
-
+// GetDiscussion 获取指定讨论信息
 func (p *Service) GetDiscussion(c context.Context, discussionID int64) (item *model.Discussion, imageUrls []string, err error) {
 	if item, err = p.getDiscussion(c, p.d.DB(), discussionID); err != nil {
 		return
@@ -226,6 +149,7 @@ func (p *Service) GetDiscussion(c context.Context, discussionID int64) (item *mo
 	return
 }
 
+// GetDiscussionStat 获取指定讨论状态
 func (p *Service) GetDiscussionStat(c context.Context, discussionID int64) (item *model.DiscussionStat, err error) {
 	if item, err = p.d.GetDiscussionStatByID(c, p.d.DB(), discussionID); err != nil {
 		return
@@ -237,6 +161,8 @@ func (p *Service) GetDiscussionStat(c context.Context, discussionID int64) (item
 	return
 }
 
+// DelDiscussion 删除讨论
 func (p *Service) DelDiscussion(c context.Context, aid, discussionID int64) (err error) {
+	// TODO:  删除讨论逻辑
 	return
 }
