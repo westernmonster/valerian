@@ -11,6 +11,7 @@ import (
 	"github.com/nats-io/stan.go"
 )
 
+// onArticleFaved 当文章被收藏时候Push消息到消息队列
 func (p *Service) onArticleFaved(m *stan.Msg) {
 	var err error
 	c := context.Background()
@@ -41,6 +42,7 @@ func (p *Service) onArticleFaved(m *stan.Msg) {
 	m.Ack()
 }
 
+// onDiscussionFaved 当讨论被收藏时候Push消息到消息队列
 func (p *Service) onDiscussionFaved(m *stan.Msg) {
 	var err error
 	c := context.Background()
@@ -71,6 +73,7 @@ func (p *Service) onDiscussionFaved(m *stan.Msg) {
 	m.Ack()
 }
 
+// onTopicFaved 当话题被收藏时候Push消息到消息队列
 func (p *Service) onTopicFaved(m *stan.Msg) {
 	var err error
 	c := context.Background()
@@ -101,6 +104,7 @@ func (p *Service) onTopicFaved(m *stan.Msg) {
 	m.Ack()
 }
 
+// onReviseFaved 当补充被收藏时候Push消息到消息队列
 func (p *Service) onReviseFaved(m *stan.Msg) {
 	var err error
 	c := context.Background()

@@ -10,6 +10,7 @@ import (
 	"valerian/library/conf/env"
 	"valerian/library/log"
 	"valerian/library/mq"
+	"valerian/library/stat/prom"
 )
 
 // Service struct of service
@@ -28,26 +29,6 @@ func New(c *conf.Config) (s *Service) {
 		mq:     mq.New(env.Hostname, c.Nats),
 		missch: make(chan func(), 1024),
 	}
-
-	// if err := s.mq.QueueSubscribe(def.BusArticleFaved, "fav", s.onArticleFaved); err != nil {
-	// 	log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusArticleFaved, "fav")
-	// 	panic(err)
-	// }
-
-	// if err := s.mq.QueueSubscribe(def.BusTopicFaved, "fav", s.onTopicFaved); err != nil {
-	// 	log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusTopicFaved, "fav")
-	// 	panic(err)
-	// }
-
-	// if err := s.mq.QueueSubscribe(def.BusDiscussionFaved, "fav", s.onDiscussionFaved); err != nil {
-	// 	log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusDiscussionFaved, "fav")
-	// 	panic(err)
-	// }
-
-	// if err := s.mq.QueueSubscribe(def.BusReviseFaved, "fav", s.onReviseFaved); err != nil {
-	// 	log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusReviseFaved, "fav")
-	// 	panic(err)
-	// }
 
 	go s.cacheproc()
 	return
@@ -97,4 +78,9 @@ func genURL(path string, param url.Values) (uri string, err error) {
 	u.RawQuery = param.Encode()
 
 	return u.String(), nil
+}
+
+func PromError(name string, format string, args ...interface{}) {
+	prom.BusinessErrCount.Incr(name)
+	log.Errorf(format, args...)
 }

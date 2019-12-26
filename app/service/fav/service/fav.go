@@ -8,6 +8,7 @@ import (
 	"valerian/library/gid"
 )
 
+// IsFav 是否被收藏
 func (p *Service) IsFav(c context.Context, aid int64, targetID int64, targetType string) (isFav bool, err error) {
 	var fav *model.Fav
 	if fav, err = p.d.GetFavByCond(c, p.d.DB(), map[string]interface{}{
@@ -23,6 +24,7 @@ func (p *Service) IsFav(c context.Context, aid int64, targetID int64, targetType
 	return
 }
 
+// Fav 收藏
 func (p *Service) Fav(c context.Context, aid, targetID int64, targetType string) (err error) {
 
 	var fav *model.Fav
@@ -52,6 +54,7 @@ func (p *Service) Fav(c context.Context, aid, targetID int64, targetType string)
 	return
 }
 
+// Unfav 取消收藏
 func (p *Service) Unfav(c context.Context, aid, targetID int64, targetType string) (err error) {
 
 	var fav *model.Fav
@@ -72,10 +75,12 @@ func (p *Service) Unfav(c context.Context, aid, targetID int64, targetType strin
 	return
 }
 
+// GetFavIDsPaged 获取指定收藏类型的ID列表
 func (p *Service) GetFavIDsPaged(c context.Context, arg *api.UserFavsReq) (ids []int64, err error) {
 	return p.d.GetFavIDsPaged(c, p.d.DB(), arg.AccountID, arg.TargetType, arg.Limit, arg.Offset)
 }
 
+// GetFavsPaged 分页获取指定收藏类型列表
 func (p *Service) GetFavsPaged(c context.Context, arg *api.UserFavsReq) (resp *api.FavsResp, err error) {
 	resp = &api.FavsResp{
 		Items: make([]*api.FavItem, 0),
