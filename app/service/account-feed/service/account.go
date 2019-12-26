@@ -13,6 +13,7 @@ import (
 	"github.com/nats-io/stan.go"
 )
 
+// getAccount 获取用户信息
 func (p *Service) getAccount(c context.Context, node sqalx.Node, aid int64) (account *model.Account, err error) {
 	var needCache = true
 
@@ -37,6 +38,7 @@ func (p *Service) getAccount(c context.Context, node sqalx.Node, aid int64) (acc
 	return
 }
 
+// onMemberFollowed 关注用户时
 func (p *Service) onMemberFollowed(m *stan.Msg) {
 	var err error
 

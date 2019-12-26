@@ -15,6 +15,7 @@ import (
 	"github.com/nats-io/stan.go"
 )
 
+// getComment 获取评论信息
 func (p *Service) getComment(c context.Context, node sqalx.Node, commentID int64) (item *model.Comment, err error) {
 	if item, err = p.d.GetCommentByID(c, p.d.DB(), commentID); err != nil {
 		return
@@ -25,6 +26,7 @@ func (p *Service) getComment(c context.Context, node sqalx.Node, commentID int64
 	return
 }
 
+// onArticleCommented 当文章被评论时
 func (p *Service) onArticleCommented(m *stan.Msg) {
 	var err error
 	c := context.Background()
@@ -76,6 +78,7 @@ func (p *Service) onArticleCommented(m *stan.Msg) {
 	m.Ack()
 }
 
+// onReviseCommented 当补充被评论时
 func (p *Service) onReviseCommented(m *stan.Msg) {
 	var err error
 	c := context.Background()
@@ -127,6 +130,7 @@ func (p *Service) onReviseCommented(m *stan.Msg) {
 	m.Ack()
 }
 
+// onDiscussionCommented 当讨论被评论时
 func (p *Service) onDiscussionCommented(m *stan.Msg) {
 	var err error
 	c := context.Background()
@@ -177,6 +181,7 @@ func (p *Service) onDiscussionCommented(m *stan.Msg) {
 	m.Ack()
 }
 
+// onCommentLiked 当评论被点赞时
 func (p *Service) onCommentLiked(m *stan.Msg) {
 	var err error
 	c := context.Background()

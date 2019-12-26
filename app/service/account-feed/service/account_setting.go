@@ -7,6 +7,7 @@ import (
 	"valerian/library/database/sqalx"
 )
 
+// getAccountSetting 获取用户设置
 func (p *Service) getAccountSetting(c context.Context, node sqalx.Node, accountID int64) (resp *model.SettingResp, err error) {
 	var setting *model.AccountSetting
 	if setting, err = p.d.GetAccountSettingByID(c, node, accountID); err != nil {

@@ -13,6 +13,7 @@ import (
 	"github.com/nats-io/stan.go"
 )
 
+// getArticleHistory 获取文章历史记录
 func (p *Service) getArticleHistory(c context.Context, node sqalx.Node, articleID int64) (item *model.ArticleHistory, err error) {
 	if item, err = p.d.GetArticleHistoryByID(c, p.d.DB(), articleID); err != nil {
 		return
@@ -24,6 +25,7 @@ func (p *Service) getArticleHistory(c context.Context, node sqalx.Node, articleI
 	return
 }
 
+// getArticle 获取文章信息
 func (p *Service) getArticle(c context.Context, node sqalx.Node, articleID int64) (item *model.Article, err error) {
 	var addCache = true
 	if item, err = p.d.ArticleCache(c, articleID); err != nil {
@@ -47,6 +49,7 @@ func (p *Service) getArticle(c context.Context, node sqalx.Node, articleID int64
 	return
 }
 
+// onArticleAdded 文章新增时
 func (p *Service) onArticleAdded(m *stan.Msg) {
 	var err error
 	c := context.Background()
@@ -88,6 +91,7 @@ func (p *Service) onArticleAdded(m *stan.Msg) {
 	m.Ack()
 }
 
+// onArticleUpdated 文章更新时
 func (p *Service) onArticleUpdated(m *stan.Msg) {
 	var err error
 	c := context.Background()
@@ -138,6 +142,7 @@ func (p *Service) onArticleUpdated(m *stan.Msg) {
 	m.Ack()
 }
 
+// onArticleLiked 文章被点赞时
 func (p *Service) onArticleLiked(m *stan.Msg) {
 	var err error
 	c := context.Background()

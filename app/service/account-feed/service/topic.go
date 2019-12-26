@@ -12,6 +12,7 @@ import (
 	"github.com/nats-io/stan.go"
 )
 
+// getTopic 获取话题信息
 func (p *Service) getTopic(c context.Context, node sqalx.Node, topicID int64) (item *model.Topic, err error) {
 	var addCache = true
 	if item, err = p.d.TopicCache(c, topicID); err != nil {
@@ -35,6 +36,7 @@ func (p *Service) getTopic(c context.Context, node sqalx.Node, topicID int64) (i
 	return
 }
 
+// onTopicAdded 当话题新增时
 func (p *Service) onTopicAdded(m *stan.Msg) {
 	var err error
 	c := context.Background()
@@ -76,6 +78,7 @@ func (p *Service) onTopicAdded(m *stan.Msg) {
 	m.Ack()
 }
 
+// onTopicFollowed 当关注话题时
 func (p *Service) onTopicFollowed(m *stan.Msg) {
 	var err error
 	info := new(def.MsgTopicFollowed)

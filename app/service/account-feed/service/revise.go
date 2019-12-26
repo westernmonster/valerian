@@ -13,20 +13,7 @@ import (
 	"github.com/nats-io/stan.go"
 )
 
-func (p *Service) GetRevise(c context.Context, reviseID int64) (item *model.Revise, err error) {
-	if item, err = p.getRevise(c, p.d.DB(), reviseID); err != nil {
-		return
-	}
-
-	var article *model.Article
-	if article, err = p.getArticle(c, p.d.DB(), item.ArticleID); err != nil {
-		return
-	}
-
-	item.Title = article.Title
-	return
-}
-
+// getRevise 获取补充信息
 func (p *Service) getRevise(c context.Context, node sqalx.Node, reviseID int64) (item *model.Revise, err error) {
 	var addCache = true
 	if item, err = p.d.ReviseCache(c, reviseID); err != nil {
@@ -50,6 +37,7 @@ func (p *Service) getRevise(c context.Context, node sqalx.Node, reviseID int64) 
 	return
 }
 
+// onReviseAdded 当补充新增时
 func (p *Service) onReviseAdded(m *stan.Msg) {
 	var err error
 	c := context.Background()
@@ -92,6 +80,7 @@ func (p *Service) onReviseAdded(m *stan.Msg) {
 	m.Ack()
 }
 
+// onReviseUpdated 当补充更新时
 func (p *Service) onReviseUpdated(m *stan.Msg) {
 	var err error
 	c := context.Background()
@@ -133,6 +122,7 @@ func (p *Service) onReviseUpdated(m *stan.Msg) {
 	m.Ack()
 }
 
+// onReviseLiked 当补充被点赞时
 func (p *Service) onReviseLiked(m *stan.Msg) {
 	var err error
 	c := context.Background()

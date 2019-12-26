@@ -12,6 +12,7 @@ import (
 	"github.com/nats-io/stan.go"
 )
 
+// getDiscussion 获取讨论信息
 func (p *Service) getDiscussion(c context.Context, node sqalx.Node, articleID int64) (item *model.Discussion, err error) {
 	var addCache = true
 	if item, err = p.d.DiscussionCache(c, articleID); err != nil {
@@ -35,6 +36,7 @@ func (p *Service) getDiscussion(c context.Context, node sqalx.Node, articleID in
 	return
 }
 
+// onDiscussionAdded 当讨论新增时
 func (p *Service) onDiscussionAdded(m *stan.Msg) {
 	var err error
 	c := context.Background()
@@ -75,6 +77,7 @@ func (p *Service) onDiscussionAdded(m *stan.Msg) {
 	m.Ack()
 }
 
+// onDiscussionUpdated 当讨论更新时
 func (p *Service) onDiscussionUpdated(m *stan.Msg) {
 	var err error
 	c := context.Background()
@@ -115,6 +118,7 @@ func (p *Service) onDiscussionUpdated(m *stan.Msg) {
 	m.Ack()
 }
 
+// onDiscussionLiked 当讨论被点赞时
 func (p *Service) onDiscussionLiked(m *stan.Msg) {
 	var err error
 	c := context.Background()
