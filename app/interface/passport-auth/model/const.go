@@ -18,3 +18,10 @@ const (
 
 	OtherMobileRegex = `^\d+$`
 )
+
+const (
+	ValcodeRegister       = int32(1)
+	ValcodeForgetPassword = int32(2)
+	ValcodeLogin          = int32(3)
+	ValcodeClose          = int32(4)
+)

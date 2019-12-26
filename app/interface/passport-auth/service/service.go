@@ -17,11 +17,8 @@ var (
 
 // Service struct of service
 type Service struct {
-	c *conf.Config
-	d interface {
-		Logout(c context.Context, aid int64, clientID string) (err error)
-		RenewToken(c context.Context, refreshToken, clientID string) (r *model.TokenResp, err error)
-	}
+	c      *conf.Config
+	d      *dao.Dao
 	missch chan func()
 }
 

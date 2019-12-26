@@ -7,6 +7,7 @@ import (
 	"valerian/library/net/metadata"
 )
 
+// RenewToken 刷新Token
 func (p *Service) RenewToken(c context.Context, arg *model.ArgRenewToken) (r *model.TokenResp, err error) {
 	if r, err = p.d.RenewToken(c, arg.RefreshToken, arg.ClientID); err != nil {
 		return
@@ -14,6 +15,7 @@ func (p *Service) RenewToken(c context.Context, arg *model.ArgRenewToken) (r *mo
 	return
 }
 
+// Logout 退出
 func (p *Service) Logout(c context.Context, arg *model.ArgLogout) (err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
@@ -23,9 +25,5 @@ func (p *Service) Logout(c context.Context, arg *model.ArgLogout) (err error) {
 	if err = p.d.Logout(c, aid, arg.ClientID); err != nil {
 		return
 	}
-	return
-}
-
-func (p *Service) CloseAccount(c context.Context, arg *model.ArgCloseAccount) (err error) {
 	return
 }
