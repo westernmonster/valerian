@@ -64,25 +64,9 @@ func (p *Dao) UpdateAccountSetting(c context.Context, aid int64, boolVals map[st
 	return
 }
 
-func (p *Dao) ForgetPassword(c context.Context, identity, valcode, prefix string, identifyType int32) (info *account.ForgetPasswordResp, err error) {
-	req := &account.ForgetPasswordReq{Identity: identity, Prefix: prefix, Valcode: valcode, IdentityType: identifyType}
-	if info, err = p.accountRPC.ForgetPassword(c, req); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.ForgetPassword err(%+v) req(%s)", err, req))
-	}
-	return
-}
-
 func (p *Dao) UpdateProfile(c context.Context, arg *account.UpdateProfileReq) (err error) {
 	if _, err = p.accountRPC.UpdateProfile(c, arg); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.UpdateProfile err(%+v) req(%s)", err, arg))
-	}
-	return
-}
-
-func (p *Dao) ResetPassword(c context.Context, sessionID, password string) (err error) {
-	req := &account.ResetPasswordReq{Password: password, SessionID: sessionID}
-	if _, err = p.accountRPC.ResetPassword(c, req); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.ResetPassword err(%+v) req(%s)", err, req))
 	}
 	return
 }

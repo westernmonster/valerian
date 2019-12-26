@@ -13,6 +13,7 @@ import (
 	comment "valerian/app/service/comment/api"
 	discuss "valerian/app/service/discuss/api"
 	fav "valerian/app/service/fav/api"
+	identify "valerian/app/service/identify/api/grpc"
 	message "valerian/app/service/message/api"
 	recent "valerian/app/service/recent/api"
 	relation "valerian/app/service/relation/api"
@@ -43,6 +44,7 @@ type Dao struct {
 	recentRPC        recent.RecentClient
 	certificationRPC certification.CertificationClient
 	favRPC           fav.FavClient
+	identifyRPC      identify.IdentifyClient
 }
 
 func New(c *conf.Config) (dao *Dao) {
@@ -119,6 +121,12 @@ func New(c *conf.Config) (dao *Dao) {
 		panic(errors.WithMessage(err, "Failed to dial comment service"))
 	} else {
 		dao.commentRPC = commentRPC
+	}
+
+	if identifyRPC, err := identify.NewClient(c.IdentifyRPC); err != nil {
+		panic(errors.WithMessage(err, "Failed to dial identify service"))
+	} else {
+		dao.identifyRPC = identifyRPC
 	}
 
 	return
