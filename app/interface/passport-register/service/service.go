@@ -5,17 +5,14 @@ import (
 
 	"valerian/app/interface/passport-register/conf"
 	"valerian/app/interface/passport-register/dao"
-	"valerian/library/conf/env"
 	"valerian/library/log"
-	"valerian/library/mq"
 )
 
 // Service struct of service
 type Service struct {
 	c *conf.Config
 
-	mq *mq.MessageQueue
-	d  *dao.Dao
+	d *dao.Dao
 
 	missch chan func()
 }
@@ -25,7 +22,6 @@ func New(c *conf.Config) (s *Service) {
 	s = &Service{
 		c:      c,
 		d:      dao.New(c),
-		mq:     mq.New(env.Hostname, c.Nats),
 		missch: make(chan func(), 1024),
 	}
 	go s.cacheproc()

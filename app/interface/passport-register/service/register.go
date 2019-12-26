@@ -2,151 +2,78 @@ package service
 
 import (
 	"context"
-	"time"
 
 	"valerian/app/interface/passport-register/model"
 	account "valerian/app/service/account/api"
-	"valerian/library/ecode"
-	"valerian/library/gid"
-	"valerian/library/net/metadata"
+	identify "valerian/app/service/identify/api/grpc"
 )
 
-func (p *Service) MobileRegister(c context.Context, arg *model.ArgMobile) (resp *model.LoginResp, err error) {
-	var (
-		code string
-	)
-
-	mobile := arg.Prefix + arg.Mobile
-	if code, err = p.d.MobileValcodeCache(c, model.ValcodeRegister, mobile); err != nil {
-		return
-	}
-	if code == "" {
-		return nil, ecode.ValcodeExpires
-	}
-	if code != arg.Valcode {
-		return nil, ecode.ValcodeWrong
+// MobileRegister 手机注册
+func (p *Service) MobileRegister(c context.Context, req *model.ArgMobile) (resp *model.LoginResp, err error) {
+	arg := &identify.MobileRegisterReq{
+		Source:   req.Source,
+		Mobile:   req.Mobile,
+		Prefix:   req.Prefix,
+		Password: req.Password,
+		ClientID: req.ClientID,
+		Valcode:  req.Valcode,
 	}
 
-	if err = p.checkClient(c, arg.ClientID); err != nil {
-		return
-	} // Check Client
-
-	ip := metadata.String(c, metadata.RemoteIP)
-	ipAddr := InetAtoN(ip)
-	salt, err := generateSalt(16)
-	if err != nil {
-		return
-	}
-	passwordHash, err := hashPassword(arg.Password, salt)
-	if err != nil {
-		return
-	}
-
-	item := &account.AddAccountReq{
-		ID:       gid.NewID(),
-		Source:   arg.Source,
-		IP:       ipAddr,
-		Mobile:   mobile,
-		Password: passwordHash,
-		Prefix:   arg.Prefix,
-		Salt:     salt,
-		Role:     model.AccountRoleUser,
-		Avatar:   "https://flywiki.oss-cn-hangzhou.aliyuncs.com/765-default-avatar.png",
-		UserName: asteriskMobile(arg.Mobile),
-	}
-
-	var profile *account.SelfProfile
-	if profile, err = p.d.AddAccount(c, item); err != nil {
-		return
-	}
-
-	p.addCache(func() {
-		p.d.DelMobileValcodeCache(context.TODO(), model.ValcodeRegister, mobile)
-		p.onAccountAdded(context.TODO(), item.ID, time.Now().Unix())
-	})
-
-	return p.loginAccount(c, profile, arg.ClientID)
-}
-
-func (p *Service) EmailRegister(c context.Context, arg *model.ArgEmail) (resp *model.LoginResp, err error) {
-	var (
-		code string
-	)
-	if arg.Valcode != "520555" {
-		if code, err = p.d.EmailValcodeCache(c, model.ValcodeRegister, arg.Email); err != nil {
-			return
-		}
-		if code == "" {
-			return nil, ecode.ValcodeExpires
-		}
-		if code != arg.Valcode {
-			return nil, ecode.ValcodeWrong
-		}
-	}
-
-	if err = p.checkClient(c, arg.ClientID); err != nil {
-		return
-	} // Check Client
-
-	ip := metadata.String(c, metadata.RemoteIP)
-	ipAddr := InetAtoN(ip)
-	salt, err := generateSalt(16)
-	if err != nil {
-		return
-	}
-	passwordHash, err := hashPassword(arg.Password, salt)
-	if err != nil {
-		return
-	}
-
-	item := &account.AddAccountReq{
-		ID:       gid.NewID(),
-		Source:   arg.Source,
-		IP:       ipAddr,
-		Email:    arg.Email,
-		Password: passwordHash,
-		Salt:     salt,
-		Role:     model.AccountRoleUser,
-		Avatar:   "https://flywiki.oss-cn-hangzhou.aliyuncs.com/765-default-avatar.png",
-		UserName: asteriskEmailName(arg.Email),
-	}
-
-	var profile *account.SelfProfile
-	if profile, err = p.d.AddAccount(c, item); err != nil {
-		return
-	}
-
-	p.addCache(func() {
-		p.d.DelEmailValcodeCache(context.TODO(), model.ValcodeRegister, arg.Email)
-		p.onAccountAdded(context.TODO(), profile.ID, time.Now().Unix())
-	})
-
-	return p.loginAccount(c, profile, arg.ClientID)
-}
-
-func (p *Service) loginAccount(c context.Context, profile *account.SelfProfile, clientID string) (resp *model.LoginResp, err error) {
-
-	accessToken, refreshToken, err := p.grantToken(c, clientID, profile.ID)
-	if err != nil {
+	var data *identify.LoginResp
+	if data, err = p.d.MobileRegister(c, arg); err != nil {
 		return
 	}
 
 	resp = &model.LoginResp{
-		AccountID:    profile.ID,
-		Role:         profile.Role,
-		AccessToken:  accessToken.Token,
-		ExpiresIn:    _accessExpireSeconds,
-		TokenType:    "Bearer",
-		Scope:        "",
-		RefreshToken: refreshToken.Token,
+		AccountID:    data.Aid,
+		Role:         data.Role,
+		AccessToken:  data.AccessToken,
+		ExpiresIn:    data.ExpiresIn,
+		TokenType:    data.TokenType,
+		Scope:        data.Scope,
+		RefreshToken: data.RefreshToken,
 	}
 
-	resp.Profile = p.FromProfile(profile)
+	if resp.Profile, err = p.GetProfile(c, data.Aid); err != nil {
+		return
+	}
 
 	return
-
 }
 
+// EmailRegister 邮箱注册
+func (p *Service) EmailRegister(c context.Context, req *model.ArgEmail) (resp *model.LoginResp, err error) {
+	arg := &identify.EmailRegisterReq{
+		Source:   req.Source,
+		Email:    req.Email,
+		Valcode:  req.Valcode,
+		Password: req.Password,
+		ClientID: req.ClientID,
+	}
+
+	var data *identify.LoginResp
+	if data, err = p.d.EmailRegister(c, arg); err != nil {
+		return
+	}
+
+	resp = &model.LoginResp{
+		AccountID:    data.Aid,
+		Role:         data.Role,
+		AccessToken:  data.AccessToken,
+		ExpiresIn:    data.ExpiresIn,
+		TokenType:    data.TokenType,
+		Scope:        data.Scope,
+		RefreshToken: data.RefreshToken,
+	}
+
+	if resp.Profile, err = p.GetProfile(c, data.Aid); err != nil {
+		return
+	}
+
+	return
+}
+
+// GetProfile 获取当前登录用户资料
 func (p *Service) GetProfile(c context.Context, aid int64) (item *model.Profile, err error) {
 	var profile *account.SelfProfile
 	if profile, err = p.d.GetSelfProfile(c, aid); err != nil {
@@ -210,36 +137,5 @@ func (p *Service) FromProfile(profile *account.SelfProfile) (item *model.Profile
 			Language: profile.Setting.Language,
 		},
 	}
-	return
-}
-
-func (p *Service) GetLocationString(c context.Context, nodeID int64) (locationString string, err error) {
-	arr := []string{}
-
-	id := nodeID
-	var item *model.Area
-	for {
-		if item, err = p.d.GetArea(c, p.d.DB(), id); err != nil {
-			return
-		} else if item == nil {
-			err = ecode.AreaNotExist
-			return
-		}
-
-		arr = append(arr, item.Name)
-
-		if item.Parent == 0 {
-			break
-		}
-
-		id = item.Parent
-	}
-
-	locationString = ""
-
-	for i := len(arr) - 1; i >= 0; i-- {
-		locationString += arr[i] + " "
-	}
-
 	return
 }
