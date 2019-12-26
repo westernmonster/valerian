@@ -232,6 +232,26 @@ func (s *server) AccountStat(ctx context.Context, req *api.AidReq) (*api.Account
 	return api.FromStat(resp), nil
 }
 
+func (s *server) UpdateProfile(ctx context.Context, req *api.UpdateProfileReq) (*api.EmptyStruct, error) {
+	err := s.svr.UpdateAccount(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return &api.EmptyStruct{}, nil
+}
+
+func (s *server) ForgetPassword(ctx context.Context, req *api.ForgetPasswordReq) (*api.ForgetPasswordResp, error) {
+	return s.svr.ForgetPassword(ctx, req)
+}
+
+func (s *server) ResetPassword(ctx context.Context, req *api.ResetPasswordReq) (*api.EmptyStruct, error) {
+	err := s.svr.ResetPassword(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return &api.EmptyStruct{}, nil
+}
+
 func (s *server) UpdateSetting(ctx context.Context, req *api.SettingReq) (*api.EmptyStruct, error) {
 	err := s.svr.UpdateAccountSetting(ctx, req.Aid, req.Settings, req.Language)
 	if err != nil {

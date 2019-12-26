@@ -171,7 +171,7 @@ func (p *Service) BatchBaseInfo(c context.Context, aids []int64) (data map[int64
 
 // ForgetPassword 忘记密码
 // 匹配验证码并生成一个有效期为5分钟的 SESSIONID
-func (p *Service) ForgetPassword(c context.Context, arg *api.ForgetPasswordReq) (sessionID string, err error) {
+func (p *Service) ForgetPassword(c context.Context, arg *api.ForgetPasswordReq) (resp *api.ForgetPasswordResp, err error) {
 	var account *model.Account
 	if govalidator.IsEmail(arg.Identity) {
 		if account, err = p.d.GetAccountByEmail(c, p.d.DB(), arg.Identity); err != nil {
@@ -205,11 +205,14 @@ func (p *Service) ForgetPassword(c context.Context, arg *api.ForgetPasswordReq) 
 		}
 	}
 
-	sessionID = uuid.NewV4().String()
+	sessionID := uuid.NewV4().String()
 	if err = p.d.SetSessionResetPasswordCache(c, sessionID, account.ID); err != nil {
 		return
 	}
 
+	resp = &api.ForgetPasswordResp{
+		SessionID: sessionID,
+	}
 	return
 }
 

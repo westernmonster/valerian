@@ -325,6 +325,10 @@ service Account {
 
     rpc UpdateProfile(UpdateProfileReq) returns (EmptyStruct);
 
+    rpc ForgetPassword(ForgetPasswordReq) returns (ForgetPasswordResp);
+
+    rpc ResetPassword(ResetPasswordReq) returns (EmptyStruct);
+
     rpc SelfProfileInfo(AidReq) returns (SelfProfile);
 
     rpc BasicInfo(AidReq) returns (BaseInfoReply);
