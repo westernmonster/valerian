@@ -3,8 +3,6 @@ package service
 import (
 	"context"
 	"fmt"
-	"strings"
-	"valerian/library/ecode"
 
 	"valerian/app/service/account/model"
 	"valerian/library/database/sqalx"
@@ -137,19 +135,5 @@ func (p *Service) UpdateAccountSetting(c context.Context, aid int64, req map[str
 		return
 	}
 
-	return
-}
-
-// checkPassword 检测密码是否正确
-func (p *Service) checkPassword(password, dbPassword, dbSalt string) (err error) {
-	passwordHash, err := hashPassword(password, dbSalt)
-	if err != nil {
-		return
-	}
-
-	if !strings.EqualFold(dbPassword, passwordHash) {
-		err = ecode.PasswordErr
-		return
-	}
 	return
 }

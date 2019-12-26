@@ -5,10 +5,8 @@ import (
 	"fmt"
 
 	"valerian/app/service/account/api"
-	"valerian/app/service/account/model"
 	"valerian/app/service/account/service"
 	"valerian/library/database/sqalx"
-	"valerian/library/database/sqlx/types"
 	"valerian/library/log"
 	"valerian/library/net/metadata"
 	"valerian/library/net/rpc/warden"
@@ -244,18 +242,6 @@ func (s *server) UpdateProfile(ctx context.Context, req *api.UpdateProfileReq) (
 	return &api.EmptyStruct{}, nil
 }
 
-func (s *server) ForgetPassword(ctx context.Context, req *api.ForgetPasswordReq) (*api.ForgetPasswordResp, error) {
-	return s.svr.ForgetPassword(ctx, req)
-}
-
-func (s *server) ResetPassword(ctx context.Context, req *api.ResetPasswordReq) (*api.EmptyStruct, error) {
-	err := s.svr.ResetPassword(ctx, req)
-	if err != nil {
-		return nil, err
-	}
-	return &api.EmptyStruct{}, nil
-}
-
 func (s *server) UpdateSetting(ctx context.Context, req *api.SettingReq) (*api.EmptyStruct, error) {
 	err := s.svr.UpdateAccountSetting(ctx, req.Aid, req.Settings, req.Language)
 	if err != nil {
@@ -307,53 +293,4 @@ func (s *server) EmailExist(ctx context.Context, req *api.EmailReq) (*api.ExistR
 	}
 
 	return &api.ExistResp{Exist: exist}, nil
-}
-
-func (s *server) AddAccount(ctx context.Context, req *api.AddAccountReq) (*api.SelfProfile, error) {
-	item := &model.Account{
-		ID:           req.ID,
-		Mobile:       req.Mobile,
-		Email:        req.Email,
-		UserName:     req.UserName,
-		Role:         req.Role,
-		Password:     req.Password,
-		Salt:         req.Salt,
-		Prefix:       req.Prefix,
-		Gender:       req.Gender,
-		BirthYear:    req.BirthYear,
-		BirthMonth:   req.BirthMonth,
-		BirthDay:     req.BirthDay,
-		Location:     req.Location,
-		Introduction: req.Introduction,
-		Avatar:       req.Avatar,
-		Source:       req.Source,
-		IP:           req.IP,
-		IDCert:       types.BitBool(req.IDCert),
-		WorkCert:     types.BitBool(req.WorkCert),
-		IsOrg:        types.BitBool(req.IsOrg),
-		IsVip:        types.BitBool(req.IsVIP),
-	}
-
-	v, err := s.svr.AddAccount(ctx, item)
-	if err != nil {
-		return nil, err
-	}
-
-	return v, nil
-}
-
-func (s *server) AccountLock(ctx context.Context, req *api.AidReq) (*api.EmptyStruct, error) {
-	err := s.svr.AccountLock(ctx, req.Aid)
-	if err != nil {
-		return nil, err
-	}
-	return &api.EmptyStruct{}, nil
-}
-
-func (s *server) AccountUnlock(ctx context.Context, req *api.AidReq) (*api.EmptyStruct, error) {
-	err := s.svr.AccountUnlock(ctx, req.Aid)
-	if err != nil {
-		return nil, err
-	}
-	return &api.EmptyStruct{}, nil
 }

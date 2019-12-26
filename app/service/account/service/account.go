@@ -12,7 +12,6 @@ import (
 	"valerian/library/log"
 
 	"github.com/asaskevich/govalidator"
-	uuid "github.com/satori/go.uuid"
 )
 
 func validateBirthDay(arg *api.UpdateProfileReq) (err error) {
@@ -185,85 +184,6 @@ func (p *Service) BatchBaseInfo(c context.Context, aids []int64) (data map[int64
 	return
 }
 
-// ForgetPassword 忘记密码
-// 匹配验证码并生成一个有效期为5分钟的 SESSIONID
-func (p *Service) ForgetPassword(c context.Context, arg *api.ForgetPasswordReq) (resp *api.ForgetPasswordResp, err error) {
-	var account *model.Account
-	if govalidator.IsEmail(arg.Identity) {
-		if account, err = p.d.GetAccountByEmail(c, p.d.DB(), arg.Identity); err != nil {
-			return
-		}
-		var code string
-		if code, err = p.d.EmailValcodeCache(c, model.ValcodeForgetPassword, arg.Identity); err != nil {
-			return
-		} else if code == "" {
-			err = ecode.ValcodeExpires
-			return
-		} else if code != arg.Valcode {
-			err = ecode.ValcodeWrong
-			return
-		}
-	} else {
-		mobile := arg.Prefix + arg.Identity
-		if account, err = p.d.GetAccountByMobile(c, p.d.DB(), mobile); err != nil {
-			return
-		}
-
-		var code string
-		if code, err = p.d.MobileValcodeCache(c, model.ValcodeForgetPassword, mobile); err != nil {
-			return
-		} else if code == "" {
-			err = ecode.ValcodeExpires
-			return
-		} else if code != arg.Valcode {
-			err = ecode.ValcodeWrong
-			return
-		}
-	}
-
-	sessionID := uuid.NewV4().String()
-	if err = p.d.SetSessionResetPasswordCache(c, sessionID, account.ID); err != nil {
-		return
-	}
-
-	resp = &api.ForgetPasswordResp{
-		SessionID: sessionID,
-	}
-	return
-}
-
-// ResetPassword 重设密码
-func (p *Service) ResetPassword(c context.Context, arg *api.ResetPasswordReq) (err error) {
-	var aid int64
-	if aid, err = p.d.SessionResetPasswordCache(c, arg.SessionID); err != nil {
-		return
-	} else if aid == 0 {
-		return ecode.SessionExpires
-	}
-
-	var acc *model.Account
-	if acc, err = p.getAccountByID(c, p.d.DB(), aid); err != nil {
-		return
-	}
-
-	passwordHash, err := hashPassword(arg.Password, acc.Salt)
-	if err != nil {
-		return
-	}
-
-	if err = p.d.SetPassword(c, p.d.DB(), passwordHash, acc.Salt, aid); err != nil {
-		return
-	}
-
-	p.addCache(func() {
-		// TODO: Clear this users's AccessToken Cached && Refresh Token Cache
-		p.d.DelAccountCache(context.TODO(), aid)
-		p.d.DelResetPasswordCache(context.TODO(), arg.SessionID)
-	})
-
-	return
-}
-
 // UpdateAccount 更新用户资料
 func (p *Service) UpdateAccount(c context.Context, arg *api.UpdateProfileReq) (err error) {
 	var account *model.Account
@@ -307,16 +227,6 @@ func (p *Service) UpdateAccount(c context.Context, arg *api.UpdateProfileReq) (e
 
 	if err = validateBirthDay(arg); err != nil {
 		return
-	}
-
-	if arg.Password != nil {
-		passwordHash, e := hashPassword(arg.GetPasswordValue(), account.Salt)
-		if e != nil {
-			return e
-		}
-
-		account.Password = passwordHash
-
 	}
 
 	if arg.Location != nil {

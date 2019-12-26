@@ -228,29 +228,6 @@ message DBAccount {
     string     Salt               = 27;
 }
 
-message AddAccountReq {
-    int64    ID                    = 1;
-    string   Mobile                = 2;
-    string   Email                 = 3;
-    string   UserName              = 4;
-    string   Role                  = 6;
-    int32    Gender                = 8;
-    int32    BirthYear             = 9;
-    int32    BirthMonth            = 10;
-    int32    BirthDay              = 11;
-    int64    Location              = 12;
-    string   Introduction          = 13;
-    string   Avatar                = 14;
-    int32    Source                = 15;
-    int64    IP                    = 16;
-    bool     IDCert                = 17;
-    bool     WorkCert              = 18;
-    bool     IsOrg                 = 19;
-    bool     IsVIP                 = 20;
-    string Password = 23;
-    string Salt = 24;
-    string Prefix = 25;
-}
 
 message UpdateProfileReq {
     oneof Avatar {
@@ -292,21 +269,6 @@ message UpdateProfileReq {
     int64 Aid  = 10;
 }
 
-message ForgetPasswordReq {
-	string Identity  = 1;
-	string Valcode  = 2;
-	string Prefix   = 3;
-	int32 IdentityType  = 4;
-}
-
-message ForgetPasswordResp {
-	string SessionID  = 1;
-}
-
-message ResetPasswordReq {
-	string SessionID  = 1;
-    string Password = 2;
-}
 
 
 
@@ -316,8 +278,6 @@ service Account {
     rpc MobileExist(MobileReq) returns (ExistResp);
 
     rpc UpdateSetting(SettingReq) returns (EmptyStruct);
-
-    rpc AddAccount(AddAccountReq) returns (SelfProfile);
 
     rpc AccountInfo(AidReq) returns (DBAccount);
 
@@ -329,10 +289,6 @@ service Account {
 
     rpc UpdateProfile(UpdateProfileReq) returns (EmptyStruct);
 
-    rpc ForgetPassword(ForgetPasswordReq) returns (ForgetPasswordResp);
-
-    rpc ResetPassword(ResetPasswordReq) returns (EmptyStruct);
-
     rpc SelfProfileInfo(AidReq) returns (SelfProfile);
 
     rpc BasicInfo(AidReq) returns (BaseInfoReply);
@@ -342,8 +298,4 @@ service Account {
     rpc AccountStat(AidReq) returns (AccountStatInfo);
 
     rpc BaseInfos(AidsReq) returns (BaseInfosReply);
-
-    rpc AccountLock(AidReq) returns (EmptyStruct);
-
-    rpc AccountUnlock(AidReq) returns (EmptyStruct);
 }
