@@ -157,7 +157,6 @@ message MemberInfoReply {
     string Position = 15;
 
     bool IsLock = 16;
-    bool IsAnnul = 17;
 }
 
 
@@ -174,7 +173,6 @@ message AidResp {
 
 message AnnulReq {
     int64 aid = 1 ;
-    string password = 2;
     bool UseMaster = 3;
 }
 
@@ -221,6 +219,9 @@ message DBAccount {
     bool     IsVIP                 = 20;
     int64    CreatedAt             = 21;
     int64    UpdatedAt             = 22;
+    bool     IsLock                 = 23;
+    string   Prefix                 = 24;
+    bool     Deactive               = 25;
 }
 
 message AddAccountReq {
@@ -247,15 +248,67 @@ message AddAccountReq {
     string Prefix = 25;
 }
 
-message AllAccountsResp {
-    repeated DBAccount Items = 1;
+message UpdateProfileReq {
+    oneof Avatar {
+        string AvatarValue  = 1;
+    }
+
+    oneof UserName {
+        string UserNameValue  = 2;
+    }
+
+    oneof Gender {
+        int32 GenderValue  = 3;
+    }
+
+    oneof Location {
+        int64 LocationValue  = 4;
+    }
+
+    oneof BirthYear {
+        int32 BirthYearValue  = 5;
+    }
+
+    oneof BirthMonth {
+        int32 BirthMonthValue  = 6;
+    }
+
+    oneof BirthDay {
+        int32 BirthDayValue  = 7;
+    }
+
+    oneof Introduction {
+        string IntroductionValue  = 8;
+    }
+
+    oneof Password {
+        string PasswordValue  = 9;
+    }
+
+    int64 Aid  = 10;
+}
+
+message ForgetPasswordReq {
+	string Identity  = 1;
+	string Valcode  = 2;
+	string Prefix   = 3;
+	int32 IdentityType  = 4;
+}
+
+message ForgetPasswordResp {
+	string SessionID  = 1;
+}
+
+message ResetPasswordReq {
+	string SessionID  = 1;
+    string Password = 2;
 }
 
 
-service Account {
-    rpc AllAccounts(EmptyStruct) returns (AllAccountsResp);
 
+service Account {
     rpc EmailExist(EmailReq) returns (ExistResp);
+
     rpc MobileExist(MobileReq) returns (ExistResp);
 
     rpc UpdateSetting(SettingReq) returns (EmptyStruct);
@@ -264,7 +317,13 @@ service Account {
 
     rpc AccountInfo(AidReq) returns (DBAccount);
 
+    rpc GetAccountByEmail(EmailReq) returns (DBAccount);
+
+    rpc GetAccountByMobile(MobileReq) returns (DBAccount);
+
     rpc MemberInfo(AidReq) returns (MemberInfoReply);
+
+    rpc UpdateProfile(UpdateProfileReq) returns (EmptyStruct);
 
     rpc SelfProfileInfo(AidReq) returns (SelfProfile);
 
@@ -277,11 +336,6 @@ service Account {
     rpc BaseInfos(AidsReq) returns (BaseInfosReply);
 
     rpc AccountLock(AidReq) returns (EmptyStruct);
+
     rpc AccountUnlock(AidReq) returns (EmptyStruct);
-
-    rpc AnnulAccount(AnnulReq) returns (EmptyStruct);
-
-    // 注销用户出了判断邮箱号码存在还要判断是不是注销用户
-    rpc EmailExistAndNotAnnul(EmailReq) returns (ExistResp);
-    rpc MobileExistAndNotAnnul(MobileReq) returns (ExistResp);
 }

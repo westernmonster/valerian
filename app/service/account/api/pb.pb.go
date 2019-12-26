@@ -782,7 +782,6 @@ type MemberInfoReply struct {
 	Company              string           `protobuf:"bytes,14,opt,name=Company,proto3" json:"Company,omitempty"`
 	Position             string           `protobuf:"bytes,15,opt,name=Position,proto3" json:"Position,omitempty"`
 	IsLock               bool             `protobuf:"varint,16,opt,name=IsLock,proto3" json:"IsLock,omitempty"`
-	IsAnnul              bool             `protobuf:"varint,17,opt,name=IsAnnul,proto3" json:"IsAnnul,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
 	XXX_unrecognized     []byte           `json:"-"`
 	XXX_sizecache        int32            `json:"-"`
@@ -933,13 +932,6 @@ func (m *MemberInfoReply) GetIsLock() bool {
 	return false
 }
 
-func (m *MemberInfoReply) GetIsAnnul() bool {
-	if m != nil {
-		return m.IsAnnul
-	}
-	return false
-}
-
 type AidReq struct {
 	Aid                  int64    `protobuf:"varint,1,opt,name=aid,proto3" json:"aid,omitempty"`
 	RemoteIP             string   `protobuf:"bytes,2,opt,name=remoteIP,proto3" json:"remoteIP,omitempty"`
@@ -1052,7 +1044,6 @@ func (m *AidResp) GetAid() int64 {
 
 type AnnulReq struct {
 	Aid                  int64    `protobuf:"varint,1,opt,name=aid,proto3" json:"aid,omitempty"`
-	Password             string   `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
 	UseMaster            bool     `protobuf:"varint,3,opt,name=UseMaster,proto3" json:"UseMaster,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -1097,13 +1088,6 @@ func (m *AnnulReq) GetAid() int64 {
 		return m.Aid
 	}
 	return 0
-}
-
-func (m *AnnulReq) GetPassword() string {
-	if m != nil {
-		return m.Password
-	}
-	return ""
 }
 
 func (m *AnnulReq) GetUseMaster() bool {
@@ -1363,6 +1347,9 @@ type DBAccount struct {
 	IsVIP                bool     `protobuf:"varint,20,opt,name=IsVIP,proto3" json:"IsVIP,omitempty"`
 	CreatedAt            int64    `protobuf:"varint,21,opt,name=CreatedAt,proto3" json:"CreatedAt,omitempty"`
 	UpdatedAt            int64    `protobuf:"varint,22,opt,name=UpdatedAt,proto3" json:"UpdatedAt,omitempty"`
+	IsLock               bool     `protobuf:"varint,23,opt,name=IsLock,proto3" json:"IsLock,omitempty"`
+	Prefix               string   `protobuf:"bytes,24,opt,name=Prefix,proto3" json:"Prefix,omitempty"`
+	Deactive             bool     `protobuf:"varint,25,opt,name=Deactive,proto3" json:"Deactive,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -1539,6 +1526,27 @@ func (m *DBAccount) GetUpdatedAt() int64 {
 		return m.UpdatedAt
 	}
 	return 0
+}
+
+func (m *DBAccount) GetIsLock() bool {
+	if m != nil {
+		return m.IsLock
+	}
+	return false
+}
+
+func (m *DBAccount) GetPrefix() string {
+	if m != nil {
+		return m.Prefix
+	}
+	return ""
+}
+
+func (m *DBAccount) GetDeactive() bool {
+	if m != nil {
+		return m.Deactive
+	}
+	return false
 }
 
 type AddAccountReq struct {
@@ -1748,25 +1756,52 @@ func (m *AddAccountReq) GetPrefix() string {
 	return ""
 }
 
-type AllAccountsResp struct {
-	Items                []*DBAccount `protobuf:"bytes,1,rep,name=Items,proto3" json:"Items,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
-	XXX_unrecognized     []byte       `json:"-"`
-	XXX_sizecache        int32        `json:"-"`
+type UpdateProfileReq struct {
+	// Types that are valid to be assigned to Avatar:
+	//	*UpdateProfileReq_AvatarValue
+	Avatar isUpdateProfileReq_Avatar `protobuf_oneof:"Avatar"`
+	// Types that are valid to be assigned to UserName:
+	//	*UpdateProfileReq_UserNameValue
+	UserName isUpdateProfileReq_UserName `protobuf_oneof:"UserName"`
+	// Types that are valid to be assigned to Gender:
+	//	*UpdateProfileReq_GenderValue
+	Gender isUpdateProfileReq_Gender `protobuf_oneof:"Gender"`
+	// Types that are valid to be assigned to Location:
+	//	*UpdateProfileReq_LocationValue
+	Location isUpdateProfileReq_Location `protobuf_oneof:"Location"`
+	// Types that are valid to be assigned to BirthYear:
+	//	*UpdateProfileReq_BirthYearValue
+	BirthYear isUpdateProfileReq_BirthYear `protobuf_oneof:"BirthYear"`
+	// Types that are valid to be assigned to BirthMonth:
+	//	*UpdateProfileReq_BirthMonthValue
+	BirthMonth isUpdateProfileReq_BirthMonth `protobuf_oneof:"BirthMonth"`
+	// Types that are valid to be assigned to BirthDay:
+	//	*UpdateProfileReq_BirthDayValue
+	BirthDay isUpdateProfileReq_BirthDay `protobuf_oneof:"BirthDay"`
+	// Types that are valid to be assigned to Introduction:
+	//	*UpdateProfileReq_IntroductionValue
+	Introduction isUpdateProfileReq_Introduction `protobuf_oneof:"Introduction"`
+	// Types that are valid to be assigned to Password:
+	//	*UpdateProfileReq_PasswordValue
+	Password             isUpdateProfileReq_Password `protobuf_oneof:"Password"`
+	Aid                  int64                       `protobuf:"varint,10,opt,name=Aid,proto3" json:"Aid,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                    `json:"-"`
+	XXX_unrecognized     []byte                      `json:"-"`
+	XXX_sizecache        int32                       `json:"-"`
 }
 
-func (m *AllAccountsResp) Reset()         { *m = AllAccountsResp{} }
-func (m *AllAccountsResp) String() string { return proto.CompactTextString(m) }
-func (*AllAccountsResp) ProtoMessage()    {}
-func (*AllAccountsResp) Descriptor() ([]byte, []int) {
+func (m *UpdateProfileReq) Reset()         { *m = UpdateProfileReq{} }
+func (m *UpdateProfileReq) String() string { return proto.CompactTextString(m) }
+func (*UpdateProfileReq) ProtoMessage()    {}
+func (*UpdateProfileReq) Descriptor() ([]byte, []int) {
 	return fileDescriptor_f80abaa17e25ccc8, []int{17}
 }
-func (m *AllAccountsResp) XXX_Unmarshal(b []byte) error {
+func (m *UpdateProfileReq) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *AllAccountsResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *UpdateProfileReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_AllAccountsResp.Marshal(b, m, deterministic)
+		return xxx_messageInfo_UpdateProfileReq.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -1776,23 +1811,413 @@ func (m *AllAccountsResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, err
 		return b[:n], nil
 	}
 }
-func (m *AllAccountsResp) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_AllAccountsResp.Merge(m, src)
+func (m *UpdateProfileReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UpdateProfileReq.Merge(m, src)
 }
-func (m *AllAccountsResp) XXX_Size() int {
+func (m *UpdateProfileReq) XXX_Size() int {
 	return m.Size()
 }
-func (m *AllAccountsResp) XXX_DiscardUnknown() {
-	xxx_messageInfo_AllAccountsResp.DiscardUnknown(m)
+func (m *UpdateProfileReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_UpdateProfileReq.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_AllAccountsResp proto.InternalMessageInfo
+var xxx_messageInfo_UpdateProfileReq proto.InternalMessageInfo
 
-func (m *AllAccountsResp) GetItems() []*DBAccount {
+type isUpdateProfileReq_Avatar interface {
+	isUpdateProfileReq_Avatar()
+	MarshalTo([]byte) (int, error)
+	Size() int
+}
+type isUpdateProfileReq_UserName interface {
+	isUpdateProfileReq_UserName()
+	MarshalTo([]byte) (int, error)
+	Size() int
+}
+type isUpdateProfileReq_Gender interface {
+	isUpdateProfileReq_Gender()
+	MarshalTo([]byte) (int, error)
+	Size() int
+}
+type isUpdateProfileReq_Location interface {
+	isUpdateProfileReq_Location()
+	MarshalTo([]byte) (int, error)
+	Size() int
+}
+type isUpdateProfileReq_BirthYear interface {
+	isUpdateProfileReq_BirthYear()
+	MarshalTo([]byte) (int, error)
+	Size() int
+}
+type isUpdateProfileReq_BirthMonth interface {
+	isUpdateProfileReq_BirthMonth()
+	MarshalTo([]byte) (int, error)
+	Size() int
+}
+type isUpdateProfileReq_BirthDay interface {
+	isUpdateProfileReq_BirthDay()
+	MarshalTo([]byte) (int, error)
+	Size() int
+}
+type isUpdateProfileReq_Introduction interface {
+	isUpdateProfileReq_Introduction()
+	MarshalTo([]byte) (int, error)
+	Size() int
+}
+type isUpdateProfileReq_Password interface {
+	isUpdateProfileReq_Password()
+	MarshalTo([]byte) (int, error)
+	Size() int
+}
+
+type UpdateProfileReq_AvatarValue struct {
+	AvatarValue string `protobuf:"bytes,1,opt,name=AvatarValue,proto3,oneof" json:"AvatarValue,omitempty"`
+}
+type UpdateProfileReq_UserNameValue struct {
+	UserNameValue string `protobuf:"bytes,2,opt,name=UserNameValue,proto3,oneof" json:"UserNameValue,omitempty"`
+}
+type UpdateProfileReq_GenderValue struct {
+	GenderValue int32 `protobuf:"varint,3,opt,name=GenderValue,proto3,oneof" json:"GenderValue,omitempty"`
+}
+type UpdateProfileReq_LocationValue struct {
+	LocationValue int64 `protobuf:"varint,4,opt,name=LocationValue,proto3,oneof" json:"LocationValue,omitempty"`
+}
+type UpdateProfileReq_BirthYearValue struct {
+	BirthYearValue int32 `protobuf:"varint,5,opt,name=BirthYearValue,proto3,oneof" json:"BirthYearValue,omitempty"`
+}
+type UpdateProfileReq_BirthMonthValue struct {
+	BirthMonthValue int32 `protobuf:"varint,6,opt,name=BirthMonthValue,proto3,oneof" json:"BirthMonthValue,omitempty"`
+}
+type UpdateProfileReq_BirthDayValue struct {
+	BirthDayValue int32 `protobuf:"varint,7,opt,name=BirthDayValue,proto3,oneof" json:"BirthDayValue,omitempty"`
+}
+type UpdateProfileReq_IntroductionValue struct {
+	IntroductionValue string `protobuf:"bytes,8,opt,name=IntroductionValue,proto3,oneof" json:"IntroductionValue,omitempty"`
+}
+type UpdateProfileReq_PasswordValue struct {
+	PasswordValue string `protobuf:"bytes,9,opt,name=PasswordValue,proto3,oneof" json:"PasswordValue,omitempty"`
+}
+
+func (*UpdateProfileReq_AvatarValue) isUpdateProfileReq_Avatar()             {}
+func (*UpdateProfileReq_UserNameValue) isUpdateProfileReq_UserName()         {}
+func (*UpdateProfileReq_GenderValue) isUpdateProfileReq_Gender()             {}
+func (*UpdateProfileReq_LocationValue) isUpdateProfileReq_Location()         {}
+func (*UpdateProfileReq_BirthYearValue) isUpdateProfileReq_BirthYear()       {}
+func (*UpdateProfileReq_BirthMonthValue) isUpdateProfileReq_BirthMonth()     {}
+func (*UpdateProfileReq_BirthDayValue) isUpdateProfileReq_BirthDay()         {}
+func (*UpdateProfileReq_IntroductionValue) isUpdateProfileReq_Introduction() {}
+func (*UpdateProfileReq_PasswordValue) isUpdateProfileReq_Password()         {}
+
+func (m *UpdateProfileReq) GetAvatar() isUpdateProfileReq_Avatar {
 	if m != nil {
-		return m.Items
+		return m.Avatar
 	}
 	return nil
+}
+func (m *UpdateProfileReq) GetUserName() isUpdateProfileReq_UserName {
+	if m != nil {
+		return m.UserName
+	}
+	return nil
+}
+func (m *UpdateProfileReq) GetGender() isUpdateProfileReq_Gender {
+	if m != nil {
+		return m.Gender
+	}
+	return nil
+}
+func (m *UpdateProfileReq) GetLocation() isUpdateProfileReq_Location {
+	if m != nil {
+		return m.Location
+	}
+	return nil
+}
+func (m *UpdateProfileReq) GetBirthYear() isUpdateProfileReq_BirthYear {
+	if m != nil {
+		return m.BirthYear
+	}
+	return nil
+}
+func (m *UpdateProfileReq) GetBirthMonth() isUpdateProfileReq_BirthMonth {
+	if m != nil {
+		return m.BirthMonth
+	}
+	return nil
+}
+func (m *UpdateProfileReq) GetBirthDay() isUpdateProfileReq_BirthDay {
+	if m != nil {
+		return m.BirthDay
+	}
+	return nil
+}
+func (m *UpdateProfileReq) GetIntroduction() isUpdateProfileReq_Introduction {
+	if m != nil {
+		return m.Introduction
+	}
+	return nil
+}
+func (m *UpdateProfileReq) GetPassword() isUpdateProfileReq_Password {
+	if m != nil {
+		return m.Password
+	}
+	return nil
+}
+
+func (m *UpdateProfileReq) GetAvatarValue() string {
+	if x, ok := m.GetAvatar().(*UpdateProfileReq_AvatarValue); ok {
+		return x.AvatarValue
+	}
+	return ""
+}
+
+func (m *UpdateProfileReq) GetUserNameValue() string {
+	if x, ok := m.GetUserName().(*UpdateProfileReq_UserNameValue); ok {
+		return x.UserNameValue
+	}
+	return ""
+}
+
+func (m *UpdateProfileReq) GetGenderValue() int32 {
+	if x, ok := m.GetGender().(*UpdateProfileReq_GenderValue); ok {
+		return x.GenderValue
+	}
+	return 0
+}
+
+func (m *UpdateProfileReq) GetLocationValue() int64 {
+	if x, ok := m.GetLocation().(*UpdateProfileReq_LocationValue); ok {
+		return x.LocationValue
+	}
+	return 0
+}
+
+func (m *UpdateProfileReq) GetBirthYearValue() int32 {
+	if x, ok := m.GetBirthYear().(*UpdateProfileReq_BirthYearValue); ok {
+		return x.BirthYearValue
+	}
+	return 0
+}
+
+func (m *UpdateProfileReq) GetBirthMonthValue() int32 {
+	if x, ok := m.GetBirthMonth().(*UpdateProfileReq_BirthMonthValue); ok {
+		return x.BirthMonthValue
+	}
+	return 0
+}
+
+func (m *UpdateProfileReq) GetBirthDayValue() int32 {
+	if x, ok := m.GetBirthDay().(*UpdateProfileReq_BirthDayValue); ok {
+		return x.BirthDayValue
+	}
+	return 0
+}
+
+func (m *UpdateProfileReq) GetIntroductionValue() string {
+	if x, ok := m.GetIntroduction().(*UpdateProfileReq_IntroductionValue); ok {
+		return x.IntroductionValue
+	}
+	return ""
+}
+
+func (m *UpdateProfileReq) GetPasswordValue() string {
+	if x, ok := m.GetPassword().(*UpdateProfileReq_PasswordValue); ok {
+		return x.PasswordValue
+	}
+	return ""
+}
+
+func (m *UpdateProfileReq) GetAid() int64 {
+	if m != nil {
+		return m.Aid
+	}
+	return 0
+}
+
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*UpdateProfileReq) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
+		(*UpdateProfileReq_AvatarValue)(nil),
+		(*UpdateProfileReq_UserNameValue)(nil),
+		(*UpdateProfileReq_GenderValue)(nil),
+		(*UpdateProfileReq_LocationValue)(nil),
+		(*UpdateProfileReq_BirthYearValue)(nil),
+		(*UpdateProfileReq_BirthMonthValue)(nil),
+		(*UpdateProfileReq_BirthDayValue)(nil),
+		(*UpdateProfileReq_IntroductionValue)(nil),
+		(*UpdateProfileReq_PasswordValue)(nil),
+	}
+}
+
+type ForgetPasswordReq struct {
+	Identity             string   `protobuf:"bytes,1,opt,name=Identity,proto3" json:"Identity,omitempty"`
+	Valcode              string   `protobuf:"bytes,2,opt,name=Valcode,proto3" json:"Valcode,omitempty"`
+	Prefix               string   `protobuf:"bytes,3,opt,name=Prefix,proto3" json:"Prefix,omitempty"`
+	IdentityType         int32    `protobuf:"varint,4,opt,name=IdentityType,proto3" json:"IdentityType,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ForgetPasswordReq) Reset()         { *m = ForgetPasswordReq{} }
+func (m *ForgetPasswordReq) String() string { return proto.CompactTextString(m) }
+func (*ForgetPasswordReq) ProtoMessage()    {}
+func (*ForgetPasswordReq) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f80abaa17e25ccc8, []int{18}
+}
+func (m *ForgetPasswordReq) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *ForgetPasswordReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_ForgetPasswordReq.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *ForgetPasswordReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ForgetPasswordReq.Merge(m, src)
+}
+func (m *ForgetPasswordReq) XXX_Size() int {
+	return m.Size()
+}
+func (m *ForgetPasswordReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_ForgetPasswordReq.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ForgetPasswordReq proto.InternalMessageInfo
+
+func (m *ForgetPasswordReq) GetIdentity() string {
+	if m != nil {
+		return m.Identity
+	}
+	return ""
+}
+
+func (m *ForgetPasswordReq) GetValcode() string {
+	if m != nil {
+		return m.Valcode
+	}
+	return ""
+}
+
+func (m *ForgetPasswordReq) GetPrefix() string {
+	if m != nil {
+		return m.Prefix
+	}
+	return ""
+}
+
+func (m *ForgetPasswordReq) GetIdentityType() int32 {
+	if m != nil {
+		return m.IdentityType
+	}
+	return 0
+}
+
+type ForgetPasswordResp struct {
+	SessionID            string   `protobuf:"bytes,1,opt,name=SessionID,proto3" json:"SessionID,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ForgetPasswordResp) Reset()         { *m = ForgetPasswordResp{} }
+func (m *ForgetPasswordResp) String() string { return proto.CompactTextString(m) }
+func (*ForgetPasswordResp) ProtoMessage()    {}
+func (*ForgetPasswordResp) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f80abaa17e25ccc8, []int{19}
+}
+func (m *ForgetPasswordResp) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *ForgetPasswordResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_ForgetPasswordResp.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *ForgetPasswordResp) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ForgetPasswordResp.Merge(m, src)
+}
+func (m *ForgetPasswordResp) XXX_Size() int {
+	return m.Size()
+}
+func (m *ForgetPasswordResp) XXX_DiscardUnknown() {
+	xxx_messageInfo_ForgetPasswordResp.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ForgetPasswordResp proto.InternalMessageInfo
+
+func (m *ForgetPasswordResp) GetSessionID() string {
+	if m != nil {
+		return m.SessionID
+	}
+	return ""
+}
+
+type ResetPasswordReq struct {
+	SessionID            string   `protobuf:"bytes,1,opt,name=SessionID,proto3" json:"SessionID,omitempty"`
+	Password             string   `protobuf:"bytes,2,opt,name=Password,proto3" json:"Password,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ResetPasswordReq) Reset()         { *m = ResetPasswordReq{} }
+func (m *ResetPasswordReq) String() string { return proto.CompactTextString(m) }
+func (*ResetPasswordReq) ProtoMessage()    {}
+func (*ResetPasswordReq) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f80abaa17e25ccc8, []int{20}
+}
+func (m *ResetPasswordReq) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *ResetPasswordReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_ResetPasswordReq.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *ResetPasswordReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ResetPasswordReq.Merge(m, src)
+}
+func (m *ResetPasswordReq) XXX_Size() int {
+	return m.Size()
+}
+func (m *ResetPasswordReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_ResetPasswordReq.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ResetPasswordReq proto.InternalMessageInfo
+
+func (m *ResetPasswordReq) GetSessionID() string {
+	if m != nil {
+		return m.SessionID
+	}
+	return ""
+}
+
+func (m *ResetPasswordReq) GetPassword() string {
+	if m != nil {
+		return m.Password
+	}
+	return ""
 }
 
 func init() {
@@ -1815,113 +2240,130 @@ func init() {
 	proto.RegisterType((*AidsReq)(nil), "service.account.AidsReq")
 	proto.RegisterType((*DBAccount)(nil), "service.account.DBAccount")
 	proto.RegisterType((*AddAccountReq)(nil), "service.account.AddAccountReq")
-	proto.RegisterType((*AllAccountsResp)(nil), "service.account.AllAccountsResp")
+	proto.RegisterType((*UpdateProfileReq)(nil), "service.account.UpdateProfileReq")
+	proto.RegisterType((*ForgetPasswordReq)(nil), "service.account.ForgetPasswordReq")
+	proto.RegisterType((*ForgetPasswordResp)(nil), "service.account.ForgetPasswordResp")
+	proto.RegisterType((*ResetPasswordReq)(nil), "service.account.ResetPasswordReq")
 }
 
 func init() { proto.RegisterFile("pb.proto", fileDescriptor_f80abaa17e25ccc8) }
 
 var fileDescriptor_f80abaa17e25ccc8 = []byte{
-	// 1593 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x58, 0xcd, 0x6e, 0x1b, 0xb7,
-	0x16, 0x86, 0x7e, 0xad, 0x39, 0xb2, 0xac, 0x84, 0x71, 0x9c, 0x89, 0x62, 0xf8, 0xfa, 0x0e, 0x2e,
-	0x02, 0xdf, 0xc5, 0x75, 0x02, 0xdf, 0x2c, 0x8a, 0x16, 0x28, 0x2a, 0x5b, 0x76, 0xa2, 0x20, 0x76,
-	0x85, 0x71, 0x7e, 0x90, 0xa2, 0x40, 0x31, 0x1a, 0xd1, 0x0a, 0xe1, 0xd1, 0x8c, 0x3a, 0x43, 0x39,
-	0xf1, 0xba, 0x8b, 0x3e, 0x42, 0x9f, 0xa4, 0xcb, 0xee, 0xbb, 0xec, 0x03, 0x74, 0x51, 0x04, 0x68,
-	0xb7, 0x45, 0xdf, 0xa0, 0xe0, 0x21, 0x39, 0x7f, 0xd2, 0xc8, 0x48, 0x02, 0x14, 0x28, 0xd0, 0x95,
-	0xf8, 0x1d, 0x92, 0x87, 0xe4, 0xe1, 0x39, 0x1f, 0xbf, 0x11, 0x34, 0xa6, 0xc3, 0xdd, 0x69, 0x18,
-	0xf0, 0x80, 0xb4, 0x23, 0x1a, 0x5e, 0x30, 0x97, 0xee, 0x3a, 0xae, 0x1b, 0xcc, 0x7c, 0xde, 0xf9,
-	0xdf, 0x98, 0xf1, 0x57, 0xb3, 0xe1, 0xae, 0x1b, 0x4c, 0xee, 0x8d, 0x83, 0x71, 0x70, 0x0f, 0xc7,
-	0x0d, 0x67, 0x67, 0x88, 0x10, 0x60, 0x4b, 0xce, 0xb7, 0x5a, 0xd0, 0x3c, 0x9c, 0x4c, 0xf9, 0xe5,
-	0x29, 0x0f, 0x67, 0x2e, 0xb7, 0xbe, 0x29, 0x43, 0x6b, 0xdf, 0x89, 0x68, 0xdf, 0x3f, 0x0b, 0x6c,
-	0x3a, 0xf5, 0x2e, 0xc9, 0x1a, 0x94, 0xfb, 0x3d, 0xb3, 0xb4, 0x5d, 0xda, 0xa9, 0xd8, 0xe5, 0x7e,
-	0x8f, 0x74, 0xa0, 0xf1, 0x2c, 0xa2, 0xe1, 0x89, 0x33, 0xa1, 0x66, 0x79, 0xbb, 0xb4, 0x63, 0xd8,
-	0x31, 0x26, 0x1b, 0x50, 0x7f, 0x48, 0xfd, 0x11, 0x0d, 0xcd, 0xca, 0x76, 0x69, 0xa7, 0x66, 0x2b,
-	0x44, 0x2c, 0x58, 0xed, 0xfb, 0x3c, 0x0c, 0x46, 0x33, 0x97, 0xb3, 0xc0, 0x37, 0xab, 0x38, 0x2f,
-	0x63, 0x13, 0x73, 0xbb, 0x17, 0x0e, 0x77, 0x42, 0xb3, 0x86, 0xbd, 0x0a, 0x09, 0x7b, 0xbf, 0x77,
-	0x40, 0x43, 0x6e, 0xd6, 0xb7, 0x4b, 0x3b, 0x0d, 0x5b, 0x21, 0xb1, 0x8f, 0x17, 0x41, 0x78, 0x8e,
-	0x3d, 0x2b, 0xd8, 0x13, 0x63, 0xb2, 0x0e, 0xb5, 0x7e, 0xf4, 0x79, 0x38, 0x36, 0x1b, 0xd8, 0x21,
-	0x81, 0xb4, 0x3e, 0xef, 0x0f, 0x4c, 0x43, 0x5b, 0x9f, 0xf7, 0x07, 0x84, 0x40, 0xd5, 0x0e, 0x3c,
-	0x6a, 0x02, 0xae, 0x8a, 0x6d, 0xeb, 0x87, 0x12, 0xac, 0xe9, 0x28, 0x44, 0x32, 0x0c, 0xc7, 0x00,
-	0x43, 0x27, 0xa2, 0x5f, 0x31, 0x61, 0x32, 0x4b, 0xdb, 0x95, 0x9d, 0xe6, 0xde, 0xee, 0x6e, 0x2e,
-	0xf8, 0xbb, 0xd9, 0x49, 0x09, 0x3c, 0xf4, 0x79, 0x78, 0x69, 0x1b, 0x43, 0x8d, 0x3b, 0x5f, 0xa6,
-	0x16, 0xc0, 0x4e, 0x72, 0x0d, 0x2a, 0xe7, 0xf4, 0x52, 0x05, 0x5a, 0x34, 0xc9, 0x03, 0xa8, 0x5d,
-	0x38, 0xde, 0x4c, 0x86, 0xb9, 0xb9, 0xb7, 0x55, 0xb8, 0x1a, 0x2e, 0x66, 0xcb, 0xc1, 0x1f, 0x97,
-	0x3f, 0x2a, 0x59, 0x3f, 0x97, 0x00, 0x4e, 0x29, 0xe7, 0xcc, 0x1f, 0xdb, 0xf4, 0x6b, 0xe1, 0xba,
-	0xcb, 0x46, 0xda, 0x75, 0x97, 0x8d, 0xc8, 0x21, 0x34, 0x54, 0x7f, 0x64, 0x96, 0xf1, 0x2c, 0xff,
-	0x9d, 0xf3, 0x9e, 0x38, 0xd0, 0x4d, 0x75, 0x8c, 0x78, 0xaa, 0xb8, 0x83, 0x27, 0x8e, 0x3f, 0x9e,
-	0x39, 0x63, 0x8a, 0x37, 0x6e, 0xd8, 0x31, 0x26, 0x9b, 0x60, 0x3c, 0x8b, 0xe8, 0xb1, 0x13, 0x71,
-	0x1a, 0xe2, 0x85, 0x37, 0xec, 0xc4, 0xd0, 0xf9, 0x04, 0x5a, 0x19, 0xa7, 0xe9, 0xe3, 0x1b, 0xf2,
-	0xf8, 0xeb, 0xe9, 0xe3, 0x37, 0xd2, 0xc7, 0xfb, 0xbe, 0x0e, 0xcd, 0x53, 0xea, 0x9d, 0x0d, 0xc2,
-	0xe0, 0x8c, 0x79, 0x74, 0x2e, 0x45, 0x37, 0xa0, 0x7e, 0x1c, 0x0c, 0x99, 0xa7, 0x13, 0x54, 0x21,
-	0xe1, 0xf1, 0x70, 0xe2, 0x30, 0x4f, 0xed, 0x55, 0x02, 0x31, 0x7a, 0x10, 0xd2, 0x33, 0xf6, 0x46,
-	0xa5, 0xa5, 0x42, 0x99, 0x44, 0xaf, 0x15, 0x26, 0x7a, 0x3d, 0x93, 0xe8, 0x9b, 0x60, 0xec, 0xb3,
-	0x90, 0xbf, 0x7a, 0x49, 0x9d, 0x10, 0xb3, 0xb2, 0x66, 0x27, 0x06, 0xb2, 0x05, 0x80, 0xe0, 0x38,
-	0xf0, 0xf9, 0x2b, 0xcc, 0xcd, 0x9a, 0x9d, 0xb2, 0x88, 0x15, 0x11, 0xf5, 0x9c, 0x4b, 0xcc, 0xd1,
-	0x9a, 0x1d, 0xe3, 0xb9, 0x12, 0x82, 0xa5, 0x25, 0xd4, 0xcc, 0x97, 0xd0, 0x69, 0x30, 0x0b, 0x5d,
-	0x6a, 0xae, 0xca, 0xdd, 0x4a, 0x84, 0xd7, 0x17, 0xb8, 0x0e, 0xfa, 0x6b, 0x61, 0xf4, 0x62, 0x4c,
-	0xee, 0xc2, 0x9a, 0x6e, 0x9f, 0xf2, 0x90, 0xf9, 0x63, 0x73, 0x0d, 0x7d, 0xe6, 0xac, 0xa9, 0xf2,
-	0x6c, 0x67, 0xca, 0x53, 0xec, 0x17, 0x5b, 0xa7, 0xdc, 0xe1, 0xb3, 0xc8, 0xbc, 0x86, 0x2b, 0x67,
-	0x6c, 0x99, 0x12, 0xbe, 0x9e, 0x2b, 0xe1, 0xbb, 0xb0, 0xa6, 0xdb, 0xca, 0x03, 0x41, 0x0f, 0x39,
-	0x2b, 0xde, 0xfd, 0xc0, 0xbc, 0x81, 0x7b, 0x2b, 0xf7, 0x07, 0x49, 0xe9, 0xaf, 0x2f, 0x2c, 0xfd,
-	0x9b, 0x8b, 0x4a, 0x7f, 0x23, 0x29, 0x7d, 0x71, 0x83, 0x07, 0x21, 0x75, 0x38, 0x1d, 0x75, 0xb9,
-	0x79, 0x0b, 0x83, 0x92, 0x18, 0x30, 0xa9, 0xa7, 0x23, 0xd5, 0x6b, 0xca, 0xde, 0xd8, 0x40, 0x1e,
-	0x40, 0x55, 0xec, 0xca, 0xbc, 0x8d, 0xf5, 0xba, 0x3d, 0x57, 0x51, 0x5d, 0xf9, 0x2b, 0xc6, 0x60,
-	0xd9, 0xe2, 0x68, 0xb2, 0x07, 0x2b, 0xaa, 0x14, 0xcc, 0x0e, 0x4e, 0x34, 0x0b, 0x4b, 0x51, 0x0f,
-	0x24, 0x26, 0xac, 0x1c, 0x04, 0x93, 0xa9, 0xe3, 0x5f, 0x9a, 0x77, 0x70, 0xf3, 0x1a, 0x8a, 0x98,
-	0x0e, 0x82, 0x88, 0xe1, 0x9d, 0x6e, 0xca, 0xac, 0xd5, 0xd8, 0xfa, 0xbd, 0x1c, 0x2f, 0x25, 0xee,
-	0xa7, 0xeb, 0x72, 0x76, 0xc1, 0xf8, 0xe5, 0x13, 0x76, 0x4e, 0xb1, 0x7a, 0x1a, 0x76, 0xc6, 0x46,
-	0x76, 0xa0, 0xad, 0xf1, 0x41, 0x30, 0x99, 0x50, 0x9f, 0xab, 0x5a, 0xcc, 0x9b, 0xc9, 0x7d, 0xb8,
-	0xa1, 0x4d, 0x47, 0x81, 0xe7, 0x05, 0xaf, 0x9f, 0x06, 0x53, 0xe6, 0x62, 0x9d, 0x35, 0xec, 0x45,
-	0x5d, 0x64, 0x0f, 0xd6, 0xb3, 0xe6, 0x63, 0x3a, 0x19, 0xc6, 0x4c, 0xb1, 0xb0, 0x4f, 0xd4, 0xcf,
-	0x49, 0xc0, 0xd9, 0x99, 0xdc, 0x71, 0x0d, 0x47, 0xa6, 0x2c, 0xe4, 0x3f, 0xd0, 0x92, 0x48, 0xef,
-	0x56, 0xbe, 0x18, 0x59, 0x63, 0x32, 0xea, 0x84, 0xbe, 0x3e, 0x72, 0xfc, 0x48, 0xbd, 0x1e, 0x59,
-	0xa3, 0x38, 0x7b, 0x6c, 0x50, 0x5b, 0x93, 0x8f, 0x49, 0xde, 0x9c, 0x21, 0x41, 0x23, 0x4b, 0x82,
-	0xd6, 0xaf, 0x25, 0x11, 0xc2, 0xcc, 0xad, 0x8b, 0xcc, 0x96, 0xa7, 0x62, 0xfe, 0xf8, 0x40, 0xf4,
-	0x60, 0xec, 0x6b, 0x76, 0xce, 0x2a, 0x72, 0x4d, 0xec, 0x44, 0x0e, 0x29, 0x4b, 0x2e, 0x89, 0x0d,
-	0xc8, 0x25, 0x9e, 0xe3, 0x9e, 0xcb, 0xee, 0x8a, 0xe2, 0x92, 0xd8, 0x22, 0xfa, 0x31, 0xd0, 0xb2,
-	0xbf, 0x2a, 0xfb, 0x13, 0x0b, 0xde, 0x7f, 0xc8, 0x99, 0xeb, 0x51, 0x39, 0xa2, 0x26, 0xeb, 0x33,
-	0x6d, 0x13, 0x31, 0xe8, 0xb1, 0xc8, 0x9d, 0x45, 0x11, 0x0b, 0x7c, 0x39, 0x4c, 0xd2, 0x5d, 0xde,
-	0x6c, 0xfd, 0x51, 0x81, 0xb6, 0x0c, 0xc7, 0x5f, 0x2f, 0x1c, 0xd2, 0x2c, 0x56, 0xbb, 0x92, 0xc5,
-	0xea, 0x45, 0x2c, 0xa6, 0x98, 0x73, 0xa5, 0x40, 0x7c, 0x34, 0x0a, 0xc5, 0x87, 0x51, 0x24, 0x3e,
-	0x60, 0x21, 0x03, 0x35, 0xd3, 0x0c, 0x94, 0x61, 0x9b, 0xd5, 0x3c, 0xdb, 0x68, 0x3e, 0x69, 0xbd,
-	0x13, 0x9f, 0xa4, 0xb8, 0x61, 0xad, 0x98, 0x1b, 0xda, 0x59, 0x6e, 0xc0, 0x93, 0x46, 0x4f, 0x02,
-	0xf7, 0x1c, 0x99, 0x5a, 0x9c, 0x14, 0x91, 0xf0, 0xd6, 0x8f, 0xba, 0xbe, 0x3f, 0xf3, 0x14, 0x45,
-	0x6b, 0x68, 0x3d, 0x85, 0x7a, 0x97, 0x8d, 0x94, 0xbe, 0x70, 0x12, 0x7d, 0xe1, 0xb0, 0x91, 0x58,
-	0x29, 0xa4, 0x93, 0x80, 0xd3, 0xfe, 0x40, 0xdf, 0xb5, 0xc6, 0x59, 0x61, 0x50, 0xc9, 0x09, 0x03,
-	0xeb, 0x0e, 0xac, 0xa0, 0xd7, 0x68, 0x3a, 0xef, 0xd6, 0x7a, 0x0e, 0x0d, 0x5c, 0xbb, 0x70, 0xd1,
-	0xa9, 0x13, 0x45, 0xaf, 0x83, 0x70, 0xa4, 0x17, 0xd5, 0xf8, 0x8a, 0x45, 0x3f, 0x85, 0x06, 0x6a,
-	0x01, 0xe1, 0x77, 0x1d, 0x6a, 0x14, 0x45, 0x82, 0x94, 0x22, 0x12, 0x64, 0xe7, 0x97, 0xf3, 0xf3,
-	0x5f, 0x82, 0x21, 0x25, 0x86, 0x70, 0xb0, 0x01, 0xf5, 0x89, 0x54, 0x1f, 0xd2, 0x83, 0x42, 0xc2,
-	0x3e, 0x95, 0x3a, 0x43, 0xa9, 0x12, 0x89, 0xae, 0xd8, 0xda, 0xbf, 0xc1, 0x38, 0x7c, 0xc3, 0x22,
-	0x8e, 0x11, 0x11, 0x02, 0x46, 0x00, 0xc5, 0xd6, 0x12, 0x58, 0x2f, 0x30, 0x64, 0x91, 0x58, 0x9b,
-	0x40, 0xd5, 0x61, 0x23, 0xa9, 0x4f, 0x2b, 0x36, 0xb6, 0x3f, 0xe0, 0x2e, 0xbe, 0xad, 0x82, 0xd1,
-	0xdb, 0x57, 0x59, 0xf6, 0x81, 0x2a, 0x2b, 0x5d, 0xfd, 0xd5, 0x5c, 0xf5, 0xeb, 0x77, 0xb8, 0x9e,
-	0x7a, 0x87, 0x13, 0x46, 0x68, 0x14, 0x2b, 0x2c, 0x63, 0xb9, 0xc2, 0x82, 0xa5, 0x0a, 0xab, 0x99,
-	0x53, 0x58, 0x69, 0x1e, 0x59, 0xcd, 0xf1, 0x48, 0x9e, 0x87, 0x5a, 0x4b, 0xd5, 0xd7, 0x5a, 0x81,
-	0xfa, 0x6a, 0x67, 0xd4, 0x97, 0x54, 0x2e, 0xd7, 0x54, 0x3c, 0x07, 0x29, 0xae, 0xb9, 0x5e, 0xc8,
-	0x35, 0xa4, 0x88, 0x6b, 0x6e, 0x2c, 0xe4, 0x9a, 0xf5, 0x42, 0xae, 0xb9, 0xb9, 0x54, 0xd9, 0x6c,
-	0xe4, 0x94, 0x8d, 0xf5, 0x5d, 0x15, 0x5a, 0xdd, 0xd1, 0x48, 0xa5, 0x82, 0xc8, 0xb4, 0x7f, 0xb2,
-	0xe1, 0xef, 0x9d, 0x0d, 0xe2, 0x2d, 0xd0, 0x64, 0x79, 0x4b, 0xbd, 0x05, 0x9a, 0x2c, 0x09, 0x54,
-	0x4f, 0x1d, 0x4f, 0x0a, 0x5c, 0xc3, 0xc6, 0x76, 0xea, 0x2b, 0xe9, 0x76, 0xfa, 0x2b, 0xc9, 0x3a,
-	0x80, 0x76, 0xd7, 0xf3, 0x54, 0x62, 0x44, 0xc8, 0x52, 0xf7, 0xa1, 0xd6, 0xe7, 0x74, 0xa2, 0xbf,
-	0x92, 0x3b, 0x73, 0xef, 0x56, 0xcc, 0x29, 0xb6, 0x1c, 0xb8, 0xf7, 0x9b, 0x01, 0x2b, 0x9a, 0x66,
-	0x8e, 0xa1, 0x99, 0x72, 0x48, 0x36, 0xe7, 0x66, 0xa7, 0xfe, 0xae, 0xe8, 0x2c, 0x78, 0x13, 0x73,
-	0x9b, 0x39, 0x00, 0xc0, 0x94, 0x43, 0xaa, 0x24, 0xb7, 0x17, 0x78, 0x93, 0xbc, 0xdf, 0x99, 0xdf,
-	0x66, 0xc2, 0xbb, 0x87, 0xd0, 0x94, 0xe9, 0x2c, 0xbd, 0xcc, 0x0f, 0x8d, 0xd9, 0x7f, 0xa9, 0x9b,
-	0xc7, 0xd0, 0x92, 0x25, 0xa5, 0x45, 0xf8, 0x9d, 0x25, 0x1f, 0xdd, 0x9d, 0xa5, 0x27, 0x27, 0x8f,
-	0x01, 0x92, 0x82, 0x24, 0xf3, 0xff, 0x0d, 0x64, 0xaa, 0x75, 0x81, 0xaf, 0xf4, 0xf7, 0xf3, 0x3e,
-	0x34, 0xd5, 0x58, 0x14, 0xa8, 0xb7, 0xe6, 0x9d, 0xe1, 0x3b, 0xdf, 0x59, 0x72, 0x93, 0xe4, 0x21,
-	0x40, 0x22, 0x00, 0x8b, 0x5d, 0xcc, 0x5f, 0x58, 0x5e, 0x36, 0x3e, 0x82, 0x76, 0x6a, 0x6f, 0xcb,
-	0xbd, 0x2d, 0x3f, 0x56, 0x0f, 0x8c, 0x7d, 0x27, 0x62, 0xee, 0x72, 0x1f, 0x57, 0xfc, 0xad, 0x42,
-	0x3e, 0x83, 0xa6, 0xba, 0x94, 0xe5, 0x7e, 0x0a, 0xbf, 0xda, 0xc8, 0xa3, 0x38, 0xbc, 0xa8, 0xcf,
-	0xde, 0x21, 0x36, 0xf9, 0x4f, 0x87, 0x23, 0x3c, 0x91, 0xfc, 0xd7, 0x88, 0x98, 0x8b, 0xfc, 0x08,
-	0x15, 0xd0, 0xf9, 0xd7, 0x15, 0xff, 0x4b, 0x91, 0x5e, 0xbc, 0x23, 0xd4, 0x78, 0xef, 0x10, 0xdf,
-	0x74, 0x0a, 0x1e, 0x41, 0x4b, 0x79, 0x79, 0xe6, 0x7b, 0x1f, 0xe0, 0xe7, 0x21, 0xac, 0xa2, 0xaa,
-	0xd3, 0xa9, 0x34, 0x5f, 0xa4, 0x5a, 0xf4, 0x5d, 0xe1, 0xe8, 0x04, 0x6e, 0x26, 0xb5, 0xde, 0xf5,
-	0x47, 0x27, 0x01, 0xc7, 0x99, 0xef, 0x5b, 0xf6, 0x03, 0xd8, 0x48, 0x95, 0x7d, 0xda, 0xe1, 0x7b,
-	0x32, 0xc0, 0xfe, 0xf5, 0x1f, 0xdf, 0x6e, 0x95, 0x7e, 0x7a, 0xbb, 0x55, 0xfa, 0xe5, 0xed, 0x56,
-	0xe9, 0x8b, 0x8a, 0x33, 0x65, 0xc3, 0x3a, 0xfe, 0x0f, 0xfb, 0xff, 0x3f, 0x03, 0x00, 0x00, 0xff,
-	0xff, 0xbf, 0xf6, 0xcd, 0x55, 0xd3, 0x15, 0x00, 0x00,
+	// 1823 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x59, 0x4b, 0x6f, 0x1b, 0xc9,
+	0x11, 0x0e, 0x9f, 0x9a, 0x29, 0x8a, 0xa4, 0xd4, 0x96, 0xe5, 0x31, 0x2d, 0x28, 0xf2, 0x20, 0x30,
+	0x94, 0x00, 0x91, 0x03, 0xc5, 0x87, 0xc0, 0x01, 0x82, 0x90, 0xa2, 0x64, 0xd2, 0x90, 0x1c, 0x62,
+	0x68, 0xcb, 0x70, 0x10, 0x20, 0x18, 0x0e, 0x5b, 0xf4, 0x40, 0xe4, 0x0c, 0x33, 0xd3, 0x94, 0xcd,
+	0x63, 0x10, 0xe4, 0x37, 0x24, 0x7f, 0x24, 0xc7, 0xdc, 0x73, 0x0c, 0xb0, 0x87, 0xbd, 0xec, 0x61,
+	0x61, 0x60, 0xcf, 0xfb, 0x17, 0x16, 0x5d, 0xdd, 0x3d, 0x2f, 0x3e, 0x04, 0xad, 0x81, 0x05, 0x16,
+	0xd8, 0x93, 0xa6, 0xbe, 0xae, 0xae, 0xee, 0xae, 0x57, 0x7f, 0x4d, 0x81, 0x36, 0x1d, 0x1c, 0x4d,
+	0x03, 0x9f, 0xf9, 0xa4, 0x1e, 0xd2, 0xe0, 0xc6, 0x75, 0xe8, 0x91, 0xed, 0x38, 0xfe, 0xcc, 0x63,
+	0x8d, 0x5f, 0x8f, 0x5c, 0xf6, 0x7e, 0x36, 0x38, 0x72, 0xfc, 0xc9, 0xd3, 0x91, 0x3f, 0xf2, 0x9f,
+	0xa2, 0xde, 0x60, 0x76, 0x85, 0x12, 0x0a, 0xf8, 0x25, 0xe6, 0x9b, 0x55, 0xa8, 0x9c, 0x4e, 0xa6,
+	0x6c, 0xde, 0x67, 0xc1, 0xcc, 0x61, 0xe6, 0x3f, 0xf2, 0x50, 0x6d, 0xd9, 0x21, 0xed, 0x7a, 0x57,
+	0xbe, 0x45, 0xa7, 0xe3, 0x39, 0xa9, 0x41, 0xbe, 0xdb, 0x36, 0x72, 0x07, 0xb9, 0xc3, 0x82, 0x95,
+	0xef, 0xb6, 0x49, 0x03, 0xb4, 0x37, 0x21, 0x0d, 0x5e, 0xd9, 0x13, 0x6a, 0xe4, 0x0f, 0x72, 0x87,
+	0xba, 0x15, 0xc9, 0x64, 0x17, 0xca, 0x2f, 0xa8, 0x37, 0xa4, 0x81, 0x51, 0x38, 0xc8, 0x1d, 0x96,
+	0x2c, 0x29, 0x11, 0x13, 0x36, 0xbb, 0x1e, 0x0b, 0xfc, 0xe1, 0xcc, 0x61, 0xae, 0xef, 0x19, 0x45,
+	0x9c, 0x97, 0xc2, 0xf8, 0xdc, 0xe6, 0x8d, 0xcd, 0xec, 0xc0, 0x28, 0xe1, 0xa8, 0x94, 0x38, 0xde,
+	0x6d, 0x9f, 0xd0, 0x80, 0x19, 0xe5, 0x83, 0xdc, 0xa1, 0x66, 0x49, 0x89, 0xef, 0xe3, 0xad, 0x1f,
+	0x5c, 0xe3, 0xc8, 0x06, 0x8e, 0x44, 0x32, 0xd9, 0x81, 0x52, 0x37, 0xfc, 0x53, 0x30, 0x32, 0x34,
+	0x1c, 0x10, 0x82, 0x40, 0x2f, 0xbb, 0x3d, 0x43, 0x57, 0xe8, 0x65, 0xb7, 0x47, 0x08, 0x14, 0x2d,
+	0x7f, 0x4c, 0x0d, 0xc0, 0x55, 0xf1, 0xdb, 0xfc, 0x6f, 0x0e, 0x6a, 0xca, 0x0b, 0xa1, 0x70, 0xc3,
+	0x05, 0xc0, 0xc0, 0x0e, 0xe9, 0x5f, 0x5d, 0x0e, 0x19, 0xb9, 0x83, 0xc2, 0x61, 0xe5, 0xf8, 0xe8,
+	0x28, 0xe3, 0xfc, 0xa3, 0xf4, 0xa4, 0x58, 0x3c, 0xf5, 0x58, 0x30, 0xb7, 0xf4, 0x81, 0x92, 0x1b,
+	0x7f, 0x49, 0x2c, 0x80, 0x83, 0x64, 0x0b, 0x0a, 0xd7, 0x74, 0x2e, 0x1d, 0xcd, 0x3f, 0xc9, 0x33,
+	0x28, 0xdd, 0xd8, 0xe3, 0x99, 0x70, 0x73, 0xe5, 0x78, 0x7f, 0xe5, 0x6a, 0xb8, 0x98, 0x25, 0x94,
+	0x9f, 0xe7, 0x7f, 0x97, 0x33, 0xbf, 0xca, 0x01, 0xf4, 0x29, 0x63, 0xae, 0x37, 0xb2, 0xe8, 0xdf,
+	0xb8, 0xe9, 0xa6, 0x3b, 0x54, 0xa6, 0x9b, 0xee, 0x90, 0x9c, 0x82, 0x26, 0xc7, 0x43, 0x23, 0x8f,
+	0x67, 0xf9, 0xe5, 0x82, 0xf5, 0xd8, 0x80, 0xfa, 0x94, 0xc7, 0x88, 0xa6, 0xf2, 0x18, 0x9c, 0xdb,
+	0xde, 0x68, 0x66, 0x8f, 0x28, 0x46, 0x5c, 0xb7, 0x22, 0x99, 0xec, 0x81, 0xfe, 0x26, 0xa4, 0x17,
+	0x76, 0xc8, 0x68, 0x80, 0x01, 0xd7, 0xac, 0x18, 0x68, 0xfc, 0x1e, 0xaa, 0x29, 0xa3, 0xc9, 0xe3,
+	0xeb, 0xe2, 0xf8, 0x3b, 0xc9, 0xe3, 0x6b, 0xc9, 0xe3, 0xfd, 0xa7, 0x0c, 0x95, 0x3e, 0x1d, 0x5f,
+	0xf5, 0x02, 0xff, 0xca, 0x1d, 0xd3, 0x85, 0x14, 0xdd, 0x85, 0xf2, 0x85, 0x3f, 0x70, 0xc7, 0x2a,
+	0x41, 0xa5, 0xc4, 0x2d, 0x9e, 0x4e, 0x6c, 0x77, 0x2c, 0xf7, 0x2a, 0x04, 0xae, 0xdd, 0x0b, 0xe8,
+	0x95, 0xfb, 0x51, 0xa6, 0xa5, 0x94, 0x52, 0x89, 0x5e, 0x5a, 0x99, 0xe8, 0xe5, 0x54, 0xa2, 0xef,
+	0x81, 0xde, 0x72, 0x03, 0xf6, 0xfe, 0x1d, 0xb5, 0x03, 0xcc, 0xca, 0x92, 0x15, 0x03, 0x64, 0x1f,
+	0x00, 0x85, 0x0b, 0xdf, 0x63, 0xef, 0x31, 0x37, 0x4b, 0x56, 0x02, 0xe1, 0x2b, 0xa2, 0xd4, 0xb6,
+	0xe7, 0x98, 0xa3, 0x25, 0x2b, 0x92, 0x17, 0x4a, 0x08, 0xd6, 0x96, 0x50, 0x25, 0x5b, 0x42, 0x7d,
+	0x7f, 0x16, 0x38, 0xd4, 0xd8, 0x14, 0xbb, 0x15, 0x12, 0x86, 0xcf, 0x77, 0x6c, 0xb4, 0x57, 0x45,
+	0xef, 0x45, 0x32, 0x79, 0x02, 0x35, 0xf5, 0xdd, 0x67, 0x81, 0xeb, 0x8d, 0x8c, 0x1a, 0xda, 0xcc,
+	0xa0, 0x89, 0xf2, 0xac, 0xa7, 0xca, 0x93, 0xef, 0x17, 0xbf, 0xfa, 0xcc, 0x66, 0xb3, 0xd0, 0xd8,
+	0xc2, 0x95, 0x53, 0x58, 0xaa, 0x84, 0xb7, 0x33, 0x25, 0xfc, 0x04, 0x6a, 0xea, 0x5b, 0x5a, 0x20,
+	0x68, 0x21, 0x83, 0x62, 0xec, 0x7b, 0xc6, 0x3d, 0xdc, 0x5b, 0xbe, 0xdb, 0x8b, 0x4b, 0x7f, 0x67,
+	0x69, 0xe9, 0xdf, 0x5f, 0x56, 0xfa, 0xbb, 0x71, 0xe9, 0xf3, 0x08, 0x9e, 0x04, 0xd4, 0x66, 0x74,
+	0xd8, 0x64, 0xc6, 0x03, 0x74, 0x4a, 0x0c, 0x60, 0x52, 0x4f, 0x87, 0x72, 0xd4, 0x10, 0xa3, 0x11,
+	0x40, 0x9e, 0x41, 0x91, 0xef, 0xca, 0x78, 0x88, 0xf5, 0x7a, 0xb0, 0x50, 0x51, 0x4d, 0xf1, 0x97,
+	0xeb, 0x60, 0xd9, 0xa2, 0x36, 0x39, 0x86, 0x0d, 0x59, 0x0a, 0x46, 0x03, 0x27, 0x1a, 0x2b, 0x4b,
+	0x51, 0x29, 0x12, 0x03, 0x36, 0x4e, 0xfc, 0xc9, 0xd4, 0xf6, 0xe6, 0xc6, 0x23, 0xdc, 0xbc, 0x12,
+	0xb9, 0x4f, 0x7b, 0x7e, 0xe8, 0x62, 0x4c, 0xf7, 0x44, 0xd6, 0x2a, 0xd9, 0xfc, 0x36, 0x1f, 0x2d,
+	0xc5, 0xe3, 0xd3, 0x74, 0x98, 0x7b, 0xe3, 0xb2, 0xf9, 0xb9, 0x7b, 0x4d, 0xb1, 0x7a, 0x34, 0x2b,
+	0x85, 0x91, 0x43, 0xa8, 0x2b, 0xf9, 0xc4, 0x9f, 0x4c, 0xa8, 0xc7, 0x64, 0x2d, 0x66, 0x61, 0xf2,
+	0x1b, 0xb8, 0xa7, 0xa0, 0x33, 0x7f, 0x3c, 0xf6, 0x3f, 0xbc, 0xf6, 0xa7, 0xae, 0x83, 0x75, 0xa6,
+	0x59, 0xcb, 0x86, 0xc8, 0x31, 0xec, 0xa4, 0xe1, 0x0b, 0x3a, 0x19, 0x44, 0x9d, 0x62, 0xe9, 0x18,
+	0xaf, 0x9f, 0x57, 0x3e, 0x73, 0xaf, 0xc4, 0x8e, 0x4b, 0xa8, 0x99, 0x40, 0xc8, 0x2f, 0xa0, 0x2a,
+	0x24, 0xb5, 0x5b, 0x71, 0x63, 0xa4, 0xc1, 0x58, 0xeb, 0x15, 0xfd, 0x70, 0x66, 0x7b, 0xa1, 0xbc,
+	0x3d, 0xd2, 0x20, 0x3f, 0x7b, 0x04, 0xc8, 0xad, 0x89, 0xcb, 0x24, 0x0b, 0xa7, 0x9a, 0xa0, 0x9e,
+	0x6e, 0x82, 0xe6, 0x37, 0x39, 0xee, 0xc2, 0x54, 0xd4, 0x79, 0x66, 0x8b, 0x53, 0xb9, 0xde, 0xe8,
+	0x84, 0x8f, 0xa0, 0xef, 0x4b, 0x56, 0x06, 0xe5, 0xb9, 0xc6, 0x77, 0x22, 0x54, 0xf2, 0xa2, 0x97,
+	0x44, 0x00, 0xf6, 0x92, 0xb1, 0xed, 0x5c, 0x8b, 0xe1, 0x82, 0xec, 0x25, 0x11, 0xc2, 0xc7, 0xd1,
+	0xd1, 0x62, 0xbc, 0x28, 0xc6, 0x63, 0x04, 0xe3, 0x1f, 0x30, 0xd7, 0x19, 0x53, 0xa1, 0x51, 0x12,
+	0xf5, 0x99, 0xc4, 0xb8, 0x0f, 0xda, 0x6e, 0xe8, 0xcc, 0xc2, 0xd0, 0xf5, 0x3d, 0xa1, 0x26, 0xda,
+	0x5d, 0x16, 0x36, 0xbf, 0x2c, 0x40, 0x5d, 0xb8, 0xe3, 0x87, 0x27, 0x0e, 0xc9, 0x2e, 0x56, 0xba,
+	0xb5, 0x8b, 0x95, 0x57, 0x75, 0x31, 0xd9, 0x39, 0x37, 0x56, 0x90, 0x0f, 0x6d, 0x25, 0xf9, 0xd0,
+	0x57, 0x91, 0x0f, 0x58, 0xda, 0x81, 0x2a, 0xc9, 0x0e, 0x94, 0xea, 0x36, 0x9b, 0xd9, 0x6e, 0xa3,
+	0xfa, 0x49, 0xf5, 0x4e, 0xfd, 0x24, 0xd1, 0x1b, 0x6a, 0xab, 0x7b, 0x43, 0x3d, 0xdd, 0x1b, 0xf0,
+	0xa4, 0xe1, 0xb9, 0xef, 0x5c, 0x63, 0xa7, 0xe6, 0x27, 0x45, 0xc9, 0x7c, 0x0d, 0xe5, 0xa6, 0x3b,
+	0x94, 0x2c, 0xc2, 0x8e, 0x59, 0x84, 0xed, 0x0e, 0xb9, 0xbd, 0x80, 0x4e, 0x7c, 0x46, 0xbb, 0x3d,
+	0x15, 0x51, 0x25, 0xa7, 0xaf, 0xff, 0x42, 0xe6, 0xfa, 0x37, 0x1f, 0xc1, 0x06, 0x5a, 0x0d, 0xa7,
+	0x8b, 0x66, 0xcd, 0xe7, 0xa0, 0x35, 0x3d, 0x6f, 0x36, 0x5e, 0xbe, 0xe8, 0x7a, 0xc3, 0x7f, 0x00,
+	0x0d, 0x6f, 0x75, 0x3e, 0x77, 0x07, 0x4a, 0x14, 0xaf, 0x7b, 0x41, 0x2a, 0x84, 0x90, 0x9e, 0x9f,
+	0xcf, 0xce, 0x7f, 0x07, 0xba, 0x20, 0x0b, 0xdc, 0xc0, 0x2e, 0x94, 0x27, 0x82, 0x47, 0x08, 0x0b,
+	0x52, 0xe2, 0xf8, 0x54, 0x30, 0x06, 0xc9, 0x2f, 0x84, 0x74, 0xcb, 0xd6, 0x1e, 0x83, 0x7e, 0xfa,
+	0xd1, 0x0d, 0x19, 0x9e, 0x9a, 0x53, 0x11, 0x2e, 0xc8, 0xbe, 0x2b, 0x04, 0xf3, 0x2d, 0xba, 0x25,
+	0xe4, 0x6b, 0x13, 0x28, 0xda, 0xee, 0x50, 0x30, 0xcd, 0x82, 0x85, 0xdf, 0x9f, 0xe1, 0xef, 0x2f,
+	0x8a, 0xa0, 0xb7, 0x5b, 0x32, 0x5f, 0x3e, 0x93, 0x2f, 0x25, 0xeb, 0xb8, 0x98, 0xa9, 0x63, 0x75,
+	0xa3, 0x96, 0x13, 0x37, 0x6a, 0x5c, 0xdb, 0xda, 0x6a, 0xae, 0xa4, 0xaf, 0xe7, 0x4a, 0xb0, 0x96,
+	0x2b, 0x55, 0x32, 0x5c, 0x29, 0xd9, 0x11, 0x36, 0x33, 0x1d, 0x21, 0xdb, 0x51, 0xaa, 0x6b, 0x79,
+	0x54, 0x6d, 0x05, 0x8f, 0xaa, 0xa7, 0x78, 0x94, 0xe0, 0x20, 0x5b, 0xd2, 0x9f, 0xbd, 0x44, 0xd7,
+	0xd8, 0x5e, 0xd9, 0x35, 0xc8, 0xaa, 0xae, 0x71, 0x6f, 0x69, 0xd7, 0xd8, 0x59, 0xd9, 0x35, 0xee,
+	0xaf, 0xe5, 0x28, 0xbb, 0x59, 0x8e, 0x12, 0xd7, 0xf9, 0x83, 0x64, 0x9d, 0x27, 0x58, 0xb0, 0x91,
+	0x65, 0xc1, 0x6d, 0x6a, 0xf3, 0xdb, 0x98, 0x22, 0xaf, 0xd1, 0xac, 0x48, 0x36, 0xff, 0x55, 0x84,
+	0x6a, 0x73, 0x38, 0x94, 0x69, 0xc5, 0xb3, 0xf6, 0xa7, 0xcc, 0xfa, 0x71, 0x67, 0x16, 0xbf, 0x21,
+	0xec, 0x30, 0xfc, 0xe0, 0x07, 0x43, 0xcc, 0x0f, 0x7e, 0x43, 0x48, 0x99, 0x47, 0xa0, 0x6f, 0x8f,
+	0x99, 0xcc, 0x0f, 0xfc, 0x4e, 0x64, 0xcd, 0xc3, 0x64, 0xd6, 0x98, 0x7f, 0x2f, 0xc2, 0x96, 0xc8,
+	0x39, 0xf9, 0x46, 0xe3, 0xc9, 0x61, 0x42, 0x45, 0x1c, 0xf7, 0x12, 0x9f, 0x75, 0xd8, 0x53, 0x3b,
+	0x3f, 0xb3, 0x92, 0x20, 0x79, 0x02, 0x55, 0x15, 0xf2, 0xcb, 0xe8, 0xf1, 0xa7, 0x77, 0x72, 0x56,
+	0x1a, 0xe6, 0xb6, 0x44, 0xb0, 0x85, 0x16, 0xb2, 0x86, 0x4e, 0xde, 0x4a, 0x82, 0xdc, 0x96, 0x0a,
+	0x8e, 0xd0, 0xe2, 0x39, 0x55, 0xe8, 0x14, 0xac, 0x34, 0x4c, 0x0e, 0xa1, 0x16, 0x65, 0x87, 0x50,
+	0x44, 0x32, 0xd4, 0x29, 0x5a, 0x19, 0x9c, 0xfc, 0x0a, 0xea, 0x71, 0xa2, 0x08, 0x55, 0x24, 0x44,
+	0x9d, 0x92, 0x95, 0x1d, 0xe0, 0xab, 0xab, 0xb4, 0x11, 0x9a, 0xf8, 0x1c, 0xec, 0x94, 0xad, 0x34,
+	0x4c, 0x8e, 0x60, 0x3b, 0x99, 0x22, 0x42, 0x57, 0xc3, 0x53, 0x6f, 0x58, 0x8b, 0x43, 0xdc, 0xae,
+	0x0a, 0x89, 0xd0, 0x45, 0xce, 0xd9, 0xd1, 0xac, 0x34, 0xac, 0x1e, 0xfd, 0x10, 0x3d, 0xfa, 0x5b,
+	0x9a, 0x4a, 0xbe, 0x16, 0xc4, 0x85, 0xc6, 0x51, 0xe1, 0x34, 0x8e, 0x2a, 0xc7, 0xb4, 0x2a, 0x89,
+	0x12, 0x6a, 0x6d, 0x26, 0x2b, 0x86, 0xab, 0xa9, 0x13, 0xb4, 0x6a, 0xe9, 0x9c, 0xe7, 0x63, 0x6a,
+	0x17, 0xe6, 0x3f, 0x73, 0xb0, 0x7d, 0xe6, 0x07, 0x23, 0xca, 0x14, 0xc4, 0x93, 0xa0, 0x01, 0x5a,
+	0x77, 0x48, 0x3d, 0xe6, 0x32, 0xf5, 0xd8, 0x8f, 0x64, 0xce, 0x5c, 0x2e, 0xed, 0xb1, 0xe3, 0x0f,
+	0x55, 0xbb, 0x50, 0x62, 0x22, 0xcf, 0x0a, 0xa9, 0xee, 0xc4, 0x6b, 0x4e, 0xce, 0x7e, 0x3d, 0x9f,
+	0x52, 0xc9, 0x73, 0x53, 0x98, 0x79, 0x0c, 0x24, 0xbb, 0x8d, 0x70, 0xca, 0x7b, 0x44, 0x9f, 0x22,
+	0x83, 0x95, 0x0d, 0x4b, 0xb7, 0x62, 0xc0, 0x3c, 0x87, 0x2d, 0x8b, 0x86, 0xe9, 0x9d, 0xaf, 0x9d,
+	0x91, 0xaa, 0x9c, 0x7c, 0xba, 0x72, 0x8e, 0xff, 0xad, 0xc3, 0x86, 0xba, 0x7b, 0x4f, 0x00, 0xb0,
+	0xd9, 0xe1, 0x85, 0x4f, 0x1e, 0x2e, 0x70, 0x3a, 0xc5, 0x5e, 0x1a, 0x8d, 0xc5, 0xa1, 0x88, 0x3d,
+	0x9c, 0x42, 0x45, 0x34, 0x52, 0x61, 0x65, 0x51, 0x35, 0xe2, 0x30, 0x6b, 0xcd, 0xbc, 0x84, 0xaa,
+	0x28, 0x52, 0xf5, 0x28, 0x7c, 0xb4, 0xe6, 0x47, 0xa0, 0xc6, 0xde, 0x92, 0xbd, 0x46, 0x3f, 0x1c,
+	0x92, 0x97, 0x00, 0xf1, 0x55, 0x40, 0x16, 0x7f, 0xab, 0x4a, 0xdd, 0x13, 0x4b, 0x6c, 0x25, 0x7f,
+	0xcf, 0x69, 0x41, 0x45, 0xea, 0xe2, 0x83, 0xe9, 0xc1, 0xa2, 0x31, 0x64, 0xa4, 0x4b, 0xce, 0x16,
+	0x73, 0x9c, 0x97, 0xb0, 0xfd, 0x82, 0x32, 0x29, 0xb5, 0xe6, 0xe2, 0x82, 0xb9, 0x93, 0xbb, 0x63,
+	0x5b, 0xe7, 0x40, 0x92, 0xb6, 0xe4, 0x1d, 0x76, 0x37, 0xaf, 0xc7, 0xd6, 0x5e, 0x00, 0xc4, 0x4f,
+	0xa5, 0xd5, 0x87, 0x5b, 0xa4, 0xfb, 0xd9, 0x07, 0x56, 0x4f, 0x85, 0x4f, 0xf9, 0xed, 0xf1, 0xc2,
+	0x94, 0x6c, 0x0f, 0xbe, 0x25, 0x88, 0x1d, 0xa8, 0x27, 0xe2, 0xb0, 0x7e, 0x7f, 0xeb, 0x43, 0xd8,
+	0x06, 0xbd, 0x65, 0x87, 0xae, 0xb3, 0xde, 0xc6, 0x2d, 0x3f, 0x69, 0x92, 0x3f, 0x42, 0x45, 0x26,
+	0xe0, 0x7a, 0x3b, 0x2b, 0x7f, 0x31, 0x21, 0x9d, 0x28, 0x95, 0xf0, 0x6d, 0x74, 0x07, 0x6f, 0x67,
+	0x9f, 0xed, 0x67, 0x78, 0x22, 0xf1, 0x8b, 0x2d, 0x31, 0x96, 0xd9, 0xe1, 0xbc, 0xbd, 0xf1, 0xf3,
+	0x5b, 0x7e, 0x13, 0x26, 0xed, 0x68, 0x47, 0xc8, 0xbb, 0xee, 0xe0, 0xdf, 0x64, 0xa4, 0xce, 0xa0,
+	0x2a, 0xad, 0xbc, 0xf1, 0xc6, 0xdf, 0xdf, 0x4e, 0x6b, 0xfb, 0x7f, 0x9f, 0xf6, 0x73, 0xff, 0xff,
+	0xb4, 0x9f, 0xfb, 0xfa, 0xd3, 0x7e, 0xee, 0xcf, 0x05, 0x7b, 0xea, 0x0e, 0xca, 0xf8, 0x8f, 0x81,
+	0xdf, 0x7e, 0x17, 0x00, 0x00, 0xff, 0xff, 0x80, 0x4b, 0xc7, 0xfe, 0x64, 0x18, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -1936,13 +2378,15 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type AccountClient interface {
-	AllAccounts(ctx context.Context, in *EmptyStruct, opts ...grpc.CallOption) (*AllAccountsResp, error)
 	EmailExist(ctx context.Context, in *EmailReq, opts ...grpc.CallOption) (*ExistResp, error)
 	MobileExist(ctx context.Context, in *MobileReq, opts ...grpc.CallOption) (*ExistResp, error)
 	UpdateSetting(ctx context.Context, in *SettingReq, opts ...grpc.CallOption) (*EmptyStruct, error)
 	AddAccount(ctx context.Context, in *AddAccountReq, opts ...grpc.CallOption) (*SelfProfile, error)
 	AccountInfo(ctx context.Context, in *AidReq, opts ...grpc.CallOption) (*DBAccount, error)
+	GetAccountByEmail(ctx context.Context, in *EmailReq, opts ...grpc.CallOption) (*DBAccount, error)
+	GetAccountByMobile(ctx context.Context, in *MobileReq, opts ...grpc.CallOption) (*DBAccount, error)
 	MemberInfo(ctx context.Context, in *AidReq, opts ...grpc.CallOption) (*MemberInfoReply, error)
+	UpdateProfile(ctx context.Context, in *UpdateProfileReq, opts ...grpc.CallOption) (*EmptyStruct, error)
 	SelfProfileInfo(ctx context.Context, in *AidReq, opts ...grpc.CallOption) (*SelfProfile, error)
 	BasicInfo(ctx context.Context, in *AidReq, opts ...grpc.CallOption) (*BaseInfoReply, error)
 	SettingInfo(ctx context.Context, in *AidReq, opts ...grpc.CallOption) (*Setting, error)
@@ -1950,10 +2394,6 @@ type AccountClient interface {
 	BaseInfos(ctx context.Context, in *AidsReq, opts ...grpc.CallOption) (*BaseInfosReply, error)
 	AccountLock(ctx context.Context, in *AidReq, opts ...grpc.CallOption) (*EmptyStruct, error)
 	AccountUnlock(ctx context.Context, in *AidReq, opts ...grpc.CallOption) (*EmptyStruct, error)
-	AnnulAccount(ctx context.Context, in *AnnulReq, opts ...grpc.CallOption) (*EmptyStruct, error)
-	// 注销用户出了判断邮箱号码存在还要判断是不是注销用户
-	EmailExistAndNotAnnul(ctx context.Context, in *EmailReq, opts ...grpc.CallOption) (*ExistResp, error)
-	MobileExistAndNotAnnul(ctx context.Context, in *MobileReq, opts ...grpc.CallOption) (*ExistResp, error)
 }
 
 type accountClient struct {
@@ -1962,15 +2402,6 @@ type accountClient struct {
 
 func NewAccountClient(cc *grpc.ClientConn) AccountClient {
 	return &accountClient{cc}
-}
-
-func (c *accountClient) AllAccounts(ctx context.Context, in *EmptyStruct, opts ...grpc.CallOption) (*AllAccountsResp, error) {
-	out := new(AllAccountsResp)
-	err := c.cc.Invoke(ctx, "/service.account.Account/AllAccounts", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *accountClient) EmailExist(ctx context.Context, in *EmailReq, opts ...grpc.CallOption) (*ExistResp, error) {
@@ -2018,9 +2449,36 @@ func (c *accountClient) AccountInfo(ctx context.Context, in *AidReq, opts ...grp
 	return out, nil
 }
 
+func (c *accountClient) GetAccountByEmail(ctx context.Context, in *EmailReq, opts ...grpc.CallOption) (*DBAccount, error) {
+	out := new(DBAccount)
+	err := c.cc.Invoke(ctx, "/service.account.Account/GetAccountByEmail", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *accountClient) GetAccountByMobile(ctx context.Context, in *MobileReq, opts ...grpc.CallOption) (*DBAccount, error) {
+	out := new(DBAccount)
+	err := c.cc.Invoke(ctx, "/service.account.Account/GetAccountByMobile", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *accountClient) MemberInfo(ctx context.Context, in *AidReq, opts ...grpc.CallOption) (*MemberInfoReply, error) {
 	out := new(MemberInfoReply)
 	err := c.cc.Invoke(ctx, "/service.account.Account/MemberInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *accountClient) UpdateProfile(ctx context.Context, in *UpdateProfileReq, opts ...grpc.CallOption) (*EmptyStruct, error) {
+	out := new(EmptyStruct)
+	err := c.cc.Invoke(ctx, "/service.account.Account/UpdateProfile", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2090,42 +2548,17 @@ func (c *accountClient) AccountUnlock(ctx context.Context, in *AidReq, opts ...g
 	return out, nil
 }
 
-func (c *accountClient) AnnulAccount(ctx context.Context, in *AnnulReq, opts ...grpc.CallOption) (*EmptyStruct, error) {
-	out := new(EmptyStruct)
-	err := c.cc.Invoke(ctx, "/service.account.Account/AnnulAccount", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *accountClient) EmailExistAndNotAnnul(ctx context.Context, in *EmailReq, opts ...grpc.CallOption) (*ExistResp, error) {
-	out := new(ExistResp)
-	err := c.cc.Invoke(ctx, "/service.account.Account/EmailExistAndNotAnnul", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *accountClient) MobileExistAndNotAnnul(ctx context.Context, in *MobileReq, opts ...grpc.CallOption) (*ExistResp, error) {
-	out := new(ExistResp)
-	err := c.cc.Invoke(ctx, "/service.account.Account/MobileExistAndNotAnnul", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // AccountServer is the server API for Account service.
 type AccountServer interface {
-	AllAccounts(context.Context, *EmptyStruct) (*AllAccountsResp, error)
 	EmailExist(context.Context, *EmailReq) (*ExistResp, error)
 	MobileExist(context.Context, *MobileReq) (*ExistResp, error)
 	UpdateSetting(context.Context, *SettingReq) (*EmptyStruct, error)
 	AddAccount(context.Context, *AddAccountReq) (*SelfProfile, error)
 	AccountInfo(context.Context, *AidReq) (*DBAccount, error)
+	GetAccountByEmail(context.Context, *EmailReq) (*DBAccount, error)
+	GetAccountByMobile(context.Context, *MobileReq) (*DBAccount, error)
 	MemberInfo(context.Context, *AidReq) (*MemberInfoReply, error)
+	UpdateProfile(context.Context, *UpdateProfileReq) (*EmptyStruct, error)
 	SelfProfileInfo(context.Context, *AidReq) (*SelfProfile, error)
 	BasicInfo(context.Context, *AidReq) (*BaseInfoReply, error)
 	SettingInfo(context.Context, *AidReq) (*Setting, error)
@@ -2133,19 +2566,12 @@ type AccountServer interface {
 	BaseInfos(context.Context, *AidsReq) (*BaseInfosReply, error)
 	AccountLock(context.Context, *AidReq) (*EmptyStruct, error)
 	AccountUnlock(context.Context, *AidReq) (*EmptyStruct, error)
-	AnnulAccount(context.Context, *AnnulReq) (*EmptyStruct, error)
-	// 注销用户出了判断邮箱号码存在还要判断是不是注销用户
-	EmailExistAndNotAnnul(context.Context, *EmailReq) (*ExistResp, error)
-	MobileExistAndNotAnnul(context.Context, *MobileReq) (*ExistResp, error)
 }
 
 // UnimplementedAccountServer can be embedded to have forward compatible implementations.
 type UnimplementedAccountServer struct {
 }
 
-func (*UnimplementedAccountServer) AllAccounts(ctx context.Context, req *EmptyStruct) (*AllAccountsResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AllAccounts not implemented")
-}
 func (*UnimplementedAccountServer) EmailExist(ctx context.Context, req *EmailReq) (*ExistResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EmailExist not implemented")
 }
@@ -2161,8 +2587,17 @@ func (*UnimplementedAccountServer) AddAccount(ctx context.Context, req *AddAccou
 func (*UnimplementedAccountServer) AccountInfo(ctx context.Context, req *AidReq) (*DBAccount, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AccountInfo not implemented")
 }
+func (*UnimplementedAccountServer) GetAccountByEmail(ctx context.Context, req *EmailReq) (*DBAccount, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAccountByEmail not implemented")
+}
+func (*UnimplementedAccountServer) GetAccountByMobile(ctx context.Context, req *MobileReq) (*DBAccount, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAccountByMobile not implemented")
+}
 func (*UnimplementedAccountServer) MemberInfo(ctx context.Context, req *AidReq) (*MemberInfoReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MemberInfo not implemented")
+}
+func (*UnimplementedAccountServer) UpdateProfile(ctx context.Context, req *UpdateProfileReq) (*EmptyStruct, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateProfile not implemented")
 }
 func (*UnimplementedAccountServer) SelfProfileInfo(ctx context.Context, req *AidReq) (*SelfProfile, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SelfProfileInfo not implemented")
@@ -2185,36 +2620,9 @@ func (*UnimplementedAccountServer) AccountLock(ctx context.Context, req *AidReq)
 func (*UnimplementedAccountServer) AccountUnlock(ctx context.Context, req *AidReq) (*EmptyStruct, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AccountUnlock not implemented")
 }
-func (*UnimplementedAccountServer) AnnulAccount(ctx context.Context, req *AnnulReq) (*EmptyStruct, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AnnulAccount not implemented")
-}
-func (*UnimplementedAccountServer) EmailExistAndNotAnnul(ctx context.Context, req *EmailReq) (*ExistResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method EmailExistAndNotAnnul not implemented")
-}
-func (*UnimplementedAccountServer) MobileExistAndNotAnnul(ctx context.Context, req *MobileReq) (*ExistResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method MobileExistAndNotAnnul not implemented")
-}
 
 func RegisterAccountServer(s *grpc.Server, srv AccountServer) {
 	s.RegisterService(&_Account_serviceDesc, srv)
-}
-
-func _Account_AllAccounts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EmptyStruct)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AccountServer).AllAccounts(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/service.account.Account/AllAccounts",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AccountServer).AllAccounts(ctx, req.(*EmptyStruct))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _Account_EmailExist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -2307,6 +2715,42 @@ func _Account_AccountInfo_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Account_GetAccountByEmail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmailReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountServer).GetAccountByEmail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/service.account.Account/GetAccountByEmail",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountServer).GetAccountByEmail(ctx, req.(*EmailReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Account_GetAccountByMobile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MobileReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountServer).GetAccountByMobile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/service.account.Account/GetAccountByMobile",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountServer).GetAccountByMobile(ctx, req.(*MobileReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Account_MemberInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AidReq)
 	if err := dec(in); err != nil {
@@ -2321,6 +2765,24 @@ func _Account_MemberInfo_Handler(srv interface{}, ctx context.Context, dec func(
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AccountServer).MemberInfo(ctx, req.(*AidReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Account_UpdateProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateProfileReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountServer).UpdateProfile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/service.account.Account/UpdateProfile",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountServer).UpdateProfile(ctx, req.(*UpdateProfileReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2451,68 +2913,10 @@ func _Account_AccountUnlock_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Account_AnnulAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AnnulReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AccountServer).AnnulAccount(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/service.account.Account/AnnulAccount",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AccountServer).AnnulAccount(ctx, req.(*AnnulReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Account_EmailExistAndNotAnnul_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EmailReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AccountServer).EmailExistAndNotAnnul(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/service.account.Account/EmailExistAndNotAnnul",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AccountServer).EmailExistAndNotAnnul(ctx, req.(*EmailReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Account_MobileExistAndNotAnnul_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MobileReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AccountServer).MobileExistAndNotAnnul(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/service.account.Account/MobileExistAndNotAnnul",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AccountServer).MobileExistAndNotAnnul(ctx, req.(*MobileReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 var _Account_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "service.account.Account",
 	HandlerType: (*AccountServer)(nil),
 	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "AllAccounts",
-			Handler:    _Account_AllAccounts_Handler,
-		},
 		{
 			MethodName: "EmailExist",
 			Handler:    _Account_EmailExist_Handler,
@@ -2534,8 +2938,20 @@ var _Account_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Account_AccountInfo_Handler,
 		},
 		{
+			MethodName: "GetAccountByEmail",
+			Handler:    _Account_GetAccountByEmail_Handler,
+		},
+		{
+			MethodName: "GetAccountByMobile",
+			Handler:    _Account_GetAccountByMobile_Handler,
+		},
+		{
 			MethodName: "MemberInfo",
 			Handler:    _Account_MemberInfo_Handler,
+		},
+		{
+			MethodName: "UpdateProfile",
+			Handler:    _Account_UpdateProfile_Handler,
 		},
 		{
 			MethodName: "SelfProfileInfo",
@@ -2564,18 +2980,6 @@ var _Account_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AccountUnlock",
 			Handler:    _Account_AccountUnlock_Handler,
-		},
-		{
-			MethodName: "AnnulAccount",
-			Handler:    _Account_AnnulAccount_Handler,
-		},
-		{
-			MethodName: "EmailExistAndNotAnnul",
-			Handler:    _Account_EmailExistAndNotAnnul_Handler,
-		},
-		{
-			MethodName: "MobileExistAndNotAnnul",
-			Handler:    _Account_MobileExistAndNotAnnul_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -3280,18 +3684,6 @@ func (m *MemberInfoReply) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
-	if m.IsAnnul {
-		i--
-		if m.IsAnnul {
-			dAtA[i] = 1
-		} else {
-			dAtA[i] = 0
-		}
-		i--
-		dAtA[i] = 0x1
-		i--
-		dAtA[i] = 0x88
-	}
 	if m.IsLock {
 		i--
 		if m.IsLock {
@@ -3536,13 +3928,6 @@ func (m *AnnulReq) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x18
 	}
-	if len(m.Password) > 0 {
-		i -= len(m.Password)
-		copy(dAtA[i:], m.Password)
-		i = encodeVarintPb(dAtA, i, uint64(len(m.Password)))
-		i--
-		dAtA[i] = 0x12
-	}
 	if m.Aid != 0 {
 		i = encodeVarintPb(dAtA, i, uint64(m.Aid))
 		i--
@@ -3769,6 +4154,39 @@ func (m *DBAccount) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	if m.XXX_unrecognized != nil {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Deactive {
+		i--
+		if m.Deactive {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0xc8
+	}
+	if len(m.Prefix) > 0 {
+		i -= len(m.Prefix)
+		copy(dAtA[i:], m.Prefix)
+		i = encodeVarintPb(dAtA, i, uint64(len(m.Prefix)))
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0xc2
+	}
+	if m.IsLock {
+		i--
+		if m.IsLock {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0xb8
 	}
 	if m.UpdatedAt != 0 {
 		i = encodeVarintPb(dAtA, i, uint64(m.UpdatedAt))
@@ -4105,7 +4523,7 @@ func (m *AddAccountReq) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *AllAccountsResp) Marshal() (dAtA []byte, err error) {
+func (m *UpdateProfileReq) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -4115,12 +4533,12 @@ func (m *AllAccountsResp) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *AllAccountsResp) MarshalTo(dAtA []byte) (int, error) {
+func (m *UpdateProfileReq) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *AllAccountsResp) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *UpdateProfileReq) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -4129,19 +4547,335 @@ func (m *AllAccountsResp) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
-	if len(m.Items) > 0 {
-		for iNdEx := len(m.Items) - 1; iNdEx >= 0; iNdEx-- {
-			{
-				size, err := m.Items[iNdEx].MarshalToSizedBuffer(dAtA[:i])
-				if err != nil {
-					return 0, err
-				}
-				i -= size
-				i = encodeVarintPb(dAtA, i, uint64(size))
+	if m.Aid != 0 {
+		i = encodeVarintPb(dAtA, i, uint64(m.Aid))
+		i--
+		dAtA[i] = 0x50
+	}
+	if m.Password != nil {
+		{
+			size := m.Password.Size()
+			i -= size
+			if _, err := m.Password.MarshalTo(dAtA[i:]); err != nil {
+				return 0, err
 			}
-			i--
-			dAtA[i] = 0xa
 		}
+	}
+	if m.Introduction != nil {
+		{
+			size := m.Introduction.Size()
+			i -= size
+			if _, err := m.Introduction.MarshalTo(dAtA[i:]); err != nil {
+				return 0, err
+			}
+		}
+	}
+	if m.BirthDay != nil {
+		{
+			size := m.BirthDay.Size()
+			i -= size
+			if _, err := m.BirthDay.MarshalTo(dAtA[i:]); err != nil {
+				return 0, err
+			}
+		}
+	}
+	if m.BirthMonth != nil {
+		{
+			size := m.BirthMonth.Size()
+			i -= size
+			if _, err := m.BirthMonth.MarshalTo(dAtA[i:]); err != nil {
+				return 0, err
+			}
+		}
+	}
+	if m.BirthYear != nil {
+		{
+			size := m.BirthYear.Size()
+			i -= size
+			if _, err := m.BirthYear.MarshalTo(dAtA[i:]); err != nil {
+				return 0, err
+			}
+		}
+	}
+	if m.Location != nil {
+		{
+			size := m.Location.Size()
+			i -= size
+			if _, err := m.Location.MarshalTo(dAtA[i:]); err != nil {
+				return 0, err
+			}
+		}
+	}
+	if m.Gender != nil {
+		{
+			size := m.Gender.Size()
+			i -= size
+			if _, err := m.Gender.MarshalTo(dAtA[i:]); err != nil {
+				return 0, err
+			}
+		}
+	}
+	if m.UserName != nil {
+		{
+			size := m.UserName.Size()
+			i -= size
+			if _, err := m.UserName.MarshalTo(dAtA[i:]); err != nil {
+				return 0, err
+			}
+		}
+	}
+	if m.Avatar != nil {
+		{
+			size := m.Avatar.Size()
+			i -= size
+			if _, err := m.Avatar.MarshalTo(dAtA[i:]); err != nil {
+				return 0, err
+			}
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *UpdateProfileReq_AvatarValue) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *UpdateProfileReq_AvatarValue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	i -= len(m.AvatarValue)
+	copy(dAtA[i:], m.AvatarValue)
+	i = encodeVarintPb(dAtA, i, uint64(len(m.AvatarValue)))
+	i--
+	dAtA[i] = 0xa
+	return len(dAtA) - i, nil
+}
+func (m *UpdateProfileReq_UserNameValue) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *UpdateProfileReq_UserNameValue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	i -= len(m.UserNameValue)
+	copy(dAtA[i:], m.UserNameValue)
+	i = encodeVarintPb(dAtA, i, uint64(len(m.UserNameValue)))
+	i--
+	dAtA[i] = 0x12
+	return len(dAtA) - i, nil
+}
+func (m *UpdateProfileReq_GenderValue) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *UpdateProfileReq_GenderValue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	i = encodeVarintPb(dAtA, i, uint64(m.GenderValue))
+	i--
+	dAtA[i] = 0x18
+	return len(dAtA) - i, nil
+}
+func (m *UpdateProfileReq_LocationValue) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *UpdateProfileReq_LocationValue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	i = encodeVarintPb(dAtA, i, uint64(m.LocationValue))
+	i--
+	dAtA[i] = 0x20
+	return len(dAtA) - i, nil
+}
+func (m *UpdateProfileReq_BirthYearValue) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *UpdateProfileReq_BirthYearValue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	i = encodeVarintPb(dAtA, i, uint64(m.BirthYearValue))
+	i--
+	dAtA[i] = 0x28
+	return len(dAtA) - i, nil
+}
+func (m *UpdateProfileReq_BirthMonthValue) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *UpdateProfileReq_BirthMonthValue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	i = encodeVarintPb(dAtA, i, uint64(m.BirthMonthValue))
+	i--
+	dAtA[i] = 0x30
+	return len(dAtA) - i, nil
+}
+func (m *UpdateProfileReq_BirthDayValue) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *UpdateProfileReq_BirthDayValue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	i = encodeVarintPb(dAtA, i, uint64(m.BirthDayValue))
+	i--
+	dAtA[i] = 0x38
+	return len(dAtA) - i, nil
+}
+func (m *UpdateProfileReq_IntroductionValue) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *UpdateProfileReq_IntroductionValue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	i -= len(m.IntroductionValue)
+	copy(dAtA[i:], m.IntroductionValue)
+	i = encodeVarintPb(dAtA, i, uint64(len(m.IntroductionValue)))
+	i--
+	dAtA[i] = 0x42
+	return len(dAtA) - i, nil
+}
+func (m *UpdateProfileReq_PasswordValue) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *UpdateProfileReq_PasswordValue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	i -= len(m.PasswordValue)
+	copy(dAtA[i:], m.PasswordValue)
+	i = encodeVarintPb(dAtA, i, uint64(len(m.PasswordValue)))
+	i--
+	dAtA[i] = 0x4a
+	return len(dAtA) - i, nil
+}
+func (m *ForgetPasswordReq) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *ForgetPasswordReq) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ForgetPasswordReq) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.IdentityType != 0 {
+		i = encodeVarintPb(dAtA, i, uint64(m.IdentityType))
+		i--
+		dAtA[i] = 0x20
+	}
+	if len(m.Prefix) > 0 {
+		i -= len(m.Prefix)
+		copy(dAtA[i:], m.Prefix)
+		i = encodeVarintPb(dAtA, i, uint64(len(m.Prefix)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Valcode) > 0 {
+		i -= len(m.Valcode)
+		copy(dAtA[i:], m.Valcode)
+		i = encodeVarintPb(dAtA, i, uint64(len(m.Valcode)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Identity) > 0 {
+		i -= len(m.Identity)
+		copy(dAtA[i:], m.Identity)
+		i = encodeVarintPb(dAtA, i, uint64(len(m.Identity)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *ForgetPasswordResp) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *ForgetPasswordResp) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ForgetPasswordResp) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.SessionID) > 0 {
+		i -= len(m.SessionID)
+		copy(dAtA[i:], m.SessionID)
+		i = encodeVarintPb(dAtA, i, uint64(len(m.SessionID)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *ResetPasswordReq) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *ResetPasswordReq) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ResetPasswordReq) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.Password) > 0 {
+		i -= len(m.Password)
+		copy(dAtA[i:], m.Password)
+		i = encodeVarintPb(dAtA, i, uint64(len(m.Password)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.SessionID) > 0 {
+		i -= len(m.SessionID)
+		copy(dAtA[i:], m.SessionID)
+		i = encodeVarintPb(dAtA, i, uint64(len(m.SessionID)))
+		i--
+		dAtA[i] = 0xa
 	}
 	return len(dAtA) - i, nil
 }
@@ -4510,9 +5244,6 @@ func (m *MemberInfoReply) Size() (n int) {
 	if m.IsLock {
 		n += 3
 	}
-	if m.IsAnnul {
-		n += 3
-	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
 	}
@@ -4564,10 +5295,6 @@ func (m *AnnulReq) Size() (n int) {
 	_ = l
 	if m.Aid != 0 {
 		n += 1 + sovPb(uint64(m.Aid))
-	}
-	l = len(m.Password)
-	if l > 0 {
-		n += 1 + l + sovPb(uint64(l))
 	}
 	if m.UseMaster {
 		n += 2
@@ -4733,6 +5460,16 @@ func (m *DBAccount) Size() (n int) {
 	if m.UpdatedAt != 0 {
 		n += 2 + sovPb(uint64(m.UpdatedAt))
 	}
+	if m.IsLock {
+		n += 3
+	}
+	l = len(m.Prefix)
+	if l > 0 {
+		n += 2 + l + sovPb(uint64(l))
+	}
+	if m.Deactive {
+		n += 3
+	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
 	}
@@ -4823,17 +5560,189 @@ func (m *AddAccountReq) Size() (n int) {
 	return n
 }
 
-func (m *AllAccountsResp) Size() (n int) {
+func (m *UpdateProfileReq) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	if len(m.Items) > 0 {
-		for _, e := range m.Items {
-			l = e.Size()
-			n += 1 + l + sovPb(uint64(l))
-		}
+	if m.Avatar != nil {
+		n += m.Avatar.Size()
+	}
+	if m.UserName != nil {
+		n += m.UserName.Size()
+	}
+	if m.Gender != nil {
+		n += m.Gender.Size()
+	}
+	if m.Location != nil {
+		n += m.Location.Size()
+	}
+	if m.BirthYear != nil {
+		n += m.BirthYear.Size()
+	}
+	if m.BirthMonth != nil {
+		n += m.BirthMonth.Size()
+	}
+	if m.BirthDay != nil {
+		n += m.BirthDay.Size()
+	}
+	if m.Introduction != nil {
+		n += m.Introduction.Size()
+	}
+	if m.Password != nil {
+		n += m.Password.Size()
+	}
+	if m.Aid != 0 {
+		n += 1 + sovPb(uint64(m.Aid))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *UpdateProfileReq_AvatarValue) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.AvatarValue)
+	n += 1 + l + sovPb(uint64(l))
+	return n
+}
+func (m *UpdateProfileReq_UserNameValue) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.UserNameValue)
+	n += 1 + l + sovPb(uint64(l))
+	return n
+}
+func (m *UpdateProfileReq_GenderValue) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	n += 1 + sovPb(uint64(m.GenderValue))
+	return n
+}
+func (m *UpdateProfileReq_LocationValue) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	n += 1 + sovPb(uint64(m.LocationValue))
+	return n
+}
+func (m *UpdateProfileReq_BirthYearValue) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	n += 1 + sovPb(uint64(m.BirthYearValue))
+	return n
+}
+func (m *UpdateProfileReq_BirthMonthValue) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	n += 1 + sovPb(uint64(m.BirthMonthValue))
+	return n
+}
+func (m *UpdateProfileReq_BirthDayValue) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	n += 1 + sovPb(uint64(m.BirthDayValue))
+	return n
+}
+func (m *UpdateProfileReq_IntroductionValue) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.IntroductionValue)
+	n += 1 + l + sovPb(uint64(l))
+	return n
+}
+func (m *UpdateProfileReq_PasswordValue) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.PasswordValue)
+	n += 1 + l + sovPb(uint64(l))
+	return n
+}
+func (m *ForgetPasswordReq) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Identity)
+	if l > 0 {
+		n += 1 + l + sovPb(uint64(l))
+	}
+	l = len(m.Valcode)
+	if l > 0 {
+		n += 1 + l + sovPb(uint64(l))
+	}
+	l = len(m.Prefix)
+	if l > 0 {
+		n += 1 + l + sovPb(uint64(l))
+	}
+	if m.IdentityType != 0 {
+		n += 1 + sovPb(uint64(m.IdentityType))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *ForgetPasswordResp) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.SessionID)
+	if l > 0 {
+		n += 1 + l + sovPb(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *ResetPasswordReq) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.SessionID)
+	if l > 0 {
+		n += 1 + l + sovPb(uint64(l))
+	}
+	l = len(m.Password)
+	if l > 0 {
+		n += 1 + l + sovPb(uint64(l))
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
@@ -7224,26 +8133,6 @@ func (m *MemberInfoReply) Unmarshal(dAtA []byte) error {
 				}
 			}
 			m.IsLock = bool(v != 0)
-		case 17:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field IsAnnul", wireType)
-			}
-			var v int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowPb
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				v |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			m.IsAnnul = bool(v != 0)
 		default:
 			iNdEx = preIndex
 			skippy, err := skipPb(dAtA[iNdEx:])
@@ -7515,38 +8404,6 @@ func (m *AnnulReq) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Password", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowPb
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthPb
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthPb
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Password = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
 		case 3:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field UseMaster", wireType)
@@ -8583,6 +9440,78 @@ func (m *DBAccount) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
+		case 23:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field IsLock", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.IsLock = bool(v != 0)
+		case 24:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Prefix", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPb
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPb
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Prefix = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 25:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Deactive", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.Deactive = bool(v != 0)
 		default:
 			iNdEx = preIndex
 			skippy, err := skipPb(dAtA[iNdEx:])
@@ -9182,7 +10111,7 @@ func (m *AddAccountReq) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *AllAccountsResp) Unmarshal(dAtA []byte) error {
+func (m *UpdateProfileReq) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -9205,17 +10134,17 @@ func (m *AllAccountsResp) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: AllAccountsResp: wiretype end group for non-group")
+			return fmt.Errorf("proto: UpdateProfileReq: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: AllAccountsResp: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: UpdateProfileReq: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Items", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field AvatarValue", wireType)
 			}
-			var msglen int
+			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowPb
@@ -9225,25 +10154,611 @@ func (m *AllAccountsResp) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= int(b&0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if msglen < 0 {
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
 				return ErrInvalidLengthPb
 			}
-			postIndex := iNdEx + msglen
+			postIndex := iNdEx + intStringLen
 			if postIndex < 0 {
 				return ErrInvalidLengthPb
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Items = append(m.Items, &DBAccount{})
-			if err := m.Items[len(m.Items)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			m.Avatar = &UpdateProfileReq_AvatarValue{string(dAtA[iNdEx:postIndex])}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field UserNameValue", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPb
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPb
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.UserName = &UpdateProfileReq_UserNameValue{string(dAtA[iNdEx:postIndex])}
+			iNdEx = postIndex
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field GenderValue", wireType)
+			}
+			var v int32
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.Gender = &UpdateProfileReq_GenderValue{v}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field LocationValue", wireType)
+			}
+			var v int64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.Location = &UpdateProfileReq_LocationValue{v}
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field BirthYearValue", wireType)
+			}
+			var v int32
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.BirthYear = &UpdateProfileReq_BirthYearValue{v}
+		case 6:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field BirthMonthValue", wireType)
+			}
+			var v int32
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.BirthMonth = &UpdateProfileReq_BirthMonthValue{v}
+		case 7:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field BirthDayValue", wireType)
+			}
+			var v int32
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.BirthDay = &UpdateProfileReq_BirthDayValue{v}
+		case 8:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field IntroductionValue", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPb
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPb
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Introduction = &UpdateProfileReq_IntroductionValue{string(dAtA[iNdEx:postIndex])}
+			iNdEx = postIndex
+		case 9:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PasswordValue", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPb
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPb
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Password = &UpdateProfileReq_PasswordValue{string(dAtA[iNdEx:postIndex])}
+			iNdEx = postIndex
+		case 10:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Aid", wireType)
+			}
+			m.Aid = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Aid |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipPb(dAtA[iNdEx:])
+			if err != nil {
 				return err
 			}
+			if skippy < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *ForgetPasswordReq) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowPb
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: ForgetPasswordReq: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: ForgetPasswordReq: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Identity", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPb
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPb
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Identity = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Valcode", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPb
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPb
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Valcode = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Prefix", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPb
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPb
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Prefix = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field IdentityType", wireType)
+			}
+			m.IdentityType = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.IdentityType |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipPb(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *ForgetPasswordResp) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowPb
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: ForgetPasswordResp: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: ForgetPasswordResp: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SessionID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPb
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPb
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SessionID = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipPb(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *ResetPasswordReq) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowPb
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: ResetPasswordReq: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: ResetPasswordReq: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SessionID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPb
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPb
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SessionID = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Password", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPb
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPb
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Password = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -9273,7 +10788,6 @@ func (m *AllAccountsResp) Unmarshal(dAtA []byte) error {
 func skipPb(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
-	depth := 0
 	for iNdEx < l {
 		var wire uint64
 		for shift := uint(0); ; shift += 7 {
@@ -9305,8 +10819,10 @@ func skipPb(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
+			return iNdEx, nil
 		case 1:
 			iNdEx += 8
+			return iNdEx, nil
 		case 2:
 			var length int
 			for shift := uint(0); ; shift += 7 {
@@ -9327,30 +10843,55 @@ func skipPb(dAtA []byte) (n int, err error) {
 				return 0, ErrInvalidLengthPb
 			}
 			iNdEx += length
-		case 3:
-			depth++
-		case 4:
-			if depth == 0 {
-				return 0, ErrUnexpectedEndOfGroupPb
+			if iNdEx < 0 {
+				return 0, ErrInvalidLengthPb
 			}
-			depth--
+			return iNdEx, nil
+		case 3:
+			for {
+				var innerWire uint64
+				var start int = iNdEx
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return 0, ErrIntOverflowPb
+					}
+					if iNdEx >= l {
+						return 0, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					innerWire |= (uint64(b) & 0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				innerWireType := int(innerWire & 0x7)
+				if innerWireType == 4 {
+					break
+				}
+				next, err := skipPb(dAtA[start:])
+				if err != nil {
+					return 0, err
+				}
+				iNdEx = start + next
+				if iNdEx < 0 {
+					return 0, ErrInvalidLengthPb
+				}
+			}
+			return iNdEx, nil
+		case 4:
+			return iNdEx, nil
 		case 5:
 			iNdEx += 4
+			return iNdEx, nil
 		default:
 			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
 		}
-		if iNdEx < 0 {
-			return 0, ErrInvalidLengthPb
-		}
-		if depth == 0 {
-			return iNdEx, nil
-		}
 	}
-	return 0, io.ErrUnexpectedEOF
+	panic("unreachable")
 }
 
 var (
-	ErrInvalidLengthPb        = fmt.Errorf("proto: negative length found during unmarshaling")
-	ErrIntOverflowPb          = fmt.Errorf("proto: integer overflow")
-	ErrUnexpectedEndOfGroupPb = fmt.Errorf("proto: unexpected end of group")
+	ErrInvalidLengthPb = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowPb   = fmt.Errorf("proto: integer overflow")
 )

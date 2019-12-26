@@ -12,10 +12,12 @@ import (
 	"valerian/library/log"
 )
 
+// GetAccountSetting 获取账户设置
 func (p *Service) GetAccountSetting(c context.Context, aid int64) (resp *model.SettingResp, err error) {
 	return p.getAccountSetting(c, p.d.DB(), aid)
 }
 
+// getAccountSetting 获取账户设置
 func (p *Service) getAccountSetting(c context.Context, node sqalx.Node, accountID int64) (resp *model.SettingResp, err error) {
 	var setting *model.AccountSetting
 	if setting, err = p.d.GetAccountSettingByID(c, node, accountID); err != nil {
@@ -50,6 +52,7 @@ func (p *Service) getAccountSetting(c context.Context, node sqalx.Node, accountI
 	return
 }
 
+// UpdateAccountSetting 更新账户设置
 func (p *Service) UpdateAccountSetting(c context.Context, aid int64, req map[string]bool, language string) (err error) {
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
@@ -137,30 +140,7 @@ func (p *Service) UpdateAccountSetting(c context.Context, aid int64, req map[str
 	return
 }
 
-func (p *Service) AnnulAccount(ctx context.Context, aid int64, password string) (err error) {
-	account, err := p.d.GetAccountByID(ctx, p.d.DB(), aid)
-	if err != nil {
-		return
-	}
-	if account == nil {
-		err = ecode.UserNotExist
-		return
-	}
-	if account.IsLock {
-		err = ecode.UserDisabled
-		return
-	}
-
-	if err = p.checkPassword(password, account.Password, account.Salt); err != nil {
-		return
-	}
-
-	if err = p.d.AnnulAccount(ctx, p.d.DB(), aid); err != nil {
-		return
-	}
-	return
-}
-
+// checkPassword 检测密码是否正确
 func (p *Service) checkPassword(password, dbPassword, dbSalt string) (err error) {
 	passwordHash, err := hashPassword(password, dbSalt)
 	if err != nil {

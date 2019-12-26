@@ -64,7 +64,6 @@ func FromProfileInfo(model *model.ProfileInfo) *MemberInfoReply {
 		Company:        model.Company,
 		Position:       model.Position,
 		IsLock:         model.IsLock,
-		IsAnnul:        model.IsAnnul,
 	}
 
 	return reply
