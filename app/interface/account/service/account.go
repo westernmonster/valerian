@@ -15,58 +15,25 @@ import (
 	topic "valerian/app/service/topic/api"
 	"valerian/library/ecode"
 	"valerian/library/net/metadata"
-
-	"github.com/asaskevich/govalidator"
-	uuid "github.com/satori/go.uuid"
 )
 
+// ForgetPassword 忘记密码
 func (p *Service) ForgetPassword(c context.Context, arg *model.ArgForgetPassword) (sessionID string, err error) {
-	var account *account.DBAccount
-	if govalidator.IsEmail(arg.Identity) {
-		if account, err = p.d.GetAccountByEmail(c, arg.Identity); err != nil {
-			return
-		}
-
-		var code string
-		if code, err = p.d.EmailValcodeCache(c, model.ValcodeForgetPassword, arg.Identity); err != nil {
-			return
-		} else if code == "" {
-			err = ecode.ValcodeExpires
-			return
-		} else if code != arg.Valcode {
-			err = ecode.ValcodeWrong
-			return
-		}
-	} else {
-		mobile := arg.Prefix + arg.Identity
-		if account, err = p.d.GetAccountByMobile(c, arg.Prefix, arg.Identity); err != nil {
-			return
-		}
-
-		var code string
-		if code, err = p.d.MobileValcodeCache(c, model.ValcodeForgetPassword, mobile); err != nil {
-			return
-		} else if code == "" {
-			err = ecode.ValcodeExpires
-			return
-		} else if code != arg.Valcode {
-			err = ecode.ValcodeWrong
-			return
-		}
-	}
-
-	sessionID = uuid.NewV4().String()
-	if err = p.d.SetSessionResetPasswordCache(c, sessionID, account.ID); err != nil {
+	resp, err := p.d.ForgetPassword(c, arg.Identity, arg.Valcode, arg.Prefix, arg.IdentityType)
+	if err != nil {
 		return
 	}
 
+	sessionID = resp.SessionID
 	return
 }
 
+// ResetPassword 重设密码
 func (p *Service) ResetPassword(c context.Context, arg *model.ArgResetPassword) (err error) {
 	return p.d.ResetPassword(c, arg.Password, arg.SessionID)
 }
 
+// UpdateProfile 更新用户资料
 func (p *Service) UpdateProfile(c context.Context, aid int64, arg *model.ArgUpdateProfile) (err error) {
 
 	req := &account.UpdateProfileReq{Aid: aid}
@@ -111,6 +78,7 @@ func (p *Service) UpdateProfile(c context.Context, aid int64, arg *model.ArgUpda
 	return p.d.UpdateProfile(c, req)
 }
 
+// ChangePassword 更改密码
 func (p *Service) ChangePassword(c context.Context, aid int64, arg *model.ArgChangePassword) (err error) {
 	req := &account.UpdateProfileReq{Aid: aid}
 
@@ -119,6 +87,7 @@ func (p *Service) ChangePassword(c context.Context, aid int64, arg *model.ArgCha
 	return p.d.UpdateProfile(c, req)
 }
 
+// GetProfile 获取当前登录用户个人资料
 func (p *Service) GetProfile(c context.Context, aid int64) (item *model.Profile, err error) {
 	var profile *account.SelfProfile
 	if profile, err = p.d.GetSelfProfile(c, aid); err != nil {
@@ -188,6 +157,7 @@ func (p *Service) GetProfile(c context.Context, aid int64) (item *model.Profile,
 	return
 }
 
+// GetUserTopicsPaged 获取当前登录用户话题
 func (p *Service) GetUserTopicsPaged(c context.Context, cate string, limit, offset int) (resp *model.AccountTopicsResp, err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
@@ -221,7 +191,7 @@ func (p *Service) GetUserTopicsPaged(c context.Context, cate string, limit, offs
 					return
 				}
 			} else {
-				item.Target = p.FromTopic(t)
+				item.Target = p.fromTopic(t)
 			}
 
 			resp.Items = append(resp.Items, item)
@@ -246,7 +216,7 @@ func (p *Service) GetUserTopicsPaged(c context.Context, cate string, limit, offs
 					return
 				}
 			} else {
-				item.Target = p.FromTopic(t)
+				item.Target = p.fromTopic(t)
 			}
 
 			resp.Items = append(resp.Items, item)
@@ -271,7 +241,7 @@ func (p *Service) GetUserTopicsPaged(c context.Context, cate string, limit, offs
 					return
 				}
 			} else {
-				item.Target = p.FromTopic(t)
+				item.Target = p.fromTopic(t)
 			}
 
 			resp.Items = append(resp.Items, item)
@@ -296,7 +266,7 @@ func (p *Service) GetUserTopicsPaged(c context.Context, cate string, limit, offs
 					return
 				}
 			} else {
-				item.Target = p.FromTopic(t)
+				item.Target = p.fromTopic(t)
 			}
 
 			resp.Items = append(resp.Items, item)
@@ -332,6 +302,7 @@ func (p *Service) GetUserTopicsPaged(c context.Context, cate string, limit, offs
 	return
 }
 
+// GetUserArticlesPaged 获取当前登录用户文章
 func (p *Service) GetUserArticlesPaged(c context.Context, cate string, limit, offset int) (resp *model.AccountArticlesResp, err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
@@ -364,7 +335,7 @@ func (p *Service) GetUserArticlesPaged(c context.Context, cate string, limit, of
 					return
 				}
 			} else {
-				item.Target = p.FromArticle(t)
+				item.Target = p.fromArticle(t)
 			}
 
 			resp.Items = append(resp.Items, item)
@@ -390,7 +361,7 @@ func (p *Service) GetUserArticlesPaged(c context.Context, cate string, limit, of
 					return
 				}
 			} else {
-				item.Target = p.FromArticle(t)
+				item.Target = p.fromArticle(t)
 			}
 
 			resp.Items = append(resp.Items, item)
@@ -415,7 +386,7 @@ func (p *Service) GetUserArticlesPaged(c context.Context, cate string, limit, of
 					return
 				}
 			} else {
-				item.Target = p.FromArticle(t)
+				item.Target = p.fromArticle(t)
 			}
 
 			resp.Items = append(resp.Items, item)
@@ -451,6 +422,7 @@ func (p *Service) GetUserArticlesPaged(c context.Context, cate string, limit, of
 	return
 }
 
+// GetUserArticlesPaged 获取当前登录用户补充
 func (p *Service) GetUserRevisesPaged(c context.Context, cate string, limit, offset int) (resp *model.AccountRevisesResp, err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
@@ -483,7 +455,7 @@ func (p *Service) GetUserRevisesPaged(c context.Context, cate string, limit, off
 					return
 				}
 			} else {
-				item.Target = p.FromRevise(t)
+				item.Target = p.fromRevise(t)
 			}
 
 			resp.Items = append(resp.Items, item)
@@ -509,7 +481,7 @@ func (p *Service) GetUserRevisesPaged(c context.Context, cate string, limit, off
 					return
 				}
 			} else {
-				item.Target = p.FromRevise(t)
+				item.Target = p.fromRevise(t)
 			}
 
 			resp.Items = append(resp.Items, item)
@@ -545,6 +517,7 @@ func (p *Service) GetUserRevisesPaged(c context.Context, cate string, limit, off
 	return
 }
 
+// GetUserDiscussionsPaged 获取当前登录用户讨论信息
 func (p *Service) GetUserDiscussionsPaged(c context.Context, cate string, limit, offset int) (resp *model.AccountDiscussionsResp, err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
@@ -577,7 +550,7 @@ func (p *Service) GetUserDiscussionsPaged(c context.Context, cate string, limit,
 					return
 				}
 			} else {
-				item.Target = p.FromDiscussion(t)
+				item.Target = p.fromDiscussion(t)
 			}
 
 			resp.Items = append(resp.Items, item)
@@ -603,7 +576,7 @@ func (p *Service) GetUserDiscussionsPaged(c context.Context, cate string, limit,
 					return
 				}
 			} else {
-				item.Target = p.FromDiscussion(t)
+				item.Target = p.fromDiscussion(t)
 			}
 
 			resp.Items = append(resp.Items, item)

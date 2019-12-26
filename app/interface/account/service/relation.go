@@ -12,6 +12,7 @@ import (
 	"valerian/library/net/metadata"
 )
 
+// Follow 关注用户
 func (p *Service) Follow(c context.Context, arg *model.ArgFollow) (err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
@@ -26,6 +27,7 @@ func (p *Service) Follow(c context.Context, arg *model.ArgFollow) (err error) {
 	return
 }
 
+// Unfollow 取关用户
 func (p *Service) Unfollow(c context.Context, arg *model.ArgUnfollow) (err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
@@ -40,6 +42,7 @@ func (p *Service) Unfollow(c context.Context, arg *model.ArgUnfollow) (err error
 	return
 }
 
+// FansPaged 获取指定用户粉丝列表
 func (p *Service) FansPaged(c context.Context, aid int64, query string, limit, offset int) (resp *model.MemberResp, err error) {
 	var data *relation.FansResp
 	if data, err = p.d.GetFans(c, aid, limit, offset); err != nil {
@@ -100,6 +103,7 @@ func (p *Service) FansPaged(c context.Context, aid int64, query string, limit, o
 	return
 }
 
+// FollowPaged 获取指定用户关注列表
 func (p *Service) FollowPaged(c context.Context, aid int64, query string, limit, offset int) (resp *model.MemberResp, err error) {
 	var data *relation.FollowingResp
 	if data, err = p.d.GetFollowings(c, aid, limit, offset); err != nil {
