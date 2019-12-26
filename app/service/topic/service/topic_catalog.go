@@ -25,6 +25,7 @@ func (p *Service) GetCatalogTaxonomiesHierarchy(c context.Context, topicID int64
 	return
 }
 
+// SaveCatalogs 批量保存目录信息
 func (p *Service) SaveCatalogs(c context.Context, req *api.ArgSaveCatalogs) (err error) {
 	// 检测是否系统管理员或者话题管理员
 	if err = p.checkTopicManagePermission(c, req.Aid, req.TopicID); err != nil {
@@ -89,6 +90,7 @@ func (p *Service) SaveCatalogs(c context.Context, req *api.ArgSaveCatalogs) (err
 	return
 }
 
+// HasTaxonomy 目录中是否有分类
 func (p *Service) HasTaxonomy(c context.Context, topicID int64) (hasTaxonomy bool, err error) {
 	if hasTaxonomy, err = p.d.HasTaxonomy(c, p.d.DB(), topicID); err != nil {
 		return

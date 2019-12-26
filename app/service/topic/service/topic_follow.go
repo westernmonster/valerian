@@ -13,6 +13,7 @@ import (
 	"valerian/library/log"
 )
 
+// Follow 加入话题
 func (p *Service) Follow(c context.Context, arg *api.ArgTopicFollow) (status int32, err error) {
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
@@ -135,6 +136,7 @@ func (p *Service) Follow(c context.Context, arg *api.ArgTopicFollow) (status int
 
 }
 
+// GetFollowedTopicsIDs 获取加入的话题ID列表
 func (p *Service) GetFollowedTopicsIDs(c context.Context, aid int64) (ids []int64, err error) {
 	if ids, err = p.d.GetFollowedTopicsIDs(c, p.d.DB(), aid); err != nil {
 		return
@@ -143,6 +145,7 @@ func (p *Service) GetFollowedTopicsIDs(c context.Context, aid int64) (ids []int6
 	return
 }
 
+// AuditFollow 审批加入话题请求
 func (p *Service) AuditFollow(c context.Context, arg *api.ArgAuditFollow) (err error) {
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {

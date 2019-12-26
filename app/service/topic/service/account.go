@@ -7,6 +7,7 @@ import (
 	"valerian/library/ecode"
 )
 
+// getAccount 获取账户信息
 func (p *Service) getAccount(c context.Context, node sqalx.Node, aid int64) (account *model.Account, err error) {
 	var needCache = true
 

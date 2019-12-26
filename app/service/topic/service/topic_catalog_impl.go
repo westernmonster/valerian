@@ -17,6 +17,7 @@ type dicItem struct {
 	Item *model.TopicCatalog
 }
 
+// getCatalogHierarchyOfAll 按树形层级获取话题目录信息
 func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, topicID int64) (items []*api.TopicRootCatalogInfo, err error) {
 	items = make([]*api.TopicRootCatalogInfo, 0)
 
@@ -46,7 +47,7 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 				return
 			}
 			parent.Name = article.Title
-			parent.Article = p.FromArticle(article)
+			parent.Article = p.fromArticle(article)
 			if parent.Article.RelationIDs, err = p.d.GetArticleRelationIDs(c, node, article.ID); err != nil {
 				return
 			}
@@ -91,7 +92,7 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 					return
 				}
 				child.Name = article.Title
-				child.Article = p.FromArticle(article)
+				child.Article = p.fromArticle(article)
 				if child.Article.RelationIDs, err = p.d.GetArticleRelationIDs(c, node, article.ID); err != nil {
 					return
 				}
@@ -135,7 +136,7 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 						return
 					}
 					subItem.Name = article.Title
-					subItem.Article = p.FromArticle(article)
+					subItem.Article = p.fromArticle(article)
 					if subItem.Article.RelationIDs, err = p.d.GetArticleRelationIDs(c, node, article.ID); err != nil {
 						return
 					}
@@ -198,6 +199,7 @@ func modelCopyToPbTopic(topic *model.Topic, topicStat *model.TopicStat) (item *a
 	return
 }
 
+// getCatalogTaxonomyHierarchyOfAll 按树形层级获取话题目录（只包含分类）
 func (p *Service) getCatalogTaxonomyHierarchyOfAll(c context.Context, node sqalx.Node, topicID int64) (items []*api.TopicRootCatalogInfo, err error) {
 	items = make([]*api.TopicRootCatalogInfo, 0)
 
@@ -252,6 +254,7 @@ func (p *Service) getCatalogTaxonomyHierarchyOfAll(c context.Context, node sqalx
 	return
 }
 
+// createCatalog 创建目录条目
 func (p *Service) createCatalog(c context.Context, node sqalx.Node, item *model.TopicCatalog) (id int64, err error) {
 	// // 当前为分类，则不允许处于第三级
 	if item.ParentID != 0 && item.Type == model.TopicCatalogTaxonomy {
@@ -285,6 +288,7 @@ func (p *Service) createCatalog(c context.Context, node sqalx.Node, item *model.
 
 }
 
+// getTopicCatalogsMap 获取话题目录字典
 func (p *Service) getTopicCatalogsMap(c context.Context, node sqalx.Node, topicID, parentID int64) (dic map[int64]dicItem, err error) {
 	var dbCatalogs []*model.TopicCatalog
 	if dbCatalogs, err = p.d.GetTopicCatalogsByCond(c, node, map[string]interface{}{"topic_id": topicID, "parent_id": parentID}); err != nil {
@@ -302,6 +306,7 @@ func (p *Service) getTopicCatalogsMap(c context.Context, node sqalx.Node, topicI
 	return
 }
 
+// saveCatalogs 保存话题目录
 func (p *Service) saveCatalogs(c context.Context, node sqalx.Node, aid int64, req *api.ArgSaveCatalogs) (change *model.CatalogChange, err error) {
 	change = &model.CatalogChange{
 		NewArticles:          make([]*model.ArticleItem, 0),

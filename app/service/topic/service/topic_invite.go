@@ -12,6 +12,7 @@ import (
 	"valerian/library/log"
 )
 
+// Invite 邀请加入话题
 func (p *Service) Invite(c context.Context, arg *api.ArgTopicInvite) (err error) {
 	if arg.Aid == arg.AccountID {
 		err = ecode.InviteSelfNotAllowed
@@ -56,6 +57,7 @@ func (p *Service) Invite(c context.Context, arg *api.ArgTopicInvite) (err error)
 	return
 }
 
+// ProcessInvite 处理邀请请求
 func (p *Service) ProcessInvite(c context.Context, arg *api.ArgProcessInvite) (err error) {
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {

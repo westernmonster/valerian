@@ -50,15 +50,17 @@ func (p *Service) Leave(c context.Context, aid, topicID int64) (err error) {
 	return
 }
 
+// GetManageTopicIDsPaged 获取管理的话题列表
 func (p *Service) GetManageTopicIDsPaged(c context.Context, arg *api.UserTopicsReq) (ids []int64, err error) {
 	return p.d.GetManageTopicIDsPaged(c, p.d.DB(), arg.AccountID, arg.Limit, arg.Offset)
 }
 
+// GetFollowedTopicIDsPaged 获取关注的话题列表
 func (p *Service) GetFollowedTopicIDsPaged(c context.Context, arg *api.UserTopicsReq) (ids []int64, err error) {
 	return p.d.GetFollowedTopicIDsPaged(c, p.d.DB(), arg.AccountID, arg.Limit, arg.Offset)
 }
 
-//  GetTopicMembersPaged 分页获取话题成员
+// GetTopicMembersPaged 分页获取话题成员
 func (p *Service) GetTopicMembersPaged(c context.Context, arg *api.ArgTopicMembers) (resp *api.TopicMembersPagedResp, err error) {
 	resp = new(api.TopicMembersPagedResp)
 	resp.PageSize = arg.PageSize
@@ -104,6 +106,7 @@ func (p *Service) GetTopicMembersPaged(c context.Context, arg *api.ArgTopicMembe
 	return
 }
 
+// BulkSaveMembers 批量保存话题成员
 func (p *Service) BulkSaveMembers(c context.Context, req *api.ArgBatchSavedTopicMember) (err error) {
 	// 检测是否系统管理员或者话题管理员
 	if err = p.checkTopicManagePermission(c, req.Aid, req.TopicID); err != nil {

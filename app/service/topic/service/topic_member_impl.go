@@ -14,6 +14,7 @@ import (
 	"valerian/library/log"
 )
 
+// leave 离开话题
 func (p *Service) leave(c context.Context, node sqalx.Node, aid, topicID int64) (err error) {
 	var member *model.TopicMember
 	if member, err = p.d.GetTopicMemberByCond(c, node, map[string]interface{}{"account_id": aid, "topic_id": topicID}); err != nil {
@@ -40,6 +41,7 @@ func (p *Service) leave(c context.Context, node sqalx.Node, aid, topicID int64) 
 	return
 }
 
+// getTopicMembers 获取话题成员
 func (p *Service) getTopicMembers(c context.Context, node sqalx.Node, topicID int64, limit int32) (total int32, resp []*api.TopicMemberInfo, err error) {
 	resp = make([]*api.TopicMemberInfo, 0)
 
@@ -81,6 +83,7 @@ func (p *Service) getTopicMembers(c context.Context, node sqalx.Node, topicID in
 	return
 }
 
+// createOwner 更改主理人
 func (p *Service) createOwner(c context.Context, node sqalx.Node, aid, topicID int64) (err error) {
 	var tx sqalx.Node
 	if tx, err = node.Beginx(c); err != nil {
@@ -165,6 +168,7 @@ func (p *Service) addMember(c context.Context, node sqalx.Node, topicID, aid int
 	return
 }
 
+// bulkSaveMembers 批量保存话题成员
 func (p *Service) bulkSaveMembers(c context.Context, node sqalx.Node, req *api.ArgBatchSavedTopicMember) (change *model.MemberChange, err error) {
 	change = &model.MemberChange{
 		NewMembers: make([]int64, 0),
@@ -266,6 +270,7 @@ func (p *Service) bulkSaveMembers(c context.Context, node sqalx.Node, req *api.A
 	return
 }
 
+// changeOwner 变更主理人
 func (p *Service) changeOwner(c context.Context, node sqalx.Node, arg *api.ArgChangeOwner) (err error) {
 	var curMember *model.TopicMember
 	if curMember, err = p.d.GetTopicMemberByCond(c, node, map[string]interface{}{
