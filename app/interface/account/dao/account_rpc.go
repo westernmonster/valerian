@@ -15,6 +15,20 @@ func (p *Dao) GetAccountBaseInfo(c context.Context, aid int64) (info *account.Ba
 	return
 }
 
+func (p *Dao) GetAccountByEmail(c context.Context, email string) (info *account.DBAccount, err error) {
+	if info, err = p.accountRPC.GetAccountByEmail(c, &account.EmailReq{Email: email, UseMaster: true}); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetAccountByEmail err(%+v) email(%s)", err, email))
+	}
+	return
+}
+
+func (p *Dao) GetAccountByMobile(c context.Context, prefix, mobile string) (info *account.DBAccount, err error) {
+	if info, err = p.accountRPC.GetAccountByMobile(c, &account.MobileReq{Prefix: prefix, Mobile: mobile, UseMaster: true}); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetAccountByMobile err(%+v) prefix(%s) email(%s)", err, prefix, mobile))
+	}
+	return
+}
+
 func (p *Dao) GetMemberInfo(c context.Context, aid int64) (info *account.MemberInfoReply, err error) {
 	if info, err = p.accountRPC.MemberInfo(c, &account.AidReq{Aid: aid}); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.MemberInfo err(%+v) aid(%d)", err, aid))
@@ -50,13 +64,25 @@ func (p *Dao) UpdateAccountSetting(c context.Context, aid int64, boolVals map[st
 	return
 }
 
-func (p *Dao) AnnulAccount(c context.Context, aid int64, password string) (err error) {
-	if _, err = p.accountRPC.AnnulAccount(c, &account.AnnulReq{
-		Aid:      aid,
-		Password: password,
-	}); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.AnnulAccount err(%+v) aid(%d)", err, aid))
-		return
+func (p *Dao) ForgetPassword(c context.Context, identity, valcode, prefix string, identifyType int32) (info *account.ForgetPasswordResp, err error) {
+	req := &account.ForgetPasswordReq{Identity: identity, Prefix: prefix, Valcode: valcode, IdentityType: identifyType}
+	if info, err = p.accountRPC.ForgetPassword(c, req); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.ForgetPassword err(%+v) req(%s)", err, req))
+	}
+	return
+}
+
+func (p *Dao) UpdateProfile(c context.Context, arg *account.UpdateProfileReq) (err error) {
+	if _, err = p.accountRPC.UpdateProfile(c, arg); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.UpdateProfile err(%+v) req(%s)", err, arg))
+	}
+	return
+}
+
+func (p *Dao) ResetPassword(c context.Context, sessionID, password string) (err error) {
+	req := &account.ResetPasswordReq{Password: password, SessionID: sessionID}
+	if _, err = p.accountRPC.ResetPassword(c, req); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.ResetPassword err(%+v) req(%s)", err, req))
 	}
 	return
 }

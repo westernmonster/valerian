@@ -233,9 +233,6 @@ func (p *Service) GetMemberInfo(c context.Context, targetID int64) (resp *model.
 	if f, err = p.d.GetMemberInfo(c, targetID); err != nil {
 		return
 	}
-	if f.IsAnnul {
-		return nil, ecode.UserIsAnnulled
-	}
 	resp = &model.MemberInfo{
 		ID:             f.ID,
 		UserName:       f.UserName,
@@ -293,16 +290,16 @@ func (p *Service) GetMemberActivitiesPaged(c context.Context, aid int64, limit, 
 			},
 		}
 
-		var account *model.Account
-		if account, err = p.getAccountByID(c, p.d.DB(), v.AccountID); err != nil {
+		var acc *account.BaseInfoReply
+		if acc, err = p.d.GetAccountBaseInfo(c, v.AccountID); err != nil {
 			return
 		}
 
 		item.Source.Actor = &model.Actor{
-			ID:           account.ID,
-			Avatar:       account.Avatar,
-			Name:         account.UserName,
-			Introduction: account.Introduction,
+			ID:           acc.ID,
+			Avatar:       acc.Avatar,
+			Name:         acc.UserName,
+			Introduction: acc.Introduction,
 		}
 
 		switch v.TargetType {

@@ -4,7 +4,6 @@ import (
 	"context"
 	"net/url"
 	"strconv"
-	"time"
 
 	"valerian/app/interface/account/model"
 	account "valerian/app/service/account/api"
@@ -14,7 +13,6 @@ import (
 	message "valerian/app/service/message/api"
 	recent "valerian/app/service/recent/api"
 	topic "valerian/app/service/topic/api"
-	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
 	"valerian/library/net/metadata"
 
@@ -22,38 +20,10 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-func validateBirthDay(arg *model.ArgUpdateProfile) (err error) {
-	if arg.BirthYear != nil {
-		year := int(*arg.BirthYear)
-		if year < 1920 || year > time.Now().Year() {
-			return ecode.InvalidBirthYear
-		}
-	}
-
-	if arg.BirthMonth != nil {
-		month := *arg.BirthMonth
-		if month < 1 || month > 12 {
-			return ecode.InvalidBirthMonth
-		}
-	}
-
-	if arg.BirthDay != nil {
-		day := *arg.BirthDay
-		if day < 1 || day > 30 {
-			return ecode.InvalidBirthDay
-		}
-	}
-
-	return
-}
-
 func (p *Service) ForgetPassword(c context.Context, arg *model.ArgForgetPassword) (sessionID string, err error) {
-	var account *model.Account
+	var account *account.DBAccount
 	if govalidator.IsEmail(arg.Identity) {
-		if account, err = p.d.GetAccountByEmail(c, p.d.DB(), arg.Identity); err != nil {
-			return
-		} else if account == nil {
-			err = ecode.UserNotExist
+		if account, err = p.d.GetAccountByEmail(c, arg.Identity); err != nil {
 			return
 		}
 
@@ -69,10 +39,7 @@ func (p *Service) ForgetPassword(c context.Context, arg *model.ArgForgetPassword
 		}
 	} else {
 		mobile := arg.Prefix + arg.Identity
-		if account, err = p.d.GetAccountByMobile(c, p.d.DB(), mobile); err != nil {
-			return
-		} else if account == nil {
-			err = ecode.UserNotExist
+		if account, err = p.d.GetAccountByMobile(c, arg.Prefix, arg.Identity); err != nil {
 			return
 		}
 
@@ -96,157 +63,60 @@ func (p *Service) ForgetPassword(c context.Context, arg *model.ArgForgetPassword
 	return
 }
 
-func (p *Service) getAccountByID(c context.Context, node sqalx.Node, aid int64) (account *model.Account, err error) {
-	var needCache = true
-
-	if account, err = p.d.AccountCache(c, aid); err != nil {
-		needCache = false
-	} else if account != nil {
-		return
-	}
-
-	if account, err = p.d.GetAccountByID(c, node, aid); err != nil {
-		return
-	} else if account == nil {
-		err = ecode.UserNotExist
-		return
-	}
-
-	if needCache {
-		p.addCache(func() {
-			p.d.SetAccountCache(context.TODO(), account)
-		})
-	}
-	return
-}
-
 func (p *Service) ResetPassword(c context.Context, arg *model.ArgResetPassword) (err error) {
-	var aid int64
-	if aid, err = p.d.SessionResetPasswordCache(c, arg.SessionID); err != nil {
-		return
-	} else if aid == 0 {
-		return ecode.SessionExpires
-	}
-
-	var acc *model.Account
-	if acc, err = p.getAccountByID(c, p.d.DB(), aid); err != nil {
-		return
-	}
-
-	passwordHash, err := hashPassword(arg.Password, acc.Salt)
-	if err != nil {
-		return
-	}
-
-	if err = p.d.SetPassword(c, p.d.DB(), passwordHash, acc.Salt, aid); err != nil {
-		return
-	}
-
-	p.addCache(func() {
-		// TODO: Clear this users's AccessToken Cached && Refresh Token Cache
-		p.d.DelAccountCache(context.TODO(), aid)
-		p.d.DelResetPasswordCache(context.TODO(), arg.SessionID)
-	})
-
-	return
+	return p.d.ResetPassword(c, arg.Password, arg.SessionID)
 }
 
 func (p *Service) UpdateProfile(c context.Context, aid int64, arg *model.ArgUpdateProfile) (err error) {
-	var account *model.Account
-	if account, err = p.getAccountByID(c, p.d.DB(), aid); err != nil {
-		return
-	}
+
+	req := &account.UpdateProfileReq{Aid: aid}
 
 	if arg.Gender != nil {
-		if *arg.Gender != model.GenderMale && *arg.Gender != model.GenderFemale {
-			return ecode.InvalidGender
-		}
-		account.Gender = *arg.Gender
+		req.Gender = &account.UpdateProfileReq_GenderValue{*arg.Gender}
 	}
 
 	if arg.Avatar != nil {
-		if !govalidator.IsURL(*arg.Avatar) {
-			return ecode.InvalidAvatar
-		}
-		account.Avatar = *arg.Avatar
+		req.Avatar = &account.UpdateProfileReq_AvatarValue{*arg.Avatar}
 	}
 
 	if arg.Introduction != nil {
-		account.Introduction = *arg.Introduction
+		req.Avatar = &account.UpdateProfileReq_AvatarValue{*arg.Avatar}
 	}
 
 	if arg.UserName != nil {
-		account.UserName = *arg.UserName
+		req.UserName = &account.UpdateProfileReq_UserNameValue{*arg.UserName}
 	}
 
 	if arg.BirthYear != nil {
-		account.BirthYear = *arg.BirthYear
+		req.BirthYear = &account.UpdateProfileReq_BirthYearValue{*arg.BirthYear}
 	}
 
 	if arg.BirthMonth != nil {
-		account.BirthMonth = *arg.BirthMonth
+		req.BirthMonth = &account.UpdateProfileReq_BirthMonthValue{*arg.BirthMonth}
 	}
 
 	if arg.BirthDay != nil {
-		account.BirthDay = *arg.BirthDay
-	}
-
-	if err = validateBirthDay(arg); err != nil {
-		return
+		req.BirthDay = &account.UpdateProfileReq_BirthDayValue{*arg.BirthDay}
 	}
 
 	if arg.Password != nil {
-		passwordHash, e := hashPassword(*arg.Password, account.Salt)
-		if e != nil {
-			return e
-		}
-
-		account.Password = passwordHash
+		req.Password = &account.UpdateProfileReq_PasswordValue{*arg.Password}
 
 	}
 
 	if arg.Location != nil {
-		if item, e := p.d.GetArea(c, p.d.DB(), *arg.Location); e != nil {
-			return e
-		} else if item == nil {
-			return ecode.AreaNotExist
-		}
-
-		account.Location = *arg.Location
+		req.Location = &account.UpdateProfileReq_LocationValue{*arg.Location}
 	}
 
-	if err = p.d.UpdateAccount(c, p.d.DB(), account); err != nil {
-		return
-	}
-
-	p.addCache(func() {
-		p.d.DelAccountCache(context.TODO(), aid)
-		p.onAccountUpdated(context.TODO(), aid, time.Now().Unix())
-	})
-
-	return
+	return p.d.UpdateProfile(c, req)
 }
 
 func (p *Service) ChangePassword(c context.Context, aid int64, arg *model.ArgChangePassword) (err error) {
+	req := &account.UpdateProfileReq{Aid: aid}
 
-	var acc *model.Account
-	if acc, err = p.getAccountByID(c, p.d.DB(), aid); err != nil {
-		return
-	}
+	req.Password = &account.UpdateProfileReq_PasswordValue{arg.Password}
 
-	passwordHash, err := hashPassword(arg.Password, acc.Salt)
-	if err != nil {
-		return
-	}
-
-	if err = p.d.SetPassword(c, p.d.DB(), passwordHash, acc.Salt, aid); err != nil {
-		return
-	}
-
-	p.addCache(func() {
-		p.d.DelAccountCache(context.TODO(), aid)
-	})
-	return
+	return p.d.UpdateProfile(c, req)
 }
 
 func (p *Service) GetProfile(c context.Context, aid int64) (item *model.Profile, err error) {

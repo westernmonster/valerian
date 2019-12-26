@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"valerian/app/interface/account/model"
+	account "valerian/app/service/account/api"
 	relation "valerian/app/service/relation/api"
 	"valerian/library/ecode"
 	"valerian/library/net/metadata"
@@ -51,8 +52,8 @@ func (p *Service) FansPaged(c context.Context, aid int64, query string, limit, o
 	}
 
 	for i, v := range data.Items {
-		var acc *model.Account
-		if acc, err = p.getAccountByID(c, p.d.DB(), v.AccountID); err != nil {
+		var acc *account.BaseInfoReply
+		if acc, err = p.d.GetAccountBaseInfo(c, v.AccountID); err != nil {
 			return
 		}
 		member := &model.MemberItem{
@@ -64,16 +65,11 @@ func (p *Service) FansPaged(c context.Context, aid int64, query string, limit, o
 			IDCert:       acc.IDCert,
 			WorkCert:     acc.WorkCert,
 			IsOrg:        acc.IsOrg,
-			IsVIP:        acc.IsVip,
+			IsVIP:        acc.IsVIP,
 		}
 
-		var stat *model.AccountStat
-		if stat, err = p.d.GetAccountStatByID(c, p.d.DB(), v.AccountID); err != nil {
-			return
-		}
-
-		member.FansCount = (stat.Fans)
-		member.FollowingCount = (stat.Following)
+		member.FansCount = (acc.Stat.FansCount)
+		member.FollowingCount = (acc.Stat.FollowingCount)
 
 		resp.Items[i] = member
 	}
@@ -116,8 +112,8 @@ func (p *Service) FollowPaged(c context.Context, aid int64, query string, limit,
 	}
 
 	for i, v := range data.Items {
-		var acc *model.Account
-		if acc, err = p.getAccountByID(c, p.d.DB(), v.AccountID); err != nil {
+		var acc *account.BaseInfoReply
+		if acc, err = p.d.GetAccountBaseInfo(c, v.AccountID); err != nil {
 			return
 		}
 		member := &model.MemberItem{
@@ -129,17 +125,11 @@ func (p *Service) FollowPaged(c context.Context, aid int64, query string, limit,
 			IDCert:       acc.IDCert,
 			WorkCert:     acc.WorkCert,
 			IsOrg:        acc.IsOrg,
-			IsVIP:        acc.IsVip,
+			IsVIP:        acc.IsVIP,
 		}
 
-		var stat *model.AccountStat
-		if stat, err = p.d.GetAccountStatByID(c, p.d.DB(), v.AccountID); err != nil {
-			return
-		}
-
-		member.FollowingCount = stat.Following
-		member.FansCount = stat.Fans
-
+		member.FansCount = (acc.Stat.FansCount)
+		member.FollowingCount = (acc.Stat.FollowingCount)
 		resp.Items[i] = member
 	}
 
