@@ -1,4 +1,4 @@
-# valerian/infra/discoveryovery
+# infra-discovery
 
 ##### 项目简介
 > 1. 服务注册发现
