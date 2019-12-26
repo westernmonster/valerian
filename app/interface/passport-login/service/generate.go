@@ -8,10 +8,12 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
+// generateAccess 生成AccessToken
 func generateAccess(accountID int64, ct time.Time, dc int) string {
 	return generateAK(accountID, int(ct.Month()), dc)
 }
 
+// generateRefresh 生成Refresh
 func generateRefresh(accountID int64, ct time.Time, dc int) string {
 	return generateRK(accountID, int(ct.Month()), dc)
 }

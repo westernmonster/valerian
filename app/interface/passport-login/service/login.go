@@ -9,12 +9,13 @@ import (
 	"valerian/library/ecode"
 )
 
+// EmailLogin 邮件登录
 func (p *Service) EmailLogin(ctx context.Context, req *model.ArgEmailLogin) (resp *model.LoginResp, err error) {
 	if err = p.checkClient(ctx, req.ClientID); err != nil {
 		return
 	} // Check Client
 
-	account, err := p.d.GetAccountByEmail(ctx, p.d.DB(), req.Email)
+	account, err := p.d.GetAccountByEmail(ctx, req.Email)
 	if err != nil {
 		return
 	}
@@ -24,10 +25,6 @@ func (p *Service) EmailLogin(ctx context.Context, req *model.ArgEmailLogin) (res
 	}
 	if account.IsLock {
 		err = ecode.UserDisabled
-		return
-	}
-	if account.IsAnnul {
-		err = ecode.UserIsAnnulled
 		return
 	}
 	if err = p.checkPassword(req.Password, account.Password, account.Salt); err != nil {
@@ -56,40 +53,36 @@ func (p *Service) EmailLogin(ctx context.Context, req *model.ArgEmailLogin) (res
 	return
 }
 
+// MobileLogin 手机登录
 func (p *Service) MobileLogin(ctx context.Context, req *model.ArgMobileLogin) (resp *model.LoginResp, err error) {
 	if err = p.checkClient(ctx, req.ClientID); err != nil {
 		return
 	} // Check Client
 
-	mobile := req.Prefix + req.Mobile
-	account, err := p.d.GetAccountByMobile(ctx, p.d.DB(), mobile)
+	acc, err := p.d.GetAccountByMobile(ctx, req.Prefix, req.Mobile)
 	if err != nil {
 		return
 	}
-	if account == nil {
+	if acc == nil {
 		err = ecode.UserNotExist
 		return
 	}
-	if account.IsLock {
+	if acc.IsLock {
 		err = ecode.UserDisabled
 		return
 	}
-	if account.IsAnnul {
-		err = ecode.UserIsAnnulled
-		return
-	}
-	if err = p.checkPassword(req.Password, account.Password, account.Salt); err != nil {
+	if err = p.checkPassword(req.Password, acc.Password, acc.Salt); err != nil {
 		return
 	}
 
-	accessToken, refreshToken, err := p.grantToken(ctx, req.ClientID, account.ID)
+	accessToken, refreshToken, err := p.grantToken(ctx, req.ClientID, acc.ID)
 	if err != nil {
 		return
 	}
 
 	resp = &model.LoginResp{
-		AccountID:    account.ID,
-		Role:         account.Role,
+		AccountID:    acc.ID,
+		Role:         acc.Role,
 		AccessToken:  accessToken.Token,
 		ExpiresIn:    _accessExpireSeconds,
 		TokenType:    "Bearer",
@@ -97,13 +90,14 @@ func (p *Service) MobileLogin(ctx context.Context, req *model.ArgMobileLogin) (r
 		RefreshToken: refreshToken.Token,
 	}
 
-	if resp.Profile, err = p.GetProfile(ctx, account.ID); err != nil {
+	if resp.Profile, err = p.GetProfile(ctx, acc.ID); err != nil {
 		return
 	}
 
 	return
 }
 
+// DigitLogin 验证码登录
 func (p *Service) DigitLogin(ctx context.Context, req *model.ArgDigitLogin) (resp *model.LoginResp, err error) {
 	mobile := req.Prefix + req.Mobile
 
@@ -118,29 +112,25 @@ func (p *Service) DigitLogin(ctx context.Context, req *model.ArgDigitLogin) (res
 		return
 	}
 
-	var account *model.Account
-	if account, err = p.d.GetAccountByMobile(ctx, p.d.DB(), mobile); err != nil {
+	var acc *account.DBAccount
+	if acc, err = p.d.GetAccountByMobile(ctx, req.Prefix, req.Mobile); err != nil {
 		return
-	} else if account == nil {
+	} else if acc == nil {
 		err = ecode.UserNotExist
 		return
 	}
-	if account.IsLock {
+	if acc.IsLock {
 		err = ecode.UserDisabled
 		return
 	}
-	if account.IsAnnul {
-		err = ecode.UserIsAnnulled
-		return
-	}
-	accessToken, refreshToken, err := p.grantToken(ctx, req.ClientID, account.ID)
+	accessToken, refreshToken, err := p.grantToken(ctx, req.ClientID, acc.ID)
 	if err != nil {
 		return
 	}
 
 	resp = &model.LoginResp{
-		AccountID:    account.ID,
-		Role:         account.Role,
+		AccountID:    acc.ID,
+		Role:         acc.Role,
 		AccessToken:  accessToken.Token,
 		ExpiresIn:    _accessExpireSeconds,
 		TokenType:    "Bearer",
@@ -148,7 +138,7 @@ func (p *Service) DigitLogin(ctx context.Context, req *model.ArgDigitLogin) (res
 		RefreshToken: refreshToken.Token,
 	}
 
-	if resp.Profile, err = p.GetProfile(ctx, account.ID); err != nil {
+	if resp.Profile, err = p.GetProfile(ctx, acc.ID); err != nil {
 		return
 	}
 
@@ -159,6 +149,7 @@ func (p *Service) DigitLogin(ctx context.Context, req *model.ArgDigitLogin) (res
 	return
 }
 
+// checkPassword 检验密码
 func (p *Service) checkPassword(password, dbPassword, dbSalt string) (err error) {
 	passwordHash, err := hashPassword(password, dbSalt)
 	if err != nil {
@@ -172,6 +163,7 @@ func (p *Service) checkPassword(password, dbPassword, dbSalt string) (err error)
 	return
 }
 
+// GetProfile 获取当前登录用户资料
 func (p *Service) GetProfile(c context.Context, aid int64) (item *model.Profile, err error) {
 	var profile *account.SelfProfile
 	if profile, err = p.d.GetSelfProfile(c, aid); err != nil {

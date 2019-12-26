@@ -41,6 +41,7 @@ func hexDecode(s string) (res []byte, err error) {
 	return hex.DecodeString(s)
 }
 
+// hashPassword 加密密码
 func hashPassword(password string, salt string) (passwordHash string, err error) {
 	mac := hmac.New(sha1.New, []byte(model.PasswordPepper))
 	_, err = mac.Write([]byte(password))
@@ -59,6 +60,7 @@ func hashPassword(password string, salt string) (passwordHash string, err error)
 	return
 }
 
+// generateSalt生成「盐」
 func generateSalt(n uint32) (salt string, err error) {
 	b := make([]byte, n)
 	_, err = rand.Read(b)
