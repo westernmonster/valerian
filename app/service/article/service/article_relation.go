@@ -14,10 +14,12 @@ import (
 	"valerian/library/log"
 )
 
+// GetArticleRelations 文章关联话题信息
 func (p *Service) GetArticleRelations(c context.Context, articleID int64) (items []*api.ArticleRelationResp, err error) {
 	return p.getArticleRelations(c, p.d.DB(), articleID)
 }
 
+// getArticleRelations 文章关联话题信息
 func (p *Service) getArticleRelations(c context.Context, node sqalx.Node, articleID int64) (items []*api.ArticleRelationResp, err error) {
 	var data []*model.TopicCatalog
 	if data, err = p.d.GetTopicCatalogsByCond(c, node, map[string]interface{}{
@@ -66,6 +68,7 @@ func (p *Service) getArticleRelations(c context.Context, node sqalx.Node, articl
 	return
 }
 
+// getCatalogFullPath 获取文章在类目中的路径
 func (p *Service) getCatalogFullPath(c context.Context, node sqalx.Node, articleItem *model.TopicCatalog) (path string, err error) {
 	if articleItem.ParentID == 0 {
 		path = ""
@@ -98,6 +101,7 @@ func (p *Service) getCatalogFullPath(c context.Context, node sqalx.Node, article
 	return
 }
 
+// checkArticleRelations 检测文章关联话题请求
 func (p *Service) checkArticleRelations(c context.Context, node sqalx.Node, aid int64, items []*api.ArgArticleRelation) (err error) {
 	dic := make(map[int64]bool)
 	for _, v := range items {
@@ -121,6 +125,7 @@ func (p *Service) checkArticleRelations(c context.Context, node sqalx.Node, aid 
 	return nil
 }
 
+// checkTopicCatalogTaxonomy 检测话题目录分类
 func (p *Service) checkTopicCatalogTaxonomy(c context.Context, node sqalx.Node, topicID, parentID int64) (err error) {
 	if parentID == 0 {
 		return
@@ -139,6 +144,7 @@ func (p *Service) checkTopicCatalogTaxonomy(c context.Context, node sqalx.Node, 
 	return nil
 }
 
+// bulkCreateArticleRelations 批量创建文章关联话题信息
 func (p *Service) bulkCreateArticleRelations(c context.Context, node sqalx.Node, aid, articleID int64, title string, relations []*api.ArgArticleRelation) (ids []int64, err error) {
 	ids = make([]int64, 0)
 	if err = p.checkArticleRelations(c, node, aid, relations); err != nil {
@@ -156,6 +162,7 @@ func (p *Service) bulkCreateArticleRelations(c context.Context, node sqalx.Node,
 	return
 }
 
+// addArticleRelation 添加文章关联话题信息
 func (p *Service) addArticleRelation(c context.Context, node sqalx.Node, articleID int64, title string, item *api.ArgArticleRelation) (id int64, err error) {
 	var checkExist *model.TopicCatalog
 	if checkExist, err = p.d.GetTopicCatalogByCond(c, node, map[string]interface{}{
@@ -205,6 +212,7 @@ func (p *Service) addArticleRelation(c context.Context, node sqalx.Node, article
 	return
 }
 
+// UpdateArticleRelation 更新文章关联话题信息
 func (p *Service) UpdateArticleRelation(c context.Context, arg *api.ArgUpdateArticleRelation) (err error) {
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
@@ -252,6 +260,7 @@ func (p *Service) UpdateArticleRelation(c context.Context, arg *api.ArgUpdateArt
 	return
 }
 
+// AddArticleRelation 添加文章关联话题信息
 func (p *Service) AddArticleRelation(c context.Context, arg *api.ArgAddArticleRelation) (err error) {
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
@@ -300,6 +309,7 @@ func (p *Service) AddArticleRelation(c context.Context, arg *api.ArgAddArticleRe
 	return
 }
 
+// DelArticleRelation 删除文章关联话题信息
 func (p *Service) DelArticleRelation(c context.Context, arg *api.ArgDelArticleRelation) (err error) {
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {

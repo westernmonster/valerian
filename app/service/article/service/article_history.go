@@ -8,6 +8,7 @@ import (
 	"valerian/library/ecode"
 )
 
+// GetArticleHistoriesPaged 获取文章修改历史记录
 func (p *Service) GetArticleHistoriesPaged(c context.Context, articleID int64, limit, offset int) (resp *api.ArticleHistoryListResp, err error) {
 	var data []*model.ArticleHistory
 	if data, err = p.d.GetArticleHistoriesPaged(c, p.d.DB(), articleID, limit, offset); err != nil {
@@ -45,6 +46,7 @@ func (p *Service) GetArticleHistoriesPaged(c context.Context, articleID int64, l
 	return
 }
 
+// GetArticleHistory 获取指定文章修改历史记录
 func (p *Service) GetArticleHistory(c context.Context, articleHistoryID int64) (item *api.ArticleHistoryResp, err error) {
 	var v *model.ArticleHistory
 	if v, err = p.d.GetArticleHistoryByID(c, p.d.DB(), articleHistoryID); err != nil {

@@ -12,10 +12,12 @@ import (
 	"valerian/library/log"
 )
 
+// GetReviseFiles 获取补充附件信息
 func (p *Service) GetReviseFiles(c context.Context, req *api.IDReq) (items []*api.ReviseFileResp, err error) {
 	return p.getReviseFiles(c, p.d.DB(), req.ID)
 }
 
+// getReviseFiles 获取补充附件信息
 func (p *Service) getReviseFiles(c context.Context, node sqalx.Node, reviseID int64) (items []*api.ReviseFileResp, err error) {
 	var addCache = true
 
@@ -49,6 +51,7 @@ func (p *Service) getReviseFiles(c context.Context, node sqalx.Node, reviseID in
 	return
 }
 
+// bulkCreateReviseFiles 批量保存补充附件
 func (p *Service) bulkCreateReviseFiles(c context.Context, node sqalx.Node, reviseID int64, files []*api.AddReviseFile) (err error) {
 	var tx sqalx.Node
 	if tx, err = node.Beginx(c); err != nil {
@@ -93,6 +96,7 @@ func (p *Service) bulkCreateReviseFiles(c context.Context, node sqalx.Node, revi
 	return
 }
 
+// SaveReviseFiles 批量更新补充附件信息
 func (p *Service) SaveReviseFiles(c context.Context, arg *api.ArgSaveReviseFiles) (err error) {
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
