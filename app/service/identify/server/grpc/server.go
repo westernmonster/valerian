@@ -85,3 +85,23 @@ func (s *server) Logout(ctx context.Context, req *api.LogoutReq) (*api.EmptyStru
 
 	return &api.EmptyStruct{}, nil
 }
+
+func (s *server) EmailLogin(ctx context.Context, req *api.EmailLoginReq) (*api.LoginResp, error) {
+	return s.svr.EmailLogin(ctx, req)
+}
+
+func (s *server) MobileLogin(ctx context.Context, req *api.MobileLoginReq) (*api.LoginResp, error) {
+	return s.svr.MobileLogin(ctx, req)
+}
+
+func (s *server) DigitLogin(ctx context.Context, req *api.DigitLoginReq) (*api.LoginResp, error) {
+	return s.svr.DigitLogin(ctx, req)
+}
+
+func (s *server) EmailRegister(ctx context.Context, req *api.EmailRegisterReq) (*api.LoginResp, error) {
+	return s.svr.EmailRegister(ctx, req)
+}
+
+func (s *server) MobileRegister(ctx context.Context, req *api.MobileRegisterReq) (*api.LoginResp, error) {
+	return s.svr.MobileRegister(ctx, req)
+}

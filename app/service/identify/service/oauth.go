@@ -15,6 +15,7 @@ const (
 	_refreshExpireSeconds = 60 * 60 * 24 * 90 // 90 days
 )
 
+// grantToken 生成Token
 func (p *Service) grantToken(ctx context.Context, clientID string, accountID int64) (accessToken *model.AccessToken, refreshToken *model.RefreshToken, err error) {
 
 	now := time.Now()
@@ -89,6 +90,7 @@ func (p *Service) grantToken(ctx context.Context, clientID string, accountID int
 	return
 }
 
+// checkClient 检测ClientID
 func (p *Service) checkClient(ctx context.Context, clientID string) (err error) {
 	client, err := p.d.GetClient(ctx, p.d.AuthDB(), clientID)
 	if err != nil {
@@ -102,6 +104,7 @@ func (p *Service) checkClient(ctx context.Context, clientID string) (err error) 
 	return
 }
 
+// deleteToken 删除Token
 func (p *Service) deleteToken(ctx context.Context, clientID string, accountID int64) (err error) {
 	var accessTokens []string
 

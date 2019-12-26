@@ -1,9 +1,9 @@
 package model
 
 const (
-	SourceWeb     = 1
-	SourceiOS     = 2
-	SourceAndroid = 3
+	SourceWeb     = int32(1)
+	SourceiOS     = int32(2)
+	SourceAndroid = int32(3)
 )
 
 const (
@@ -21,10 +21,24 @@ const (
 )
 
 const (
-	IdentityMobile = 1
-	IdentityEmail  = 2
+	IdentityMobile = int32(1)
+	IdentityEmail  = int32(2)
+)
+
+const (
+	ValcodeRegister       = int32(1)
+	ValcodeForgetPassword = int32(2)
+	ValcodeLogin          = int32(3)
+	ValcodeDeactive       = int32(4)
 )
 
 const (
 	PasswordPepper = "8PrhfDL7Qr/G6%RbaiQouFfQ"
+)
+
+const (
+	AccountRoleUser       = "user"
+	AccountRoleAdmin      = "admin"
+	AccountRoleSuperAdmin = "superadmin"
+	AccountRoleOrg        = "org"
 )

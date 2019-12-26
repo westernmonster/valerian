@@ -93,4 +93,25 @@ type Account struct {
 	CreatedAt    int64         `db:"created_at" json:"created_at"`     // CreatedAt 创建时间
 	UpdatedAt    int64         `db:"updated_at" json:"updated_at"`     // UpdatedAt 更新时间
 	Prefix       string        `db:"prefix" json:"prefix"`             // Prefix 手机前缀
+	IsLock       types.BitBool `db:"is_lock" json:"is_lock"`           // IsLock 是否被禁用
+	Deactive     types.BitBool `db:"deactive" json:"deactive"`         // Deactive 是否已注销
+}
+
+type AccountStat struct {
+	AccountID       int64 `db:"account_id" json:"account_id,string"`      // AccountID 用户ID
+	Following       int32 `db:"following" json:"following"`               // Following 关注数
+	Fans            int32 `db:"fans" json:"fans"`                         // Fans 粉丝数
+	ArticleCount    int32 `db:"article_count" json:"article_count"`       // ArticleCount 文章数
+	DiscussionCount int32 `db:"discussion_count" json:"discussion_count"` // DiscussionCount 讨论数
+	TopicCount      int32 `db:"topic_count" json:"topic_count"`           // TopicCount 讨论数
+	Black           int32 `db:"black" json:"black"`                       // Black 黑名单数
+	CreatedAt       int64 `db:"created_at" json:"created_at"`             // CreatedAt 创建时间
+	UpdatedAt       int64 `db:"updated_at" json:"updated_at"`             // UpdatedAt 更新时间
+}
+
+type MessageStat struct {
+	AccountID   int64 `db:"account_id" json:"account_id,string"` // AccountID 账户ID
+	UnreadCount int   `db:"unread_count" json:"unread_count"`    // UnreadCount 未读数
+	CreatedAt   int64 `db:"created_at" json:"created_at"`        // CreatedAt 创建时间
+	UpdatedAt   int64 `db:"updated_at" json:"updated_at"`        // UpdatedAt 更新时间
 }

@@ -21,13 +21,13 @@ func (p *Service) AuthAdmin(c context.Context, reqSID string) (sid string, aid i
 		return
 	}
 
-	var u *model.Account
-	if u, err = p.getAccountByID(c, aid); err != nil {
-		return
-	}
+	// var u *model.Account
+	// if u, err = p.getAccountByID(c, aid); err != nil {
+	// 	return
+	// }
 
-	aid = u.ID
-	uname = si.Get(_sessUnameKey).(string)
+	// aid = u.ID
+	// uname = si.Get(_sessUnameKey).(string)
 
 	return
 }

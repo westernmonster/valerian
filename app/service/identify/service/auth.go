@@ -9,6 +9,7 @@ import (
 	"valerian/library/ecode"
 )
 
+// GetTokenInfo 通过Token获取登录信息
 func (p *Service) GetTokenInfo(c context.Context, token string) (r *api.AuthReply, err error) {
 	var t *model.AccessToken
 
@@ -29,11 +30,7 @@ func (p *Service) GetTokenInfo(c context.Context, token string) (r *api.AuthRepl
 	return
 }
 
-func (p *Service) Logout(c context.Context, aid int64, clientID string) (err error) {
-	p.deleteToken(c, clientID, aid)
-	return
-}
-
+// RenewToken 重新生成Token
 func (p *Service) RenewToken(c context.Context, refreshToken, clientID string) (r *model.TokenResp, err error) {
 	var t *model.RefreshToken
 	if t, err = p.d.GetRefreshToken(c, p.d.AuthDB(), refreshToken); err != nil {
@@ -64,6 +61,7 @@ func (p *Service) RenewToken(c context.Context, refreshToken, clientID string) (
 	return
 }
 
+// getAccessToken 获取AccessToken
 func (p *Service) getAccessToken(c context.Context, token string) (t *model.AccessToken, err error) {
 	addCache := true
 	if t, err = p.d.AccessTokenCache(c, token); err != nil {

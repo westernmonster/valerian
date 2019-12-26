@@ -1,0 +1,77 @@
+package service
+
+import (
+	"context"
+	"fmt"
+	"time"
+
+	"valerian/app/service/identify/model"
+	"valerian/library/database/sqalx"
+	"valerian/library/ecode"
+	"valerian/library/log"
+)
+
+// AddAccount 添加账户
+func (p *Service) addAccount(c context.Context, node sqalx.Node, item *model.Account) (err error) {
+	var tx sqalx.Node
+	if tx, err = node.Beginx(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		return
+	}
+
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+			}
+			return
+		}
+	}()
+
+	var account *model.Account
+	var e error
+	if item.Mobile != "" {
+		if account, e = p.d.GetAccountByMobile(c, tx, item.Mobile); e != nil {
+			return e
+		} else if account != nil {
+			err = ecode.AccountExist
+			return
+		}
+	} else {
+		if account, e = p.d.GetAccountByEmail(c, tx, item.Email); e != nil {
+			return e
+		} else if account != nil {
+			err = ecode.AccountExist
+			return
+		}
+	}
+	item.CreatedAt = time.Now().Unix()
+	item.UpdatedAt = time.Now().Unix()
+
+	if err = p.d.AddAccount(c, tx, item); err != nil {
+		return
+	}
+
+	if err = p.d.AddAccountStat(c, tx, &model.AccountStat{
+		AccountID: item.ID,
+		CreatedAt: time.Now().Unix(),
+		UpdatedAt: time.Now().Unix(),
+	}); err != nil {
+		return
+	}
+
+	if err = p.d.AddMessageStat(c, tx, &model.MessageStat{
+		AccountID: item.ID,
+		CreatedAt: time.Now().Unix(),
+		UpdatedAt: time.Now().Unix(),
+	}); err != nil {
+		return
+	}
+
+	if err = tx.Commit(); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		return
+	}
+
+	return
+}
