@@ -33,9 +33,9 @@ type Config struct {
 	// Auth
 	Memcache *Memcache
 
-	Discovery *discovery.Config
-	Auth *auth.Config
-	AccountRPC *warden.ClientConfig
+	Discovery        *discovery.Config
+	Auth             *auth.Config
+	IdentifyRPC      *warden.ClientConfig
 	CertificationRPC *warden.ClientConfig
 }
 
