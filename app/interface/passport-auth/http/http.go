@@ -32,7 +32,6 @@ func route(e *mars.Engine) {
 	{
 		g.POST("/renew", renewToken)
 		g.POST("/logout", logout)
-		g.POST("/close", closeAccount)
 	}
 }
 
