@@ -288,9 +288,8 @@ func (p *Service) Deactive(c context.Context, arg *api.DeactiveReq) (err error) 
 		}
 	}()
 
-	var account *model.Account
 	if govalidator.IsEmail(arg.Identity) {
-		if account, err = p.d.GetAccountByEmail(c, tx, arg.Identity); err != nil {
+		if _, err = p.d.GetAccountByEmail(c, tx, arg.Identity); err != nil {
 			return
 		}
 		var code string
@@ -305,7 +304,7 @@ func (p *Service) Deactive(c context.Context, arg *api.DeactiveReq) (err error) 
 		}
 	} else {
 		mobile := arg.Prefix + arg.Identity
-		if account, err = p.d.GetAccountByMobile(c, tx, mobile); err != nil {
+		if _, err = p.d.GetAccountByMobile(c, tx, mobile); err != nil {
 			return
 		}
 
@@ -321,7 +320,7 @@ func (p *Service) Deactive(c context.Context, arg *api.DeactiveReq) (err error) 
 		}
 	}
 
-	if err = p.d.DeactiveAccount(c, tx, account.ID); err != nil {
+	if err = p.d.DeactiveAccount(c, tx, arg.Aid); err != nil {
 		return
 	}
 
@@ -331,8 +330,8 @@ func (p *Service) Deactive(c context.Context, arg *api.DeactiveReq) (err error) 
 	}
 
 	p.addCache(func() {
-		p.d.DelAccountCache(context.TODO(), account.ID)
-		p.deleteAllToken(context.TODO(), account.ID)
+		p.d.DelAccountCache(context.TODO(), arg.Aid)
+		p.deleteAllToken(context.TODO(), arg.Aid)
 	})
 
 	return

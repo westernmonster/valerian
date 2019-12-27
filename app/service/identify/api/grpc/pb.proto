@@ -156,7 +156,8 @@ message DeactiveReq {
     string Valcode =  1;
     string Identity = 2;
     string Prefix = 3;
-    string IdentityType = 4;
+    int32 IdentityType = 4;
+    int64 Aid = 5;
 }
 
 
