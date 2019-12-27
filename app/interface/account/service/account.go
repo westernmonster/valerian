@@ -10,6 +10,7 @@ import (
 	article "valerian/app/service/article/api"
 	discuss "valerian/app/service/discuss/api"
 	fav "valerian/app/service/fav/api"
+	identify "valerian/app/service/identify/api/grpc"
 	message "valerian/app/service/message/api"
 	recent "valerian/app/service/recent/api"
 	topic "valerian/app/service/topic/api"
@@ -31,6 +32,23 @@ func (p *Service) ForgetPassword(c context.Context, arg *model.ArgForgetPassword
 // ResetPassword 重设密码
 func (p *Service) ResetPassword(c context.Context, arg *model.ArgResetPassword) (err error) {
 	return p.d.ResetPassword(c, arg.Password, arg.SessionID)
+}
+
+// Deactive 注销
+func (p *Service) Deactive(c context.Context, arg *model.ArgDeactiveAccount) (err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+	req := &identify.DeactiveReq{
+		Aid:          aid,
+		IdentityType: arg.IdentityType,
+		Identity:     arg.Identity,
+		Valcode:      arg.Valcode,
+		Prefix:       arg.Prefix,
+	}
+	return p.d.Deactive(c, req)
 }
 
 // UpdateProfile 更新用户资料

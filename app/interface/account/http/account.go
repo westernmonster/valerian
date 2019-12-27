@@ -291,3 +291,29 @@ func accountDiscussions(c *mars.Context) {
 	}
 	c.JSON(srv.GetUserDiscussionsPaged(c, params.Get("cate"), (limit), (offset)))
 }
+
+// @Summary 注销账户
+// @Description 注销账户
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param req body  app.interface.account.model.ArgDeactiveAccount true "请求"
+// @Success 200 "成功"
+// @Failure 400 "验证请求失败"
+// @Failure 500 "服务器端错误"
+// @Router /me/deactive [post]
+func deactiveAccount(c *mars.Context) {
+	arg := new(model.ArgDeactiveAccount)
+	if e := c.Bind(arg); e != nil {
+		return
+	}
+
+	if e := arg.Validate(); e != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
+	}
+
+	c.JSON(nil, srv.Deactive(c, arg))
+}

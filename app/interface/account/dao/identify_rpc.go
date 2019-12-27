@@ -23,3 +23,10 @@ func (p *Dao) ResetPassword(c context.Context, sessionID, password string) (err 
 	}
 	return
 }
+
+func (p *Dao) Deactive(c context.Context, arg *identify.DeactiveReq) (err error) {
+	if _, err = p.identifyRPC.Deactive(c, arg); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.Deactive err(%+v) req(%s)", err, arg))
+	}
+	return
+}
