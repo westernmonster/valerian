@@ -3,6 +3,10 @@ package def
 import fmt "fmt"
 
 func RefreshTokenKey(token string) string {
+	return fmt.Sprintf("rk_%s", token)
+}
+
+func AccessTokenKey(token string) string {
 	return fmt.Sprintf("ak_%s", token)
 }
 
