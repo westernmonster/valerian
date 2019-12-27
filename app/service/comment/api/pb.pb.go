@@ -139,20 +139,17 @@ func (m *Creator) GetIntroduction() string {
 }
 
 type CommentInfo struct {
-	ID         int64    `protobuf:"varint,1,opt,name=ID,proto3" json:"id"`
-	Content    string   `protobuf:"bytes,2,opt,name=Content,proto3" json:"content"`
-	TargetType string   `protobuf:"bytes,3,opt,name=TargetType,proto3" json:"target_type"`
-	OwnerID    int64    `protobuf:"varint,4,opt,name=OwnerID,proto3" json:"owner_id"`
-	ResourceID int64    `protobuf:"varint,5,opt,name=ResourceID,proto3" json:"resource_id"`
-	Featured   bool     `protobuf:"varint,6,opt,name=Featured,proto3" json:"featured"`
-	Deleted    bool     `protobuf:"varint,7,opt,name=Deleted,proto3" json:"deleted"`
-	Creator    *Creator `protobuf:"bytes,8,opt,name=Creator,proto3" json:"creator"`
-	// unix timestamp
-	CreatedAt int64 `protobuf:"varint,9,opt,name=CreatedAt,proto3" json:"created_at"`
-	// unix timestamp
-	UpdatedAt            int64        `protobuf:"varint,10,opt,name=UpdatedAt,proto3" json:"updated_at"`
+	ID                   int64        `protobuf:"varint,1,opt,name=ID,proto3" json:"id"`
+	Content              string       `protobuf:"bytes,2,opt,name=Content,proto3" json:"content"`
+	TargetType           string       `protobuf:"bytes,3,opt,name=TargetType,proto3" json:"target_type"`
+	OwnerID              int64        `protobuf:"varint,4,opt,name=OwnerID,proto3" json:"owner_id"`
+	ResourceID           int64        `protobuf:"varint,5,opt,name=ResourceID,proto3" json:"resource_id"`
+	Featured             bool         `protobuf:"varint,6,opt,name=Featured,proto3" json:"featured"`
+	Deleted              bool         `protobuf:"varint,7,opt,name=Deleted,proto3" json:"deleted"`
+	Creator              *Creator     `protobuf:"bytes,8,opt,name=Creator,proto3" json:"creator"`
+	CreatedAt            int64        `protobuf:"varint,9,opt,name=CreatedAt,proto3" json:"created_at"`
 	Stat                 *CommentStat `protobuf:"bytes,11,opt,name=Stat,proto3" json:"stat"`
-	ReplyTo              int64        `protobuf:"varint,12,opt,name=ReplyTo,proto3" json:"reply_to"`
+	ReplyTo              *Creator     `protobuf:"bytes,12,opt,name=ReplyTo,proto3" json:"reply_to"`
 	OwnerType            string       `protobuf:"bytes,13,opt,name=OwnerType,proto3" json:"owner_type"`
 	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
 	XXX_unrecognized     []byte       `json:"-"`
@@ -255,13 +252,6 @@ func (m *CommentInfo) GetCreatedAt() int64 {
 	return 0
 }
 
-func (m *CommentInfo) GetUpdatedAt() int64 {
-	if m != nil {
-		return m.UpdatedAt
-	}
-	return 0
-}
-
 func (m *CommentInfo) GetStat() *CommentStat {
 	if m != nil {
 		return m.Stat
@@ -269,11 +259,11 @@ func (m *CommentInfo) GetStat() *CommentStat {
 	return nil
 }
 
-func (m *CommentInfo) GetReplyTo() int64 {
+func (m *CommentInfo) GetReplyTo() *Creator {
 	if m != nil {
 		return m.ReplyTo
 	}
-	return 0
+	return nil
 }
 
 func (m *CommentInfo) GetOwnerType() string {
@@ -281,6 +271,234 @@ func (m *CommentInfo) GetOwnerType() string {
 		return m.OwnerType
 	}
 	return ""
+}
+
+type CommentListResp struct {
+	Items                []*CommentInfo `protobuf:"bytes,1,rep,name=Items,proto3" json:"Items,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
+	XXX_unrecognized     []byte         `json:"-"`
+	XXX_sizecache        int32          `json:"-"`
+}
+
+func (m *CommentListResp) Reset()         { *m = CommentListResp{} }
+func (m *CommentListResp) String() string { return proto.CompactTextString(m) }
+func (*CommentListResp) ProtoMessage()    {}
+func (*CommentListResp) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f80abaa17e25ccc8, []int{3}
+}
+func (m *CommentListResp) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *CommentListResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_CommentListResp.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *CommentListResp) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CommentListResp.Merge(m, src)
+}
+func (m *CommentListResp) XXX_Size() int {
+	return m.Size()
+}
+func (m *CommentListResp) XXX_DiscardUnknown() {
+	xxx_messageInfo_CommentListResp.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CommentListResp proto.InternalMessageInfo
+
+func (m *CommentListResp) GetItems() []*CommentInfo {
+	if m != nil {
+		return m.Items
+	}
+	return nil
+}
+
+type AddCommentReq struct {
+	TargetType           string   `protobuf:"bytes,1,opt,name=TargetType,proto3" json:"TargetType,omitempty"`
+	Content              string   `protobuf:"bytes,2,opt,name=Content,proto3" json:"Content,omitempty"`
+	TargetID             int64    `protobuf:"varint,3,opt,name=TargetID,proto3" json:"TargetID,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *AddCommentReq) Reset()         { *m = AddCommentReq{} }
+func (m *AddCommentReq) String() string { return proto.CompactTextString(m) }
+func (*AddCommentReq) ProtoMessage()    {}
+func (*AddCommentReq) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f80abaa17e25ccc8, []int{4}
+}
+func (m *AddCommentReq) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *AddCommentReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_AddCommentReq.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *AddCommentReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AddCommentReq.Merge(m, src)
+}
+func (m *AddCommentReq) XXX_Size() int {
+	return m.Size()
+}
+func (m *AddCommentReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_AddCommentReq.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_AddCommentReq proto.InternalMessageInfo
+
+func (m *AddCommentReq) GetTargetType() string {
+	if m != nil {
+		return m.TargetType
+	}
+	return ""
+}
+
+func (m *AddCommentReq) GetContent() string {
+	if m != nil {
+		return m.Content
+	}
+	return ""
+}
+
+func (m *AddCommentReq) GetTargetID() int64 {
+	if m != nil {
+		return m.TargetID
+	}
+	return 0
+}
+
+type DeleteReq struct {
+	ID                   int64    `protobuf:"varint,1,opt,name=ID,proto3" json:"ID,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *DeleteReq) Reset()         { *m = DeleteReq{} }
+func (m *DeleteReq) String() string { return proto.CompactTextString(m) }
+func (*DeleteReq) ProtoMessage()    {}
+func (*DeleteReq) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f80abaa17e25ccc8, []int{5}
+}
+func (m *DeleteReq) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *DeleteReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_DeleteReq.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *DeleteReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteReq.Merge(m, src)
+}
+func (m *DeleteReq) XXX_Size() int {
+	return m.Size()
+}
+func (m *DeleteReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeleteReq.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DeleteReq proto.InternalMessageInfo
+
+func (m *DeleteReq) GetID() int64 {
+	if m != nil {
+		return m.ID
+	}
+	return 0
+}
+
+type CommentListReq struct {
+	ResourceID           int64    `protobuf:"varint,1,opt,name=ResourceID,proto3" json:"ResourceID,omitempty"`
+	TargetType           string   `protobuf:"bytes,2,opt,name=TargetType,proto3" json:"TargetType,omitempty"`
+	Limit                int32    `protobuf:"varint,3,opt,name=Limit,proto3" json:"Limit,omitempty"`
+	Offset               int32    `protobuf:"varint,4,opt,name=Offset,proto3" json:"Offset,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *CommentListReq) Reset()         { *m = CommentListReq{} }
+func (m *CommentListReq) String() string { return proto.CompactTextString(m) }
+func (*CommentListReq) ProtoMessage()    {}
+func (*CommentListReq) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f80abaa17e25ccc8, []int{6}
+}
+func (m *CommentListReq) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *CommentListReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_CommentListReq.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *CommentListReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CommentListReq.Merge(m, src)
+}
+func (m *CommentListReq) XXX_Size() int {
+	return m.Size()
+}
+func (m *CommentListReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_CommentListReq.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CommentListReq proto.InternalMessageInfo
+
+func (m *CommentListReq) GetResourceID() int64 {
+	if m != nil {
+		return m.ResourceID
+	}
+	return 0
+}
+
+func (m *CommentListReq) GetTargetType() string {
+	if m != nil {
+		return m.TargetType
+	}
+	return ""
+}
+
+func (m *CommentListReq) GetLimit() int32 {
+	if m != nil {
+		return m.Limit
+	}
+	return 0
+}
+
+func (m *CommentListReq) GetOffset() int32 {
+	if m != nil {
+		return m.Offset
+	}
+	return 0
 }
 
 type CommentStat struct {
@@ -296,7 +514,7 @@ func (m *CommentStat) Reset()         { *m = CommentStat{} }
 func (m *CommentStat) String() string { return proto.CompactTextString(m) }
 func (*CommentStat) ProtoMessage()    {}
 func (*CommentStat) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f80abaa17e25ccc8, []int{3}
+	return fileDescriptor_f80abaa17e25ccc8, []int{7}
 }
 func (m *CommentStat) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -358,7 +576,7 @@ func (m *IDReq) Reset()         { *m = IDReq{} }
 func (m *IDReq) String() string { return proto.CompactTextString(m) }
 func (*IDReq) ProtoMessage()    {}
 func (*IDReq) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f80abaa17e25ccc8, []int{4}
+	return fileDescriptor_f80abaa17e25ccc8, []int{8}
 }
 func (m *IDReq) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -405,6 +623,10 @@ func init() {
 	proto.RegisterType((*EmptyStruct)(nil), "service.comment.EmptyStruct")
 	proto.RegisterType((*Creator)(nil), "service.comment.Creator")
 	proto.RegisterType((*CommentInfo)(nil), "service.comment.CommentInfo")
+	proto.RegisterType((*CommentListResp)(nil), "service.comment.CommentListResp")
+	proto.RegisterType((*AddCommentReq)(nil), "service.comment.AddCommentReq")
+	proto.RegisterType((*DeleteReq)(nil), "service.comment.DeleteReq")
+	proto.RegisterType((*CommentListReq)(nil), "service.comment.CommentListReq")
 	proto.RegisterType((*CommentStat)(nil), "service.comment.CommentStat")
 	proto.RegisterType((*IDReq)(nil), "service.comment.IDReq")
 }
@@ -412,48 +634,58 @@ func init() {
 func init() { proto.RegisterFile("pb.proto", fileDescriptor_f80abaa17e25ccc8) }
 
 var fileDescriptor_f80abaa17e25ccc8 = []byte{
-	// 644 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x94, 0x4f, 0x6b, 0xdb, 0x4c,
-	0x10, 0xc6, 0x91, 0xed, 0xd8, 0xf2, 0xda, 0x4e, 0xde, 0xec, 0xe1, 0x45, 0x84, 0x10, 0x19, 0x43,
-	0x8b, 0x0b, 0xa9, 0x03, 0x69, 0x0b, 0xa5, 0x50, 0x4a, 0x6c, 0x37, 0x45, 0xd0, 0x3f, 0x74, 0x93,
-	0x5c, 0x7a, 0x31, 0xb2, 0x34, 0x71, 0x44, 0x6c, 0xad, 0xba, 0x1a, 0xa5, 0xf8, 0x0b, 0xf5, 0xd4,
-	0x0f, 0xd2, 0x63, 0x4f, 0x3d, 0x8a, 0x92, 0xa3, 0x3e, 0x45, 0xd1, 0xac, 0x2c, 0xc7, 0x0d, 0x39,
-	0x59, 0xfb, 0xcc, 0xef, 0x59, 0xcd, 0xf8, 0xd9, 0x15, 0x33, 0xa3, 0xe9, 0x20, 0x52, 0x12, 0x25,
-	0xdf, 0x89, 0x41, 0xdd, 0x04, 0x1e, 0x0c, 0x3c, 0xb9, 0x58, 0x40, 0x88, 0x7b, 0x4f, 0x67, 0x01,
-	0x5e, 0x25, 0xd3, 0x7c, 0x7d, 0x34, 0x93, 0x33, 0x79, 0x44, 0xdc, 0x34, 0xb9, 0xa4, 0x15, 0x2d,
-	0xe8, 0x49, 0xfb, 0x7b, 0x1d, 0xd6, 0x7a, 0xbb, 0x88, 0x70, 0x79, 0x86, 0x2a, 0xf1, 0xb0, 0xf7,
-	0xdd, 0x60, 0x8d, 0x91, 0x02, 0x17, 0xa5, 0xe2, 0xff, 0xb3, 0x8a, 0x33, 0xb6, 0x8c, 0xae, 0xd1,
-	0xaf, 0x0e, 0xeb, 0x59, 0x6a, 0x57, 0x02, 0x5f, 0x54, 0x9c, 0x31, 0x7f, 0xc2, 0xcc, 0x8b, 0x18,
-	0xd4, 0x47, 0x77, 0x01, 0x56, 0xa5, 0x6b, 0xf4, 0x9b, 0xc3, 0x4e, 0x96, 0xda, 0xcd, 0x24, 0x06,
-	0x35, 0x09, 0xdd, 0x05, 0x88, 0xb2, 0xcc, 0x7b, 0xac, 0x7e, 0x72, 0xe3, 0xa2, 0xab, 0xac, 0x2a,
-	0x81, 0x2c, 0x4b, 0xed, 0xba, 0x4b, 0x8a, 0x28, 0x2a, 0xfc, 0x39, 0x6b, 0x3b, 0x21, 0x2a, 0xe9,
-	0x27, 0x1e, 0x06, 0x32, 0xb4, 0x6a, 0x44, 0xfe, 0x97, 0xa5, 0x76, 0x3b, 0xb8, 0xa3, 0x8b, 0x0d,
-	0xaa, 0xf7, 0xbb, 0xc6, 0x5a, 0x23, 0x3d, 0xb2, 0x13, 0x5e, 0xca, 0x07, 0x9b, 0x7d, 0xc4, 0x1a,
-	0x23, 0x19, 0x22, 0x84, 0x58, 0xf4, 0xda, 0xca, 0x52, 0xbb, 0xe1, 0x69, 0x49, 0xac, 0x6a, 0xfc,
-	0x88, 0xb1, 0x73, 0x57, 0xcd, 0x00, 0xcf, 0x97, 0x11, 0x14, 0xcd, 0xee, 0x64, 0xa9, 0xdd, 0x42,
-	0x52, 0x27, 0xb8, 0x8c, 0x40, 0xdc, 0x41, 0xf8, 0x63, 0xd6, 0xf8, 0xf4, 0x2d, 0x04, 0xe5, 0x8c,
-	0xa9, 0xe1, 0xea, 0xb0, 0x9d, 0xa5, 0xb6, 0x29, 0x73, 0x69, 0x12, 0xf8, 0x62, 0x55, 0xcc, 0x37,
-	0x16, 0x10, 0xcb, 0x44, 0x79, 0xe0, 0x8c, 0xad, 0x2d, 0x42, 0x69, 0x63, 0x55, 0xa8, 0x39, 0x7d,
-	0x07, 0xe1, 0x7d, 0x66, 0x9e, 0x82, 0x8b, 0x89, 0x02, 0xdf, 0xaa, 0x77, 0x8d, 0xbe, 0xa9, 0x77,
-	0xbe, 0x2c, 0x34, 0x51, 0x56, 0xf3, 0xd1, 0xc6, 0x30, 0x07, 0x04, 0xdf, 0x6a, 0x10, 0x48, 0xa3,
-	0xf9, 0x5a, 0x12, 0xab, 0x1a, 0x7f, 0x53, 0x26, 0x6a, 0x99, 0x5d, 0xa3, 0xdf, 0x3a, 0xb6, 0x06,
-	0xff, 0x9c, 0x99, 0x41, 0x51, 0x2f, 0xfe, 0x1b, 0xbd, 0x10, 0xe5, 0x39, 0x38, 0x64, 0x4d, 0x7a,
-	0x04, 0xff, 0x04, 0xad, 0x26, 0x4d, 0xb0, 0x9d, 0xa5, 0x36, 0xf3, 0xb4, 0x38, 0x71, 0x51, 0xac,
-	0x81, 0x9c, 0xbe, 0x88, 0xfc, 0x82, 0x66, 0x6b, 0x3a, 0xd1, 0x22, 0xd1, 0x25, 0xc0, 0x5f, 0xb1,
-	0xda, 0x19, 0xba, 0x68, 0xb5, 0xa8, 0xb3, 0xfd, 0xfb, 0x9d, 0xe9, 0xdf, 0x9c, 0x19, 0x9a, 0x59,
-	0x6a, 0xd7, 0x62, 0x74, 0x51, 0x90, 0x27, 0x8f, 0x40, 0x40, 0x34, 0x5f, 0x9e, 0x4b, 0xab, 0xbd,
-	0x8e, 0x40, 0xe5, 0xd2, 0x04, 0xa5, 0x58, 0x15, 0xf3, 0x8e, 0x28, 0x0d, 0x8a, 0xb6, 0x43, 0xd1,
-	0x52, 0x47, 0x3a, 0x2c, 0x4a, 0x76, 0x0d, 0xf4, 0x7e, 0x18, 0xe5, 0xc1, 0xa2, 0xb7, 0x1c, 0xb2,
-	0xe6, 0xfb, 0xe0, 0x1a, 0x46, 0x32, 0x09, 0x91, 0xce, 0xd7, 0x96, 0x76, 0xcf, 0x83, 0x6b, 0x98,
-	0x78, 0xb9, 0x2a, 0xd6, 0x00, 0x7f, 0xc1, 0xda, 0xe3, 0x20, 0x9e, 0x97, 0x86, 0x0a, 0x19, 0x76,
-	0xb3, 0xd4, 0xee, 0xf8, 0x5a, 0x2f, 0x3c, 0x1b, 0x18, 0x7f, 0xc9, 0x3a, 0xa3, 0xab, 0x60, 0xee,
-	0x2b, 0x08, 0xb5, 0xaf, 0x4a, 0x3e, 0x9e, 0xa5, 0xf6, 0xb6, 0x57, 0x14, 0x0a, 0xe3, 0x26, 0xd8,
-	0x7b, 0xcd, 0xb6, 0x9c, 0xb1, 0x80, 0xaf, 0x0f, 0x5e, 0x80, 0x7d, 0xd6, 0xbc, 0x88, 0xe1, 0x83,
-	0x1b, 0x23, 0x28, 0x6a, 0xc7, 0x14, 0x6b, 0xe1, 0xf8, 0x73, 0x7e, 0x3d, 0x68, 0x58, 0x7e, 0xca,
-	0xb6, 0xdf, 0x01, 0x6e, 0xdc, 0xa9, 0x7b, 0x71, 0xd0, 0xab, 0xf6, 0x1e, 0x8c, 0x29, 0x77, 0x0d,
-	0x77, 0x7f, 0xde, 0x1e, 0x18, 0xbf, 0x6e, 0x0f, 0x8c, 0x3f, 0xb7, 0x07, 0xc6, 0x97, 0xaa, 0x1b,
-	0x05, 0xd3, 0x3a, 0x7d, 0x6b, 0x9e, 0xfd, 0x0d, 0x00, 0x00, 0xff, 0xff, 0x29, 0x50, 0x4c, 0x9a,
-	0xb7, 0x04, 0x00, 0x00,
+	// 814 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x55, 0xcd, 0x8e, 0xe3, 0x44,
+	0x10, 0x96, 0x93, 0x49, 0xe2, 0x54, 0x7e, 0x66, 0xb7, 0x85, 0x56, 0x56, 0x58, 0xc5, 0x91, 0x25,
+	0x50, 0x90, 0x96, 0x19, 0x69, 0x00, 0x09, 0x21, 0x21, 0x98, 0x24, 0xbb, 0xc8, 0x68, 0x60, 0x51,
+	0xef, 0xcc, 0x85, 0x4b, 0xe4, 0xb1, 0x2b, 0x59, 0x6b, 0x13, 0xdb, 0xb4, 0xdb, 0x8b, 0xe6, 0xc2,
+	0xe3, 0x70, 0xe2, 0x1d, 0x90, 0x38, 0x71, 0xe4, 0x09, 0x2c, 0x34, 0x47, 0x3f, 0x05, 0x72, 0xb5,
+	0x63, 0xc7, 0x1b, 0x26, 0x7b, 0x8a, 0xeb, 0xab, 0xaf, 0xaa, 0xbf, 0xea, 0xfa, 0x62, 0x83, 0x1e,
+	0xdd, 0x9e, 0x45, 0x22, 0x94, 0x21, 0x3b, 0x8d, 0x51, 0xbc, 0xf5, 0x5d, 0x3c, 0x73, 0xc3, 0xed,
+	0x16, 0x03, 0x39, 0xfa, 0x74, 0xed, 0xcb, 0xd7, 0xc9, 0x6d, 0x1e, 0x9f, 0xaf, 0xc3, 0x75, 0x78,
+	0x4e, 0xbc, 0xdb, 0x64, 0x45, 0x11, 0x05, 0xf4, 0xa4, 0xea, 0xad, 0x01, 0xf4, 0x9e, 0x6f, 0x23,
+	0x79, 0xf7, 0x4a, 0x8a, 0xc4, 0x95, 0xd6, 0xef, 0x1a, 0x74, 0xe6, 0x02, 0x1d, 0x19, 0x0a, 0xf6,
+	0x04, 0x1a, 0xf6, 0xc2, 0xd0, 0x26, 0xda, 0xb4, 0x39, 0x6b, 0x67, 0xa9, 0xd9, 0xf0, 0x3d, 0xde,
+	0xb0, 0x17, 0xec, 0x13, 0xd0, 0x6f, 0x62, 0x14, 0x3f, 0x3a, 0x5b, 0x34, 0x1a, 0x13, 0x6d, 0xda,
+	0x9d, 0x0d, 0xb2, 0xd4, 0xec, 0x26, 0x31, 0x8a, 0x65, 0xe0, 0x6c, 0x91, 0x97, 0x69, 0x66, 0x41,
+	0xfb, 0xf2, 0xad, 0x23, 0x1d, 0x61, 0x34, 0x89, 0x08, 0x59, 0x6a, 0xb6, 0x1d, 0x42, 0x78, 0x91,
+	0x61, 0x9f, 0x43, 0xdf, 0x0e, 0xa4, 0x08, 0xbd, 0xc4, 0x95, 0x7e, 0x18, 0x18, 0x27, 0xc4, 0x7c,
+	0x94, 0xa5, 0x66, 0xdf, 0xdf, 0xc3, 0x79, 0x8d, 0x65, 0xfd, 0x75, 0x02, 0xbd, 0xb9, 0x1a, 0xd9,
+	0x0e, 0x56, 0xe1, 0x83, 0x62, 0x3f, 0x82, 0xce, 0x3c, 0x0c, 0x24, 0x06, 0xb2, 0xd0, 0xda, 0xcb,
+	0x52, 0xb3, 0xe3, 0x2a, 0x88, 0xef, 0x72, 0xec, 0x1c, 0xe0, 0xda, 0x11, 0x6b, 0x94, 0xd7, 0x77,
+	0x11, 0x16, 0x62, 0x4f, 0xb3, 0xd4, 0xec, 0x49, 0x42, 0x97, 0xf2, 0x2e, 0x42, 0xbe, 0x47, 0x61,
+	0x1f, 0x43, 0xe7, 0xe5, 0xaf, 0x01, 0x0a, 0x7b, 0x41, 0x82, 0x9b, 0xb3, 0x7e, 0x96, 0x9a, 0x7a,
+	0x98, 0x43, 0x4b, 0xdf, 0xe3, 0xbb, 0x64, 0xde, 0x98, 0x63, 0x1c, 0x26, 0xc2, 0x45, 0x7b, 0x61,
+	0xb4, 0x88, 0x4a, 0x8d, 0x45, 0x81, 0xe6, 0xec, 0x3d, 0x0a, 0x9b, 0x82, 0xfe, 0x02, 0x1d, 0x99,
+	0x08, 0xf4, 0x8c, 0xf6, 0x44, 0x9b, 0xea, 0xaa, 0xf3, 0xaa, 0xc0, 0x78, 0x99, 0xcd, 0x47, 0x5b,
+	0xe0, 0x06, 0x25, 0x7a, 0x46, 0x87, 0x88, 0x34, 0x9a, 0xa7, 0x20, 0xbe, 0xcb, 0xb1, 0x6f, 0xca,
+	0x8d, 0x1a, 0xfa, 0x44, 0x9b, 0xf6, 0x2e, 0x8c, 0xb3, 0x77, 0x3c, 0x73, 0x56, 0xe4, 0x8b, 0xbb,
+	0x51, 0x01, 0x2f, 0x7d, 0xf0, 0x0c, 0xba, 0xf4, 0x88, 0xde, 0xa5, 0x34, 0xba, 0x34, 0xc1, 0x30,
+	0x4b, 0x4d, 0x70, 0x15, 0xb8, 0x74, 0x24, 0xaf, 0x08, 0xec, 0x2b, 0x38, 0x79, 0x25, 0x1d, 0x69,
+	0xf4, 0xe8, 0xac, 0xa7, 0x87, 0x67, 0xa9, 0xdf, 0x9c, 0x33, 0xd3, 0xb3, 0xd4, 0x3c, 0x89, 0xa5,
+	0x23, 0x39, 0xd5, 0xb0, 0x6f, 0xa1, 0xc3, 0x31, 0xda, 0xdc, 0x5d, 0x87, 0x46, 0xff, 0x3d, 0x52,
+	0xe9, 0x52, 0x44, 0x4e, 0x5e, 0xca, 0x90, 0xef, 0xca, 0x72, 0xad, 0x74, 0xf3, 0xb4, 0xc6, 0x01,
+	0xad, 0x91, 0xb4, 0xaa, 0xc5, 0xd0, 0x16, 0x2b, 0x82, 0xf5, 0x1c, 0x4e, 0x0b, 0x39, 0x57, 0x7e,
+	0x2c, 0x39, 0xc6, 0x11, 0xbb, 0x80, 0x96, 0x2d, 0x71, 0x1b, 0x1b, 0xda, 0xa4, 0x79, 0x4c, 0x7f,
+	0x6e, 0x3a, 0xae, 0xa8, 0x16, 0xc2, 0xe0, 0xd2, 0xf3, 0x8a, 0x04, 0xc7, 0x5f, 0xd8, 0xb8, 0xe6,
+	0xa6, 0xdc, 0x94, 0xdd, 0x9a, 0x79, 0x8c, 0x77, 0x4c, 0x59, 0xf9, 0x70, 0x04, 0xba, 0xe2, 0xd9,
+	0x0b, 0x72, 0x61, 0x93, 0x97, 0xb1, 0xf5, 0x21, 0x74, 0xd5, 0x4e, 0xf3, 0x23, 0x86, 0x95, 0xdf,
+	0x73, 0x9f, 0x5b, 0xbf, 0xc1, 0xb0, 0x36, 0x0a, 0x89, 0xd8, 0x73, 0x9e, 0x62, 0xee, 0x1b, 0xad,
+	0x2e, 0xb2, 0x71, 0x20, 0xf2, 0x03, 0x68, 0x5d, 0xf9, 0x5b, 0x5f, 0x92, 0x8e, 0x16, 0x57, 0x01,
+	0x7b, 0x02, 0xed, 0x97, 0xab, 0x55, 0x8c, 0x92, 0x6c, 0xdf, 0xe2, 0x45, 0x64, 0xfd, 0xa1, 0x95,
+	0xff, 0x47, 0x5a, 0xe5, 0x33, 0xe8, 0x5e, 0xf9, 0x6f, 0x70, 0x1e, 0x26, 0x81, 0xa4, 0xc3, 0x5b,
+	0x6a, 0x11, 0x1b, 0xff, 0x0d, 0x2e, 0xdd, 0x1c, 0xe5, 0x15, 0x81, 0x7d, 0x01, 0xfd, 0x85, 0x1f,
+	0x6f, 0xca, 0x82, 0x06, 0x15, 0x3c, 0xce, 0x52, 0x73, 0xe0, 0x29, 0xbc, 0xa8, 0xa9, 0xd1, 0xd8,
+	0x97, 0x30, 0x98, 0xbf, 0xf6, 0x37, 0x9e, 0xc0, 0x40, 0xd5, 0x91, 0xd4, 0x19, 0xcb, 0x52, 0x73,
+	0xe8, 0x16, 0x89, 0xa2, 0xb0, 0x4e, 0xb4, 0xbe, 0x86, 0x96, 0xbd, 0xc8, 0x6f, 0xe9, 0xa1, 0xf7,
+	0xc6, 0x53, 0xe8, 0xde, 0xc4, 0xf8, 0x83, 0x13, 0x4b, 0x14, 0x24, 0x47, 0xe7, 0x15, 0x70, 0xf1,
+	0x67, 0x23, 0xdf, 0x20, 0x4d, 0xcb, 0x5e, 0xc0, 0xf0, 0x3b, 0x94, 0xb5, 0x77, 0xd1, 0x81, 0x69,
+	0xe8, 0xac, 0xd1, 0x51, 0x33, 0xb1, 0x1b, 0x78, 0x54, 0xf5, 0x89, 0x7f, 0x72, 0xd6, 0xe8, 0x31,
+	0xf3, 0xa1, 0x8a, 0x62, 0xc9, 0xa3, 0xc9, 0x71, 0x42, 0x1c, 0xb1, 0xef, 0x01, 0x2a, 0x73, 0xb2,
+	0xf1, 0x01, 0xbf, 0xe6, 0xdc, 0xff, 0x91, 0xb8, 0xf7, 0x75, 0x60, 0x36, 0x0c, 0x94, 0x03, 0x77,
+	0xed, 0x46, 0x07, 0xf4, 0xd2, 0xa1, 0xc7, 0x5b, 0xcd, 0x1e, 0xff, 0x7d, 0x3f, 0xd6, 0xfe, 0xb9,
+	0x1f, 0x6b, 0xff, 0xde, 0x8f, 0xb5, 0x9f, 0x9b, 0x4e, 0xe4, 0xdf, 0xb6, 0xe9, 0x8b, 0xf4, 0xd9,
+	0x7f, 0x01, 0x00, 0x00, 0xff, 0xff, 0xb9, 0xc9, 0x0b, 0x7b, 0xdd, 0x06, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -469,6 +701,9 @@ const _ = grpc.SupportPackageIsVersion4
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type CommentClient interface {
 	GetCommentInfo(ctx context.Context, in *IDReq, opts ...grpc.CallOption) (*CommentInfo, error)
+	GetCommentsPaged(ctx context.Context, in *CommentListReq, opts ...grpc.CallOption) (*CommentListResp, error)
+	AddComment(ctx context.Context, in *AddCommentReq, opts ...grpc.CallOption) (*EmptyStruct, error)
+	DeleteComment(ctx context.Context, in *DeleteReq, opts ...grpc.CallOption) (*EmptyStruct, error)
 }
 
 type commentClient struct {
@@ -488,9 +723,39 @@ func (c *commentClient) GetCommentInfo(ctx context.Context, in *IDReq, opts ...g
 	return out, nil
 }
 
+func (c *commentClient) GetCommentsPaged(ctx context.Context, in *CommentListReq, opts ...grpc.CallOption) (*CommentListResp, error) {
+	out := new(CommentListResp)
+	err := c.cc.Invoke(ctx, "/service.comment.Comment/GetCommentsPaged", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *commentClient) AddComment(ctx context.Context, in *AddCommentReq, opts ...grpc.CallOption) (*EmptyStruct, error) {
+	out := new(EmptyStruct)
+	err := c.cc.Invoke(ctx, "/service.comment.Comment/AddComment", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *commentClient) DeleteComment(ctx context.Context, in *DeleteReq, opts ...grpc.CallOption) (*EmptyStruct, error) {
+	out := new(EmptyStruct)
+	err := c.cc.Invoke(ctx, "/service.comment.Comment/DeleteComment", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CommentServer is the server API for Comment service.
 type CommentServer interface {
 	GetCommentInfo(context.Context, *IDReq) (*CommentInfo, error)
+	GetCommentsPaged(context.Context, *CommentListReq) (*CommentListResp, error)
+	AddComment(context.Context, *AddCommentReq) (*EmptyStruct, error)
+	DeleteComment(context.Context, *DeleteReq) (*EmptyStruct, error)
 }
 
 // UnimplementedCommentServer can be embedded to have forward compatible implementations.
@@ -499,6 +764,15 @@ type UnimplementedCommentServer struct {
 
 func (*UnimplementedCommentServer) GetCommentInfo(ctx context.Context, req *IDReq) (*CommentInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCommentInfo not implemented")
+}
+func (*UnimplementedCommentServer) GetCommentsPaged(ctx context.Context, req *CommentListReq) (*CommentListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCommentsPaged not implemented")
+}
+func (*UnimplementedCommentServer) AddComment(ctx context.Context, req *AddCommentReq) (*EmptyStruct, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddComment not implemented")
+}
+func (*UnimplementedCommentServer) DeleteComment(ctx context.Context, req *DeleteReq) (*EmptyStruct, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteComment not implemented")
 }
 
 func RegisterCommentServer(s *grpc.Server, srv CommentServer) {
@@ -523,6 +797,60 @@ func _Comment_GetCommentInfo_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Comment_GetCommentsPaged_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CommentListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommentServer).GetCommentsPaged(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/service.comment.Comment/GetCommentsPaged",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommentServer).GetCommentsPaged(ctx, req.(*CommentListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Comment_AddComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddCommentReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommentServer).AddComment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/service.comment.Comment/AddComment",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommentServer).AddComment(ctx, req.(*AddCommentReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Comment_DeleteComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommentServer).DeleteComment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/service.comment.Comment/DeleteComment",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommentServer).DeleteComment(ctx, req.(*DeleteReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Comment_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "service.comment.Comment",
 	HandlerType: (*CommentServer)(nil),
@@ -530,6 +858,18 @@ var _Comment_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetCommentInfo",
 			Handler:    _Comment_GetCommentInfo_Handler,
+		},
+		{
+			MethodName: "GetCommentsPaged",
+			Handler:    _Comment_GetCommentsPaged_Handler,
+		},
+		{
+			MethodName: "AddComment",
+			Handler:    _Comment_AddComment_Handler,
+		},
+		{
+			MethodName: "DeleteComment",
+			Handler:    _Comment_DeleteComment_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -647,10 +987,17 @@ func (m *CommentInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x6a
 	}
-	if m.ReplyTo != 0 {
-		i = encodeVarintPb(dAtA, i, uint64(m.ReplyTo))
+	if m.ReplyTo != nil {
+		{
+			size, err := m.ReplyTo.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintPb(dAtA, i, uint64(size))
+		}
 		i--
-		dAtA[i] = 0x60
+		dAtA[i] = 0x62
 	}
 	if m.Stat != nil {
 		{
@@ -663,11 +1010,6 @@ func (m *CommentInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		}
 		i--
 		dAtA[i] = 0x5a
-	}
-	if m.UpdatedAt != 0 {
-		i = encodeVarintPb(dAtA, i, uint64(m.UpdatedAt))
-		i--
-		dAtA[i] = 0x50
 	}
 	if m.CreatedAt != 0 {
 		i = encodeVarintPb(dAtA, i, uint64(m.CreatedAt))
@@ -732,6 +1074,174 @@ func (m *CommentInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	}
 	if m.ID != 0 {
 		i = encodeVarintPb(dAtA, i, uint64(m.ID))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *CommentListResp) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *CommentListResp) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *CommentListResp) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.Items) > 0 {
+		for iNdEx := len(m.Items) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Items[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintPb(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *AddCommentReq) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *AddCommentReq) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *AddCommentReq) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.TargetID != 0 {
+		i = encodeVarintPb(dAtA, i, uint64(m.TargetID))
+		i--
+		dAtA[i] = 0x18
+	}
+	if len(m.Content) > 0 {
+		i -= len(m.Content)
+		copy(dAtA[i:], m.Content)
+		i = encodeVarintPb(dAtA, i, uint64(len(m.Content)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.TargetType) > 0 {
+		i -= len(m.TargetType)
+		copy(dAtA[i:], m.TargetType)
+		i = encodeVarintPb(dAtA, i, uint64(len(m.TargetType)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *DeleteReq) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *DeleteReq) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DeleteReq) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.ID != 0 {
+		i = encodeVarintPb(dAtA, i, uint64(m.ID))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *CommentListReq) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *CommentListReq) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *CommentListReq) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Offset != 0 {
+		i = encodeVarintPb(dAtA, i, uint64(m.Offset))
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.Limit != 0 {
+		i = encodeVarintPb(dAtA, i, uint64(m.Limit))
+		i--
+		dAtA[i] = 0x18
+	}
+	if len(m.TargetType) > 0 {
+		i -= len(m.TargetType)
+		copy(dAtA[i:], m.TargetType)
+		i = encodeVarintPb(dAtA, i, uint64(len(m.TargetType)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.ResourceID != 0 {
+		i = encodeVarintPb(dAtA, i, uint64(m.ResourceID))
 		i--
 		dAtA[i] = 0x8
 	}
@@ -908,19 +1418,98 @@ func (m *CommentInfo) Size() (n int) {
 	if m.CreatedAt != 0 {
 		n += 1 + sovPb(uint64(m.CreatedAt))
 	}
-	if m.UpdatedAt != 0 {
-		n += 1 + sovPb(uint64(m.UpdatedAt))
-	}
 	if m.Stat != nil {
 		l = m.Stat.Size()
 		n += 1 + l + sovPb(uint64(l))
 	}
-	if m.ReplyTo != 0 {
-		n += 1 + sovPb(uint64(m.ReplyTo))
+	if m.ReplyTo != nil {
+		l = m.ReplyTo.Size()
+		n += 1 + l + sovPb(uint64(l))
 	}
 	l = len(m.OwnerType)
 	if l > 0 {
 		n += 1 + l + sovPb(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *CommentListResp) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Items) > 0 {
+		for _, e := range m.Items {
+			l = e.Size()
+			n += 1 + l + sovPb(uint64(l))
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *AddCommentReq) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.TargetType)
+	if l > 0 {
+		n += 1 + l + sovPb(uint64(l))
+	}
+	l = len(m.Content)
+	if l > 0 {
+		n += 1 + l + sovPb(uint64(l))
+	}
+	if m.TargetID != 0 {
+		n += 1 + sovPb(uint64(m.TargetID))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *DeleteReq) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.ID != 0 {
+		n += 1 + sovPb(uint64(m.ID))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *CommentListReq) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.ResourceID != 0 {
+		n += 1 + sovPb(uint64(m.ResourceID))
+	}
+	l = len(m.TargetType)
+	if l > 0 {
+		n += 1 + l + sovPb(uint64(l))
+	}
+	if m.Limit != 0 {
+		n += 1 + sovPb(uint64(m.Limit))
+	}
+	if m.Offset != 0 {
+		n += 1 + sovPb(uint64(m.Offset))
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
@@ -1441,25 +2030,6 @@ func (m *CommentInfo) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-		case 10:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field UpdatedAt", wireType)
-			}
-			m.UpdatedAt = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowPb
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.UpdatedAt |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
 		case 11:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Stat", wireType)
@@ -1497,10 +2067,10 @@ func (m *CommentInfo) Unmarshal(dAtA []byte) error {
 			}
 			iNdEx = postIndex
 		case 12:
-			if wireType != 0 {
+			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field ReplyTo", wireType)
 			}
-			m.ReplyTo = 0
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowPb
@@ -1510,11 +2080,28 @@ func (m *CommentInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.ReplyTo |= int64(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			if msglen < 0 {
+				return ErrInvalidLengthPb
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthPb
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.ReplyTo == nil {
+				m.ReplyTo = &Creator{}
+			}
+			if err := m.ReplyTo.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		case 13:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field OwnerType", wireType)
@@ -1547,6 +2134,447 @@ func (m *CommentInfo) Unmarshal(dAtA []byte) error {
 			}
 			m.OwnerType = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipPb(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *CommentListResp) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowPb
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: CommentListResp: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: CommentListResp: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Items", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthPb
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthPb
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Items = append(m.Items, &CommentInfo{})
+			if err := m.Items[len(m.Items)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipPb(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *AddCommentReq) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowPb
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: AddCommentReq: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: AddCommentReq: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TargetType", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPb
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPb
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.TargetType = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Content", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPb
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPb
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Content = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TargetID", wireType)
+			}
+			m.TargetID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.TargetID |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipPb(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *DeleteReq) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowPb
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: DeleteReq: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: DeleteReq: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ID", wireType)
+			}
+			m.ID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ID |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipPb(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *CommentListReq) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowPb
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: CommentListReq: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: CommentListReq: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ResourceID", wireType)
+			}
+			m.ResourceID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ResourceID |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TargetType", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPb
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPb
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.TargetType = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Limit", wireType)
+			}
+			m.Limit = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Limit |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Offset", wireType)
+			}
+			m.Offset = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Offset |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipPb(dAtA[iNdEx:])

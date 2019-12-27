@@ -36,18 +36,36 @@ message CommentInfo {
 
     Creator  Creator  = 8 [(gogoproto.jsontag) = "creator"];
 
-
-    // unix timestamp
     int64 CreatedAt = 9 [(gogoproto.jsontag) = "created_at"];
-    // unix timestamp
-    int64 UpdatedAt = 10 [(gogoproto.jsontag) = "updated_at"];
 
     CommentStat  Stat = 11 [(gogoproto.jsontag) = "stat"];
 
-    int64  ReplyTo = 12 [(gogoproto.jsontag) = "reply_to"] ;
+    Creator  ReplyTo = 12 [(gogoproto.jsontag) = "reply_to"] ;
 
     string OwnerType = 13 [(gogoproto.jsontag) = "owner_type"];
 }
+
+message CommentListResp {
+    repeated CommentInfo Items = 1;
+}
+
+message AddCommentReq {
+    string TargetType  = 1;
+    string Content  = 2;
+    int64 TargetID  = 3;
+}
+
+message DeleteReq {
+    int64 ID  = 1;
+}
+
+message CommentListReq {
+    int64 ResourceID = 1;
+    string TargetType = 2;
+    int32 Limit = 3;
+    int32 Offset = 4;
+}
+
 
 message CommentStat {
     int32 LikeCount = 1 [(gogoproto.jsontag) = "like_count"];
@@ -63,6 +81,9 @@ message IDReq {
 
 service Comment {
     rpc GetCommentInfo(IDReq) returns (CommentInfo);
+    rpc GetCommentsPaged(CommentListReq) returns (CommentListResp);
+    rpc AddComment(AddCommentReq) returns (EmptyStruct);
+    rpc DeleteComment(DeleteReq) returns (EmptyStruct);
 }
 
 
