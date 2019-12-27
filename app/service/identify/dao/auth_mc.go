@@ -102,8 +102,23 @@ func (p *Dao) RefreshTokenCache(c context.Context, sd string) (item *model.Refre
 	return
 }
 
+func (p *Dao) DelRefreshTokenCache(c context.Context, token string) (err error) {
+	key := def.RefreshTokenKey(token)
+	conn := p.authMC.Get(c)
+	defer conn.Close()
+	if err = conn.Delete(key); err != nil {
+		if err == memcache.ErrNotFound {
+			err = nil
+			return
+		}
+		log.For(c).Error(fmt.Sprintf("conn.Delete(%s) error(%v)", key, err))
+		return
+	}
+	return
+}
+
 func (p *Dao) SetAccessTokenCache(c context.Context, m *model.AccessToken) (err error) {
-	key := def.RefreshTokenKey(m.Token)
+	key := def.AccessTokenKey(m.Token)
 	conn := p.authMC.Get(c)
 	defer conn.Close()
 
@@ -120,7 +135,7 @@ func (p *Dao) SetAccessTokenCache(c context.Context, m *model.AccessToken) (err 
 }
 
 func (p *Dao) AccessTokenCache(c context.Context, token string) (res *model.AccessToken, err error) {
-	key := def.RefreshTokenKey(token)
+	key := def.AccessTokenKey(token)
 	conn := p.authMC.Get(c)
 	defer conn.Close()
 	var item *memcache.Item
@@ -140,7 +155,7 @@ func (p *Dao) AccessTokenCache(c context.Context, token string) (res *model.Acce
 }
 
 func (p *Dao) DelAccessTokenCache(c context.Context, token string) (err error) {
-	key := def.RefreshTokenKey(token)
+	key := def.AccessTokenKey(token)
 	conn := p.authMC.Get(c)
 	defer conn.Close()
 	if err = conn.Delete(key); err != nil {

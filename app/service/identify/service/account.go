@@ -175,22 +175,165 @@ func (p *Service) ResetPassword(c context.Context, arg *api.ResetPasswordReq) (e
 	}
 
 	p.addCache(func() {
-		// TODO: Clear this users's AccessToken Cached && Refresh Token Cache
 		p.d.DelAccountCache(context.TODO(), aid)
 		p.d.DelResetPasswordCache(context.TODO(), arg.SessionID)
+		p.deleteAllToken(context.TODO(), aid)
+	})
+
+	return
+}
+
+// SetPassword 变更密码
+func (p *Service) SetPassword(c context.Context, arg *api.SetPasswordReq) (err error) {
+	var acc *model.Account
+	if acc, err = p.getAccountByID(c, p.d.DB(), arg.Aid); err != nil {
+		return
+	}
+
+	passwordHash, err := hashPassword(arg.Password, acc.Salt)
+	if err != nil {
+		return
+	}
+
+	if err = p.d.SetPassword(c, p.d.DB(), passwordHash, acc.Salt, arg.Aid); err != nil {
+		return
+	}
+
+	p.addCache(func() {
+		p.d.DelAccountCache(context.TODO(), arg.Aid)
+		p.deleteAllToken(context.TODO(), arg.Aid)
 	})
 
 	return
 }
 
 // AccountLock 锁定用户
-func (p *Service) AccountLock(ctx context.Context, accountID int64) (err error) {
-	err = p.d.AccountSetLock(ctx, p.d.DB(), accountID, true)
+func (p *Service) AccountLock(c context.Context, req *api.LockReq) (err error) {
+	var tx sqalx.Node
+	if tx, err = p.d.DB().Beginx(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		return
+	}
+
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+			}
+			return
+		}
+	}()
+
+	if err = p.checkSystemAdmin(c, tx, req.Aid); err != nil {
+		return
+	}
+
+	if err = p.d.AccountSetLock(c, tx, req.TargetAccountID, true); err != nil {
+		return
+	}
+
+	if err = tx.Commit(); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		return
+	}
 	return
 }
 
 // AccountLock 解锁用户
-func (p *Service) AccountUnlock(ctx context.Context, accountID int64) (err error) {
-	err = p.d.AccountSetLock(ctx, p.d.DB(), accountID, false)
+func (p *Service) AccountUnlock(c context.Context, req *api.LockReq) (err error) {
+	var tx sqalx.Node
+	if tx, err = p.d.DB().Beginx(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		return
+	}
+
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+			}
+			return
+		}
+	}()
+
+	if err = p.checkSystemAdmin(c, tx, req.Aid); err != nil {
+		return
+	}
+
+	if err = p.d.AccountSetLock(c, tx, req.TargetAccountID, false); err != nil {
+		return
+	}
+
+	if err = tx.Commit(); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		return
+	}
+	return
+}
+
+// Deactive 注销用户
+func (p *Service) Deactive(c context.Context, arg *api.DeactiveReq) (err error) {
+	var tx sqalx.Node
+	if tx, err = p.d.DB().Beginx(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		return
+	}
+
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+			}
+			return
+		}
+	}()
+
+	var account *model.Account
+	if govalidator.IsEmail(arg.Identity) {
+		if account, err = p.d.GetAccountByEmail(c, tx, arg.Identity); err != nil {
+			return
+		}
+		var code string
+		if code, err = p.d.EmailValcodeCache(c, model.ValcodeDeactive, arg.Identity); err != nil {
+			return
+		} else if code == "" {
+			err = ecode.ValcodeExpires
+			return
+		} else if code != arg.Valcode {
+			err = ecode.ValcodeWrong
+			return
+		}
+	} else {
+		mobile := arg.Prefix + arg.Identity
+		if account, err = p.d.GetAccountByMobile(c, tx, mobile); err != nil {
+			return
+		}
+
+		var code string
+		if code, err = p.d.MobileValcodeCache(c, model.ValcodeDeactive, mobile); err != nil {
+			return
+		} else if code == "" {
+			err = ecode.ValcodeExpires
+			return
+		} else if code != arg.Valcode {
+			err = ecode.ValcodeWrong
+			return
+		}
+	}
+
+	if err = p.d.DeactiveAccount(c, tx, account.ID); err != nil {
+		return
+	}
+
+	if err = tx.Commit(); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		return
+	}
+
+	p.addCache(func() {
+		p.d.DelAccountCache(context.TODO(), account.ID)
+		p.deleteAllToken(context.TODO(), account.ID)
+	})
+
 	return
 }

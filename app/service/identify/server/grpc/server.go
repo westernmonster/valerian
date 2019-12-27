@@ -118,16 +118,32 @@ func (s *server) ResetPassword(ctx context.Context, req *api.ResetPasswordReq) (
 	return &api.EmptyStruct{}, nil
 }
 
-func (s *server) AccountLock(ctx context.Context, req *api.AidReq) (*api.EmptyStruct, error) {
-	err := s.svr.AccountLock(ctx, req.Aid)
+func (s *server) AccountLock(ctx context.Context, req *api.LockReq) (*api.EmptyStruct, error) {
+	err := s.svr.AccountLock(ctx, req)
 	if err != nil {
 		return nil, err
 	}
 	return &api.EmptyStruct{}, nil
 }
 
-func (s *server) AccountUnlock(ctx context.Context, req *api.AidReq) (*api.EmptyStruct, error) {
-	err := s.svr.AccountUnlock(ctx, req.Aid)
+func (s *server) AccountUnlock(ctx context.Context, req *api.LockReq) (*api.EmptyStruct, error) {
+	err := s.svr.AccountUnlock(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return &api.EmptyStruct{}, nil
+}
+
+func (s *server) Deactive(ctx context.Context, req *api.DeactiveReq) (*api.EmptyStruct, error) {
+	err := s.svr.Deactive(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return &api.EmptyStruct{}, nil
+}
+
+func (s *server) SetPassword(ctx context.Context, req *api.SetPasswordReq) (*api.EmptyStruct, error) {
+	err := s.svr.SetPassword(ctx, req)
 	if err != nil {
 		return nil, err
 	}
