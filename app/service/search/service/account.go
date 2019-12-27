@@ -79,6 +79,15 @@ func (p *Service) onAccountUpdated(m *stan.Msg) {
 		m.Ack()
 	}
 
+	if v.Deactive {
+		if err = p.d.DelESAccount(c, info.AccountID); err != nil {
+			return
+		}
+
+		m.Ack()
+		return
+	}
+
 	item := &model.ESAccount{
 		ID:           v.ID,
 		Mobile:       &v.Mobile,
