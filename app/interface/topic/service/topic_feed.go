@@ -97,6 +97,8 @@ func (p *Service) GetTopicFeedPaged(c context.Context, topicID int64, limit, off
 			}
 
 			item.Target.Article = p.FromArticle(article)
+			item.Target.Article.ChangeDesc = ""
+			break
 		case model.TargetTypeArticleHistory:
 			var h *article.ArticleHistoryResp
 			if h, err = p.d.GetArticleHistory(c, v.TargetID); err != nil {
