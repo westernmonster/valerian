@@ -168,6 +168,30 @@ func (p *Service) GetFeedPaged(c context.Context, limit, offset int) (resp *mode
 			}
 
 			item.Target.Article = p.FromArticle(article)
+			item.Target.Article.ChangeDesc = ""
+			break
+		case model.TargetTypeArticleHistory:
+			var h *article.ArticleHistoryResp
+			if h, err = p.d.GetArticleHistory(c, v.TargetID); err != nil {
+				if ecode.IsNotExistEcode(err) {
+					item.Deleted = true
+					break
+				}
+				return
+			}
+
+			var article *article.ArticleInfo
+			if article, err = p.d.GetArticle(c, h.ArticleID); err != nil {
+				if ecode.IsNotExistEcode(err) {
+					item.Deleted = true
+					break
+				}
+				return
+			}
+
+			item.Target.Article = p.FromArticle(article)
+			item.Target.Article.ChangeDesc = h.ChangeDesc
+
 			break
 		case model.TargetTypeRevise:
 			var revise *article.ReviseInfo
