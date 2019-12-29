@@ -8,5 +8,5 @@ type DiscussCategoryResp struct {
 	// 名称
 	Name string `json:"name"`
 	// 顺序
-	Seq int `json:"seq"`
+	Seq int32 `json:"seq"`
 }

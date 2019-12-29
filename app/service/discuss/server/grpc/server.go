@@ -3,7 +3,6 @@ package server
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	"valerian/app/service/discuss/api"
 	"valerian/app/service/discuss/service"
@@ -11,7 +10,6 @@ import (
 	"valerian/library/log"
 	"valerian/library/net/metadata"
 	"valerian/library/net/rpc/warden"
-	"valerian/library/xstr"
 
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -65,82 +63,9 @@ func (s *server) GetDiscussionStat(ctx context.Context, req *api.IDReq) (*api.Di
 func (s *server) GetDiscussionInfo(ctx context.Context, req *api.IDReq) (*api.DiscussionInfo, error) {
 	if req.UseMaster {
 		ctx = sqalx.NewContext(ctx, true)
-		defer func() {
-			ctx = sqalx.NewContext(ctx, false)
-		}()
-	}
-	v, imgs, err := s.svr.GetDiscussion(ctx, req.ID)
-	if err != nil {
-		return nil, err
 	}
 
-	stat, err := s.svr.GetDiscussionStat(ctx, req.ID)
-	if err != nil {
-		return nil, err
-	}
-
-	m, err := s.svr.GetAccountBaseInfo(ctx, v.CreatedBy)
-	if err != nil {
-		return nil, err
-	}
-
-	resp := &api.DiscussionInfo{
-		ID:         v.ID,
-		TopicID:    v.TopicID,
-		CategoryID: v.CategoryID,
-		// CreatedBy:   v.CreatedBy,
-		Excerpt:   xstr.Excerpt(v.ContentText),
-		CreatedAt: v.CreatedAt,
-		UpdatedAt: v.UpdatedAt,
-		ImageUrls: imgs,
-		Title:     v.Title,
-	}
-
-	inc := includeParam(req.Include)
-	if inc["content"] {
-		resp.Content = v.Content
-	}
-
-	if inc["content_text"] {
-		resp.ContentText = v.ContentText
-	}
-
-	resp.Stat = &api.DiscussionStat{
-		DislikeCount: int32(stat.DislikeCount),
-		LikeCount:    int32(stat.LikeCount),
-		CommentCount: int32(stat.CommentCount),
-	}
-
-	if v.CategoryID != -1 {
-		c, err := s.svr.GetDiscussCategory(ctx, v.CategoryID)
-		if err != nil {
-			return nil, err
-		}
-
-		resp.CategoryInfo = &api.CategoryInfo{
-			ID:      c.ID,
-			TopicID: c.TopicID,
-			Name:    c.Name,
-			Seq:     c.Seq,
-		}
-
-	} else {
-		resp.CategoryInfo = &api.CategoryInfo{
-			ID:      -1,
-			TopicID: v.TopicID,
-			Name:    "问答",
-			Seq:     1,
-		}
-	}
-
-	resp.Creator = &api.Creator{
-		ID:           m.ID,
-		UserName:     m.UserName,
-		Avatar:       m.Avatar,
-		Introduction: m.Introduction,
-	}
-
-	return resp, err
+	return s.svr.GetDiscussionInfo(ctx, req)
 }
 
 func (s *server) GetDiscussionCategories(ctx context.Context, req *api.CategoriesReq) (*api.CategoriesResp, error) {
@@ -177,38 +102,81 @@ func (s *server) GetUserDiscussionIDsPaged(ctx context.Context, req *api.UserDis
 	return &api.IDsResp{IDs: ids}, nil
 }
 
-func (s *server) GetUserDiscussionsPaged(ctx context.Context, req *api.UserDiscussionsReq) (*api.UserDiscussionsResp, error) {
-	items, err := s.svr.GetUserDiscussionsPaged(ctx, req.AccountID, int(req.Limit), int(req.Offset))
+func (s *server) GetUserDiscussionsPaged(ctx context.Context, req *api.UserDiscussionsReq) (*api.DiscussionsResp, error) {
+	items, err := s.svr.GetUserDiscussionsPaged(ctx, req)
 	if err != nil {
 		return nil, err
 	}
 
-	resp := &api.UserDiscussionsResp{
+	resp := &api.DiscussionsResp{
 		Items: items,
 	}
 
 	return resp, nil
 }
 
-func (s *server) GetAllDiscussions(ctx context.Context, req *api.EmptyStruct) (*api.AllDiscussionsResp, error) {
-	items, err := s.svr.GetAllDiscussions(ctx)
+func (s *server) GetTopicDiscussionsPaged(ctx context.Context, req *api.TopicDiscussionsReq) (*api.DiscussionsResp, error) {
+	items, err := s.svr.GetTopicDiscussionsPaged(ctx, req)
 	if err != nil {
 		return nil, err
 	}
 
-	resp := &api.AllDiscussionsResp{
+	resp := &api.DiscussionsResp{
 		Items: items,
 	}
 
 	return resp, nil
 }
 
-func includeParam(include string) (dic map[string]bool) {
-	arr := strings.Split(include, ",")
-	dic = make(map[string]bool)
-	for _, v := range arr {
-		dic[v] = true
+func (s *server) AddDiscussion(ctx context.Context, req *api.ArgAddDiscussion) (*api.IDResp, error) {
+	id, err := s.svr.AddDiscussion(ctx, req)
+	if err != nil {
+		return nil, err
 	}
 
-	return
+	resp := &api.IDResp{
+		ID: id,
+	}
+
+	return resp, nil
+}
+
+func (s *server) UpdateDiscussion(ctx context.Context, req *api.ArgUpdateDiscussion) (*api.EmptyStruct, error) {
+	err := s.svr.UpdateDiscussion(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.EmptyStruct{}, nil
+}
+
+func (s *server) DelDiscussion(ctx context.Context, req *api.IDReq) (*api.EmptyStruct, error) {
+	err := s.svr.DelDiscussion(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.EmptyStruct{}, nil
+}
+
+func (s *server) SaveDiscussionCategories(ctx context.Context, req *api.ArgSaveDiscussCategories) (*api.EmptyStruct, error) {
+	err := s.svr.SaveDiscussCategories(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.EmptyStruct{}, nil
+}
+
+func (s *server) SaveDiscussionFiles(ctx context.Context, req *api.ArgSaveDiscussionFiles) (*api.EmptyStruct, error) {
+	err := s.svr.SaveDiscussionFiles(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.EmptyStruct{}, nil
+}
+
+func (s *server) GetDiscussionFiles(ctx context.Context, req *api.IDReq) (*api.DiscussionFilesResp, error) {
+	return s.svr.GetDiscussionFiles(ctx, req)
 }

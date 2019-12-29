@@ -144,3 +144,21 @@ func (p *Dao) DelDiscussCategory(c context.Context, node sqalx.Node, id int64) (
 
 	return
 }
+
+func (p *Dao) HasDiscussionInCategory(c context.Context, node sqalx.Node, categoryID int64) (has bool, err error) {
+	item := new(model.Discussion)
+	sqlSelect := "SELECT a.id,a.topic_id,a.category_id,a.created_by,a.title,a.content,a.content_text,a.deleted,a.created_at,a.updated_at FROM discussions a WHERE a.category_id=? AND a.deleted=0 LIMIT 1"
+
+	if err = node.GetContext(c, item, sqlSelect, categoryID); err != nil {
+		if err == sql.ErrNoRows {
+			err = nil
+			has = false
+			return
+		}
+		log.For(c).Error(fmt.Sprintf("dao.HasDiscussionInCategory err(%+v), category_id(%+v)", err, categoryID))
+	}
+
+	has = true
+
+	return
+}

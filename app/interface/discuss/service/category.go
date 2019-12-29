@@ -2,92 +2,39 @@ package service
 
 import (
 	"context"
-	"fmt"
-	"time"
 
 	"valerian/app/interface/discuss/model"
-	"valerian/library/database/sqalx"
+	discussion "valerian/app/service/discuss/api"
 	"valerian/library/ecode"
-	"valerian/library/gid"
-	"valerian/library/log"
 	"valerian/library/net/metadata"
 )
 
-func (p *Service) checkTopic(c context.Context, topicID int64) (err error) {
-	if _, err = p.d.GetTopic(c, topicID); err != nil {
-		return
-	}
-	return
-}
-
-func (p *Service) checkTopicManager(c context.Context, topicID, aid int64) (err error) {
-	info, err := p.d.GetTopicMemberRole(c, topicID, aid)
-	if err != nil {
+func (p *Service) getDiscussCategories(c context.Context, aid, topicID int64) (items []*model.DiscussCategoryResp, err error) {
+	var resp *discussion.CategoriesResp
+	if resp, err = p.d.GetDiscussionCategories(c, aid, topicID); err != nil {
 		return
 	}
 
-	if info.IsMember == false {
-		err = ecode.NotTopicMember
-		return
-	}
-
-	if info.Role == model.MemberRoleUser {
-		err = ecode.NotTopicAdmin
-		return
-	}
-
-	return
-}
-
-func (p *Service) checkTopicMember(c context.Context, topicID, aid int64) (err error) {
-	info, err := p.d.GetTopicMemberRole(c, topicID, aid)
-	if err != nil {
-		return
-	}
-
-	if info.IsMember == false {
-		err = ecode.NotTopicMember
-		return
-	}
-
-	return
-}
-
-func (p *Service) getDiscussCategories(c context.Context, node sqalx.Node, topicID int64) (items []*model.DiscussCategoryResp, err error) {
-	var dbItems []*model.DiscussCategory
-	if dbItems, err = p.d.GetDiscussCategoriesByCond(c, p.d.DB(), map[string]interface{}{"topic_id": topicID}); err != nil {
-		return
-	}
-
-	items = make([]*model.DiscussCategoryResp, 0)
-	for _, v := range dbItems {
-		items = append(items, &model.DiscussCategoryResp{
+	items = make([]*model.DiscussCategoryResp, len(resp.Items))
+	for i, v := range resp.Items {
+		items[i] = &model.DiscussCategoryResp{
 			ID:      v.ID,
 			TopicID: v.TopicID,
 			Name:    v.Name,
 			Seq:     v.Seq,
-		})
+		}
 	}
 
 	return
 }
 
 func (p *Service) GetDiscussCategories(c context.Context, topicID int64) (items []*model.DiscussCategoryResp, err error) {
-	return p.getDiscussCategories(c, p.d.DB(), topicID)
-}
-
-func (p *Service) loadDiscussCategoriesMap(c context.Context, node sqalx.Node, topicID int64) (dic map[int64]bool, err error) {
-	dic = make(map[int64]bool)
-	var dbItems []*model.DiscussCategory
-	if dbItems, err = p.d.GetDiscussCategoriesByCond(c, node, map[string]interface{}{"topic_id": topicID}); err != nil {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
 		return
 	}
-
-	for _, v := range dbItems {
-		dic[v.ID] = false
-	}
-
-	return
+	return p.getDiscussCategories(c, aid, topicID)
 }
 
 func (p *Service) SaveDiscussCategories(c context.Context, arg *model.ArgSaveDiscussCategories) (err error) {
@@ -97,91 +44,23 @@ func (p *Service) SaveDiscussCategories(c context.Context, arg *model.ArgSaveDis
 		return
 	}
 
-	// check topic
-	if err = p.checkTopic(c, arg.TopicID); err != nil {
-		return
-	}
-
-	// check admin role
-	if err = p.checkTopicManager(c, arg.TopicID, aid); err != nil {
-		return
-	}
-
-	var tx sqalx.Node
-	if tx, err = p.d.DB().Beginx(c); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
-		return
-	}
-
-	defer func() {
-		if err != nil {
-			if err1 := tx.Rollback(); err1 != nil {
-				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
-			}
-			return
-		}
-	}()
-
-	var dic map[int64]bool
-	if dic, err = p.loadDiscussCategoriesMap(c, tx, arg.TopicID); err != nil {
-		return
+	req := &discussion.ArgSaveDiscussCategories{
+		Aid:     aid,
+		TopicID: arg.TopicID,
+		Items:   make([]*discussion.ArgDisucssCategory, 0),
 	}
 
 	for _, v := range arg.Items {
-		if v.ID == nil {
-			item := &model.DiscussCategory{
-				ID:        gid.NewID(),
-				TopicID:   arg.TopicID,
-				Seq:       v.Seq,
-				Name:      v.Name,
-				CreatedAt: time.Now().Unix(),
-				UpdatedAt: time.Now().Unix(),
-			}
-			if err = p.d.AddDiscussCategory(c, tx, item); err != nil {
-				return
-			}
-
-			continue
+		item := &discussion.ArgDisucssCategory{
+			Name: v.Name,
+			Seq:  v.Seq,
 		}
 
-		var dItem *model.DiscussCategory
-		if dItem, err = p.d.GetDiscussCategoryByID(c, tx, *v.ID); err != nil {
-			return
-		} else if dItem == nil {
-			err = ecode.DiscussCategoryNotExist
-			return
+		if v.ID != nil {
+			item.ID = &discussion.ArgDisucssCategory_IDValue{*v.ID}
 		}
 
-		dItem.Name = v.Name
-		dItem.Seq = v.Seq
-
-		if err = p.d.UpdateDiscussCategory(c, tx, dItem); err != nil {
-			return
-		}
-
-		dic[*v.ID] = true
-	}
-
-	for k, used := range dic {
-		if used {
-			continue
-		}
-		if has, e := p.d.HasDiscussionInCategory(c, tx, k); err != nil {
-			err = e
-			return
-		} else if has {
-			err = ecode.HasDiscussionInCategory
-			return
-		} else {
-			if err = p.d.DelDiscussCategory(c, tx, k); err != nil {
-				return
-			}
-		}
-	}
-
-	if err = tx.Commit(); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
-		return
+		req.Items = append(req.Items, item)
 	}
 
 	return

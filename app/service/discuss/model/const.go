@@ -6,3 +6,9 @@ const (
 	TargetTypeRevise     = "revise"
 	TargetTypeArticle    = "article"
 )
+
+const (
+	MemberRoleOwner = "owner"
+	MemberRoleAdmin = "admin"
+	MemberRoleUser  = "user"
+)

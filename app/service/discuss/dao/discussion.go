@@ -11,6 +11,24 @@ import (
 	"valerian/library/log"
 )
 
+func (p *Dao) GetTopicDiscussionsPaged(c context.Context, node sqalx.Node, topicID, categoryID int64, limit, offset int) (items []*model.Discussion, err error) {
+	items = make([]*model.Discussion, 0)
+
+	if categoryID == 0 {
+		sql := "SELECT a.id,a.topic_id,a.category_id,a.created_by,a.title,a.content,a.content_text,a.deleted,a.created_at,a.updated_at FROM discussions a WHERE a.deleted=0 AND a.topic_id=?  ORDER BY a.id DESC limit ?,?"
+		if err = node.SelectContext(c, &items, sql, topicID, offset, limit); err != nil {
+			log.For(c).Error(fmt.Sprintf("dao.GetTopicDiscussionsPaged error(%+v), topic_id(%d) limit(%d) offset(%d)", err, topicID, limit, offset))
+		}
+	} else {
+		sql := "SELECT a.id,a.topic_id,a.category_id,a.created_by,a.title,a.content,a.content_text,a.deleted,a.created_at,a.updated_at FROM discussions a WHERE a.deleted=0 AND a.topic_id=? and category_id=? ORDER BY a.id DESC limit ?,?"
+		if err = node.SelectContext(c, &items, sql, topicID, categoryID, offset, limit); err != nil {
+			log.For(c).Error(fmt.Sprintf("dao.GetTopicDiscussionsPaged error(%+v), topic_id(%d) category_id(%d) limit(%d) offset(%d)", err, topicID, categoryID, limit, offset))
+		}
+	}
+
+	return
+}
+
 func (p *Dao) GetUserDiscussionIDsPaged(c context.Context, node sqalx.Node, aid int64, limit, offset int) (items []int64, err error) {
 	items = make([]int64, 0)
 	sqlSelect := "SELECT a.id FROM discussions a WHERE a.deleted=0 AND a.created_by=? ORDER BY a.id DESC limit ?,?"

@@ -39,8 +39,9 @@ type Config struct {
 	LikeRPC   *warden.ClientConfig
 	FavRPC    *warden.ClientConfig
 
-	AccountRPC *warden.ClientConfig
-	TopicRPC   *warden.ClientConfig
+	AccountRPC    *warden.ClientConfig
+	TopicRPC      *warden.ClientConfig
+	DiscussionRPC *warden.ClientConfig
 }
 
 // DB db config.

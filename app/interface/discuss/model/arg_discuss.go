@@ -35,9 +35,6 @@ type ArgUpdateDiscuss struct {
 
 	// 内容
 	Content string `json:"content"`
-
-	// 附件
-	Files []*AddDiscussionFile `json:"files"`
 }
 
 func (p *ArgUpdateDiscuss) Validate() error {
@@ -45,6 +42,5 @@ func (p *ArgUpdateDiscuss) Validate() error {
 		p,
 		validation.Field(&p.ID, validation.Required),
 		validation.Field(&p.Content, validation.Required),
-		validation.Field(&p.Files),
 	)
 }
