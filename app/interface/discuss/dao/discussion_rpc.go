@@ -76,3 +76,17 @@ func (p *Dao) DelDiscussion(c context.Context, aid, discussionID int64) (err err
 	}
 	return
 }
+
+func (p *Dao) GetDiscussionFiles(c context.Context, aid, discussionID int64) (resp *discussion.DiscussionFilesResp, err error) {
+	if resp, err = p.discussionRPC.GetDiscussionFiles(c, &discussion.IDReq{Aid: aid, ID: discussionID}); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetDiscussionFiles, error(%+v), aid(%d), discussion_id(%d)", err, aid, discussionID))
+	}
+	return
+}
+
+func (p *Dao) SaveDiscussionFiles(c context.Context, arg *discussion.ArgSaveDiscussionFiles) (err error) {
+	if _, err = p.discussionRPC.SaveDiscussionFiles(c, arg); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.SaveDiscussionFiles, error(%+v), arg(%+v)", err, arg))
+	}
+	return
+}
