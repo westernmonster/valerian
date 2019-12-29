@@ -24,6 +24,7 @@ func (p *ArgAddDiscuss) Validate() error {
 		validation.Field(&p.Title, validation.RuneLength(0, 120)),
 		validation.Field(&p.Content, validation.Required),
 		validation.Field(&p.TopicID, validation.Required),
+		validation.Field(&p.Files),
 	)
 }
 

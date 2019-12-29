@@ -6,6 +6,7 @@ import (
 
 	"valerian/app/interface/discuss/model"
 	"valerian/library/ecode"
+	"valerian/library/log"
 	"valerian/library/net/http/mars"
 )
 
@@ -132,6 +133,7 @@ func addDiscussion(c *mars.Context) {
 	}
 
 	if e := arg.Validate(); e != nil {
+		log.Errorf("validation err(%+v)", e)
 		c.JSON(nil, ecode.RequestErr)
 		return
 	}
