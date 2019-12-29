@@ -53,10 +53,6 @@ spec:
         backend:
           serviceName: interface-passport-auth
           servicePort: 8000
-      - path: /api/v1/oauth/close
-        backend:
-          serviceName: interface-passport-auth
-          servicePort: 8000
       - path: /api/v1/certification
         backend:
           serviceName: interface-certification
@@ -94,6 +90,10 @@ spec:
           serviceName: interface-like
           servicePort: 8000
       - path: /api/v1/list/activities
+        backend:
+          serviceName: interface-feed
+          servicePort: 8000
+      - path: /api/v1/list/hot
         backend:
           serviceName: interface-feed
           servicePort: 8000
@@ -196,10 +196,6 @@ spec:
         backend:
           serviceName: interface-passport-auth
           servicePort: 8000
-      - path: /api/v1/oauth/close
-        backend:
-          serviceName: interface-passport-auth
-          servicePort: 8000
       - path: /api/v1/certification
         backend:
           serviceName: interface-certification
@@ -237,6 +233,10 @@ spec:
           serviceName: interface-like
           servicePort: 8000
       - path: /api/v1/list/activities
+        backend:
+          serviceName: interface-feed
+          servicePort: 8000
+      - path: /api/v1/list/hot
         backend:
           serviceName: interface-feed
           servicePort: 8000
@@ -335,10 +335,6 @@ spec:
         backend:
           serviceName: interface-passport-auth
           servicePort: 8000
-      - path: /api/v1/oauth/close
-        backend:
-          serviceName: interface-passport-auth
-          servicePort: 8000
       - path: /api/v1/certification
         backend:
           serviceName: interface-certification
@@ -376,6 +372,10 @@ spec:
           serviceName: interface-like
           servicePort: 8000
       - path: /api/v1/list/activities
+        backend:
+          serviceName: interface-feed
+          servicePort: 8000
+      - path: /api/v1/list/hot
         backend:
           serviceName: interface-feed
           servicePort: 8000
