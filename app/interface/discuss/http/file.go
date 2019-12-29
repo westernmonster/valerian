@@ -26,6 +26,8 @@ import (
 func editDiscussionFiles(c *mars.Context) {
 	arg := new(model.ArgSaveDiscussionFiles)
 	if e := c.Bind(arg); e != nil {
+		log.For(c).Error(fmt.Sprintf("bind error(%+v)", e))
+		c.JSON(nil, ecode.RequestErr)
 		return
 	}
 

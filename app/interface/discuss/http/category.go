@@ -59,6 +59,8 @@ func discussCategories(c *mars.Context) {
 func editDiscussCategories(c *mars.Context) {
 	arg := new(model.ArgSaveDiscussCategories)
 	if e := c.Bind(arg); e != nil {
+		log.For(c).Error(fmt.Sprintf("bind error(%+v)", e))
+		c.JSON(nil, ecode.RequestErr)
 		return
 	}
 

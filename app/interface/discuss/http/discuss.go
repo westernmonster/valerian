@@ -130,6 +130,8 @@ func getDiscusstionsByAccount(c *mars.Context) {
 func addDiscussion(c *mars.Context) {
 	arg := new(model.ArgAddDiscuss)
 	if e := c.Bind(arg); e != nil {
+		log.For(c).Error(fmt.Sprintf("bind error(%+v)", e))
+		c.JSON(nil, ecode.RequestErr)
 		return
 	}
 
@@ -160,6 +162,8 @@ func addDiscussion(c *mars.Context) {
 func updateDiscussion(c *mars.Context) {
 	arg := new(model.ArgUpdateDiscuss)
 	if e := c.Bind(arg); e != nil {
+		log.For(c).Error(fmt.Sprintf("bind error(%+v)", e))
+		c.JSON(nil, ecode.RequestErr)
 		return
 	}
 
@@ -189,6 +193,8 @@ func updateDiscussion(c *mars.Context) {
 func delDiscussion(c *mars.Context) {
 	arg := new(model.ArgDelete)
 	if e := c.Bind(arg); e != nil {
+		log.For(c).Error(fmt.Sprintf("bind error(%+v)", e))
+		c.JSON(nil, ecode.RequestErr)
 		return
 	}
 
