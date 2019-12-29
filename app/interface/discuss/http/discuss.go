@@ -1,6 +1,7 @@
 package http
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -133,7 +134,7 @@ func addDiscussion(c *mars.Context) {
 	}
 
 	if e := arg.Validate(); e != nil {
-		log.Errorf("validation err(%+v)", e)
+		log.For(c).Error(fmt.Sprintf("validation error(%+v)", e))
 		c.JSON(nil, ecode.RequestErr)
 		return
 	}
@@ -163,6 +164,7 @@ func updateDiscussion(c *mars.Context) {
 	}
 
 	if e := arg.Validate(); e != nil {
+		log.For(c).Error(fmt.Sprintf("validation error(%+v)", e))
 		c.JSON(nil, ecode.RequestErr)
 		return
 	}
@@ -218,6 +220,7 @@ func getDiscussion(c *mars.Context) {
 	params := c.Request.Form
 
 	if id, err = strconv.ParseInt(params.Get("id"), 10, 64); err != nil {
+		log.For(c).Error(fmt.Sprintf("req error(%+v)", err))
 		c.JSON(nil, ecode.RequestErr)
 		return
 	}
