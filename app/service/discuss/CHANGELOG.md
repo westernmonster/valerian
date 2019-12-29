@@ -1,5 +1,8 @@
 # service-discuss
 
+## 1.1.0
+- 从interface-discuss 移动逻辑
+
 ## 1.0.2
 - 添加代码注释
 
