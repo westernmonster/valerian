@@ -63,5 +63,9 @@ func (p *Service) SaveDiscussCategories(c context.Context, arg *model.ArgSaveDis
 		req.Items = append(req.Items, item)
 	}
 
+	if err = p.d.SaveDiscussionCategories(c, req); err != nil {
+		return
+	}
+
 	return
 }
