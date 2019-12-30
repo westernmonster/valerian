@@ -20,7 +20,7 @@ const discussionMapping = `
       "analyzer": {
         "optimizeIK": {
 		  "type": "custom",
-          "tokenizer": "ik",
+          "tokenizer": "ik_max_word",
           "char_filter": ["html_strip"],
 		  "filter":["stemmer"]
         }
