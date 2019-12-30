@@ -15,28 +15,42 @@ import (
 
 const discussionMapping = `
 {
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "my_analyzer": {
+          "tokenizer": "ik_max_word",
+          "char_filter": ["html_strip"]
+        }
+      }
+    }
+  },
   "mappings": {
     "discussion": {
       "properties": {
         "id": { "type": "long" },
         "title": {
           "type": "text",
-          "analyzer": "aliws"
+          "analyzer": "ik_max_word",
+          "search_analyzer": "ik_smart"
         },
         "content": {
           "type": "text",
-          "analyzer": "aliws"
+          "analyzer": "ik_max_word",
+          "search_analyzer": "ik_smart"
         },
         "content_text": {
           "type": "text",
-          "analyzer": "aliws"
+          "analyzer": "ik_max_word",
+          "search_analyzer": "ik_smart"
         },
         "category": {
           "properties": {
             "id": { "type": "long" },
             "name": {
               "type": "text",
-              "analyzer": "aliws"
+              "analyzer": "ik_max_word",
+              "search_analyzer": "ik_smart"
             },
 			"seq": { "type": "integer" }
           }
@@ -46,12 +60,14 @@ const discussionMapping = `
             "id": { "type": "long" },
             "name": {
               "type": "text",
-              "analyzer": "aliws"
+              "analyzer": "ik_max_word",
+              "search_analyzer": "ik_smart"
             },
             "avatar": { "type": "text" },
             "introduction": {
               "type": "text",
-              "analyzer": "aliws"
+              "analyzer": "ik_max_word",
+              "search_analyzer": "ik_smart"
 			}
           }
         },
@@ -60,7 +76,8 @@ const discussionMapping = `
             "id": { "type": "long" },
             "user_name": {
               "type": "text",
-              "analyzer": "aliws"
+              "analyzer": "ik_max_word",
+              "search_analyzer": "ik_smart"
             },
             "avatar": { "type": "text" },
             "introduction": { "type": "text" }
