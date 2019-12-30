@@ -141,6 +141,12 @@ func (p *Service) RefreshIDCertStatus(c context.Context, aid int64) (status int3
 		if err = p.d.UpdateAccountIDCert(c, tx, aid, true); err != nil {
 			return
 		}
+
+		if item.Name != "" {
+			if err = p.d.UpdateAccountRealName(c, tx, aid, item.Name); err != nil {
+				return
+			}
+		}
 	}
 
 	if err = tx.Commit(); err != nil {
