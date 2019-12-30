@@ -209,8 +209,10 @@ func (p *Service) UpdateAccount(c context.Context, arg *api.UpdateProfileReq) (e
 		account.Introduction = arg.GetIntroductionValue()
 	}
 
-	if arg.UserName != nil {
-		account.UserName = arg.GetUserNameValue()
+	if !account.IDCert {
+		if arg.UserName != nil {
+			account.UserName = arg.GetUserNameValue()
+		}
 	}
 
 	if arg.BirthYear != nil {
