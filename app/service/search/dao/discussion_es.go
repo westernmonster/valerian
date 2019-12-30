@@ -18,9 +18,11 @@ const discussionMapping = `
   "settings": {
     "analysis": {
       "analyzer": {
-        "my_analyzer": {
-          "tokenizer": "ik_max_word",
-          "char_filter": ["html_strip"]
+        "optimizeIK": {
+		  "type": "custom",
+          "tokenizer": "ik",
+          "char_filter": ["html_strip"],
+		  "filter":["stemmer"]
         }
       }
     }
@@ -31,26 +33,22 @@ const discussionMapping = `
         "id": { "type": "long" },
         "title": {
           "type": "text",
-          "analyzer": "ik_max_word",
-          "search_analyzer": "ik_smart"
+          "analyzer": "optimizeIK"
         },
         "content": {
           "type": "text",
-          "analyzer": "ik_max_word",
-          "search_analyzer": "ik_smart"
+          "analyzer": "optimizeIK"
         },
         "content_text": {
           "type": "text",
-          "analyzer": "ik_max_word",
-          "search_analyzer": "ik_smart"
+          "analyzer": "optimizeIK"
         },
         "category": {
           "properties": {
             "id": { "type": "long" },
             "name": {
               "type": "text",
-              "analyzer": "ik_max_word",
-              "search_analyzer": "ik_smart"
+		      "analyzer": "optimizeIK"
             },
 			"seq": { "type": "integer" }
           }
@@ -60,14 +58,12 @@ const discussionMapping = `
             "id": { "type": "long" },
             "name": {
               "type": "text",
-              "analyzer": "ik_max_word",
-              "search_analyzer": "ik_smart"
+		      "analyzer": "optimizeIK"
             },
             "avatar": { "type": "text" },
             "introduction": {
               "type": "text",
-              "analyzer": "ik_max_word",
-              "search_analyzer": "ik_smart"
+		      "analyzer": "optimizeIK"
 			}
           }
         },
@@ -76,8 +72,7 @@ const discussionMapping = `
             "id": { "type": "long" },
             "user_name": {
               "type": "text",
-              "analyzer": "ik_max_word",
-              "search_analyzer": "ik_smart"
+		      "analyzer": "optimizeIK"
             },
             "avatar": { "type": "text" },
             "introduction": { "type": "text" }
