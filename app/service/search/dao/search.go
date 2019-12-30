@@ -25,7 +25,7 @@ func (p *Dao) AccountSearch(c context.Context, arg *model.BasicSearchParams, ids
 	indexName := fmt.Sprintf("%s_accounts", env.DeployEnv)
 
 	if arg.KW != "" {
-		query = query.Must(elastic.NewMultiMatchQuery(arg.KW, arg.KwFields...).Type("best_fields").TieBreaker(0.1).Fuzziness("2").PrefixLength(2))
+		query = query.Must(elastic.NewMultiMatchQuery(arg.KW, arg.KwFields...).Type("best_fields").TieBreaker(0.1).Fuzziness("2").MinimumShouldMatch("2"))
 	}
 
 	if res, err = p.searchResult(c, indexName, query, arg); err != nil {
@@ -51,7 +51,7 @@ func (p *Dao) TopicSearch(c context.Context, arg *model.BasicSearchParams, ids [
 	indexName := fmt.Sprintf("%s_topics", env.DeployEnv)
 
 	if arg.KW != "" {
-		query = query.Must(elastic.NewMultiMatchQuery(arg.KW, arg.KwFields...).Type("best_fields").TieBreaker(0.1).Fuzziness("2").PrefixLength(2))
+		query = query.Must(elastic.NewMultiMatchQuery(arg.KW, arg.KwFields...).Type("best_fields").TieBreaker(0.1).Fuzziness("2").MinimumShouldMatch("2"))
 	}
 
 	if res, err = p.searchResult(c, indexName, query, arg); err != nil {
@@ -77,7 +77,7 @@ func (p *Dao) ArticleSearch(c context.Context, arg *model.BasicSearchParams, ids
 	// }
 
 	if arg.KW != "" {
-		query = query.Must(elastic.NewMultiMatchQuery(arg.KW, arg.KwFields...).Type("best_fields").TieBreaker(0.1).Fuzziness("2").PrefixLength(2))
+		query = query.Must(elastic.NewMultiMatchQuery(arg.KW, arg.KwFields...).Type("best_fields").TieBreaker(0.1).Fuzziness("2").MinimumShouldMatch("2"))
 	}
 
 	if res, err = p.searchResult(c, indexName, query, arg); err != nil {
@@ -102,7 +102,7 @@ func (p *Dao) DiscussionSearch(c context.Context, arg *model.BasicSearchParams, 
 
 	indexName := fmt.Sprintf("%s_discussions", env.DeployEnv)
 	if arg.KW != "" {
-		query = query.Must(elastic.NewMultiMatchQuery(arg.KW, arg.KwFields...).TieBreaker(0.1).Fuzziness("2").PrefixLength(2).MinimumShouldMatch("2"))
+		query = query.Must(elastic.NewMultiMatchQuery(arg.KW, arg.KwFields...).Type("best_fields").TieBreaker(0.1).Fuzziness("2").MinimumShouldMatch("2"))
 	}
 
 	if res, err = p.searchResult(c, indexName, query, arg); err != nil {
