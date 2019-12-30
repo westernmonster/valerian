@@ -8,9 +8,15 @@ import (
 )
 
 func (p *Service) Init(c context.Context) (err error) {
-	c, cancelFunc := context.WithTimeout(c, 3*60*time.Second)
+	go p.init()
+	return
+}
+
+func (p *Service) init() {
+	c, cancelFunc := context.WithTimeout(context.Background(), 3*60*time.Second)
 	defer cancelFunc()
 	c = sqalx.NewContext(c, true)
+	var err error
 	if err = p.d.CreateAccountIndices(c); err != nil {
 		return
 	}
@@ -231,5 +237,4 @@ func (p *Service) Init(c context.Context) (err error) {
 		return
 	}
 
-	return
 }
