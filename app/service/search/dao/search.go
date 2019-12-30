@@ -102,7 +102,7 @@ func (p *Dao) DiscussionSearch(c context.Context, arg *model.BasicSearchParams, 
 
 	indexName := fmt.Sprintf("%s_discussions", env.DeployEnv)
 	if arg.KW != "" {
-		query = query.Should(elastic.NewMultiMatchQuery(arg.KW, arg.KwFields...).Type("best_fields").TieBreaker(0.1).Fuzziness("2"))
+		query = query.Should(elastic.NewMultiMatchQuery(arg.KW, arg.KwFields...).Type("best_fields").TieBreaker(0.1).Fuzziness("2").PrefixLength(2))
 	}
 
 	if res, err = p.searchResult(c, indexName, query, arg); err != nil {
