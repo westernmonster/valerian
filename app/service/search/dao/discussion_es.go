@@ -19,7 +19,7 @@ const discussionMapping = `
     "analysis": {
       "analyzer": {
         "valerian": {
-          "tokenizer": "aliws",
+          "tokenizer": "ik_max_word",
           "char_filter": ["html_strip"]
         }
       }
@@ -31,22 +31,22 @@ const discussionMapping = `
         "id": { "type": "long" },
         "title": {
           "type": "text",
-          "analyzer": "aliws"
+          "analyzer": "valerian"
         },
         "content": {
           "type": "text",
-          "analyzer": "aliws"
+          "analyzer": "valerian"
         },
         "content_text": {
           "type": "text",
-          "analyzer": "aliws"
+          "analyzer": "valerian"
         },
         "category": {
           "properties": {
             "id": { "type": "long" },
             "name": {
               "type": "text",
-              "analyzer": "aliws"
+              "analyzer": "valerian"
             },
 			"seq": { "type": "integer" }
           }
@@ -56,12 +56,12 @@ const discussionMapping = `
             "id": { "type": "long" },
             "name": {
               "type": "text",
-              "analyzer": "aliws"
+              "analyzer": "valerian"
             },
             "avatar": { "type": "text" },
             "introduction": {
               "type": "text",
-              "analyzer": "aliws"
+              "analyzer": "valerian"
 			}
           }
         },
@@ -70,7 +70,7 @@ const discussionMapping = `
             "id": { "type": "long" },
             "user_name": {
               "type": "text",
-              "analyzer": "aliws"
+              "analyzer": "valerian"
             },
             "avatar": { "type": "text" },
             "introduction": { "type": "text" }
