@@ -18,11 +18,9 @@ const discussionMapping = `
   "settings": {
     "analysis": {
       "analyzer": {
-        "optimizeIK": {
-		  "type": "custom",
-          "tokenizer": "ik_max_word",
-          "char_filter": ["html_strip"],
-		  "filter":["stemmer"]
+        "valerian": {
+          "tokenizer": "aliws",
+          "char_filter": ["html_strip"]
         }
       }
     }
@@ -33,22 +31,22 @@ const discussionMapping = `
         "id": { "type": "long" },
         "title": {
           "type": "text",
-          "analyzer": "optimizeIK"
+          "analyzer": "aliws"
         },
         "content": {
           "type": "text",
-          "analyzer": "optimizeIK"
+          "analyzer": "aliws"
         },
         "content_text": {
           "type": "text",
-          "analyzer": "optimizeIK"
+          "analyzer": "aliws"
         },
         "category": {
           "properties": {
             "id": { "type": "long" },
             "name": {
               "type": "text",
-		      "analyzer": "optimizeIK"
+              "analyzer": "aliws"
             },
 			"seq": { "type": "integer" }
           }
@@ -58,12 +56,12 @@ const discussionMapping = `
             "id": { "type": "long" },
             "name": {
               "type": "text",
-		      "analyzer": "optimizeIK"
+              "analyzer": "aliws"
             },
             "avatar": { "type": "text" },
             "introduction": {
               "type": "text",
-		      "analyzer": "optimizeIK"
+              "analyzer": "aliws"
 			}
           }
         },
@@ -72,7 +70,7 @@ const discussionMapping = `
             "id": { "type": "long" },
             "user_name": {
               "type": "text",
-		      "analyzer": "optimizeIK"
+              "analyzer": "aliws"
             },
             "avatar": { "type": "text" },
             "introduction": { "type": "text" }
