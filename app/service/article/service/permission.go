@@ -15,23 +15,6 @@ func (p *Service) CanEdit(c context.Context, arg *api.IDReq) (canEdit bool, err 
 		return
 	}
 
-	var article *model.Article
-	if article, err = p.getArticle(c, p.d.DB(), arg.ID); err != nil {
-		return
-	}
-
-	if article.CreatedBy == arg.Aid {
-		canEdit = true
-	}
-
-	var isSystemAdmin bool
-	if isSystemAdmin, err = p.isSystemAdmin(c, p.d.DB(), arg.Aid); err != nil {
-		return
-	} else if isSystemAdmin {
-		canEdit = true
-		return
-	}
-
 	return
 }
 
@@ -58,15 +41,6 @@ func (p *Service) checkEditPermission(c context.Context, node sqalx.Node, aid, a
 	var canEdit bool
 	if canEdit, err = p.canEdit(c, node, aid, articleID); err != nil {
 		return
-	}
-
-	var article *model.Article
-	if article, err = p.getArticle(c, node, articleID); err != nil {
-		return
-	}
-
-	if article.CreatedBy == aid {
-		canEdit = true
 	}
 
 	if !canEdit {

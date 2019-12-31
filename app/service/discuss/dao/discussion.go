@@ -31,7 +31,7 @@ func (p *Dao) GetTopicDiscussionsPaged(c context.Context, node sqalx.Node, topic
 
 func (p *Dao) GetUserDiscussionIDsPaged(c context.Context, node sqalx.Node, aid int64, limit, offset int) (items []int64, err error) {
 	items = make([]int64, 0)
-	sqlSelect := "SELECT a.id FROM discussions a WHERE a.deleted=0 AND a.created_by=? ORDER BY a.id DESC limit ?,?"
+	sqlSelect := "SELECT a.id FROM discussions a LEFT JOIN topics b ON a.topic_id=b.id WHERE b.deleted =0 AND a.deleted=0 AND a.created_by=? ORDER BY a.id DESC limit ?,?"
 
 	var rows *sqlx.Rows
 	if rows, err = node.QueryxContext(c, sqlSelect, aid, offset, limit); err != nil {
@@ -57,22 +57,12 @@ func (p *Dao) GetUserDiscussionIDsPaged(c context.Context, node sqalx.Node, aid 
 
 func (p *Dao) GetUserDiscussionsPaged(c context.Context, node sqalx.Node, aid int64, limit, offset int) (items []*model.Discussion, err error) {
 	items = make([]*model.Discussion, 0)
-	sqlSelect := "SELECT a.id,a.topic_id,a.category_id,a.created_by,a.title,a.content,a.content_text,a.deleted,a.created_at,a.updated_at FROM discussions a WHERE a.deleted=0 AND a.created_by=? ORDER BY a.id DESC limit ?,?"
+	sqlSelect := `SELECT a.id,a.topic_id,a.category_id,a.created_by,a.title,a.content,a.content_text,a.deleted,a.created_at,a.updated_at
+	FROM discussions a
+	WHERE a.deleted=0 AND a.created_by=? ORDER BY a.id DESC limit ?,?`
 
 	if err = node.SelectContext(c, &items, sqlSelect, aid, offset, limit); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetUserDiscussionsPaged err(%+v) aid(%d) limit(%d) offset(%d)", err, aid, limit, offset))
-		return
-	}
-	return
-}
-
-// GetAll get all records
-func (p *Dao) GetDiscussions(c context.Context, node sqalx.Node) (items []*model.Discussion, err error) {
-	items = make([]*model.Discussion, 0)
-	sqlSelect := "SELECT a.id,a.topic_id,a.category_id,a.created_by,a.title,a.content,a.content_text,a.deleted,a.created_at,a.updated_at FROM discussions a WHERE a.deleted=0 ORDER BY a.id DESC "
-
-	if err = node.SelectContext(c, &items, sqlSelect); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.GetDiscussions err(%+v)", err))
 		return
 	}
 	return

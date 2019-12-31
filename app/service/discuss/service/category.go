@@ -45,6 +45,16 @@ func (p *Service) SaveDiscussCategories(c context.Context, arg *api.ArgSaveDiscu
 		}
 	}()
 
+	// 检测话题
+	if err = p.checkTopicExist(c, tx, arg.TopicID); err != nil {
+		return
+	}
+
+	// 是否话题管理员
+	if err = p.checkIsTopicManager(c, tx, arg.Aid, arg.TopicID); err != nil {
+		return
+	}
+
 	var dic map[int64]bool
 	if dic, err = p.loadDiscussCategoriesMap(c, tx, arg.TopicID); err != nil {
 		return

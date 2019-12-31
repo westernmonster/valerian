@@ -116,11 +116,13 @@ var (
 	TeamExist                      = add(10065) // Team已经存在
 
 	// 89000 - 89999 属于 Permission 类错误
-	NoTopicViewPermission   = add(89001) // 没有话题查看权限
-	NoTopicEditPermission   = add(89002) // 没有话题编辑权限
-	NoTopicManagePermission = add(89003) // 没有话题管理权限
-	NoArticleViewPermission = add(89004) // 没有文章查看权限
-	NoArticleEditPermission = add(89005) // 没有文章编辑权限
+	NoTopicViewPermission      = add(89001) // 没有话题查看权限
+	NoTopicEditPermission      = add(89002) // 没有话题编辑权限
+	NoTopicManagePermission    = add(89003) // 没有话题管理权限
+	NoArticleViewPermission    = add(89004) // 没有文章查看权限
+	NoArticleEditPermission    = add(89005) // 没有文章编辑权限
+	NoDiscussionViewPermission = add(89006) // 没有讨论查看权限
+	NoDiscussionEditPermission = add(89007) // 没有讨论编辑权限
 
 	// 90000 - 99999 属于 Not Exist 类错误
 	UserNotExist                  = add(90001) // 用户不存在

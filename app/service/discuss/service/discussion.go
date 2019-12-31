@@ -347,6 +347,9 @@ func (p *Service) GetDiscussionStat(c context.Context, discussionID int64) (item
 // DelDiscussion 删除讨论
 func (p *Service) DelDiscussion(c context.Context, arg *api.IDReq) (err error) {
 	// TODO:  删除讨论逻辑
+	if err = p.checkEditPermission(c, p.d.DB(), arg.Aid, arg.ID); err != nil {
+		return
+	}
 	return
 }
 
@@ -482,6 +485,10 @@ func (p *Service) UpdateDiscussion(c context.Context, arg *api.ArgUpdateDiscussi
 			return
 		}
 	}()
+
+	if err = p.checkEditPermission(c, tx, arg.Aid, arg.ID); err != nil {
+		return
+	}
 
 	var item *model.Discussion
 	if item, err = p.d.GetDiscussionByID(c, tx, arg.ID); err != nil {

@@ -180,3 +180,35 @@ func (s *server) SaveDiscussionFiles(ctx context.Context, req *api.ArgSaveDiscus
 func (s *server) GetDiscussionFiles(ctx context.Context, req *api.IDReq) (*api.DiscussionFilesResp, error) {
 	return s.svr.GetDiscussionFiles(ctx, req)
 }
+
+func (s *server) CanEdit(ctx context.Context, req *api.IDReq) (*api.BoolResp, error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
+
+	canEdit, err := s.svr.CanEdit(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.BoolResp{Result: canEdit}, nil
+}
+
+func (s *server) CanView(ctx context.Context, req *api.IDReq) (*api.BoolResp, error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
+
+	canView, err := s.svr.CanView(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.BoolResp{Result: canView}, nil
+}

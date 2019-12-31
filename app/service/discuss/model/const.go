@@ -12,3 +12,8 @@ const (
 	MemberRoleAdmin = "admin"
 	MemberRoleUser  = "user"
 )
+
+const (
+	ViewPermissionPublic = "public"
+	ViewPermissionJoin   = "join"
+)

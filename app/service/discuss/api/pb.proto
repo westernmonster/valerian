@@ -181,7 +181,13 @@ message IDResp {
 }
 
 
+message BoolResp {
+    bool Result = 1;
+}
+
 service Discussion {
+    rpc CanView (IDReq) returns (BoolResp);
+    rpc CanEdit (IDReq) returns (BoolResp);
     rpc GetDiscussionInfo(IDReq) returns (DiscussionInfo);
     rpc GetDiscussionStat(IDReq) returns (DiscussionStat);
     rpc SaveDiscussionCategories(ArgSaveDiscussCategories) returns (EmptyStruct);
