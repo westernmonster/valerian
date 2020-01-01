@@ -424,7 +424,7 @@ func (p *Service) GetMemberArticlesPaged(c context.Context, aid int64, limit, of
 
 // GetMemberDiscussionsPaged 获取指定用户讨论列表
 func (p *Service) GetMemberDiscussionsPaged(c context.Context, aid int64, limit, offset int) (resp *model.MemberDiscussResp, err error) {
-	var data *discuss.UserDiscussionsResp
+	var data *discuss.DiscussionsResp
 	if data, err = p.d.GetUserDiscussionsPaged(c, aid, limit, offset); err != nil {
 		return
 	}
