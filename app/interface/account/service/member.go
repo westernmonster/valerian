@@ -47,6 +47,7 @@ func (p *Service) GetMemberRecentPubsPaged(c context.Context, aid int64, atype s
 			}
 
 			item.Article = p.fromArticle(article)
+			item.Article.ChangeDesc = ""
 			break
 		case model.TargetTypeRevise:
 			var revise *article.ReviseInfo
@@ -300,6 +301,7 @@ func (p *Service) GetMemberActivitiesPaged(c context.Context, aid int64, limit, 
 				}
 
 				item.Target.Article = p.fromArticle(article)
+				item.Target.Article.ChangeDesc = ""
 				break
 			case model.TargetTypeRevise:
 				var revise *article.ReviseInfo

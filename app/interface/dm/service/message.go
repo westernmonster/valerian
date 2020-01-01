@@ -209,7 +209,9 @@ func (p *Service) GetUserMessagesPaged(c context.Context, atype string, limit, o
 			item.Content.Target.Link = fmt.Sprintf(def.LinkArticle, article.ID)
 			item.Content.Target.Text = article.Title
 
-			item.Target = p.FromArticle(article)
+			tg := p.FromArticle(article)
+			tg.ChangeDesc = ""
+			item.Target = tg
 			break
 		case model.TargetTypeRevise:
 			var revise *article.ReviseInfo
@@ -503,7 +505,9 @@ func (p *Service) GetCommentTarget(c context.Context, v *comment.CommentInfo) (r
 		if article, err = p.d.GetArticle(c, v.OwnerID); err != nil {
 			return
 		}
-		resp.Owner = p.FromArticle(article)
+		owner := p.FromArticle(article)
+		owner.ChangeDesc = ""
+		resp.Owner = owner
 		resp.OwnerType = model.TargetTypeArticle
 		break
 	case model.TargetTypeRevise:
@@ -541,27 +545,22 @@ func (p *Service) GetCommentTarget(c context.Context, v *comment.CommentInfo) (r
 			TargetType: replyComment.TargetType,
 		}
 
-		if v.ReplyTo != 0 {
-			var acc *account.BaseInfoReply
-			if acc, err = p.d.GetAccountBaseInfo(c, v.ReplyTo); err != nil {
-				return
-			}
-
-			resp.ReplyTo = &model.Creator{
-				ID:           acc.ID,
-				Avatar:       acc.Avatar,
-				UserName:     acc.UserName,
-				Introduction: acc.Introduction,
-			}
-
+		resp.ReplyTo = &model.Creator{
+			ID:           v.ReplyTo.ID,
+			Avatar:       v.ReplyTo.Avatar,
+			UserName:     v.ReplyTo.UserName,
+			Introduction: v.ReplyTo.Introduction,
 		}
+
 		switch replyComment.TargetType {
 		case model.TargetTypeArticle:
 			var article *article.ArticleInfo
 			if article, err = p.d.GetArticle(c, replyComment.OwnerID); err != nil {
 				return
 			}
-			resp.Owner = p.FromArticle(article)
+			owner := p.FromArticle(article)
+			owner.ChangeDesc = ""
+			resp.Owner = owner
 			resp.OwnerType = model.TargetTypeArticle
 			break
 		case model.TargetTypeRevise:

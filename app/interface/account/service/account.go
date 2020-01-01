@@ -353,7 +353,9 @@ func (p *Service) GetUserArticlesPaged(c context.Context, cate string, limit, of
 					return
 				}
 			} else {
-				item.Target = p.fromArticle(t)
+				tg := p.fromArticle(t)
+				tg.ChangeDesc = ""
+				item.Target = tg
 			}
 
 			resp.Items = append(resp.Items, item)
@@ -379,7 +381,9 @@ func (p *Service) GetUserArticlesPaged(c context.Context, cate string, limit, of
 					return
 				}
 			} else {
-				item.Target = p.fromArticle(t)
+				tg := p.fromArticle(t)
+				tg.ChangeDesc = ""
+				item.Target = tg
 			}
 
 			resp.Items = append(resp.Items, item)
@@ -404,7 +408,9 @@ func (p *Service) GetUserArticlesPaged(c context.Context, cate string, limit, of
 					return
 				}
 			} else {
-				item.Target = p.fromArticle(t)
+				tg := p.fromArticle(t)
+				tg.ChangeDesc = ""
+				item.Target = tg
 			}
 
 			resp.Items = append(resp.Items, item)
