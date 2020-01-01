@@ -1,7 +1,9 @@
 # interface-account
 
-## 1.1.1
+## 1.1.2
+- 修复获取关注列表 返回第二页的问题
 
+## 1.1.1
 - 移动逻辑到 service-account
 - 增加备注
 
