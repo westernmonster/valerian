@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"net/url"
 	"strconv"
 
@@ -144,15 +143,13 @@ func (p *Service) FollowPaged(c context.Context, aid int64, query string, limit,
 	param.Set("limit", strconv.Itoa(limit))
 	param.Set("offset", strconv.Itoa(offset-limit))
 
-	if resp.Paging.Prev, err = genURL("/api/v1/account/list/follow", param); err != nil {
+	if resp.Paging.Prev, err = genURL("/api/v1/account/list/followings", param); err != nil {
 		return
 	}
 	param.Set("offset", strconv.Itoa(offset+limit))
-	if resp.Paging.Next, err = genURL("/api/v1/account/list/follow", param); err != nil {
+	if resp.Paging.Next, err = genURL("/api/v1/account/list/followings", param); err != nil {
 		return
 	}
-
-	fmt.Println(aid, query, limit, offset)
 
 	if len(resp.Items) < limit {
 		resp.Paging.IsEnd = true
