@@ -17,50 +17,18 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
-// initDiscussionStat 初始化讨论状态
-func (p *Service) initDiscussionStat(c context.Context, discussionID int64) (err error) {
-	if err = p.d.AddDiscussionStat(c, p.d.DB(), &model.DiscussionStat{
-		DiscussionID: discussionID,
-		CreatedAt:    time.Now().Unix(),
-		UpdatedAt:    time.Now().Unix(),
-	}); err != nil {
-		return
-	}
-
-	return
-}
-
-// getDiscussion 获取讨论信息
-func (p *Service) getDiscussion(c context.Context, node sqalx.Node, articleID int64) (item *model.Discussion, err error) {
-	var addCache = true
-	if item, err = p.d.DiscussionCache(c, articleID); err != nil {
-		addCache = false
-	} else if item != nil {
-		return
-	}
-
-	if item, err = p.d.GetDiscussionByID(c, p.d.DB(), articleID); err != nil {
-		return
-	} else if item == nil {
-		err = ecode.DiscussionNotExist
-		return
-	}
-
-	if addCache {
-		p.addCache(func() {
-			p.d.SetDiscussionCache(context.TODO(), item)
-		})
-	}
-	return
-}
-
 // GetUserDiscussionIDsPaged 获取用户所有创建的讨论ID列表
+// 如果话题已经删除，需要在SQL中过滤掉
 func (p *Service) GetUserDiscussionIDsPaged(c context.Context, req *api.UserDiscussionsReq) (resp []int64, err error) {
 	return p.d.GetUserDiscussionIDsPaged(c, p.d.DB(), req.AccountID, int(req.Limit), int(req.Offset))
 }
 
 // GetTopicDiscussionsPaged 分页获取话题讨论列表
 func (p *Service) GetTopicDiscussionsPaged(c context.Context, req *api.TopicDiscussionsReq) (items []*api.DiscussionInfo, err error) {
+	// 检测话题是否存在
+	if err = p.checkTopicExist(c, p.d.DB(), req.TopicID); err != nil {
+		return
+	}
 	var data []*model.Discussion
 	if data, err = p.d.GetTopicDiscussionsPaged(c, p.d.DB(), req.TopicID, req.CategoryID, int(req.Limit), int(req.Offset)); err != nil {
 		return
@@ -69,7 +37,6 @@ func (p *Service) GetTopicDiscussionsPaged(c context.Context, req *api.TopicDisc
 	items = make([]*api.DiscussionInfo, len(data))
 
 	for i, v := range data {
-
 		item := &api.DiscussionInfo{
 			ID:         v.ID,
 			TopicID:    v.TopicID,
@@ -140,7 +107,9 @@ func (p *Service) GetTopicDiscussionsPaged(c context.Context, req *api.TopicDisc
 }
 
 // GetUserDiscussionsPaged 分页获取用户创建的讨论列表
+// 如果话题已经被删除，需要在SQL中过滤掉
 func (p *Service) GetUserDiscussionsPaged(c context.Context, req *api.UserDiscussionsReq) (items []*api.DiscussionInfo, err error) {
+	// 无需验证权限
 	var data []*model.Discussion
 	if data, err = p.d.GetUserDiscussionsPaged(c, p.d.DB(), req.AccountID, int(req.Limit), int(req.Offset)); err != nil {
 		return
@@ -223,6 +192,11 @@ func (p *Service) GetUserDiscussionsPaged(c context.Context, req *api.UserDiscus
 func (p *Service) GetDiscussionInfo(c context.Context, req *api.IDReq) (resp *api.DiscussionInfo, err error) {
 	var item *model.Discussion
 	if item, err = p.getDiscussion(c, p.d.DB(), req.ID); err != nil {
+		return
+	}
+
+	// 如果所属话题已经被删除，需要返回错误
+	if err = p.checkTopicExist(c, p.d.DB(), item.TopicID); err != nil {
 		return
 	}
 
@@ -328,28 +302,24 @@ func (p *Service) GetDiscussionInfo(c context.Context, req *api.IDReq) (resp *ap
 }
 
 // GetDiscussionStat 获取指定讨论状态
-func (p *Service) getDiscussionStat(c context.Context, node sqalx.Node, discussionID int64) (item *model.DiscussionStat, err error) {
-	if item, err = p.d.GetDiscussionStatByID(c, node, discussionID); err != nil {
-		return
-	} else {
-		item = &model.DiscussionStat{
-			DiscussionID: discussionID,
-		}
-	}
-	return
-}
-
-// GetDiscussionStat 获取指定讨论状态
 func (p *Service) GetDiscussionStat(c context.Context, discussionID int64) (item *model.DiscussionStat, err error) {
 	return p.getDiscussionStat(c, p.d.DB(), discussionID)
 }
 
 // DelDiscussion 删除讨论
 func (p *Service) DelDiscussion(c context.Context, arg *api.IDReq) (err error) {
-	// TODO:  删除讨论逻辑
 	if err = p.checkEditPermission(c, p.d.DB(), arg.Aid, arg.ID); err != nil {
 		return
 	}
+
+	if err = p.d.DelDiscussion(c, p.d.DB(), arg.ID); err != nil {
+		return
+	}
+
+	p.addCache(func() {
+		p.onDiscussionDeleted(context.Background(), arg.ID, arg.Aid, time.Now().Unix())
+	})
+
 	return
 }
 
@@ -470,7 +440,6 @@ func (p *Service) AddDiscussion(c context.Context, arg *api.ArgAddDiscussion) (i
 
 // UpdateDiscussion 更新讨论
 func (p *Service) UpdateDiscussion(c context.Context, arg *api.ArgUpdateDiscussion) (err error) {
-
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
@@ -486,6 +455,7 @@ func (p *Service) UpdateDiscussion(c context.Context, arg *api.ArgUpdateDiscussi
 		}
 	}()
 
+	// 检查编辑权限
 	if err = p.checkEditPermission(c, tx, arg.Aid, arg.ID); err != nil {
 		return
 	}
@@ -495,6 +465,11 @@ func (p *Service) UpdateDiscussion(c context.Context, arg *api.ArgUpdateDiscussi
 		return
 	} else if item == nil {
 		err = ecode.DiscussionNotExist
+		return
+	}
+
+	// 检测话题
+	if err = p.checkTopicExist(c, tx, item.TopicID); err != nil {
 		return
 	}
 

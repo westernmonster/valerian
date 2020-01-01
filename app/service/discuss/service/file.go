@@ -15,6 +15,11 @@ import (
 
 // GetDiscussionFiles 获取讨论文件
 func (p *Service) GetDiscussionFiles(c context.Context, req *api.IDReq) (resp *api.DiscussionFilesResp, err error) {
+	// 检测讨论
+	if _, err = p.getDiscussion(c, p.d.DB(), req.ID); err != nil {
+		return
+	}
+
 	var data []*model.DiscussionFile
 	if data, err = p.getDiscussionFiles(c, p.d.DB(), req.Aid, req.ID); err != nil {
 		return
@@ -39,73 +44,6 @@ func (p *Service) GetDiscussionFiles(c context.Context, req *api.IDReq) (resp *a
 	return
 }
 
-// getDiscussionFiles 获取讨论文件
-func (p *Service) getDiscussionFiles(c context.Context, node sqalx.Node, aid, discussionID int64) (items []*model.DiscussionFile, err error) {
-	var addCache = true
-	if items, err = p.d.DiscussionFilesCache(c, discussionID); err != nil {
-		addCache = false
-	} else if items != nil {
-		return
-	}
-
-	if items, err = p.d.GetDiscussionFilesByCond(c, node, map[string]interface{}{"discussion_id": discussionID}); err != nil {
-		return
-	}
-
-	if addCache {
-		p.addCache(func() {
-			p.d.SetDiscussionFilesCache(context.TODO(), discussionID, items)
-		})
-	}
-
-	return
-}
-
-// bulkCreateFiles 批量添加附件（讨论新建时）
-func (p *Service) bulkCreateFiles(c context.Context, node sqalx.Node, discussionID int64, files []*api.ArgDiscussionFile) (err error) {
-	var tx sqalx.Node
-	if tx, err = node.Beginx(c); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
-		return
-	}
-
-	defer func() {
-		if err != nil {
-			if err1 := tx.Rollback(); err1 != nil {
-				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
-			}
-			return
-		}
-	}()
-
-	for _, v := range files {
-		item := &model.DiscussionFile{
-			ID:           gid.NewID(),
-			FileName:     v.FileName,
-			FileURL:      v.FileURL,
-			Seq:          int32(v.Seq),
-			DiscussionID: discussionID,
-			CreatedAt:    time.Now().Unix(),
-			UpdatedAt:    time.Now().Unix(),
-		}
-
-		if err = p.d.AddDiscussionFile(c, tx, item); err != nil {
-			return
-		}
-	}
-
-	if err = tx.Commit(); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
-		return
-	}
-
-	p.addCache(func() {
-		p.d.DelDiscussionFilesCache(context.TODO(), discussionID)
-	})
-
-	return
-}
-
 // SaveDiscussionFiles 批量更新讨论附件
 func (p *Service) SaveDiscussionFiles(c context.Context, arg *api.ArgSaveDiscussionFiles) (err error) {
 	var tx sqalx.Node
@@ -123,11 +61,18 @@ func (p *Service) SaveDiscussionFiles(c context.Context, arg *api.ArgSaveDiscuss
 		}
 	}()
 
-	var discussion *model.Discussion
-	if discussion, err = p.d.GetDiscussionByID(c, tx, arg.DiscussionID); err != nil {
+	// 检测讨论和所属话题
+	var discuss *model.Discussion
+	if discuss, err = p.getDiscussion(c, tx, arg.DiscussionID); err != nil {
 		return
-	} else if discussion == nil {
-		return ecode.DiscussionNotExist
+	}
+	if err = p.checkTopicExist(c, tx, discuss.TopicID); err != nil {
+		return
+	}
+
+	// 检测讨论的编辑权限
+	if err = p.checkEditPermission(c, tx, arg.Aid, discuss.ID); err != nil {
+		return
 	}
 
 	dbItems, err := p.d.GetDiscussionFilesByCond(c, tx, map[string]interface{}{"discussion_id": arg.DiscussionID})
