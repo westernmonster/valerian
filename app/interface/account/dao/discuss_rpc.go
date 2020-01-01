@@ -14,7 +14,7 @@ func (p *Dao) GetDiscussion(c context.Context, id int64) (info *discuss.Discussi
 	return
 }
 
-func (p *Dao) GetUserDiscussionsPaged(c context.Context, aid int64, limit, offset int) (resp *discuss.UserDiscussionsResp, err error) {
+func (p *Dao) GetUserDiscussionsPaged(c context.Context, aid int64, limit, offset int) (resp *discuss.DiscussionsResp, err error) {
 	if resp, err = p.discussRPC.GetUserDiscussionsPaged(c, &discuss.UserDiscussionsReq{AccountID: aid, Limit: int32(limit), Offset: int32(offset)}); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetUserDiscussionsPaged, error(%+v), aid(%d), limit(%d), offset(%d)`", err, aid, limit, offset))
 	}
