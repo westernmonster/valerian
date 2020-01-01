@@ -15,6 +15,16 @@ func (p *Service) GetDiscussionFiles(c context.Context, discussionID int64) (ite
 		err = ecode.AcquireAccountIDFailed
 		return
 	}
+
+	// 查看权限
+	var canView bool
+	if canView, err = p.d.CanView(c, &discussion.IDReq{Aid: aid, ID: discussionID}); err != nil {
+		return
+	} else if !canView {
+		err = ecode.NoDiscussionViewPermission
+		return
+	}
+
 	var data *discussion.DiscussionFilesResp
 	if data, err = p.d.GetDiscussionFiles(c, aid, discussionID); err != nil {
 		return

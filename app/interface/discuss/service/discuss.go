@@ -256,6 +256,15 @@ func (p *Service) GetDiscussion(c context.Context, discussionID int64) (resp *mo
 		return
 	}
 
+	// 查看权限
+	var canView bool
+	if canView, err = p.d.CanView(c, &discussion.IDReq{Aid: aid, ID: discussionID}); err != nil {
+		return
+	} else if !canView {
+		err = ecode.NoDiscussionViewPermission
+		return
+	}
+
 	req := &discussion.IDReq{
 		ID:      discussionID,
 		Aid:     aid,
@@ -324,11 +333,13 @@ func (p *Service) GetDiscussion(c context.Context, discussionID int64) (resp *mo
 
 	resp.TopicName = tp.Name
 
-	if aid == data.Creator.ID {
-		resp.CanEdit = true
+	// 查看权限
+	var canEdit bool
+	if canEdit, err = p.d.CanEdit(c, &discussion.IDReq{Aid: aid, ID: discussionID}); err != nil {
 		return
 	}
 
-	// TODO: 讨论权限
+	resp.CanEdit = canEdit
+
 	return
 }

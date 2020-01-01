@@ -90,3 +90,23 @@ func (p *Dao) SaveDiscussionFiles(c context.Context, arg *discussion.ArgSaveDisc
 	}
 	return
 }
+
+func (p *Dao) CanEdit(c context.Context, req *discussion.IDReq) (canEdit bool, err error) {
+	var resp *discussion.BoolResp
+	if resp, err = p.discussionRPC.CanEdit(c, req); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.CanEdit() error(%+v), req(%+v)", err, req))
+		return
+	}
+	canEdit = resp.Result
+	return
+}
+
+func (p *Dao) CanView(c context.Context, req *discussion.IDReq) (canView bool, err error) {
+	var resp *discussion.BoolResp
+	if resp, err = p.discussionRPC.CanView(c, req); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.CanView() error(%+v), req(%+v)", err, req))
+		return
+	}
+	canView = resp.Result
+	return
+}
