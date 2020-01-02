@@ -30,6 +30,67 @@ message RenewTokenReq {
 }
 
 
+message EmailLoginReq {
+    int32 Source = 1;
+    string Email = 2;
+    string Password = 3;
+    string ClientID = 4;
+}
+
+message DigitLoginReq {
+    int32 Source = 1;
+    string Mobile = 2;
+    string Prefix = 3;
+    string Valcode = 4;
+    string ClientID = 5;
+}
+
+
+message MobileLoginReq {
+    int32 Source = 1;
+    string Mobile = 2;
+    string Prefix = 3;
+    string Password = 4;
+    string ClientID = 5;
+}
+
+message EmailRegisterReq {
+    int32 Source = 1;
+    string Email = 2;
+    string Valcode = 3;
+    string Password = 4;
+    string ClientID = 5;
+}
+
+
+message MobileRegisterReq {
+    int32 Source = 1;
+    string Mobile = 2;
+    string Prefix = 3;
+    string Password = 4;
+    string Valcode = 5;
+    string ClientID = 6;
+}
+
+
+message ForgetPasswordReq {
+	string Identity  = 1;
+	string Valcode  = 2;
+	string Prefix   = 3;
+	int32 IdentityType  = 4;
+}
+
+message ForgetPasswordResp {
+	string SessionID  = 1;
+}
+
+message ResetPasswordReq {
+	string SessionID  = 1;
+    string Password = 2;
+}
+
+
+
 message LogoutReq {
     int64 aid = 1;
     string client_id = 2;
@@ -58,9 +119,45 @@ message AdminPermissionReq {
     string sid = 1;
 }
 
+message SetPasswordReq {
+    int64 Aid = 1;
+    string Password = 2;
+}
+
+message AidReq {
+    int64 aid = 1 ;
+    string remoteIP = 2 ;
+    bool UseMaster = 3;
+}
+
+message LockReq {
+    int64 Aid = 1 ;
+    bool UseMaster = 2;
+    int64 TargetAccountID = 3;
+}
+
+
+message LoginResp {
+    int64 Aid = 1;
+    string Role = 2;
+    string AccessToken = 3;
+    int32 ExpiresIn = 4;
+    string TokenType = 5;
+    string Scope = 6;
+    string RefreshToken = 7;
+}
+
 message AdminPermissionResp {
     int64 aid = 1;
     repeated string perms = 2;
+}
+
+message DeactiveReq {
+    string Valcode =  1;
+    string Identity = 2;
+    string Prefix = 3;
+    int32 IdentityType = 4;
+    int64 Aid = 5;
 }
 
 
@@ -69,9 +166,31 @@ service Identify {
 
     rpc RenewToken(RenewTokenReq) returns (RenewTokenResp);
 
+    rpc EmailRegister(EmailRegisterReq) returns (LoginResp);
+
+    rpc MobileRegister(MobileRegisterReq) returns (LoginResp);
+
+    rpc EmailLogin(EmailLoginReq) returns (LoginResp);
+
+    rpc MobileLogin(MobileLoginReq) returns (LoginResp);
+
+    rpc DigitLogin(DigitLoginReq) returns (LoginResp);
+
+    rpc ForgetPassword(ForgetPasswordReq) returns (ForgetPasswordResp);
+
+    rpc ResetPassword(ResetPasswordReq) returns (EmptyStruct);
+
+    rpc SetPassword(SetPasswordReq) returns (EmptyStruct);
+
     rpc Logout(LogoutReq) returns (EmptyStruct);
 
     rpc AdminAuth(AdminAuthReq) returns(AdminAuthResp);
 
     rpc Permissions(AdminPermissionReq) returns(AdminPermissionResp);
+
+    rpc AccountLock(LockReq) returns (EmptyStruct);
+
+    rpc AccountUnlock(LockReq) returns (EmptyStruct);
+
+    rpc Deactive(DeactiveReq) returns (EmptyStruct);
 }

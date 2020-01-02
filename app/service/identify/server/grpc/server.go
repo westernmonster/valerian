@@ -85,3 +85,67 @@ func (s *server) Logout(ctx context.Context, req *api.LogoutReq) (*api.EmptyStru
 
 	return &api.EmptyStruct{}, nil
 }
+
+func (s *server) EmailLogin(ctx context.Context, req *api.EmailLoginReq) (*api.LoginResp, error) {
+	return s.svr.EmailLogin(ctx, req)
+}
+
+func (s *server) MobileLogin(ctx context.Context, req *api.MobileLoginReq) (*api.LoginResp, error) {
+	return s.svr.MobileLogin(ctx, req)
+}
+
+func (s *server) DigitLogin(ctx context.Context, req *api.DigitLoginReq) (*api.LoginResp, error) {
+	return s.svr.DigitLogin(ctx, req)
+}
+
+func (s *server) EmailRegister(ctx context.Context, req *api.EmailRegisterReq) (*api.LoginResp, error) {
+	return s.svr.EmailRegister(ctx, req)
+}
+
+func (s *server) MobileRegister(ctx context.Context, req *api.MobileRegisterReq) (*api.LoginResp, error) {
+	return s.svr.MobileRegister(ctx, req)
+}
+
+func (s *server) ForgetPassword(ctx context.Context, req *api.ForgetPasswordReq) (*api.ForgetPasswordResp, error) {
+	return s.svr.ForgetPassword(ctx, req)
+}
+
+func (s *server) ResetPassword(ctx context.Context, req *api.ResetPasswordReq) (*api.EmptyStruct, error) {
+	err := s.svr.ResetPassword(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return &api.EmptyStruct{}, nil
+}
+
+func (s *server) AccountLock(ctx context.Context, req *api.LockReq) (*api.EmptyStruct, error) {
+	err := s.svr.AccountLock(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return &api.EmptyStruct{}, nil
+}
+
+func (s *server) AccountUnlock(ctx context.Context, req *api.LockReq) (*api.EmptyStruct, error) {
+	err := s.svr.AccountUnlock(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return &api.EmptyStruct{}, nil
+}
+
+func (s *server) Deactive(ctx context.Context, req *api.DeactiveReq) (*api.EmptyStruct, error) {
+	err := s.svr.Deactive(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return &api.EmptyStruct{}, nil
+}
+
+func (s *server) SetPassword(ctx context.Context, req *api.SetPasswordReq) (*api.EmptyStruct, error) {
+	err := s.svr.SetPassword(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return &api.EmptyStruct{}, nil
+}

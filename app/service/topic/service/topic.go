@@ -11,15 +11,17 @@ import (
 	"valerian/library/log"
 )
 
+// GetBelongsTopicIDs 获取所关注的话题ID列表
 func (p *Service) GetBelongsTopicIDs(c context.Context, aid int64) (ids []int64, err error) {
-
 	return p.d.GetMemberBelongsTopicIDs(c, p.d.DB(), aid)
 }
 
+// GetTopicMemberIDs 获取话题成员ID列表
 func (p *Service) GetTopicMemberIDs(c context.Context, aid int64) (ids []int64, err error) {
 	return p.d.GetTopicMemberIDs(c, p.d.DB(), aid)
 }
 
+// GetUserTopicsPaged 获取用户创建的话题列表
 func (p *Service) GetUserTopicsPaged(c context.Context, aid int64, limit, offset int) (resp *api.UserTopicsResp, err error) {
 	var items []*model.Topic
 	if items, err = p.d.GetUserTopicsPaged(c, p.d.DB(), aid, limit, offset); err != nil {
@@ -78,18 +80,22 @@ func (p *Service) GetUserTopicsPaged(c context.Context, aid int64, limit, offset
 	return
 }
 
+// GetAllTopics 获取所有话题
 func (p *Service) GetAllTopics(c context.Context) (items []*model.Topic, err error) {
 	return p.d.GetTopics(c, p.d.DB())
 }
 
+// GetTopic 通过ID获取话题
 func (p *Service) GetTopic(c context.Context, topicID int64) (item *model.Topic, err error) {
 	return p.getTopic(c, p.d.DB(), topicID)
 }
 
+// GetTopicInfo 通过ID获取话题信息
 func (p *Service) GetTopicInfo(c context.Context, topicID int64) (item *api.TopicInfo, err error) {
 	return p.getTopicInfo(c, p.d.DB(), topicID)
 }
 
+// getTopicInfo 通过ID获取话题信息
 func (p *Service) getTopicInfo(c context.Context, node sqalx.Node, topicID int64) (item *api.TopicInfo, err error) {
 	var v *model.Topic
 	if v, err = p.getTopic(c, node, topicID); err != nil {
@@ -141,6 +147,7 @@ func (p *Service) getTopicInfo(c context.Context, node sqalx.Node, topicID int64
 
 }
 
+// GetTopicStat 获取话题状态值
 func (p *Service) GetTopicStat(c context.Context, topicID int64) (stat *model.TopicStat, err error) {
 	if stat, err = p.d.GetTopicStatByID(c, p.d.DB(), topicID); err != nil {
 		return
@@ -152,6 +159,7 @@ func (p *Service) GetTopicStat(c context.Context, topicID int64) (stat *model.To
 	return
 }
 
+// GetTopicManagerRole 判断是否话题成员，如果是则返回成员角色
 func (p *Service) GetTopicManagerRole(c context.Context, topicID, aid int64) (isMember bool, role string, err error) {
 	var member *model.TopicMember
 	if member, err = p.d.GetTopicMemberByCond(c, p.d.DB(), map[string]interface{}{"account_id": aid, "topic_id": topicID}); err != nil {
@@ -166,7 +174,7 @@ func (p *Service) GetTopicManagerRole(c context.Context, topicID, aid int64) (is
 	return
 }
 
-// 创建
+// CreateTopic 创建话题
 func (p *Service) CreateTopic(c context.Context, arg *api.ArgCreateTopic) (topicID int64, err error) {
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
@@ -198,6 +206,7 @@ func (p *Service) CreateTopic(c context.Context, arg *api.ArgCreateTopic) (topic
 	return
 }
 
+// UpdateTopic 更新话题
 func (p *Service) UpdateTopic(c context.Context, arg *api.ArgUpdateTopic) (err error) {
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
@@ -235,6 +244,7 @@ func (p *Service) UpdateTopic(c context.Context, arg *api.ArgUpdateTopic) (err e
 	return
 }
 
+// GetTopicResp 获取话题全量信息
 func (p *Service) GetTopicResp(c context.Context, aid int64, topicID int64, include string) (item *api.TopicResp, err error) {
 	var t *model.Topic
 	if t, err = p.getTopic(c, p.d.DB(), topicID); err != nil {
@@ -299,6 +309,8 @@ func (p *Service) GetTopicResp(c context.Context, aid int64, topicID int64, incl
 	return
 }
 
+// DelTopic 删除话题
 func (p *Service) DelTopic(c context.Context, topicID int64) (err error) {
+	//TODO: 实现话题删除逻辑
 	return
 }

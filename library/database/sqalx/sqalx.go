@@ -271,7 +271,7 @@ func (n *node) SelectContext(ctx context.Context, dest interface{}, query string
 
 func (n *node) ExecContext(ctx context.Context, query string, args ...interface{}) (result sql.Result, err error) {
 	if n.tx == nil && UseMaster(ctx) {
-		return n.write.ExecContext(n.tx.Context, query, args...)
+		return n.write.ExecContext(ctx, query, args...)
 	}
 
 	// 默认write库执行，如果有事务则Driver为 write 库

@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-
 	"valerian/app/interface/account/model"
 	account "valerian/app/service/account/api"
 	"valerian/library/database/sqalx"
@@ -10,6 +9,7 @@ import (
 	"valerian/library/net/metadata"
 )
 
+// GetAccountSetting 获取用户设置
 func (p *Service) GetAccountSetting(c context.Context) (resp *model.SettingResp, err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
@@ -19,6 +19,7 @@ func (p *Service) GetAccountSetting(c context.Context) (resp *model.SettingResp,
 	return p.getAccountSetting(c, p.d.DB(), aid)
 }
 
+// getAccountSetting 获取用户设置
 func (p *Service) getAccountSetting(c context.Context, node sqalx.Node, accountID int64) (resp *model.SettingResp, err error) {
 	var setting *account.Setting
 	if setting, err = p.d.GetAccountSetting(c, accountID); err != nil {
@@ -47,6 +48,7 @@ func (p *Service) getAccountSetting(c context.Context, node sqalx.Node, accountI
 	return
 }
 
+// UpdateAccountSetting 更新用户设置
 func (p *Service) UpdateAccountSetting(c context.Context, arg *model.ArgSetting) (err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
@@ -101,6 +103,7 @@ func (p *Service) UpdateAccountSetting(c context.Context, arg *model.ArgSetting)
 	return
 }
 
+//  UpdateActivitySetting 更新用户动态设置
 func (p *Service) UpdateActivitySetting(c context.Context, arg *model.ArgActivitySetting) (err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
@@ -132,6 +135,7 @@ func (p *Service) UpdateActivitySetting(c context.Context, arg *model.ArgActivit
 	return
 }
 
+// UpdateNotifySetting 更新用户通知设置
 func (p *Service) UpdateNotifySetting(c context.Context, arg *model.ArgNotifySetting) (err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
@@ -164,6 +168,7 @@ func (p *Service) UpdateNotifySetting(c context.Context, arg *model.ArgNotifySet
 	return
 }
 
+// UpdateLanguageSetting 更新用户语言设置
 func (p *Service) UpdateLanguageSetting(c context.Context, arg *model.ArgLanguageSetting) (err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {

@@ -490,5 +490,5 @@ spec:
           servicePort: 8000
       - path: /
         backend:
-          serviceName: adminweb
+          serviceName: admin-web
           servicePort: 80

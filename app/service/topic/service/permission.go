@@ -7,10 +7,12 @@ import (
 	"valerian/library/ecode"
 )
 
+// IsSystemAdmin 是否系统管理员
 func (p *Service) IsSystemAdmin(c context.Context, aid int64) (ret bool, err error) {
 	return p.isSystemAdmin(c, p.d.DB(), aid)
 }
 
+// isSystemAdmin 是否系统管理员
 func (p *Service) isSystemAdmin(c context.Context, node sqalx.Node, aid int64) (ret bool, err error) {
 	var acc *model.Account
 	if acc, err = p.getAccount(c, node, aid); err != nil {
@@ -25,10 +27,12 @@ func (p *Service) isSystemAdmin(c context.Context, node sqalx.Node, aid int64) (
 	return
 }
 
+// CanView 是否能查看话题
 func (p *Service) CanView(c context.Context, aid int64, topicID int64) (canView bool, err error) {
 	return p.canView(c, p.d.DB(), aid, topicID)
 }
 
+// canView 是否能查看话题
 func (p *Service) canView(c context.Context, node sqalx.Node, aid int64, topicID int64) (canView bool, err error) {
 	var isSystemAdmin bool
 	if isSystemAdmin, err = p.isSystemAdmin(c, node, aid); err != nil {
@@ -53,10 +57,12 @@ func (p *Service) canView(c context.Context, node sqalx.Node, aid int64, topicID
 	return
 }
 
+// CanEdit 是否能编辑话题
 func (p *Service) CanEdit(c context.Context, aid int64, topicID int64) (canEdit bool, err error) {
 	return p.canEdit(c, p.d.DB(), aid, topicID)
 }
 
+// canEdit 是否能编辑话题
 func (p *Service) canEdit(c context.Context, node sqalx.Node, aid int64, topicID int64) (canEdit bool, err error) {
 	var isSystemAdmin bool
 	if isSystemAdmin, err = p.isSystemAdmin(c, node, aid); err != nil {
@@ -73,10 +79,12 @@ func (p *Service) canEdit(c context.Context, node sqalx.Node, aid int64, topicID
 	return
 }
 
+// IsTopicMember 是否话题成员
 func (p *Service) IsTopicMember(c context.Context, aid int64, topicID int64) (ret bool, err error) {
 	return p.isTopicMember(c, p.d.DB(), aid, topicID)
 }
 
+// isTopicMember 是否话题成员
 func (p *Service) isTopicMember(c context.Context, node sqalx.Node, aid int64, topicID int64) (ret bool, err error) {
 	var member *model.TopicMember
 	if member, err = p.d.GetTopicMemberByCond(c, node, map[string]interface{}{"account_id": aid, "topic_id": topicID}); err != nil {
@@ -87,10 +95,12 @@ func (p *Service) isTopicMember(c context.Context, node sqalx.Node, aid int64, t
 	return
 }
 
+// IsTopicAdmin 是否话题管理员
 func (p *Service) IsTopicAdmin(c context.Context, aid int64, topicID int64) (ret bool, err error) {
 	return p.isTopicAdmin(c, p.d.DB(), aid, topicID)
 }
 
+// isTopicAdmin 是否话题管理员
 func (p *Service) isTopicAdmin(c context.Context, node sqalx.Node, aid int64, topicID int64) (ret bool, err error) {
 	var member *model.TopicMember
 	if member, err = p.d.GetTopicMemberByCond(c, node, map[string]interface{}{"account_id": aid, "topic_id": topicID}); err != nil {
@@ -104,6 +114,7 @@ func (p *Service) isTopicAdmin(c context.Context, node sqalx.Node, aid int64, to
 	return
 }
 
+// IsTopicOwner 是否是话题的主理人
 func (p *Service) IsTopicOwner(c context.Context, aid int64, topicID int64) (ret bool, err error) {
 	var member *model.TopicMember
 	if member, err = p.d.GetTopicMemberByCond(c, p.d.DB(), map[string]interface{}{"account_id": aid, "topic_id": topicID}); err != nil {
@@ -116,6 +127,7 @@ func (p *Service) IsTopicOwner(c context.Context, aid int64, topicID int64) (ret
 	return
 }
 
+// checkTopicManagePermission 检测话题管理权限
 func (p *Service) checkTopicManagePermission(c context.Context, aid, topicID int64) (err error) {
 	var hasManagePermission bool
 	if hasManagePermission, err = p.hasTopicManagePermission(c, p.d.DB(), aid, topicID); err != nil {
@@ -127,6 +139,7 @@ func (p *Service) checkTopicManagePermission(c context.Context, aid, topicID int
 	return
 }
 
+// hasTopicManagePermission 是否有话题管理权限
 func (p *Service) hasTopicManagePermission(c context.Context, node sqalx.Node, aid, topicID int64) (ret bool, err error) {
 	var isSysAdmin bool
 	if isSysAdmin, err = p.isSystemAdmin(c, node, aid); err != nil {
@@ -147,6 +160,7 @@ func (p *Service) hasTopicManagePermission(c context.Context, node sqalx.Node, a
 	return
 }
 
+// checkIsTopicAdmin 检测话题管理权限
 func (p *Service) checkIsTopicAdmin(c context.Context, aid, topicID int64) (err error) {
 	var member *model.TopicMember
 	if member, err = p.d.GetTopicMemberByCond(c, p.d.DB(), map[string]interface{}{"account_id": aid, "topic_id": topicID}); err != nil {
@@ -161,6 +175,7 @@ func (p *Service) checkIsTopicAdmin(c context.Context, aid, topicID int64) (err 
 	return
 }
 
+// checkIsMember 检测是否话题成员
 func (p *Service) checkIsMember(c context.Context, aid, topicID int64) (err error) {
 	var member *model.TopicMember
 	if member, err = p.d.GetTopicMemberByCond(c, p.d.DB(), map[string]interface{}{"account_id": aid, "topic_id": topicID}); err != nil {
@@ -173,6 +188,7 @@ func (p *Service) checkIsMember(c context.Context, aid, topicID int64) (err erro
 	return
 }
 
+// checkViewPermission 检测话题查看权限
 func (p *Service) checkViewPermission(c context.Context, aid, topicID int64) (err error) {
 	var canView bool
 	if canView, err = p.canView(c, p.d.DB(), aid, topicID); err != nil {
@@ -187,6 +203,7 @@ func (p *Service) checkViewPermission(c context.Context, aid, topicID int64) (er
 	return
 }
 
+// checkEditPermission 检测话题编辑权限
 func (p *Service) checkEditPermission(c context.Context, aid, topicID int64) (err error) {
 	var canEdit bool
 	if canEdit, err = p.canEdit(c, p.d.DB(), aid, topicID); err != nil {

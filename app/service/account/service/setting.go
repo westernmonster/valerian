@@ -10,10 +10,12 @@ import (
 	"valerian/library/log"
 )
 
+// GetAccountSetting 获取账户设置
 func (p *Service) GetAccountSetting(c context.Context, aid int64) (resp *model.SettingResp, err error) {
 	return p.getAccountSetting(c, p.d.DB(), aid)
 }
 
+// getAccountSetting 获取账户设置
 func (p *Service) getAccountSetting(c context.Context, node sqalx.Node, accountID int64) (resp *model.SettingResp, err error) {
 	var setting *model.AccountSetting
 	if setting, err = p.d.GetAccountSettingByID(c, node, accountID); err != nil {
@@ -48,6 +50,7 @@ func (p *Service) getAccountSetting(c context.Context, node sqalx.Node, accountI
 	return
 }
 
+// UpdateAccountSetting 更新账户设置
 func (p *Service) UpdateAccountSetting(c context.Context, aid int64, req map[string]bool, language string) (err error) {
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {

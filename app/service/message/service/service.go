@@ -12,6 +12,7 @@ import (
 	"valerian/library/jpush"
 	"valerian/library/log"
 	"valerian/library/mq"
+	"valerian/library/stat/prom"
 )
 
 // Service struct of service
@@ -108,18 +109,23 @@ func New(c *conf.Config) (s *Service) {
 		panic(err)
 	}
 
-	if err := s.mq.QueueSubscribe(def.BusFeedBackAccuseSuit, "message", s.onFeedBackAccuseSuit); err != nil {
-		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusFeedBackAccuseSuit, "message")
-		panic(err)
-	}
+	// if err := s.mq.QueueSubscribe(def.BusFeedBackAccuseSuit, "message", s.onFeedBackAccuseSuit); err != nil {
+	// 	log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusFeedBackAccuseSuit, "message")
+	// 	panic(err)
+	// }
 
-	if err := s.mq.QueueSubscribe(def.BusFeedBackAccuseNotSuit, "message", s.onFeedBackAccuseNotSuit); err != nil {
-		log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusFeedBackAccuseNotSuit, "message")
-		panic(err)
-	}
+	// if err := s.mq.QueueSubscribe(def.BusFeedBackAccuseNotSuit, "message", s.onFeedBackAccuseNotSuit); err != nil {
+	// 	log.Errorf("mq.QueueSubscribe(), error(%+v),subject(%s), queue(%s)", err, def.BusFeedBackAccuseNotSuit, "message")
+	// 	panic(err)
+	// }
 
 	go s.cacheproc()
 	return
+}
+
+func PromError(name string, format string, args ...interface{}) {
+	prom.BusinessErrCount.Incr(name)
+	log.Errorf(format, args...)
 }
 
 // Ping check server ok.

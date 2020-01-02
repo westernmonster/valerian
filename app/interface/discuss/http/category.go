@@ -1,10 +1,12 @@
 package http
 
 import (
+	"fmt"
 	"strconv"
 
 	"valerian/app/interface/discuss/model"
 	"valerian/library/ecode"
+	"valerian/library/log"
 	"valerian/library/net/http/mars"
 )
 
@@ -31,6 +33,7 @@ func discussCategories(c *mars.Context) {
 	params := c.Request.Form
 
 	if id, err = strconv.ParseInt(params.Get("topic_id"), 10, 64); err != nil {
+		log.For(c).Error(fmt.Sprintf("req error(%+v)", err))
 		c.JSON(nil, ecode.RequestErr)
 		return
 	}
@@ -56,10 +59,13 @@ func discussCategories(c *mars.Context) {
 func editDiscussCategories(c *mars.Context) {
 	arg := new(model.ArgSaveDiscussCategories)
 	if e := c.Bind(arg); e != nil {
+		log.For(c).Error(fmt.Sprintf("bind error(%+v)", e))
+		c.JSON(nil, ecode.RequestErr)
 		return
 	}
 
 	if e := arg.Validate(); e != nil {
+		log.For(c).Error(fmt.Sprintf("validation error(%+v)", e))
 		c.JSON(nil, ecode.RequestErr)
 		return
 	}

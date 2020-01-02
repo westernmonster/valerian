@@ -1,6 +1,12 @@
 package model
 
-import validation "github.com/go-ozzo/ozzo-validation"
+import (
+	"regexp"
+	"valerian/library/ecode"
+
+	"github.com/asaskevich/govalidator"
+	validation "github.com/go-ozzo/ozzo-validation"
+)
 
 type ArgRenewToken struct {
 	RefreshToken string `json:"refresh_token"`
@@ -83,4 +89,41 @@ func (p *ArgLogout) Validate() error {
 		validation.Field(&p.ClientID, validation.Required),
 	)
 
+}
+
+func ValidateIdentity(identityType int32, prefix string) *ValidateIdentityRule {
+	return &ValidateIdentityRule{
+		IdentityType: identityType,
+		Prefix:       prefix,
+	}
+}
+
+type ValidateIdentityRule struct {
+	IdentityType int32
+	Prefix       string
+}
+
+func (p *ValidateIdentityRule) Validate(v interface{}) error {
+	identity := v.(string)
+
+	if p.IdentityType == IdentityEmail {
+		if !govalidator.IsEmail(identity) {
+			return ecode.InvalidEmail
+		}
+	} else {
+		chinaRegex := regexp.MustCompile(ChinaMobileRegex)
+		otherRegex := regexp.MustCompile(OtherMobileRegex)
+
+		if p.Prefix == "86" {
+			if !chinaRegex.MatchString(identity) {
+				return ecode.InvalidMobile
+			}
+		} else { // China
+			if !otherRegex.MatchString(identity) {
+				return ecode.InvalidMobile
+			}
+		} // Other Country
+	}
+
+	return nil
 }

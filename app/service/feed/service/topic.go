@@ -2,67 +2,78 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"time"
+
 	"valerian/app/service/feed/def"
 	"valerian/app/service/feed/model"
-	relation "valerian/app/service/relation/api"
-	topic "valerian/app/service/topic/api"
 	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
 	"valerian/library/gid"
-	"valerian/library/log"
 
 	"github.com/nats-io/stan.go"
 )
 
+func (p *Service) getTopic(c context.Context, node sqalx.Node, topicID int64) (item *model.Topic, err error) {
+	if item, err = p.d.GetTopicByID(c, node, topicID); err != nil {
+		return
+	} else if item == nil {
+		return nil, ecode.TopicNotExist
+	}
+	return
+}
+
 func (p *Service) onTopicAdded(m *stan.Msg) {
 	var err error
+
 	c := context.Background()
+	// 强制使用强制使用Master库
+	c = sqalx.NewContext(c, true)
+
 	info := new(def.MsgTopicAdded)
 	if err = info.Unmarshal(m.Data); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onTopicAdded Unmarshal failed %#v", err))
-		return
-	}
-
-	var topic *topic.TopicInfo
-	if topic, err = p.d.GetTopic(c, info.TopicID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onTopicAdded GetTopic failed %#v", err))
-		if ecode.Cause(err) == ecode.TopicNotExist {
-			m.Ack()
-		}
-		return
-	}
-
-	var fansResp *relation.IDsResp
-	if fansResp, err = p.d.GetFansIDs(c, info.ActorID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onTopicAdded GetFansIDs failed %#v", err))
+		PromError("feed: Unmarshal data", "info.Umarshal() ,error(%+v)", err)
 		return
 	}
 
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		PromError("feed: tx.Beginx", "tx.Beginx(), error(%+v)", err)
 		return
 	}
 
 	defer func() {
 		if err != nil {
 			if err1 := tx.Rollback(); err1 != nil {
-				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+				PromError("feed: tx.Rollback", "tx.Rollback(), error(%+v)", err)
 			}
 			return
 		}
 	}()
 
-	for _, v := range fansResp.IDs {
+	var topic *model.Topic
+	if topic, err = p.getTopic(c, tx, info.TopicID); err != nil {
+		if ecode.IsNotExistEcode(err) {
+			m.Ack()
+			return
+		}
+		PromError("feed: GetTopic", "GetTopic(), id(%d),error(%+v)", info.TopicID, err)
+		return
+	}
+
+	var ids []int64
+	if ids, err = p.d.GetFansIDs(c, tx, info.ActorID); err != nil {
+		PromError("feed: GetFansIDs", "GetFansIDs(), aid(%d),error(%+v)", info.ActorID, err)
+		return
+	}
+
+	for _, v := range ids {
 		feed := &model.Feed{
 			ID:         gid.NewID(),
 			AccountID:  v,
 			ActionType: def.ActionTypeCreateTopic,
 			ActionTime: time.Now().Unix(),
 			ActionText: def.ActionTextCreateTopic,
-			ActorID:    topic.Creator.ID,
+			ActorID:    topic.CreatedBy,
 			ActorType:  def.ActorTypeUser,
 			TargetID:   topic.ID,
 			TargetType: def.TargetTypeTopic,
@@ -71,13 +82,13 @@ func (p *Service) onTopicAdded(m *stan.Msg) {
 		}
 
 		if err = p.d.AddFeed(c, tx, feed); err != nil {
-			log.For(c).Error(fmt.Sprintf("service.onTopicAdded() failed %#v", err))
+			PromError("feed: AddFeed", "AddFeed(), feed(%+v),error(%+v)", feed, err)
 			return
 		}
 	}
 
 	if err = tx.Commit(); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		PromError("feed: tx.Commit", "tx.Commit(), error(%+v)", err)
 		return
 	}
 
@@ -86,51 +97,67 @@ func (p *Service) onTopicAdded(m *stan.Msg) {
 
 func (p *Service) onTopicFollowed(m *stan.Msg) {
 	var err error
+
 	c := context.Background()
+	// 强制使用强制使用Master库
+	c = sqalx.NewContext(c, true)
+
 	info := new(def.MsgTopicFollowed)
 	if err = info.Unmarshal(m.Data); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onTopicFollowed Unmarshal failed %#v", err))
-		return
-	}
-
-	var topic *topic.TopicInfo
-	if topic, err = p.d.GetTopic(c, info.TopicID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onTopicFollowed GetTopic failed %#v", err))
-		if ecode.Cause(err) == ecode.TopicNotExist {
-			m.Ack()
-		}
-		return
-	}
-
-	var fansResp *relation.IDsResp
-	if fansResp, err = p.d.GetFansIDs(c, info.ActorID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onTopicFollowed GetFansIDs failed %#v", err))
+		PromError("feed: Unmarshal data", "info.Umarshal() ,error(%+v)", err)
 		return
 	}
 
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		PromError("feed: tx.Beginx", "tx.Beginx(), error(%+v)", err)
 		return
 	}
 
 	defer func() {
 		if err != nil {
 			if err1 := tx.Rollback(); err1 != nil {
-				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+				PromError("feed: tx.Rollback", "tx.Rollback(), error(%+v)", err)
 			}
 			return
 		}
 	}()
 
-	for _, v := range fansResp.IDs {
+	var topic *model.Topic
+	if topic, err = p.getTopic(c, tx, info.TopicID); err != nil {
+		if ecode.IsNotExistEcode(err) {
+			m.Ack()
+			return
+		}
+		PromError("feed: GetTopic", "GetTopic(), id(%d),error(%+v)", info.TopicID, err)
+		return
+	}
+
+	var setting *model.SettingResp
+	if setting, err = p.getAccountSetting(c, p.d.DB(), info.ActorID); err != nil {
+		PromError("feed: getAccountSetting", "getAccountSetting(), id(%d),error(%+v)", info.ActorID, err)
+		return
+	}
+
+	if !setting.ActivityFollowTopic {
+		m.Ack()
+		return
+	}
+
+	var ids []int64
+	if ids, err = p.d.GetFansIDs(c, tx, info.ActorID); err != nil {
+		PromError("feed: GetFansIDs", "GetFansIDs(), aid(%d),error(%+v)", info.ActorID, err)
+		return
+	}
+
+	for _, v := range ids {
 		feed := &model.Feed{
 			ID:         gid.NewID(),
 			AccountID:  v,
 			ActionType: def.ActionTypeFollowTopic,
 			ActionTime: time.Now().Unix(),
 			ActionText: def.ActionTextFollowTopic,
-			ActorID:    topic.Creator.ID,
+			ActorID:    topic.CreatedBy,
 			ActorType:  def.ActorTypeUser,
 			TargetID:   topic.ID,
 			TargetType: def.TargetTypeTopic,
@@ -139,29 +166,13 @@ func (p *Service) onTopicFollowed(m *stan.Msg) {
 		}
 
 		if err = p.d.AddFeed(c, tx, feed); err != nil {
-			log.For(c).Error(fmt.Sprintf("service.onTopicFollowed() failed %#v", err))
+			PromError("feed: AddFeed", "AddFeed(), feed(%+v),error(%+v)", feed, err)
 			return
 		}
 	}
 
 	if err = tx.Commit(); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
-		return
-	}
-
-	m.Ack()
-}
-
-func (p *Service) onTopicDeleted(m *stan.Msg) {
-	var err error
-	info := new(def.MsgTopicDeleted)
-	if err = info.Unmarshal(m.Data); err != nil {
-		log.Errorf("service.onTopicDeleted Unmarshal failed %#v", err)
-		return
-	}
-
-	if err = p.d.DelFeedByCond(context.Background(), p.d.DB(), def.TargetTypeTopic, info.TopicID); err != nil {
-		log.Errorf("service.onTopicDeleted() failed %#v", err)
+		PromError("feed: tx.Commit", "tx.Commit(), error(%+v)", err)
 		return
 	}
 

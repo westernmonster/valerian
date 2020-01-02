@@ -3,34 +3,93 @@ package service
 import (
 	"context"
 	"fmt"
-	"strings"
+	"time"
 
 	"valerian/app/service/account/api"
 	"valerian/app/service/account/model"
-	certification "valerian/app/service/certification/api"
 	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
 	"valerian/library/log"
+
+	"github.com/asaskevich/govalidator"
 )
 
-func baseInfoFromAccount(account *model.Account) (info *model.BaseInfo) {
-	info = &model.BaseInfo{
-		ID:           account.ID,
-		UserName:     account.UserName,
-		Gender:       account.Gender,
-		Avatar:       account.Avatar,
-		Introduction: account.Introduction,
-		IDCert:       bool(account.IDCert),
-		WorkCert:     bool(account.WorkCert),
-		IsOrg:        bool(account.IsOrg),
-		IsVIP:        bool(account.IsVip),
-		Role:         account.Role,
+func validateBirthDay(arg *api.UpdateProfileReq) (err error) {
+	if arg.BirthYear != nil {
+		year := int(arg.GetBirthYearValue())
+		if year < 1920 || year > time.Now().Year() {
+			return ecode.InvalidBirthYear
+		}
+	}
+
+	if arg.BirthMonth != nil {
+		month := arg.GetBirthMonthValue()
+		if month < 1 || month > 12 {
+			return ecode.InvalidBirthMonth
+		}
+	}
+
+	if arg.BirthDay != nil {
+		day := arg.GetBirthDayValue()
+		if day < 1 || day > 30 {
+			return ecode.InvalidBirthDay
+		}
+	}
+
+	return
+}
+
+func baseInfoFromAccount(acc *model.Account, stat *model.AccountStat) (info *api.BaseInfoReply) {
+	info = &api.BaseInfoReply{
+		ID:           acc.ID,
+		UserName:     acc.UserName,
+		Gender:       acc.Gender,
+		Avatar:       acc.Avatar,
+		Introduction: acc.Introduction,
+		IDCert:       bool(acc.IDCert),
+		WorkCert:     bool(acc.WorkCert),
+		IsOrg:        bool(acc.IsOrg),
+		IsVIP:        bool(acc.IsVip),
+		Role:         acc.Role,
+		Stat: &api.AccountStatInfo{
+			FollowingCount: stat.Following,
+			FansCount:      stat.Fans,
+			BlackCount:     stat.Black,
+			TopicCount:     stat.TopicCount,
+			ArticleCount:   stat.ArticleCount,
+		},
 	}
 	return
 }
 
+// GetAccountByEmail 通过 Email 获取账户信息
+// 会排除已经注销的用户
+func (p *Service) GetAccountByEmail(c context.Context, email string) (item *model.Account, err error) {
+	if item, err = p.d.GetAccountByEmail(c, p.d.DB(), email); err != nil {
+		return
+	} else if item == nil {
+		err = ecode.UserNotExist
+		return
+	}
+	return
+}
+
+// GetAccountByMobile 通过手机号获取账户
+// 会排除已经注销的账户
+func (p *Service) GetAccountByMobile(c context.Context, prefix, mobile string) (item *model.Account, err error) {
+	fullMobile := prefix + mobile
+	if item, err = p.d.GetAccountByMobile(c, p.d.DB(), fullMobile); err != nil {
+		return
+	} else if item == nil {
+		err = ecode.UserNotExist
+		return
+	}
+	return
+}
+
+// IsEmailExist 邮件是否已经注册
+// 会排除已经注销的账户
 func (p *Service) IsEmailExist(c context.Context, email string) (exist bool, err error) {
-	// mobile := arg.Prefix + arg.Mobile
 	if account, e := p.d.GetAccountByEmail(c, p.d.DB(), email); e != nil {
 		return false, e
 	} else if account != nil {
@@ -43,6 +102,8 @@ func (p *Service) IsEmailExist(c context.Context, email string) (exist bool, err
 	return
 }
 
+// IsMobileExist 手机号是否已经注册
+// 会排除已经注销的账户
 func (p *Service) IsMobileExist(c context.Context, prefix, mobile string) (exist bool, err error) {
 	fullMobile := prefix + mobile
 	if account, e := p.d.GetAccountByMobile(c, p.d.DB(), fullMobile); e != nil {
@@ -57,17 +118,24 @@ func (p *Service) IsMobileExist(c context.Context, prefix, mobile string) (exist
 	return
 }
 
-func (p *Service) BaseInfo(c context.Context, aid int64) (info *model.BaseInfo, err error) {
+// BaseInfo 获取账户基本信息
+func (p *Service) BaseInfo(c context.Context, aid int64) (info *api.BaseInfoReply, err error) {
 	var account *model.Account
 	if account, err = p.getAccountByID(c, p.d.DB(), aid); err != nil {
 		return
 	}
 
-	info = baseInfoFromAccount(account)
+	var stat *model.AccountStat
+	if stat, err = p.getAccountStat(c, p.d.DB(), aid); err != nil {
+		return
+	}
+
+	info = baseInfoFromAccount(account, stat)
 	return
 }
 
-func (p *Service) BatchBaseInfo(c context.Context, aids []int64) (data map[int64]*model.BaseInfo, err error) {
+// BatchBaseInfo 批量获取账户基本信息
+func (p *Service) BatchBaseInfo(c context.Context, aids []int64) (data map[int64]*api.BaseInfoReply, err error) {
 	if len(aids) > 100 {
 		err = ecode.MemberOverLimit
 		return
@@ -96,9 +164,13 @@ func (p *Service) BatchBaseInfo(c context.Context, aids []int64) (data map[int64
 		}
 	}
 
-	data = make(map[int64]*model.BaseInfo)
+	data = make(map[int64]*api.BaseInfoReply)
 	for k, v := range res {
-		data[k] = baseInfoFromAccount(v)
+		var stat *model.AccountStat
+		if stat, err = p.getAccountStat(c, p.d.DB(), v.ID); err != nil {
+			return
+		}
+		data[k] = baseInfoFromAccount(v, stat)
 	}
 
 	if len(missA) == 0 {
@@ -112,186 +184,81 @@ func (p *Service) BatchBaseInfo(c context.Context, aids []int64) (data map[int64
 	return
 }
 
-func (p *Service) GetSelfProfile(c context.Context, accountID int64) (profile *api.SelfProfile, err error) {
-	return p.getSelfProfile(c, p.d.DB(), accountID)
-}
-
-func (p *Service) getSelfProfile(c context.Context, node sqalx.Node, accountID int64) (profile *api.SelfProfile, err error) {
-	var item *model.Account
-	if item, err = p.getAccountByID(c, node, accountID); err != nil {
+// UpdateAccount 更新用户资料
+func (p *Service) UpdateAccount(c context.Context, arg *api.UpdateProfileReq) (err error) {
+	var account *model.Account
+	if account, err = p.getAccountByID(c, p.d.DB(), arg.Aid); err != nil {
 		return
 	}
 
-	profile = &api.SelfProfile{
-		ID:           item.ID,
-		Prefix:       item.Prefix,
-		Mobile:       item.Mobile,
-		Email:        item.Email,
-		UserName:     item.UserName,
-		Gender:       item.Gender,
-		BirthYear:    item.BirthYear,
-		BirthMonth:   item.BirthMonth,
-		BirthDay:     item.BirthDay,
-		Location:     item.Location,
-		Introduction: item.Introduction,
-		Avatar:       item.Avatar,
-		Source:       item.Source,
-		IDCert:       bool(item.IDCert),
-		WorkCert:     bool(item.WorkCert),
-		IsOrg:        bool(item.IsOrg),
-		IsVIP:        bool(item.IsVip),
-		Role:         item.Role,
-		CreatedAt:    item.CreatedAt,
-		UpdatedAt:    item.UpdatedAt,
+	if arg.Gender != nil {
+		if arg.GetGenderValue() != model.GenderMale && arg.GetGenderValue() != model.GenderFemale {
+			return ecode.InvalidGender
+		}
+		account.Gender = arg.GetGenderValue()
 	}
 
-	if item.Mobile != "" {
-		profile.Mobile = strings.TrimLeft(item.Mobile, item.Prefix)
+	if arg.Avatar != nil {
+		if !govalidator.IsURL(arg.GetAvatarValue()) {
+			return ecode.InvalidAvatar
+		}
+		account.Avatar = arg.GetAvatarValue()
 	}
 
-	if item.Location != 0 {
-		if v, e := p.getLocationString(c, item.Location); e != nil {
-			return nil, e
-		} else {
-			profile.LocationString = v
+	if arg.Introduction != nil {
+		account.Introduction = arg.GetIntroductionValue()
+	}
+
+	if !account.IDCert {
+		if arg.UserName != nil {
+			account.UserName = arg.GetUserNameValue()
 		}
 	}
 
-	if profile.WorkCertStatus, err = p.d.GetWorkCertStatus(c, accountID); err != nil {
+	if arg.BirthYear != nil {
+		account.BirthYear = arg.GetBirthYearValue()
+	}
+
+	if arg.BirthMonth != nil {
+		account.BirthMonth = arg.GetBirthMonthValue()
+	}
+
+	if arg.BirthDay != nil {
+		account.BirthDay = arg.GetBirthDayValue()
+	}
+
+	if err = validateBirthDay(arg); err != nil {
 		return
 	}
 
-	if profile.WorkCertStatus == 1 {
-		var workCert *certification.WorkCertInfo
-		if workCert, err = p.d.GetWorkCert(c, accountID); err != nil {
-			return
-		}
-
-		profile.Company = workCert.Company
-		profile.Position = workCert.Position
-	}
-
-	if profile.IDCertStatus, err = p.d.GetIDCertStatus(c, accountID); err != nil {
-		return
-	}
-
-	var stat *model.AccountStat
-	if stat, err = p.getAccountStat(c, node, accountID); err != nil {
-		return
-	}
-
-	profile.Stat = &api.AccountStatInfo{
-		FansCount:       int32(stat.Fans),
-		FollowingCount:  int32(stat.Following),
-		BlackCount:      int32(stat.Black),
-		TopicCount:      int32(stat.TopicCount),
-		ArticleCount:    int32(stat.ArticleCount),
-		DiscussionCount: int32(stat.DiscussionCount),
-	}
-
-	var setting *model.SettingResp
-	if setting, err = p.getAccountSetting(c, node, accountID); err != nil {
-		return
-	}
-
-	profile.Setting = &api.Setting{
-		ActivityLike:         bool(setting.ActivityLike),
-		ActivityComment:      bool(setting.ActivityComment),
-		ActivityFollowTopic:  bool(setting.ActivityFollowTopic),
-		ActivityFollowMember: bool(setting.ActivityFollowMember),
-		NotifyLike:           bool(setting.NotifyLike),
-		NotifyComment:        bool(setting.NotifyComment),
-		NotifyNewFans:        bool(setting.NotifyNewFans),
-		NotifyNewMember:      bool(setting.NotifyNewMember),
-		Language:             setting.Language,
-	}
-
-	return
-}
-
-func (p *Service) GetMemberProfile(c context.Context, accountID int64) (profile *model.ProfileInfo, err error) {
-	var item *model.Account
-	if item, err = p.getAccountByID(c, p.d.DB(), accountID); err != nil {
-		return
-	}
-
-	profile = &model.ProfileInfo{
-		ID:           item.ID,
-		UserName:     item.UserName,
-		Gender:       item.Gender,
-		Location:     item.Location,
-		Introduction: item.Introduction,
-		Avatar:       item.Avatar,
-		IDCert:       bool(item.IDCert),
-		WorkCert:     bool(item.WorkCert),
-		IsOrg:        bool(item.IsOrg),
-		IsVIP:        bool(item.IsVip),
-		Role:         item.Role,
-		CreatedAt:    item.CreatedAt,
-		UpdatedAt:    item.UpdatedAt,
-	}
-
-	var workCertStatus int32
-	if workCertStatus, err = p.d.GetWorkCertStatus(c, accountID); err != nil {
-		return
-	}
-
-	if workCertStatus == int32(1) {
-		var workCert *certification.WorkCertInfo
-		if workCert, err = p.d.GetWorkCert(c, accountID); err != nil {
-			return
-		}
-
-		profile.Company = workCert.Company
-		profile.Position = workCert.Position
-	}
-
-	if item.Location != 0 {
-		if v, e := p.getLocationString(c, item.Location); e != nil {
-			return nil, e
-		} else {
-			profile.LocationString = v
-		}
-	}
-
-	return
-}
-
-func (p *Service) getLocationString(c context.Context, nodeID int64) (locationString string, err error) {
-	arr := []string{}
-
-	id := nodeID
-	var item *model.Area
-	for {
-		if item, err = p.d.GetArea(c, p.d.DB(), id); err != nil {
-			return
+	if arg.Location != nil {
+		if item, e := p.d.GetArea(c, p.d.DB(), arg.GetLocationValue()); e != nil {
+			return e
 		} else if item == nil {
-			err = ecode.AreaNotExist
-			return
+			return ecode.AreaNotExist
 		}
 
-		arr = append(arr, item.Name)
-
-		if item.Parent == 0 {
-			break
-		}
-
-		id = item.Parent
+		account.Location = arg.GetLocationValue()
 	}
 
-	locationString = ""
-
-	for i := len(arr) - 1; i >= 0; i-- {
-		locationString += arr[i] + " "
+	if err = p.d.UpdateAccount(c, p.d.DB(), account); err != nil {
+		return
 	}
+
+	p.addCache(func() {
+		p.d.DelAccountCache(context.TODO(), arg.Aid)
+		p.onAccountUpdated(context.TODO(), arg.Aid, time.Now().Unix())
+	})
 
 	return
 }
 
+// GetAccountByID 通过ID获取用户
 func (p *Service) GetAccountByID(c context.Context, aid int64) (account *model.Account, err error) {
 	return p.getAccountByID(c, p.d.DB(), aid)
 }
 
+// getAccountByID 通过ID获取用户
 func (p *Service) getAccountByID(c context.Context, node sqalx.Node, aid int64) (account *model.Account, err error) {
 	var needCache = true
 
@@ -300,7 +267,6 @@ func (p *Service) getAccountByID(c context.Context, node sqalx.Node, aid int64) 
 	} else if account != nil {
 		return
 	}
-
 	if account, err = p.d.GetAccountByID(c, node, aid); err != nil {
 		return
 	} else if account == nil {
@@ -314,8 +280,4 @@ func (p *Service) getAccountByID(c context.Context, node sqalx.Node, aid int64) 
 		})
 	}
 	return
-}
-
-func (p *Service) GetAllAccounts(c context.Context) (items []*model.Account, err error) {
-	return p.d.GetAccounts(c, p.d.DB())
 }

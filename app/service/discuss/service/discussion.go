@@ -3,34 +3,52 @@ package service
 import (
 	"context"
 	"fmt"
+	"strings"
+	"time"
 
-	account "valerian/app/service/account/api"
 	"valerian/app/service/discuss/api"
 	"valerian/app/service/discuss/model"
+	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
+	"valerian/library/gid"
 	"valerian/library/log"
 	"valerian/library/xstr"
+
+	"github.com/PuerkitoBio/goquery"
 )
 
-func (p *Service) GetAccountBaseInfo(c context.Context, aid int64) (info *account.BaseInfoReply, err error) {
-	return p.d.GetAccountBaseInfo(c, aid)
-}
-
+// GetUserDiscussionIDsPaged 获取用户所有创建的讨论ID列表
+// 如果话题已经删除，需要在SQL中过滤掉
 func (p *Service) GetUserDiscussionIDsPaged(c context.Context, req *api.UserDiscussionsReq) (resp []int64, err error) {
 	return p.d.GetUserDiscussionIDsPaged(c, p.d.DB(), req.AccountID, int(req.Limit), int(req.Offset))
 }
 
-func (p *Service) GetUserDiscussionsPaged(c context.Context, aid int64, limit, offset int) (items []*api.DiscussionInfo, err error) {
+// GetTopicDiscussionsPaged 分页获取话题讨论列表
+func (p *Service) GetTopicDiscussionsPaged(c context.Context, req *api.TopicDiscussionsReq) (items []*api.DiscussionInfo, err error) {
+	// 检测话题是否存在
+	if err = p.checkTopicExist(c, p.d.DB(), req.TopicID); err != nil {
+		return
+	}
 	var data []*model.Discussion
-	if data, err = p.d.GetUserDiscussionsPaged(c, p.d.DB(), aid, limit, offset); err != nil {
+	if data, err = p.d.GetTopicDiscussionsPaged(c, p.d.DB(), req.TopicID, req.CategoryID, int(req.Limit), int(req.Offset)); err != nil {
 		return
 	}
 
 	items = make([]*api.DiscussionInfo, len(data))
 
 	for i, v := range data {
+		item := &api.DiscussionInfo{
+			ID:         v.ID,
+			TopicID:    v.TopicID,
+			CategoryID: v.CategoryID,
+			// CreatedBy:   v.CreatedBy,
+			Excerpt:   xstr.Excerpt(v.ContentText),
+			CreatedAt: v.CreatedAt,
+			UpdatedAt: v.UpdatedAt,
+			ImageUrls: make([]string, 0),
+			Title:     v.Title,
+		}
 
-		imageUrls := make([]string, 0)
 		var imgs []*model.ImageURL
 		if imgs, err = p.d.GetImageUrlsByCond(c, p.d.DB(), map[string]interface{}{
 			"target_type": model.TargetTypeDiscussion,
@@ -40,26 +58,13 @@ func (p *Service) GetUserDiscussionsPaged(c context.Context, aid int64, limit, o
 		}
 
 		for _, v := range imgs {
-			imageUrls = append(imageUrls, v.URL)
+			item.ImageUrls = append(item.ImageUrls, v.URL)
 		}
 
 		var stat *model.DiscussionStat
 		if stat, err = p.d.GetDiscussionStatByID(c, p.d.DB(), v.ID); err != nil {
 			return
 		}
-
-		item := &api.DiscussionInfo{
-			ID:         v.ID,
-			TopicID:    v.TopicID,
-			CategoryID: v.CategoryID,
-			// CreatedBy:   v.CreatedBy,
-			Excerpt:   xstr.Excerpt(v.ContentText),
-			CreatedAt: v.CreatedAt,
-			UpdatedAt: v.UpdatedAt,
-			ImageUrls: imageUrls,
-			Title:     v.Title,
-		}
-
 		item.Stat = &api.DiscussionStat{
 			DislikeCount: int32(stat.DislikeCount),
 			LikeCount:    int32(stat.LikeCount),
@@ -83,8 +88,8 @@ func (p *Service) GetUserDiscussionsPaged(c context.Context, aid int64, limit, o
 			}
 		}
 
-		var acc *account.BaseInfoReply
-		if acc, err = p.GetAccountBaseInfo(c, v.CreatedBy); err != nil {
+		var acc *model.Account
+		if acc, err = p.getAccount(c, p.d.DB(), v.CreatedBy); err != nil {
 			return
 		}
 
@@ -101,33 +106,18 @@ func (p *Service) GetUserDiscussionsPaged(c context.Context, aid int64, limit, o
 	return
 }
 
-func (p *Service) GetAllDiscussions(c context.Context) (items []*api.DiscussionInfo, err error) {
+// GetUserDiscussionsPaged 分页获取用户创建的讨论列表
+// 如果话题已经被删除，需要在SQL中过滤掉
+func (p *Service) GetUserDiscussionsPaged(c context.Context, req *api.UserDiscussionsReq) (items []*api.DiscussionInfo, err error) {
+	// 无需验证权限
 	var data []*model.Discussion
-	if data, err = p.d.GetDiscussions(c, p.d.DB()); err != nil {
+	if data, err = p.d.GetUserDiscussionsPaged(c, p.d.DB(), req.AccountID, int(req.Limit), int(req.Offset)); err != nil {
 		return
 	}
 
 	items = make([]*api.DiscussionInfo, len(data))
 
 	for i, v := range data {
-
-		imageUrls := make([]string, 0)
-		var imgs []*model.ImageURL
-		if imgs, err = p.d.GetImageUrlsByCond(c, p.d.DB(), map[string]interface{}{
-			"target_type": model.TargetTypeDiscussion,
-			"target_id":   v.ID,
-		}); err != nil {
-			return
-		}
-
-		for _, v := range imgs {
-			imageUrls = append(imageUrls, v.URL)
-		}
-
-		var stat *model.DiscussionStat
-		if stat, err = p.d.GetDiscussionStatByID(c, p.d.DB(), v.ID); err != nil {
-			return
-		}
 
 		item := &api.DiscussionInfo{
 			ID:         v.ID,
@@ -137,10 +127,26 @@ func (p *Service) GetAllDiscussions(c context.Context) (items []*api.DiscussionI
 			Excerpt:   xstr.Excerpt(v.ContentText),
 			CreatedAt: v.CreatedAt,
 			UpdatedAt: v.UpdatedAt,
-			ImageUrls: imageUrls,
+			ImageUrls: make([]string, 0),
 			Title:     v.Title,
 		}
 
+		var imgs []*model.ImageURL
+		if imgs, err = p.d.GetImageUrlsByCond(c, p.d.DB(), map[string]interface{}{
+			"target_type": model.TargetTypeDiscussion,
+			"target_id":   v.ID,
+		}); err != nil {
+			return
+		}
+
+		for _, v := range imgs {
+			item.ImageUrls = append(item.ImageUrls, v.URL)
+		}
+
+		var stat *model.DiscussionStat
+		if stat, err = p.d.GetDiscussionStatByID(c, p.d.DB(), v.ID); err != nil {
+			return
+		}
 		item.Stat = &api.DiscussionStat{
 			DislikeCount: int32(stat.DislikeCount),
 			LikeCount:    int32(stat.LikeCount),
@@ -164,8 +170,8 @@ func (p *Service) GetAllDiscussions(c context.Context) (items []*api.DiscussionI
 			}
 		}
 
-		var acc *account.BaseInfoReply
-		if acc, err = p.GetAccountBaseInfo(c, v.CreatedBy); err != nil {
+		var acc *model.Account
+		if acc, err = p.getAccount(c, p.d.DB(), v.CreatedBy); err != nil {
 			return
 		}
 
@@ -177,48 +183,347 @@ func (p *Service) GetAllDiscussions(c context.Context) (items []*api.DiscussionI
 		}
 
 		items[i] = item
-
 	}
 
 	return
 }
 
-func (p *Service) GetDiscussion(c context.Context, discussionID int64) (item *model.Discussion, imageUrls []string, err error) {
-	if item, err = p.d.GetDiscussionByID(c, p.d.DB(), discussionID); err != nil {
-		return
-	} else if item == nil {
-		log.For(c).Error(fmt.Sprintf("service.GetDiscussion, not exist. id(%+v)", discussionID))
-		err = ecode.DiscussionNotExist
+// GetDiscussion 获取指定讨论信息
+func (p *Service) GetDiscussionInfo(c context.Context, req *api.IDReq) (resp *api.DiscussionInfo, err error) {
+	var item *model.Discussion
+	if item, err = p.getDiscussion(c, p.d.DB(), req.ID); err != nil {
 		return
 	}
 
-	imageUrls = make([]string, 0)
+	// 如果所属话题已经被删除，需要返回错误
+	if err = p.checkTopicExist(c, p.d.DB(), item.TopicID); err != nil {
+		return
+	}
+
+	resp = &api.DiscussionInfo{
+		ID:         item.ID,
+		TopicID:    item.TopicID,
+		CategoryID: item.CategoryID,
+		Excerpt:    xstr.Excerpt(item.ContentText),
+		CreatedAt:  item.CreatedAt,
+		UpdatedAt:  item.UpdatedAt,
+		ImageUrls:  make([]string, 0),
+		Files:      make([]*api.DiscussionFile, 0),
+		Title:      item.Title,
+	}
+
+	inc := includeParam(req.Include)
+	if inc["content"] {
+		resp.Content = item.Content
+	}
+
+	if inc["content_text"] {
+		resp.ContentText = item.ContentText
+	}
+
+	// 图片
 	var imgs []*model.ImageURL
 	if imgs, err = p.d.GetImageUrlsByCond(c, p.d.DB(), map[string]interface{}{
 		"target_type": model.TargetTypeDiscussion,
-		"target_id":   discussionID,
+		"target_id":   req.ID,
+	}); err != nil {
+		return
+	}
+	for _, v := range imgs {
+		resp.ImageUrls = append(resp.ImageUrls, v.URL)
+	}
+
+	// 状态
+	var stat *model.DiscussionStat
+	if stat, err = p.getDiscussionStat(c, p.d.DB(), req.ID); err != nil {
+		return
+	}
+	resp.Stat = &api.DiscussionStat{
+		DislikeCount: int32(stat.DislikeCount),
+		LikeCount:    int32(stat.LikeCount),
+		CommentCount: int32(stat.CommentCount),
+	}
+
+	// 分类
+	if item.CategoryID != -1 {
+		var cate *model.DiscussCategory
+		if cate, err = p.d.GetDiscussCategoryByID(c, p.d.DB(), item.CategoryID); err != nil {
+			return
+		} else if cate == nil {
+			err = ecode.DiscussCategoryNotExist
+			return
+		}
+
+		resp.CategoryInfo = &api.CategoryInfo{
+			ID:      cate.ID,
+			TopicID: cate.TopicID,
+			Name:    cate.Name,
+			Seq:     cate.Seq,
+		}
+
+	} else {
+		resp.CategoryInfo = &api.CategoryInfo{
+			ID:      -1,
+			TopicID: item.TopicID,
+			Name:    "问答",
+			Seq:     1,
+		}
+	}
+
+	var files []*model.DiscussionFile
+	if files, err = p.getDiscussionFiles(c, p.d.DB(), req.Aid, item.ID); err != nil {
+		return
+	}
+	for _, v := range files {
+		resp.Files = append(resp.Files, &api.DiscussionFile{
+			ID:        v.ID,
+			FileName:  v.FileName,
+			FileURL:   v.FileURL,
+			PdfURL:    v.PdfURL,
+			FileType:  v.FileType,
+			Seq:       v.Seq,
+			CreatedAt: v.CreatedAt,
+		})
+	}
+
+	// 创建者
+	var acc *model.Account
+	if acc, err = p.getAccount(c, p.d.DB(), item.CreatedBy); err != nil {
+		return
+	}
+	resp.Creator = &api.Creator{
+		ID:           acc.ID,
+		UserName:     acc.UserName,
+		Avatar:       acc.Avatar,
+		Introduction: acc.Introduction,
+	}
+
+	return
+}
+
+// GetDiscussionStat 获取指定讨论状态
+func (p *Service) GetDiscussionStat(c context.Context, discussionID int64) (item *model.DiscussionStat, err error) {
+	return p.getDiscussionStat(c, p.d.DB(), discussionID)
+}
+
+// DelDiscussion 删除讨论
+func (p *Service) DelDiscussion(c context.Context, arg *api.IDReq) (err error) {
+	if err = p.checkEditPermission(c, p.d.DB(), arg.Aid, arg.ID); err != nil {
+		return
+	}
+
+	if err = p.d.DelDiscussion(c, p.d.DB(), arg.ID); err != nil {
+		return
+	}
+
+	p.addCache(func() {
+		p.onDiscussionDeleted(context.Background(), arg.ID, arg.Aid, time.Now().Unix())
+	})
+
+	return
+}
+
+// AddDiscussion 添加讨论
+func (p *Service) AddDiscussion(c context.Context, arg *api.ArgAddDiscussion) (id int64, err error) {
+	var tx sqalx.Node
+	if tx, err = p.d.DB().Beginx(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		return
+	}
+
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+			}
+			return
+		}
+	}()
+
+	// 检测分类
+	if err = p.checkCategory(c, tx, arg.CategoryID); err != nil {
+		return
+	}
+
+	// 检测话题
+	if err = p.checkTopicExist(c, tx, arg.TopicID); err != nil {
+		return
+	}
+
+	// 检测是否成员
+	if err = p.checkIsTopicMember(c, tx, arg.Aid, arg.TopicID); err != nil {
+		return
+	}
+
+	item := &model.Discussion{
+		ID:         gid.NewID(),
+		TopicID:    arg.TopicID,
+		CategoryID: arg.CategoryID,
+		CreatedBy:  arg.Aid,
+		Content:    arg.Content,
+		CreatedAt:  time.Now().Unix(),
+		UpdatedAt:  time.Now().Unix(),
+	}
+
+	item.Title = arg.GetTitleValue()
+
+	var doc *goquery.Document
+	doc, err = goquery.NewDocumentFromReader(strings.NewReader(item.Content))
+	if err != nil {
+		err = ecode.ParseHTMLFailed
+		return
+	}
+
+	item.ContentText = doc.Text()
+
+	doc.Find("img").Each(func(i int, s *goquery.Selection) {
+		if url, exist := s.Attr("src"); exist {
+			u := &model.ImageURL{
+				ID:         gid.NewID(),
+				TargetType: model.TargetTypeDiscussion,
+				TargetID:   item.ID,
+				URL:        url,
+				CreatedAt:  time.Now().Unix(),
+				UpdatedAt:  time.Now().Unix(),
+			}
+			if err = p.d.AddImageURL(c, tx, u); err != nil {
+				return
+			}
+		}
+	})
+
+	if err = p.d.AddDiscussion(c, tx, item); err != nil {
+		return
+	}
+
+	if err = p.bulkCreateFiles(c, tx, item.ID, arg.Files); err != nil {
+		return
+	}
+
+	if err = p.d.AddDiscussionStat(c, tx, &model.DiscussionStat{
+		DiscussionID: item.ID,
+		CreatedAt:    time.Now().Unix(),
+		UpdatedAt:    time.Now().Unix(),
 	}); err != nil {
 		return
 	}
 
-	for _, v := range imgs {
-		imageUrls = append(imageUrls, v.URL)
+	// Update Stat
+	if err = p.d.IncrAccountStat(c, tx, &model.AccountStat{AccountID: arg.Aid, DiscussionCount: 1}); err != nil {
+		return
 	}
+	if err = p.d.IncrTopicStat(c, tx, &model.TopicStat{TopicID: arg.TopicID, DiscussionCount: 1}); err != nil {
+		return
+	}
+
+	if err = p.d.AddDiscussionStat(c, tx, &model.DiscussionStat{
+		DiscussionID: item.ID,
+		CreatedAt:    time.Now().Unix(),
+		UpdatedAt:    time.Now().Unix(),
+	}); err != nil {
+		return
+	}
+
+	if err = tx.Commit(); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		return
+	}
+
+	id = item.ID
+
+	p.addCache(func() {
+		p.onDiscussionAdded(context.Background(), item.ID, arg.Aid, time.Now().Unix())
+	})
 
 	return
 }
 
-func (p *Service) GetDiscussionStat(c context.Context, discussionID int64) (item *model.DiscussionStat, err error) {
-	if item, err = p.d.GetDiscussionStatByID(c, p.d.DB(), discussionID); err != nil {
+// UpdateDiscussion 更新讨论
+func (p *Service) UpdateDiscussion(c context.Context, arg *api.ArgUpdateDiscussion) (err error) {
+	var tx sqalx.Node
+	if tx, err = p.d.DB().Beginx(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
 		return
-	} else {
-		item = &model.DiscussionStat{
-			DiscussionID: discussionID,
+	}
+
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+			}
+			return
+		}
+	}()
+
+	// 检查编辑权限
+	if err = p.checkEditPermission(c, tx, arg.Aid, arg.ID); err != nil {
+		return
+	}
+
+	var item *model.Discussion
+	if item, err = p.d.GetDiscussionByID(c, tx, arg.ID); err != nil {
+		return
+	} else if item == nil {
+		err = ecode.DiscussionNotExist
+		return
+	}
+
+	// 检测话题
+	if err = p.checkTopicExist(c, tx, item.TopicID); err != nil {
+		return
+	}
+
+	if item.CreatedBy != arg.Aid {
+		if err = p.checkIsTopicManager(c, tx, item.TopicID, arg.Aid); err != nil {
+			return
 		}
 	}
-	return
-}
 
-func (p *Service) DelDiscussion(c context.Context, aid, discussionID int64) (err error) {
+	item.Title = arg.GetTitleValue()
+	item.Content = arg.Content
+	item.UpdatedAt = time.Now().Unix()
+
+	var doc *goquery.Document
+	doc, err = goquery.NewDocumentFromReader(strings.NewReader(item.Content))
+	if err != nil {
+		err = ecode.ParseHTMLFailed
+		return
+	}
+
+	item.ContentText = doc.Text()
+
+	if err = p.d.DelImageURLByCond(c, tx, model.TargetTypeDiscussion, item.ID); err != nil {
+		return
+	}
+
+	doc.Find("img").Each(func(i int, s *goquery.Selection) {
+		if url, exist := s.Attr("src"); exist {
+			u := &model.ImageURL{
+				ID:         gid.NewID(),
+				TargetType: model.TargetTypeDiscussion,
+				TargetID:   item.ID,
+				URL:        url,
+				CreatedAt:  time.Now().Unix(),
+				UpdatedAt:  time.Now().Unix(),
+			}
+			if err = p.d.AddImageURL(c, tx, u); err != nil {
+				return
+			}
+		}
+	})
+
+	if err = p.d.UpdateDiscussion(c, tx, item); err != nil {
+		return
+	}
+
+	if err = tx.Commit(); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		return
+	}
+
+	p.addCache(func() {
+		p.onDiscussionUpdated(context.Background(), arg.ID, arg.Aid, time.Now().Unix())
+	})
+
 	return
 }

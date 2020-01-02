@@ -12,6 +12,7 @@ import (
 	"valerian/library/log"
 )
 
+// GetRecommendTopicsIDs 获取冷启动推荐话题
 func (p *Service) GetRecommendTopicsIDs(c context.Context) (ids []int64, err error) {
 	data := make([]*model.RecommendTopic, 0)
 	if data, err = p.d.GetRecommendTopics(c, p.d.DB()); err != nil {
@@ -26,6 +27,7 @@ func (p *Service) GetRecommendTopicsIDs(c context.Context) (ids []int64, err err
 	return
 }
 
+// GetRecommendAuthTopicsIDs 获取冷启动推荐话题所包含的授权话题
 func (p *Service) GetRecommendAuthTopicsIDs(c context.Context, topicIDs []int64) (ids []int64, err error) {
 	if ids, err = p.d.GetAuthTopicIDs(c, p.d.DB(), topicIDs); err != nil {
 		return
@@ -34,6 +36,7 @@ func (p *Service) GetRecommendAuthTopicsIDs(c context.Context, topicIDs []int64)
 	return
 }
 
+// GetRecommendMemberIDs 获取冷启动话题下属成员
 func (p *Service) GetRecommendMemberIDs(c context.Context, topicIDs []int64) (ids []int64, err error) {
 	if ids, err = p.d.GetSpecificTopicsMemberIDs(c, p.d.DB(), topicIDs); err != nil {
 		return
@@ -41,6 +44,7 @@ func (p *Service) GetRecommendMemberIDs(c context.Context, topicIDs []int64) (id
 	return
 }
 
+// AddRecommendTopic 添加冷启动推荐话题
 func (p *Service) AddRecommendTopic(c context.Context, arg *api.TopicReq) (err error) {
 	if err = p.checkIsTopicAdmin(c, arg.Aid, arg.ID); err != nil {
 		return
@@ -95,6 +99,7 @@ func (p *Service) AddRecommendTopic(c context.Context, arg *api.TopicReq) (err e
 	return
 }
 
+// DelRecommendTopic 删除冷启动推荐话题
 func (p *Service) DelRecommendTopic(c context.Context, arg *api.TopicReq) (err error) {
 	if err = p.checkIsTopicAdmin(c, arg.Aid, arg.ID); err != nil {
 		return

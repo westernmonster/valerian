@@ -28,4 +28,5 @@ type Account struct {
 	UpdatedAt    int64         `db:"updated_at" json:"updated_at"`     // UpdatedAt 更新时间
 	Prefix       string        `db:"prefix" json:"prefix"`             // Prefix 手机前缀
 	IsLock       types.BitBool `db:"is_lock" json:"is_lock"`           // IsLock 是否被禁用
+	IsAnnul      types.BitBool `db:"is_annul" json:"is_annul"`         // IsAnnul 是否已注销
 }

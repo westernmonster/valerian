@@ -3,6 +3,10 @@ package def
 import fmt "fmt"
 
 func RefreshTokenKey(token string) string {
+	return fmt.Sprintf("rk_%s", token)
+}
+
+func AccessTokenKey(token string) string {
 	return fmt.Sprintf("ak_%s", token)
 }
 
@@ -88,6 +92,10 @@ func TopicMembersKey(topicID int64, page, pageSize int32, version string) string
 
 func TopicMemberVersionKey(topicID int64) string {
 	return fmt.Sprintf("tmv_%d", topicID)
+}
+
+func DiscussionKey(discussionID int64) string {
+	return fmt.Sprintf("d_%d", discussionID)
 }
 
 func DiscussionFileKey(discussionID int64) string {

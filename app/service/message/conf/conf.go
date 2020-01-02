@@ -41,12 +41,6 @@ type Config struct {
 	Memcache  *Memcache
 	Discovery *discovery.Config
 	JPush     *jpush.Config
-
-	AccountRPC *warden.ClientConfig
-	TopicRPC   *warden.ClientConfig
-	ArticleRPC *warden.ClientConfig
-	DiscussRPC *warden.ClientConfig
-	CommentRPC *warden.ClientConfig
 }
 
 // DB db config.

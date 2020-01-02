@@ -2,9 +2,9 @@ package model
 
 const (
 	//ConfigIng config ing.
-	ConfigStateInProgress = int8(1)
+	ConfigStateInProgress = int32(1)
 	//ConfigEnd config end.
-	ConfigStateEnd = int8(2)
+	ConfigStateEnd = int32(2)
 )
 
 const (

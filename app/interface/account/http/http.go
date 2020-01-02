@@ -40,6 +40,7 @@ func route(e *mars.Engine) {
 		g.POST("/notify_setting/edit", authSvc.User, updateNotifySetting)
 		g.POST("/language_setting/edit", authSvc.User, updateLanguage)
 		g.GET("/setting/get", authSvc.User, getSetting)
+		g.POST("/deactive", authSvc.User, deactiveAccount)
 	}
 
 	x := e.Group("/api/v1/account")

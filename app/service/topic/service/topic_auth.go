@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"valerian/app/service/topic/api"
 	"valerian/library/database/sqalx"
@@ -34,11 +35,16 @@ func (p *Service) SaveAuthTopics(c context.Context, arg *api.ArgSaveAuthTopics) 
 		return
 	}
 
+	if err = p.d.SetTopicUpdatedAt(c, tx, arg.TopicID, time.Now().Unix()); err != nil {
+		return
+	}
+
 	if err = tx.Commit(); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 	}
 
 	p.addCache(func() {
+		p.d.DelTopicCache(context.TODO(), arg.TopicID)
 		p.d.DelAuthTopicsCache(context.TODO(), arg.TopicID)
 	})
 

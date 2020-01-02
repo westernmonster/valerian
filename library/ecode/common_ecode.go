@@ -22,6 +22,7 @@ var (
 	UserIDCheckInvalidPhone = add(114) // 请先绑定手机
 	UserIDCheckInvalidCard  = add(115) // 请先完成实名认证
 	ClientNotExist          = add(116) // Client不存在
+	UserIsAnnulled          = add(117) // 账号已注销
 
 	NotModified         = add(304) // 木有改动
 	TemporaryRedirect   = add(307) // 撞车跳转
@@ -112,13 +113,16 @@ var (
 	CatalogNameInvalid             = add(10062) // 目录名称格式不正确
 	DownloadImageFailed            = add(10063) // 下载图片失败
 	InvalidImage                   = add(10064) // 图片格式不正确
+	TeamExist                      = add(10065) // Team已经存在
 
 	// 89000 - 89999 属于 Permission 类错误
-	NoTopicViewPermission   = add(89001) // 没有话题查看权限
-	NoTopicEditPermission   = add(89002) // 没有话题编辑权限
-	NoTopicManagePermission = add(89003) // 没有话题管理权限
-	NoArticleViewPermission = add(89004) // 没有文章查看权限
-	NoArticleEditPermission = add(89005) // 没有文章编辑权限
+	NoTopicViewPermission      = add(89001) // 没有话题查看权限
+	NoTopicEditPermission      = add(89002) // 没有话题编辑权限
+	NoTopicManagePermission    = add(89003) // 没有话题管理权限
+	NoArticleViewPermission    = add(89004) // 没有文章查看权限
+	NoArticleEditPermission    = add(89005) // 没有文章编辑权限
+	NoDiscussionViewPermission = add(89006) // 没有讨论查看权限
+	NoDiscussionEditPermission = add(89007) // 没有讨论编辑权限
 
 	// 90000 - 99999 属于 Not Exist 类错误
 	UserNotExist                  = add(90001) // 用户不存在
@@ -154,6 +158,9 @@ var (
 	AdminNotExist                 = add(90032) // 管理员不存在
 	AccountRoleNotExist           = add(90033) // 用户角色不存在
 	WorkCertificationNotExist     = add(90034) // 尚未发起工作认证
+	TeamNotExist                  = add(90035) // Team 不存在
+	CommonConfNotExist            = add(90036) // CommonConf 不存在
+	FeedbackNotExist              = add(90037) // 未找到该反馈记录
 
 )
 

@@ -37,6 +37,8 @@ func route(e *mars.Engine) {
 		g.POST("/unlock", authSvc.User, setAccountUnlock)
 
 		g.POST("/workcert", authSvc.User, setWorkCert)
+		g.GET("/workcert/list", authSvc.User, listWorkCert)
+		g.GET("/workcert/history/list", authSvc.User, workCertHistory)
 	}
 }
 

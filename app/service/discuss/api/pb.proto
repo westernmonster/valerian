@@ -9,93 +9,116 @@ message EmptyStruct {
 }
 
 message DiscussionStat {
-    int32 LikeCount = 1 [(gogoproto.jsontag) = "like_count"];
-    int32 DislikeCount = 2 [(gogoproto.jsontag) = "dislike_count"];
-    int32 CommentCount = 3 [(gogoproto.jsontag) = "comment_count"];
+    int32 LikeCount = 1 ;
+    int32 DislikeCount = 2 ;
+    int32 CommentCount = 3 ;
 }
 
 message CategoriesResp {
-    repeated CategoryInfo items = 1 [(gogoproto.jsontag) = 'items'];
+    repeated CategoryInfo items = 1 ;
 }
 
 message CategoryInfo {
-    int64 ID = 1 [(gogoproto.jsontag) = "id"];
+    int64 ID = 1 ;
 
-    int64 TopicID = 2 [(gogoproto.jsontag) = "topic_id"];
+    int64 TopicID = 2 ;
 
-    string  Name = 3 [(gogoproto.jsontag) = "name"] ;
+    string  Name = 3  ;
 
-    int32  Seq = 4 [(gogoproto.jsontag) = "seq"] ;
+    int32  Seq = 4  ;
 }
 
 
 message Creator {
-    int64 ID = 1 [(gogoproto.jsontag) = "id"];
+    int64 ID = 1 ;
 
-    string  UserName = 2 [(gogoproto.jsontag) = "user_name"];
+    string  UserName = 2 ;
 
-    string Avatar   = 3 [(gogoproto.jsontag) = "avatar"];
+    string Avatar   = 3 ;
 
-        string  Introduction = 4 [(gogoproto.jsontag) = "introduction"] ;
+    string  Introduction = 4  ;
 }
 
 
 
 message DiscussionInfo {
-    int64 ID = 1 [(gogoproto.jsontag) = "id"];
+    int64 ID = 1 ;
 
-    int64 TopicID = 2 [(gogoproto.jsontag) = "topic_id"];
+    int64 TopicID = 2 ;
 
-    int64 CategoryID = 3 [(gogoproto.jsontag) = "category_id"];
+    int64 CategoryID = 3 ;
 
-    Creator Creator = 4 [(gogoproto.jsontag) = "creator"];
+    Creator Creator = 4 ;
 
-    string  Title = 5 [(gogoproto.jsontag) = "title"] ;
+    string  Title = 5  ;
 
-    string  Excerpt = 6 [(gogoproto.jsontag) = "excerpt"];
+    string  Excerpt = 6 ;
 
-
-    // unix timestamp
-    int64 CreatedAt = 7 [(gogoproto.jsontag) = "created_at"];
 
     // unix timestamp
-    int64 UpdatedAt = 8 [(gogoproto.jsontag) = "updated_at"];
+    int64 CreatedAt = 7 ;
 
-    DiscussionStat  Stat = 9 [(gogoproto.jsontag) = "stat"];
+    // unix timestamp
+    int64 UpdatedAt = 8 ;
 
-    repeated string ImageUrls  = 10 [(gogoproto.jsontag) = "image_urls"];
+    DiscussionStat  Stat = 9 ;
 
-    string  Content = 11 [(gogoproto.jsontag) = "content"];
+    repeated string ImageUrls  = 10 ;
 
-    string  ContentText = 12 [(gogoproto.jsontag) = "content_context"];
+    string  Content = 11 ;
 
-    CategoryInfo CategoryInfo = 13 [(gogoproto.jsontag) = "category"];
+    string  ContentText = 12 ;
+
+    CategoryInfo CategoryInfo = 13 ;
+
+    repeated DiscussionFile Files  = 14 ;
 }
 
 
 message UserDiscussionsReq {
-    int64 AccountID = 1 [(gogoproto.jsontag) = "aid"];
-    int32 Limit = 2 [(gogoproto.jsontag) = "limit"];
-    int32 Offset = 3 [(gogoproto.jsontag) = "offset"];
+    int64 AccountID = 1;
+    int32 Limit = 2 ;
+    int32 Offset = 3;
+    int64 Aid = 4;
 }
 
-message UserDiscussionsResp {
-    repeated DiscussionInfo Items = 1 [(gogoproto.jsontag) = 'items'];
+message TopicDiscussionsReq {
+    int64 TopicID = 1;
+    int64 CategoryID = 2;
+    int32 Limit = 3;
+    int32 Offset = 4;
+    int64 Aid = 5;
 }
 
-message AllDiscussionsResp {
-    repeated DiscussionInfo Items = 1 [(gogoproto.jsontag) = 'items'];
+message DiscussionsResp {
+    repeated DiscussionInfo Items = 1;
+}
+
+message DiscussionFile {
+    int64 ID = 1;
+    string FileName = 2;
+    string FileURL = 3;
+    int32 Seq = 4;
+    string FileType = 5;
+    string PdfURL = 6;
+    int64 CreatedAt = 7 ;
+}
+
+message DiscussionFilesResp {
+    repeated  DiscussionFile Items = 1;
 }
 
 message IDReq {
-    int64 ID = 1 [(gogoproto.jsontag) = "id"];
-    string include = 2 [(gogoproto.jsontag) = "include"]; ;
+    int64 ID = 1;
+    string include = 2 ; ;
     bool UseMaster = 3;
+    int64 Aid = 4;
 }
 
 message CategoriesReq {
-    int64 TopicID = 1 [(gogoproto.jsontag) = "topic_id"];
+    int64 TopicID = 1 ;
     bool UseMaster = 2;
+    int64 Aid = 3;
 }
 
 message ArgDisucssCategory {
@@ -113,7 +136,7 @@ message ArgSaveDiscussCategories {
     repeated ArgDisucssCategory Items = 3;
 }
 
-message ArgAddDiscuss {
+message ArgAddDiscussion {
     int64 TopicID = 1;
     int64 CategoryID = 2;
     oneof Title {
@@ -121,6 +144,7 @@ message ArgAddDiscuss {
     }
     string Content = 4;
     repeated  ArgDiscussionFile Files = 5;
+    int64 Aid = 6;
 }
 
 message ArgDiscussionFile {
@@ -133,32 +157,48 @@ message ArgDiscussionFile {
     int32 Seq = 5;
 }
 
-message ArgUpdateDiscuss {
+message ArgUpdateDiscussion {
     int64 ID = 1;
     oneof Title {
         string TitleValue = 2;
     }
     string Content = 3;
-    repeated  ArgDiscussionFile Files = 5;
+    int64 Aid = 6;
 }
 
-message ArgSaveDiscussFiles {
+message ArgSaveDiscussionFiles {
     int64 DiscussionID = 1;
     int64 Aid = 2;
-    repeated ArgDiscussionFile Items = 5;
+    repeated ArgDiscussionFile Items = 3;
 }
 
 message IDsResp {
-    repeated int64 IDs = 1 [(gogoproto.jsontag) = 'ids'];
+    repeated int64 IDs = 1 ;
+}
+
+message IDResp {
+    int64 ID = 1;
 }
 
 
+message BoolResp {
+    bool Result = 1;
+}
+
 service Discussion {
+    rpc CanView (IDReq) returns (BoolResp);
+    rpc CanEdit (IDReq) returns (BoolResp);
     rpc GetDiscussionInfo(IDReq) returns (DiscussionInfo);
     rpc GetDiscussionStat(IDReq) returns (DiscussionStat);
+    rpc SaveDiscussionCategories(ArgSaveDiscussCategories) returns (EmptyStruct);
+    rpc AddDiscussion(ArgAddDiscussion) returns (IDResp);
+    rpc UpdateDiscussion(ArgUpdateDiscussion) returns (EmptyStruct);
+    rpc DelDiscussion(IDReq) returns (EmptyStruct);
     rpc GetDiscussionCategories(CategoriesReq) returns (CategoriesResp);
-    rpc GetUserDiscussionsPaged(UserDiscussionsReq) returns (UserDiscussionsResp);
+    rpc GetUserDiscussionsPaged(UserDiscussionsReq) returns (DiscussionsResp);
+    rpc GetTopicDiscussionsPaged(TopicDiscussionsReq) returns (DiscussionsResp);
     rpc GetUserDiscussionIDsPaged(UserDiscussionsReq) returns (IDsResp);
-    rpc GetAllDiscussions(EmptyStruct) returns (AllDiscussionsResp);
+    rpc SaveDiscussionFiles(ArgSaveDiscussionFiles) returns (EmptyStruct);
+    rpc GetDiscussionFiles(IDReq) returns (DiscussionFilesResp);
 }
 

@@ -15,6 +15,7 @@ const (
 	_refreshExpireSeconds = 60 * 60 * 24 * 90 // 90 days
 )
 
+// grantToken 生成Token
 func (p *Service) grantToken(ctx context.Context, clientID string, accountID int64) (accessToken *model.AccessToken, refreshToken *model.RefreshToken, err error) {
 
 	now := time.Now()
@@ -89,6 +90,7 @@ func (p *Service) grantToken(ctx context.Context, clientID string, accountID int
 	return
 }
 
+// checkClient 检测ClientID
 func (p *Service) checkClient(ctx context.Context, clientID string) (err error) {
 	client, err := p.d.GetClient(ctx, p.d.AuthDB(), clientID)
 	if err != nil {
@@ -102,6 +104,7 @@ func (p *Service) checkClient(ctx context.Context, clientID string) (err error) 
 	return
 }
 
+// deleteToken 删除Token
 func (p *Service) deleteToken(ctx context.Context, clientID string, accountID int64) (err error) {
 	var accessTokens []string
 
@@ -133,6 +136,56 @@ func (p *Service) deleteToken(ctx context.Context, clientID string, accountID in
 	p.addCache(func() {
 		for _, v := range accessTokens {
 			p.d.DelAccessTokenCache(context.TODO(), v)
+		}
+	})
+
+	return
+}
+
+// deleteAllToken 删除所有Token
+func (p *Service) deleteAllToken(ctx context.Context, accountID int64) (err error) {
+	tx, err := p.d.AuthDB().Beginx(ctx)
+	if err != nil {
+		log.For(ctx).Error(fmt.Sprintf("deleteAllToken Beginx err(%v) accountID(%d)", err, accountID))
+		return
+	}
+
+	defer tx.Rollback()
+
+	var accTokens []*model.AccessToken
+	if accTokens, err = p.d.GetAccessTokensByCond(ctx, tx, map[string]interface{}{
+		"account_id": accountID,
+	}); err != nil {
+		return
+	}
+
+	var refTokens []*model.RefreshToken
+	if refTokens, err = p.d.GetRefreshTokensByCond(ctx, tx, map[string]interface{}{
+		"account_id": accountID,
+	}); err != nil {
+		return
+	}
+
+	if _, err = p.d.DelAllAccessToken(ctx, tx, accountID); err != nil {
+		return
+	}
+
+	if _, err = p.d.DelAllRefreshToken(ctx, tx, accountID); err != nil {
+		return
+	}
+
+	if err = tx.Commit(); err != nil {
+		log.For(ctx).Error(fmt.Sprintf("deleteAllToken Commit err(%v) ", err))
+		return
+	}
+
+	p.addCache(func() {
+		for _, v := range accTokens {
+			p.d.DelAccessTokenCache(context.TODO(), v.Token)
+		}
+
+		for _, v := range refTokens {
+			p.d.DelRefreshTokenCache(context.TODO(), v.Token)
 		}
 	})
 

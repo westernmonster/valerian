@@ -1,6 +1,9 @@
 # service-search
 
-## 1.0.2 
+## 1.0.2
+- 调整搜索参数
+
+## 1.0.2
 1.fix:search add es index define
 
 ## 1.0.1

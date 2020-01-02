@@ -17,7 +17,7 @@ const (
 	MsgCommentReplied      = "comment_replied"
 
 	MsgFeedbackAccuseSuit    = "feedback_accuse_suit"
-	MsgFeedbackAccuseNotSuit = "feedback_accuse_suit"
+	MsgFeedbackAccuseNotSuit = "feedback_accuse_not_suit"
 )
 
 const (

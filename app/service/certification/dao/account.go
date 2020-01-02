@@ -35,3 +35,11 @@ func (p *Dao) UpdateAccountWorkCert(c context.Context, node sqalx.Node, aid int6
 	}
 	return
 }
+
+func (p *Dao) UpdateAccountRealName(c context.Context, node sqalx.Node, aid int64, realName string) (err error) {
+	sqlUpdate := "UPDATE accounts SET user_name=?,updated_at=? WHERE id=? AND deleted=0"
+	if _, err = node.ExecContext(c, sqlUpdate, realName, time.Now().Unix(), aid); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.UpdateAccountRealName error(%+v), user_name(%+v) aid(%d)", err, realName, aid))
+	}
+	return
+}

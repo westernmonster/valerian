@@ -280,3 +280,22 @@ type Paging struct {
 	// 上一页
 	Prev string `json:"prev"`
 }
+
+type HotFeedItem struct {
+	// 目标类型
+	// article, topic, member, comment
+	TargetType string `json:"target_type"`
+	// 目标
+	Target *FeedTarget `json:"target"`
+
+	// 热度值
+	Score float64 `json:"score"`
+
+	// 是否删除
+	Deleted bool `json:"deleted"`
+}
+
+type HotFeedResp struct {
+	Items  []*HotFeedItem `json:"items"`
+	Paging *Paging        `json:"paging"`
+}

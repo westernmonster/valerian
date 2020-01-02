@@ -35,3 +35,17 @@ func (p *Dao) GetAccountStat(c context.Context, aid int64) (info *account.Accoun
 	}
 	return
 }
+
+func (p *Dao) GetAccountByEmail(c context.Context, email string) (info *account.DBAccount, err error) {
+	if info, err = p.accountRPC.GetAccountByEmail(c, &account.EmailReq{Email: email, UseMaster: true}); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetAccountByEmail err(%+v) email(%s)", err, email))
+	}
+	return
+}
+
+func (p *Dao) GetAccountByMobile(c context.Context, prefix, mobile string) (info *account.DBAccount, err error) {
+	if info, err = p.accountRPC.GetAccountByMobile(c, &account.MobileReq{Prefix: prefix, Mobile: mobile, UseMaster: true}); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetAccountByMobile err(%+v) prefix(%s) email(%s)", err, prefix, mobile))
+	}
+	return
+}

@@ -24,7 +24,7 @@ spec:
       terminationGracePeriodSeconds: 10
       dnsPolicy: ClusterFirst
       imagePullSecrets:
-        - name: registry-secret
+        - name: registry-secret-vpc
       securityContext:
         fsGroup: 1000
       containers:

@@ -2,164 +2,108 @@ package service
 
 import (
 	"context"
-	"strings"
 
 	"valerian/app/interface/passport-login/model"
 	account "valerian/app/service/account/api"
-	"valerian/library/ecode"
+	identify "valerian/app/service/identify/api/grpc"
 )
 
+// EmailLogin 邮件登录
 func (p *Service) EmailLogin(ctx context.Context, req *model.ArgEmailLogin) (resp *model.LoginResp, err error) {
-	if err = p.checkClient(ctx, req.ClientID); err != nil {
-		return
-	} // Check Client
-
-	account, err := p.d.GetAccountByEmail(ctx, p.d.DB(), req.Email)
-	if err != nil {
-		return
-	}
-	if account == nil {
-		err = ecode.UserNotExist
-		return
-	}
-	if account.IsLock {
-		err = ecode.UserDisabled
-		return
-	}
-	if err = p.checkPassword(req.Password, account.Password, account.Salt); err != nil {
-		return
+	arg := &identify.EmailLoginReq{
+		Source:   req.Source,
+		Email:    req.Email,
+		Password: req.Password,
+		ClientID: req.ClientID,
 	}
 
-	accessToken, refreshToken, err := p.grantToken(ctx, req.ClientID, account.ID)
-	if err != nil {
+	var data *identify.LoginResp
+	if data, err = p.d.EmailLogin(ctx, arg); err != nil {
 		return
 	}
 
 	resp = &model.LoginResp{
-		AccountID:    account.ID,
-		Role:         account.Role,
-		AccessToken:  accessToken.Token,
-		ExpiresIn:    _accessExpireSeconds,
-		TokenType:    "Bearer",
-		Scope:        "",
-		RefreshToken: refreshToken.Token,
+		AccountID:    data.Aid,
+		Role:         data.Role,
+		AccessToken:  data.AccessToken,
+		ExpiresIn:    data.ExpiresIn,
+		TokenType:    data.TokenType,
+		Scope:        data.Scope,
+		RefreshToken: data.RefreshToken,
 	}
 
-	if resp.Profile, err = p.GetProfile(ctx, account.ID); err != nil {
+	if resp.Profile, err = p.GetProfile(ctx, data.Aid); err != nil {
 		return
 	}
 
 	return
 }
 
+// MobileLogin 手机登录
 func (p *Service) MobileLogin(ctx context.Context, req *model.ArgMobileLogin) (resp *model.LoginResp, err error) {
-	if err = p.checkClient(ctx, req.ClientID); err != nil {
-		return
-	} // Check Client
-
-	mobile := req.Prefix + req.Mobile
-	account, err := p.d.GetAccountByMobile(ctx, p.d.DB(), mobile)
-	if err != nil {
-		return
-	}
-	if account == nil {
-		err = ecode.UserNotExist
-		return
-	}
-	if account.IsLock {
-		err = ecode.UserDisabled
-		return
-	}
-	if err = p.checkPassword(req.Password, account.Password, account.Salt); err != nil {
-		return
+	arg := &identify.MobileLoginReq{
+		Source:   req.Source,
+		Mobile:   req.Mobile,
+		Prefix:   req.Prefix,
+		Password: req.Password,
+		ClientID: req.ClientID,
 	}
 
-	accessToken, refreshToken, err := p.grantToken(ctx, req.ClientID, account.ID)
-	if err != nil {
+	var data *identify.LoginResp
+	if data, err = p.d.MobileLogin(ctx, arg); err != nil {
 		return
 	}
 
 	resp = &model.LoginResp{
-		AccountID:    account.ID,
-		Role:         account.Role,
-		AccessToken:  accessToken.Token,
-		ExpiresIn:    _accessExpireSeconds,
-		TokenType:    "Bearer",
-		Scope:        "",
-		RefreshToken: refreshToken.Token,
+		AccountID:    data.Aid,
+		Role:         data.Role,
+		AccessToken:  data.AccessToken,
+		ExpiresIn:    data.ExpiresIn,
+		TokenType:    data.TokenType,
+		Scope:        data.Scope,
+		RefreshToken: data.RefreshToken,
 	}
 
-	if resp.Profile, err = p.GetProfile(ctx, account.ID); err != nil {
+	if resp.Profile, err = p.GetProfile(ctx, data.Aid); err != nil {
 		return
 	}
 
 	return
 }
 
+// DigitLogin 验证码登录
 func (p *Service) DigitLogin(ctx context.Context, req *model.ArgDigitLogin) (resp *model.LoginResp, err error) {
-	mobile := req.Prefix + req.Mobile
-
-	var code string
-	if code, err = p.d.MobileValcodeCache(ctx, model.ValcodeLogin, mobile); err != nil {
-		return
-	} else if code == "" {
-		err = ecode.ValcodeExpires
-		return
-	} else if code != req.Valcode {
-		err = ecode.ValcodeWrong
-		return
+	arg := &identify.DigitLoginReq{
+		Source:   req.Source,
+		Prefix:   req.Prefix,
+		Valcode:  req.Valcode,
+		Mobile:   req.Mobile,
+		ClientID: req.ClientID,
 	}
 
-	var account *model.Account
-	if account, err = p.d.GetAccountByMobile(ctx, p.d.DB(), mobile); err != nil {
-		return
-	} else if account == nil {
-		err = ecode.UserNotExist
-		return
-	}
-	if account.IsLock {
-		err = ecode.UserDisabled
-		return
-	}
-	accessToken, refreshToken, err := p.grantToken(ctx, req.ClientID, account.ID)
-	if err != nil {
+	var data *identify.LoginResp
+	if data, err = p.d.DigitLogin(ctx, arg); err != nil {
 		return
 	}
 
 	resp = &model.LoginResp{
-		AccountID:    account.ID,
-		Role:         account.Role,
-		AccessToken:  accessToken.Token,
-		ExpiresIn:    _accessExpireSeconds,
-		TokenType:    "Bearer",
-		Scope:        "",
-		RefreshToken: refreshToken.Token,
+		AccountID:    data.Aid,
+		Role:         data.Role,
+		AccessToken:  data.AccessToken,
+		ExpiresIn:    data.ExpiresIn,
+		TokenType:    data.TokenType,
+		Scope:        data.Scope,
+		RefreshToken: data.RefreshToken,
 	}
 
-	if resp.Profile, err = p.GetProfile(ctx, account.ID); err != nil {
+	if resp.Profile, err = p.GetProfile(ctx, data.Aid); err != nil {
 		return
 	}
-
-	p.addCache(func() {
-		p.d.DelMobileValcodeCache(context.TODO(), model.ValcodeLogin, mobile)
-	})
 
 	return
 }
 
-func (p *Service) checkPassword(password, dbPassword, dbSalt string) (err error) {
-	passwordHash, err := hashPassword(password, dbSalt)
-	if err != nil {
-		return
-	}
-
-	if !strings.EqualFold(dbPassword, passwordHash) {
-		err = ecode.PasswordErr
-		return
-	}
-	return
-}
-
+// GetProfile 获取当前登录用户资料
 func (p *Service) GetProfile(c context.Context, aid int64) (item *model.Profile, err error) {
 	var profile *account.SelfProfile
 	if profile, err = p.d.GetSelfProfile(c, aid); err != nil {

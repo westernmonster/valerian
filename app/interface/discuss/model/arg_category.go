@@ -25,7 +25,7 @@ type ArgDisucssCategory struct {
 
 	// 顺序
 	// required: true
-	Seq int `json:"seq"`
+	Seq int32 `json:"seq"`
 }
 
 func (p *ArgDisucssCategory) Validate() error {

@@ -8,28 +8,34 @@ import (
 )
 
 func (p *Service) Init(c context.Context) (err error) {
-	c, cancelFunc := context.WithTimeout(c, 3*60*time.Second)
+	go p.init()
+	return
+}
+
+func (p *Service) init() {
+	c, cancelFunc := context.WithTimeout(context.Background(), 3*60*time.Second)
 	defer cancelFunc()
 	c = sqalx.NewContext(c, true)
-	// if err = p.d.CreateAccountIndices(c); err != nil {
-	// 	return
-	// }
+	var err error
+	if err = p.d.CreateAccountIndices(c); err != nil {
+		return
+	}
 
-	// if err = p.d.CreateTopicIndices(c); err != nil {
-	// 	return
-	// }
+	if err = p.d.CreateTopicIndices(c); err != nil {
+		return
+	}
 
-	// if err = p.d.CreateArticleIndices(c); err != nil {
-	// 	return
-	// }
+	if err = p.d.CreateArticleIndices(c); err != nil {
+		return
+	}
 
-	// if err = p.d.CreateDiscussionIndices(c); err != nil {
-	// 	return
-	// }
+	if err = p.d.CreateDiscussionIndices(c); err != nil {
+		return
+	}
 
-	// if err = p.d.CreateSearchStatIndices(c); err != nil {
-	// 	return
-	// }
+	if err = p.d.CreateSearchStatIndices(c); err != nil {
+		return
+	}
 
 	var accounts []*model.Account
 	if accounts, err = p.d.GetAccounts(c, p.d.DB()); err != nil {
@@ -231,5 +237,4 @@ func (p *Service) Init(c context.Context) (err error) {
 		return
 	}
 
-	return
 }

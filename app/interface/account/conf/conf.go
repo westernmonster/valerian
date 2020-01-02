@@ -42,7 +42,9 @@ type Config struct {
 	MessageRPC       *warden.ClientConfig
 	FavRPC           *warden.ClientConfig
 	ArticleRPC       *warden.ClientConfig
+	CommentRPC       *warden.ClientConfig
 	RecentRPC        *warden.ClientConfig
+	IdentifyRPC      *warden.ClientConfig
 	Auth             *auth.Config
 	Memcache         *Memcache
 	Discovery        *discovery.Config

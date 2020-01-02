@@ -12,6 +12,7 @@ import (
 	"valerian/library/log"
 )
 
+// RequestWorkCert 申请工作认证
 func (p *Service) RequestWorkCert(c context.Context, arg *model.ArgAddWorkCert) (err error) {
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
@@ -92,6 +93,7 @@ func (p *Service) RequestWorkCert(c context.Context, arg *model.ArgAddWorkCert) 
 	return
 }
 
+// AuditWorkCert 审批工作认证
 func (p *Service) AuditWorkCert(c context.Context, arg *model.ArgAuditWorkCert) (err error) {
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
@@ -140,6 +142,24 @@ func (p *Service) AuditWorkCert(c context.Context, arg *model.ArgAuditWorkCert) 
 	if err = p.d.UpdateWorkCertification(c, tx, item); err != nil {
 		return
 	}
+	// add result to history
+	if err = p.d.AddWorkCertHistory(c, tx, &model.WorkCertHistory{
+		ID:          gid.NewID(),
+		AccountID:   item.AccountID,
+		Status:      item.Status,
+		WorkPic:     item.WorkPic,
+		OtherPic:    item.OtherPic,
+		Company:     item.Company,
+		Department:  item.Department,
+		Position:    item.Position,
+		ExpiresAt:   item.ExpiresAt,
+		AuditResult: arg.AuditResult,
+		ManagerID:   arg.ManagerID,
+		CreatedAt:   time.Now().Unix(),
+		UpdatedAt:   time.Now().Unix(),
+	}); err != nil {
+		return
+	}
 
 	if err = tx.Commit(); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
@@ -153,6 +173,7 @@ func (p *Service) AuditWorkCert(c context.Context, arg *model.ArgAuditWorkCert) 
 	return
 }
 
+// GetWorkCertStatus 获取工作认证状态
 func (p *Service) GetWorkCertStatus(c context.Context, aid int64) (status int32, err error) {
 	var item *model.WorkCertification
 	if item, err = p.getWorkCertByID(c, p.d.DB(), aid); err != nil {
@@ -165,10 +186,12 @@ func (p *Service) GetWorkCertStatus(c context.Context, aid int64) (status int32,
 	}
 }
 
+// GetWorkCert 获取工作认证
 func (p *Service) GetWorkCert(c context.Context, aid int64) (item *model.WorkCertification, err error) {
 	return p.getWorkCertByID(c, p.d.DB(), aid)
 }
 
+// getWorkCertByID 通过ID获取工作认证
 func (p *Service) getWorkCertByID(c context.Context, node sqalx.Node, aid int64) (item *model.WorkCertification, err error) {
 	var needCache = true
 

@@ -27,14 +27,17 @@ const (
 	ValcodeRegister       = int32(1)
 	ValcodeForgetPassword = int32(2)
 	ValcodeLogin          = int32(3)
+	ValcodeClose          = int32(4)
 )
 
 const (
-	TargetTypeTopic      = "topic"
-	TargetTypeDiscussion = "discussion"
-	TargetTypeRevise     = "revise"
-	TargetTypeArticle    = "article"
-	TargetTypeMember     = "member"
+	TargetTypeTopic          = "topic"
+	TargetTypeDiscussion     = "discussion"
+	TargetTypeRevise         = "revise"
+	TargetTypeArticle        = "article"
+	TargetTypeMember         = "member"
+	TargetTypeComment        = "comment"
+	TargetTypeArticleHistory = "article_history"
 )
 
 const (

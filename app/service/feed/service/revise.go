@@ -2,83 +2,106 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"time"
 
-	article "valerian/app/service/article/api"
 	"valerian/app/service/feed/def"
 	"valerian/app/service/feed/model"
-	relation "valerian/app/service/relation/api"
 	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
 	"valerian/library/gid"
-	"valerian/library/log"
 
 	"github.com/nats-io/stan.go"
 )
 
+func (p *Service) GetRevise(c context.Context, reviseID int64) (item *model.Revise, err error) {
+	if item, err = p.getRevise(c, p.d.DB(), reviseID); err != nil {
+		return
+	}
+
+	var article *model.Article
+	if article, err = p.getArticle(c, p.d.DB(), item.ArticleID); err != nil {
+		return
+	}
+
+	item.Title = article.Title
+	return
+}
+
+func (p *Service) getRevise(c context.Context, node sqalx.Node, reviseID int64) (item *model.Revise, err error) {
+	if item, err = p.d.GetReviseByID(c, p.d.DB(), reviseID); err != nil {
+		return
+	} else if item == nil {
+		err = ecode.ReviseNotExist
+		return
+	}
+	return
+}
+
 func (p *Service) onReviseAdded(m *stan.Msg) {
 	var err error
 	c := context.Background()
+	// 强制使用强制使用Master库
+	c = sqalx.NewContext(c, true)
 	info := new(def.MsgReviseAdded)
 	if err = info.Unmarshal(m.Data); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onReviseAdded Unmarshal failed %#v", err))
-		return
-	}
-
-	var article *article.ReviseInfo
-	if article, err = p.d.GetRevise(c, info.ReviseID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onReviseAdded GetRevise failed %#v", err))
-		if ecode.Cause(err) == ecode.ReviseNotExist {
-			m.Ack()
-		}
-		return
-	}
-
-	var fansResp *relation.IDsResp
-	if fansResp, err = p.d.GetFansIDs(c, info.ActorID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onReviseAdded GetFansIDs failed %#v", err))
+		PromError("feed: Unmarshal data", "info.Umarshal() ,error(%+v)", err)
 		return
 	}
 
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		PromError("feed: tx.Beginx", "tx.Beginx(), error(%+v)", err)
 		return
 	}
 
 	defer func() {
 		if err != nil {
 			if err1 := tx.Rollback(); err1 != nil {
-				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+				PromError("feed: tx.Rollback", "tx.Rollback(), error(%+v)", err)
 			}
 			return
 		}
 	}()
 
-	for _, v := range fansResp.IDs {
+	var revise *model.Revise
+	if revise, err = p.getRevise(c, tx, info.ReviseID); err != nil {
+		if ecode.IsNotExistEcode(err) {
+			m.Ack()
+			return
+		}
+		PromError("feed: GetRevise", "GetRevise(), id(%d),error(%+v)", info.ReviseID, err)
+		return
+	}
+
+	var ids []int64
+	if ids, err = p.d.GetFansIDs(c, tx, info.ActorID); err != nil {
+		PromError("feed: GetFansIDs", "GetFansIDs(), aid(%d),error(%+v)", info.ActorID, err)
+		return
+	}
+
+	for _, v := range ids {
 		feed := &model.Feed{
 			ID:         gid.NewID(),
 			AccountID:  v,
 			ActionType: def.ActionTypeCreateRevise,
 			ActionTime: time.Now().Unix(),
 			ActionText: def.ActionTextCreateRevise,
-			ActorID:    article.Creator.ID,
+			ActorID:    revise.CreatedBy,
 			ActorType:  def.ActorTypeUser,
-			TargetID:   article.ID,
+			TargetID:   revise.ID,
 			TargetType: def.TargetTypeRevise,
 			CreatedAt:  time.Now().Unix(),
 			UpdatedAt:  time.Now().Unix(),
 		}
 
 		if err = p.d.AddFeed(c, tx, feed); err != nil {
-			log.For(c).Error(fmt.Sprintf("service.onReviseAdded() failed %#v", err))
+			PromError("feed: AddFeed", "AddFeed(), feed(%+v),error(%+v)", feed, err)
 			return
 		}
 	}
 
 	if err = tx.Commit(); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		PromError("feed: tx.Commit", "tx.Commit(), error(%+v)", err)
 		return
 	}
 
@@ -88,43 +111,46 @@ func (p *Service) onReviseAdded(m *stan.Msg) {
 func (p *Service) onReviseUpdated(m *stan.Msg) {
 	var err error
 	c := context.Background()
+	// 强制使用强制使用Master库
+	c = sqalx.NewContext(c, true)
 	info := new(def.MsgReviseUpdated)
 	if err = info.Unmarshal(m.Data); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onReviseUpdated Unmarshal failed %#v", err))
-		return
-	}
-
-	var article *article.ReviseInfo
-	if article, err = p.d.GetRevise(c, info.ReviseID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onReviseUpdated GetRevise failed %#v", err))
-		if ecode.Cause(err) == ecode.ReviseNotExist {
-			m.Ack()
-		}
-		return
-	}
-
-	var fansResp *relation.IDsResp
-	if fansResp, err = p.d.GetFansIDs(c, info.ActorID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onReviseUpdated GetFansIDs failed %#v", err))
+		PromError("feed: Unmarshal data", "info.Umarshal() ,error(%+v)", err)
 		return
 	}
 
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		PromError("feed: tx.Beginx", "tx.Beginx(), error(%+v)", err)
 		return
 	}
 
 	defer func() {
 		if err != nil {
 			if err1 := tx.Rollback(); err1 != nil {
-				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+				PromError("feed: tx.Rollback", "tx.Rollback(), error(%+v)", err)
 			}
 			return
 		}
 	}()
 
-	for _, v := range fansResp.IDs {
+	var revise *model.Revise
+	if revise, err = p.getRevise(c, tx, info.ReviseID); err != nil {
+		if ecode.IsNotExistEcode(err) {
+			m.Ack()
+			return
+		}
+		PromError("feed: GetRevise", "GetRevise(), id(%d),error(%+v)", info.ReviseID, err)
+		return
+	}
+
+	var ids []int64
+	if ids, err = p.d.GetFansIDs(c, tx, info.ActorID); err != nil {
+		PromError("feed: GetFansIDs", "GetFansIDs(), aid(%d),error(%+v)", info.ActorID, err)
+		return
+	}
+
+	for _, v := range ids {
 		feed := &model.Feed{
 			ID:         gid.NewID(),
 			AccountID:  v,
@@ -133,20 +159,20 @@ func (p *Service) onReviseUpdated(m *stan.Msg) {
 			ActionText: def.ActionTextUpdateRevise,
 			ActorID:    info.ActorID,
 			ActorType:  def.ActorTypeUser,
-			TargetID:   article.ID,
+			TargetID:   revise.ID,
 			TargetType: def.TargetTypeRevise,
 			CreatedAt:  time.Now().Unix(),
 			UpdatedAt:  time.Now().Unix(),
 		}
 
 		if err = p.d.AddFeed(c, tx, feed); err != nil {
-			log.For(c).Error(fmt.Sprintf("service.onReviseUpdated() failed %#v", err))
+			PromError("feed: AddFeed", "AddFeed(), feed(%+v),error(%+v)", feed, err)
 			return
 		}
 	}
 
 	if err = tx.Commit(); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		PromError("feed: tx.Commit", "tx.Commit(), error(%+v)", err)
 		return
 	}
 
@@ -156,43 +182,57 @@ func (p *Service) onReviseUpdated(m *stan.Msg) {
 func (p *Service) onReviseLiked(m *stan.Msg) {
 	var err error
 	c := context.Background()
+	// 强制使用强制使用Master库
+	c = sqalx.NewContext(c, true)
 	info := new(def.MsgReviseLiked)
 	if err = info.Unmarshal(m.Data); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onReviseLiked Unmarshal failed %#v", err))
-		return
-	}
-
-	var article *article.ReviseInfo
-	if article, err = p.d.GetRevise(c, info.ReviseID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onReviseLiked GetRevise failed %#v", err))
-		if ecode.Cause(err) == ecode.ReviseNotExist {
-			m.Ack()
-		}
-		return
-	}
-
-	var fansResp *relation.IDsResp
-	if fansResp, err = p.d.GetFansIDs(c, info.ActorID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onReviseLiked GetFansIDs failed %#v", err))
+		PromError("feed: Unmarshal data", "info.Umarshal() ,error(%+v)", err)
 		return
 	}
 
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		PromError("feed: tx.Beginx", "tx.Beginx(), error(%+v)", err)
 		return
 	}
 
 	defer func() {
 		if err != nil {
 			if err1 := tx.Rollback(); err1 != nil {
-				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+				PromError("feed: tx.Rollback", "tx.Rollback(), error(%+v)", err)
 			}
 			return
 		}
 	}()
 
-	for _, v := range fansResp.IDs {
+	var revise *model.Revise
+	if revise, err = p.getRevise(c, tx, info.ReviseID); err != nil {
+		if ecode.IsNotExistEcode(err) {
+			m.Ack()
+			return
+		}
+		PromError("feed: GetRevise", "GetRevise(), id(%d),error(%+v)", info.ReviseID, err)
+		return
+	}
+
+	var setting *model.SettingResp
+	if setting, err = p.getAccountSetting(c, p.d.DB(), info.ActorID); err != nil {
+		PromError("feed: getAccountSetting", "getAccountSetting(), id(%d),error(%+v)", info.ActorID, err)
+		return
+	}
+
+	if !setting.ActivityLike {
+		m.Ack()
+		return
+	}
+
+	var ids []int64
+	if ids, err = p.d.GetFansIDs(c, tx, info.ActorID); err != nil {
+		PromError("feed: GetFansIDs", "GetFansIDs(), aid(%d),error(%+v)", info.ActorID, err)
+		return
+	}
+
+	for _, v := range ids {
 		feed := &model.Feed{
 			ID:         gid.NewID(),
 			AccountID:  v,
@@ -201,104 +241,20 @@ func (p *Service) onReviseLiked(m *stan.Msg) {
 			ActionText: def.ActionTextLikeRevise,
 			ActorID:    info.ActorID,
 			ActorType:  def.ActorTypeUser,
-			TargetID:   article.ID,
+			TargetID:   revise.ID,
 			TargetType: def.TargetTypeRevise,
 			CreatedAt:  time.Now().Unix(),
 			UpdatedAt:  time.Now().Unix(),
 		}
 
 		if err = p.d.AddFeed(c, tx, feed); err != nil {
-			log.For(c).Error(fmt.Sprintf("service.onReviseLiked() failed %#v", err))
+			PromError("feed: AddFeed", "AddFeed(), feed(%+v),error(%+v)", feed, err)
 			return
 		}
 	}
 
 	if err = tx.Commit(); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
-		return
-	}
-
-	m.Ack()
-}
-
-func (p *Service) onReviseFaved(m *stan.Msg) {
-	var err error
-	c := context.Background()
-	info := new(def.MsgReviseFaved)
-	if err = info.Unmarshal(m.Data); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onReviseFaved Unmarshal failed %#v", err))
-		return
-	}
-
-	var article *article.ReviseInfo
-	if article, err = p.d.GetRevise(c, info.ReviseID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onReviseFaved GetRevise failed %#v", err))
-		if ecode.Cause(err) == ecode.ReviseNotExist {
-			m.Ack()
-		}
-		return
-	}
-
-	var fansResp *relation.IDsResp
-	if fansResp, err = p.d.GetFansIDs(c, info.ActorID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onReviseFaved GetFansIDs failed %#v", err))
-		return
-	}
-
-	var tx sqalx.Node
-	if tx, err = p.d.DB().Beginx(c); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
-		return
-	}
-
-	defer func() {
-		if err != nil {
-			if err1 := tx.Rollback(); err1 != nil {
-				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
-			}
-			return
-		}
-	}()
-
-	for _, v := range fansResp.IDs {
-		feed := &model.Feed{
-			ID:         gid.NewID(),
-			AccountID:  v,
-			ActionType: def.ActionTypeFavRevise,
-			ActionTime: time.Now().Unix(),
-			ActionText: def.ActionTextFavRevise,
-			ActorID:    info.ActorID,
-			ActorType:  def.ActorTypeUser,
-			TargetID:   article.ID,
-			TargetType: def.TargetTypeRevise,
-			CreatedAt:  time.Now().Unix(),
-			UpdatedAt:  time.Now().Unix(),
-		}
-
-		if err = p.d.AddFeed(c, tx, feed); err != nil {
-			log.For(c).Error(fmt.Sprintf("service.onReviseFaved() failed %#v", err))
-			return
-		}
-	}
-
-	if err = tx.Commit(); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
-		return
-	}
-
-	m.Ack()
-}
-
-func (p *Service) onReviseDeleted(m *stan.Msg) {
-	var err error
-	info := new(def.MsgReviseDeleted)
-	if err = info.Unmarshal(m.Data); err != nil {
-		log.Errorf("service.onReviseDeleted Unmarshal failed %#v", err)
-		return
-	}
-
-	if err = p.d.DelFeedByCond(context.Background(), p.d.DB(), def.TargetTypeRevise, info.ReviseID); err != nil {
-		log.Errorf("service.onReviseDeleted() failed %#v", err)
+		PromError("feed: tx.Commit", "tx.Commit(), error(%+v)", err)
 		return
 	}
 

@@ -29,3 +29,36 @@ type Account struct {
 	Prefix       string        `db:"prefix" json:"prefix"`             // Prefix 手机前缀
 	IsLock       types.BitBool `db:"is_lock" json:"is_lock"`           // IsLock 是否被禁用
 }
+
+type WorkCertification struct {
+	ID          int64         `db:"id" json:"id,string"`                 // ID ID
+	AccountID   int64         `db:"account_id" json:"account_id,string"` // AccountID 账户ID
+	Status      int32         `db:"status" json:"status"`                // Status 状态：-1 未认证, 0 认证中,  1 认证成功, 2 认证失败
+	WorkPic     string        `db:"work_pic" json:"work_pic"`            // WorkPic 工作证
+	OtherPic    string        `db:"other_pic" json:"other_pic"`          // OtherPic 其他证明
+	Company     string        `db:"company" json:"company"`              // Company 公司
+	Department  string        `db:"department" json:"department"`        // Department 部门
+	Position    string        `db:"position" json:"position"`            // Position 职位
+	ExpiresAt   int64         `db:"expires_at" json:"expires_at,string"` // ExpiresAt 工作证有效期
+	AuditResult string        `db:"audit_result" json:"audit_result"`    // AuditResult 审核结果
+	Deleted     types.BitBool `db:"deleted" json:"deleted"`              // Deleted 是否删除
+	CreatedAt   int64         `db:"created_at" json:"created_at"`        // CreatedAt 创建时间
+	UpdatedAt   int64         `db:"updated_at" json:"updated_at"`        // UpdatedAt 更新时间
+}
+
+type WorkCertHistory struct {
+	ID          int64         `db:"id" json:"id,string"`                 // ID ID
+	AccountID   int64         `db:"account_id" json:"account_id,string"` // AccountID 账户ID
+	Status      int32         `db:"status" json:"status"`                // Status 状态：-1 未认证, 0 认证中,  1 认证成功, 2 认证失败
+	WorkPic     string        `db:"work_pic" json:"work_pic"`            // WorkPic 工作证
+	OtherPic    string        `db:"other_pic" json:"other_pic"`          // OtherPic 其他证明
+	Company     string        `db:"company" json:"company"`              // Company 公司
+	Department  string        `db:"department" json:"department"`        // Department 部门
+	Position    string        `db:"position" json:"position"`            // Position 职位
+	ExpiresAt   int64         `db:"expires_at" json:"expires_at,string"` // ExpiresAt 工作证有效期
+	AuditResult string        `db:"audit_result" json:"audit_result"`    // AuditResult 审核结果
+	ManagerID   int64         `db:"manager_id" json:"manager_id,string"` // ManagerID 审核人ID
+	Deleted     types.BitBool `db:"deleted" json:"deleted"`              // Deleted 是否删除
+	CreatedAt   int64         `db:"created_at" json:"created_at"`        // CreatedAt 创建时间
+	UpdatedAt   int64         `db:"updated_at" json:"updated_at"`        // UpdatedAt 更新时间
+}

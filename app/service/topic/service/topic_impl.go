@@ -23,6 +23,7 @@ func (p *Service) checkTopic(c context.Context, node sqalx.Node, topicID int64) 
 	return
 }
 
+// createTopic 创建话题
 func (p *Service) createTopic(c context.Context, node sqalx.Node, aid int64, arg *api.ArgCreateTopic) (id int64, err error) {
 	item := &model.Topic{
 		ID:              gid.NewID(),
@@ -88,6 +89,7 @@ func (p *Service) createTopic(c context.Context, node sqalx.Node, aid int64, arg
 
 }
 
+// updateTopic 更新话题
 func (p *Service) updateTopic(c context.Context, node sqalx.Node, aid int64, arg *api.ArgUpdateTopic) (err error) {
 	var t *model.Topic
 	if t, err = p.getTopic(c, node, arg.ID); err != nil {
@@ -173,6 +175,8 @@ func (p *Service) updateTopic(c context.Context, node sqalx.Node, aid int64, arg
 		t.AllowDiscuss = types.BitBool(arg.GetAllowDiscussValue())
 	}
 
+	t.UpdatedAt = time.Now().Unix()
+
 	if err = p.d.UpdateTopic(c, node, t); err != nil {
 		return
 	}
@@ -180,6 +184,7 @@ func (p *Service) updateTopic(c context.Context, node sqalx.Node, aid int64, arg
 	return
 }
 
+// getAccountTopicSetting 获取用户话题设置
 func (p *Service) getAccountTopicSetting(c context.Context, node sqalx.Node, aid, topicID int64) (item *model.AccountTopicSetting, err error) {
 	var addCache = true
 	if item, err = p.d.AccountTopicSettingCache(c, aid, topicID); err != nil {
@@ -212,6 +217,7 @@ func (p *Service) getAccountTopicSetting(c context.Context, node sqalx.Node, aid
 	return
 }
 
+// getTopic 获取话题信息
 func (p *Service) getTopic(c context.Context, node sqalx.Node, topicID int64) (item *model.Topic, err error) {
 	var addCache = true
 	if item, err = p.d.TopicCache(c, topicID); err != nil {

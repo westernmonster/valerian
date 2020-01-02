@@ -1,11 +1,13 @@
 package http
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 
 	"valerian/app/interface/discuss/model"
 	"valerian/library/ecode"
+	"valerian/library/log"
 	"valerian/library/net/http/mars"
 )
 
@@ -128,10 +130,13 @@ func getDiscusstionsByAccount(c *mars.Context) {
 func addDiscussion(c *mars.Context) {
 	arg := new(model.ArgAddDiscuss)
 	if e := c.Bind(arg); e != nil {
+		log.For(c).Error(fmt.Sprintf("bind error(%+v)", e))
+		c.JSON(nil, ecode.RequestErr)
 		return
 	}
 
 	if e := arg.Validate(); e != nil {
+		log.For(c).Error(fmt.Sprintf("validation error(%+v)", e))
 		c.JSON(nil, ecode.RequestErr)
 		return
 	}
@@ -157,10 +162,13 @@ func addDiscussion(c *mars.Context) {
 func updateDiscussion(c *mars.Context) {
 	arg := new(model.ArgUpdateDiscuss)
 	if e := c.Bind(arg); e != nil {
+		log.For(c).Error(fmt.Sprintf("bind error(%+v)", e))
+		c.JSON(nil, ecode.RequestErr)
 		return
 	}
 
 	if e := arg.Validate(); e != nil {
+		log.For(c).Error(fmt.Sprintf("validation error(%+v)", e))
 		c.JSON(nil, ecode.RequestErr)
 		return
 	}
@@ -185,6 +193,8 @@ func updateDiscussion(c *mars.Context) {
 func delDiscussion(c *mars.Context) {
 	arg := new(model.ArgDelete)
 	if e := c.Bind(arg); e != nil {
+		log.For(c).Error(fmt.Sprintf("bind error(%+v)", e))
+		c.JSON(nil, ecode.RequestErr)
 		return
 	}
 
@@ -216,6 +226,7 @@ func getDiscussion(c *mars.Context) {
 	params := c.Request.Form
 
 	if id, err = strconv.ParseInt(params.Get("id"), 10, 64); err != nil {
+		log.For(c).Error(fmt.Sprintf("req error(%+v)", err))
 		c.JSON(nil, ecode.RequestErr)
 		return
 	}

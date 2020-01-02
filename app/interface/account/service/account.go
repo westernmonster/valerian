@@ -4,251 +4,108 @@ import (
 	"context"
 	"net/url"
 	"strconv"
-	"time"
 
 	"valerian/app/interface/account/model"
 	account "valerian/app/service/account/api"
 	article "valerian/app/service/article/api"
 	discuss "valerian/app/service/discuss/api"
 	fav "valerian/app/service/fav/api"
+	identify "valerian/app/service/identify/api/grpc"
 	message "valerian/app/service/message/api"
 	recent "valerian/app/service/recent/api"
 	topic "valerian/app/service/topic/api"
-	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
 	"valerian/library/net/metadata"
-
-	"github.com/asaskevich/govalidator"
-	uuid "github.com/satori/go.uuid"
 )
 
-func validateBirthDay(arg *model.ArgUpdateProfile) (err error) {
-	if arg.BirthYear != nil {
-		year := int(*arg.BirthYear)
-		if year < 1920 || year > time.Now().Year() {
-			return ecode.InvalidBirthYear
-		}
-	}
-
-	if arg.BirthMonth != nil {
-		month := *arg.BirthMonth
-		if month < 1 || month > 12 {
-			return ecode.InvalidBirthMonth
-		}
-	}
-
-	if arg.BirthDay != nil {
-		day := *arg.BirthDay
-		if day < 1 || day > 30 {
-			return ecode.InvalidBirthDay
-		}
-	}
-
-	return
-}
-
+// ForgetPassword 忘记密码
 func (p *Service) ForgetPassword(c context.Context, arg *model.ArgForgetPassword) (sessionID string, err error) {
-	var account *model.Account
-	if govalidator.IsEmail(arg.Identity) {
-		if account, err = p.d.GetAccountByEmail(c, p.d.DB(), arg.Identity); err != nil {
-			return
-		} else if account == nil {
-			err = ecode.UserNotExist
-			return
-		}
-
-		var code string
-		if code, err = p.d.EmailValcodeCache(c, model.ValcodeForgetPassword, arg.Identity); err != nil {
-			return
-		} else if code == "" {
-			err = ecode.ValcodeExpires
-			return
-		} else if code != arg.Valcode {
-			err = ecode.ValcodeWrong
-			return
-		}
-	} else {
-		mobile := arg.Prefix + arg.Identity
-		if account, err = p.d.GetAccountByMobile(c, p.d.DB(), mobile); err != nil {
-			return
-		} else if account == nil {
-			err = ecode.UserNotExist
-			return
-		}
-
-		var code string
-		if code, err = p.d.MobileValcodeCache(c, model.ValcodeForgetPassword, mobile); err != nil {
-			return
-		} else if code == "" {
-			err = ecode.ValcodeExpires
-			return
-		} else if code != arg.Valcode {
-			err = ecode.ValcodeWrong
-			return
-		}
-	}
-
-	sessionID = uuid.NewV4().String()
-	if err = p.d.SetSessionResetPasswordCache(c, sessionID, account.ID); err != nil {
-		return
-	}
-
-	return
-}
-
-func (p *Service) getAccountByID(c context.Context, node sqalx.Node, aid int64) (account *model.Account, err error) {
-	var needCache = true
-
-	if account, err = p.d.AccountCache(c, aid); err != nil {
-		needCache = false
-	} else if account != nil {
-		return
-	}
-
-	if account, err = p.d.GetAccountByID(c, node, aid); err != nil {
-		return
-	} else if account == nil {
-		err = ecode.UserNotExist
-		return
-	}
-
-	if needCache {
-		p.addCache(func() {
-			p.d.SetAccountCache(context.TODO(), account)
-		})
-	}
-	return
-}
-
-func (p *Service) ResetPassword(c context.Context, arg *model.ArgResetPassword) (err error) {
-	var aid int64
-	if aid, err = p.d.SessionResetPasswordCache(c, arg.SessionID); err != nil {
-		return
-	} else if aid == 0 {
-		return ecode.SessionExpires
-	}
-
-	var acc *model.Account
-	if acc, err = p.getAccountByID(c, p.d.DB(), aid); err != nil {
-		return
-	}
-
-	passwordHash, err := hashPassword(arg.Password, acc.Salt)
+	resp, err := p.d.ForgetPassword(c, arg.Identity, arg.Valcode, arg.Prefix, arg.IdentityType)
 	if err != nil {
 		return
 	}
 
-	if err = p.d.SetPassword(c, p.d.DB(), passwordHash, acc.Salt, aid); err != nil {
-		return
-	}
-
-	p.addCache(func() {
-		// TODO: Clear this users's AccessToken Cached && Refresh Token Cache
-		p.d.DelAccountCache(context.TODO(), aid)
-		p.d.DelResetPasswordCache(context.TODO(), arg.SessionID)
-	})
-
+	sessionID = resp.SessionID
 	return
 }
 
-func (p *Service) UpdateProfile(c context.Context, aid int64, arg *model.ArgUpdateProfile) (err error) {
-	var account *model.Account
-	if account, err = p.getAccountByID(c, p.d.DB(), aid); err != nil {
+// ResetPassword 重设密码
+func (p *Service) ResetPassword(c context.Context, arg *model.ArgResetPassword) (err error) {
+	return p.d.ResetPassword(c, arg.Password, arg.SessionID)
+}
+
+// Deactive 注销
+func (p *Service) Deactive(c context.Context, arg *model.ArgDeactiveAccount) (err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
 		return
 	}
+	req := &identify.DeactiveReq{
+		Aid:          aid,
+		IdentityType: arg.IdentityType,
+		Identity:     arg.Identity,
+		Valcode:      arg.Valcode,
+		Prefix:       arg.Prefix,
+	}
+	return p.d.Deactive(c, req)
+}
+
+// UpdateProfile 更新用户资料
+func (p *Service) UpdateProfile(c context.Context, aid int64, arg *model.ArgUpdateProfile) (err error) {
+
+	req := &account.UpdateProfileReq{Aid: aid}
 
 	if arg.Gender != nil {
-		if *arg.Gender != model.GenderMale && *arg.Gender != model.GenderFemale {
-			return ecode.InvalidGender
-		}
-		account.Gender = *arg.Gender
+		req.Gender = &account.UpdateProfileReq_GenderValue{*arg.Gender}
 	}
 
 	if arg.Avatar != nil {
-		if !govalidator.IsURL(*arg.Avatar) {
-			return ecode.InvalidAvatar
-		}
-		account.Avatar = *arg.Avatar
+		req.Avatar = &account.UpdateProfileReq_AvatarValue{*arg.Avatar}
 	}
 
 	if arg.Introduction != nil {
-		account.Introduction = *arg.Introduction
+		req.Avatar = &account.UpdateProfileReq_AvatarValue{*arg.Avatar}
 	}
 
 	if arg.UserName != nil {
-		account.UserName = *arg.UserName
+		req.UserName = &account.UpdateProfileReq_UserNameValue{*arg.UserName}
 	}
 
 	if arg.BirthYear != nil {
-		account.BirthYear = *arg.BirthYear
+		req.BirthYear = &account.UpdateProfileReq_BirthYearValue{*arg.BirthYear}
 	}
 
 	if arg.BirthMonth != nil {
-		account.BirthMonth = *arg.BirthMonth
+		req.BirthMonth = &account.UpdateProfileReq_BirthMonthValue{*arg.BirthMonth}
 	}
 
 	if arg.BirthDay != nil {
-		account.BirthDay = *arg.BirthDay
-	}
-
-	if err = validateBirthDay(arg); err != nil {
-		return
+		req.BirthDay = &account.UpdateProfileReq_BirthDayValue{*arg.BirthDay}
 	}
 
 	if arg.Password != nil {
-		passwordHash, e := hashPassword(*arg.Password, account.Salt)
-		if e != nil {
-			return e
-		}
-
-		account.Password = passwordHash
+		req.Password = &account.UpdateProfileReq_PasswordValue{*arg.Password}
 
 	}
 
 	if arg.Location != nil {
-		if item, e := p.d.GetArea(c, p.d.DB(), *arg.Location); e != nil {
-			return e
-		} else if item == nil {
-			return ecode.AreaNotExist
-		}
-
-		account.Location = *arg.Location
+		req.Location = &account.UpdateProfileReq_LocationValue{*arg.Location}
 	}
 
-	if err = p.d.UpdateAccount(c, p.d.DB(), account); err != nil {
-		return
-	}
-
-	p.addCache(func() {
-		p.d.DelAccountCache(context.TODO(), aid)
-		p.onAccountUpdated(context.TODO(), aid, time.Now().Unix())
-	})
-
-	return
+	return p.d.UpdateProfile(c, req)
 }
 
+// ChangePassword 更改密码
 func (p *Service) ChangePassword(c context.Context, aid int64, arg *model.ArgChangePassword) (err error) {
+	req := &account.UpdateProfileReq{Aid: aid}
 
-	var acc *model.Account
-	if acc, err = p.getAccountByID(c, p.d.DB(), aid); err != nil {
-		return
-	}
+	req.Password = &account.UpdateProfileReq_PasswordValue{arg.Password}
 
-	passwordHash, err := hashPassword(arg.Password, acc.Salt)
-	if err != nil {
-		return
-	}
-
-	if err = p.d.SetPassword(c, p.d.DB(), passwordHash, acc.Salt, aid); err != nil {
-		return
-	}
-
-	p.addCache(func() {
-		p.d.DelAccountCache(context.TODO(), aid)
-	})
-	return
+	return p.d.UpdateProfile(c, req)
 }
 
+// GetProfile 获取当前登录用户个人资料
 func (p *Service) GetProfile(c context.Context, aid int64) (item *model.Profile, err error) {
 	var profile *account.SelfProfile
 	if profile, err = p.d.GetSelfProfile(c, aid); err != nil {
@@ -318,6 +175,7 @@ func (p *Service) GetProfile(c context.Context, aid int64) (item *model.Profile,
 	return
 }
 
+// GetUserTopicsPaged 获取当前登录用户话题
 func (p *Service) GetUserTopicsPaged(c context.Context, cate string, limit, offset int) (resp *model.AccountTopicsResp, err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
@@ -351,7 +209,7 @@ func (p *Service) GetUserTopicsPaged(c context.Context, cate string, limit, offs
 					return
 				}
 			} else {
-				item.Target = p.FromTopic(t)
+				item.Target = p.fromTopic(t)
 			}
 
 			resp.Items = append(resp.Items, item)
@@ -376,7 +234,7 @@ func (p *Service) GetUserTopicsPaged(c context.Context, cate string, limit, offs
 					return
 				}
 			} else {
-				item.Target = p.FromTopic(t)
+				item.Target = p.fromTopic(t)
 			}
 
 			resp.Items = append(resp.Items, item)
@@ -401,7 +259,7 @@ func (p *Service) GetUserTopicsPaged(c context.Context, cate string, limit, offs
 					return
 				}
 			} else {
-				item.Target = p.FromTopic(t)
+				item.Target = p.fromTopic(t)
 			}
 
 			resp.Items = append(resp.Items, item)
@@ -426,7 +284,7 @@ func (p *Service) GetUserTopicsPaged(c context.Context, cate string, limit, offs
 					return
 				}
 			} else {
-				item.Target = p.FromTopic(t)
+				item.Target = p.fromTopic(t)
 			}
 
 			resp.Items = append(resp.Items, item)
@@ -462,6 +320,7 @@ func (p *Service) GetUserTopicsPaged(c context.Context, cate string, limit, offs
 	return
 }
 
+// GetUserArticlesPaged 获取当前登录用户文章
 func (p *Service) GetUserArticlesPaged(c context.Context, cate string, limit, offset int) (resp *model.AccountArticlesResp, err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
@@ -494,7 +353,9 @@ func (p *Service) GetUserArticlesPaged(c context.Context, cate string, limit, of
 					return
 				}
 			} else {
-				item.Target = p.FromArticle(t)
+				tg := p.fromArticle(t)
+				tg.ChangeDesc = ""
+				item.Target = tg
 			}
 
 			resp.Items = append(resp.Items, item)
@@ -520,7 +381,9 @@ func (p *Service) GetUserArticlesPaged(c context.Context, cate string, limit, of
 					return
 				}
 			} else {
-				item.Target = p.FromArticle(t)
+				tg := p.fromArticle(t)
+				tg.ChangeDesc = ""
+				item.Target = tg
 			}
 
 			resp.Items = append(resp.Items, item)
@@ -545,7 +408,9 @@ func (p *Service) GetUserArticlesPaged(c context.Context, cate string, limit, of
 					return
 				}
 			} else {
-				item.Target = p.FromArticle(t)
+				tg := p.fromArticle(t)
+				tg.ChangeDesc = ""
+				item.Target = tg
 			}
 
 			resp.Items = append(resp.Items, item)
@@ -581,6 +446,7 @@ func (p *Service) GetUserArticlesPaged(c context.Context, cate string, limit, of
 	return
 }
 
+// GetUserArticlesPaged 获取当前登录用户补充
 func (p *Service) GetUserRevisesPaged(c context.Context, cate string, limit, offset int) (resp *model.AccountRevisesResp, err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
@@ -613,7 +479,7 @@ func (p *Service) GetUserRevisesPaged(c context.Context, cate string, limit, off
 					return
 				}
 			} else {
-				item.Target = p.FromRevise(t)
+				item.Target = p.fromRevise(t)
 			}
 
 			resp.Items = append(resp.Items, item)
@@ -639,7 +505,7 @@ func (p *Service) GetUserRevisesPaged(c context.Context, cate string, limit, off
 					return
 				}
 			} else {
-				item.Target = p.FromRevise(t)
+				item.Target = p.fromRevise(t)
 			}
 
 			resp.Items = append(resp.Items, item)
@@ -675,6 +541,7 @@ func (p *Service) GetUserRevisesPaged(c context.Context, cate string, limit, off
 	return
 }
 
+// GetUserDiscussionsPaged 获取当前登录用户讨论信息
 func (p *Service) GetUserDiscussionsPaged(c context.Context, cate string, limit, offset int) (resp *model.AccountDiscussionsResp, err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
@@ -707,7 +574,7 @@ func (p *Service) GetUserDiscussionsPaged(c context.Context, cate string, limit,
 					return
 				}
 			} else {
-				item.Target = p.FromDiscussion(t)
+				item.Target = p.fromDiscussion(t)
 			}
 
 			resp.Items = append(resp.Items, item)
@@ -733,7 +600,7 @@ func (p *Service) GetUserDiscussionsPaged(c context.Context, cate string, limit,
 					return
 				}
 			} else {
-				item.Target = p.FromDiscussion(t)
+				item.Target = p.fromDiscussion(t)
 			}
 
 			resp.Items = append(resp.Items, item)

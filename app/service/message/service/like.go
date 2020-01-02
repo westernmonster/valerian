@@ -6,51 +6,54 @@ import (
 	"strconv"
 	"time"
 
-	article "valerian/app/service/article/api"
-	comment "valerian/app/service/comment/api"
-	discuss "valerian/app/service/discuss/api"
 	"valerian/app/service/feed/def"
 	"valerian/app/service/message/model"
 	"valerian/library/database/sqalx"
+	"valerian/library/ecode"
 	"valerian/library/gid"
-	"valerian/library/log"
 
 	"github.com/nats-io/stan.go"
 )
 
 func (p *Service) onArticleLiked(m *stan.Msg) {
 	var err error
-	c := context.Background()
+	// 强制使用Master库
+	c := sqalx.NewContext(context.Background(), true)
+
 	info := new(def.MsgArticleLiked)
 	if err = info.Unmarshal(m.Data); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onArticleLiked Unmarshal failed %#v", err))
-		return
-	}
-
-	var article *article.ArticleInfo
-	if article, err = p.d.GetArticle(c, info.ArticleID, true); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onArticleLiked GetArticle failed %#v", err))
+		PromError("message: Unmarshal data", "info.Umarshal() ,error(%+v)", err)
 		return
 	}
 
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		PromError("message: tx.Beginx", "tx.Beginx(), error(%+v)", err)
 		return
 	}
 
 	defer func() {
 		if err != nil {
 			if err1 := tx.Rollback(); err1 != nil {
-				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+				PromError("message: tx.Rollback", "tx.Rollback(), error(%+v)", err)
 			}
 			return
 		}
 	}()
 
+	var article *model.Article
+	if article, err = p.getArticle(c, tx, info.ArticleID); err != nil {
+		if ecode.IsNotExistEcode(err) {
+			m.Ack()
+			return
+		}
+		PromError("message: GetArticle", "GetArticle(), id(%d),error(%+v)", info.ArticleID, err)
+		return
+	}
+
 	msg := &model.Message{
 		ID:         gid.NewID(),
-		AccountID:  article.Creator.ID,
+		AccountID:  article.CreatedBy,
 		ActionType: model.MsgLike,
 		ActionTime: time.Now().Unix(),
 		ActionText: model.MsgTextLikeArticle,
@@ -64,30 +67,43 @@ func (p *Service) onArticleLiked(m *stan.Msg) {
 	}
 
 	if err = p.d.AddMessage(c, tx, msg); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onCommentAdded AddMessage failed %#v", err))
+		PromError("message: AddMessage", "AddMessage(), message(%+v),error(%+v)", msg, err)
 		return
 	}
 
-	if err = p.d.IncrMessageStat(c, tx, &model.MessageStat{AccountID: msg.AccountID, UnreadCount: 1}); err != nil {
+	stat := &model.MessageStat{AccountID: msg.AccountID, UnreadCount: 1}
+	if err = p.d.IncrMessageStat(c, tx, stat); err != nil {
+		PromError("message: AddMessage", "AddMessage(), message(%+v),error(%+v)", msg, err)
 		return
 	}
 
 	if err = tx.Commit(); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		PromError("message: tx.Commit", "tx.Commit(), error(%+v)", err)
 		return
 	}
 
 	m.Ack()
 
 	p.addCache(func() {
-		if _, err := p.pushSingleUser(context.Background(),
-			msg.AccountID,
-			msg.ID,
-			def.PushMsgTitleArticleLiked,
-			def.PushMsgTitleArticleLiked,
-			fmt.Sprintf(def.LinkArticle, article.ID),
-		); err != nil {
-			log.For(context.Background()).Error(fmt.Sprintf("service.onArticleLiked Push message failed %#v", err))
+		// 强制使用Master库
+		c := sqalx.NewContext(context.Background(), true)
+
+		var setting *model.SettingResp
+		if setting, err = p.getAccountSetting(c, p.d.DB(), msg.AccountID); err != nil {
+			PromError("message: getAccountSetting", "getAccountSetting(), id(%d),error(%+v)", msg.AccountID, err)
+			return
+		}
+		if setting.NotifyLike {
+			push := &model.PushMessage{
+				Aid:     msg.AccountID,
+				MsgID:   msg.ID,
+				Title:   def.PushMsgTitleArticleLiked,
+				Content: def.PushMsgTitleArticleLiked,
+				Link:    fmt.Sprintf(def.LinkArticle, article.ID),
+			}
+			if _, err := p.pushSingleUser(c, push); err != nil {
+				PromError("message: pushSingleUser", "pushSingleUser(), push(%+v),error(%+v)", push, err)
+			}
 		}
 	})
 
@@ -95,74 +111,92 @@ func (p *Service) onArticleLiked(m *stan.Msg) {
 
 func (p *Service) onReviseLiked(m *stan.Msg) {
 	var err error
-	c := context.Background()
+	// 强制使用Master库
+	c := sqalx.NewContext(context.Background(), true)
 	info := new(def.MsgReviseLiked)
 	if err = info.Unmarshal(m.Data); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onReviseLiked Unmarshal failed %#v", err))
-		return
-	}
-
-	var article *article.ReviseInfo
-	if article, err = p.d.GetRevise(c, info.ReviseID, true); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onReviseLiked GetRevise failed %#v", err))
+		PromError("message: Unmarshal data", "info.Umarshal() ,error(%+v)", err)
 		return
 	}
 
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		PromError("message: tx.Beginx", "tx.Beginx(), error(%+v)", err)
 		return
 	}
 
 	defer func() {
 		if err != nil {
 			if err1 := tx.Rollback(); err1 != nil {
-				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+				PromError("message: tx.Rollback", "tx.Rollback(), error(%+v)", err)
 			}
 			return
 		}
 	}()
 
+	var revise *model.Revise
+	if revise, err = p.getRevise(c, tx, info.ReviseID); err != nil {
+		if ecode.IsNotExistEcode(err) {
+			m.Ack()
+			return
+		}
+		PromError("message: GetRevise", "GetRevise(), id(%d),error(%+v)", info.ReviseID, err)
+		return
+	}
+
 	msg := &model.Message{
 		ID:         gid.NewID(),
-		AccountID:  article.Creator.ID,
+		AccountID:  revise.CreatedBy,
 		ActionType: model.MsgLike,
 		ActionTime: time.Now().Unix(),
 		ActionText: model.MsgTextLikeRevise,
 		Actors:     strconv.FormatInt(info.ActorID, 10),
 		MergeCount: 1,
 		ActorType:  model.ActorTypeUser,
-		TargetID:   article.ID,
+		TargetID:   revise.ID,
 		TargetType: model.TargetTypeRevise,
 		CreatedAt:  time.Now().Unix(),
 		UpdatedAt:  time.Now().Unix(),
 	}
 
 	if err = p.d.AddMessage(c, tx, msg); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onCommentAdded AddMessage failed %#v", err))
+		PromError("message: AddMessage", "AddMessage(), message(%+v),error(%+v)", msg, err)
 		return
 	}
 
-	if err = p.d.IncrMessageStat(c, tx, &model.MessageStat{AccountID: msg.AccountID, UnreadCount: 1}); err != nil {
+	stat := &model.MessageStat{AccountID: msg.AccountID, UnreadCount: 1}
+	if err = p.d.IncrMessageStat(c, tx, stat); err != nil {
+		PromError("message: AddMessage", "AddMessage(), message(%+v),error(%+v)", msg, err)
 		return
 	}
 
 	if err = tx.Commit(); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		PromError("message: tx.Commit", "tx.Commit(), error(%+v)", err)
 		return
 	}
 
 	m.Ack()
 
 	p.addCache(func() {
-		if _, err := p.pushSingleUser(context.Background(),
-			msg.AccountID,
-			msg.ID,
-			def.PushMsgTitleReviseLiked,
-			def.PushMsgTitleReviseLiked,
-			fmt.Sprintf(def.LinkRevise, article.ID),
-		); err != nil {
-			log.For(context.Background()).Error(fmt.Sprintf("service.onReviseLiked Push message failed %#v", err))
+		// 强制使用Master库
+		c := sqalx.NewContext(context.Background(), true)
+
+		var setting *model.SettingResp
+		if setting, err = p.getAccountSetting(c, p.d.DB(), msg.AccountID); err != nil {
+			PromError("message: getAccountSetting", "getAccountSetting(), id(%d),error(%+v)", msg.AccountID, err)
+			return
+		}
+		if setting.NotifyLike {
+			push := &model.PushMessage{
+				Aid:     msg.AccountID,
+				MsgID:   msg.ID,
+				Title:   def.PushMsgTitleReviseLiked,
+				Content: def.PushMsgTitleReviseLiked,
+				Link:    fmt.Sprintf(def.LinkRevise, revise.ID),
+			}
+			if _, err := p.pushSingleUser(c, push); err != nil {
+				PromError("message: pushSingleUser", "pushSingleUser(), push(%+v),error(%+v)", push, err)
+			}
 		}
 	})
 
@@ -170,36 +204,42 @@ func (p *Service) onReviseLiked(m *stan.Msg) {
 
 func (p *Service) onDiscussionLiked(m *stan.Msg) {
 	var err error
-	c := context.Background()
+	// 强制使用Master库
+	c := sqalx.NewContext(context.Background(), true)
 	info := new(def.MsgDiscussionLiked)
 	if err = info.Unmarshal(m.Data); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onDiscussionLiked Unmarshal failed %#v", err))
-		return
-	}
-
-	var discuss *discuss.DiscussionInfo
-	if discuss, err = p.d.GetDiscussion(c, info.DiscussionID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onDiscussionLiked GetDiscussion failed %#v", err))
+		PromError("message: Unmarshal data", "info.Umarshal() ,error(%+v)", err)
 		return
 	}
 
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		PromError("message: tx.Beginx", "tx.Beginx(), error(%+v)", err)
 		return
 	}
 
 	defer func() {
 		if err != nil {
 			if err1 := tx.Rollback(); err1 != nil {
-				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+				PromError("message: tx.Rollback", "tx.Rollback(), error(%+v)", err)
 			}
 			return
 		}
 	}()
+
+	var discuss *model.Discussion
+	if discuss, err = p.getDiscussion(c, tx, info.DiscussionID); err != nil {
+		if ecode.IsNotExistEcode(err) {
+			m.Ack()
+			return
+		}
+		PromError("message: GetDiscussion", "GetDiscussion(), id(%+v),error(%+v)", info.DiscussionID, err)
+		return
+	}
+
 	msg := &model.Message{
 		ID:         gid.NewID(),
-		AccountID:  discuss.Creator.ID,
+		AccountID:  discuss.CreatedBy,
 		ActionType: model.MsgLike,
 		ActionTime: time.Now().Unix(),
 		ActionText: model.MsgTextLikeDiscussion,
@@ -213,67 +253,81 @@ func (p *Service) onDiscussionLiked(m *stan.Msg) {
 	}
 
 	if err = p.d.AddMessage(c, tx, msg); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onCommentAdded AddMessage failed %#v", err))
+		PromError("message: AddMessage", "AddMessage(), message(%+v),error(%+v)", msg, err)
 		return
 	}
 
-	if err = p.d.IncrMessageStat(c, tx, &model.MessageStat{AccountID: msg.AccountID, UnreadCount: 1}); err != nil {
+	stat := &model.MessageStat{AccountID: msg.AccountID, UnreadCount: 1}
+	if err = p.d.IncrMessageStat(c, tx, stat); err != nil {
+		PromError("message: AddMessage", "AddMessage(), message(%+v),error(%+v)", msg, err)
 		return
 	}
 
 	if err = tx.Commit(); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		PromError("message: tx.Commit", "tx.Commit(), error(%+v)", err)
 		return
 	}
 
 	m.Ack()
 
 	p.addCache(func() {
-		if _, err := p.pushSingleUser(context.Background(),
-			msg.AccountID,
-			msg.ID,
-			def.PushMsgTitleDiscussionLiked,
-			def.PushMsgTitleDiscussionLiked,
-			fmt.Sprintf(def.LinkDiscussion, discuss.ID),
-		); err != nil {
-			log.For(context.Background()).Error(fmt.Sprintf("service.onDiscussionLiked Push message failed %#v", err))
+		// 强制使用Master库
+		c := sqalx.NewContext(context.Background(), true)
+
+		var setting *model.SettingResp
+		if setting, err = p.getAccountSetting(c, p.d.DB(), msg.AccountID); err != nil {
+			PromError("message: getAccountSetting", "getAccountSetting(), id(%d),error(%+v)", msg.AccountID, err)
+			return
+		}
+		if setting.NotifyLike {
+			push := &model.PushMessage{
+				Aid:     msg.AccountID,
+				MsgID:   msg.ID,
+				Title:   def.PushMsgTitleDiscussionLiked,
+				Content: def.PushMsgTitleDiscussionLiked,
+				Link:    fmt.Sprintf(def.LinkDiscussion, discuss.ID),
+			}
+			if _, err := p.pushSingleUser(c, push); err != nil {
+				PromError("message: pushSingleUser", "pushSingleUser(), push(%+v),error(%+v)", push, err)
+			}
 		}
 	})
 }
 
 func (p *Service) onCommentLiked(m *stan.Msg) {
 	var err error
-	c := context.Background()
+	// 强制使用Master库
+	c := sqalx.NewContext(context.Background(), true)
 	info := new(def.MsgCommentLiked)
 	if err = info.Unmarshal(m.Data); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onCommentLiked Unmarshal failed %#v", err))
-		return
-	}
-
-	var comment *comment.CommentInfo
-	if comment, err = p.d.GetComment(c, info.CommentID, true); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onCommentLiked GetComment failed %#v", err))
+		PromError("message: Unmarshal data", "info.Umarshal() ,error(%+v)", err)
 		return
 	}
 
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		PromError("message: tx.Beginx", "tx.Beginx(), error(%+v)", err)
 		return
 	}
 
 	defer func() {
 		if err != nil {
 			if err1 := tx.Rollback(); err1 != nil {
-				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+				PromError("message: tx.Rollback", "tx.Rollback(), error(%+v)", err)
 			}
 			return
 		}
 	}()
 
+	var comment *model.Comment
+	if comment, err = p.getComment(c, tx, info.CommentID); err != nil {
+		PromError("message: GetComment", "GetComment(), id(%+v),error(%+v)", info.CommentID, err)
+		return
+	}
+
 	msg := &model.Message{
 		ID:         gid.NewID(),
-		AccountID:  comment.Creator.ID,
+		AccountID:  comment.CreatedBy,
 		ActionType: model.MsgLike,
 		ActionTime: time.Now().Unix(),
 		ActionText: model.MsgTextLikeComment,
@@ -287,30 +341,43 @@ func (p *Service) onCommentLiked(m *stan.Msg) {
 	}
 
 	if err = p.d.AddMessage(c, tx, msg); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onCommentAdded AddMessage failed %#v", err))
+		PromError("message: AddMessage", "AddMessage(), message(%+v),error(%+v)", msg, err)
 		return
 	}
 
-	if err = p.d.IncrMessageStat(c, tx, &model.MessageStat{AccountID: msg.AccountID, UnreadCount: 1}); err != nil {
+	stat := &model.MessageStat{AccountID: msg.AccountID, UnreadCount: 1}
+	if err = p.d.IncrMessageStat(c, tx, stat); err != nil {
+		PromError("message: AddMessage", "AddMessage(), message(%+v),error(%+v)", msg, err)
 		return
 	}
 
 	if err = tx.Commit(); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		PromError("message: tx.Commit", "tx.Commit(), error(%+v)", err)
 		return
 	}
 
 	m.Ack()
 
 	p.addCache(func() {
-		if _, err := p.pushSingleUser(context.Background(),
-			msg.AccountID,
-			msg.ID,
-			def.PushMsgTitleCommentLiked,
-			def.PushMsgTitleCommentLiked,
-			fmt.Sprintf(def.LinkComment, comment.OwnerType, comment.OwnerID, comment.ID),
-		); err != nil {
-			log.For(context.Background()).Error(fmt.Sprintf("service.onCommentLiked Push message failed %#v", err))
+		// 强制使用Master库
+		c := sqalx.NewContext(context.Background(), true)
+
+		var setting *model.SettingResp
+		if setting, err = p.getAccountSetting(c, p.d.DB(), msg.AccountID); err != nil {
+			PromError("message: getAccountSetting", "getAccountSetting(), id(%d),error(%+v)", msg.AccountID, err)
+			return
+		}
+		if setting.NotifyLike {
+			push := &model.PushMessage{
+				Aid:     msg.AccountID,
+				MsgID:   msg.ID,
+				Title:   def.PushMsgTitleCommentLiked,
+				Content: def.PushMsgTitleCommentLiked,
+				Link:    fmt.Sprintf(def.LinkComment, comment.OwnerType, comment.OwnerID, comment.ID),
+			}
+			if _, err := p.pushSingleUser(c, push); err != nil {
+				PromError("message: pushSingleUser", "pushSingleUser(), push(%+v),error(%+v)", push, err)
+			}
 		}
 	})
 

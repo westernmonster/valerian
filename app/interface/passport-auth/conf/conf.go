@@ -5,13 +5,15 @@ import (
 
 	flag "github.com/spf13/pflag"
 
+	"valerian/library/cache/memcache"
 	"valerian/library/conf"
+	"valerian/library/database/sqalx"
 	"valerian/library/log"
 	"valerian/library/naming/discovery"
 	"valerian/library/net/http/mars"
-	"valerian/library/net/rpc/warden"
-
 	"valerian/library/net/http/mars/middleware/auth"
+	"valerian/library/net/rpc/warden"
+	xtime "valerian/library/time"
 	"valerian/library/tracing"
 
 	"github.com/BurntSushi/toml"
@@ -24,14 +26,35 @@ var (
 )
 
 type Config struct {
-	Log    *log.Config
-	Mars   *mars.ServerConfig
-	Tracer *tracing.Config
+	Log      *log.Config
+	Mars     *mars.ServerConfig
+	Tracer   *tracing.Config
+	DB       *DB
+	Memcache *Memcache
 
+	AccountRPC *warden.ClientConfig
 	// Auth
 	Auth        *auth.Config
 	Discovery   *discovery.Config
 	IdentifyRPC *warden.ClientConfig
+}
+
+// DB db config.
+type DB struct {
+	Main *sqalx.Config
+	Auth *sqalx.Config
+}
+
+// Memcache memcache config.
+type Memcache struct {
+	Auth *MC
+	Main *MC
+}
+
+// MC .
+type MC struct {
+	*memcache.Config
+	Expire xtime.Duration
 }
 
 func init() {

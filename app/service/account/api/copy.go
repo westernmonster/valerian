@@ -63,6 +63,7 @@ func FromProfileInfo(model *model.ProfileInfo) *MemberInfoReply {
 		LocationString: model.LocationString,
 		Company:        model.Company,
 		Position:       model.Position,
+		IsLock:         model.IsLock,
 	}
 
 	return reply

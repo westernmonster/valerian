@@ -68,9 +68,9 @@ func (m *EmptyStruct) XXX_DiscardUnknown() {
 var xxx_messageInfo_EmptyStruct proto.InternalMessageInfo
 
 type DiscussionStat struct {
-	LikeCount            int32    `protobuf:"varint,1,opt,name=LikeCount,proto3" json:"like_count"`
-	DislikeCount         int32    `protobuf:"varint,2,opt,name=DislikeCount,proto3" json:"dislike_count"`
-	CommentCount         int32    `protobuf:"varint,3,opt,name=CommentCount,proto3" json:"comment_count"`
+	LikeCount            int32    `protobuf:"varint,1,opt,name=LikeCount,proto3" json:"LikeCount,omitempty"`
+	DislikeCount         int32    `protobuf:"varint,2,opt,name=DislikeCount,proto3" json:"DislikeCount,omitempty"`
+	CommentCount         int32    `protobuf:"varint,3,opt,name=CommentCount,proto3" json:"CommentCount,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -131,7 +131,7 @@ func (m *DiscussionStat) GetCommentCount() int32 {
 }
 
 type CategoriesResp struct {
-	Items                []*CategoryInfo `protobuf:"bytes,1,rep,name=items,proto3" json:"items"`
+	Items                []*CategoryInfo `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}        `json:"-"`
 	XXX_unrecognized     []byte          `json:"-"`
 	XXX_sizecache        int32           `json:"-"`
@@ -178,10 +178,10 @@ func (m *CategoriesResp) GetItems() []*CategoryInfo {
 }
 
 type CategoryInfo struct {
-	ID                   int64    `protobuf:"varint,1,opt,name=ID,proto3" json:"id"`
-	TopicID              int64    `protobuf:"varint,2,opt,name=TopicID,proto3" json:"topic_id"`
-	Name                 string   `protobuf:"bytes,3,opt,name=Name,proto3" json:"name"`
-	Seq                  int32    `protobuf:"varint,4,opt,name=Seq,proto3" json:"seq"`
+	ID                   int64    `protobuf:"varint,1,opt,name=ID,proto3" json:"ID,omitempty"`
+	TopicID              int64    `protobuf:"varint,2,opt,name=TopicID,proto3" json:"TopicID,omitempty"`
+	Name                 string   `protobuf:"bytes,3,opt,name=Name,proto3" json:"Name,omitempty"`
+	Seq                  int32    `protobuf:"varint,4,opt,name=Seq,proto3" json:"Seq,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -249,10 +249,10 @@ func (m *CategoryInfo) GetSeq() int32 {
 }
 
 type Creator struct {
-	ID                   int64    `protobuf:"varint,1,opt,name=ID,proto3" json:"id"`
-	UserName             string   `protobuf:"bytes,2,opt,name=UserName,proto3" json:"user_name"`
-	Avatar               string   `protobuf:"bytes,3,opt,name=Avatar,proto3" json:"avatar"`
-	Introduction         string   `protobuf:"bytes,4,opt,name=Introduction,proto3" json:"introduction"`
+	ID                   int64    `protobuf:"varint,1,opt,name=ID,proto3" json:"ID,omitempty"`
+	UserName             string   `protobuf:"bytes,2,opt,name=UserName,proto3" json:"UserName,omitempty"`
+	Avatar               string   `protobuf:"bytes,3,opt,name=Avatar,proto3" json:"Avatar,omitempty"`
+	Introduction         string   `protobuf:"bytes,4,opt,name=Introduction,proto3" json:"Introduction,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -320,24 +320,25 @@ func (m *Creator) GetIntroduction() string {
 }
 
 type DiscussionInfo struct {
-	ID         int64    `protobuf:"varint,1,opt,name=ID,proto3" json:"id"`
-	TopicID    int64    `protobuf:"varint,2,opt,name=TopicID,proto3" json:"topic_id"`
-	CategoryID int64    `protobuf:"varint,3,opt,name=CategoryID,proto3" json:"category_id"`
-	Creator    *Creator `protobuf:"bytes,4,opt,name=Creator,proto3" json:"creator"`
-	Title      string   `protobuf:"bytes,5,opt,name=Title,proto3" json:"title"`
-	Excerpt    string   `protobuf:"bytes,6,opt,name=Excerpt,proto3" json:"excerpt"`
+	ID         int64    `protobuf:"varint,1,opt,name=ID,proto3" json:"ID,omitempty"`
+	TopicID    int64    `protobuf:"varint,2,opt,name=TopicID,proto3" json:"TopicID,omitempty"`
+	CategoryID int64    `protobuf:"varint,3,opt,name=CategoryID,proto3" json:"CategoryID,omitempty"`
+	Creator    *Creator `protobuf:"bytes,4,opt,name=Creator,proto3" json:"Creator,omitempty"`
+	Title      string   `protobuf:"bytes,5,opt,name=Title,proto3" json:"Title,omitempty"`
+	Excerpt    string   `protobuf:"bytes,6,opt,name=Excerpt,proto3" json:"Excerpt,omitempty"`
 	// unix timestamp
-	CreatedAt int64 `protobuf:"varint,7,opt,name=CreatedAt,proto3" json:"created_at"`
+	CreatedAt int64 `protobuf:"varint,7,opt,name=CreatedAt,proto3" json:"CreatedAt,omitempty"`
 	// unix timestamp
-	UpdatedAt            int64           `protobuf:"varint,8,opt,name=UpdatedAt,proto3" json:"updated_at"`
-	Stat                 *DiscussionStat `protobuf:"bytes,9,opt,name=Stat,proto3" json:"stat"`
-	ImageUrls            []string        `protobuf:"bytes,10,rep,name=ImageUrls,proto3" json:"image_urls"`
-	Content              string          `protobuf:"bytes,11,opt,name=Content,proto3" json:"content"`
-	ContentText          string          `protobuf:"bytes,12,opt,name=ContentText,proto3" json:"content_context"`
-	CategoryInfo         *CategoryInfo   `protobuf:"bytes,13,opt,name=CategoryInfo,proto3" json:"category"`
-	XXX_NoUnkeyedLiteral struct{}        `json:"-"`
-	XXX_unrecognized     []byte          `json:"-"`
-	XXX_sizecache        int32           `json:"-"`
+	UpdatedAt            int64             `protobuf:"varint,8,opt,name=UpdatedAt,proto3" json:"UpdatedAt,omitempty"`
+	Stat                 *DiscussionStat   `protobuf:"bytes,9,opt,name=Stat,proto3" json:"Stat,omitempty"`
+	ImageUrls            []string          `protobuf:"bytes,10,rep,name=ImageUrls,proto3" json:"ImageUrls,omitempty"`
+	Content              string            `protobuf:"bytes,11,opt,name=Content,proto3" json:"Content,omitempty"`
+	ContentText          string            `protobuf:"bytes,12,opt,name=ContentText,proto3" json:"ContentText,omitempty"`
+	CategoryInfo         *CategoryInfo     `protobuf:"bytes,13,opt,name=CategoryInfo,proto3" json:"CategoryInfo,omitempty"`
+	Files                []*DiscussionFile `protobuf:"bytes,14,rep,name=Files,proto3" json:"Files,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
+	XXX_unrecognized     []byte            `json:"-"`
+	XXX_sizecache        int32             `json:"-"`
 }
 
 func (m *DiscussionInfo) Reset()         { *m = DiscussionInfo{} }
@@ -464,10 +465,18 @@ func (m *DiscussionInfo) GetCategoryInfo() *CategoryInfo {
 	return nil
 }
 
+func (m *DiscussionInfo) GetFiles() []*DiscussionFile {
+	if m != nil {
+		return m.Files
+	}
+	return nil
+}
+
 type UserDiscussionsReq struct {
-	AccountID            int64    `protobuf:"varint,1,opt,name=AccountID,proto3" json:"aid"`
-	Limit                int32    `protobuf:"varint,2,opt,name=Limit,proto3" json:"limit"`
-	Offset               int32    `protobuf:"varint,3,opt,name=Offset,proto3" json:"offset"`
+	AccountID            int64    `protobuf:"varint,1,opt,name=AccountID,proto3" json:"AccountID,omitempty"`
+	Limit                int32    `protobuf:"varint,2,opt,name=Limit,proto3" json:"Limit,omitempty"`
+	Offset               int32    `protobuf:"varint,3,opt,name=Offset,proto3" json:"Offset,omitempty"`
+	Aid                  int64    `protobuf:"varint,4,opt,name=Aid,proto3" json:"Aid,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -527,25 +536,36 @@ func (m *UserDiscussionsReq) GetOffset() int32 {
 	return 0
 }
 
-type UserDiscussionsResp struct {
-	Items                []*DiscussionInfo `protobuf:"bytes,1,rep,name=Items,proto3" json:"items"`
-	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
-	XXX_unrecognized     []byte            `json:"-"`
-	XXX_sizecache        int32             `json:"-"`
+func (m *UserDiscussionsReq) GetAid() int64 {
+	if m != nil {
+		return m.Aid
+	}
+	return 0
 }
 
-func (m *UserDiscussionsResp) Reset()         { *m = UserDiscussionsResp{} }
-func (m *UserDiscussionsResp) String() string { return proto.CompactTextString(m) }
-func (*UserDiscussionsResp) ProtoMessage()    {}
-func (*UserDiscussionsResp) Descriptor() ([]byte, []int) {
+type TopicDiscussionsReq struct {
+	TopicID              int64    `protobuf:"varint,1,opt,name=TopicID,proto3" json:"TopicID,omitempty"`
+	CategoryID           int64    `protobuf:"varint,2,opt,name=CategoryID,proto3" json:"CategoryID,omitempty"`
+	Limit                int32    `protobuf:"varint,3,opt,name=Limit,proto3" json:"Limit,omitempty"`
+	Offset               int32    `protobuf:"varint,4,opt,name=Offset,proto3" json:"Offset,omitempty"`
+	Aid                  int64    `protobuf:"varint,5,opt,name=Aid,proto3" json:"Aid,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *TopicDiscussionsReq) Reset()         { *m = TopicDiscussionsReq{} }
+func (m *TopicDiscussionsReq) String() string { return proto.CompactTextString(m) }
+func (*TopicDiscussionsReq) ProtoMessage()    {}
+func (*TopicDiscussionsReq) Descriptor() ([]byte, []int) {
 	return fileDescriptor_f80abaa17e25ccc8, []int{7}
 }
-func (m *UserDiscussionsResp) XXX_Unmarshal(b []byte) error {
+func (m *TopicDiscussionsReq) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *UserDiscussionsResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *TopicDiscussionsReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_UserDiscussionsResp.Marshal(b, m, deterministic)
+		return xxx_messageInfo_TopicDiscussionsReq.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -555,44 +575,125 @@ func (m *UserDiscussionsResp) XXX_Marshal(b []byte, deterministic bool) ([]byte,
 		return b[:n], nil
 	}
 }
-func (m *UserDiscussionsResp) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_UserDiscussionsResp.Merge(m, src)
+func (m *TopicDiscussionsReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TopicDiscussionsReq.Merge(m, src)
 }
-func (m *UserDiscussionsResp) XXX_Size() int {
+func (m *TopicDiscussionsReq) XXX_Size() int {
 	return m.Size()
 }
-func (m *UserDiscussionsResp) XXX_DiscardUnknown() {
-	xxx_messageInfo_UserDiscussionsResp.DiscardUnknown(m)
+func (m *TopicDiscussionsReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_TopicDiscussionsReq.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_UserDiscussionsResp proto.InternalMessageInfo
+var xxx_messageInfo_TopicDiscussionsReq proto.InternalMessageInfo
 
-func (m *UserDiscussionsResp) GetItems() []*DiscussionInfo {
+func (m *TopicDiscussionsReq) GetTopicID() int64 {
+	if m != nil {
+		return m.TopicID
+	}
+	return 0
+}
+
+func (m *TopicDiscussionsReq) GetCategoryID() int64 {
+	if m != nil {
+		return m.CategoryID
+	}
+	return 0
+}
+
+func (m *TopicDiscussionsReq) GetLimit() int32 {
+	if m != nil {
+		return m.Limit
+	}
+	return 0
+}
+
+func (m *TopicDiscussionsReq) GetOffset() int32 {
+	if m != nil {
+		return m.Offset
+	}
+	return 0
+}
+
+func (m *TopicDiscussionsReq) GetAid() int64 {
+	if m != nil {
+		return m.Aid
+	}
+	return 0
+}
+
+type DiscussionsResp struct {
+	Items                []*DiscussionInfo `protobuf:"bytes,1,rep,name=Items,proto3" json:"Items,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
+	XXX_unrecognized     []byte            `json:"-"`
+	XXX_sizecache        int32             `json:"-"`
+}
+
+func (m *DiscussionsResp) Reset()         { *m = DiscussionsResp{} }
+func (m *DiscussionsResp) String() string { return proto.CompactTextString(m) }
+func (*DiscussionsResp) ProtoMessage()    {}
+func (*DiscussionsResp) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f80abaa17e25ccc8, []int{8}
+}
+func (m *DiscussionsResp) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *DiscussionsResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_DiscussionsResp.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *DiscussionsResp) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DiscussionsResp.Merge(m, src)
+}
+func (m *DiscussionsResp) XXX_Size() int {
+	return m.Size()
+}
+func (m *DiscussionsResp) XXX_DiscardUnknown() {
+	xxx_messageInfo_DiscussionsResp.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DiscussionsResp proto.InternalMessageInfo
+
+func (m *DiscussionsResp) GetItems() []*DiscussionInfo {
 	if m != nil {
 		return m.Items
 	}
 	return nil
 }
 
-type AllDiscussionsResp struct {
-	Items                []*DiscussionInfo `protobuf:"bytes,1,rep,name=Items,proto3" json:"items"`
-	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
-	XXX_unrecognized     []byte            `json:"-"`
-	XXX_sizecache        int32             `json:"-"`
+type DiscussionFile struct {
+	ID                   int64    `protobuf:"varint,1,opt,name=ID,proto3" json:"ID,omitempty"`
+	FileName             string   `protobuf:"bytes,2,opt,name=FileName,proto3" json:"FileName,omitempty"`
+	FileURL              string   `protobuf:"bytes,3,opt,name=FileURL,proto3" json:"FileURL,omitempty"`
+	Seq                  int32    `protobuf:"varint,4,opt,name=Seq,proto3" json:"Seq,omitempty"`
+	FileType             string   `protobuf:"bytes,5,opt,name=FileType,proto3" json:"FileType,omitempty"`
+	PdfURL               string   `protobuf:"bytes,6,opt,name=PdfURL,proto3" json:"PdfURL,omitempty"`
+	CreatedAt            int64    `protobuf:"varint,7,opt,name=CreatedAt,proto3" json:"CreatedAt,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *AllDiscussionsResp) Reset()         { *m = AllDiscussionsResp{} }
-func (m *AllDiscussionsResp) String() string { return proto.CompactTextString(m) }
-func (*AllDiscussionsResp) ProtoMessage()    {}
-func (*AllDiscussionsResp) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f80abaa17e25ccc8, []int{8}
+func (m *DiscussionFile) Reset()         { *m = DiscussionFile{} }
+func (m *DiscussionFile) String() string { return proto.CompactTextString(m) }
+func (*DiscussionFile) ProtoMessage()    {}
+func (*DiscussionFile) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f80abaa17e25ccc8, []int{9}
 }
-func (m *AllDiscussionsResp) XXX_Unmarshal(b []byte) error {
+func (m *DiscussionFile) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *AllDiscussionsResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *DiscussionFile) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_AllDiscussionsResp.Marshal(b, m, deterministic)
+		return xxx_messageInfo_DiscussionFile.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -602,19 +703,108 @@ func (m *AllDiscussionsResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, 
 		return b[:n], nil
 	}
 }
-func (m *AllDiscussionsResp) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_AllDiscussionsResp.Merge(m, src)
+func (m *DiscussionFile) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DiscussionFile.Merge(m, src)
 }
-func (m *AllDiscussionsResp) XXX_Size() int {
+func (m *DiscussionFile) XXX_Size() int {
 	return m.Size()
 }
-func (m *AllDiscussionsResp) XXX_DiscardUnknown() {
-	xxx_messageInfo_AllDiscussionsResp.DiscardUnknown(m)
+func (m *DiscussionFile) XXX_DiscardUnknown() {
+	xxx_messageInfo_DiscussionFile.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_AllDiscussionsResp proto.InternalMessageInfo
+var xxx_messageInfo_DiscussionFile proto.InternalMessageInfo
 
-func (m *AllDiscussionsResp) GetItems() []*DiscussionInfo {
+func (m *DiscussionFile) GetID() int64 {
+	if m != nil {
+		return m.ID
+	}
+	return 0
+}
+
+func (m *DiscussionFile) GetFileName() string {
+	if m != nil {
+		return m.FileName
+	}
+	return ""
+}
+
+func (m *DiscussionFile) GetFileURL() string {
+	if m != nil {
+		return m.FileURL
+	}
+	return ""
+}
+
+func (m *DiscussionFile) GetSeq() int32 {
+	if m != nil {
+		return m.Seq
+	}
+	return 0
+}
+
+func (m *DiscussionFile) GetFileType() string {
+	if m != nil {
+		return m.FileType
+	}
+	return ""
+}
+
+func (m *DiscussionFile) GetPdfURL() string {
+	if m != nil {
+		return m.PdfURL
+	}
+	return ""
+}
+
+func (m *DiscussionFile) GetCreatedAt() int64 {
+	if m != nil {
+		return m.CreatedAt
+	}
+	return 0
+}
+
+type DiscussionFilesResp struct {
+	Items                []*DiscussionFile `protobuf:"bytes,1,rep,name=Items,proto3" json:"Items,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
+	XXX_unrecognized     []byte            `json:"-"`
+	XXX_sizecache        int32             `json:"-"`
+}
+
+func (m *DiscussionFilesResp) Reset()         { *m = DiscussionFilesResp{} }
+func (m *DiscussionFilesResp) String() string { return proto.CompactTextString(m) }
+func (*DiscussionFilesResp) ProtoMessage()    {}
+func (*DiscussionFilesResp) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f80abaa17e25ccc8, []int{10}
+}
+func (m *DiscussionFilesResp) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *DiscussionFilesResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_DiscussionFilesResp.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *DiscussionFilesResp) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DiscussionFilesResp.Merge(m, src)
+}
+func (m *DiscussionFilesResp) XXX_Size() int {
+	return m.Size()
+}
+func (m *DiscussionFilesResp) XXX_DiscardUnknown() {
+	xxx_messageInfo_DiscussionFilesResp.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DiscussionFilesResp proto.InternalMessageInfo
+
+func (m *DiscussionFilesResp) GetItems() []*DiscussionFile {
 	if m != nil {
 		return m.Items
 	}
@@ -622,9 +812,10 @@ func (m *AllDiscussionsResp) GetItems() []*DiscussionInfo {
 }
 
 type IDReq struct {
-	ID                   int64    `protobuf:"varint,1,opt,name=ID,proto3" json:"id"`
-	Include              string   `protobuf:"bytes,2,opt,name=include,proto3" json:"include"`
+	ID                   int64    `protobuf:"varint,1,opt,name=ID,proto3" json:"ID,omitempty"`
+	Include              string   `protobuf:"bytes,2,opt,name=include,proto3" json:"include,omitempty"`
 	UseMaster            bool     `protobuf:"varint,3,opt,name=UseMaster,proto3" json:"UseMaster,omitempty"`
+	Aid                  int64    `protobuf:"varint,4,opt,name=Aid,proto3" json:"Aid,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -634,7 +825,7 @@ func (m *IDReq) Reset()         { *m = IDReq{} }
 func (m *IDReq) String() string { return proto.CompactTextString(m) }
 func (*IDReq) ProtoMessage()    {}
 func (*IDReq) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f80abaa17e25ccc8, []int{9}
+	return fileDescriptor_f80abaa17e25ccc8, []int{11}
 }
 func (m *IDReq) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -684,9 +875,17 @@ func (m *IDReq) GetUseMaster() bool {
 	return false
 }
 
+func (m *IDReq) GetAid() int64 {
+	if m != nil {
+		return m.Aid
+	}
+	return 0
+}
+
 type CategoriesReq struct {
-	TopicID              int64    `protobuf:"varint,1,opt,name=TopicID,proto3" json:"topic_id"`
+	TopicID              int64    `protobuf:"varint,1,opt,name=TopicID,proto3" json:"TopicID,omitempty"`
 	UseMaster            bool     `protobuf:"varint,2,opt,name=UseMaster,proto3" json:"UseMaster,omitempty"`
+	Aid                  int64    `protobuf:"varint,3,opt,name=Aid,proto3" json:"Aid,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -696,7 +895,7 @@ func (m *CategoriesReq) Reset()         { *m = CategoriesReq{} }
 func (m *CategoriesReq) String() string { return proto.CompactTextString(m) }
 func (*CategoriesReq) ProtoMessage()    {}
 func (*CategoriesReq) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f80abaa17e25ccc8, []int{10}
+	return fileDescriptor_f80abaa17e25ccc8, []int{12}
 }
 func (m *CategoriesReq) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -739,6 +938,13 @@ func (m *CategoriesReq) GetUseMaster() bool {
 	return false
 }
 
+func (m *CategoriesReq) GetAid() int64 {
+	if m != nil {
+		return m.Aid
+	}
+	return 0
+}
+
 type ArgDisucssCategory struct {
 	// Types that are valid to be assigned to ID:
 	//	*ArgDisucssCategory_IDValue
@@ -754,7 +960,7 @@ func (m *ArgDisucssCategory) Reset()         { *m = ArgDisucssCategory{} }
 func (m *ArgDisucssCategory) String() string { return proto.CompactTextString(m) }
 func (*ArgDisucssCategory) ProtoMessage()    {}
 func (*ArgDisucssCategory) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f80abaa17e25ccc8, []int{11}
+	return fileDescriptor_f80abaa17e25ccc8, []int{13}
 }
 func (m *ArgDisucssCategory) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -843,7 +1049,7 @@ func (m *ArgSaveDiscussCategories) Reset()         { *m = ArgSaveDiscussCategori
 func (m *ArgSaveDiscussCategories) String() string { return proto.CompactTextString(m) }
 func (*ArgSaveDiscussCategories) ProtoMessage()    {}
 func (*ArgSaveDiscussCategories) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f80abaa17e25ccc8, []int{12}
+	return fileDescriptor_f80abaa17e25ccc8, []int{14}
 }
 func (m *ArgSaveDiscussCategories) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -893,31 +1099,32 @@ func (m *ArgSaveDiscussCategories) GetItems() []*ArgDisucssCategory {
 	return nil
 }
 
-type ArgAddDiscuss struct {
+type ArgAddDiscussion struct {
 	TopicID    int64 `protobuf:"varint,1,opt,name=TopicID,proto3" json:"TopicID,omitempty"`
 	CategoryID int64 `protobuf:"varint,2,opt,name=CategoryID,proto3" json:"CategoryID,omitempty"`
 	// Types that are valid to be assigned to Title:
-	//	*ArgAddDiscuss_TitleValue
-	Title                isArgAddDiscuss_Title `protobuf_oneof:"Title"`
-	Content              string                `protobuf:"bytes,4,opt,name=Content,proto3" json:"Content,omitempty"`
-	Files                []*ArgDiscussionFile  `protobuf:"bytes,5,rep,name=Files,proto3" json:"Files,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
+	//	*ArgAddDiscussion_TitleValue
+	Title                isArgAddDiscussion_Title `protobuf_oneof:"Title"`
+	Content              string                   `protobuf:"bytes,4,opt,name=Content,proto3" json:"Content,omitempty"`
+	Files                []*ArgDiscussionFile     `protobuf:"bytes,5,rep,name=Files,proto3" json:"Files,omitempty"`
+	Aid                  int64                    `protobuf:"varint,6,opt,name=Aid,proto3" json:"Aid,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                 `json:"-"`
+	XXX_unrecognized     []byte                   `json:"-"`
+	XXX_sizecache        int32                    `json:"-"`
 }
 
-func (m *ArgAddDiscuss) Reset()         { *m = ArgAddDiscuss{} }
-func (m *ArgAddDiscuss) String() string { return proto.CompactTextString(m) }
-func (*ArgAddDiscuss) ProtoMessage()    {}
-func (*ArgAddDiscuss) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f80abaa17e25ccc8, []int{13}
+func (m *ArgAddDiscussion) Reset()         { *m = ArgAddDiscussion{} }
+func (m *ArgAddDiscussion) String() string { return proto.CompactTextString(m) }
+func (*ArgAddDiscussion) ProtoMessage()    {}
+func (*ArgAddDiscussion) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f80abaa17e25ccc8, []int{15}
 }
-func (m *ArgAddDiscuss) XXX_Unmarshal(b []byte) error {
+func (m *ArgAddDiscussion) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *ArgAddDiscuss) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *ArgAddDiscussion) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_ArgAddDiscuss.Marshal(b, m, deterministic)
+		return xxx_messageInfo_ArgAddDiscussion.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -927,76 +1134,83 @@ func (m *ArgAddDiscuss) XXX_Marshal(b []byte, deterministic bool) ([]byte, error
 		return b[:n], nil
 	}
 }
-func (m *ArgAddDiscuss) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ArgAddDiscuss.Merge(m, src)
+func (m *ArgAddDiscussion) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ArgAddDiscussion.Merge(m, src)
 }
-func (m *ArgAddDiscuss) XXX_Size() int {
+func (m *ArgAddDiscussion) XXX_Size() int {
 	return m.Size()
 }
-func (m *ArgAddDiscuss) XXX_DiscardUnknown() {
-	xxx_messageInfo_ArgAddDiscuss.DiscardUnknown(m)
+func (m *ArgAddDiscussion) XXX_DiscardUnknown() {
+	xxx_messageInfo_ArgAddDiscussion.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_ArgAddDiscuss proto.InternalMessageInfo
+var xxx_messageInfo_ArgAddDiscussion proto.InternalMessageInfo
 
-type isArgAddDiscuss_Title interface {
-	isArgAddDiscuss_Title()
+type isArgAddDiscussion_Title interface {
+	isArgAddDiscussion_Title()
 	MarshalTo([]byte) (int, error)
 	Size() int
 }
 
-type ArgAddDiscuss_TitleValue struct {
+type ArgAddDiscussion_TitleValue struct {
 	TitleValue string `protobuf:"bytes,3,opt,name=TitleValue,proto3,oneof" json:"TitleValue,omitempty"`
 }
 
-func (*ArgAddDiscuss_TitleValue) isArgAddDiscuss_Title() {}
+func (*ArgAddDiscussion_TitleValue) isArgAddDiscussion_Title() {}
 
-func (m *ArgAddDiscuss) GetTitle() isArgAddDiscuss_Title {
+func (m *ArgAddDiscussion) GetTitle() isArgAddDiscussion_Title {
 	if m != nil {
 		return m.Title
 	}
 	return nil
 }
 
-func (m *ArgAddDiscuss) GetTopicID() int64 {
+func (m *ArgAddDiscussion) GetTopicID() int64 {
 	if m != nil {
 		return m.TopicID
 	}
 	return 0
 }
 
-func (m *ArgAddDiscuss) GetCategoryID() int64 {
+func (m *ArgAddDiscussion) GetCategoryID() int64 {
 	if m != nil {
 		return m.CategoryID
 	}
 	return 0
 }
 
-func (m *ArgAddDiscuss) GetTitleValue() string {
-	if x, ok := m.GetTitle().(*ArgAddDiscuss_TitleValue); ok {
+func (m *ArgAddDiscussion) GetTitleValue() string {
+	if x, ok := m.GetTitle().(*ArgAddDiscussion_TitleValue); ok {
 		return x.TitleValue
 	}
 	return ""
 }
 
-func (m *ArgAddDiscuss) GetContent() string {
+func (m *ArgAddDiscussion) GetContent() string {
 	if m != nil {
 		return m.Content
 	}
 	return ""
 }
 
-func (m *ArgAddDiscuss) GetFiles() []*ArgDiscussionFile {
+func (m *ArgAddDiscussion) GetFiles() []*ArgDiscussionFile {
 	if m != nil {
 		return m.Files
 	}
 	return nil
 }
 
+func (m *ArgAddDiscussion) GetAid() int64 {
+	if m != nil {
+		return m.Aid
+	}
+	return 0
+}
+
 // XXX_OneofWrappers is for the internal use of the proto package.
-func (*ArgAddDiscuss) XXX_OneofWrappers() []interface{} {
+func (*ArgAddDiscussion) XXX_OneofWrappers() []interface{} {
 	return []interface{}{
-		(*ArgAddDiscuss_TitleValue)(nil),
+		(*ArgAddDiscussion_TitleValue)(nil),
 	}
 }
 
@@ -1017,7 +1231,7 @@ func (m *ArgDiscussionFile) Reset()         { *m = ArgDiscussionFile{} }
 func (m *ArgDiscussionFile) String() string { return proto.CompactTextString(m) }
 func (*ArgDiscussionFile) ProtoMessage()    {}
 func (*ArgDiscussionFile) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f80abaa17e25ccc8, []int{14}
+	return fileDescriptor_f80abaa17e25ccc8, []int{16}
 }
 func (m *ArgDiscussionFile) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1107,30 +1321,30 @@ func (*ArgDiscussionFile) XXX_OneofWrappers() []interface{} {
 	}
 }
 
-type ArgUpdateDiscuss struct {
+type ArgUpdateDiscussion struct {
 	ID int64 `protobuf:"varint,1,opt,name=ID,proto3" json:"ID,omitempty"`
 	// Types that are valid to be assigned to Title:
-	//	*ArgUpdateDiscuss_TitleValue
-	Title                isArgUpdateDiscuss_Title `protobuf_oneof:"Title"`
-	Content              string                   `protobuf:"bytes,3,opt,name=Content,proto3" json:"Content,omitempty"`
-	Files                []*ArgDiscussionFile     `protobuf:"bytes,5,rep,name=Files,proto3" json:"Files,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                 `json:"-"`
-	XXX_unrecognized     []byte                   `json:"-"`
-	XXX_sizecache        int32                    `json:"-"`
+	//	*ArgUpdateDiscussion_TitleValue
+	Title                isArgUpdateDiscussion_Title `protobuf_oneof:"Title"`
+	Content              string                      `protobuf:"bytes,3,opt,name=Content,proto3" json:"Content,omitempty"`
+	Aid                  int64                       `protobuf:"varint,6,opt,name=Aid,proto3" json:"Aid,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                    `json:"-"`
+	XXX_unrecognized     []byte                      `json:"-"`
+	XXX_sizecache        int32                       `json:"-"`
 }
 
-func (m *ArgUpdateDiscuss) Reset()         { *m = ArgUpdateDiscuss{} }
-func (m *ArgUpdateDiscuss) String() string { return proto.CompactTextString(m) }
-func (*ArgUpdateDiscuss) ProtoMessage()    {}
-func (*ArgUpdateDiscuss) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f80abaa17e25ccc8, []int{15}
+func (m *ArgUpdateDiscussion) Reset()         { *m = ArgUpdateDiscussion{} }
+func (m *ArgUpdateDiscussion) String() string { return proto.CompactTextString(m) }
+func (*ArgUpdateDiscussion) ProtoMessage()    {}
+func (*ArgUpdateDiscussion) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f80abaa17e25ccc8, []int{17}
 }
-func (m *ArgUpdateDiscuss) XXX_Unmarshal(b []byte) error {
+func (m *ArgUpdateDiscussion) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *ArgUpdateDiscuss) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *ArgUpdateDiscussion) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_ArgUpdateDiscuss.Marshal(b, m, deterministic)
+		return xxx_messageInfo_ArgUpdateDiscussion.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -1140,93 +1354,93 @@ func (m *ArgUpdateDiscuss) XXX_Marshal(b []byte, deterministic bool) ([]byte, er
 		return b[:n], nil
 	}
 }
-func (m *ArgUpdateDiscuss) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ArgUpdateDiscuss.Merge(m, src)
+func (m *ArgUpdateDiscussion) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ArgUpdateDiscussion.Merge(m, src)
 }
-func (m *ArgUpdateDiscuss) XXX_Size() int {
+func (m *ArgUpdateDiscussion) XXX_Size() int {
 	return m.Size()
 }
-func (m *ArgUpdateDiscuss) XXX_DiscardUnknown() {
-	xxx_messageInfo_ArgUpdateDiscuss.DiscardUnknown(m)
+func (m *ArgUpdateDiscussion) XXX_DiscardUnknown() {
+	xxx_messageInfo_ArgUpdateDiscussion.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_ArgUpdateDiscuss proto.InternalMessageInfo
+var xxx_messageInfo_ArgUpdateDiscussion proto.InternalMessageInfo
 
-type isArgUpdateDiscuss_Title interface {
-	isArgUpdateDiscuss_Title()
+type isArgUpdateDiscussion_Title interface {
+	isArgUpdateDiscussion_Title()
 	MarshalTo([]byte) (int, error)
 	Size() int
 }
 
-type ArgUpdateDiscuss_TitleValue struct {
+type ArgUpdateDiscussion_TitleValue struct {
 	TitleValue string `protobuf:"bytes,2,opt,name=TitleValue,proto3,oneof" json:"TitleValue,omitempty"`
 }
 
-func (*ArgUpdateDiscuss_TitleValue) isArgUpdateDiscuss_Title() {}
+func (*ArgUpdateDiscussion_TitleValue) isArgUpdateDiscussion_Title() {}
 
-func (m *ArgUpdateDiscuss) GetTitle() isArgUpdateDiscuss_Title {
+func (m *ArgUpdateDiscussion) GetTitle() isArgUpdateDiscussion_Title {
 	if m != nil {
 		return m.Title
 	}
 	return nil
 }
 
-func (m *ArgUpdateDiscuss) GetID() int64 {
+func (m *ArgUpdateDiscussion) GetID() int64 {
 	if m != nil {
 		return m.ID
 	}
 	return 0
 }
 
-func (m *ArgUpdateDiscuss) GetTitleValue() string {
-	if x, ok := m.GetTitle().(*ArgUpdateDiscuss_TitleValue); ok {
+func (m *ArgUpdateDiscussion) GetTitleValue() string {
+	if x, ok := m.GetTitle().(*ArgUpdateDiscussion_TitleValue); ok {
 		return x.TitleValue
 	}
 	return ""
 }
 
-func (m *ArgUpdateDiscuss) GetContent() string {
+func (m *ArgUpdateDiscussion) GetContent() string {
 	if m != nil {
 		return m.Content
 	}
 	return ""
 }
 
-func (m *ArgUpdateDiscuss) GetFiles() []*ArgDiscussionFile {
+func (m *ArgUpdateDiscussion) GetAid() int64 {
 	if m != nil {
-		return m.Files
+		return m.Aid
 	}
-	return nil
+	return 0
 }
 
 // XXX_OneofWrappers is for the internal use of the proto package.
-func (*ArgUpdateDiscuss) XXX_OneofWrappers() []interface{} {
+func (*ArgUpdateDiscussion) XXX_OneofWrappers() []interface{} {
 	return []interface{}{
-		(*ArgUpdateDiscuss_TitleValue)(nil),
+		(*ArgUpdateDiscussion_TitleValue)(nil),
 	}
 }
 
-type ArgSaveDiscussFiles struct {
+type ArgSaveDiscussionFiles struct {
 	DiscussionID         int64                `protobuf:"varint,1,opt,name=DiscussionID,proto3" json:"DiscussionID,omitempty"`
 	Aid                  int64                `protobuf:"varint,2,opt,name=Aid,proto3" json:"Aid,omitempty"`
-	Items                []*ArgDiscussionFile `protobuf:"bytes,5,rep,name=Items,proto3" json:"Items,omitempty"`
+	Items                []*ArgDiscussionFile `protobuf:"bytes,3,rep,name=Items,proto3" json:"Items,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
 	XXX_unrecognized     []byte               `json:"-"`
 	XXX_sizecache        int32                `json:"-"`
 }
 
-func (m *ArgSaveDiscussFiles) Reset()         { *m = ArgSaveDiscussFiles{} }
-func (m *ArgSaveDiscussFiles) String() string { return proto.CompactTextString(m) }
-func (*ArgSaveDiscussFiles) ProtoMessage()    {}
-func (*ArgSaveDiscussFiles) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f80abaa17e25ccc8, []int{16}
+func (m *ArgSaveDiscussionFiles) Reset()         { *m = ArgSaveDiscussionFiles{} }
+func (m *ArgSaveDiscussionFiles) String() string { return proto.CompactTextString(m) }
+func (*ArgSaveDiscussionFiles) ProtoMessage()    {}
+func (*ArgSaveDiscussionFiles) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f80abaa17e25ccc8, []int{18}
 }
-func (m *ArgSaveDiscussFiles) XXX_Unmarshal(b []byte) error {
+func (m *ArgSaveDiscussionFiles) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *ArgSaveDiscussFiles) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *ArgSaveDiscussionFiles) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_ArgSaveDiscussFiles.Marshal(b, m, deterministic)
+		return xxx_messageInfo_ArgSaveDiscussionFiles.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -1236,33 +1450,33 @@ func (m *ArgSaveDiscussFiles) XXX_Marshal(b []byte, deterministic bool) ([]byte,
 		return b[:n], nil
 	}
 }
-func (m *ArgSaveDiscussFiles) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ArgSaveDiscussFiles.Merge(m, src)
+func (m *ArgSaveDiscussionFiles) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ArgSaveDiscussionFiles.Merge(m, src)
 }
-func (m *ArgSaveDiscussFiles) XXX_Size() int {
+func (m *ArgSaveDiscussionFiles) XXX_Size() int {
 	return m.Size()
 }
-func (m *ArgSaveDiscussFiles) XXX_DiscardUnknown() {
-	xxx_messageInfo_ArgSaveDiscussFiles.DiscardUnknown(m)
+func (m *ArgSaveDiscussionFiles) XXX_DiscardUnknown() {
+	xxx_messageInfo_ArgSaveDiscussionFiles.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_ArgSaveDiscussFiles proto.InternalMessageInfo
+var xxx_messageInfo_ArgSaveDiscussionFiles proto.InternalMessageInfo
 
-func (m *ArgSaveDiscussFiles) GetDiscussionID() int64 {
+func (m *ArgSaveDiscussionFiles) GetDiscussionID() int64 {
 	if m != nil {
 		return m.DiscussionID
 	}
 	return 0
 }
 
-func (m *ArgSaveDiscussFiles) GetAid() int64 {
+func (m *ArgSaveDiscussionFiles) GetAid() int64 {
 	if m != nil {
 		return m.Aid
 	}
 	return 0
 }
 
-func (m *ArgSaveDiscussFiles) GetItems() []*ArgDiscussionFile {
+func (m *ArgSaveDiscussionFiles) GetItems() []*ArgDiscussionFile {
 	if m != nil {
 		return m.Items
 	}
@@ -1270,7 +1484,7 @@ func (m *ArgSaveDiscussFiles) GetItems() []*ArgDiscussionFile {
 }
 
 type IDsResp struct {
-	IDs                  []int64  `protobuf:"varint,1,rep,packed,name=IDs,proto3" json:"ids"`
+	IDs                  []int64  `protobuf:"varint,1,rep,packed,name=IDs,proto3" json:"IDs,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -1280,7 +1494,7 @@ func (m *IDsResp) Reset()         { *m = IDsResp{} }
 func (m *IDsResp) String() string { return proto.CompactTextString(m) }
 func (*IDsResp) ProtoMessage()    {}
 func (*IDsResp) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f80abaa17e25ccc8, []int{17}
+	return fileDescriptor_f80abaa17e25ccc8, []int{19}
 }
 func (m *IDsResp) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1316,6 +1530,100 @@ func (m *IDsResp) GetIDs() []int64 {
 	return nil
 }
 
+type IDResp struct {
+	ID                   int64    `protobuf:"varint,1,opt,name=ID,proto3" json:"ID,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *IDResp) Reset()         { *m = IDResp{} }
+func (m *IDResp) String() string { return proto.CompactTextString(m) }
+func (*IDResp) ProtoMessage()    {}
+func (*IDResp) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f80abaa17e25ccc8, []int{20}
+}
+func (m *IDResp) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *IDResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_IDResp.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *IDResp) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_IDResp.Merge(m, src)
+}
+func (m *IDResp) XXX_Size() int {
+	return m.Size()
+}
+func (m *IDResp) XXX_DiscardUnknown() {
+	xxx_messageInfo_IDResp.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_IDResp proto.InternalMessageInfo
+
+func (m *IDResp) GetID() int64 {
+	if m != nil {
+		return m.ID
+	}
+	return 0
+}
+
+type BoolResp struct {
+	Result               bool     `protobuf:"varint,1,opt,name=Result,proto3" json:"Result,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *BoolResp) Reset()         { *m = BoolResp{} }
+func (m *BoolResp) String() string { return proto.CompactTextString(m) }
+func (*BoolResp) ProtoMessage()    {}
+func (*BoolResp) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f80abaa17e25ccc8, []int{21}
+}
+func (m *BoolResp) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *BoolResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_BoolResp.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *BoolResp) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_BoolResp.Merge(m, src)
+}
+func (m *BoolResp) XXX_Size() int {
+	return m.Size()
+}
+func (m *BoolResp) XXX_DiscardUnknown() {
+	xxx_messageInfo_BoolResp.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_BoolResp proto.InternalMessageInfo
+
+func (m *BoolResp) GetResult() bool {
+	if m != nil {
+		return m.Result
+	}
+	return false
+}
+
 func init() {
 	proto.RegisterType((*EmptyStruct)(nil), "service.discuss.EmptyStruct")
 	proto.RegisterType((*DiscussionStat)(nil), "service.discuss.DiscussionStat")
@@ -1324,99 +1632,103 @@ func init() {
 	proto.RegisterType((*Creator)(nil), "service.discuss.Creator")
 	proto.RegisterType((*DiscussionInfo)(nil), "service.discuss.DiscussionInfo")
 	proto.RegisterType((*UserDiscussionsReq)(nil), "service.discuss.UserDiscussionsReq")
-	proto.RegisterType((*UserDiscussionsResp)(nil), "service.discuss.UserDiscussionsResp")
-	proto.RegisterType((*AllDiscussionsResp)(nil), "service.discuss.AllDiscussionsResp")
+	proto.RegisterType((*TopicDiscussionsReq)(nil), "service.discuss.TopicDiscussionsReq")
+	proto.RegisterType((*DiscussionsResp)(nil), "service.discuss.DiscussionsResp")
+	proto.RegisterType((*DiscussionFile)(nil), "service.discuss.DiscussionFile")
+	proto.RegisterType((*DiscussionFilesResp)(nil), "service.discuss.DiscussionFilesResp")
 	proto.RegisterType((*IDReq)(nil), "service.discuss.IDReq")
 	proto.RegisterType((*CategoriesReq)(nil), "service.discuss.CategoriesReq")
 	proto.RegisterType((*ArgDisucssCategory)(nil), "service.discuss.ArgDisucssCategory")
 	proto.RegisterType((*ArgSaveDiscussCategories)(nil), "service.discuss.ArgSaveDiscussCategories")
-	proto.RegisterType((*ArgAddDiscuss)(nil), "service.discuss.ArgAddDiscuss")
+	proto.RegisterType((*ArgAddDiscussion)(nil), "service.discuss.ArgAddDiscussion")
 	proto.RegisterType((*ArgDiscussionFile)(nil), "service.discuss.ArgDiscussionFile")
-	proto.RegisterType((*ArgUpdateDiscuss)(nil), "service.discuss.ArgUpdateDiscuss")
-	proto.RegisterType((*ArgSaveDiscussFiles)(nil), "service.discuss.ArgSaveDiscussFiles")
+	proto.RegisterType((*ArgUpdateDiscussion)(nil), "service.discuss.ArgUpdateDiscussion")
+	proto.RegisterType((*ArgSaveDiscussionFiles)(nil), "service.discuss.ArgSaveDiscussionFiles")
 	proto.RegisterType((*IDsResp)(nil), "service.discuss.IDsResp")
+	proto.RegisterType((*IDResp)(nil), "service.discuss.IDResp")
+	proto.RegisterType((*BoolResp)(nil), "service.discuss.BoolResp")
 }
 
 func init() { proto.RegisterFile("pb.proto", fileDescriptor_f80abaa17e25ccc8) }
 
 var fileDescriptor_f80abaa17e25ccc8 = []byte{
-	// 1206 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x57, 0xdd, 0x8e, 0xdb, 0x44,
-	0x14, 0xae, 0xe3, 0x64, 0x93, 0x9c, 0x24, 0xdb, 0xdd, 0xa9, 0x04, 0x6e, 0x54, 0xd6, 0x2b, 0xd3,
-	0xa2, 0x22, 0xc1, 0x56, 0x2a, 0x54, 0x2a, 0x17, 0xfc, 0x24, 0x9b, 0x42, 0x23, 0x2d, 0xb4, 0x9a,
-	0xdd, 0x14, 0xa9, 0x42, 0x8a, 0xbc, 0xf6, 0x6c, 0x18, 0x35, 0x89, 0xb3, 0x9e, 0x71, 0xd5, 0xde,
-	0x01, 0x12, 0xe2, 0x19, 0xb8, 0x41, 0xe2, 0x86, 0x2b, 0x1e, 0xa4, 0x97, 0x3c, 0x81, 0x85, 0x7a,
-	0xe9, 0xa7, 0x40, 0x73, 0xc6, 0x8e, 0x9d, 0x78, 0x77, 0xab, 0xa2, 0xbd, 0x8a, 0xfd, 0xcd, 0x77,
-	0xce, 0xcc, 0xf9, 0xfb, 0xc6, 0x81, 0xc6, 0xe2, 0x78, 0x6f, 0x11, 0x06, 0x32, 0x20, 0x57, 0x05,
-	0x0b, 0x9f, 0x73, 0x8f, 0xed, 0xf9, 0x5c, 0x78, 0x91, 0x10, 0xdd, 0x8f, 0x27, 0x5c, 0xfe, 0x18,
-	0x1d, 0xef, 0x79, 0xc1, 0xec, 0xce, 0x24, 0x98, 0x04, 0x77, 0x90, 0x77, 0x1c, 0x9d, 0xe0, 0x1b,
-	0xbe, 0xe0, 0x93, 0xb6, 0x77, 0x3a, 0xd0, 0x7a, 0x30, 0x5b, 0xc8, 0x97, 0x87, 0x32, 0x8c, 0x3c,
-	0xe9, 0xfc, 0x6d, 0xc0, 0xe6, 0x40, 0x7b, 0xe2, 0xc1, 0xfc, 0x50, 0xba, 0x92, 0x7c, 0x04, 0xcd,
-	0x03, 0xfe, 0x8c, 0xed, 0x07, 0xd1, 0x5c, 0x5a, 0xc6, 0xae, 0x71, 0xbb, 0xd6, 0xdf, 0x4c, 0x62,
-	0x1b, 0xa6, 0xfc, 0x19, 0x1b, 0x7b, 0x0a, 0xa5, 0x39, 0x81, 0xdc, 0x83, 0xf6, 0x80, 0x8b, 0xe9,
-	0xd2, 0xa0, 0x82, 0x06, 0xdb, 0x49, 0x6c, 0x77, 0x7c, 0x8d, 0xa7, 0x36, 0x2b, 0x34, 0x65, 0xb6,
-	0x1f, 0xcc, 0x66, 0x6c, 0x2e, 0xb5, 0x99, 0x99, 0x9b, 0x79, 0x1a, 0xcf, 0xcc, 0x8a, 0x34, 0xe7,
-	0x31, 0x6c, 0xee, 0xbb, 0x92, 0x4d, 0x82, 0x90, 0x33, 0x41, 0x99, 0x58, 0x90, 0x2f, 0xa0, 0xc6,
-	0x25, 0x9b, 0x09, 0xcb, 0xd8, 0x35, 0x6f, 0xb7, 0xee, 0xbe, 0xb7, 0xb7, 0x96, 0x9f, 0xbd, 0x94,
-	0xff, 0x72, 0x38, 0x3f, 0x09, 0xfa, 0xcd, 0x24, 0xb6, 0x35, 0x9f, 0xea, 0x1f, 0xe7, 0x37, 0x03,
-	0xda, 0x45, 0x0a, 0x79, 0x07, 0x2a, 0xc3, 0x01, 0xc6, 0x6d, 0xf6, 0x37, 0x92, 0xd8, 0xae, 0x70,
-	0x9f, 0x56, 0x86, 0x03, 0xf2, 0x01, 0xd4, 0x8f, 0x82, 0x05, 0xf7, 0x86, 0x03, 0x8c, 0xd1, 0xec,
-	0xb7, 0x93, 0xd8, 0x6e, 0x48, 0x05, 0x8d, 0xb9, 0x4f, 0xb3, 0x45, 0x72, 0x03, 0xaa, 0xdf, 0xb9,
-	0x33, 0x86, 0x11, 0x35, 0xfb, 0x8d, 0x24, 0xb6, 0xab, 0x73, 0x77, 0xc6, 0x28, 0xa2, 0xe4, 0x3a,
-	0x98, 0x87, 0xec, 0xd4, 0xaa, 0x62, 0xb8, 0xf5, 0x24, 0xb6, 0x4d, 0xc1, 0x4e, 0xa9, 0xc2, 0x9c,
-	0xbf, 0x0c, 0xa8, 0xef, 0x87, 0xcc, 0x95, 0x41, 0x78, 0xee, 0x21, 0x3e, 0x84, 0xc6, 0x48, 0xb0,
-	0x10, 0x37, 0xa8, 0xe0, 0x06, 0x9d, 0x24, 0xb6, 0x9b, 0x91, 0x60, 0xe1, 0x18, 0x77, 0x59, 0x2e,
-	0x13, 0x07, 0x36, 0x7a, 0xcf, 0x5d, 0xe9, 0x86, 0xe9, 0x49, 0x20, 0x89, 0xed, 0x0d, 0x17, 0x11,
-	0x9a, 0xae, 0x90, 0x4f, 0xa1, 0x3d, 0x9c, 0xcb, 0x30, 0xf0, 0x23, 0x4f, 0xf2, 0x60, 0x8e, 0xc7,
-	0x6a, 0xf6, 0xb7, 0x92, 0xd8, 0x6e, 0xf3, 0x02, 0x4e, 0x57, 0x58, 0xce, 0x2f, 0xb5, 0x62, 0xcf,
-	0x5c, 0x4a, 0xd2, 0xee, 0x00, 0x2c, 0x8b, 0x30, 0xc0, 0x03, 0x9b, 0xfd, 0xab, 0x49, 0x6c, 0xb7,
-	0xbc, 0x14, 0x55, 0xec, 0x02, 0x85, 0x7c, 0xb9, 0xcc, 0x15, 0x1e, 0xba, 0x75, 0xd7, 0x2a, 0x17,
-	0x5e, 0xaf, 0xf7, 0x5b, 0x49, 0x6c, 0xd7, 0x3d, 0xfd, 0x42, 0x97, 0x19, 0xb6, 0xa1, 0x76, 0xc4,
-	0xe5, 0x94, 0x59, 0x35, 0x8c, 0x19, 0x1b, 0x43, 0x2a, 0x80, 0x6a, 0x9c, 0xdc, 0x82, 0xfa, 0x83,
-	0x17, 0x1e, 0x0b, 0x17, 0xd2, 0xda, 0x40, 0x0a, 0xfa, 0x61, 0x1a, 0xa2, 0xd9, 0x9a, 0x9a, 0x16,
-	0x74, 0xc9, 0xfc, 0x9e, 0xb4, 0xea, 0x78, 0x70, 0x9c, 0x16, 0x4f, 0x83, 0x63, 0x57, 0xd2, 0x9c,
-	0xa0, 0xd8, 0xa3, 0x85, 0x9f, 0xb2, 0x1b, 0x39, 0x3b, 0xd2, 0x20, 0xb2, 0x97, 0x04, 0xf2, 0x39,
-	0x54, 0xd5, 0x44, 0x5a, 0x4d, 0x8c, 0xd0, 0x2e, 0x45, 0xb8, 0x3a, 0xb8, 0xba, 0xd7, 0x84, 0x74,
-	0x25, 0xad, 0x66, 0x83, 0x3c, 0x9c, 0xb9, 0x13, 0x36, 0x0a, 0xa7, 0xc2, 0x82, 0x5d, 0xf3, 0x76,
-	0x53, 0x6f, 0xc6, 0x15, 0x38, 0x8e, 0xc2, 0xa9, 0xa0, 0x39, 0x41, 0xc5, 0xbb, 0x1f, 0xcc, 0x25,
-	0x9b, 0x4b, 0xab, 0x95, 0xc7, 0xeb, 0x69, 0x88, 0x66, 0x6b, 0xe4, 0x1e, 0xb4, 0xd2, 0xc7, 0x23,
-	0xf6, 0x42, 0x5a, 0x6d, 0xa4, 0x5e, 0x4b, 0x62, 0xfb, 0x6a, 0x4a, 0x1d, 0xe3, 0xef, 0x0b, 0x49,
-	0x8b, 0x3c, 0xf2, 0x68, 0x75, 0xca, 0xac, 0x0e, 0x86, 0xf4, 0x86, 0x69, 0xc5, 0x66, 0xc9, 0x3a,
-	0x80, 0xae, 0x38, 0x70, 0x7e, 0x32, 0x80, 0xa8, 0x5e, 0xcf, 0x73, 0x20, 0x28, 0x3b, 0x25, 0xb7,
-	0xa0, 0xd9, 0xf3, 0x50, 0x39, 0x96, 0xfd, 0x88, 0x53, 0xe6, 0x72, 0x9f, 0xe6, 0x2b, 0xaa, 0xfa,
-	0x07, 0x7c, 0xc6, 0x33, 0xb9, 0xc2, 0xea, 0x4f, 0x15, 0x40, 0x35, 0xae, 0xa6, 0xe7, 0xd1, 0xc9,
-	0x89, 0x60, 0x99, 0x32, 0xe1, 0xf4, 0x04, 0x88, 0xd0, 0x74, 0xc5, 0xf9, 0x1e, 0xae, 0x95, 0x4e,
-	0x20, 0x16, 0xe4, 0x2b, 0xa8, 0x0d, 0x0b, 0x8a, 0x74, 0x51, 0xd9, 0x4a, 0x9a, 0x84, 0x86, 0xce,
-	0x13, 0x20, 0xbd, 0xe9, 0xf4, 0xf2, 0xfd, 0xfa, 0x50, 0x1b, 0x0e, 0x54, 0x96, 0xce, 0x1b, 0xd7,
-	0x5b, 0x50, 0xe7, 0x73, 0x6f, 0x1a, 0xf9, 0x99, 0xba, 0x60, 0x0f, 0xa4, 0x10, 0xcd, 0x1e, 0xc8,
-	0x0d, 0x68, 0x8e, 0x04, 0xfb, 0xd6, 0x15, 0x92, 0x69, 0x75, 0x69, 0xd0, 0x1c, 0x70, 0x46, 0xd0,
-	0x29, 0x6a, 0xf4, 0x69, 0x51, 0x04, 0x8c, 0x8b, 0x95, 0xb3, 0xe0, 0xb6, 0xb2, 0xee, 0xf6, 0x07,
-	0x20, 0xbd, 0x70, 0x32, 0xe0, 0x22, 0xf2, 0x84, 0xc8, 0x5a, 0x81, 0x74, 0xa1, 0x3e, 0x1c, 0x3c,
-	0x71, 0xa7, 0x11, 0xd3, 0xbe, 0x1f, 0x5e, 0xa1, 0x19, 0x40, 0x48, 0xaa, 0xc4, 0x18, 0x4a, 0xaa,
-	0xbf, 0x5b, 0x5a, 0x7f, 0xb1, 0xa8, 0x28, 0xbb, 0xfd, 0xaa, 0xca, 0x85, 0xf3, 0xb3, 0x01, 0x56,
-	0x2f, 0x9c, 0x1c, 0xba, 0xcf, 0x59, 0x9a, 0xc6, 0x3c, 0x06, 0x62, 0xad, 0x05, 0x90, 0x1f, 0x79,
-	0x0b, 0xcc, 0x1e, 0xf7, 0xb5, 0xb6, 0x51, 0xf5, 0x48, 0x3e, 0xcb, 0xaa, 0x64, 0x62, 0x95, 0xde,
-	0x2f, 0x55, 0xa9, 0x1c, 0x44, 0x56, 0x9e, 0x57, 0x06, 0x74, 0x7a, 0xe1, 0xa4, 0xe7, 0xfb, 0xe9,
-	0x11, 0x2e, 0xd8, 0x78, 0x67, 0x45, 0x30, 0xf5, 0xfe, 0x45, 0x7d, 0xdc, 0x05, 0x40, 0x19, 0xd3,
-	0xa9, 0xc1, 0x1b, 0xe0, 0xe1, 0x15, 0x5a, 0xc0, 0x94, 0xef, 0x6c, 0xde, 0x51, 0xf6, 0xf3, 0x11,
-	0xbf, 0x0f, 0xb5, 0xaf, 0xf9, 0x94, 0x09, 0xab, 0x86, 0x21, 0x38, 0xe7, 0x84, 0x90, 0xf6, 0x9a,
-	0xa2, 0x52, 0x6d, 0xd0, 0xaf, 0xa7, 0xa2, 0xea, 0xfc, 0x6e, 0xc0, 0x76, 0x89, 0x75, 0x61, 0xb1,
-	0xba, 0xd0, 0x50, 0x9c, 0x42, 0xc1, 0x96, 0xef, 0xd9, 0xda, 0xd1, 0xcb, 0x45, 0x1a, 0x0a, 0x5d,
-	0xbe, 0xab, 0x30, 0xd4, 0xf3, 0x88, 0x1e, 0x64, 0x61, 0xa4, 0xaf, 0x59, 0xa9, 0x6b, 0xeb, 0xa5,
-	0xfe, 0xd3, 0x80, 0xad, 0x5e, 0x38, 0xd1, 0x32, 0x9b, 0x65, 0x7a, 0x33, 0x9f, 0x08, 0x9c, 0x84,
-	0xd5, 0xfc, 0x55, 0x2e, 0xce, 0x9f, 0x79, 0xe9, 0xf9, 0xfb, 0xd5, 0x80, 0x6b, 0xab, 0xed, 0x88,
-	0x04, 0xe2, 0xe0, 0xd7, 0x56, 0x36, 0xe5, 0xd9, 0x81, 0x57, 0xb0, 0x33, 0x7a, 0xf2, 0x7e, 0xd6,
-	0x93, 0x6f, 0x71, 0x20, 0xdd, 0x92, 0x37, 0x55, 0xc5, 0xb4, 0xfc, 0x5c, 0x07, 0x73, 0x38, 0xd0,
-	0xe2, 0x93, 0x6a, 0x2a, 0xf7, 0x05, 0x55, 0xd8, 0xdd, 0x3f, 0xaa, 0x00, 0xb9, 0x3d, 0x39, 0x80,
-	0xed, 0x6f, 0x98, 0x5c, 0xff, 0x42, 0x28, 0x6d, 0x8a, 0x52, 0xd4, 0x7d, 0x93, 0x8c, 0x95, 0xbc,
-	0xe1, 0xd5, 0xf6, 0x7f, 0xbc, 0xa1, 0xe1, 0x53, 0x78, 0x77, 0xc5, 0x5b, 0x61, 0xca, 0x77, 0xce,
-	0xbb, 0x8c, 0xb4, 0x8c, 0x9d, 0xe1, 0x7b, 0xed, 0x53, 0xd4, 0x47, 0xdf, 0x6b, 0x57, 0xc2, 0x63,
-	0x77, 0xc2, 0x7c, 0x52, 0x96, 0x81, 0xf2, 0xdd, 0xd5, 0xbd, 0xf9, 0x66, 0x92, 0x58, 0x90, 0xa7,
-	0x70, 0xbd, 0xb4, 0xcb, 0x70, 0xf0, 0x36, 0xfb, 0x58, 0x67, 0x24, 0x4f, 0xfb, 0x7e, 0x82, 0xb9,
-	0x5e, 0xbd, 0x7b, 0xc8, 0x8d, 0x12, 0xbd, 0xf0, 0x07, 0xa2, 0x7b, 0x86, 0xc0, 0x95, 0xae, 0xae,
-	0xfe, 0xf6, 0xab, 0xd7, 0x3b, 0xc6, 0x3f, 0xaf, 0x77, 0x8c, 0x7f, 0x5f, 0xef, 0x18, 0x4f, 0x4d,
-	0x77, 0xc1, 0x8f, 0x37, 0xf0, 0xef, 0xc8, 0x27, 0xff, 0x05, 0x00, 0x00, 0xff, 0xff, 0x43, 0xea,
-	0x01, 0xb0, 0xda, 0x0c, 0x00, 0x00,
+	// 1210 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x57, 0xcd, 0x6e, 0xe4, 0x44,
+	0x10, 0x5e, 0x8f, 0xe7, 0xb7, 0xf2, 0xb3, 0x49, 0x07, 0x65, 0xbd, 0xc3, 0x12, 0x06, 0xb3, 0x12,
+	0xe1, 0x40, 0x56, 0x4a, 0x84, 0xb4, 0x48, 0x5c, 0x26, 0xe3, 0xb0, 0xb1, 0x08, 0xb0, 0xea, 0xfc,
+	0x48, 0x44, 0x2b, 0x84, 0x63, 0xf7, 0x0c, 0x16, 0x33, 0x63, 0xc7, 0xdd, 0x13, 0x36, 0x12, 0x17,
+	0xc4, 0x85, 0x1b, 0x67, 0x1e, 0x80, 0x97, 0xe0, 0x09, 0x38, 0xf2, 0x02, 0x48, 0x28, 0x4f, 0x82,
+	0xba, 0xdb, 0xed, 0xf1, 0xdf, 0x78, 0x36, 0x70, 0xeb, 0xaa, 0xae, 0xae, 0xae, 0xfa, 0xea, 0xab,
+	0x72, 0x1b, 0xda, 0xe1, 0xd5, 0x5e, 0x18, 0x05, 0x2c, 0x40, 0x0f, 0x29, 0x89, 0x6e, 0x7c, 0x97,
+	0xec, 0x79, 0x3e, 0x75, 0x67, 0x94, 0x76, 0x3f, 0x1a, 0xf9, 0xec, 0xbb, 0xd9, 0xd5, 0x9e, 0x1b,
+	0x4c, 0x9e, 0x8d, 0x82, 0x51, 0xf0, 0x4c, 0xd8, 0x5d, 0xcd, 0x86, 0x42, 0x12, 0x82, 0x58, 0xc9,
+	0xf3, 0xe6, 0x1a, 0xac, 0x1c, 0x4d, 0x42, 0x76, 0x7b, 0xca, 0xa2, 0x99, 0xcb, 0xcc, 0x1b, 0x58,
+	0xb7, 0xa4, 0x23, 0x3f, 0x98, 0x9e, 0x32, 0x87, 0xa1, 0x27, 0xd0, 0x39, 0xf1, 0xbf, 0x27, 0x83,
+	0x60, 0x36, 0x65, 0x86, 0xd6, 0xd3, 0x76, 0x1b, 0x78, 0xae, 0x40, 0x26, 0xac, 0x5a, 0x3e, 0x1d,
+	0x27, 0x06, 0x35, 0x61, 0x90, 0xd1, 0x71, 0x9b, 0x41, 0x30, 0x99, 0x90, 0x29, 0x93, 0x36, 0xba,
+	0xb4, 0x49, 0xeb, 0xcc, 0x23, 0x58, 0x1f, 0x38, 0x8c, 0x8c, 0x82, 0xc8, 0x27, 0x14, 0x13, 0x1a,
+	0xa2, 0x03, 0x68, 0xf8, 0x8c, 0x4c, 0xa8, 0xa1, 0xf5, 0xf4, 0xdd, 0x95, 0xfd, 0x77, 0xf6, 0x72,
+	0x89, 0xee, 0xc5, 0xf6, 0xb7, 0xf6, 0x74, 0x18, 0x60, 0x69, 0x6b, 0x7e, 0x03, 0xab, 0x69, 0x35,
+	0x5a, 0x87, 0x9a, 0x6d, 0x89, 0xa8, 0x75, 0x5c, 0xb3, 0x2d, 0x64, 0x40, 0xeb, 0x2c, 0x08, 0x7d,
+	0xd7, 0xb6, 0x44, 0xa4, 0x3a, 0x56, 0x22, 0x42, 0x50, 0xff, 0xd2, 0x99, 0x10, 0x11, 0x5c, 0x07,
+	0x8b, 0x35, 0xda, 0x00, 0xfd, 0x94, 0x5c, 0x1b, 0x75, 0x11, 0x2f, 0x5f, 0x9a, 0xd7, 0xd0, 0x1a,
+	0x44, 0xc4, 0x61, 0x41, 0x54, 0x70, 0xdd, 0x85, 0xf6, 0x39, 0x25, 0x91, 0x70, 0x52, 0x13, 0x4e,
+	0x12, 0x19, 0x6d, 0x43, 0xb3, 0x7f, 0xe3, 0x30, 0x27, 0x8a, 0xdd, 0xc7, 0x12, 0x47, 0xc6, 0x9e,
+	0xb2, 0x28, 0xf0, 0x66, 0x2e, 0xf3, 0x83, 0xa9, 0xb8, 0xa9, 0x83, 0x33, 0x3a, 0xf3, 0xe7, 0x7a,
+	0xba, 0x24, 0xf7, 0xcc, 0x6a, 0x07, 0x20, 0xc1, 0xc3, 0x12, 0x97, 0xeb, 0x38, 0xa5, 0x41, 0xfb,
+	0x49, 0x3e, 0xe2, 0xee, 0x95, 0x7d, 0xa3, 0x08, 0xb3, 0xdc, 0xc7, 0x49, 0xe2, 0x6f, 0x41, 0xe3,
+	0xcc, 0x67, 0x63, 0x62, 0x34, 0x44, 0xb4, 0x52, 0xe0, 0x31, 0x1c, 0xbd, 0x76, 0x49, 0x14, 0x32,
+	0xa3, 0x29, 0xf4, 0x4a, 0xe4, 0x04, 0x12, 0x47, 0x89, 0xd7, 0x67, 0x46, 0x4b, 0x84, 0x30, 0x57,
+	0xf0, 0xdd, 0xf3, 0xd0, 0x8b, 0x77, 0xdb, 0x72, 0x37, 0x51, 0xa0, 0x03, 0xa8, 0x73, 0x12, 0x1a,
+	0x1d, 0x11, 0xdc, 0xbb, 0x85, 0xe0, 0xb2, 0x5c, 0xc5, 0x75, 0xc5, 0x58, 0x7b, 0xe2, 0x8c, 0xc8,
+	0x79, 0x34, 0xa6, 0x06, 0xf4, 0xf4, 0xdd, 0x0e, 0x9e, 0x2b, 0x78, 0xa0, 0x83, 0x60, 0xca, 0xc8,
+	0x94, 0x19, 0x2b, 0x32, 0xd0, 0x58, 0x44, 0x3d, 0x58, 0x89, 0x97, 0x67, 0xe4, 0x35, 0x33, 0x56,
+	0xc5, 0x6e, 0x5a, 0x85, 0xfa, 0x59, 0x7a, 0x19, 0x6b, 0x22, 0xac, 0x25, 0xd4, 0xcc, 0x32, 0xf2,
+	0x63, 0x68, 0x7c, 0xe6, 0x8f, 0x09, 0x35, 0xd6, 0x05, 0xad, 0xab, 0x52, 0xe2, 0x76, 0x58, 0x5a,
+	0x9b, 0x11, 0x20, 0xce, 0xa6, 0xf9, 0x26, 0xc5, 0xe4, 0x9a, 0x67, 0xda, 0x77, 0x5d, 0xde, 0x40,
+	0x09, 0x1f, 0xe6, 0x0a, 0x5e, 0xa8, 0x13, 0x7f, 0xe2, 0xab, 0xa6, 0x94, 0x02, 0xe7, 0xe2, 0x57,
+	0xc3, 0x21, 0x25, 0xaa, 0x0f, 0x63, 0x89, 0x93, 0xbd, 0xef, 0x7b, 0x82, 0x06, 0x3a, 0xe6, 0x4b,
+	0xf3, 0x57, 0x0d, 0xb6, 0x04, 0x91, 0x72, 0xb7, 0xa6, 0xe8, 0xa6, 0x55, 0xd1, 0xad, 0x56, 0xa0,
+	0x5b, 0x12, 0x91, 0x5e, 0x1e, 0x51, 0xbd, 0x2c, 0xa2, 0xc6, 0x3c, 0xa2, 0x63, 0x78, 0x98, 0x89,
+	0x85, 0x86, 0x1c, 0x4f, 0x3b, 0x35, 0x26, 0xaa, 0xf0, 0x94, 0x83, 0x42, 0x58, 0x9b, 0x7f, 0x68,
+	0xe9, 0xae, 0xe2, 0x18, 0x97, 0x35, 0x34, 0xd7, 0xa7, 0x1b, 0x5a, 0xc9, 0x1c, 0x02, 0xbe, 0x3e,
+	0xc7, 0x27, 0x71, 0x47, 0x2b, 0xb1, 0x38, 0x33, 0x94, 0x9f, 0xb3, 0xdb, 0x50, 0xb5, 0x4c, 0x22,
+	0xf3, 0xd4, 0x5f, 0x7a, 0x43, 0xee, 0x46, 0x36, 0x4d, 0x2c, 0x55, 0xf7, 0x8c, 0x79, 0x02, 0x5b,
+	0xd9, 0xd8, 0xef, 0x0d, 0x85, 0xa4, 0x96, 0x84, 0xc2, 0x81, 0x86, 0x6d, 0xf1, 0xba, 0x96, 0x8c,
+	0x15, 0x7f, 0xea, 0x8e, 0x67, 0x9e, 0xca, 0x5f, 0x89, 0xa2, 0x69, 0x29, 0xf9, 0xc2, 0xa1, 0x8c,
+	0xc8, 0x91, 0xd6, 0xc6, 0x73, 0x45, 0x09, 0x93, 0xbe, 0x86, 0xb5, 0xf4, 0x74, 0xaf, 0xa2, 0x50,
+	0xc6, 0x75, 0x6d, 0x81, 0x6b, 0x7d, 0xee, 0xfa, 0x15, 0xa0, 0x7e, 0x34, 0xb2, 0x7c, 0x3a, 0x73,
+	0x29, 0x55, 0x54, 0x43, 0x5d, 0x68, 0xd9, 0xd6, 0x85, 0x33, 0x9e, 0x11, 0xe9, 0xff, 0xf8, 0x01,
+	0x56, 0x8a, 0x64, 0xd2, 0xd7, 0x8a, 0x93, 0x5e, 0x4f, 0xaa, 0x76, 0x58, 0xe7, 0x60, 0x98, 0x3f,
+	0x69, 0x60, 0xf4, 0xa3, 0xd1, 0xa9, 0x73, 0x43, 0x62, 0xf0, 0xe6, 0x79, 0x54, 0x24, 0x11, 0x87,
+	0x59, 0x4b, 0xc2, 0x44, 0x9f, 0xa8, 0xda, 0xe8, 0xa2, 0x36, 0xef, 0x17, 0x6a, 0x53, 0x4c, 0x42,
+	0xd5, 0xe7, 0x6f, 0x0d, 0x36, 0xfa, 0xd1, 0xa8, 0xef, 0x79, 0xf3, 0xfa, 0xfd, 0x8f, 0x1e, 0xec,
+	0x01, 0x88, 0x89, 0x2d, 0xd1, 0x11, 0xec, 0x3d, 0x7e, 0x80, 0x53, 0xba, 0xf4, 0x84, 0xac, 0x67,
+	0x27, 0xe4, 0x73, 0x35, 0xbc, 0x1a, 0x22, 0x0b, 0x73, 0x41, 0x16, 0xc5, 0xf9, 0xa5, 0x10, 0x69,
+	0x26, 0x88, 0x1c, 0xb6, 0xe2, 0xcf, 0x88, 0xf9, 0x9b, 0x06, 0x9b, 0x85, 0x73, 0x95, 0x15, 0xac,
+	0xea, 0xcc, 0x74, 0xb7, 0xe9, 0xb9, 0x6e, 0x4b, 0x75, 0x6d, 0xbd, 0xb4, 0x6b, 0x1b, 0xf9, 0xfa,
+	0xff, 0x08, 0x5b, 0xfd, 0x68, 0x24, 0xbf, 0x47, 0x29, 0xf4, 0xf3, 0x9d, 0x92, 0xc5, 0xb4, 0x56,
+	0x8d, 0xa9, 0x9e, 0xc5, 0xb4, 0x02, 0x99, 0x5f, 0x34, 0xd8, 0xce, 0xb2, 0x4f, 0xf5, 0x7b, 0xfc,
+	0xee, 0x52, 0x83, 0x4d, 0xc5, 0x92, 0xd1, 0x95, 0xb0, 0xf0, 0x79, 0x96, 0x85, 0x6f, 0x54, 0x3f,
+	0x49, 0xc2, 0xb7, 0x79, 0x39, 0xe4, 0x98, 0xd9, 0x00, 0xdd, 0xb6, 0xe4, 0x90, 0xd1, 0x31, 0x5f,
+	0x9a, 0x06, 0x34, 0xf9, 0x04, 0xa1, 0x61, 0x1e, 0x18, 0xd3, 0x84, 0xf6, 0x61, 0x10, 0x8c, 0xc5,
+	0xde, 0x36, 0x34, 0x31, 0xa1, 0xb3, 0xb1, 0x7c, 0x45, 0xb6, 0x71, 0x2c, 0xed, 0xff, 0xde, 0x01,
+	0x48, 0x61, 0xfb, 0x29, 0xb4, 0x06, 0xce, 0xf4, 0xc2, 0x27, 0x3f, 0xa0, 0xed, 0x42, 0x7c, 0x62,
+	0x50, 0x75, 0x1f, 0x17, 0xf4, 0xc9, 0x25, 0xf2, 0xf4, 0x91, 0xc7, 0x3f, 0x2b, 0xf7, 0x3f, 0x7d,
+	0x02, 0x9b, 0x2f, 0x08, 0xcb, 0xbd, 0xb6, 0x16, 0xf9, 0x59, 0xf6, 0xa9, 0x29, 0x78, 0x13, 0x8f,
+	0x93, 0xff, 0xe2, 0x4d, 0x1c, 0x74, 0xc1, 0xc8, 0x12, 0x21, 0x35, 0x89, 0x3e, 0x2c, 0x2b, 0x64,
+	0xe9, 0xd0, 0xea, 0x3e, 0x29, 0x98, 0xa6, 0x9e, 0xff, 0xe8, 0x73, 0x58, 0xcb, 0xce, 0x99, 0xf7,
+	0xca, 0x3c, 0x67, 0x4c, 0xba, 0x8f, 0x4a, 0x33, 0xa2, 0x21, 0xba, 0x80, 0x8d, 0x42, 0xe7, 0x3c,
+	0x2d, 0xf3, 0x97, 0xb7, 0x5a, 0x12, 0xe4, 0x11, 0xac, 0x59, 0x64, 0x9c, 0x72, 0xba, 0x08, 0xd3,
+	0x6a, 0x37, 0x97, 0xf0, 0x28, 0x53, 0x9e, 0x14, 0x9e, 0x3b, 0x8b, 0x5e, 0x74, 0xf2, 0xf3, 0x55,
+	0x52, 0xac, 0xdc, 0xcf, 0xcb, 0xb7, 0xc2, 0x77, 0xee, 0xc5, 0xf6, 0xd2, 0x19, 0x11, 0x0f, 0x15,
+	0x47, 0x7f, 0xf1, 0x61, 0xd7, 0xed, 0x55, 0xb0, 0x41, 0xde, 0x70, 0x05, 0xc6, 0x0b, 0xc2, 0xf2,
+	0xcf, 0x33, 0x79, 0x45, 0x11, 0xe4, 0x92, 0x67, 0xdc, 0x1b, 0xdc, 0x71, 0x09, 0x8f, 0x0b, 0x59,
+	0xd8, 0xd6, 0x7d, 0xf2, 0x30, 0x4a, 0x2a, 0x23, 0x7d, 0xbf, 0x82, 0xad, 0xb2, 0xb9, 0xf6, 0xc1,
+	0x12, 0x26, 0x2b, 0xc3, 0x25, 0xb5, 0xc5, 0x80, 0x32, 0xb5, 0x95, 0xce, 0x17, 0xf1, 0xe4, 0xe9,
+	0x92, 0x97, 0x92, 0x88, 0xf8, 0x70, 0xf3, 0xcf, 0xbb, 0x1d, 0xed, 0xaf, 0xbb, 0x1d, 0xed, 0x9f,
+	0xbb, 0x1d, 0xed, 0x52, 0x77, 0x42, 0xff, 0xaa, 0x29, 0xfe, 0xa1, 0x0f, 0xfe, 0x0d, 0x00, 0x00,
+	0xff, 0xff, 0x7e, 0xd3, 0x4c, 0x28, 0x8f, 0x0f, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -1431,12 +1743,20 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type DiscussionClient interface {
+	CanView(ctx context.Context, in *IDReq, opts ...grpc.CallOption) (*BoolResp, error)
+	CanEdit(ctx context.Context, in *IDReq, opts ...grpc.CallOption) (*BoolResp, error)
 	GetDiscussionInfo(ctx context.Context, in *IDReq, opts ...grpc.CallOption) (*DiscussionInfo, error)
 	GetDiscussionStat(ctx context.Context, in *IDReq, opts ...grpc.CallOption) (*DiscussionStat, error)
+	SaveDiscussionCategories(ctx context.Context, in *ArgSaveDiscussCategories, opts ...grpc.CallOption) (*EmptyStruct, error)
+	AddDiscussion(ctx context.Context, in *ArgAddDiscussion, opts ...grpc.CallOption) (*IDResp, error)
+	UpdateDiscussion(ctx context.Context, in *ArgUpdateDiscussion, opts ...grpc.CallOption) (*EmptyStruct, error)
+	DelDiscussion(ctx context.Context, in *IDReq, opts ...grpc.CallOption) (*EmptyStruct, error)
 	GetDiscussionCategories(ctx context.Context, in *CategoriesReq, opts ...grpc.CallOption) (*CategoriesResp, error)
-	GetUserDiscussionsPaged(ctx context.Context, in *UserDiscussionsReq, opts ...grpc.CallOption) (*UserDiscussionsResp, error)
+	GetUserDiscussionsPaged(ctx context.Context, in *UserDiscussionsReq, opts ...grpc.CallOption) (*DiscussionsResp, error)
+	GetTopicDiscussionsPaged(ctx context.Context, in *TopicDiscussionsReq, opts ...grpc.CallOption) (*DiscussionsResp, error)
 	GetUserDiscussionIDsPaged(ctx context.Context, in *UserDiscussionsReq, opts ...grpc.CallOption) (*IDsResp, error)
-	GetAllDiscussions(ctx context.Context, in *EmptyStruct, opts ...grpc.CallOption) (*AllDiscussionsResp, error)
+	SaveDiscussionFiles(ctx context.Context, in *ArgSaveDiscussionFiles, opts ...grpc.CallOption) (*EmptyStruct, error)
+	GetDiscussionFiles(ctx context.Context, in *IDReq, opts ...grpc.CallOption) (*DiscussionFilesResp, error)
 }
 
 type discussionClient struct {
@@ -1445,6 +1765,24 @@ type discussionClient struct {
 
 func NewDiscussionClient(cc *grpc.ClientConn) DiscussionClient {
 	return &discussionClient{cc}
+}
+
+func (c *discussionClient) CanView(ctx context.Context, in *IDReq, opts ...grpc.CallOption) (*BoolResp, error) {
+	out := new(BoolResp)
+	err := c.cc.Invoke(ctx, "/service.discuss.Discussion/CanView", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *discussionClient) CanEdit(ctx context.Context, in *IDReq, opts ...grpc.CallOption) (*BoolResp, error) {
+	out := new(BoolResp)
+	err := c.cc.Invoke(ctx, "/service.discuss.Discussion/CanEdit", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *discussionClient) GetDiscussionInfo(ctx context.Context, in *IDReq, opts ...grpc.CallOption) (*DiscussionInfo, error) {
@@ -1465,6 +1803,42 @@ func (c *discussionClient) GetDiscussionStat(ctx context.Context, in *IDReq, opt
 	return out, nil
 }
 
+func (c *discussionClient) SaveDiscussionCategories(ctx context.Context, in *ArgSaveDiscussCategories, opts ...grpc.CallOption) (*EmptyStruct, error) {
+	out := new(EmptyStruct)
+	err := c.cc.Invoke(ctx, "/service.discuss.Discussion/SaveDiscussionCategories", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *discussionClient) AddDiscussion(ctx context.Context, in *ArgAddDiscussion, opts ...grpc.CallOption) (*IDResp, error) {
+	out := new(IDResp)
+	err := c.cc.Invoke(ctx, "/service.discuss.Discussion/AddDiscussion", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *discussionClient) UpdateDiscussion(ctx context.Context, in *ArgUpdateDiscussion, opts ...grpc.CallOption) (*EmptyStruct, error) {
+	out := new(EmptyStruct)
+	err := c.cc.Invoke(ctx, "/service.discuss.Discussion/UpdateDiscussion", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *discussionClient) DelDiscussion(ctx context.Context, in *IDReq, opts ...grpc.CallOption) (*EmptyStruct, error) {
+	out := new(EmptyStruct)
+	err := c.cc.Invoke(ctx, "/service.discuss.Discussion/DelDiscussion", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *discussionClient) GetDiscussionCategories(ctx context.Context, in *CategoriesReq, opts ...grpc.CallOption) (*CategoriesResp, error) {
 	out := new(CategoriesResp)
 	err := c.cc.Invoke(ctx, "/service.discuss.Discussion/GetDiscussionCategories", in, out, opts...)
@@ -1474,9 +1848,18 @@ func (c *discussionClient) GetDiscussionCategories(ctx context.Context, in *Cate
 	return out, nil
 }
 
-func (c *discussionClient) GetUserDiscussionsPaged(ctx context.Context, in *UserDiscussionsReq, opts ...grpc.CallOption) (*UserDiscussionsResp, error) {
-	out := new(UserDiscussionsResp)
+func (c *discussionClient) GetUserDiscussionsPaged(ctx context.Context, in *UserDiscussionsReq, opts ...grpc.CallOption) (*DiscussionsResp, error) {
+	out := new(DiscussionsResp)
 	err := c.cc.Invoke(ctx, "/service.discuss.Discussion/GetUserDiscussionsPaged", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *discussionClient) GetTopicDiscussionsPaged(ctx context.Context, in *TopicDiscussionsReq, opts ...grpc.CallOption) (*DiscussionsResp, error) {
+	out := new(DiscussionsResp)
+	err := c.cc.Invoke(ctx, "/service.discuss.Discussion/GetTopicDiscussionsPaged", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1492,9 +1875,18 @@ func (c *discussionClient) GetUserDiscussionIDsPaged(ctx context.Context, in *Us
 	return out, nil
 }
 
-func (c *discussionClient) GetAllDiscussions(ctx context.Context, in *EmptyStruct, opts ...grpc.CallOption) (*AllDiscussionsResp, error) {
-	out := new(AllDiscussionsResp)
-	err := c.cc.Invoke(ctx, "/service.discuss.Discussion/GetAllDiscussions", in, out, opts...)
+func (c *discussionClient) SaveDiscussionFiles(ctx context.Context, in *ArgSaveDiscussionFiles, opts ...grpc.CallOption) (*EmptyStruct, error) {
+	out := new(EmptyStruct)
+	err := c.cc.Invoke(ctx, "/service.discuss.Discussion/SaveDiscussionFiles", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *discussionClient) GetDiscussionFiles(ctx context.Context, in *IDReq, opts ...grpc.CallOption) (*DiscussionFilesResp, error) {
+	out := new(DiscussionFilesResp)
+	err := c.cc.Invoke(ctx, "/service.discuss.Discussion/GetDiscussionFiles", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1503,39 +1895,107 @@ func (c *discussionClient) GetAllDiscussions(ctx context.Context, in *EmptyStruc
 
 // DiscussionServer is the server API for Discussion service.
 type DiscussionServer interface {
+	CanView(context.Context, *IDReq) (*BoolResp, error)
+	CanEdit(context.Context, *IDReq) (*BoolResp, error)
 	GetDiscussionInfo(context.Context, *IDReq) (*DiscussionInfo, error)
 	GetDiscussionStat(context.Context, *IDReq) (*DiscussionStat, error)
+	SaveDiscussionCategories(context.Context, *ArgSaveDiscussCategories) (*EmptyStruct, error)
+	AddDiscussion(context.Context, *ArgAddDiscussion) (*IDResp, error)
+	UpdateDiscussion(context.Context, *ArgUpdateDiscussion) (*EmptyStruct, error)
+	DelDiscussion(context.Context, *IDReq) (*EmptyStruct, error)
 	GetDiscussionCategories(context.Context, *CategoriesReq) (*CategoriesResp, error)
-	GetUserDiscussionsPaged(context.Context, *UserDiscussionsReq) (*UserDiscussionsResp, error)
+	GetUserDiscussionsPaged(context.Context, *UserDiscussionsReq) (*DiscussionsResp, error)
+	GetTopicDiscussionsPaged(context.Context, *TopicDiscussionsReq) (*DiscussionsResp, error)
 	GetUserDiscussionIDsPaged(context.Context, *UserDiscussionsReq) (*IDsResp, error)
-	GetAllDiscussions(context.Context, *EmptyStruct) (*AllDiscussionsResp, error)
+	SaveDiscussionFiles(context.Context, *ArgSaveDiscussionFiles) (*EmptyStruct, error)
+	GetDiscussionFiles(context.Context, *IDReq) (*DiscussionFilesResp, error)
 }
 
 // UnimplementedDiscussionServer can be embedded to have forward compatible implementations.
 type UnimplementedDiscussionServer struct {
 }
 
+func (*UnimplementedDiscussionServer) CanView(ctx context.Context, req *IDReq) (*BoolResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CanView not implemented")
+}
+func (*UnimplementedDiscussionServer) CanEdit(ctx context.Context, req *IDReq) (*BoolResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CanEdit not implemented")
+}
 func (*UnimplementedDiscussionServer) GetDiscussionInfo(ctx context.Context, req *IDReq) (*DiscussionInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDiscussionInfo not implemented")
 }
 func (*UnimplementedDiscussionServer) GetDiscussionStat(ctx context.Context, req *IDReq) (*DiscussionStat, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDiscussionStat not implemented")
 }
+func (*UnimplementedDiscussionServer) SaveDiscussionCategories(ctx context.Context, req *ArgSaveDiscussCategories) (*EmptyStruct, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SaveDiscussionCategories not implemented")
+}
+func (*UnimplementedDiscussionServer) AddDiscussion(ctx context.Context, req *ArgAddDiscussion) (*IDResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddDiscussion not implemented")
+}
+func (*UnimplementedDiscussionServer) UpdateDiscussion(ctx context.Context, req *ArgUpdateDiscussion) (*EmptyStruct, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateDiscussion not implemented")
+}
+func (*UnimplementedDiscussionServer) DelDiscussion(ctx context.Context, req *IDReq) (*EmptyStruct, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DelDiscussion not implemented")
+}
 func (*UnimplementedDiscussionServer) GetDiscussionCategories(ctx context.Context, req *CategoriesReq) (*CategoriesResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDiscussionCategories not implemented")
 }
-func (*UnimplementedDiscussionServer) GetUserDiscussionsPaged(ctx context.Context, req *UserDiscussionsReq) (*UserDiscussionsResp, error) {
+func (*UnimplementedDiscussionServer) GetUserDiscussionsPaged(ctx context.Context, req *UserDiscussionsReq) (*DiscussionsResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserDiscussionsPaged not implemented")
+}
+func (*UnimplementedDiscussionServer) GetTopicDiscussionsPaged(ctx context.Context, req *TopicDiscussionsReq) (*DiscussionsResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTopicDiscussionsPaged not implemented")
 }
 func (*UnimplementedDiscussionServer) GetUserDiscussionIDsPaged(ctx context.Context, req *UserDiscussionsReq) (*IDsResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserDiscussionIDsPaged not implemented")
 }
-func (*UnimplementedDiscussionServer) GetAllDiscussions(ctx context.Context, req *EmptyStruct) (*AllDiscussionsResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAllDiscussions not implemented")
+func (*UnimplementedDiscussionServer) SaveDiscussionFiles(ctx context.Context, req *ArgSaveDiscussionFiles) (*EmptyStruct, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SaveDiscussionFiles not implemented")
+}
+func (*UnimplementedDiscussionServer) GetDiscussionFiles(ctx context.Context, req *IDReq) (*DiscussionFilesResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetDiscussionFiles not implemented")
 }
 
 func RegisterDiscussionServer(s *grpc.Server, srv DiscussionServer) {
 	s.RegisterService(&_Discussion_serviceDesc, srv)
+}
+
+func _Discussion_CanView_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IDReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DiscussionServer).CanView(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/service.discuss.Discussion/CanView",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DiscussionServer).CanView(ctx, req.(*IDReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Discussion_CanEdit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IDReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DiscussionServer).CanEdit(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/service.discuss.Discussion/CanEdit",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DiscussionServer).CanEdit(ctx, req.(*IDReq))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _Discussion_GetDiscussionInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -1570,6 +2030,78 @@ func _Discussion_GetDiscussionStat_Handler(srv interface{}, ctx context.Context,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DiscussionServer).GetDiscussionStat(ctx, req.(*IDReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Discussion_SaveDiscussionCategories_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ArgSaveDiscussCategories)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DiscussionServer).SaveDiscussionCategories(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/service.discuss.Discussion/SaveDiscussionCategories",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DiscussionServer).SaveDiscussionCategories(ctx, req.(*ArgSaveDiscussCategories))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Discussion_AddDiscussion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ArgAddDiscussion)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DiscussionServer).AddDiscussion(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/service.discuss.Discussion/AddDiscussion",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DiscussionServer).AddDiscussion(ctx, req.(*ArgAddDiscussion))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Discussion_UpdateDiscussion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ArgUpdateDiscussion)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DiscussionServer).UpdateDiscussion(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/service.discuss.Discussion/UpdateDiscussion",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DiscussionServer).UpdateDiscussion(ctx, req.(*ArgUpdateDiscussion))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Discussion_DelDiscussion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IDReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DiscussionServer).DelDiscussion(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/service.discuss.Discussion/DelDiscussion",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DiscussionServer).DelDiscussion(ctx, req.(*IDReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1610,6 +2142,24 @@ func _Discussion_GetUserDiscussionsPaged_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Discussion_GetTopicDiscussionsPaged_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TopicDiscussionsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DiscussionServer).GetTopicDiscussionsPaged(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/service.discuss.Discussion/GetTopicDiscussionsPaged",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DiscussionServer).GetTopicDiscussionsPaged(ctx, req.(*TopicDiscussionsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Discussion_GetUserDiscussionIDsPaged_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UserDiscussionsReq)
 	if err := dec(in); err != nil {
@@ -1628,20 +2178,38 @@ func _Discussion_GetUserDiscussionIDsPaged_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Discussion_GetAllDiscussions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EmptyStruct)
+func _Discussion_SaveDiscussionFiles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ArgSaveDiscussionFiles)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DiscussionServer).GetAllDiscussions(ctx, in)
+		return srv.(DiscussionServer).SaveDiscussionFiles(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/service.discuss.Discussion/GetAllDiscussions",
+		FullMethod: "/service.discuss.Discussion/SaveDiscussionFiles",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DiscussionServer).GetAllDiscussions(ctx, req.(*EmptyStruct))
+		return srv.(DiscussionServer).SaveDiscussionFiles(ctx, req.(*ArgSaveDiscussionFiles))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Discussion_GetDiscussionFiles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IDReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DiscussionServer).GetDiscussionFiles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/service.discuss.Discussion/GetDiscussionFiles",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DiscussionServer).GetDiscussionFiles(ctx, req.(*IDReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1651,12 +2219,36 @@ var _Discussion_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*DiscussionServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
+			MethodName: "CanView",
+			Handler:    _Discussion_CanView_Handler,
+		},
+		{
+			MethodName: "CanEdit",
+			Handler:    _Discussion_CanEdit_Handler,
+		},
+		{
 			MethodName: "GetDiscussionInfo",
 			Handler:    _Discussion_GetDiscussionInfo_Handler,
 		},
 		{
 			MethodName: "GetDiscussionStat",
 			Handler:    _Discussion_GetDiscussionStat_Handler,
+		},
+		{
+			MethodName: "SaveDiscussionCategories",
+			Handler:    _Discussion_SaveDiscussionCategories_Handler,
+		},
+		{
+			MethodName: "AddDiscussion",
+			Handler:    _Discussion_AddDiscussion_Handler,
+		},
+		{
+			MethodName: "UpdateDiscussion",
+			Handler:    _Discussion_UpdateDiscussion_Handler,
+		},
+		{
+			MethodName: "DelDiscussion",
+			Handler:    _Discussion_DelDiscussion_Handler,
 		},
 		{
 			MethodName: "GetDiscussionCategories",
@@ -1667,12 +2259,20 @@ var _Discussion_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Discussion_GetUserDiscussionsPaged_Handler,
 		},
 		{
+			MethodName: "GetTopicDiscussionsPaged",
+			Handler:    _Discussion_GetTopicDiscussionsPaged_Handler,
+		},
+		{
 			MethodName: "GetUserDiscussionIDsPaged",
 			Handler:    _Discussion_GetUserDiscussionIDsPaged_Handler,
 		},
 		{
-			MethodName: "GetAllDiscussions",
-			Handler:    _Discussion_GetAllDiscussions_Handler,
+			MethodName: "SaveDiscussionFiles",
+			Handler:    _Discussion_SaveDiscussionFiles_Handler,
+		},
+		{
+			MethodName: "GetDiscussionFiles",
+			Handler:    _Discussion_GetDiscussionFiles_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -1915,6 +2515,20 @@ func (m *DiscussionInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
+	if len(m.Files) > 0 {
+		for iNdEx := len(m.Files) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Files[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintPb(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x72
+		}
+	}
 	if m.CategoryInfo != nil {
 		{
 			size, err := m.CategoryInfo.MarshalToSizedBuffer(dAtA[:i])
@@ -2040,6 +2654,11 @@ func (m *UserDiscussionsReq) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
+	if m.Aid != 0 {
+		i = encodeVarintPb(dAtA, i, uint64(m.Aid))
+		i--
+		dAtA[i] = 0x20
+	}
 	if m.Offset != 0 {
 		i = encodeVarintPb(dAtA, i, uint64(m.Offset))
 		i--
@@ -2058,7 +2677,7 @@ func (m *UserDiscussionsReq) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *UserDiscussionsResp) Marshal() (dAtA []byte, err error) {
+func (m *TopicDiscussionsReq) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -2068,12 +2687,64 @@ func (m *UserDiscussionsResp) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *UserDiscussionsResp) MarshalTo(dAtA []byte) (int, error) {
+func (m *TopicDiscussionsReq) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *UserDiscussionsResp) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *TopicDiscussionsReq) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Aid != 0 {
+		i = encodeVarintPb(dAtA, i, uint64(m.Aid))
+		i--
+		dAtA[i] = 0x28
+	}
+	if m.Offset != 0 {
+		i = encodeVarintPb(dAtA, i, uint64(m.Offset))
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.Limit != 0 {
+		i = encodeVarintPb(dAtA, i, uint64(m.Limit))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.CategoryID != 0 {
+		i = encodeVarintPb(dAtA, i, uint64(m.CategoryID))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.TopicID != 0 {
+		i = encodeVarintPb(dAtA, i, uint64(m.TopicID))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *DiscussionsResp) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *DiscussionsResp) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DiscussionsResp) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -2099,7 +2770,7 @@ func (m *UserDiscussionsResp) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *AllDiscussionsResp) Marshal() (dAtA []byte, err error) {
+func (m *DiscussionFile) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -2109,12 +2780,82 @@ func (m *AllDiscussionsResp) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *AllDiscussionsResp) MarshalTo(dAtA []byte) (int, error) {
+func (m *DiscussionFile) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *AllDiscussionsResp) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *DiscussionFile) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.CreatedAt != 0 {
+		i = encodeVarintPb(dAtA, i, uint64(m.CreatedAt))
+		i--
+		dAtA[i] = 0x38
+	}
+	if len(m.PdfURL) > 0 {
+		i -= len(m.PdfURL)
+		copy(dAtA[i:], m.PdfURL)
+		i = encodeVarintPb(dAtA, i, uint64(len(m.PdfURL)))
+		i--
+		dAtA[i] = 0x32
+	}
+	if len(m.FileType) > 0 {
+		i -= len(m.FileType)
+		copy(dAtA[i:], m.FileType)
+		i = encodeVarintPb(dAtA, i, uint64(len(m.FileType)))
+		i--
+		dAtA[i] = 0x2a
+	}
+	if m.Seq != 0 {
+		i = encodeVarintPb(dAtA, i, uint64(m.Seq))
+		i--
+		dAtA[i] = 0x20
+	}
+	if len(m.FileURL) > 0 {
+		i -= len(m.FileURL)
+		copy(dAtA[i:], m.FileURL)
+		i = encodeVarintPb(dAtA, i, uint64(len(m.FileURL)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.FileName) > 0 {
+		i -= len(m.FileName)
+		copy(dAtA[i:], m.FileName)
+		i = encodeVarintPb(dAtA, i, uint64(len(m.FileName)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.ID != 0 {
+		i = encodeVarintPb(dAtA, i, uint64(m.ID))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *DiscussionFilesResp) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *DiscussionFilesResp) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DiscussionFilesResp) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -2164,6 +2905,11 @@ func (m *IDReq) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
+	if m.Aid != 0 {
+		i = encodeVarintPb(dAtA, i, uint64(m.Aid))
+		i--
+		dAtA[i] = 0x20
+	}
 	if m.UseMaster {
 		i--
 		if m.UseMaster {
@@ -2212,6 +2958,11 @@ func (m *CategoriesReq) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	if m.XXX_unrecognized != nil {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Aid != 0 {
+		i = encodeVarintPb(dAtA, i, uint64(m.Aid))
+		i--
+		dAtA[i] = 0x18
 	}
 	if m.UseMaster {
 		i--
@@ -2342,7 +3093,7 @@ func (m *ArgSaveDiscussCategories) MarshalToSizedBuffer(dAtA []byte) (int, error
 	return len(dAtA) - i, nil
 }
 
-func (m *ArgAddDiscuss) Marshal() (dAtA []byte, err error) {
+func (m *ArgAddDiscussion) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -2352,12 +3103,12 @@ func (m *ArgAddDiscuss) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *ArgAddDiscuss) MarshalTo(dAtA []byte) (int, error) {
+func (m *ArgAddDiscussion) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *ArgAddDiscuss) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *ArgAddDiscussion) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -2365,6 +3116,11 @@ func (m *ArgAddDiscuss) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	if m.XXX_unrecognized != nil {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Aid != 0 {
+		i = encodeVarintPb(dAtA, i, uint64(m.Aid))
+		i--
+		dAtA[i] = 0x30
 	}
 	if len(m.Files) > 0 {
 		for iNdEx := len(m.Files) - 1; iNdEx >= 0; iNdEx-- {
@@ -2409,12 +3165,12 @@ func (m *ArgAddDiscuss) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *ArgAddDiscuss_TitleValue) MarshalTo(dAtA []byte) (int, error) {
+func (m *ArgAddDiscussion_TitleValue) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *ArgAddDiscuss_TitleValue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *ArgAddDiscussion_TitleValue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	i -= len(m.TitleValue)
 	copy(dAtA[i:], m.TitleValue)
@@ -2497,7 +3253,7 @@ func (m *ArgDiscussionFile_IDValue) MarshalToSizedBuffer(dAtA []byte) (int, erro
 	dAtA[i] = 0x8
 	return len(dAtA) - i, nil
 }
-func (m *ArgUpdateDiscuss) Marshal() (dAtA []byte, err error) {
+func (m *ArgUpdateDiscussion) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -2507,12 +3263,12 @@ func (m *ArgUpdateDiscuss) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *ArgUpdateDiscuss) MarshalTo(dAtA []byte) (int, error) {
+func (m *ArgUpdateDiscussion) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *ArgUpdateDiscuss) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *ArgUpdateDiscussion) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -2521,19 +3277,10 @@ func (m *ArgUpdateDiscuss) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
-	if len(m.Files) > 0 {
-		for iNdEx := len(m.Files) - 1; iNdEx >= 0; iNdEx-- {
-			{
-				size, err := m.Files[iNdEx].MarshalToSizedBuffer(dAtA[:i])
-				if err != nil {
-					return 0, err
-				}
-				i -= size
-				i = encodeVarintPb(dAtA, i, uint64(size))
-			}
-			i--
-			dAtA[i] = 0x2a
-		}
+	if m.Aid != 0 {
+		i = encodeVarintPb(dAtA, i, uint64(m.Aid))
+		i--
+		dAtA[i] = 0x30
 	}
 	if len(m.Content) > 0 {
 		i -= len(m.Content)
@@ -2559,12 +3306,12 @@ func (m *ArgUpdateDiscuss) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *ArgUpdateDiscuss_TitleValue) MarshalTo(dAtA []byte) (int, error) {
+func (m *ArgUpdateDiscussion_TitleValue) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *ArgUpdateDiscuss_TitleValue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *ArgUpdateDiscussion_TitleValue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	i -= len(m.TitleValue)
 	copy(dAtA[i:], m.TitleValue)
@@ -2573,7 +3320,7 @@ func (m *ArgUpdateDiscuss_TitleValue) MarshalToSizedBuffer(dAtA []byte) (int, er
 	dAtA[i] = 0x12
 	return len(dAtA) - i, nil
 }
-func (m *ArgSaveDiscussFiles) Marshal() (dAtA []byte, err error) {
+func (m *ArgSaveDiscussionFiles) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -2583,12 +3330,12 @@ func (m *ArgSaveDiscussFiles) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *ArgSaveDiscussFiles) MarshalTo(dAtA []byte) (int, error) {
+func (m *ArgSaveDiscussionFiles) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *ArgSaveDiscussFiles) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *ArgSaveDiscussionFiles) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -2608,7 +3355,7 @@ func (m *ArgSaveDiscussFiles) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 				i = encodeVarintPb(dAtA, i, uint64(size))
 			}
 			i--
-			dAtA[i] = 0x2a
+			dAtA[i] = 0x1a
 		}
 	}
 	if m.Aid != 0 {
@@ -2666,6 +3413,75 @@ func (m *IDsResp) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i = encodeVarintPb(dAtA, i, uint64(j4))
 		i--
 		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *IDResp) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *IDResp) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *IDResp) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.ID != 0 {
+		i = encodeVarintPb(dAtA, i, uint64(m.ID))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *BoolResp) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *BoolResp) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *BoolResp) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Result {
+		i--
+		if m.Result {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x8
 	}
 	return len(dAtA) - i, nil
 }
@@ -2839,6 +3655,12 @@ func (m *DiscussionInfo) Size() (n int) {
 		l = m.CategoryInfo.Size()
 		n += 1 + l + sovPb(uint64(l))
 	}
+	if len(m.Files) > 0 {
+		for _, e := range m.Files {
+			l = e.Size()
+			n += 1 + l + sovPb(uint64(l))
+		}
+	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
 	}
@@ -2860,13 +3682,43 @@ func (m *UserDiscussionsReq) Size() (n int) {
 	if m.Offset != 0 {
 		n += 1 + sovPb(uint64(m.Offset))
 	}
+	if m.Aid != 0 {
+		n += 1 + sovPb(uint64(m.Aid))
+	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
 
-func (m *UserDiscussionsResp) Size() (n int) {
+func (m *TopicDiscussionsReq) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.TopicID != 0 {
+		n += 1 + sovPb(uint64(m.TopicID))
+	}
+	if m.CategoryID != 0 {
+		n += 1 + sovPb(uint64(m.CategoryID))
+	}
+	if m.Limit != 0 {
+		n += 1 + sovPb(uint64(m.Limit))
+	}
+	if m.Offset != 0 {
+		n += 1 + sovPb(uint64(m.Offset))
+	}
+	if m.Aid != 0 {
+		n += 1 + sovPb(uint64(m.Aid))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *DiscussionsResp) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -2884,7 +3736,44 @@ func (m *UserDiscussionsResp) Size() (n int) {
 	return n
 }
 
-func (m *AllDiscussionsResp) Size() (n int) {
+func (m *DiscussionFile) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.ID != 0 {
+		n += 1 + sovPb(uint64(m.ID))
+	}
+	l = len(m.FileName)
+	if l > 0 {
+		n += 1 + l + sovPb(uint64(l))
+	}
+	l = len(m.FileURL)
+	if l > 0 {
+		n += 1 + l + sovPb(uint64(l))
+	}
+	if m.Seq != 0 {
+		n += 1 + sovPb(uint64(m.Seq))
+	}
+	l = len(m.FileType)
+	if l > 0 {
+		n += 1 + l + sovPb(uint64(l))
+	}
+	l = len(m.PdfURL)
+	if l > 0 {
+		n += 1 + l + sovPb(uint64(l))
+	}
+	if m.CreatedAt != 0 {
+		n += 1 + sovPb(uint64(m.CreatedAt))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *DiscussionFilesResp) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -2918,6 +3807,9 @@ func (m *IDReq) Size() (n int) {
 	if m.UseMaster {
 		n += 2
 	}
+	if m.Aid != 0 {
+		n += 1 + sovPb(uint64(m.Aid))
+	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
 	}
@@ -2935,6 +3827,9 @@ func (m *CategoriesReq) Size() (n int) {
 	}
 	if m.UseMaster {
 		n += 2
+	}
+	if m.Aid != 0 {
+		n += 1 + sovPb(uint64(m.Aid))
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
@@ -2997,7 +3892,7 @@ func (m *ArgSaveDiscussCategories) Size() (n int) {
 	return n
 }
 
-func (m *ArgAddDiscuss) Size() (n int) {
+func (m *ArgAddDiscussion) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -3022,13 +3917,16 @@ func (m *ArgAddDiscuss) Size() (n int) {
 			n += 1 + l + sovPb(uint64(l))
 		}
 	}
+	if m.Aid != 0 {
+		n += 1 + sovPb(uint64(m.Aid))
+	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
 
-func (m *ArgAddDiscuss_TitleValue) Size() (n int) {
+func (m *ArgAddDiscussion_TitleValue) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -3077,7 +3975,7 @@ func (m *ArgDiscussionFile_IDValue) Size() (n int) {
 	n += 1 + sovPb(uint64(m.IDValue))
 	return n
 }
-func (m *ArgUpdateDiscuss) Size() (n int) {
+func (m *ArgUpdateDiscussion) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -3093,11 +3991,8 @@ func (m *ArgUpdateDiscuss) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovPb(uint64(l))
 	}
-	if len(m.Files) > 0 {
-		for _, e := range m.Files {
-			l = e.Size()
-			n += 1 + l + sovPb(uint64(l))
-		}
+	if m.Aid != 0 {
+		n += 1 + sovPb(uint64(m.Aid))
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
@@ -3105,7 +4000,7 @@ func (m *ArgUpdateDiscuss) Size() (n int) {
 	return n
 }
 
-func (m *ArgUpdateDiscuss_TitleValue) Size() (n int) {
+func (m *ArgUpdateDiscussion_TitleValue) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -3115,7 +4010,7 @@ func (m *ArgUpdateDiscuss_TitleValue) Size() (n int) {
 	n += 1 + l + sovPb(uint64(l))
 	return n
 }
-func (m *ArgSaveDiscussFiles) Size() (n int) {
+func (m *ArgSaveDiscussionFiles) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -3151,6 +4046,36 @@ func (m *IDsResp) Size() (n int) {
 			l += sovPb(uint64(e))
 		}
 		n += 1 + sovPb(uint64(l)) + l
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *IDResp) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.ID != 0 {
+		n += 1 + sovPb(uint64(m.ID))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *BoolResp) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Result {
+		n += 2
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
@@ -4121,6 +5046,40 @@ func (m *DiscussionInfo) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
+		case 14:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Files", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthPb
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthPb
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Files = append(m.Files, &DiscussionFile{})
+			if err := m.Files[len(m.Files)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipPb(dAtA[iNdEx:])
@@ -4232,6 +5191,25 @@ func (m *UserDiscussionsReq) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Aid", wireType)
+			}
+			m.Aid = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Aid |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipPb(dAtA[iNdEx:])
@@ -4257,7 +5235,7 @@ func (m *UserDiscussionsReq) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *UserDiscussionsResp) Unmarshal(dAtA []byte) error {
+func (m *TopicDiscussionsReq) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -4280,10 +5258,159 @@ func (m *UserDiscussionsResp) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: UserDiscussionsResp: wiretype end group for non-group")
+			return fmt.Errorf("proto: TopicDiscussionsReq: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: UserDiscussionsResp: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: TopicDiscussionsReq: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TopicID", wireType)
+			}
+			m.TopicID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.TopicID |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CategoryID", wireType)
+			}
+			m.CategoryID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.CategoryID |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Limit", wireType)
+			}
+			m.Limit = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Limit |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Offset", wireType)
+			}
+			m.Offset = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Offset |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Aid", wireType)
+			}
+			m.Aid = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Aid |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipPb(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *DiscussionsResp) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowPb
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: DiscussionsResp: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: DiscussionsResp: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -4345,7 +5472,7 @@ func (m *UserDiscussionsResp) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *AllDiscussionsResp) Unmarshal(dAtA []byte) error {
+func (m *DiscussionFile) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -4368,10 +5495,249 @@ func (m *AllDiscussionsResp) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: AllDiscussionsResp: wiretype end group for non-group")
+			return fmt.Errorf("proto: DiscussionFile: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: AllDiscussionsResp: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: DiscussionFile: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ID", wireType)
+			}
+			m.ID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ID |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field FileName", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPb
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPb
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.FileName = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field FileURL", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPb
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPb
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.FileURL = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Seq", wireType)
+			}
+			m.Seq = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Seq |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field FileType", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPb
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPb
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.FileType = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PdfURL", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPb
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPb
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.PdfURL = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 7:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CreatedAt", wireType)
+			}
+			m.CreatedAt = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.CreatedAt |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipPb(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *DiscussionFilesResp) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowPb
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: DiscussionFilesResp: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: DiscussionFilesResp: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -4403,7 +5769,7 @@ func (m *AllDiscussionsResp) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Items = append(m.Items, &DiscussionInfo{})
+			m.Items = append(m.Items, &DiscussionFile{})
 			if err := m.Items[len(m.Items)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
@@ -4533,6 +5899,25 @@ func (m *IDReq) Unmarshal(dAtA []byte) error {
 				}
 			}
 			m.UseMaster = bool(v != 0)
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Aid", wireType)
+			}
+			m.Aid = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Aid |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipPb(dAtA[iNdEx:])
@@ -4626,6 +6011,25 @@ func (m *CategoriesReq) Unmarshal(dAtA []byte) error {
 				}
 			}
 			m.UseMaster = bool(v != 0)
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Aid", wireType)
+			}
+			m.Aid = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Aid |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipPb(dAtA[iNdEx:])
@@ -4902,7 +6306,7 @@ func (m *ArgSaveDiscussCategories) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *ArgAddDiscuss) Unmarshal(dAtA []byte) error {
+func (m *ArgAddDiscussion) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -4925,10 +6329,10 @@ func (m *ArgAddDiscuss) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: ArgAddDiscuss: wiretype end group for non-group")
+			return fmt.Errorf("proto: ArgAddDiscussion: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: ArgAddDiscuss: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: ArgAddDiscussion: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -4999,7 +6403,7 @@ func (m *ArgAddDiscuss) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Title = &ArgAddDiscuss_TitleValue{string(dAtA[iNdEx:postIndex])}
+			m.Title = &ArgAddDiscussion_TitleValue{string(dAtA[iNdEx:postIndex])}
 			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
@@ -5067,6 +6471,25 @@ func (m *ArgAddDiscuss) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
+		case 6:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Aid", wireType)
+			}
+			m.Aid = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Aid |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipPb(dAtA[iNdEx:])
@@ -5281,7 +6704,7 @@ func (m *ArgDiscussionFile) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *ArgUpdateDiscuss) Unmarshal(dAtA []byte) error {
+func (m *ArgUpdateDiscussion) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -5304,10 +6727,10 @@ func (m *ArgUpdateDiscuss) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: ArgUpdateDiscuss: wiretype end group for non-group")
+			return fmt.Errorf("proto: ArgUpdateDiscussion: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: ArgUpdateDiscuss: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: ArgUpdateDiscussion: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -5359,7 +6782,7 @@ func (m *ArgUpdateDiscuss) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Title = &ArgUpdateDiscuss_TitleValue{string(dAtA[iNdEx:postIndex])}
+			m.Title = &ArgUpdateDiscussion_TitleValue{string(dAtA[iNdEx:postIndex])}
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
@@ -5393,11 +6816,11 @@ func (m *ArgUpdateDiscuss) Unmarshal(dAtA []byte) error {
 			}
 			m.Content = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 5:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Files", wireType)
+		case 6:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Aid", wireType)
 			}
-			var msglen int
+			m.Aid = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowPb
@@ -5407,26 +6830,11 @@ func (m *ArgUpdateDiscuss) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= int(b&0x7F) << shift
+				m.Aid |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if msglen < 0 {
-				return ErrInvalidLengthPb
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthPb
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Files = append(m.Files, &ArgDiscussionFile{})
-			if err := m.Files[len(m.Files)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipPb(dAtA[iNdEx:])
@@ -5452,7 +6860,7 @@ func (m *ArgUpdateDiscuss) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *ArgSaveDiscussFiles) Unmarshal(dAtA []byte) error {
+func (m *ArgSaveDiscussionFiles) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -5475,10 +6883,10 @@ func (m *ArgSaveDiscussFiles) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: ArgSaveDiscussFiles: wiretype end group for non-group")
+			return fmt.Errorf("proto: ArgSaveDiscussionFiles: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: ArgSaveDiscussFiles: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: ArgSaveDiscussionFiles: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -5519,7 +6927,7 @@ func (m *ArgSaveDiscussFiles) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-		case 5:
+		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Items", wireType)
 			}
@@ -5683,6 +7091,153 @@ func (m *IDsResp) Unmarshal(dAtA []byte) error {
 			} else {
 				return fmt.Errorf("proto: wrong wireType = %d for field IDs", wireType)
 			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipPb(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *IDResp) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowPb
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: IDResp: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: IDResp: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ID", wireType)
+			}
+			m.ID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ID |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipPb(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthPb
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *BoolResp) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowPb
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: BoolResp: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: BoolResp: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Result", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPb
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.Result = bool(v != 0)
 		default:
 			iNdEx = preIndex
 			skippy, err := skipPb(dAtA[iNdEx:])

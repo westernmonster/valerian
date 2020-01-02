@@ -4,7 +4,7 @@ import validation "github.com/go-ozzo/ozzo-validation"
 
 type ArgCreateApp struct {
 	AppName string `json:"app_name"`
-	TreeID  int    `json:"tree_id"`
+	TreeID  int32  `json:"tree_id"`
 }
 
 func (p *ArgCreateApp) Validate() error {

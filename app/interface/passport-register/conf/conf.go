@@ -26,14 +26,16 @@ var (
 )
 
 type Config struct {
-	DC         *DC
-	Log        *log.Config
-	Mars       *mars.ServerConfig
-	Tracer     *tracing.Config
-	DB         *DB
-	Memcache   *Memcache
-	Discovery  *discovery.Config
-	AccountRPC *warden.ClientConfig
+	DC        *DC
+	Log       *log.Config
+	Mars      *mars.ServerConfig
+	Tracer    *tracing.Config
+	DB        *DB
+	Memcache  *Memcache
+	Discovery *discovery.Config
+
+	AccountRPC  *warden.ClientConfig
+	IdentifyRPC *warden.ClientConfig
 
 	Nats *mq.Config
 }

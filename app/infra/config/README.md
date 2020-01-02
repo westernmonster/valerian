@@ -1,4 +1,4 @@
-# valerian/business/main/service/config
+# infra-config
 
 ##### 项目简介
 > 1. 配置中心服务端，提供配置文件的管理和拉取

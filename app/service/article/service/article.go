@@ -19,6 +19,7 @@ import (
 	"github.com/sergi/go-diff/diffmatchpatch"
 )
 
+// getAccount 获取用户信息
 func (p *Service) getAccount(c context.Context, node sqalx.Node, aid int64) (info *model.Account, err error) {
 	if info, err = p.d.GetAccountByID(c, node, aid); err != nil {
 		return
@@ -30,6 +31,7 @@ func (p *Service) getAccount(c context.Context, node sqalx.Node, aid int64) (inf
 	return
 }
 
+// getTopic 获取话题信息
 func (p *Service) getTopic(c context.Context, node sqalx.Node, tid int64) (info *model.Topic, err error) {
 	if info, err = p.d.GetTopicByID(c, node, tid); err != nil {
 		return
@@ -41,10 +43,12 @@ func (p *Service) getTopic(c context.Context, node sqalx.Node, tid int64) (info 
 	return
 }
 
+// GetArticle 获取文章信息
 func (p *Service) GetArticle(c context.Context, articleID int64) (item *model.Article, err error) {
 	return p.getArticle(c, p.d.DB(), articleID)
 }
 
+// GetArticleDetail 获取文章详情
 func (p *Service) GetArticleDetail(c context.Context, req *api.IDReq) (resp *api.ArticleDetail, err error) {
 	article, err := p.GetArticle(c, req.ID)
 	if err != nil {
@@ -122,6 +126,7 @@ func (p *Service) GetArticleDetail(c context.Context, req *api.IDReq) (resp *api
 
 }
 
+// GetArticleInfo 获取文章基本信息
 func (p *Service) GetArticleInfo(c context.Context, req *api.IDReq) (resp *api.ArticleInfo, err error) {
 	article, err := p.GetArticle(c, req.ID)
 	if err != nil {
@@ -186,6 +191,7 @@ func (p *Service) GetArticleInfo(c context.Context, req *api.IDReq) (resp *api.A
 
 }
 
+// GetArticleLastChangeDesc 获取文章最后一次改动备注
 func (p *Service) GetArticleLastChangeDesc(c context.Context, articleID int64) (changeDesc string, err error) {
 	var history *model.ArticleHistory
 	if history, err = p.d.GetLastArticleHistory(c, p.d.DB(), articleID); err != nil {
@@ -199,10 +205,12 @@ func (p *Service) GetArticleLastChangeDesc(c context.Context, articleID int64) (
 	return
 }
 
+// GetAllArticles 获取所有文章信息
 func (p *Service) GetAllArticles(c context.Context) (items []*model.Article, err error) {
 	return p.d.GetArticles(c, p.d.DB())
 }
 
+// getArticle 获取文章信息
 func (p *Service) getArticle(c context.Context, node sqalx.Node, articleID int64) (item *model.Article, err error) {
 	var addCache = true
 	if item, err = p.d.ArticleCache(c, articleID); err != nil {
@@ -226,6 +234,7 @@ func (p *Service) getArticle(c context.Context, node sqalx.Node, articleID int64
 	return
 }
 
+// GetArticleImageUrls 获取文章图片
 func (p *Service) GetArticleImageUrls(c context.Context, articleID int64) (urls []string, err error) {
 	urls = make([]string, 0)
 	var imgs []*model.ImageURL
@@ -243,14 +252,17 @@ func (p *Service) GetArticleImageUrls(c context.Context, articleID int64) (urls 
 	return
 }
 
+// GetArticleStat 获取文章状态值
 func (p *Service) GetArticleStat(c context.Context, articleID int64) (stat *model.ArticleStat, err error) {
 	return p.d.GetArticleStatByID(c, p.d.DB(), articleID)
 }
 
+// GetUserArticleIDsPaged 获取用户创建的文章ID列表
 func (p *Service) GetUserArticleIDsPaged(c context.Context, req *api.UserArticlesReq) (ids []int64, err error) {
 	return p.d.GetUserArticleIDsPaged(c, p.d.DB(), req.AccountID, int(req.Limit), int(req.Offset))
 }
 
+// GetUserArticlesPaged  获取用户创建的文章信息列表
 func (p *Service) GetUserArticlesPaged(c context.Context, req *api.UserArticlesReq) (resp *api.UserArticlesResp, err error) {
 	var data []*model.Article
 	if data, err = p.d.GetUserArticlesPaged(c, p.d.DB(), req.AccountID, int(req.Limit), int(req.Offset)); err != nil {
@@ -311,6 +323,7 @@ func (p *Service) GetUserArticlesPaged(c context.Context, req *api.UserArticlesR
 	return resp, nil
 }
 
+// AddArticle 添加文章
 func (p *Service) AddArticle(c context.Context, arg *api.ArgAddArticle) (id int64, err error) {
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
@@ -438,6 +451,7 @@ func (p *Service) AddArticle(c context.Context, arg *api.ArgAddArticle) (id int6
 	return
 }
 
+// DelArticle 删除文章
 func (p *Service) DelArticle(c context.Context, arg *api.IDReq) (err error) {
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
@@ -548,6 +562,7 @@ func (p *Service) DelArticle(c context.Context, arg *api.IDReq) (err error) {
 	return
 }
 
+// UpdateArticle 更新文章
 func (p *Service) UpdateArticle(c context.Context, arg *api.ArgUpdateArticle) (err error) {
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {

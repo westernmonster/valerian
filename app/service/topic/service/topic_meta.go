@@ -8,6 +8,7 @@ import (
 	"valerian/library/ecode"
 )
 
+// GetTopicMeta 获取话题元信息
 func (p *Service) GetTopicMeta(c context.Context, aid, topicID int64) (meta *api.TopicMetaInfo, err error) {
 	var t *model.Topic
 	if t, err = p.getTopic(c, p.d.DB(), topicID); err != nil {
@@ -84,6 +85,7 @@ func (p *Service) GetTopicMeta(c context.Context, aid, topicID int64) (meta *api
 	return
 }
 
+// GetGuestTopicMeta 获取游客状态话题元信息
 func (p *Service) GetGuestTopicMeta(c context.Context, t *model.Topic) (meta *api.TopicMetaInfo, err error) {
 	meta = new(api.TopicMetaInfo)
 	if t.ViewPermission == model.ViewPermissionPublic {
@@ -100,6 +102,7 @@ func (p *Service) GetGuestTopicMeta(c context.Context, t *model.Topic) (meta *ap
 	return
 }
 
+// GetTopicPermission 获取话题权限信息
 func (p *Service) GetTopicPermission(c context.Context, aid, topicID int64) (isMember bool, role string, editPermission string, err error) {
 	var t *model.Topic
 	if t, err = p.getTopic(c, p.d.DB(), topicID); err != nil {

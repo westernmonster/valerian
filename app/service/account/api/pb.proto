@@ -27,6 +27,8 @@ message BaseInfoReply {
     bool IsVIP  = 9 ;
 
     string Role = 10;
+
+    AccountStatInfo Stat = 11 ;
 }
 
 message BaseInfosReply {
@@ -155,6 +157,8 @@ message MemberInfoReply {
     string Company = 14;
 
     string Position = 15;
+
+    bool IsLock = 16;
 }
 
 
@@ -167,6 +171,11 @@ message AidReq {
 
 message AidResp {
     int64 aid = 1 ;
+}
+
+message AnnulReq {
+    int64 aid = 1 ;
+    bool UseMaster = 3;
 }
 
 message EmailReq {
@@ -212,50 +221,73 @@ message DBAccount {
     bool     IsVIP                 = 20;
     int64    CreatedAt             = 21;
     int64    UpdatedAt             = 22;
+    bool     IsLock                 = 23;
+    string   Prefix                 = 24;
+    bool     Deactive               = 25;
+    string     Password               = 26;
+    string     Salt               = 27;
 }
 
-message AddAccountReq {
-    int64    ID                    = 1;
-    string   Mobile                = 2;
-    string   Email                 = 3;
-    string   UserName              = 4;
-    string   Role                  = 6;
-    int32    Gender                = 8;
-    int32    BirthYear             = 9;
-    int32    BirthMonth            = 10;
-    int32    BirthDay              = 11;
-    int64    Location              = 12;
-    string   Introduction          = 13;
-    string   Avatar                = 14;
-    int32    Source                = 15;
-    int64    IP                    = 16;
-    bool     IDCert                = 17;
-    bool     WorkCert              = 18;
-    bool     IsOrg                 = 19;
-    bool     IsVIP                 = 20;
-    string Password = 23;
-    string Salt = 24;
-    string Prefix = 25;
+
+message UpdateProfileReq {
+    oneof Avatar {
+        string AvatarValue  = 1;
+    }
+
+    oneof UserName {
+        string UserNameValue  = 2;
+    }
+
+    oneof Gender {
+        int32 GenderValue  = 3;
+    }
+
+    oneof Location {
+        int64 LocationValue  = 4;
+    }
+
+    oneof BirthYear {
+        int32 BirthYearValue  = 5;
+    }
+
+    oneof BirthMonth {
+        int32 BirthMonthValue  = 6;
+    }
+
+    oneof BirthDay {
+        int32 BirthDayValue  = 7;
+    }
+
+    oneof Introduction {
+        string IntroductionValue  = 8;
+    }
+
+    oneof Password {
+        string PasswordValue  = 9;
+    }
+
+    int64 Aid  = 10;
 }
 
-message AllAccountsResp {
-    repeated DBAccount Items = 1;
-}
+
 
 
 service Account {
-    rpc AllAccounts(EmptyStruct) returns (AllAccountsResp);
-
     rpc EmailExist(EmailReq) returns (ExistResp);
+
     rpc MobileExist(MobileReq) returns (ExistResp);
 
     rpc UpdateSetting(SettingReq) returns (EmptyStruct);
 
-    rpc AddAccount(AddAccountReq) returns (SelfProfile);
-
     rpc AccountInfo(AidReq) returns (DBAccount);
 
+    rpc GetAccountByEmail(EmailReq) returns (DBAccount);
+
+    rpc GetAccountByMobile(MobileReq) returns (DBAccount);
+
     rpc MemberInfo(AidReq) returns (MemberInfoReply);
+
+    rpc UpdateProfile(UpdateProfileReq) returns (EmptyStruct);
 
     rpc SelfProfileInfo(AidReq) returns (SelfProfile);
 
@@ -266,7 +298,4 @@ service Account {
     rpc AccountStat(AidReq) returns (AccountStatInfo);
 
     rpc BaseInfos(AidsReq) returns (BaseInfosReply);
-
-    rpc AccountLock(AidReq) returns (EmptyStruct);
-    rpc AccountUnlock(AidReq) returns (EmptyStruct);
 }

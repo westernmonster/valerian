@@ -15,30 +15,18 @@ import (
 
 // Service struct of service
 type Service struct {
-	c *conf.Config
-	d interface {
-		SetMobileValcodeCache(c context.Context, vtype int32, mobile, code string) (err error)
-		MobileValcodeCache(c context.Context, vtype int32, mobile string) (code string, err error)
-		DelMobileCache(c context.Context, vtype int32, mobile string) (err error)
-
-		SetEmailValcodeCache(c context.Context, vtype int32, mobile, code string) (err error)
-		EmailValcodeCache(c context.Context, vtype int32, mobile string) (code string, err error)
-		DelEmailCache(c context.Context, vtype int32, mobile string) (err error)
-
-		IsEmailExist(c context.Context, email string) (exist bool, err error)
-		IsMobileExist(c context.Context, prefix, mobile string) (exist bool, err error)
-
-		Ping(c context.Context) (err error)
-		Close()
-	}
+	c   *conf.Config
+	d   *dao.Dao
 	sms interface {
 		SendRegisterValcode(c context.Context, prefix, mobile string, valcode string) (err error)
 		SendResetPasswordValcode(c context.Context, prefix, mobile string, valcode string) (err error)
 		SendLoginValcode(c context.Context, prefix, mobile string, valcode string) (err error)
+		SendCloseValcode(c context.Context, prefix, mobile string, valcode string) (err error)
 	}
 	email interface {
 		SendRegisterEmail(c context.Context, email string, valcode string) (err error)
 		SendResetPasswordValcode(c context.Context, email string, valcode string) (err error)
+		SendCloseValcode(c context.Context, email string, valcode string) (err error)
 	}
 	missch chan func()
 }

@@ -243,6 +243,7 @@ func (p *Service) GetFavsPaged(c context.Context, targetType string, limit, offs
 			}
 
 			item.Article = p.FromArticle(article)
+			item.Article.ChangeDesc = ""
 			break
 		case model.TargetTypeRevise:
 			var revise *article.ReviseInfo

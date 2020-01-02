@@ -175,3 +175,75 @@ func (p *EmailClient) SendResetPasswordValcode(c context.Context, email string, 
 
 	return
 }
+
+func (p *EmailClient) SendCloseValcode(c context.Context, email string, valcode string) (err error) {
+	if span := opentracing.SpanFromContext(c); span != nil {
+		span := tracing.StartSpan("email", opentracing.ChildOf(span.Context()))
+		span.SetTag("param.email", email)
+		span.SetTag("param.type", "Close")
+		ext.SpanKindRPCClient.Set(span)
+		defer span.Finish()
+		c = opentracing.ContextWithSpan(c, span)
+	}
+
+	body := &tmpl.RegisterValcodeBody{
+		Head: &layouts.EmailPageHead{
+			Title:     "他石笔记安全验证码",
+			BodyClass: "",
+		},
+		Valcode: valcode,
+	}
+
+	request := requests.NewCommonRequest()
+	request.Domain = EndPoint
+	request.Version = Version
+	request.ApiName = SingleSendMail
+	request.QueryParams["Action"] = SingleSendMail
+	request.QueryParams["AccountName"] = "noreply@flywki.com"
+	request.QueryParams["AddressType"] = "1"
+	request.QueryParams["ReplyToAddress"] = "false"
+	request.QueryParams["ToAddress"] = email
+	request.QueryParams["FromAlias"] = "他石笔记"
+	request.QueryParams["Subject"] = "他石笔记安全验证码"
+	request.QueryParams["HtmlBody"] = body.EmailHTML()
+
+	response, err := p.Client.ProcessCommonRequest(request)
+	if err != nil {
+		logrus.WithFields(logrus.Fields{
+			"prefix": "email",
+			"method": "SingleSendMail",
+			"email":  email,
+		}).Error(fmt.Sprintf("ProcessCommonRequest: %v", err))
+		err = tracerr.Errorf("下发短信失败")
+		return
+	}
+
+	if !response.IsSuccess() {
+		logrus.WithFields(logrus.Fields{
+			"prefix":       "email",
+			"method":       "SingleSendMail",
+			"email":        email,
+			"http_status":  response.GetHttpStatus(),
+			"http_content": response.GetHttpContentString(),
+		}).Error(fmt.Sprintf("HTTP Status: %v", err))
+
+		err = tracerr.Errorf("下发短信失败")
+		return
+	}
+	data := response.GetHttpContentBytes()
+	sr := new(emailResponse)
+	err = json.Unmarshal(data, sr)
+	if err != nil {
+		logrus.WithFields(logrus.Fields{
+			"prefix":       "email",
+			"method":       "SingleSendMail",
+			"email":        email,
+			"http_status":  response.GetHttpStatus(),
+			"http_content": response.GetHttpContentString(),
+		}).Error(fmt.Sprintf("Unmarshal Response: %v", err))
+		err = tracerr.Errorf("下发短信失败")
+		return
+	}
+
+	return
+}

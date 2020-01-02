@@ -20,6 +20,7 @@ import (
 	"github.com/jinzhu/copier"
 )
 
+// GetArticleFile 获取指定文章附件
 func (p *Service) GetArticleFile(c context.Context, id int64) (item *api.ArticleFileResp, err error) {
 	var data *model.ArticleFile
 	if data, err = p.d.GetArticleFileByID(c, p.d.DB(), id); err != nil {
@@ -42,10 +43,12 @@ func (p *Service) GetArticleFile(c context.Context, id int64) (item *api.Article
 	return
 }
 
+// GetArticleFiles 获取文章附件列表
 func (p *Service) GetArticleFiles(c context.Context, articleID int64) (items []*api.ArticleFileResp, err error) {
 	return p.getArticleFiles(c, p.d.DB(), articleID)
 }
 
+// getArticleFiles 获取文章附件列表
 func (p *Service) getArticleFiles(c context.Context, node sqalx.Node, articleID int64) (items []*api.ArticleFileResp, err error) {
 	var addCache = true
 
@@ -74,6 +77,7 @@ func (p *Service) getArticleFiles(c context.Context, node sqalx.Node, articleID 
 	return
 }
 
+// bulkCreateFiles 批量保存附件信息
 func (p *Service) bulkCreateFiles(c context.Context, node sqalx.Node, articleID int64, files []*api.ArgArticleFile) (err error) {
 	var tx sqalx.Node
 	if tx, err = node.Beginx(c); err != nil {
@@ -120,6 +124,7 @@ func (p *Service) bulkCreateFiles(c context.Context, node sqalx.Node, articleID 
 	return
 }
 
+// convertOfficeFiles 转换Office文档
 func (p *Service) convertOfficeFiles(c context.Context, articleID int64) (err error) {
 	var files []*model.ArticleFile
 	if files, err = p.d.GetArticleFilesByCond(c, p.d.DB(), map[string]interface{}{
@@ -203,6 +208,7 @@ func (p *Service) convertOfficeFiles(c context.Context, articleID int64) (err er
 	return
 }
 
+// SaveArticleFiles 批量保存文章附件
 func (p *Service) SaveArticleFiles(c context.Context, arg *api.ArgSaveArticleFiles) (err error) {
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {

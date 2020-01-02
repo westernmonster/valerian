@@ -12,7 +12,7 @@ import (
 // GetByID get a record by ID
 func (p *Dao) GetFeedbackByID(c context.Context, node sqalx.Node, id int64) (item *model.Feedback, err error) {
 	item = new(model.Feedback)
-	sqlSelect := "SELECT a.id,a.target_id,a.target_type,a.feedback_type,a.feedback_desc,a.created_by,a.deleted,a.created_at,a.updated_at FROM feedbacks a WHERE a.id=? AND a.deleted=0"
+	sqlSelect := "SELECT a.id,a.target_id,a.target_type,a.target_desc,a.feedback_type,a.feedback_desc,a.created_by,a.deleted,a.created_at,a.updated_at,a.verify_status,a.verify_desc FROM feedbacks a WHERE a.id=? AND a.deleted=0"
 
 	if err = node.GetContext(c, item, sqlSelect, id); err != nil {
 		if err == sql.ErrNoRows {

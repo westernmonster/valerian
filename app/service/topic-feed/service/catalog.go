@@ -9,7 +9,6 @@ import (
 	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
 	"valerian/library/gid"
-	"valerian/library/log"
 
 	"github.com/nats-io/stan.go"
 )
@@ -27,24 +26,25 @@ func (p *Service) getTopicCatalog(c context.Context, node sqalx.Node, id int64) 
 func (p *Service) onTopicTaxonomyCatalogAdded(m *stan.Msg) {
 	var err error
 	c := context.Background()
+	// 强制使用Master库
 	c = sqalx.NewContext(c, true)
 
 	info := new(def.MsgTopicTaxonomyCatalogAdded)
 	if err = info.Unmarshal(m.Data); err != nil {
-		log.Errorf("onTopicTaxonomyCatalogAdded Unmarshal failed %#v", err)
+		PromError("topic-feed: Unmarshal data", "info.Umarshal() ,error(%+v)", err)
 		return
 	}
 
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		PromError("topic-feed: tx.Beginx", "tx.Beginx(), error(%+v)", err)
 		return
 	}
 
 	defer func() {
 		if err != nil {
 			if err1 := tx.Rollback(); err1 != nil {
-				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+				PromError("topic-feed: tx.Rollback", "tx.Rollback(), error(%+v)", err)
 			}
 			return
 		}
@@ -52,9 +52,11 @@ func (p *Service) onTopicTaxonomyCatalogAdded(m *stan.Msg) {
 
 	var catalog *model.TopicCatalog
 	if catalog, err = p.getTopicCatalog(c, tx, info.CatalogID); err != nil {
-		if ecode.Cause(err) == ecode.TopicCatalogNotExist {
+		if ecode.IsNotExistEcode(err) {
 			m.Ack()
+			return
 		}
+		PromError("topic-feed: GetTopicCatalog", "GetTopicCatalog(), id(%d),error(%+v)", info.CatalogID, err)
 		return
 	}
 
@@ -73,12 +75,12 @@ func (p *Service) onTopicTaxonomyCatalogAdded(m *stan.Msg) {
 	}
 
 	if err = p.d.AddTopicFeed(c, tx, feed); err != nil {
-		log.Errorf("service.onTopicTaxonomyCatalogAdded() failed %#v", err)
+		PromError("topic-feed: AddTopicFeed", "AddFeed(), feed(%+v),error(%+v)", feed, err)
 		return
 	}
 
 	if err = tx.Commit(); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		PromError("topic-feed: tx.Commit", "tx.Commit(), error(%+v)", err)
 		return
 	}
 	m.Ack()
@@ -91,20 +93,20 @@ func (p *Service) onTopicTaxonomyCatalogDeleted(m *stan.Msg) {
 
 	info := new(def.MsgTopicTaxonomyCatalogDeleted)
 	if err = info.Unmarshal(m.Data); err != nil {
-		log.Errorf("onTopicTaxonomyCatalogDeleted Unmarshal failed %#v", err)
+		PromError("topic-feed: Unmarshal data", "info.Umarshal() ,error(%+v)", err)
 		return
 	}
 
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		PromError("topic-feed: tx.Beginx", "tx.Beginx(), error(%+v)", err)
 		return
 	}
 
 	defer func() {
 		if err != nil {
 			if err1 := tx.Rollback(); err1 != nil {
-				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+				PromError("topic-feed: tx.Rollback", "tx.Rollback(), error(%+v)", err)
 			}
 			return
 		}
@@ -125,12 +127,12 @@ func (p *Service) onTopicTaxonomyCatalogDeleted(m *stan.Msg) {
 	}
 
 	if err = p.d.AddTopicFeed(c, tx, feed); err != nil {
-		log.Errorf("service.onTopicTaxonomyCatalogDeleted() failed %#v", err)
+		PromError("topic-feed: AddTopicFeed", "AddFeed(), feed(%+v),error(%+v)", feed, err)
 		return
 	}
 
 	if err = tx.Commit(); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		PromError("topic-feed: tx.Commit", "tx.Commit(), error(%+v)", err)
 		return
 	}
 	m.Ack()
@@ -143,20 +145,20 @@ func (p *Service) onTopicTaxonomyCatalogRenamed(m *stan.Msg) {
 
 	info := new(def.MsgTopicTaxonomyCatalogRenamed)
 	if err = info.Unmarshal(m.Data); err != nil {
-		log.Errorf("onTopicTaxonomyCatalogRenamed Unmarshal failed %#v", err)
+		PromError("topic-feed: Unmarshal data", "info.Umarshal() ,error(%+v)", err)
 		return
 	}
 
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		PromError("topic-feed: tx.Beginx", "tx.Beginx(), error(%+v)", err)
 		return
 	}
 
 	defer func() {
 		if err != nil {
 			if err1 := tx.Rollback(); err1 != nil {
-				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+				PromError("topic-feed: tx.Rollback", "tx.Rollback(), error(%+v)", err)
 			}
 			return
 		}
@@ -164,9 +166,11 @@ func (p *Service) onTopicTaxonomyCatalogRenamed(m *stan.Msg) {
 
 	var catalog *model.TopicCatalog
 	if catalog, err = p.getTopicCatalog(c, tx, info.CatalogID); err != nil {
-		if ecode.Cause(err) == ecode.TopicCatalogNotExist {
+		if ecode.IsNotExistEcode(err) {
 			m.Ack()
+			return
 		}
+		PromError("topic-feed: GetTopicCatalog", "GetTopicCatalog(), id(%d),error(%+v)", info.CatalogID, err)
 		return
 	}
 
@@ -185,12 +189,12 @@ func (p *Service) onTopicTaxonomyCatalogRenamed(m *stan.Msg) {
 	}
 
 	if err = p.d.AddTopicFeed(c, tx, feed); err != nil {
-		log.Errorf("service.onTopicTaxonomyCatalogRenamed() failed %#v", err)
+		PromError("topic-feed: AddTopicFeed", "AddFeed(), feed(%+v),error(%+v)", feed, err)
 		return
 	}
 
 	if err = tx.Commit(); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		PromError("topic-feed: tx.Commit", "tx.Commit(), error(%+v)", err)
 		return
 	}
 	m.Ack()
@@ -203,20 +207,20 @@ func (p *Service) onTopicTaxonomyCatalogMoved(m *stan.Msg) {
 
 	info := new(def.MsgTopicTaxonomyCatalogMoved)
 	if err = info.Unmarshal(m.Data); err != nil {
-		log.Errorf("onTopicTaxonomyCatalogMoved Unmarshal failed %#v", err)
+		PromError("topic-feed: Unmarshal data", "info.Umarshal() ,error(%+v)", err)
 		return
 	}
 
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		PromError("topic-feed: tx.Beginx", "tx.Beginx(), error(%+v)", err)
 		return
 	}
 
 	defer func() {
 		if err != nil {
 			if err1 := tx.Rollback(); err1 != nil {
-				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+				PromError("topic-feed: tx.Rollback", "tx.Rollback(), error(%+v)", err)
 			}
 			return
 		}
@@ -224,9 +228,11 @@ func (p *Service) onTopicTaxonomyCatalogMoved(m *stan.Msg) {
 
 	var catalog *model.TopicCatalog
 	if catalog, err = p.getTopicCatalog(c, tx, info.CatalogID); err != nil {
-		if ecode.Cause(err) == ecode.TopicCatalogNotExist {
+		if ecode.IsNotExistEcode(err) {
 			m.Ack()
+			return
 		}
+		PromError("topic-feed: GetTopicCatalog", "GetTopicCatalog(), id(%d),error(%+v)", info.CatalogID, err)
 		return
 	}
 
@@ -245,12 +251,12 @@ func (p *Service) onTopicTaxonomyCatalogMoved(m *stan.Msg) {
 	}
 
 	if err = p.d.AddTopicFeed(c, tx, feed); err != nil {
-		log.Errorf("service.onTopicTaxonomyCatalogMoved() failed %#v", err)
+		PromError("topic-feed: AddTopicFeed", "AddFeed(), feed(%+v),error(%+v)", feed, err)
 		return
 	}
 
 	if err = tx.Commit(); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		PromError("topic-feed: tx.Commit", "tx.Commit(), error(%+v)", err)
 		return
 	}
 	m.Ack()
@@ -263,20 +269,20 @@ func (p *Service) onTopicUpdated(m *stan.Msg) {
 
 	info := new(def.MsgTopicUpdated)
 	if err = info.Unmarshal(m.Data); err != nil {
-		log.Errorf("onTopicUpdated Unmarshal failed %#v", err)
+		PromError("topic-feed: Unmarshal data", "info.Umarshal() ,error(%+v)", err)
 		return
 	}
 
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		PromError("topic-feed: tx.Beginx", "tx.Beginx(), error(%+v)", err)
 		return
 	}
 
 	defer func() {
 		if err != nil {
 			if err1 := tx.Rollback(); err1 != nil {
-				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+				PromError("topic-feed: tx.Rollback", "tx.Rollback(), error(%+v)", err)
 			}
 			return
 		}
@@ -284,9 +290,11 @@ func (p *Service) onTopicUpdated(m *stan.Msg) {
 
 	var t *model.Topic
 	if t, err = p.getTopic(c, tx, info.TopicID); err != nil {
-		if ecode.Cause(err) == ecode.TopicNotExist {
+		if ecode.IsNotExistEcode(err) {
 			m.Ack()
+			return
 		}
+		PromError("topic-feed: GetTopic", "GetTopic(), id(%d),error(%+v)", info.TopicID, err)
 		return
 	}
 	feed := &model.TopicFeed{
@@ -304,12 +312,12 @@ func (p *Service) onTopicUpdated(m *stan.Msg) {
 	}
 
 	if err = p.d.AddTopicFeed(c, tx, feed); err != nil {
-		log.Errorf("service.onTopicUpdated() failed %#v", err)
+		PromError("topic-feed: AddTopicFeed", "AddFeed(), feed(%+v),error(%+v)", feed, err)
 		return
 	}
 
 	if err = tx.Commit(); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		PromError("topic-feed: tx.Commit", "tx.Commit(), error(%+v)", err)
 		return
 	}
 	m.Ack()
@@ -323,20 +331,20 @@ func (p *Service) onTopicFollowed(m *stan.Msg) {
 
 	info := new(def.MsgTopicFollowed)
 	if err = info.Unmarshal(m.Data); err != nil {
-		log.Errorf("onTopicUpdated Unmarshal failed %#v", err)
+		PromError("topic-feed: Unmarshal data", "info.Umarshal() ,error(%+v)", err)
 		return
 	}
 
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		PromError("topic-feed: tx.Beginx", "tx.Beginx(), error(%+v)", err)
 		return
 	}
 
 	defer func() {
 		if err != nil {
 			if err1 := tx.Rollback(); err1 != nil {
-				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+				PromError("topic-feed: tx.Rollback", "tx.Rollback(), error(%+v)", err)
 			}
 			return
 		}
@@ -344,13 +352,16 @@ func (p *Service) onTopicFollowed(m *stan.Msg) {
 
 	var t *model.Topic
 	if t, err = p.getTopic(c, tx, info.TopicID); err != nil {
-		if ecode.Cause(err) == ecode.TopicNotExist {
+		if ecode.IsNotExistEcode(err) {
 			m.Ack()
+			return
 		}
+		PromError("topic-feed: GetTopic", "GetTopic(), id(%d),error(%+v)", info.TopicID, err)
 		return
 	}
 
 	if t.JoinPermission == model.JoinPermissionMember {
+		m.Ack()
 		return
 	}
 
@@ -369,12 +380,12 @@ func (p *Service) onTopicFollowed(m *stan.Msg) {
 	}
 
 	if err = p.d.AddTopicFeed(c, tx, feed); err != nil {
-		log.Errorf("service.onTopicUpdated() failed %#v", err)
+		PromError("topic-feed: AddTopicFeed", "AddFeed(), feed(%+v),error(%+v)", feed, err)
 		return
 	}
 
 	if err = tx.Commit(); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		PromError("topic-feed: tx.Commit", "tx.Commit(), error(%+v)", err)
 		return
 	}
 	m.Ack()

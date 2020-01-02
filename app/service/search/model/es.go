@@ -222,15 +222,15 @@ type ESDiscussionCategory struct {
 type ESSearchStat struct {
 	ID int64 `json:"id,string" swaggertype:"string"`
 	// Keywords 关键字
-	Keywords   string `json:"keywords"`
+	Keywords string `json:"keywords"`
 	// CreatedBy 创建人
-	CreatedBy  int64  `json:"created_by,string"`
+	CreatedBy int64 `json:"created_by,string"`
 	// Hits 命中数量
-	Hits       int64  `json:"hits,string"`
+	Hits int64 `json:"hits,string"`
 	// Enterpoint 搜索入口
 	Enterpoint string `json:"enterpoint"`
 	// CreatedAt 创建时间(搜索时间)
-	CreatedAt  int64  `json:"created_at"`
+	CreatedAt int64 `json:"created_at"`
 	// UpdatedAt 更新时间
-	UpdatedAt  int64  `json:"updated_at"`
+	UpdatedAt int64 `json:"updated_at"`
 }

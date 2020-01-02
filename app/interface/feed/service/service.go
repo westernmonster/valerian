@@ -6,35 +6,14 @@ import (
 
 	"valerian/app/interface/feed/conf"
 	"valerian/app/interface/feed/dao"
-	account "valerian/app/service/account/api"
-	article "valerian/app/service/article/api"
-	comment "valerian/app/service/comment/api"
-	discuss "valerian/app/service/discuss/api"
-	feed "valerian/app/service/feed/api"
-	topic "valerian/app/service/topic/api"
 	"valerian/library/conf/env"
-	"valerian/library/database/sqalx"
 	"valerian/library/log"
 )
 
 // Service struct of service
 type Service struct {
-	c *conf.Config
-	d interface {
-		GetAccountBaseInfo(c context.Context, aid int64) (info *account.BaseInfoReply, err error)
-		GetMemberInfo(c context.Context, aid int64) (info *account.MemberInfoReply, err error)
-		GetArticle(c context.Context, id int64) (info *article.ArticleInfo, err error)
-		GetComment(c context.Context, id int64) (info *comment.CommentInfo, err error)
-		GetRevise(c context.Context, id int64) (info *article.ReviseInfo, err error)
-		GetDiscussion(c context.Context, id int64) (info *discuss.DiscussionInfo, err error)
-		GetTopic(c context.Context, id int64) (resp *topic.TopicInfo, err error)
-		GetFeedPaged(c context.Context, accountID int64, limit, offset int) (info *feed.FeedResp, err error)
-		IsFollowing(c context.Context, aid, targetAccountID int64) (IsFollowing bool, err error)
-
-		Ping(c context.Context) (err error)
-		Close()
-		DB() sqalx.Node
-	}
+	c      *conf.Config
+	d      *dao.Dao
 	missch chan func()
 }
 

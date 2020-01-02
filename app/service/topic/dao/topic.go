@@ -212,6 +212,18 @@ func (p *Dao) AddTopic(c context.Context, node sqalx.Node, item *model.Topic) (e
 	return
 }
 
+func (p *Dao) SetTopicUpdatedAt(c context.Context, node sqalx.Node, id, updatedAt int64) (err error) {
+	sqlUpdate := "UPDATE topics SET updated_at=? WHERE id=?"
+
+	_, err = node.ExecContext(c, sqlUpdate, updatedAt, id)
+	if err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.SetTopicUpdatedAt err(%+v), id(%+v) updated_at(%+v)", err, id, updatedAt))
+		return
+	}
+
+	return
+}
+
 // Update update a exist record
 func (p *Dao) UpdateTopic(c context.Context, node sqalx.Node, item *model.Topic) (err error) {
 	sqlUpdate := "UPDATE topics SET name=?,avatar=?,bg=?,introduction=?,allow_discuss=?,allow_chat=?,is_private=?,view_permission=?,edit_permission=?,join_permission=?,catalog_view_type=?,topic_home=?,created_by=?,updated_at=? WHERE id=?"

@@ -8,47 +8,85 @@ import (
 
 	"valerian/app/service/feed/def"
 	"valerian/app/service/message/model"
-	topic "valerian/app/service/topic/api"
 	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
 	"valerian/library/gid"
-	"valerian/library/log"
 
 	"github.com/nats-io/stan.go"
 )
 
-func (p *Service) onTopicFollowed(m *stan.Msg) {
-	var err error
-	c := context.Background()
-	info := new(def.MsgTopicFollowed)
-	if err = info.Unmarshal(m.Data); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onTopicFollowed Unmarshal failed %#v", err))
+func (p *Service) getTopic(c context.Context, node sqalx.Node, topicID int64) (item *model.Topic, err error) {
+	if item, err = p.d.GetTopicByID(c, node, topicID); err != nil {
+		return
+	} else if item == nil {
+		return nil, ecode.TopicNotExist
+	}
+	return
+}
+
+func (p *Service) getTopicFollowRequest(c context.Context, node sqalx.Node, id int64) (item *model.TopicFollowRequest, err error) {
+	var req *model.TopicFollowRequest
+	if req, err = p.d.GetTopicFollowRequestByID(c, node, id); err != nil {
+		return
+	} else if req == nil {
+		err = ecode.TopicFollowRequestNotExist
 		return
 	}
 
-	var topic *topic.TopicInfo
-	if topic, err = p.d.GetTopic(c, info.TopicID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onTopicFollowed GetTopic failed %#v", err))
+	return
+}
+
+func (p *Service) getTopicInviteRequest(c context.Context, node sqalx.Node, id int64) (item *model.TopicInviteRequest, err error) {
+	var req *model.TopicInviteRequest
+	if req, err = p.d.GetTopicInviteRequestByID(c, node, id); err != nil {
+		return
+	} else if req == nil {
+		err = ecode.TopicInviteRequestNotExist
+		return
+	}
+
+	return
+}
+
+func (p *Service) onTopicFollowed(m *stan.Msg) {
+	var err error
+	// 强制使用Master库
+	c := sqalx.NewContext(context.Background(), true)
+
+	info := new(def.MsgTopicFollowed)
+	if err = info.Unmarshal(m.Data); err != nil {
+		PromError("message: Unmarshal data", "info.Umarshal() ,error(%+v)", err)
 		return
 	}
 
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		PromError("message: tx.Beginx", "tx.Beginx(), error(%+v)", err)
 		return
 	}
 
 	defer func() {
 		if err != nil {
 			if err1 := tx.Rollback(); err1 != nil {
-				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+				PromError("message: tx.Rollback", "tx.Rollback(), error(%+v)", err)
 			}
 			return
 		}
 	}()
 
+	var topic *model.Topic
+	if topic, err = p.getTopic(c, tx, info.TopicID); err != nil {
+		if ecode.IsNotExistEcode(err) {
+			m.Ack()
+			return
+		}
+		PromError("message: GetTopic", "GetTopic(), id(%d),error(%+v)", info.TopicID, err)
+		return
+	}
+
 	var admins []*model.TopicMember
 	if admins, err = p.d.GetAdminTopicMembers(c, tx, info.TopicID); err != nil {
+		PromError("message: GetAdminTopicMembers", "GetAdminTopicMembers(), topic_id(%d),error(%+v)", info.TopicID, err)
 		return
 	}
 
@@ -69,18 +107,20 @@ func (p *Service) onTopicFollowed(m *stan.Msg) {
 		}
 
 		if err = p.d.AddMessage(c, tx, msg); err != nil {
-			log.For(c).Error(fmt.Sprintf("service.onTopicFollowed AddMessage failed %#v", err))
+			PromError("message: AddMessage", "AddMessage(), message(%+v),error(%+v)", msg, err)
 			return
 		}
 
-		if err = p.d.IncrMessageStat(c, tx, &model.MessageStat{AccountID: v.AccountID, UnreadCount: 1}); err != nil {
+		stat := &model.MessageStat{AccountID: v.AccountID, UnreadCount: 1}
+		if err = p.d.IncrMessageStat(c, tx, stat); err != nil {
+			PromError("message: IncrMessageStat", "IncrMessageStat(), stat(%+v),error(%+v)", stat, err)
 			return
 		}
 
 	}
 
 	if err = tx.Commit(); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		PromError("message: tx.Commit", "tx.Commit(), error(%+v)", err)
 		return
 	}
 
@@ -90,23 +130,25 @@ func (p *Service) onTopicFollowed(m *stan.Msg) {
 
 func (p *Service) onTopicFollowRequested(m *stan.Msg) {
 	var err error
-	c := context.Background()
+	// 强制使用Master库
+	c := sqalx.NewContext(context.Background(), true)
+
 	info := new(def.MsgTopicFollowRequested)
 	if err = info.Unmarshal(m.Data); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onTopicFollowRequested Unmarshal failed %#v", err))
+		PromError("message: Unmarshal data", "info.Umarshal() ,error(%+v)", err)
 		return
 	}
 
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		PromError("message: tx.Beginx", "tx.Beginx(), error(%+v)", err)
 		return
 	}
 
 	defer func() {
 		if err != nil {
 			if err1 := tx.Rollback(); err1 != nil {
-				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+				PromError("message: tx.Rollback", "tx.Rollback(), error(%+v)", err)
 			}
 			return
 		}
@@ -114,29 +156,23 @@ func (p *Service) onTopicFollowRequested(m *stan.Msg) {
 
 	var admins []*model.TopicMember
 	if admins, err = p.d.GetAdminTopicMembers(c, tx, info.TopicID); err != nil {
+		PromError("message: GetAdminTopicMembers", "GetAdminTopicMembers(), topic_id(%d),error(%+v)", info.TopicID, err)
 		return
 	}
 
 	var req *model.TopicFollowRequest
-	if req, err = p.d.GetTopicFollowRequestByID(c, tx, info.RequestID); err != nil {
-		return
-	} else if req == nil {
-		err = ecode.TopicFollowRequestNotExist
+	if req, err = p.getTopicFollowRequest(c, tx, info.RequestID); err != nil {
+		if ecode.IsNotExistEcode(err) {
+			m.Ack()
+			return
+		}
+		PromError("message: GetTopicFollowRequest", "GetTopicFollowRequest(), id(%d),error(%+v)", info.RequestID, err)
 		return
 	}
 
-	type PushMessge struct {
-		Aid     int64
-		MsgID   int64
-		Title   string
-		Content string
-		Link    string
-	}
-
-	pushMsgs := make([]*PushMessge, 0)
+	pushMsgs := make([]*model.PushMessage, 0)
 
 	for _, v := range admins {
-
 		msg := &model.Message{
 			ID:         gid.NewID(),
 			AccountID:  v.AccountID,
@@ -153,15 +189,17 @@ func (p *Service) onTopicFollowRequested(m *stan.Msg) {
 		}
 
 		if err = p.d.AddMessage(c, tx, msg); err != nil {
-			log.For(c).Error(fmt.Sprintf("service.onTopicFollowRequested AddMessage failed %#v", err))
+			PromError("message: AddMessage", "AddMessage(), message(%+v),error(%+v)", msg, err)
 			return
 		}
 
-		if err = p.d.IncrMessageStat(c, tx, &model.MessageStat{AccountID: v.AccountID, UnreadCount: 1}); err != nil {
+		stat := &model.MessageStat{AccountID: v.AccountID, UnreadCount: 1}
+		if err = p.d.IncrMessageStat(c, tx, stat); err != nil {
+			PromError("message: IncrMessageStat", "IncrMessageStat(), stat(%+v),error(%+v)", stat, err)
 			return
 		}
 
-		pushMsgs = append(pushMsgs, &PushMessge{
+		pushMsgs = append(pushMsgs, &model.PushMessage{
 			MsgID:   msg.ID,
 			Title:   def.PushMsgTitleTopicFollowRequested,
 			Content: def.PushMsgTitleTopicFollowRequested,
@@ -172,7 +210,7 @@ func (p *Service) onTopicFollowRequested(m *stan.Msg) {
 	}
 
 	if err = tx.Commit(); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		PromError("message: tx.Commit", "tx.Commit(), error(%+v)", err)
 		return
 	}
 
@@ -180,8 +218,8 @@ func (p *Service) onTopicFollowRequested(m *stan.Msg) {
 
 	p.addCache(func() {
 		for _, v := range pushMsgs {
-			if _, err := p.pushSingleUser(context.Background(), v.Aid, v.MsgID, v.Title, v.Content, v.Link); err != nil {
-				log.For(context.Background()).Error(fmt.Sprintf("service.onTopicFollowRequested Push message failed %#v", err))
+			if _, err := p.pushSingleUser(context.Background(), v); err != nil {
+				PromError("message: pushSingleUser", "pushSingleUser(), push(%+v),error(%+v)", v, err)
 			}
 		}
 	})
@@ -190,39 +228,47 @@ func (p *Service) onTopicFollowRequested(m *stan.Msg) {
 
 func (p *Service) onTopicFollowApproved(m *stan.Msg) {
 	var err error
-	c := context.Background()
+	// 强制使用Master库
+	c := sqalx.NewContext(context.Background(), true)
+
 	info := new(def.MsgTopicFollowApproved)
 	if err = info.Unmarshal(m.Data); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onTopicFollowApproved Unmarshal failed %#v", err))
+		PromError("message: Unmarshal data", "info.Umarshal() ,error(%+v)", err)
 		return
 	}
 
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		PromError("message: tx.Beginx", "tx.Beginx(), error(%+v)", err)
 		return
 	}
 
 	defer func() {
 		if err != nil {
 			if err1 := tx.Rollback(); err1 != nil {
-				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+				PromError("message: tx.Rollback", "tx.Rollback(), error(%+v)", err)
 			}
 			return
 		}
 	}()
 
 	var req *model.TopicFollowRequest
-	if req, err = p.d.GetTopicFollowRequestByID(c, tx, info.RequestID); err != nil {
-		return
-	} else if req == nil {
-		err = ecode.TopicFollowRequestNotExist
+	if req, err = p.getTopicFollowRequest(c, tx, info.RequestID); err != nil {
+		if ecode.IsNotExistEcode(err) {
+			m.Ack()
+			return
+		}
+		PromError("message: GetTopicFollowRequest", "GetTopicFollowRequest(), id(%d),error(%+v)", info.RequestID, err)
 		return
 	}
 
-	var topic *topic.TopicInfo
-	if topic, err = p.d.GetTopic(c, req.TopicID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onTopicFollowApproved GetTopic failed %#v", err))
+	var topic *model.Topic
+	if topic, err = p.getTopic(c, tx, req.TopicID); err != nil {
+		if ecode.IsNotExistEcode(err) {
+			m.Ack()
+			return
+		}
+		PromError("message: GetTopic", "GetTopic(), id(%d),error(%+v)", info.TopicID, err)
 		return
 	}
 
@@ -242,30 +288,33 @@ func (p *Service) onTopicFollowApproved(m *stan.Msg) {
 	}
 
 	if err = p.d.AddMessage(c, tx, msg); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onTopicFollowApproved AddMessage failed %#v", err))
+		PromError("message: AddMessage", "AddMessage(), message(%+v),error(%+v)", msg, err)
 		return
 	}
 
-	if err = p.d.IncrMessageStat(c, tx, &model.MessageStat{AccountID: req.AccountID, UnreadCount: 1}); err != nil {
+	stat := &model.MessageStat{AccountID: msg.AccountID, UnreadCount: 1}
+	if err = p.d.IncrMessageStat(c, tx, stat); err != nil {
+		PromError("message: AddMessage", "AddMessage(), message(%+v),error(%+v)", msg, err)
 		return
 	}
 
 	if err = tx.Commit(); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		PromError("message: tx.Commit", "tx.Commit(), error(%+v)", err)
 		return
 	}
 
 	m.Ack()
 
 	p.addCache(func() {
-		if _, err := p.pushSingleUser(context.Background(),
-			msg.AccountID,
-			msg.ID,
-			def.PushMsgTitleTopicFollowApproved,
-			def.PushMsgTitleTopicFollowApproved,
-			fmt.Sprintf(def.LinkTopicRequest, req.ID),
-		); err != nil {
-			log.For(context.Background()).Error(fmt.Sprintf("service.onTopicFollowApproved Push message failed %#v", err))
+		push := &model.PushMessage{
+			Aid:     msg.AccountID,
+			MsgID:   msg.ID,
+			Title:   def.PushMsgTitleTopicFollowApproved,
+			Content: def.PushMsgTitleTopicFollowApproved,
+			Link:    fmt.Sprintf(def.LinkTopicRequest, req.ID),
+		}
+		if _, err := p.pushSingleUser(context.Background(), push); err != nil {
+			PromError("message: pushSingleUser", "pushSingleUser(), push(%+v),error(%+v)", push, err)
 		}
 	})
 
@@ -273,39 +322,47 @@ func (p *Service) onTopicFollowApproved(m *stan.Msg) {
 
 func (p *Service) onTopicFollowRejected(m *stan.Msg) {
 	var err error
-	c := context.Background()
+	// 强制使用Master库
+	c := sqalx.NewContext(context.Background(), true)
+
 	info := new(def.MsgTopicFollowRejected)
 	if err = info.Unmarshal(m.Data); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onTopicFollowRejected Unmarshal failed %#v", err))
+		PromError("message: Unmarshal data", "info.Umarshal() ,error(%+v)", err)
 		return
 	}
 
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		PromError("message: tx.Beginx", "tx.Beginx(), error(%+v)", err)
 		return
 	}
 
 	defer func() {
 		if err != nil {
 			if err1 := tx.Rollback(); err1 != nil {
-				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+				PromError("message: tx.Rollback", "tx.Rollback(), error(%+v)", err)
 			}
 			return
 		}
 	}()
 
 	var req *model.TopicFollowRequest
-	if req, err = p.d.GetTopicFollowRequestByID(c, tx, info.RequestID); err != nil {
-		return
-	} else if req == nil {
-		err = ecode.TopicFollowRequestNotExist
+	if req, err = p.getTopicFollowRequest(c, tx, info.RequestID); err != nil {
+		if ecode.IsNotExistEcode(err) {
+			m.Ack()
+			return
+		}
+		PromError("message: GetTopicFollowRequest", "GetTopicFollowRequest(), id(%d),error(%+v)", info.RequestID, err)
 		return
 	}
 
-	var topic *topic.TopicInfo
-	if topic, err = p.d.GetTopic(c, req.TopicID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onTopicFollowRejected GetTopic failed %#v", err))
+	var topic *model.Topic
+	if topic, err = p.getTopic(c, tx, req.TopicID); err != nil {
+		if ecode.IsNotExistEcode(err) {
+			m.Ack()
+			return
+		}
+		PromError("message: GetTopic", "GetTopic(), id(%d),error(%+v)", req.TopicID, err)
 		return
 	}
 
@@ -325,30 +382,33 @@ func (p *Service) onTopicFollowRejected(m *stan.Msg) {
 	}
 
 	if err = p.d.AddMessage(c, tx, msg); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onTopicFollowRejected AddMessage failed %#v", err))
+		PromError("message: AddMessage", "AddMessage(), message(%+v),error(%+v)", msg, err)
 		return
 	}
 
-	if err = p.d.IncrMessageStat(c, tx, &model.MessageStat{AccountID: req.AccountID, UnreadCount: 1}); err != nil {
+	stat := &model.MessageStat{AccountID: msg.AccountID, UnreadCount: 1}
+	if err = p.d.IncrMessageStat(c, tx, stat); err != nil {
+		PromError("message: AddMessage", "AddMessage(), message(%+v),error(%+v)", msg, err)
 		return
 	}
 
 	if err = tx.Commit(); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		PromError("message: tx.Commit", "tx.Commit(), error(%+v)", err)
 		return
 	}
 
 	m.Ack()
 
 	p.addCache(func() {
-		if _, err := p.pushSingleUser(context.Background(),
-			msg.AccountID,
-			msg.ID,
-			def.PushMsgTitleTopicFollowRejected,
-			def.PushMsgTitleTopicFollowRejected,
-			fmt.Sprintf(def.LinkTopicRequest, req.ID),
-		); err != nil {
-			log.For(context.Background()).Error(fmt.Sprintf("service.onTopicFollowRejected Push message failed %#v", err))
+		push := &model.PushMessage{
+			Aid:     msg.AccountID,
+			MsgID:   msg.ID,
+			Title:   def.PushMsgTitleTopicFollowRejected,
+			Content: def.PushMsgTitleTopicFollowRejected,
+			Link:    fmt.Sprintf(def.LinkTopicRequest, req.ID),
+		}
+		if _, err := p.pushSingleUser(context.Background(), push); err != nil {
+			PromError("message: pushSingleUser", "pushSingleUser(), push(%+v),error(%+v)", push, err)
 		}
 	})
 
@@ -356,32 +416,35 @@ func (p *Service) onTopicFollowRejected(m *stan.Msg) {
 
 func (p *Service) onTopicInvite(m *stan.Msg) {
 	var err error
-	c := context.Background()
+	// 强制使用Master库
+	c := sqalx.NewContext(context.Background(), true)
 	info := new(def.MsgTopicInviteSent)
 	if err = info.Unmarshal(m.Data); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onTopicFollowed Unmarshal failed %#v", err))
+		PromError("message: Unmarshal data", "info.Umarshal() ,error(%+v)", err)
 		return
 	}
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		PromError("message: tx.Beginx", "tx.Beginx(), error(%+v)", err)
 		return
 	}
 
 	defer func() {
 		if err != nil {
 			if err1 := tx.Rollback(); err1 != nil {
-				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+				PromError("message: tx.Rollback", "tx.Rollback(), error(%+v)", err)
 			}
 			return
 		}
 	}()
 
 	var req *model.TopicInviteRequest
-	if req, err = p.d.GetTopicInviteRequestByID(c, tx, info.InviteID); err != nil {
-		return
-	} else if req == nil {
-		err = ecode.TopicInviteRequestNotExist
+	if req, err = p.getTopicInviteRequest(c, tx, info.InviteID); err != nil {
+		if ecode.IsNotExistEcode(err) {
+			m.Ack()
+			return
+		}
+		PromError("message: GetTopicInviteRequest", "GetTopicInviteRequest(), id(%d),error(%+v)", info.InviteID, err)
 		return
 	}
 
@@ -401,30 +464,33 @@ func (p *Service) onTopicInvite(m *stan.Msg) {
 	}
 
 	if err = p.d.AddMessage(c, tx, msg); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onTopicFollowed AddMessage failed %#v", err))
+		PromError("message: AddMessage", "AddMessage(), message(%+v),error(%+v)", msg, err)
 		return
 	}
 
-	if err = p.d.IncrMessageStat(c, tx, &model.MessageStat{AccountID: req.AccountID, UnreadCount: 1}); err != nil {
+	stat := &model.MessageStat{AccountID: msg.AccountID, UnreadCount: 1}
+	if err = p.d.IncrMessageStat(c, tx, stat); err != nil {
+		PromError("message: IncrMessageStat", "IncrMessageStat(), stat(%+v),error(%+v)", stat, err)
 		return
 	}
 
 	if err = tx.Commit(); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		PromError("message: tx.Commit", "tx.Commit(), error(%+v)", err)
 		return
 	}
 
 	m.Ack()
 
 	p.addCache(func() {
-		if _, err := p.pushSingleUser(context.Background(),
-			msg.AccountID,
-			msg.ID,
-			def.PushMsgTitleTopicFollowInvited,
-			def.PushMsgTitleTopicFollowInvited,
-			fmt.Sprintf(def.LinkTopicInvite, req.ID),
-		); err != nil {
-			log.For(context.Background()).Error(fmt.Sprintf("service.onTopicInvite Push message failed %#v", err))
+		push := &model.PushMessage{
+			Aid:     msg.AccountID,
+			MsgID:   msg.ID,
+			Title:   def.PushMsgTitleTopicFollowInvited,
+			Content: def.PushMsgTitleTopicFollowInvited,
+			Link:    fmt.Sprintf(def.LinkTopicInvite, req.ID),
+		}
+		if _, err := p.pushSingleUser(context.Background(), push); err != nil {
+			PromError("message: pushSingleUser", "pushSingleUser(), push(%+v),error(%+v)", push, err)
 		}
 	})
 }

@@ -2,60 +2,84 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"time"
 
-	account "valerian/app/service/account/api"
 	"valerian/app/service/feed/def"
 	"valerian/app/service/feed/model"
-	relation "valerian/app/service/relation/api"
 	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
 	"valerian/library/gid"
-	"valerian/library/log"
 
 	"github.com/nats-io/stan.go"
 )
 
+func (p *Service) getAccount(c context.Context, node sqalx.Node, aid int64) (account *model.Account, err error) {
+	if account, err = p.d.GetAccountByID(c, node, aid); err != nil {
+		return
+	} else if account == nil {
+		err = ecode.UserNotExist
+		return
+	}
+	return
+}
+
 func (p *Service) onMemberFollowed(m *stan.Msg) {
 	var err error
+
 	c := context.Background()
+	// 强制使用强制使用Master库
+	c = sqalx.NewContext(c, true)
+
 	info := new(def.MsgMemberFollowed)
 	if err = info.Unmarshal(m.Data); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onDiscussionUpdated Unmarshal failed %#v", err))
-		return
-	}
-
-	var member *account.BaseInfoReply
-	if member, err = p.d.GetAccountBaseInfo(context.Background(), info.TargetAccountID); err != nil {
-		if ecode.Cause(err) == ecode.UserNotExist {
-			m.Ack()
-		}
-		return
-	}
-
-	var fansResp *relation.IDsResp
-	if fansResp, err = p.d.GetFansIDs(c, info.AccountID); err != nil {
-		log.For(c).Error(fmt.Sprintf("service.onDiscussionUpdated GetFansIDs failed %#v", err))
+		PromError("feed: Unmarshal data", "info.Umarshal() ,error(%+v)", err)
 		return
 	}
 
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		PromError("feed: tx.Beginx", "tx.Beginx(), error(%+v)", err)
 		return
 	}
 
 	defer func() {
 		if err != nil {
 			if err1 := tx.Rollback(); err1 != nil {
-				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+				PromError("feed: tx.Rollback", "tx.Rollback(), error(%+v)", err)
 			}
 			return
 		}
 	}()
 
-	for _, v := range fansResp.IDs {
+	var member *model.Account
+	if member, err = p.getAccount(c, tx, info.TargetAccountID); err != nil {
+		if ecode.IsNotExistEcode(err) {
+			// 如果不存在这个账户，直接Ack
+			m.Ack()
+			return
+		}
+		PromError("feed: getAccount", "getAccount(), id(%d),error(%+v)", info.TargetAccountID, err)
+		return
+	}
+
+	var setting *model.SettingResp
+	if setting, err = p.getAccountSetting(c, tx, info.AccountID); err != nil {
+		PromError("feed: getAccountSetting", "getAccountSetting(), id(%d),error(%+v)", info.AccountID, err)
+		return
+	}
+
+	if !setting.ActivityFollowMember {
+		m.Ack()
+		return
+	}
+
+	var ids []int64
+	if ids, err = p.d.GetFansIDs(c, tx, info.AccountID); err != nil {
+		PromError("feed: GetFansIDs", "GetFansIDs(), aid(%d),error(%+v)", info.AccountID, err)
+		return
+	}
+
+	for _, v := range ids {
 		feed := &model.Feed{
 			ID:         gid.NewID(),
 			AccountID:  v,
@@ -71,13 +95,13 @@ func (p *Service) onMemberFollowed(m *stan.Msg) {
 		}
 
 		if err = p.d.AddFeed(c, tx, feed); err != nil {
-			log.For(c).Error(fmt.Sprintf("service.onDiscussionUpdated() failed %#v", err))
+			PromError("feed: AddFeed", "AddFeed(), feed(%+v),error(%+v)", feed, err)
 			return
 		}
 	}
 
 	if err = tx.Commit(); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		PromError("feed: tx.Rollback", "tx.Commit(), error(%+v)", err)
 		return
 	}
 

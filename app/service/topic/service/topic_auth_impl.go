@@ -11,6 +11,7 @@ import (
 	"valerian/library/gid"
 )
 
+// isAuthTopic 是否授权话题
 func (p *Service) isAuthTopic(c context.Context, node sqalx.Node, toTopicID, fromTopicID int64) (isAuth bool, err error) {
 	var t *model.AuthTopic
 	if t, err = p.d.GetAuthTopicByCond(c, node, map[string]interface{}{"to_topic_id": toTopicID, "topic_id": fromTopicID}); err != nil {
@@ -22,6 +23,7 @@ func (p *Service) isAuthTopic(c context.Context, node sqalx.Node, toTopicID, fro
 	return
 }
 
+// checkAuthTopics 验证授权话题请求
 func (p *Service) checkAuthTopics(c context.Context, node sqalx.Node, topicID int64, items []*api.ArgAuthTopic) (err error) {
 	// must unique and not equal to current topic
 	dic := make(map[int64]bool)
@@ -46,6 +48,7 @@ func (p *Service) checkAuthTopics(c context.Context, node sqalx.Node, topicID in
 	return
 }
 
+// loadAuthTopicsMap 获取授权话题字典
 func (p *Service) loadAuthTopicsMap(c context.Context, node sqalx.Node, topicID int64) (dic map[int64]bool, err error) {
 	dic = make(map[int64]bool)
 	var dbItems []*model.AuthTopic
@@ -60,6 +63,7 @@ func (p *Service) loadAuthTopicsMap(c context.Context, node sqalx.Node, topicID 
 	return
 }
 
+// bulkSaveAuthTopics 批量保存授权话题信息
 func (p *Service) bulkSaveAuthTopics(c context.Context, node sqalx.Node, topicID int64, items []*api.ArgAuthTopic) (err error) {
 	if err = p.checkAuthTopics(c, node, topicID, items); err != nil {
 		return
@@ -115,6 +119,7 @@ func (p *Service) bulkSaveAuthTopics(c context.Context, node sqalx.Node, topicID
 	return
 }
 
+// getAuthTopicsResp 获取授权话题信息
 func (p *Service) getAuthTopicsResp(c context.Context, node sqalx.Node, topicID int64) (items []*api.AuthTopicInfo, err error) {
 	var data []*model.AuthTopic
 	if data, err = p.getAuthTopics(c, node, topicID); err != nil {
@@ -150,6 +155,7 @@ func (p *Service) getAuthTopicsResp(c context.Context, node sqalx.Node, topicID 
 	return
 }
 
+// getAuthTopics 获取授权话题信息
 func (p *Service) getAuthTopics(c context.Context, node sqalx.Node, topicID int64) (data []*model.AuthTopic, err error) {
 	var addCache = true
 	if data, err = p.d.AuthTopicsCache(c, topicID); err != nil {
@@ -170,7 +176,7 @@ func (p *Service) getAuthTopics(c context.Context, node sqalx.Node, topicID int6
 	return
 }
 
-// 获取授权了当前话题的话题ID
+// GetAuthed2CurrentTopicIDsPaged 获取授权了当前话题的话题ID列表
 func (p *Service) GetAuthed2CurrentTopicIDsPaged(c context.Context, topicID int64, limit, offset int32) (ids []int64, err error) {
 	if ids, err = p.d.GetAuthed2CurrentTopicIDsPaged(c, p.d.DB(), topicID, limit, offset); err != nil {
 		return

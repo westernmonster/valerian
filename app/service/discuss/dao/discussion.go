@@ -11,9 +11,31 @@ import (
 	"valerian/library/log"
 )
 
+func (p *Dao) GetTopicDiscussionsPaged(c context.Context, node sqalx.Node, topicID, categoryID int64, limit, offset int) (items []*model.Discussion, err error) {
+	items = make([]*model.Discussion, 0)
+
+	if categoryID == 0 {
+		sqlSelect := "SELECT a.id,a.topic_id,a.category_id,a.created_by,a.title,a.content,a.content_text,a.deleted,a.created_at,a.updated_at FROM discussions a WHERE a.deleted=0 AND a.topic_id=?  ORDER BY a.id DESC limit ?,?"
+		if err = node.SelectContext(c, &items, sqlSelect, topicID, offset, limit); err != nil {
+			log.For(c).Error(fmt.Sprintf("dao.GetTopicDiscussionsPaged error(%+v), topic_id(%d) limit(%d) offset(%d)", err, topicID, limit, offset))
+		}
+	} else {
+		sqlSelect := "SELECT a.id,a.topic_id,a.category_id,a.created_by,a.title,a.content,a.content_text,a.deleted,a.created_at,a.updated_at FROM discussions a WHERE a.deleted=0 AND a.topic_id=? and category_id=? ORDER BY a.id DESC limit ?,?"
+		if err = node.SelectContext(c, &items, sqlSelect, topicID, categoryID, offset, limit); err != nil {
+			log.For(c).Error(fmt.Sprintf("dao.GetTopicDiscussionsPaged error(%+v), topic_id(%d) category_id(%d) limit(%d) offset(%d)", err, topicID, categoryID, limit, offset))
+		}
+	}
+
+	return
+}
+
 func (p *Dao) GetUserDiscussionIDsPaged(c context.Context, node sqalx.Node, aid int64, limit, offset int) (items []int64, err error) {
 	items = make([]int64, 0)
-	sqlSelect := "SELECT a.id FROM discussions a WHERE a.deleted=0 AND a.created_by=? ORDER BY a.id DESC limit ?,?"
+	sqlSelect := `
+    SELECT a.id
+	FROM discussions a LEFT JOIN topics b ON a.topic_id=b.id
+	WHERE b.deleted =0 AND a.deleted=0 AND a.created_by=?
+	ORDER BY a.id DESC limit ?,?`
 
 	var rows *sqlx.Rows
 	if rows, err = node.QueryxContext(c, sqlSelect, aid, offset, limit); err != nil {
@@ -39,66 +61,13 @@ func (p *Dao) GetUserDiscussionIDsPaged(c context.Context, node sqalx.Node, aid 
 
 func (p *Dao) GetUserDiscussionsPaged(c context.Context, node sqalx.Node, aid int64, limit, offset int) (items []*model.Discussion, err error) {
 	items = make([]*model.Discussion, 0)
-	sqlSelect := "SELECT a.id,a.topic_id,a.category_id,a.created_by,a.title,a.content,a.content_text,a.deleted,a.created_at,a.updated_at FROM discussions a WHERE a.deleted=0 AND a.created_by=? ORDER BY a.id DESC limit ?,?"
+	sqlSelect := `
+    SELECT a.id,a.topic_id,a.category_id,a.created_by,a.title,a.content,a.content_text,a.deleted,a.created_at,a.updated_at
+	FROM discussions a LEFT JOIN topics b ON a.topic_id = b.id
+	WHERE a.deleted=0 AND b.deleted=0 AND a.created_by=? ORDER BY a.id DESC limit ?,?`
 
 	if err = node.SelectContext(c, &items, sqlSelect, aid, offset, limit); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetUserDiscussionsPaged err(%+v) aid(%d) limit(%d) offset(%d)", err, aid, limit, offset))
-		return
-	}
-	return
-}
-
-// GetAll get all records
-func (p *Dao) GetDiscussions(c context.Context, node sqalx.Node) (items []*model.Discussion, err error) {
-	items = make([]*model.Discussion, 0)
-	sqlSelect := "SELECT a.id,a.topic_id,a.category_id,a.created_by,a.title,a.content,a.content_text,a.deleted,a.created_at,a.updated_at FROM discussions a WHERE a.deleted=0 ORDER BY a.id DESC "
-
-	if err = node.SelectContext(c, &items, sqlSelect); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.GetDiscussions err(%+v)", err))
-		return
-	}
-	return
-}
-
-// GetAllByCondition get records by condition
-func (p *Dao) GetDiscussionsByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.Discussion, err error) {
-	items = make([]*model.Discussion, 0)
-	condition := make([]interface{}, 0)
-	clause := ""
-
-	if val, ok := cond["id"]; ok {
-		clause += " AND a.id =?"
-		condition = append(condition, val)
-	}
-	if val, ok := cond["topic_id"]; ok {
-		clause += " AND a.topic_id =?"
-		condition = append(condition, val)
-	}
-	if val, ok := cond["category_id"]; ok {
-		clause += " AND a.category_id =?"
-		condition = append(condition, val)
-	}
-	if val, ok := cond["created_by"]; ok {
-		clause += " AND a.created_by =?"
-		condition = append(condition, val)
-	}
-	if val, ok := cond["title"]; ok {
-		clause += " AND a.title =?"
-		condition = append(condition, val)
-	}
-	if val, ok := cond["content"]; ok {
-		clause += " AND a.content =?"
-		condition = append(condition, val)
-	}
-	if val, ok := cond["content_text"]; ok {
-		clause += " AND a.content_text =?"
-		condition = append(condition, val)
-	}
-
-	sqlSelect := fmt.Sprintf("SELECT a.id,a.topic_id,a.category_id,a.created_by,a.title,a.content,a.content_text,a.deleted,a.created_at,a.updated_at FROM discussions a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
-
-	if err = node.SelectContext(c, &items, sqlSelect, condition...); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.GetDiscussionsByCond err(%+v), condition(%+v)", err, cond))
 		return
 	}
 	return
@@ -116,56 +85,6 @@ func (p *Dao) GetDiscussionByID(c context.Context, node sqalx.Node, id int64) (i
 			return
 		}
 		log.For(c).Error(fmt.Sprintf("dao.GetDiscussionByID err(%+v), id(%+v)", err, id))
-	}
-
-	return
-}
-
-// GetByCondition get a record by condition
-func (p *Dao) GetDiscussionByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (item *model.Discussion, err error) {
-	item = new(model.Discussion)
-	condition := make([]interface{}, 0)
-	clause := ""
-
-	if val, ok := cond["id"]; ok {
-		clause += " AND a.id =?"
-		condition = append(condition, val)
-	}
-	if val, ok := cond["topic_id"]; ok {
-		clause += " AND a.topic_id =?"
-		condition = append(condition, val)
-	}
-	if val, ok := cond["category_id"]; ok {
-		clause += " AND a.category_id =?"
-		condition = append(condition, val)
-	}
-	if val, ok := cond["created_by"]; ok {
-		clause += " AND a.created_by =?"
-		condition = append(condition, val)
-	}
-	if val, ok := cond["title"]; ok {
-		clause += " AND a.title =?"
-		condition = append(condition, val)
-	}
-	if val, ok := cond["content"]; ok {
-		clause += " AND a.content =?"
-		condition = append(condition, val)
-	}
-	if val, ok := cond["content_text"]; ok {
-		clause += " AND a.content_text =?"
-		condition = append(condition, val)
-	}
-
-	sqlSelect := fmt.Sprintf("SELECT a.id,a.topic_id,a.category_id,a.created_by,a.title,a.content,a.content_text,a.deleted,a.created_at,a.updated_at FROM discussions a WHERE a.deleted=0 %s", clause)
-
-	if err = node.GetContext(c, item, sqlSelect, condition...); err != nil {
-		if err == sql.ErrNoRows {
-			item = nil
-			err = nil
-			return
-		}
-		log.For(c).Error(fmt.Sprintf("dao.GetDiscussionsByCond err(%+v), condition(%+v)", err, cond))
-		return
 	}
 
 	return

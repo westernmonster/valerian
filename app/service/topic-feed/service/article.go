@@ -2,14 +2,12 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"time"
 	"valerian/app/service/feed/def"
 	"valerian/app/service/topic-feed/model"
 	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
 	"valerian/library/gid"
-	"valerian/library/log"
 
 	"github.com/nats-io/stan.go"
 )
@@ -52,39 +50,44 @@ func (p *Service) onArticleAdded(m *stan.Msg) {
 	var err error
 	info := new(def.MsgCatalogArticleAdded)
 	c := context.Background()
+	// 强制使用Master库
 	c = sqalx.NewContext(c, true)
 	if err = info.Unmarshal(m.Data); err != nil {
-		log.Errorf("onReviseAdded Unmarshal failed %#v", err)
+		PromError("topic-feed: Unmarshal data", "info.Umarshal() ,error(%+v)", err)
 		return
 	}
 
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		PromError("topic-feed: tx.Beginx", "tx.Beginx(), error(%+v)", err)
 		return
 	}
 
 	defer func() {
 		if err != nil {
 			if err1 := tx.Rollback(); err1 != nil {
-				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+				PromError("topic-feed: tx.Rollback", "tx.Rollback(), error(%+v)", err)
 			}
 			return
 		}
 	}()
 	var history *model.ArticleHistory
 	if history, err = p.getArticleHistory(c, tx, info.ArticleHistoryID); err != nil {
-		if ecode.Cause(err) == ecode.ArticleHistoryNotExist {
+		if ecode.IsNotExistEcode(err) {
 			m.Ack()
+			return
 		}
+		PromError("topic-feed: GetArticleHistory", "GetArticleHistory(), id(%d),error(%+v)", info.ArticleHistoryID, err)
 		return
 	}
 
 	var article *model.Article
 	if article, err = p.getArticle(c, tx, info.ArticleID); err != nil {
-		if ecode.Cause(err) == ecode.ArticleNotExist {
+		if ecode.IsNotExistEcode(err) {
 			m.Ack()
+			return
 		}
+		PromError("topic-feed: GetArticle", "GetArticle(), id(%d),error(%+v)", info.ArticleID, err)
 		return
 	}
 
@@ -103,12 +106,12 @@ func (p *Service) onArticleAdded(m *stan.Msg) {
 	}
 
 	if err = p.d.AddTopicFeed(context.Background(), tx, feed); err != nil {
-		log.Errorf("service.onArticleAdded() failed %#v", err)
+		PromError("topic-feed: AddTopicFeed", "AddFeed(), feed(%+v),error(%+v)", feed, err)
 		return
 	}
 
 	if err = tx.Commit(); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		PromError("topic-feed: tx.Commit", "tx.Commit(), error(%+v)", err)
 		return
 	}
 
@@ -118,24 +121,25 @@ func (p *Service) onArticleAdded(m *stan.Msg) {
 func (p *Service) onArticleUpdated(m *stan.Msg) {
 	var err error
 	c := context.Background()
+	// 强制使用Master库
 	c = sqalx.NewContext(c, true)
 
 	info := new(def.MsgArticleUpdated)
 	if err = info.Unmarshal(m.Data); err != nil {
-		log.Errorf("onReviseUpdated Unmarshal failed %#v", err)
+		PromError("topic-feed: Unmarshal data", "info.Umarshal() ,error(%+v)", err)
 		return
 	}
 
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		PromError("topic-feed: tx.Beginx", "tx.Beginx(), error(%+v)", err)
 		return
 	}
 
 	defer func() {
 		if err != nil {
 			if err1 := tx.Rollback(); err1 != nil {
-				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+				PromError("topic-feed: tx.Rollback", "tx.Rollback(), error(%+v)", err)
 			}
 			return
 		}
@@ -143,17 +147,21 @@ func (p *Service) onArticleUpdated(m *stan.Msg) {
 
 	var history *model.ArticleHistory
 	if history, err = p.getArticleHistory(c, tx, info.ArticleHistoryID); err != nil {
-		if ecode.Cause(err) == ecode.ArticleHistoryNotExist {
+		if ecode.IsNotExistEcode(err) {
 			m.Ack()
+			return
 		}
+		PromError("topic-feed: GetArticleHistory", "GetArticleHistory(), id(%d),error(%+v)", info.ArticleHistoryID, err)
 		return
 	}
 
 	var article *model.Article
 	if article, err = p.getArticle(c, tx, info.ArticleID); err != nil {
-		if ecode.Cause(err) == ecode.ArticleNotExist {
+		if ecode.IsNotExistEcode(err) {
 			m.Ack()
+			return
 		}
+		PromError("topic-feed: GetArticle", "GetArticle(), id(%d),error(%+v)", info.ArticleID, err)
 		return
 	}
 
@@ -162,6 +170,7 @@ func (p *Service) onArticleUpdated(m *stan.Msg) {
 		"type":   model.TopicCatalogArticle,
 		"ref_id": article.ID,
 	}); err != nil {
+		PromError("topic-feed: GetTopicCatalogsByCond", "GetTopicCatalogsByCond(), type(%s),ref_id(%d),error(%+v)", model.TopicCatalogArticle, article.ID, err)
 		return
 	}
 
@@ -181,13 +190,13 @@ func (p *Service) onArticleUpdated(m *stan.Msg) {
 		}
 
 		if err = p.d.AddTopicFeed(context.Background(), tx, feed); err != nil {
-			log.Errorf("service.onArticleUpdated() failed %#v", err)
+			PromError("topic-feed: AddTopicFeed", "AddFeed(), feed(%+v),error(%+v)", feed, err)
 			return
 		}
 	}
 
 	if err = tx.Commit(); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		PromError("topic-feed: tx.Commit", "tx.Commit(), error(%+v)", err)
 		return
 	}
 	m.Ack()
@@ -196,23 +205,24 @@ func (p *Service) onArticleUpdated(m *stan.Msg) {
 func (p *Service) onArticleDeleted(m *stan.Msg) {
 	var err error
 	c := context.Background()
+	// 强制使用Master库
 	c = sqalx.NewContext(c, true)
 	info := new(def.MsgCatalogArticleDeleted)
 	if err = info.Unmarshal(m.Data); err != nil {
-		log.Errorf("onReviseAdded Unmarshal failed %#v", err)
+		PromError("topic-feed: Unmarshal data", "info.Umarshal() ,error(%+v)", err)
 		return
 	}
 
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		PromError("topic-feed: tx.Beginx", "tx.Beginx(), error(%+v)", err)
 		return
 	}
 
 	defer func() {
 		if err != nil {
 			if err1 := tx.Rollback(); err1 != nil {
-				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+				PromError("topic-feed: tx.Rollback", "tx.Rollback(), error(%+v)", err)
 			}
 			return
 		}
@@ -220,9 +230,11 @@ func (p *Service) onArticleDeleted(m *stan.Msg) {
 
 	var article *model.Article
 	if article, err = p.getArticle(c, tx, info.ArticleID); err != nil {
-		if ecode.Cause(err) == ecode.ArticleNotExist {
+		if ecode.IsNotExistEcode(err) {
 			m.Ack()
+			return
 		}
+		PromError("topic-feed: GetArticle", "GetArticle(), id(%d),error(%+v)", info.ArticleID, err)
 		return
 	}
 
@@ -241,12 +253,12 @@ func (p *Service) onArticleDeleted(m *stan.Msg) {
 	}
 
 	if err = p.d.AddTopicFeed(context.Background(), tx, feed); err != nil {
-		log.Errorf("service.onArticleDeleted() failed %#v", err)
+		PromError("topic-feed: AddTopicFeed", "AddFeed(), feed(%+v),error(%+v)", feed, err)
 		return
 	}
 
 	if err = tx.Commit(); err != nil {
-		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		PromError("topic-feed: tx.Commit", "tx.Commit(), error(%+v)", err)
 		return
 	}
 

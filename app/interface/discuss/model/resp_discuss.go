@@ -33,13 +33,13 @@ type DiscussItem struct {
 	// 摘录
 	Excerpt string `json:"excerpt"`
 	// 喜欢数
-	LikeCount int `json:"like_count"`
+	LikeCount int32 `json:"like_count"`
 
 	// 反对数
-	DislikeCount int `json:"dislike_count"`
+	DislikeCount int32 `json:"dislike_count"`
 
 	// 评论数
-	CommentCount int `json:"comment_count"`
+	CommentCount int32 `json:"comment_count"`
 
 	// 发布日期
 	CreatedAt int64 `json:"created_at"`
@@ -93,13 +93,13 @@ type DiscussDetailResp struct {
 	Dislike bool `json:"dislike"`
 
 	// 喜欢数
-	LikeCount int `json:"like_count"`
+	LikeCount int32 `json:"like_count"`
 
 	// 反对数
-	DislikeCount int `json:"dislike_count"`
+	DislikeCount int32 `json:"dislike_count"`
 
 	// 评论数
-	CommentCount int `json:"comment_count"`
+	CommentCount int32 `json:"comment_count"`
 
 	// 是否可以编辑
 	// 讨论所属用户以及管理员可以编辑
@@ -116,5 +116,9 @@ type DiscussFileResp struct {
 	ID       int64  `json:"id,string" swaggertype:"string"`
 	FileName string `json:"file_name"` // FileName 文件名
 	FileURL  string `json:"file_url"`  // FileURL 文件地址
-	Seq      int    `json:"seq"`       // Seq 文件顺序
+	PdfURL   string `json:"pdf_url"`   // PdfURL Pdf文件地址
+	FileType string `json:"file_type"` // 文件类型
+	Seq      int32  `json:"seq"`       // Seq 文件顺序
+	// 发布日期
+	CreatedAt int64 `json:"created_at"`
 }

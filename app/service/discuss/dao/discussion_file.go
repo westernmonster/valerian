@@ -10,18 +10,6 @@ import (
 	"valerian/library/log"
 )
 
-// GetAll get all records
-func (p *Dao) GetDiscussionFiles(c context.Context, node sqalx.Node) (items []*model.DiscussionFile, err error) {
-	items = make([]*model.DiscussionFile, 0)
-	sqlSelect := "SELECT a.id,a.file_name,a.file_url,a.seq,a.discussion_id,a.deleted,a.created_at,a.updated_at,a.file_type,a.pdf_url FROM discussion_files a WHERE a.deleted=0 ORDER BY a.id DESC "
-
-	if err = node.SelectContext(c, &items, sqlSelect); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.GetDiscussionFiles err(%+v)", err))
-		return
-	}
-	return
-}
-
 // GetAllByCondition get records by condition
 func (p *Dao) GetDiscussionFilesByCond(c context.Context, node sqalx.Node, cond map[string]interface{}) (items []*model.DiscussionFile, err error) {
 	items = make([]*model.DiscussionFile, 0)

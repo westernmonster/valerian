@@ -4,10 +4,9 @@ import (
 	"context"
 	"fmt"
 	"time"
-
 	"valerian/app/admin/account/conf"
-	account "valerian/app/service/account/api"
 	certification "valerian/app/service/certification/api"
+	identify "valerian/app/service/identify/api/grpc"
 	"valerian/library/cache/memcache"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
@@ -23,7 +22,7 @@ type Dao struct {
 	authMCExpire     int32
 	db               sqalx.Node
 	c                *conf.Config
-	accountRPC       account.AccountClient
+	identifyRPC      identify.IdentifyClient
 	certificationRPC certification.CertificationClient
 }
 
@@ -35,10 +34,10 @@ func New(c *conf.Config) (dao *Dao) {
 		mcExpire: int32(time.Duration(c.Memcache.Main.Expire) / time.Second),
 	}
 
-	if accountRPC, err := account.NewClient(c.AccountRPC); err != nil {
-		panic(errors.WithMessage(err, "Failed to dial account service"))
+	if identifyRPC, err := identify.NewClient(c.IdentifyRPC); err != nil {
+		panic(errors.WithMessage(err, "Failed to dial identify service"))
 	} else {
-		dao.accountRPC = accountRPC
+		dao.identifyRPC = identifyRPC
 	}
 
 	if certificationRPC, err := certification.NewClient(c.CertificationRPC); err != nil {

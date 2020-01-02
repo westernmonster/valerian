@@ -95,6 +95,7 @@ func (p *Service) GetMemberRecentViewsPaged(c context.Context, atype string, lim
 			}
 
 			item.Article = p.FromArticle(article)
+			item.Article.ChangeDesc = ""
 			break
 		case model.TargetTypeTopic:
 			var topic *topic.TopicInfo

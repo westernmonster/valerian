@@ -17,10 +17,12 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
+// GetReviseStat 获取补充状态信息
 func (p *Service) GetReviseStat(c context.Context, reviseID int64) (item *model.ReviseStat, err error) {
 	return p.d.GetReviseStatByID(c, p.d.DB(), reviseID)
 }
 
+// GetRevise 获取补充
 func (p *Service) GetRevise(c context.Context, reviseID int64) (item *model.Revise, err error) {
 	if item, err = p.getRevise(c, p.d.DB(), reviseID); err != nil {
 		return
@@ -35,6 +37,7 @@ func (p *Service) GetRevise(c context.Context, reviseID int64) (item *model.Revi
 	return
 }
 
+// getRevise 获取补充
 func (p *Service) getRevise(c context.Context, node sqalx.Node, reviseID int64) (item *model.Revise, err error) {
 	var addCache = true
 	if item, err = p.d.ReviseCache(c, reviseID); err != nil {
@@ -58,6 +61,7 @@ func (p *Service) getRevise(c context.Context, node sqalx.Node, reviseID int64) 
 	return
 }
 
+// GetReviseImageUrls 获取补充图片地址
 func (p *Service) GetReviseImageUrls(c context.Context, reviseID int64) (urls []string, err error) {
 	urls = make([]string, 0)
 	var imgs []*model.ImageURL
@@ -75,6 +79,7 @@ func (p *Service) GetReviseImageUrls(c context.Context, reviseID int64) (urls []
 	return
 }
 
+// GetReviseInfo 获取补充基本信息
 func (p *Service) GetReviseInfo(c context.Context, req *api.IDReq) (item *api.ReviseInfo, err error) {
 	revise, err := p.GetRevise(c, req.ID)
 	if err != nil {
@@ -135,6 +140,7 @@ func (p *Service) GetReviseInfo(c context.Context, req *api.IDReq) (item *api.Re
 
 }
 
+// GetReviseDetail 获取补充详情
 func (p *Service) GetReviseDetail(c context.Context, req *api.IDReq) (item *api.ReviseDetail, err error) {
 	revise, err := p.GetRevise(c, req.ID)
 	if err != nil {
@@ -201,6 +207,7 @@ func (p *Service) GetReviseDetail(c context.Context, req *api.IDReq) (item *api.
 
 }
 
+// AddRevise 添加补充
 func (p *Service) AddRevise(c context.Context, arg *api.ArgAddRevise) (id int64, err error) {
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
@@ -291,6 +298,7 @@ func (p *Service) AddRevise(c context.Context, arg *api.ArgAddRevise) (id int64,
 	return
 }
 
+// UpdateRevise 更新补充
 func (p *Service) UpdateRevise(c context.Context, arg *api.ArgUpdateRevise) (err error) {
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
@@ -349,6 +357,8 @@ func (p *Service) UpdateRevise(c context.Context, arg *api.ArgUpdateRevise) (err
 		}
 	})
 
+	item.UpdatedAt = time.Now().Unix()
+
 	if err = p.d.UpdateRevise(c, tx, item); err != nil {
 		return
 	}
@@ -365,10 +375,12 @@ func (p *Service) UpdateRevise(c context.Context, arg *api.ArgUpdateRevise) (err
 	return
 }
 
+// DelRevise 删除补充
 func (p *Service) DelRevise(c context.Context, arg *api.IDReq) (err error) {
 	return p.delRevise(c, arg.Aid, arg.ID)
 }
 
+// delRevise 删除补充
 func (p *Service) delRevise(c context.Context, aid, id int64) (err error) {
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
@@ -420,10 +432,12 @@ func (p *Service) delRevise(c context.Context, aid, id int64) (err error) {
 	return
 }
 
+// GetUserReviseIDsPaged 获取用户创建的补充ID列表
 func (p *Service) GetUserReviseIDsPaged(c context.Context, req *api.UserRevisesReq) (items []int64, err error) {
 	return p.d.GetUserReviseIDsPaged(c, p.d.DB(), req.AccountID, int(req.Limit), int(req.Offset))
 }
 
+// GetArticleRevisesPaged 获取文章补充列表
 func (p *Service) GetArticleRevisesPaged(c context.Context, req *api.ArgArticleRevisesPaged) (resp *api.ReviseListResp, err error) {
 	var data []*model.Revise
 	if data, err = p.d.GetArticleRevisesPaged(c, p.d.DB(), req.ArticleID, req.Sort, int(req.Limit), int(req.Offset)); err != nil {
