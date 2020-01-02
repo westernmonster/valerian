@@ -46,6 +46,7 @@ func (p *Service) getArticleRelations(c context.Context, node sqalx.Node, articl
 		item.Name = t.Name
 		item.Avatar = t.Avatar
 		item.Introduction = t.Introduction
+		item.EditPermission = t.EditPermission
 
 		var stat *model.TopicStat
 		if stat, err = p.d.GetTopicStatByID(c, p.d.DB(), v.TopicID); err != nil {
