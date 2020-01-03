@@ -28,7 +28,7 @@ const discussionMapping = `
   "mappings": {
     "discussion": {
       "properties": {
-		"suggest": {type: "completion"},
+	   "suggest": { "type": "completion" },
         "id": { "type": "long" },
         "title": {
           "type": "text",
