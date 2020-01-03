@@ -1,5 +1,8 @@
 # interface-search
 
+## 1.1.0
+- 增加自动补全API
+
 ## 1.0.1
 1.feature:搜索历史记录保存到 es。
 
