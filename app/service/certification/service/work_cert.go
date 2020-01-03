@@ -222,6 +222,7 @@ func (p *Service) getWorkCertByID(c context.Context, node sqalx.Node, aid int64)
 	return
 }
 
+// GetWorkCertificationsPaged 获取工作认证信息
 func (p *Service) GetWorkCertificationsPaged(c context.Context, arg *api.WorkCertPagedReq) (resp *api.WorkCertPagedResp, err error) {
 	cond := make(map[string]interface{})
 	if arg.Status != nil {
