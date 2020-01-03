@@ -11,7 +11,6 @@ import (
 )
 
 func (p *Service) GetWorkCertsPaged(c context.Context, status *int32, limit, offset int32) (resp *model.WorkCertsPagedResp, err error) {
-
 	arg := &certification.WorkCertPagedReq{Limit: limit, Offset: offset}
 	if status != nil {
 		arg.Status = &certification.WorkCertPagedReq_StatusValue{*status}
