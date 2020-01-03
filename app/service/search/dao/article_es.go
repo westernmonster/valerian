@@ -28,14 +28,13 @@ const articleMapping = `
   "mappings": {
     "article": {
       "properties": {
-		"suggest_title": {type: "completion"},
-		"suggest_content_text": {type: "completion"},
+		"suggest": {type: "completion"},
         "id": { "type": "long" },
         "title": {
           "type": "text",
           "analyzer": "ik_max_word",
           "search_analyzer": "ik_smart",
-		  "copy_to":"suggest_title"
+		  "copy_to":["suggest"]
         },
         "content": {
           "type": "text",
@@ -46,7 +45,7 @@ const articleMapping = `
           "type": "text",
           "analyzer": "ik_max_word",
           "search_analyzer": "ik_smart",
-		  "copy_to":"suggest_content_text"
+		  "copy_to":["suggest"]
         },
         "disable_revise": { "type": "boolean" },
         "disable_comment": { "type": "boolean" },

@@ -35,7 +35,8 @@ const accountMapping = `
         "user_name": {
           "type": "text",
           "analyzer": "ik_max_word",
-          "search_analyzer": "ik_smart"
+          "search_analyzer": "ik_smart",
+		  "copy_to":["suggest"]
         },
         "role": { "type": "text" },
         "gender": { "type": "integer" },
@@ -46,7 +47,8 @@ const accountMapping = `
         "introduction": {
           "type": "text",
           "analyzer": "ik_max_word",
-          "search_analyzer": "ik_smart"
+          "search_analyzer": "ik_smart",
+		  "copy_to":["suggest"]
         },
         "avatar": { "type": "text" },
         "source": { "type": "text" },
