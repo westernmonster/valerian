@@ -10,13 +10,13 @@ import (
 
 func (d *Dao) ArticleSuggest(c context.Context, text string, size int) (res []string, err error) {
 	titleSuggester := elastic.NewCompletionSuggester("title-suggester").
-		Field("title").
+		Field("suggest_title").
 		Fuzziness(2).
 		Text(text).
 		Size(size).SkipDuplicates(true)
 
 	contentSuggester := elastic.NewCompletionSuggester("content-suggester").
-		Field("content_text").
+		Field("suggest_content_text").
 		Fuzziness(2).
 		Text(text).
 		Size(size).SkipDuplicates(true)
@@ -24,7 +24,7 @@ func (d *Dao) ArticleSuggest(c context.Context, text string, size int) (res []st
 	searchSource := elastic.NewSearchSource().Suggester(titleSuggester).Suggester(contentSuggester).FetchSource(false).TrackScores(true)
 
 	indexName := fmt.Sprintf("%s_articles", env.DeployEnv)
-	searchResult, err := d.esClient.Search().Index(indexName).SearchSource(searchSource).Do(c)
+	searchResult, err := d.esClient.Search().Index(indexName).Type("article").SearchSource(searchSource).Do(c)
 	if err != nil {
 		PromError(c, fmt.Sprintf("es:执行查询失败"), "%v", err)
 		return
@@ -52,13 +52,13 @@ func (d *Dao) ArticleSuggest(c context.Context, text string, size int) (res []st
 
 func (d *Dao) TopicSuggest(c context.Context, text string, size int) (res []string, err error) {
 	nameSuggester := elastic.NewCompletionSuggester("name-suggester").
-		Field("name").
+		Field("suggest_name").
 		Fuzziness(2).
 		Text(text).
 		Size(size).SkipDuplicates(true)
 
 	introductionSuggester := elastic.NewCompletionSuggester("introduction-suggester").
-		Field("introduction").
+		Field("suggest_introduction").
 		Fuzziness(2).
 		Text(text).
 		Size(size).SkipDuplicates(true)
@@ -66,7 +66,7 @@ func (d *Dao) TopicSuggest(c context.Context, text string, size int) (res []stri
 	searchSource := elastic.NewSearchSource().Suggester(nameSuggester).Suggester(introductionSuggester).FetchSource(false).TrackScores(true)
 
 	indexName := fmt.Sprintf("%s_topics", env.DeployEnv)
-	searchResult, err := d.esClient.Search().Index(indexName).SearchSource(searchSource).Do(c)
+	searchResult, err := d.esClient.Search().Index(indexName).Type("topic").SearchSource(searchSource).Do(c)
 	if err != nil {
 		PromError(c, fmt.Sprintf("es:执行查询失败"), "%v", err)
 		return
@@ -94,13 +94,13 @@ func (d *Dao) TopicSuggest(c context.Context, text string, size int) (res []stri
 
 func (d *Dao) AccountSuggest(c context.Context, text string, size int) (res []string, err error) {
 	nameSuggester := elastic.NewCompletionSuggester("name-suggester").
-		Field("user_name").
+		Field("suggest_user_name").
 		Fuzziness(2).
 		Text(text).
 		Size(size).SkipDuplicates(true)
 
 	introductionSuggester := elastic.NewCompletionSuggester("introduction-suggester").
-		Field("introduction").
+		Field("suggest_introduction").
 		Fuzziness(2).
 		Text(text).
 		Size(size).SkipDuplicates(true)
@@ -108,7 +108,7 @@ func (d *Dao) AccountSuggest(c context.Context, text string, size int) (res []st
 	searchSource := elastic.NewSearchSource().Suggester(nameSuggester).Suggester(introductionSuggester).FetchSource(false).TrackScores(true)
 
 	indexName := fmt.Sprintf("%s_accounts", env.DeployEnv)
-	searchResult, err := d.esClient.Search().Index(indexName).SearchSource(searchSource).Do(c)
+	searchResult, err := d.esClient.Search().Index(indexName).Type("account").SearchSource(searchSource).Do(c)
 	if err != nil {
 		PromError(c, fmt.Sprintf("es:执行查询失败"), "%v", err)
 		return
@@ -136,13 +136,13 @@ func (d *Dao) AccountSuggest(c context.Context, text string, size int) (res []st
 
 func (d *Dao) DiscussionSuggest(c context.Context, text string, size int) (res []string, err error) {
 	nameSuggester := elastic.NewCompletionSuggester("name-suggester").
-		Field("title").
+		Field("suggest_title").
 		Fuzziness(2).
 		Text(text).
 		Size(size).SkipDuplicates(true)
 
 	introductionSuggester := elastic.NewCompletionSuggester("content-suggester").
-		Field("content_text").
+		Field("suggest_content_text").
 		Fuzziness(2).
 		Text(text).
 		Size(size).SkipDuplicates(true)
@@ -150,7 +150,7 @@ func (d *Dao) DiscussionSuggest(c context.Context, text string, size int) (res [
 	searchSource := elastic.NewSearchSource().Suggester(nameSuggester).Suggester(introductionSuggester).FetchSource(false).TrackScores(true)
 
 	indexName := fmt.Sprintf("%s_discussions", env.DeployEnv)
-	searchResult, err := d.esClient.Search().Index(indexName).SearchSource(searchSource).Do(c)
+	searchResult, err := d.esClient.Search().Index(indexName).Type("discussion").SearchSource(searchSource).Do(c)
 	if err != nil {
 		PromError(c, fmt.Sprintf("es:执行查询失败"), "%v", err)
 		return
