@@ -11,6 +11,18 @@ import (
 	"valerian/library/ecode"
 )
 
+func (p *Service) TopicSuggest(c context.Context, kw string) (resp []string, err error) {
+	resp = make([]string, 0)
+
+	var topicSuggestions []string
+	if topicSuggestions, err = p.d.TopicSuggest(c, kw, 5); err != nil {
+		return
+	}
+	resp = append(resp, topicSuggestions...)
+
+	return
+}
+
 func (p *Service) TopicSearch(c context.Context, arg *model.TopicSearchParams) (resp *model.TopicSearchResult, err error) {
 	var data *model.SearchResult
 	if data, err = p.d.TopicSearch(c, arg); err != nil {

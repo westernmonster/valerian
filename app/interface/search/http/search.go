@@ -324,3 +324,108 @@ func searchAll(c *mars.Context) {
 
 	c.JSON(srv.AllSearch(c, kw))
 }
+
+// @Summary 综合提示
+// @Description 综合提示
+// @Tags search
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param kw query string true "关键词"
+// @Success 200 {array} string "结果"
+// @Failure 400 "验证请求失败"
+// @Failure 401 "登录验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /search/suggest/all [get]
+func suggestAll(c *mars.Context) {
+	param := c.Request.Form
+	kw := strings.TrimSpace(param.Get("kw"))
+
+	c.JSON(srv.AllSuggest(c, kw))
+}
+
+// @Summary 话题提示
+// @Description 话题提示
+// @Tags search
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param kw query string true "关键词"
+// @Success 200 {array} string "话题"
+// @Failure 400 "验证请求失败"
+// @Failure 401 "登录验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /search/suggest/topics [get]
+func suggestTopics(c *mars.Context) {
+	param := c.Request.Form
+	kw := strings.TrimSpace(param.Get("kw"))
+
+	c.JSON(srv.TopicSuggest(c, kw))
+}
+
+// @Summary 文章提示
+// @Description 文章提示
+// @Tags search
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param kw query string true "关键词"
+// @Success 200 {array} string "文章"
+// @Failure 400 "验证请求失败"
+// @Failure 401 "登录验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /search/suggest/articles [get]
+func suggestArticles(c *mars.Context) {
+	param := c.Request.Form
+	kw := strings.TrimSpace(param.Get("kw"))
+
+	c.JSON(srv.ArticleSuggest(c, kw))
+}
+
+// @Summary 讨论提示
+// @Description 讨论提示
+// @Tags search
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param kw query string true "关键词"
+// @Success 200 {array} string "讨论"
+// @Failure 400 "验证请求失败"
+// @Failure 401 "登录验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /search/suggest/discussions [get]
+func suggestDiscusstions(c *mars.Context) {
+	param := c.Request.Form
+	kw := strings.TrimSpace(param.Get("kw"))
+
+	c.JSON(srv.DiscussionSuggest(c, kw))
+}
+
+// @Summary 账户提示
+// @Description 账户提示
+// @Tags search
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
+// @Param Locale header string true "语言" Enums(zh-CN, en-US)
+// @Param kw query string true "关键词"
+// @Success 200 {array} string "账户"
+// @Failure 400 "验证请求失败"
+// @Failure 401 "登录验证失败"
+// @Failure 500 "服务器端错误"
+// @Router /search/topics [get]
+func suggestAccounts(c *mars.Context) {
+	param := c.Request.Form
+	kw := strings.TrimSpace(param.Get("kw"))
+
+	c.JSON(srv.AccountSuggest(c, kw))
+}

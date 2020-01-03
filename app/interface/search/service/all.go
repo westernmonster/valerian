@@ -9,6 +9,36 @@ import (
 	"valerian/library/xstr"
 )
 
+func (p *Service) AllSuggest(c context.Context, kw string) (resp []string, err error) {
+	resp = make([]string, 0)
+
+	var articleSuggestions []string
+	if articleSuggestions, err = p.d.ArticleSuggest(c, kw, 5); err != nil {
+		return
+	}
+	resp = append(resp, articleSuggestions...)
+
+	var topicSuggestions []string
+	if topicSuggestions, err = p.d.TopicSuggest(c, kw, 5); err != nil {
+		return
+	}
+	resp = append(resp, topicSuggestions...)
+
+	var discussionSuggestions []string
+	if discussionSuggestions, err = p.d.DiscussionSuggest(c, kw, 5); err != nil {
+		return
+	}
+	resp = append(resp, discussionSuggestions...)
+
+	var accountSuggestions []string
+	if accountSuggestions, err = p.d.AccountSuggest(c, kw, 5); err != nil {
+		return
+	}
+	resp = append(resp, accountSuggestions...)
+
+	return
+}
+
 func (p *Service) AllSearch(c context.Context, kw string) (resp *model.AllSearchResult, err error) {
 	resp = &model.AllSearchResult{
 		Topics:      make([]*model.ESTopic, 0),

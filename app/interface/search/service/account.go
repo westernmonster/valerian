@@ -11,6 +11,18 @@ import (
 	"valerian/library/ecode"
 )
 
+func (p *Service) AccountSuggest(c context.Context, kw string) (resp []string, err error) {
+	resp = make([]string, 0)
+
+	var accountSuggestions []string
+	if accountSuggestions, err = p.d.AccountSuggest(c, kw, 10); err != nil {
+		return
+	}
+	resp = append(resp, accountSuggestions...)
+
+	return
+}
+
 func (p *Service) AccountSearch(c context.Context, arg *model.AccountSearchParams) (resp *model.AccountSearchResult, err error) {
 	var data *model.SearchResult
 	if data, err = p.d.AccountSearch(c, arg); err != nil {
