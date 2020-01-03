@@ -28,7 +28,6 @@ const accountMapping = `
   "mappings": {
     "account": {
       "properties": {
-		"suggest": {type: "completion"}
         "id": { "type": "long" },
         "mobile": { "type": "text" },
         "email": { "type": "text" },
