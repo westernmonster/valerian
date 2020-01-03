@@ -28,13 +28,16 @@ const accountMapping = `
   "mappings": {
     "account": {
       "properties": {
+		"suggest_user_name": {type: "completion"},
+		"suggest_introduction": {type: "completion"},
         "id": { "type": "long" },
         "mobile": { "type": "text" },
         "email": { "type": "text" },
         "user_name": {
           "type": "text",
           "analyzer": "ik_max_word",
-          "search_analyzer": "ik_smart"
+          "search_analyzer": "ik_smart",
+		  "copy_to": "suggest_user_name"
         },
         "role": { "type": "text" },
         "gender": { "type": "integer" },
@@ -45,7 +48,8 @@ const accountMapping = `
         "introduction": {
           "type": "text",
           "analyzer": "ik_max_word",
-          "search_analyzer": "ik_smart"
+          "search_analyzer": "ik_smart",
+		  "copy_to": "suggest_introduction"
         },
         "avatar": { "type": "text" },
         "source": { "type": "text" },

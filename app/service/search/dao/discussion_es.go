@@ -28,11 +28,14 @@ const discussionMapping = `
   "mappings": {
     "discussion": {
       "properties": {
+		"suggest_title": {type: "completion"},
+		"suggest_content_text": {type: "completion"},
         "id": { "type": "long" },
         "title": {
           "type": "text",
           "analyzer": "ik_max_word",
-          "search_analyzer": "ik_smart"
+          "search_analyzer": "ik_smart",
+		  "copy_to":"suggest_title"
         },
         "content": {
           "type": "text",
@@ -42,7 +45,8 @@ const discussionMapping = `
         "content_text": {
           "type": "text",
           "analyzer": "ik_max_word",
-          "search_analyzer": "ik_smart"
+          "search_analyzer": "ik_smart",
+		  "copy_to":"suggest_content_text"
         },
         "category": {
           "properties": {

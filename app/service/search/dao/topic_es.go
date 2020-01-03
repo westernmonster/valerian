@@ -29,18 +29,22 @@ const topicMapping = `
   "mappings": {
     "topic": {
       "properties": {
+		"suggest_name": {type: "completion"},
+		"suggest_introduction": {type: "completion"},
         "id": { "type": "long" },
         "name": {
           "type": "text",
           "analyzer": "ik_max_word",
-          "search_analyzer": "ik_smart"
+          "search_analyzer": "ik_smart",
+          "copy_to": "suggest_name"
         },
         "avatar": { "type": "text" },
         "bg": { "type": "text" },
         "introduction": {
           "type": "text",
           "analyzer": "ik_max_word",
-          "search_analyzer": "ik_smart"
+          "search_analyzer": "ik_smart",
+          "copy_to": "suggest_introduction"
         },
         "is_private": { "type": "boolean" },
         "allow_chat": { "type": "boolean" },
