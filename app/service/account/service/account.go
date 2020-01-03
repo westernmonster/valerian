@@ -62,6 +62,18 @@ func baseInfoFromAccount(acc *model.Account, stat *model.AccountStat) (info *api
 	return
 }
 
+// GetAllAccountIDsPaged 获取所有用户，排除已经注销的
+func (p *Service) GetAllAccountIDs(c context.Context, req *api.AidReq) (ids []int64, err error) {
+	if err = p.checkSystemAdmin(c, p.d.DB(), req.Aid); err != nil {
+		return
+	}
+
+	if ids, err = p.d.GetAllAccountIDs(c, p.d.DB()); err != nil {
+		return
+	}
+	return
+}
+
 // GetAccountByEmail 通过 Email 获取账户信息
 // 会排除已经注销的用户
 func (p *Service) GetAccountByEmail(c context.Context, email string) (item *model.Account, err error) {

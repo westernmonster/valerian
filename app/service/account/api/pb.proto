@@ -269,7 +269,9 @@ message UpdateProfileReq {
     int64 Aid  = 10;
 }
 
-
+message IDsResp {
+    repeated int64 IDs = 1 [(gogoproto.jsontag) = 'ids'];
+}
 
 
 service Account {
@@ -298,4 +300,6 @@ service Account {
     rpc AccountStat(AidReq) returns (AccountStatInfo);
 
     rpc BaseInfos(AidsReq) returns (BaseInfosReply);
+
+    rpc AllAccountsIDs(AidReq) returns (IDsResp);
 }

@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"time"
+	"valerian/library/database/sqlx"
 	"valerian/library/database/sqlx/types"
 
 	"valerian/app/service/account/model"
@@ -108,5 +109,31 @@ func (p *Dao) DeactiveAccount(c context.Context, node sqalx.Node, aid int64) (er
 		log.For(c).Error(fmt.Sprintf("dao.DeactiveAccount error(%+v), id(%d)", err, aid))
 		return
 	}
+	return
+}
+
+func (p *Dao) GetAllAccountIDs(c context.Context, node sqalx.Node) (items []int64, err error) {
+	items = make([]int64, 0)
+	sqlSelect := "SELECT a.id FROM accounts a WHERE a.deleted=0 AND a.deactive=0 ORDER BY a.id DESC"
+
+	var rows *sqlx.Rows
+	if rows, err = node.QueryxContext(c, sqlSelect); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetAllAccountIDs err(%+v)", err))
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var (
+			targetID int64
+		)
+		if err = rows.Scan(&targetID); err != nil {
+			log.For(c).Error(fmt.Sprintf("dao.GetAllAccountIDs err(%+v)", err))
+			return
+		}
+		items = append(items, targetID)
+	}
+
+	err = rows.Err()
 	return
 }
