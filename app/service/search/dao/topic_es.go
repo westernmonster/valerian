@@ -29,7 +29,7 @@ const topicMapping = `
   "mappings": {
     "topic": {
       "properties": {
-		"suggest": {type: "completion"},
+	   "suggest": { "type": "completion" },
         "id": { "type": "long" },
         "name": {
           "type": "text",
