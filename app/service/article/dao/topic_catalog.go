@@ -137,7 +137,7 @@ func (p *Dao) GetTopicCatalogByCond(c context.Context, node sqalx.Node, cond map
 }
 
 func (p *Dao) GetTopicCatalogMaxChildrenSeq(c context.Context, node sqalx.Node, topicID, parentID int64) (seq int, err error) {
-	sqlSelect := "SELECT a.seq FROM topic_catalogs a WHERE a.deleted=0 AND a.topic_id=? AND a.parent_id=? ORDER BY a.seq  LIMIT 1"
+	sqlSelect := "SELECT a.seq FROM topic_catalogs a WHERE a.deleted=0 AND a.topic_id=? AND a.parent_id=? ORDER BY a.seq DESC LIMIT 1"
 	if err = node.GetContext(c, &seq, sqlSelect, topicID, parentID); err != nil {
 		if err == sql.ErrNoRows {
 			seq = 0
