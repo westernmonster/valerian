@@ -8,7 +8,7 @@ import (
 
 // @Summary 管理员获取所有用户
 // @Description 管理员获取所有用户
-// @Tags account
+// @Tags admin
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer"
