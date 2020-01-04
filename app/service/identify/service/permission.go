@@ -27,6 +27,7 @@ func (p *Service) isSystemAdmin(c context.Context, node sqalx.Node, aid int64) (
 	return
 }
 
+// checkSystemAdmin 检测是否系统管理员
 func (p *Service) checkSystemAdmin(c context.Context, node sqalx.Node, aid int64) (err error) {
 	var isSystemAdmin bool
 	if isSystemAdmin, err = p.isSystemAdmin(c, node, aid); err != nil {

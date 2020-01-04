@@ -161,10 +161,22 @@ message DeactiveReq {
 }
 
 
+message AdminCreateAccountReq {
+    string Email = 1;
+    string Password = 2;
+    string Prefix = 3;
+    string Mobile = 4;
+    string RemoteIP = 5;
+    int64 Aid = 6;
+}
+
+
 service Identify {
     rpc GetTokenInfo(TokenReq) returns (AuthReply);
 
     rpc RenewToken(RenewTokenReq) returns (RenewTokenResp);
+
+    rpc AdminCreateAccount(AdminCreateAccountReq) returns (EmptyStruct);
 
     rpc EmailRegister(EmailRegisterReq) returns (LoginResp);
 
