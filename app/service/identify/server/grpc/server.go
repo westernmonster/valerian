@@ -157,3 +157,11 @@ func (s *server) AdminCreateAccount(ctx context.Context, req *api.AdminCreateAcc
 	}
 	return &api.EmptyStruct{}, nil
 }
+
+func (s *server) AdminDeactive(ctx context.Context, req *api.AdminDeactiveReq) (*api.EmptyStruct, error) {
+	err := s.svr.AdminDeactive(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return &api.EmptyStruct{}, nil
+}

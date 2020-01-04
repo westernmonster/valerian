@@ -161,6 +161,12 @@ message DeactiveReq {
 }
 
 
+message AdminDeactiveReq {
+    int64 AccountID = 1;
+    int64 Aid = 2;
+}
+
+
 message AdminCreateAccountReq {
     string Email = 1;
     string Password = 2;
@@ -205,4 +211,6 @@ service Identify {
     rpc AccountUnlock(LockReq) returns (EmptyStruct);
 
     rpc Deactive(DeactiveReq) returns (EmptyStruct);
+
+    rpc AdminDeactive(AdminDeactiveReq) returns (EmptyStruct);
 }

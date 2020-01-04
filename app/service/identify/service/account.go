@@ -236,6 +236,10 @@ func (p *Service) AccountLock(c context.Context, req *api.LockReq) (err error) {
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 		return
 	}
+
+	p.addCache(func() {
+		p.onAccountUpdated(context.TODO(), req.TargetAccountID, time.Now().Unix())
+	})
 	return
 }
 
@@ -268,6 +272,10 @@ func (p *Service) AccountUnlock(c context.Context, req *api.LockReq) (err error)
 		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
 		return
 	}
+
+	p.addCache(func() {
+		p.onAccountUpdated(context.TODO(), req.TargetAccountID, time.Now().Unix())
+	})
 	return
 }
 
@@ -332,6 +340,46 @@ func (p *Service) Deactive(c context.Context, arg *api.DeactiveReq) (err error) 
 	p.addCache(func() {
 		p.d.DelAccountCache(context.TODO(), arg.Aid)
 		p.deleteAllToken(context.TODO(), arg.Aid)
+		p.onAccountDeleted(context.TODO(), arg.Aid, time.Now().Unix())
+	})
+
+	return
+}
+
+// AdminDeactive 管理员强制注销用户
+func (p *Service) AdminDeactive(c context.Context, arg *api.AdminDeactiveReq) (err error) {
+	var tx sqalx.Node
+	if tx, err = p.d.DB().Beginx(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		return
+	}
+
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+			}
+			return
+		}
+	}()
+
+	if err = p.checkSystemAdmin(c, tx, arg.Aid); err != nil {
+		return
+	}
+
+	if err = p.d.DeactiveAccount(c, tx, arg.AccountID); err != nil {
+		return
+	}
+
+	if err = tx.Commit(); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		return
+	}
+
+	p.addCache(func() {
+		p.d.DelAccountCache(context.TODO(), arg.AccountID)
+		p.deleteAllToken(context.TODO(), arg.AccountID)
+		p.onAccountDeleted(context.TODO(), arg.AccountID, time.Now().Unix())
 	})
 
 	return
