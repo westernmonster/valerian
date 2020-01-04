@@ -94,7 +94,7 @@ func (p *Service) RequestWorkCert(c context.Context, arg *model.ArgAddWorkCert) 
 }
 
 // AuditWorkCert 审批工作认证
-func (p *Service) AuditWorkCert(c context.Context, arg *model.ArgAuditWorkCert) (err error) {
+func (p *Service) AuditWorkCert(c context.Context, arg *api.AuditWorkCertReq) (err error) {
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
@@ -109,6 +109,11 @@ func (p *Service) AuditWorkCert(c context.Context, arg *model.ArgAuditWorkCert) 
 			return
 		}
 	}()
+
+	// 检测操作人是否系统管理员
+	if err = p.checkSystemAdmin(c, tx, arg.Aid); err != nil {
+		return
+	}
 
 	var cert *model.IDCertification
 	if cert, err = p.getIDCertByID(c, tx, arg.AccountID); err != nil {
@@ -154,7 +159,7 @@ func (p *Service) AuditWorkCert(c context.Context, arg *model.ArgAuditWorkCert) 
 		Position:    item.Position,
 		ExpiresAt:   item.ExpiresAt,
 		AuditResult: arg.AuditResult,
-		ManagerID:   arg.ManagerID,
+		ManagerID:   arg.Aid,
 		CreatedAt:   time.Now().Unix(),
 		UpdatedAt:   time.Now().Unix(),
 	}); err != nil {
@@ -224,9 +229,14 @@ func (p *Service) getWorkCertByID(c context.Context, node sqalx.Node, aid int64)
 
 // GetWorkCertificationsPaged 获取工作认证信息
 func (p *Service) GetWorkCertificationsPaged(c context.Context, arg *api.WorkCertPagedReq) (resp *api.WorkCertPagedResp, err error) {
+	// 检测操作人是否系统管理员
+	if err = p.checkSystemAdmin(c, p.d.DB(), arg.Aid); err != nil {
+		return
+	}
+
 	cond := make(map[string]interface{})
-	if arg.Status != nil {
-		cond["status"] = arg.GetStatusValue()
+	if arg.Status != int32(0) {
+		cond["status"] = arg.Status
 	}
 
 	var items []*model.WorkCertification
@@ -250,6 +260,39 @@ func (p *Service) GetWorkCertificationsPaged(c context.Context, arg *api.WorkCer
 			Position:    v.Position,
 			ExpiresAt:   v.ExpiresAt,
 			AuditResult: v.AuditResult,
+			CreatedAt:   v.CreatedAt,
+			UpdatedAt:   v.UpdatedAt,
+		}
+
+		resp.Items[i] = item
+	}
+
+	return
+}
+
+func (p *Service) GetWorkCertHistoriesPaged(c context.Context, arg *api.WorkCertHistoriesPagedReq) (resp *api.WorkCertHistoriesPagedResp, err error) {
+	var data []*model.WorkCertHistory
+	if data, err = p.d.GetWorkCertHistoriesPaged(c, p.d.DB(), arg.AccountID, arg.Limit, arg.Offset); err != nil {
+		return
+	}
+
+	resp = &api.WorkCertHistoriesPagedResp{
+		Items: make([]*api.WorkCertHistoryItem, len(data)),
+	}
+
+	for i, v := range data {
+		item := &api.WorkCertHistoryItem{
+			ID:          v.ID,
+			AccountID:   v.AccountID,
+			Status:      v.Status,
+			WorkPic:     v.WorkPic,
+			OtherPic:    v.OtherPic,
+			Company:     v.Company,
+			Department:  v.Department,
+			Position:    v.Position,
+			ExpiresAt:   v.ExpiresAt,
+			AuditResult: v.AuditResult,
+			ManagerID:   v.ManagerID,
 			CreatedAt:   v.CreatedAt,
 			UpdatedAt:   v.UpdatedAt,
 		}

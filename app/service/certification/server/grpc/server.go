@@ -152,12 +152,7 @@ func (p *server) RequestWorkCert(c context.Context, req *api.WorkCertReq) (*api.
 }
 
 func (p *server) AuditWorkCert(c context.Context, req *api.AuditWorkCertReq) (*api.EmptyStruct, error) {
-	err := p.svr.AuditWorkCert(c, &model.ArgAuditWorkCert{
-		AccountID:   req.AccountID,
-		ManagerID:   req.ManagerID,
-		AuditResult: req.AuditResult,
-		Approve:     req.Approve,
-	})
+	err := p.svr.AuditWorkCert(c, req)
 	if err != nil {
 		return nil, err
 	}
@@ -209,4 +204,8 @@ func (p *server) GetWorkCertStatus(c context.Context, req *api.AidReq) (*api.Wor
 
 func (p *server) GetWorkCertsPaged(c context.Context, req *api.WorkCertPagedReq) (*api.WorkCertPagedResp, error) {
 	return p.svr.GetWorkCertificationsPaged(c, req)
+}
+
+func (p *server) GetWorkCertHistoriesPaged(c context.Context, req *api.WorkCertHistoriesPagedReq) (*api.WorkCertHistoriesPagedResp, error) {
+	return p.svr.GetWorkCertHistoriesPaged(c, req)
 }

@@ -2,9 +2,11 @@ package service
 
 import (
 	"context"
+	"net/url"
 
 	"valerian/app/interface/certification/conf"
 	"valerian/app/interface/certification/dao"
+	"valerian/library/conf/env"
 	"valerian/library/log"
 )
 
@@ -51,4 +53,14 @@ func (s *Service) cacheproc() {
 		f := <-s.missch
 		f()
 	}
+}
+
+func genURL(path string, param url.Values) (uri string, err error) {
+	u, err := url.Parse(env.SiteURL + path)
+	if err != nil {
+		return
+	}
+	u.RawQuery = param.Encode()
+
+	return u.String(), nil
 }
