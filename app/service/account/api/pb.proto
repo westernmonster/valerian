@@ -270,6 +270,13 @@ message UpdateProfileReq {
     int64 Aid  = 11;
 }
 
+
+message AccountIDsPagedReq {
+    int64 Aid = 1 [(gogoproto.jsontag) = "aid"];
+    int32 Limit = 2 [(gogoproto.jsontag) = "limit"];
+    int32 Offset = 3 [(gogoproto.jsontag) = "offset"];
+}
+
 message IDsResp {
     repeated int64 IDs = 1 [(gogoproto.jsontag) = 'ids'];
 }
@@ -303,4 +310,6 @@ service Account {
     rpc BaseInfos(AidsReq) returns (BaseInfosReply);
 
     rpc AllAccountsIDs(AidReq) returns (IDsResp);
+
+    rpc AllAccountsIDsPaged(AccountIDsPagedReq) returns (IDsResp);
 }

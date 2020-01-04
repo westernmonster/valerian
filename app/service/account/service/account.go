@@ -62,13 +62,25 @@ func baseInfoFromAccount(acc *model.Account, stat *model.AccountStat) (info *api
 	return
 }
 
-// GetAllAccountIDsPaged 获取所有用户，排除已经注销的
+// GetAllAccountIDs 获取所有用户ID，排除已经注销的
 func (p *Service) GetAllAccountIDs(c context.Context, req *api.AidReq) (ids []int64, err error) {
 	if err = p.checkSystemAdmin(c, p.d.DB(), req.Aid); err != nil {
 		return
 	}
 
 	if ids, err = p.d.GetAllAccountIDs(c, p.d.DB()); err != nil {
+		return
+	}
+	return
+}
+
+// GetAllAccountIDsPaged 分页获取所有用户ID，排除已经注销的
+func (p *Service) GetAllAccountIDsPaged(c context.Context, req *api.AccountIDsPagedReq) (ids []int64, err error) {
+	if err = p.checkSystemAdmin(c, p.d.DB(), req.Aid); err != nil {
+		return
+	}
+
+	if ids, err = p.d.GetAllAccountIDsPaged(c, p.d.DB(), req.Limit, req.Offset); err != nil {
 		return
 	}
 	return

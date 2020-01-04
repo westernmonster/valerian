@@ -137,3 +137,29 @@ func (p *Dao) GetAllAccountIDs(c context.Context, node sqalx.Node) (items []int6
 	err = rows.Err()
 	return
 }
+
+func (p *Dao) GetAllAccountIDsPaged(c context.Context, node sqalx.Node, limit, offset int32) (items []int64, err error) {
+	items = make([]int64, 0)
+	sqlSelect := "SELECT a.id FROM accounts a WHERE a.deleted=0 AND a.deactive=0 ORDER BY a.id DESC LIMIT ?,?"
+
+	var rows *sqlx.Rows
+	if rows, err = node.QueryxContext(c, sqlSelect, offset, limit); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetAllAccountIDsPaged err(%+v), limit(%d), offset(%d)", err, limit, offset))
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var (
+			targetID int64
+		)
+		if err = rows.Scan(&targetID); err != nil {
+			log.For(c).Error(fmt.Sprintf("dao.GetAllAccountIDsPaged err(%+v), limit(%d), offset(%d)", err, limit, offset))
+			return
+		}
+		items = append(items, targetID)
+	}
+
+	err = rows.Err()
+	return
+}
