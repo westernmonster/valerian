@@ -59,16 +59,9 @@ type ArgForgetPassword struct {
 func (p *ArgForgetPassword) Validate() error {
 	return validation.ValidateStruct(
 		p,
-		validation.Field(&p.Identity,
-			validation.Required.Error(`请输入手机号或邮件地址`),
-			ValidateIdentity(p.IdentityType, p.Prefix)),
-		validation.Field(&p.Valcode,
-			validation.Required.Error(`请输入验证码`),
-			validation.RuneLength(6, 6).Error(`验证码必须为6位数字`),
-			is.Digit.Error("验证码必须为6位数字")),
-		validation.Field(&p.IdentityType,
-			validation.Required.Error(`请输入类型`),
-			validation.In(IdentityEmail, IdentityMobile).Error("登录标识类型不正确")),
+		validation.Field(&p.Identity, validation.Required, ValidateIdentity(p.IdentityType, p.Prefix)),
+		validation.Field(&p.Valcode, validation.Required, validation.RuneLength(6, 6), is.Digit),
+		validation.Field(&p.IdentityType, validation.Required, validation.In(IdentityEmail, IdentityMobile)),
 	)
 }
 
@@ -82,10 +75,8 @@ type ArgResetPassword struct {
 func (p *ArgResetPassword) Validate() error {
 	return validation.ValidateStruct(
 		p,
-		validation.Field(&p.Password,
-			validation.Required.Error(`请输入密码`)),
-		validation.Field(&p.SessionID,
-			validation.Required.Error(`请输入 Session ID`)),
+		validation.Field(&p.Password, validation.Required),
+		validation.Field(&p.SessionID, validation.Required),
 	)
 }
 

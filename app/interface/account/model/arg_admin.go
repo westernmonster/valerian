@@ -2,10 +2,11 @@ package model
 
 import (
 	"regexp"
+	"strings"
 	"valerian/library/ecode"
 
+	"github.com/asaskevich/govalidator"
 	validation "github.com/go-ozzo/ozzo-validation"
-	"github.com/go-ozzo/ozzo-validation/is"
 )
 
 type ArgAdminDeactiveAccount struct {
@@ -42,13 +43,42 @@ type ArgAdminAddAccount struct {
 	Prefix string `json:"prefix"`
 }
 
-func (p *ArgAdminAddAccount) Validate() error {
-	return validation.ValidateStruct(
-		p,
-		validation.Field(&p.Mobile, validation.Required, ValidateMobile(p.Prefix)),
-		validation.Field(&p.Password, validation.Required, validation.RuneLength(6, 50)),
-		validation.Field(&p.Email, validation.Required, is.Email),
-	)
+func (p *ArgAdminAddAccount) Validate() (err error) {
+	if err = validation.ValidateStruct(p, validation.Field(&p.Password, validation.Required, validation.RuneLength(6, 50))); err != nil {
+		return
+	}
+
+	mobile := strings.TrimSpace(p.Prefix + p.Mobile)
+	email := strings.TrimSpace(p.Email)
+
+	if mobile == "" && email == "" {
+		err = ecode.EmailOrMobileRequired
+		return
+	}
+
+	if mobile != "" {
+		chinaRegex := regexp.MustCompile(ChinaMobileRegex)
+		otherRegex := regexp.MustCompile(OtherMobileRegex)
+
+		if p.Prefix == "86" {
+			if !chinaRegex.MatchString(p.Mobile) {
+				return ecode.InvalidMobile
+			}
+		} else { // China
+			if !otherRegex.MatchString(p.Mobile) {
+				return ecode.InvalidMobile
+			}
+		} // Other Country
+	}
+
+	if email != "" {
+		if !govalidator.IsEmail(p.Email) {
+			return ecode.InvalidEmail
+		}
+	}
+
+	return
+
 }
 
 type ArgAdminUpdateProfile struct {
