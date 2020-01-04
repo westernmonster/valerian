@@ -52,7 +52,7 @@ func (p *Service) Deactive(c context.Context, arg *model.ArgDeactiveAccount) (er
 }
 
 // UpdateProfile 更新用户资料
-func (p *Service) UpdateProfile(c context.Context, aid int64, arg *model.ArgUpdateProfile) (err error) {
+func (p *Service) UpdateProfile(c context.Context, arg *model.ArgUpdateProfile) (err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed

@@ -110,6 +110,14 @@ func (p *Service) AdminUnlockAccount(c context.Context, arg *model.ArgAdminLockA
 }
 
 // AdminDeactiveAccount 管理员注销账户
-func (p *Service) AdminDeactiveAccount(c context.Context, arg *model.ArgAdminDeactiveAccount) (err error) {
+func (p *Service) AdminDeactive(c context.Context, arg *model.ArgAdminDeactiveAccount) (err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+	if err = p.d.AdminDeactive(c, &identify.AdminDeactiveReq{Aid: aid, AccountID: arg.AccountID}); err != nil {
+		return
+	}
 	return
 }

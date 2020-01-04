@@ -31,6 +31,16 @@ func Init(c *conf.Config, s *service.Service) {
 func route(e *mars.Engine) {
 	e.Ping(ping)
 	e.Register(register)
+
+	a := e.Group("/api/v1/admin/account")
+	{
+		a.POST("/profile", authSvc.User, adminUpdateProfile)
+		a.POST("/lock", authSvc.User, adminLockAccount)
+		a.POST("/unlock", authSvc.User, adminUnlockAccount)
+		a.POST("/add", authSvc.User, adminAddAccount)
+		a.POST("/deactive", authSvc.User, adminDeactiveAccount)
+	}
+
 	g := e.Group("/api/v1/me")
 	{
 		g.PUT("/password", authSvc.User, changePassword)

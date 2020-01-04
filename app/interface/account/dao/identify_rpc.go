@@ -51,3 +51,10 @@ func (p *Dao) AccountUnlock(c context.Context, arg *identify.LockReq) (err error
 	}
 	return
 }
+
+func (p *Dao) AdminDeactive(c context.Context, arg *identify.AdminDeactiveReq) (err error) {
+	if _, err = p.identifyRPC.AdminDeactive(c, arg); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.AdminDeactive err(%+v) req(%s)", err, arg))
+	}
+	return
+}
