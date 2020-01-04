@@ -393,21 +393,3 @@ func memberArticles(c *mars.Context) {
 
 	c.JSON(srv.GetMemberArticlesPaged(c, id, limit, offset))
 }
-
-// @Summary 拉黑
-// @Description 拉黑
-// @Tags account
-// @Accept json
-// @Produce json
-// @Param Authorization header string true "Bearer"
-// @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
-// @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body app.interface.account.model.ArgBlockMember true "请求"
-// @Success 200 "成功"
-// @Failure 400 "验证请求失败"
-// @Failure 401 "登录验证失败"
-// @Failure 500 "服务器端错误"
-// @Router /account/block [post]
-func block(c *mars.Context) {
-	// TODO: block user
-}

@@ -48,7 +48,7 @@ func auditWorkCert(c *mars.Context) {
 // @Failure 400 "请求验证失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /admin/certifcation/workcert/list [get]
+// @Router /admin/certification/workcert/list [get]
 func listWorkCert(c *mars.Context) {
 	var (
 		err    error
