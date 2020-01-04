@@ -1,6 +1,23 @@
 package model
 
-import validation "github.com/go-ozzo/ozzo-validation"
+import (
+	"regexp"
+	"valerian/library/ecode"
+
+	validation "github.com/go-ozzo/ozzo-validation"
+	"github.com/go-ozzo/ozzo-validation/is"
+)
+
+type ArgAdminDeactiveAccount struct {
+	AccountID int64 `json:"account_id,string" swaggertype:"string"`
+}
+
+func (p *ArgAdminDeactiveAccount) Validate() error {
+	return validation.ValidateStruct(
+		p,
+		validation.Field(&p.AccountID, validation.Required),
+	)
+}
 
 type ArgAdminLockAccount struct {
 	AccountID int64 `json:"account_id,string" swaggertype:"string"`
@@ -10,6 +27,27 @@ func (p *ArgAdminLockAccount) Validate() error {
 	return validation.ValidateStruct(
 		p,
 		validation.Field(&p.AccountID, validation.Required),
+	)
+}
+
+type ArgAdminAddAccount struct {
+	// 邮件地址
+	Email string `json:"email"`
+	// 密码
+	Password string `json:"password"`
+
+	// 手机号码
+	Mobile string `json:"mobile"`
+	// Prefix 电话号码前缀，例如86
+	Prefix string `json:"prefix"`
+}
+
+func (p *ArgAdminAddAccount) Validate() error {
+	return validation.ValidateStruct(
+		p,
+		validation.Field(&p.Mobile, validation.Required, ValidateMobile(p.Prefix)),
+		validation.Field(&p.Password, validation.Required, validation.RuneLength(6, 50)),
+		validation.Field(&p.Email, validation.Required, is.Email),
 	)
 }
 
@@ -54,4 +92,33 @@ func (p *ArgAdminUpdateProfile) Validate() error {
 		p,
 		validation.Field(&p.AccountID, validation.Required),
 	)
+}
+
+func ValidateMobile(prefix string) *ValidateMobileRule {
+	return &ValidateMobileRule{
+		Prefix: prefix,
+	}
+}
+
+type ValidateMobileRule struct {
+	Prefix string
+}
+
+func (p *ValidateMobileRule) Validate(v interface{}) error {
+	mobile := v.(string)
+
+	chinaRegex := regexp.MustCompile(ChinaMobileRegex)
+	otherRegex := regexp.MustCompile(OtherMobileRegex)
+
+	if p.Prefix == "86" {
+		if !chinaRegex.MatchString(mobile) {
+			return ecode.InvalidMobile
+		}
+	} else { // China
+		if !otherRegex.MatchString(mobile) {
+			return ecode.InvalidMobile
+		}
+	} // Other Country
+
+	return nil
 }

@@ -266,7 +266,8 @@ message UpdateProfileReq {
         string PasswordValue  = 9;
     }
 
-    int64 Aid  = 10;
+    int64 AccountID  = 10;
+    int64 Aid  = 11;
 }
 
 message IDsResp {

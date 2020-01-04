@@ -25,9 +25,7 @@ type ArgEmail struct {
 func (p *ArgEmail) Validate() error {
 	return validation.ValidateStruct(
 		p,
-		validation.Field(&p.Email, validation.Required,
-			is.Email,
-		),
+		validation.Field(&p.Email, validation.Required, is.Email),
 		validation.Field(&p.Password, validation.Required, validation.RuneLength(6, 50)),
 		validation.Field(&p.Valcode, validation.Required, validation.RuneLength(6, 6), is.Digit),
 		validation.Field(&p.Source, validation.Required, validation.In(SourceAndroid, SourceiOS, SourceWeb)),

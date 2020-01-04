@@ -76,8 +76,7 @@ func updateProfile(c *mars.Context) {
 		return
 	}
 
-	aid, _ := c.Get("aid")
-	c.JSON(nil, srv.UpdateProfile(c, aid.(int64), arg))
+	c.JSON(nil, srv.UpdateProfile(c, arg))
 }
 
 // @Summary 忘记密码
