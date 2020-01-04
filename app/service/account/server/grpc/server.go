@@ -305,3 +305,15 @@ func (s *server) AllAccountsIDs(ctx context.Context, req *api.AidReq) (*api.IDsR
 	}
 	return &api.IDsResp{IDs: data}, nil
 }
+
+func (s *server) AllAccountsIDsPaged(ctx context.Context, req *api.AccountsPagedReq) (*api.IDsResp, error) {
+	data, err := s.svr.GetAllAccountIDsPaged(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return &api.IDsResp{IDs: data}, nil
+}
+
+func (s *server) AllAccountsPaged(ctx context.Context, req *api.AccountsPagedReq) (*api.AdminAccountsResp, error) {
+	return s.svr.GetAllAccountsPaged(ctx, req)
+}

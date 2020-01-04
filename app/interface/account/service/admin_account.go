@@ -10,6 +10,27 @@ import (
 	"valerian/library/net/metadata"
 )
 
+// GetAllAccountsPaged 添加账户
+func (p *Service) GetAllAccountsPaged(c context.Context, limit, offset int) (resp err error) {
+	aid, ok := metadata.Value(c, metadata.Aid).(int64)
+	if !ok {
+		err = ecode.AcquireAccountIDFailed
+		return
+	}
+
+	req := &account.AccountIDsPagedReq{
+		Aid:      aid,
+		Limit: int32(limit),
+		Offset: int32(offset),
+	}
+
+	if err = p.d.AllAccountIDsPaged(c, req); err != nil {
+		return
+	}
+	return
+}
+
+
 // AdminAddAccount 添加账户
 func (p *Service) AdminAddAccount(c context.Context, arg *model.ArgAdminAddAccount) (err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)

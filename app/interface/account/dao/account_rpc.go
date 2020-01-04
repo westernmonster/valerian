@@ -70,3 +70,10 @@ func (p *Dao) UpdateProfile(c context.Context, arg *account.UpdateProfileReq) (e
 	}
 	return
 }
+
+func (p *Dao) AllAccountIDsPaged(c context.Context, req *account.AccountIDsPagedReq) (info *account.IDsResp, err error) {
+	if info, err = p.accountRPC.AllAccountsIDsPaged(c, req); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.AllAccountIDsPaged err(%+v) req(%+v) ", err, req))
+	}
+	return
+}

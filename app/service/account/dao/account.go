@@ -163,3 +163,18 @@ func (p *Dao) GetAllAccountIDsPaged(c context.Context, node sqalx.Node, limit, o
 	err = rows.Err()
 	return
 }
+
+func (p *Dao) GetAllAccountsPaged(c context.Context, node sqalx.Node, limit, offset int32) (items []*model.Account, err error) {
+	items = make([]*model.Account, 0)
+	sqlSelect := `SELECT a.id,a.mobile,a.user_name,a.email,a.password,a.role,a.salt,a.gender,a.birth_year,a.birth_month,a.birth_day,a.location,a.introduction,a.avatar,a.source,a.ip,a.id_cert,a.work_cert,a.is_org,a.is_vip,a.deleted,a.created_at,a.updated_at,a.prefix,a.is_lock,a.deactive
+	FROM accounts a
+	WHERE a.deleted=0 AND a.deactive=0
+	ORDER BY a.id DESC
+	LIMIT ?,?`
+
+	if err = node.SelectContext(c, &items, sqlSelect, offset, limit); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetAllAccountsPaged err(%+v), limit(%d), offset(%d)", err, limit, offset))
+		return
+	}
+	return
+}
