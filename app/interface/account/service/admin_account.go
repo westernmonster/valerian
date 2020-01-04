@@ -2,6 +2,8 @@ package service
 
 import (
 	"context"
+	"net/url"
+	"strconv"
 
 	"valerian/app/interface/account/model"
 	account "valerian/app/service/account/api"
@@ -11,25 +13,78 @@ import (
 )
 
 // GetAllAccountsPaged 添加账户
-func (p *Service) GetAllAccountsPaged(c context.Context, limit, offset int) (resp err error) {
+func (p *Service) GetAllAccountsPaged(c context.Context, limit, offset int) (resp *model.AdminAccountsResp, err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed
 		return
 	}
 
-	req := &account.AccountIDsPagedReq{
-		Aid:      aid,
-		Limit: int32(limit),
+	req := &account.AccountsPagedReq{
+		Aid:    aid,
+		Limit:  int32(limit),
 		Offset: int32(offset),
 	}
 
-	if err = p.d.AllAccountIDsPaged(c, req); err != nil {
+	var data *account.AdminAccountsResp
+	if data, err = p.d.AllAccountsPaged(c, req); err != nil {
 		return
 	}
+
+	resp = &model.AdminAccountsResp{
+		Items:  make([]*model.AdminAccountItem, 0),
+		Paging: &model.Paging{},
+	}
+
+	for _, v := range data.Items {
+		item := &model.AdminAccountItem{
+			ID:             v.ID,
+			Email:          v.Email,
+			Mobile:         v.Mobile,
+			Prefix:         v.Prefix,
+			UserName:       v.UserName,
+			Gender:         v.Gender,
+			Location:       v.Location,
+			LocationString: v.LocationString,
+			Introduction:   v.Introduction,
+			Avatar:         v.Avatar,
+			IDCert:         v.IDCert,
+			WorkCert:       v.WorkCert,
+			IsOrg:          v.IsOrg,
+			IsVIP:          v.IsVIP,
+			Company:        v.Company,
+			Position:       v.Position,
+			IsLock:         v.IsLock,
+		}
+
+		resp.Items = append(resp.Items, item)
+	}
+
+	if resp.Paging.Prev, err = genURL("/api/v1/admin/account/list", url.Values{
+		"limit":  []string{strconv.Itoa(limit)},
+		"offset": []string{strconv.Itoa(offset - limit)},
+	}); err != nil {
+		return
+	}
+
+	if resp.Paging.Next, err = genURL("/api/v1/admin/account/list", url.Values{
+		"limit":  []string{strconv.Itoa(limit)},
+		"offset": []string{strconv.Itoa(offset + limit)},
+	}); err != nil {
+		return
+	}
+
+	if len(resp.Items) < limit {
+		resp.Paging.IsEnd = true
+		resp.Paging.Next = ""
+	}
+
+	if offset == 0 {
+		resp.Paging.Prev = ""
+	}
+
 	return
 }
-
 
 // AdminAddAccount 添加账户
 func (p *Service) AdminAddAccount(c context.Context, arg *model.ArgAdminAddAccount) (err error) {

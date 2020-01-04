@@ -39,6 +39,7 @@ func route(e *mars.Engine) {
 		a.POST("/unlock", authSvc.User, adminUnlockAccount)
 		a.POST("/add", authSvc.User, adminAddAccount)
 		a.POST("/deactive", authSvc.User, adminDeactiveAccount)
+		a.GET("/list", authSvc.User, adminAllAccounts)
 	}
 
 	g := e.Group("/api/v1/me")
