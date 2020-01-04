@@ -198,8 +198,16 @@ func (p *Service) BatchBaseInfo(c context.Context, aids []int64) (data map[int64
 
 // UpdateAccount 更新用户资料
 func (p *Service) UpdateAccount(c context.Context, arg *api.UpdateProfileReq) (err error) {
+	// 如果操作人ID和操作的账户ID不等
+	// 则需要验证是否是管理员进行操作
+	if arg.Aid != arg.AccountID {
+		if err = p.checkSystemAdmin(c, p.d.DB(), arg.Aid); err != nil {
+			return
+		}
+	}
+
 	var account *model.Account
-	if account, err = p.getAccountByID(c, p.d.DB(), arg.Aid); err != nil {
+	if account, err = p.getAccountByID(c, p.d.DB(), arg.AccountID); err != nil {
 		return
 	}
 
