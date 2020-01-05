@@ -20,6 +20,7 @@ func (p *Service) GetComment(c context.Context, commentID int64) (item *model.Co
 }
 
 func (p *Service) GetCommentInfo(c context.Context, commentID int64) (item *api.CommentInfo, err error) {
+	return
 }
 
 // getComment 获取评论信息
