@@ -98,6 +98,10 @@ spec:
         backend:
           serviceName: interface-feed
           servicePort: 8000
+      - path: /api/v1/list/hot
+        backend:
+          serviceName: interface-feed
+          servicePort: 8000
       - path: /api/v1/comment
         backend:
           serviceName: interface-comment
@@ -218,6 +222,10 @@ spec:
         backend:
           serviceName: interface-feed
           servicePort: 8000
+      - path: /api/v1/list/hot
+        backend:
+          serviceName: interface-feed
+          servicePort: 8000
       - path: /api/v1/comment
         backend:
           serviceName: interface-comment
@@ -333,6 +341,10 @@ spec:
         backend:
           serviceName: interface-feed
           servicePort: 8000
+      - path: /api/v1/list/hot
+        backend:
+          serviceName: interface-feed
+          servicePort: 8000
       - path: /api/v1/comment
         backend:
           serviceName: interface-comment
@@ -445,6 +457,10 @@ spec:
           serviceName: interface-like
           servicePort: 8000
       - path: /api/v1/list/activities
+        backend:
+          serviceName: interface-feed
+          servicePort: 8000
+      - path: /api/v1/list/hot
         backend:
           serviceName: interface-feed
           servicePort: 8000
