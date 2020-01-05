@@ -59,7 +59,7 @@ func (p *Service) GetCommentInfo(c context.Context, commentID int64) (item *api.
 		},
 	}
 
-	if data.ReplyTo != 0 {
+	if data.ReplyTo != int64(0) {
 		var r *account.BaseInfoReply
 		if r, err = p.d.GetAccountBaseInfo(c, data.ReplyTo); err != nil {
 			return
