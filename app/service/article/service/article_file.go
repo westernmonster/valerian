@@ -17,6 +17,7 @@ import (
 
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk/requests"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/imm"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/jinzhu/copier"
 )
 
@@ -135,9 +136,12 @@ func (p *Service) convertOfficeFiles(c context.Context, articleID int64) (err er
 	}
 
 	for _, v := range files {
+		spew.Dump(v)
 		switch v.FileType {
 		case model.FileTypePPT:
+			fallthrough
 		case model.FileTypeExcel:
+			fallthrough
 		case model.FileTypeWord:
 			if v.PdfURL == "" {
 				req := imm.CreateCreateOfficeConversionTaskRequest()
