@@ -47,45 +47,17 @@ func (s *server) GetCommentInfo(ctx context.Context, req *api.IDReq) (*api.Comme
 		}()
 	}
 
-	comment, err := s.svr.GetComment(ctx, req.ID)
-	if err != nil {
-		return nil, err
-	}
+	return s.GetCommentInfo(ctx, req)
+}
 
-	stat, err := s.svr.GetCommentStat(ctx, req.ID)
-	if err != nil {
-		return nil, err
-	}
+func (s *server) GetCommentsPaged(ctx context.Context, req *api.CommentListReq) (*api.CommentListResp, error) {
+	return nil, nil
+}
 
-	m, err := s.svr.GetAccountBaseInfo(ctx, comment.CreatedBy)
-	if err != nil {
-		return nil, err
-	}
+func (s *server) AddComment(ctx context.Context, req *api.AddCommentReq) (*api.EmptyStruct, error) {
+	return nil, nil
+}
 
-	resp := &api.CommentInfo{
-		ID:         comment.ID,
-		Content:    comment.Content,
-		TargetType: comment.TargetType,
-		Deleted:    bool(comment.Deleted),
-		Featured:   bool(comment.Featured),
-		OwnerID:    comment.OwnerID,
-		OwnerType:  comment.OwnerType,
-		ResourceID: comment.ResourceID,
-		CreatedAt:  comment.CreatedAt,
-		UpdatedAt:  comment.UpdatedAt,
-		Stat: &api.CommentStat{
-			ChildrenCount: int32(stat.ChildrenCount),
-			LikeCount:     int32(stat.LikeCount),
-			DislikeCount:  int32(stat.DislikeCount),
-		},
-		Creator: &api.Creator{
-			ID:           m.ID,
-			UserName:     m.UserName,
-			Avatar:       m.Avatar,
-			Introduction: m.Introduction,
-		},
-		ReplyTo: comment.ReplyTo,
-	}
-
-	return resp, nil
+func (s *server) DeleteComment(ctx context.Context, req *api.DeleteReq) (*api.EmptyStruct, error) {
+	return nil, nil
 }
