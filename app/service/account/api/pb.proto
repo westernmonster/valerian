@@ -29,6 +29,8 @@ message BaseInfoReply {
     string Role = 10;
 
     AccountStatInfo Stat = 11 ;
+
+    bool IsLock = 12;
 }
 
 message BaseInfosReply {
@@ -161,6 +163,44 @@ message MemberInfoReply {
     bool IsLock = 16;
 }
 
+message AdminAccountItem {
+    int64 ID = 1;
+
+    string UserName  = 2 ;
+
+    int32  Gender = 3 ;
+
+    string  Introduction = 4 ;
+
+    int64  Location = 5 ;
+
+    string  LocationString = 6 ;
+
+    string Avatar  = 7 ;
+
+    bool IDCert  = 8 ;
+
+    bool WorkCert  = 9 ;
+
+    bool IsOrg  = 10 ;
+
+    bool IsVIP  = 11 ;
+
+    int64 CreatedAt  = 12 ;
+
+    AccountStatInfo Stat = 13 ;
+
+    string Company = 14;
+
+    string Position = 15;
+
+    bool IsLock = 16;
+
+    string Email  = 17 ;
+    string Prefix  = 18 ;
+    string Mobile  = 19 ;
+}
+
 
 
 message AidReq {
@@ -266,10 +306,24 @@ message UpdateProfileReq {
         string PasswordValue  = 9;
     }
 
-    int64 Aid  = 10;
+    int64 AccountID  = 10;
+    int64 Aid  = 11;
 }
 
 
+message AccountsPagedReq {
+    int64 Aid = 1 [(gogoproto.jsontag) = "aid"];
+    int32 Limit = 2 [(gogoproto.jsontag) = "limit"];
+    int32 Offset = 3 [(gogoproto.jsontag) = "offset"];
+}
+
+message IDsResp {
+    repeated int64 IDs = 1 [(gogoproto.jsontag) = 'ids'];
+}
+
+message AdminAccountsResp {
+    repeated AdminAccountItem Items = 1;
+}
 
 
 service Account {
@@ -298,4 +352,10 @@ service Account {
     rpc AccountStat(AidReq) returns (AccountStatInfo);
 
     rpc BaseInfos(AidsReq) returns (BaseInfosReply);
+
+    rpc AllAccountsIDs(AidReq) returns (IDsResp);
+
+    rpc AllAccountsIDsPaged(AccountsPagedReq) returns (IDsResp);
+
+    rpc AllAccountsPaged(AccountsPagedReq) returns (AdminAccountsResp);
 }

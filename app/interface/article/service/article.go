@@ -105,7 +105,7 @@ func (p *Service) DelArticle(c context.Context, id int64) (err error) {
 	return
 }
 
-func (p *Service) GetArticle(c context.Context, id int64, include string) (item *model.ArticleResp, err error) {
+func (p *Service) GetArticle(c context.Context, id, curTopicID int64, include string) (item *model.ArticleResp, err error) {
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed

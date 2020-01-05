@@ -18,7 +18,7 @@ func (s *Service) AppArticleCachePull(c *mars.Context, arg *model.ArgArticleAppC
 	resp = &model.ArticleListCacheResp{}
 	resp.Items = []*model.ArticleResp{}
 	for _, argItem := range arg.Items {
-		article, _ := s.GetArticle(c, argItem.ID, arg.Include)
+		article, _ := s.GetArticle(c, argItem.ID, 0, arg.Include)
 		if article != nil && article.UpdatedAt != argItem.UpdatedAt {
 			resp.Items = append(resp.Items, article)
 		}

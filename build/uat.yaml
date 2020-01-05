@@ -137,25 +137,13 @@ spec:
         backend:
           serviceName: admin-login
           servicePort: 8000
-      - path: /api/v1/admin/search
-        backend:
-          serviceName: admin-search
-          servicePort: 8000
       - path: /api/v1/admin/topic
         backend:
           serviceName: admin-topic
           servicePort: 8000
-      - path: /api/v1/admin/article
-        backend:
-          serviceName: admin-article
-          servicePort: 8000
-      - path: /api/v1/admin/discuss
-        backend:
-          serviceName: admin-discuss
-          servicePort: 8000
       - path: /api/v1/admin/account
         backend:
-          serviceName: admin-account
+          serviceName: interface-account
           servicePort: 8000
       - path: /api/v1/admin/feedback
         backend:
@@ -276,25 +264,13 @@ spec:
         backend:
           serviceName: interface-init
           servicePort: 8000
-      - path: /api/v1/admin/search
-        backend:
-          serviceName: admin-search
-          servicePort: 8000
       - path: /api/v1/admin/topic
         backend:
           serviceName: admin-topic
           servicePort: 8000
-      - path: /api/v1/admin/article
-        backend:
-          serviceName: admin-article
-          servicePort: 8000
-      - path: /api/v1/admin/discuss
-        backend:
-          serviceName: admin-discuss
-          servicePort: 8000
       - path: /api/v1/admin/account
         backend:
-          serviceName: admin-account
+          serviceName: interface-account
           servicePort: 8000
       - path: /
         backend:
@@ -415,25 +391,13 @@ spec:
         backend:
           serviceName: interface-init
           servicePort: 8000
-      - path: /api/v1/admin/search
-        backend:
-          serviceName: admin-search
-          servicePort: 8000
       - path: /api/v1/admin/topic
         backend:
           serviceName: admin-topic
           servicePort: 8000
-      - path: /api/v1/admin/article
-        backend:
-          serviceName: admin-article
-          servicePort: 8000
-      - path: /api/v1/admin/discuss
-        backend:
-          serviceName: admin-discuss
-          servicePort: 8000
       - path: /api/v1/admin/account
         backend:
-          serviceName: admin-account
+          serviceName: interface-account
           servicePort: 8000
       - path: /
         backend:

@@ -607,7 +607,7 @@ func (m *WorkCertReq) GetExpiresAt() int64 {
 
 type AuditWorkCertReq struct {
 	AccountID            int64    `protobuf:"varint,1,opt,name=AccountID,proto3" json:"AccountID,omitempty"`
-	ManagerID            int64    `protobuf:"varint,2,opt,name=ManagerID,proto3" json:"ManagerID,omitempty"`
+	Aid                  int64    `protobuf:"varint,2,opt,name=Aid,proto3" json:"Aid,omitempty"`
 	AuditResult          string   `protobuf:"bytes,3,opt,name=AuditResult,proto3" json:"AuditResult,omitempty"`
 	Approve              bool     `protobuf:"varint,4,opt,name=Approve,proto3" json:"Approve,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -655,9 +655,9 @@ func (m *AuditWorkCertReq) GetAccountID() int64 {
 	return 0
 }
 
-func (m *AuditWorkCertReq) GetManagerID() int64 {
+func (m *AuditWorkCertReq) GetAid() int64 {
 	if m != nil {
-		return m.ManagerID
+		return m.Aid
 	}
 	return 0
 }
@@ -900,14 +900,13 @@ func (m *STSToken) GetToken() string {
 }
 
 type WorkCertPagedReq struct {
-	// Types that are valid to be assigned to Status:
-	//	*WorkCertPagedReq_StatusValue
-	Status               isWorkCertPagedReq_Status `protobuf_oneof:"Status"`
-	Limit                int32                     `protobuf:"varint,2,opt,name=Limit,proto3" json:"limit"`
-	Offset               int32                     `protobuf:"varint,3,opt,name=Offset,proto3" json:"offset"`
-	XXX_NoUnkeyedLiteral struct{}                  `json:"-"`
-	XXX_unrecognized     []byte                    `json:"-"`
-	XXX_sizecache        int32                     `json:"-"`
+	Status               int32    `protobuf:"varint,1,opt,name=Status,proto3" json:"Status,omitempty"`
+	Limit                int32    `protobuf:"varint,2,opt,name=Limit,proto3" json:"Limit,omitempty"`
+	Offset               int32    `protobuf:"varint,3,opt,name=Offset,proto3" json:"Offset,omitempty"`
+	Aid                  int64    `protobuf:"varint,4,opt,name=Aid,proto3" json:"Aid,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *WorkCertPagedReq) Reset()         { *m = WorkCertPagedReq{} }
@@ -943,28 +942,9 @@ func (m *WorkCertPagedReq) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_WorkCertPagedReq proto.InternalMessageInfo
 
-type isWorkCertPagedReq_Status interface {
-	isWorkCertPagedReq_Status()
-	MarshalTo([]byte) (int, error)
-	Size() int
-}
-
-type WorkCertPagedReq_StatusValue struct {
-	StatusValue int32 `protobuf:"varint,1,opt,name=StatusValue,proto3,oneof" json:"StatusValue,omitempty"`
-}
-
-func (*WorkCertPagedReq_StatusValue) isWorkCertPagedReq_Status() {}
-
-func (m *WorkCertPagedReq) GetStatus() isWorkCertPagedReq_Status {
+func (m *WorkCertPagedReq) GetStatus() int32 {
 	if m != nil {
 		return m.Status
-	}
-	return nil
-}
-
-func (m *WorkCertPagedReq) GetStatusValue() int32 {
-	if x, ok := m.GetStatus().(*WorkCertPagedReq_StatusValue); ok {
-		return x.StatusValue
 	}
 	return 0
 }
@@ -983,11 +963,11 @@ func (m *WorkCertPagedReq) GetOffset() int32 {
 	return 0
 }
 
-// XXX_OneofWrappers is for the internal use of the proto package.
-func (*WorkCertPagedReq) XXX_OneofWrappers() []interface{} {
-	return []interface{}{
-		(*WorkCertPagedReq_StatusValue)(nil),
+func (m *WorkCertPagedReq) GetAid() int64 {
+	if m != nil {
+		return m.Aid
 	}
+	return 0
 }
 
 type WorkCertItem struct {
@@ -1125,6 +1105,149 @@ func (m *WorkCertItem) GetUpdatedAt() int64 {
 	return 0
 }
 
+type WorkCertHistoryItem struct {
+	ID                   int64    `protobuf:"varint,1,opt,name=ID,proto3" json:"ID,omitempty"`
+	AccountID            int64    `protobuf:"varint,3,opt,name=AccountID,proto3" json:"AccountID,omitempty"`
+	Status               int32    `protobuf:"varint,4,opt,name=Status,proto3" json:"Status,omitempty"`
+	WorkPic              string   `protobuf:"bytes,5,opt,name=WorkPic,proto3" json:"WorkPic,omitempty"`
+	OtherPic             string   `protobuf:"bytes,6,opt,name=OtherPic,proto3" json:"OtherPic,omitempty"`
+	Company              string   `protobuf:"bytes,7,opt,name=Company,proto3" json:"Company,omitempty"`
+	Department           string   `protobuf:"bytes,8,opt,name=Department,proto3" json:"Department,omitempty"`
+	Position             string   `protobuf:"bytes,9,opt,name=Position,proto3" json:"Position,omitempty"`
+	ExpiresAt            int64    `protobuf:"varint,10,opt,name=ExpiresAt,proto3" json:"ExpiresAt,omitempty"`
+	AuditResult          string   `protobuf:"bytes,11,opt,name=AuditResult,proto3" json:"AuditResult,omitempty"`
+	ManagerID            int64    `protobuf:"varint,13,opt,name=ManagerID,proto3" json:"ManagerID,omitempty"`
+	CreatedAt            int64    `protobuf:"varint,14,opt,name=CreatedAt,proto3" json:"CreatedAt,omitempty"`
+	UpdatedAt            int64    `protobuf:"varint,15,opt,name=UpdatedAt,proto3" json:"UpdatedAt,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *WorkCertHistoryItem) Reset()         { *m = WorkCertHistoryItem{} }
+func (m *WorkCertHistoryItem) String() string { return proto.CompactTextString(m) }
+func (*WorkCertHistoryItem) ProtoMessage()    {}
+func (*WorkCertHistoryItem) Descriptor() ([]byte, []int) {
+	return fileDescriptor_00212fb1f9d3bf1c, []int{13}
+}
+func (m *WorkCertHistoryItem) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *WorkCertHistoryItem) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_WorkCertHistoryItem.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *WorkCertHistoryItem) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_WorkCertHistoryItem.Merge(m, src)
+}
+func (m *WorkCertHistoryItem) XXX_Size() int {
+	return m.Size()
+}
+func (m *WorkCertHistoryItem) XXX_DiscardUnknown() {
+	xxx_messageInfo_WorkCertHistoryItem.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_WorkCertHistoryItem proto.InternalMessageInfo
+
+func (m *WorkCertHistoryItem) GetID() int64 {
+	if m != nil {
+		return m.ID
+	}
+	return 0
+}
+
+func (m *WorkCertHistoryItem) GetAccountID() int64 {
+	if m != nil {
+		return m.AccountID
+	}
+	return 0
+}
+
+func (m *WorkCertHistoryItem) GetStatus() int32 {
+	if m != nil {
+		return m.Status
+	}
+	return 0
+}
+
+func (m *WorkCertHistoryItem) GetWorkPic() string {
+	if m != nil {
+		return m.WorkPic
+	}
+	return ""
+}
+
+func (m *WorkCertHistoryItem) GetOtherPic() string {
+	if m != nil {
+		return m.OtherPic
+	}
+	return ""
+}
+
+func (m *WorkCertHistoryItem) GetCompany() string {
+	if m != nil {
+		return m.Company
+	}
+	return ""
+}
+
+func (m *WorkCertHistoryItem) GetDepartment() string {
+	if m != nil {
+		return m.Department
+	}
+	return ""
+}
+
+func (m *WorkCertHistoryItem) GetPosition() string {
+	if m != nil {
+		return m.Position
+	}
+	return ""
+}
+
+func (m *WorkCertHistoryItem) GetExpiresAt() int64 {
+	if m != nil {
+		return m.ExpiresAt
+	}
+	return 0
+}
+
+func (m *WorkCertHistoryItem) GetAuditResult() string {
+	if m != nil {
+		return m.AuditResult
+	}
+	return ""
+}
+
+func (m *WorkCertHistoryItem) GetManagerID() int64 {
+	if m != nil {
+		return m.ManagerID
+	}
+	return 0
+}
+
+func (m *WorkCertHistoryItem) GetCreatedAt() int64 {
+	if m != nil {
+		return m.CreatedAt
+	}
+	return 0
+}
+
+func (m *WorkCertHistoryItem) GetUpdatedAt() int64 {
+	if m != nil {
+		return m.UpdatedAt
+	}
+	return 0
+}
+
 type WorkCertPagedResp struct {
 	Items                []*WorkCertItem `protobuf:"bytes,1,rep,name=Items,proto3" json:"Items,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}        `json:"-"`
@@ -1136,7 +1259,7 @@ func (m *WorkCertPagedResp) Reset()         { *m = WorkCertPagedResp{} }
 func (m *WorkCertPagedResp) String() string { return proto.CompactTextString(m) }
 func (*WorkCertPagedResp) ProtoMessage()    {}
 func (*WorkCertPagedResp) Descriptor() ([]byte, []int) {
-	return fileDescriptor_00212fb1f9d3bf1c, []int{13}
+	return fileDescriptor_00212fb1f9d3bf1c, []int{14}
 }
 func (m *WorkCertPagedResp) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1172,6 +1295,124 @@ func (m *WorkCertPagedResp) GetItems() []*WorkCertItem {
 	return nil
 }
 
+type WorkCertHistoriesPagedReq struct {
+	Limit                int32    `protobuf:"varint,2,opt,name=Limit,proto3" json:"Limit,omitempty"`
+	Offset               int32    `protobuf:"varint,3,opt,name=Offset,proto3" json:"Offset,omitempty"`
+	AccountID            int64    `protobuf:"varint,4,opt,name=AccountID,proto3" json:"AccountID,omitempty"`
+	Aid                  int64    `protobuf:"varint,5,opt,name=Aid,proto3" json:"Aid,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *WorkCertHistoriesPagedReq) Reset()         { *m = WorkCertHistoriesPagedReq{} }
+func (m *WorkCertHistoriesPagedReq) String() string { return proto.CompactTextString(m) }
+func (*WorkCertHistoriesPagedReq) ProtoMessage()    {}
+func (*WorkCertHistoriesPagedReq) Descriptor() ([]byte, []int) {
+	return fileDescriptor_00212fb1f9d3bf1c, []int{15}
+}
+func (m *WorkCertHistoriesPagedReq) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *WorkCertHistoriesPagedReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_WorkCertHistoriesPagedReq.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *WorkCertHistoriesPagedReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_WorkCertHistoriesPagedReq.Merge(m, src)
+}
+func (m *WorkCertHistoriesPagedReq) XXX_Size() int {
+	return m.Size()
+}
+func (m *WorkCertHistoriesPagedReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_WorkCertHistoriesPagedReq.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_WorkCertHistoriesPagedReq proto.InternalMessageInfo
+
+func (m *WorkCertHistoriesPagedReq) GetLimit() int32 {
+	if m != nil {
+		return m.Limit
+	}
+	return 0
+}
+
+func (m *WorkCertHistoriesPagedReq) GetOffset() int32 {
+	if m != nil {
+		return m.Offset
+	}
+	return 0
+}
+
+func (m *WorkCertHistoriesPagedReq) GetAccountID() int64 {
+	if m != nil {
+		return m.AccountID
+	}
+	return 0
+}
+
+func (m *WorkCertHistoriesPagedReq) GetAid() int64 {
+	if m != nil {
+		return m.Aid
+	}
+	return 0
+}
+
+type WorkCertHistoriesPagedResp struct {
+	Items                []*WorkCertHistoryItem `protobuf:"bytes,1,rep,name=Items,proto3" json:"Items,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}               `json:"-"`
+	XXX_unrecognized     []byte                 `json:"-"`
+	XXX_sizecache        int32                  `json:"-"`
+}
+
+func (m *WorkCertHistoriesPagedResp) Reset()         { *m = WorkCertHistoriesPagedResp{} }
+func (m *WorkCertHistoriesPagedResp) String() string { return proto.CompactTextString(m) }
+func (*WorkCertHistoriesPagedResp) ProtoMessage()    {}
+func (*WorkCertHistoriesPagedResp) Descriptor() ([]byte, []int) {
+	return fileDescriptor_00212fb1f9d3bf1c, []int{16}
+}
+func (m *WorkCertHistoriesPagedResp) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *WorkCertHistoriesPagedResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_WorkCertHistoriesPagedResp.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *WorkCertHistoriesPagedResp) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_WorkCertHistoriesPagedResp.Merge(m, src)
+}
+func (m *WorkCertHistoriesPagedResp) XXX_Size() int {
+	return m.Size()
+}
+func (m *WorkCertHistoriesPagedResp) XXX_DiscardUnknown() {
+	xxx_messageInfo_WorkCertHistoriesPagedResp.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_WorkCertHistoriesPagedResp proto.InternalMessageInfo
+
+func (m *WorkCertHistoriesPagedResp) GetItems() []*WorkCertHistoryItem {
+	if m != nil {
+		return m.Items
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*EmptyStruct)(nil), "service.certification.EmptyStruct")
 	proto.RegisterType((*AidReq)(nil), "service.certification.AidReq")
@@ -1186,83 +1427,90 @@ func init() {
 	proto.RegisterType((*STSToken)(nil), "service.certification.STSToken")
 	proto.RegisterType((*WorkCertPagedReq)(nil), "service.certification.WorkCertPagedReq")
 	proto.RegisterType((*WorkCertItem)(nil), "service.certification.WorkCertItem")
+	proto.RegisterType((*WorkCertHistoryItem)(nil), "service.certification.WorkCertHistoryItem")
 	proto.RegisterType((*WorkCertPagedResp)(nil), "service.certification.WorkCertPagedResp")
+	proto.RegisterType((*WorkCertHistoriesPagedReq)(nil), "service.certification.WorkCertHistoriesPagedReq")
+	proto.RegisterType((*WorkCertHistoriesPagedResp)(nil), "service.certification.WorkCertHistoriesPagedResp")
 }
 
 func init() { proto.RegisterFile("api.proto", fileDescriptor_00212fb1f9d3bf1c) }
 
 var fileDescriptor_00212fb1f9d3bf1c = []byte{
-	// 1110 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x57, 0xcd, 0x72, 0xe3, 0x44,
-	0x10, 0x46, 0x51, 0xfc, 0xd7, 0x8e, 0xf3, 0x33, 0x2c, 0x94, 0xd8, 0x5a, 0x92, 0x20, 0x60, 0x71,
-	0x51, 0x45, 0xb6, 0x2a, 0x9c, 0x28, 0x4e, 0xfe, 0xc9, 0x2e, 0x2e, 0x48, 0x36, 0xc8, 0xc9, 0x42,
-	0x28, 0x2e, 0x13, 0xa9, 0x1d, 0xab, 0x62, 0x6b, 0xb4, 0xa3, 0xd1, 0xd6, 0xfa, 0x01, 0xb8, 0xf0,
-	0x00, 0xbc, 0x0b, 0x57, 0x4e, 0x1c, 0x38, 0x70, 0xe1, 0xb6, 0x95, 0xa2, 0x72, 0xcc, 0x53, 0x50,
-	0x33, 0x23, 0x59, 0xb2, 0xb3, 0xb2, 0x53, 0x2c, 0x17, 0x6e, 0xee, 0xaf, 0x7b, 0x3e, 0x8d, 0xba,
-	0xbf, 0xf9, 0x46, 0x86, 0x1a, 0x0d, 0xfd, 0xbd, 0x90, 0x33, 0xc1, 0xc8, 0x3b, 0x11, 0xf2, 0x17,
-	0xbe, 0x8b, 0x7b, 0x2e, 0x72, 0xe1, 0x0f, 0x7c, 0x97, 0x0a, 0x9f, 0x05, 0xf7, 0x3f, 0xbb, 0xf0,
-	0xc5, 0x30, 0x3e, 0xdf, 0x73, 0xd9, 0xf8, 0xd1, 0x05, 0xbb, 0x60, 0x8f, 0x54, 0xf5, 0x79, 0x3c,
-	0x50, 0x91, 0x0a, 0xd4, 0x2f, 0xcd, 0x62, 0x37, 0xa0, 0x7e, 0x30, 0x0e, 0xc5, 0xa4, 0x2f, 0x78,
-	0xec, 0x0a, 0xbb, 0x05, 0xe5, 0x96, 0xef, 0x39, 0xf8, 0x9c, 0xbc, 0x07, 0x66, 0xcb, 0xf7, 0x2c,
-	0x63, 0xd7, 0x68, 0x9a, 0xed, 0xca, 0xcd, 0xd5, 0x8e, 0x49, 0x7d, 0xcf, 0x91, 0x18, 0x79, 0x00,
-	0xb5, 0xd3, 0x08, 0x0f, 0x69, 0x24, 0x90, 0x5b, 0x2b, 0xbb, 0x46, 0xb3, 0xea, 0x64, 0x80, 0xfd,
-	0xcb, 0x2a, 0x40, 0xaf, 0xdb, 0x41, 0x2e, 0x7a, 0xc1, 0x80, 0xc9, 0xe2, 0x96, 0xeb, 0xb2, 0x38,
-	0x10, 0xbd, 0xae, 0x66, 0x73, 0x32, 0x80, 0xbc, 0x0b, 0xe5, 0xbe, 0xa0, 0x22, 0x8e, 0x14, 0x4f,
-	0xc9, 0x49, 0x22, 0xf2, 0x29, 0x6c, 0xb6, 0x62, 0xcf, 0x17, 0x1d, 0x16, 0xb8, 0xa3, 0x38, 0xf2,
-	0x59, 0x10, 0x59, 0xab, 0xbb, 0x46, 0xb3, 0xe6, 0xdc, 0xc2, 0x09, 0x81, 0xd5, 0x23, 0x3a, 0x46,
-	0xab, 0xa4, 0xf2, 0xea, 0x37, 0xd9, 0x87, 0x7b, 0x3d, 0x0f, 0x83, 0xac, 0x2f, 0x47, 0xf1, 0xf8,
-	0x1c, 0xb9, 0x55, 0x56, 0x35, 0xaf, 0xcd, 0x91, 0x6d, 0xb5, 0x6f, 0xca, 0xbd, 0x93, 0x49, 0x88,
-	0x56, 0x45, 0x55, 0xe6, 0x10, 0xd2, 0x84, 0x0d, 0x1d, 0xf5, 0x05, 0xe5, 0xa2, 0x4b, 0x05, 0x5a,
-	0x55, 0x55, 0x34, 0x0f, 0x13, 0x1b, 0xd6, 0x34, 0x74, 0xf0, 0x32, 0xf4, 0xf9, 0xc4, 0xaa, 0xa9,
-	0xb2, 0x19, 0x8c, 0x58, 0x50, 0x69, 0x79, 0x1e, 0xc7, 0x28, 0xb2, 0x40, 0xa5, 0xd3, 0x90, 0x6c,
-	0x82, 0xd9, 0xc7, 0x97, 0x56, 0x5d, 0xa1, 0xf2, 0x27, 0x79, 0x08, 0xeb, 0x7a, 0xed, 0x63, 0xce,
-	0x02, 0x71, 0xec, 0xbb, 0xd6, 0x9a, 0x4a, 0xce, 0xa1, 0xe4, 0x23, 0x68, 0x68, 0xa4, 0x4d, 0xdd,
-	0x4b, 0x59, 0xd6, 0x50, 0x65, 0xb3, 0xa0, 0x7c, 0xf2, 0x63, 0xea, 0xa2, 0xcc, 0xaf, 0xeb, 0x27,
-	0x27, 0x21, 0xd9, 0x85, 0xfa, 0x81, 0x18, 0x06, 0xbe, 0xfb, 0x84, 0xb3, 0x38, 0xb4, 0x36, 0x54,
-	0x36, 0x0f, 0xc9, 0x69, 0x76, 0x38, 0x52, 0x81, 0x5e, 0x4b, 0x58, 0x9b, 0x7a, 0x9a, 0x53, 0x40,
-	0x09, 0x23, 0xf4, 0x92, 0xec, 0x96, 0xce, 0x4e, 0x01, 0xfb, 0x8f, 0x15, 0x58, 0xfb, 0x8e, 0xf1,
-	0xcb, 0x37, 0x94, 0x86, 0x05, 0x15, 0xc9, 0x22, 0xb7, 0xaf, 0x15, 0x91, 0x86, 0xe4, 0x3e, 0x54,
-	0x9f, 0x8a, 0x21, 0x72, 0x99, 0xd2, 0x62, 0x98, 0xc6, 0x72, 0x55, 0x87, 0x8d, 0x43, 0x1a, 0x4c,
-	0x12, 0x0d, 0xa4, 0xa1, 0x1c, 0x7b, 0x17, 0x43, 0xca, 0xc5, 0x18, 0x03, 0x91, 0x8e, 0x3d, 0x43,
-	0x24, 0xeb, 0x31, 0x8b, 0x7c, 0x29, 0x94, 0x64, 0xde, 0xd3, 0x58, 0xbe, 0x81, 0x1a, 0x27, 0x46,
-	0x2d, 0xa1, 0xa6, 0x6c, 0x3a, 0x19, 0x20, 0xdb, 0xa9, 0xc4, 0xea, 0x60, 0x14, 0x8f, 0x44, 0x32,
-	0xe6, 0x3c, 0xf4, 0x46, 0xed, 0x7c, 0xa8, 0x44, 0x86, 0x5c, 0x24, 0x7d, 0xc9, 0xfa, 0x65, 0xe4,
-	0xfb, 0x65, 0x37, 0x61, 0x3d, 0xed, 0xfa, 0x92, 0xca, 0xbf, 0x0c, 0xa8, 0xa7, 0xa5, 0xd2, 0x02,
-	0x16, 0xcf, 0xe7, 0x7f, 0x33, 0x07, 0xfb, 0x67, 0x23, 0x71, 0x93, 0xbb, 0xbf, 0xdc, 0x03, 0xa8,
-	0x1d, 0xd2, 0x80, 0x5e, 0x20, 0xef, 0x75, 0x95, 0xfe, 0x4c, 0x27, 0x03, 0xe6, 0x07, 0x6b, 0xde,
-	0x1e, 0xac, 0x3c, 0xdd, 0x61, 0xc8, 0xd9, 0x0b, 0x54, 0xcd, 0xa9, 0x3a, 0x69, 0x68, 0xff, 0x66,
-	0xc0, 0x96, 0x83, 0xcf, 0x63, 0x8c, 0x84, 0x1e, 0x9f, 0x83, 0x51, 0x28, 0xfd, 0xae, 0x33, 0x62,
-	0xb1, 0x47, 0x63, 0x31, 0x3c, 0xa6, 0x17, 0x78, 0xca, 0x47, 0x6a, 0x53, 0x35, 0xe7, 0x16, 0x4e,
-	0xbe, 0x84, 0x6a, 0xff, 0xa4, 0x7f, 0xc2, 0x2e, 0x31, 0x50, 0x5b, 0xab, 0xef, 0xef, 0xec, 0xbd,
-	0xf6, 0x2e, 0xd8, 0x4b, 0xcb, 0x9c, 0xe9, 0x02, 0xd2, 0x85, 0xfa, 0x33, 0xe4, 0xfe, 0x60, 0xa2,
-	0xd7, 0x9b, 0x6a, 0xbd, 0x5d, 0xb0, 0x3e, 0x57, 0xe9, 0xe4, 0x97, 0xd9, 0x87, 0x33, 0x2c, 0xe4,
-	0x1e, 0x94, 0x34, 0x9d, 0xde, 0xb2, 0x0e, 0xa4, 0x5f, 0x76, 0x63, 0xae, 0x98, 0xfa, 0xe8, 0xb2,
-	0xc0, 0x4b, 0x4f, 0xf2, 0x3c, 0x6c, 0xbf, 0x32, 0xb2, 0x57, 0x52, 0xcd, 0x75, 0x5d, 0x8c, 0xa2,
-	0xaf, 0x71, 0xd2, 0xf3, 0x12, 0xca, 0x3c, 0x24, 0x89, 0xa7, 0x61, 0x1f, 0x5d, 0x8e, 0x42, 0x11,
-	0xd7, 0x9c, 0x79, 0x58, 0x6a, 0x4a, 0xc9, 0x40, 0x3d, 0x2d, 0x99, 0x53, 0x0e, 0x91, 0x9a, 0x3a,
-	0x08, 0xbc, 0x63, 0xe6, 0x07, 0x22, 0x11, 0xf1, 0x34, 0x96, 0x6b, 0xdb, 0xb1, 0x7b, 0x89, 0x22,
-	0x77, 0xb9, 0xe4, 0x10, 0x79, 0xed, 0x1c, 0x53, 0x31, 0x4c, 0x64, 0xac, 0x7e, 0x67, 0x8d, 0xa8,
-	0xe4, 0x1a, 0x61, 0xff, 0x64, 0xc0, 0x66, 0x2a, 0x3d, 0x39, 0x44, 0x75, 0xbf, 0xda, 0x50, 0xd7,
-	0xc7, 0xee, 0x19, 0x1d, 0xc5, 0xa8, 0x4f, 0xe2, 0x57, 0x6f, 0x39, 0x79, 0x90, 0xec, 0x40, 0xe9,
-	0x1b, 0x7f, 0xec, 0xeb, 0xd7, 0x2b, 0xb5, 0x6b, 0x37, 0x57, 0x3b, 0xa5, 0x91, 0x04, 0x1c, 0x8d,
-	0x13, 0x1b, 0xca, 0x4f, 0x07, 0x83, 0x08, 0xb5, 0x06, 0x4b, 0x6d, 0xb8, 0xb9, 0xda, 0x29, 0x33,
-	0x85, 0x38, 0x49, 0xa6, 0x5d, 0x4d, 0x4f, 0xbb, 0xfd, 0x2a, 0x6f, 0xc0, 0x02, 0xc7, 0x64, 0x1d,
-	0x56, 0xa6, 0xe2, 0x5f, 0xd1, 0xaa, 0xcf, 0xce, 0x84, 0x59, 0x6c, 0xc8, 0xab, 0x45, 0x86, 0x5c,
-	0x2a, 0x36, 0x82, 0x72, 0xb1, 0x11, 0x54, 0x16, 0x19, 0x41, 0x75, 0xa1, 0x11, 0xd4, 0x16, 0x19,
-	0x01, 0x2c, 0x31, 0xe4, 0xfa, 0x12, 0x43, 0x5e, 0x5b, 0x68, 0xc8, 0x8d, 0x79, 0x43, 0x3e, 0x82,
-	0xad, 0xb9, 0x29, 0x47, 0x21, 0xf9, 0x02, 0x4a, 0xb2, 0xd5, 0xd2, 0x6a, 0xcd, 0x66, 0x7d, 0xff,
-	0xc3, 0x82, 0x93, 0x96, 0x1f, 0x8b, 0xa3, 0x57, 0xec, 0xff, 0x5a, 0x86, 0x46, 0x27, 0x5f, 0x45,
-	0xbe, 0x87, 0xc6, 0x8c, 0x75, 0x90, 0xf7, 0x0b, 0xe8, 0xf4, 0x37, 0xdc, 0xfd, 0x66, 0x41, 0xfa,
-	0xb6, 0xff, 0x9c, 0xc1, 0xdb, 0x0e, 0x0e, 0x38, 0x46, 0xc3, 0x99, 0x3b, 0x65, 0x09, 0x7f, 0xd1,
-	0xdb, 0xcc, 0x70, 0x1c, 0x42, 0xed, 0x09, 0xde, 0x71, 0xc3, 0x1f, 0x2c, 0x24, 0x54, 0x1f, 0x0d,
-	0xa7, 0xb0, 0x31, 0xa5, 0xfb, 0x0f, 0x77, 0x79, 0x06, 0x1b, 0x49, 0x57, 0xd2, 0x51, 0x10, 0x7b,
-	0xc9, 0xac, 0x24, 0x77, 0x51, 0x4d, 0xee, 0x9b, 0x9a, 0xfc, 0x08, 0x8d, 0x99, 0xdb, 0x87, 0x7c,
-	0x52, 0xb4, 0xdf, 0xb9, 0x3b, 0xea, 0x4e, 0xec, 0xdf, 0x42, 0xfd, 0x09, 0x66, 0xdc, 0xff, 0xb2,
-	0x17, 0x33, 0xdf, 0x65, 0x03, 0xd8, 0xca, 0x51, 0x46, 0x4a, 0xcc, 0x85, 0x9b, 0x9e, 0x37, 0xb6,
-	0x42, 0xd1, 0xdd, 0x3e, 0x1b, 0x67, 0x33, 0xcf, 0xb9, 0xdb, 0x30, 0x3f, 0x5e, 0xc2, 0xae, 0x59,
-	0xda, 0x5b, 0xbf, 0x5f, 0x6f, 0x1b, 0x7f, 0x5e, 0x6f, 0x1b, 0x7f, 0x5f, 0x6f, 0x1b, 0x3f, 0x98,
-	0x34, 0xf4, 0xcf, 0xcb, 0xea, 0x0f, 0xcf, 0xe7, 0xff, 0x04, 0x00, 0x00, 0xff, 0xff, 0x42, 0xc7,
-	0xd3, 0x8c, 0x43, 0x0d, 0x00, 0x00,
+	// 1173 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x57, 0xcf, 0x6f, 0xe3, 0xc4,
+	0x17, 0x97, 0xeb, 0xa4, 0x49, 0x5e, 0x9a, 0xfe, 0x98, 0xdd, 0xef, 0x57, 0xde, 0x0a, 0xba, 0xc5,
+	0xc0, 0x12, 0xad, 0x44, 0x17, 0xca, 0x09, 0x71, 0x21, 0x4d, 0xba, 0x4b, 0x04, 0xed, 0x16, 0xa7,
+	0x05, 0x16, 0x21, 0x24, 0xd7, 0x7e, 0x69, 0x86, 0x36, 0xb6, 0x77, 0x66, 0xbc, 0xda, 0x5c, 0x10,
+	0xfc, 0x13, 0xfc, 0x35, 0x9c, 0x38, 0x71, 0xe0, 0xc0, 0x85, 0xdb, 0x0a, 0xa1, 0x1e, 0xf9, 0x2b,
+	0xd0, 0xcc, 0xd8, 0x8e, 0x9d, 0xae, 0x93, 0x2e, 0xcb, 0x05, 0x89, 0x9b, 0xdf, 0x67, 0xde, 0xbc,
+	0x99, 0x79, 0x9f, 0xcf, 0x7b, 0x33, 0x86, 0x86, 0x1b, 0xd1, 0x9d, 0x88, 0x85, 0x22, 0x24, 0xff,
+	0xe3, 0xc8, 0x9e, 0x50, 0x0f, 0x77, 0x3c, 0x64, 0x82, 0x0e, 0xa9, 0xe7, 0x0a, 0x1a, 0x06, 0x9b,
+	0x6f, 0x9f, 0x51, 0x31, 0x8a, 0x4f, 0x77, 0xbc, 0x70, 0x7c, 0xef, 0x2c, 0x3c, 0x0b, 0xef, 0x29,
+	0xef, 0xd3, 0x78, 0xa8, 0x2c, 0x65, 0xa8, 0x2f, 0x1d, 0xc5, 0x6e, 0x41, 0x73, 0x7f, 0x1c, 0x89,
+	0xc9, 0x40, 0xb0, 0xd8, 0x13, 0x76, 0x07, 0x96, 0x3b, 0xd4, 0x77, 0xf0, 0x31, 0xb9, 0x05, 0x66,
+	0x87, 0xfa, 0x96, 0xb1, 0x6d, 0xb4, 0xcd, 0xbd, 0xda, 0x9f, 0xbf, 0xdf, 0x36, 0x5d, 0xea, 0x3b,
+	0x12, 0x23, 0xaf, 0x40, 0xe3, 0x84, 0xe3, 0x81, 0xcb, 0x05, 0x32, 0x6b, 0x69, 0xdb, 0x68, 0xd7,
+	0x9d, 0x29, 0x60, 0xff, 0x50, 0x01, 0xe8, 0xf7, 0xba, 0xc8, 0x44, 0x3f, 0x18, 0x86, 0xd2, 0xb9,
+	0xe3, 0x79, 0x61, 0x1c, 0x88, 0x7e, 0x4f, 0x47, 0x73, 0xa6, 0x00, 0xf9, 0x3f, 0x2c, 0x0f, 0x84,
+	0x2b, 0x62, 0xae, 0xe2, 0x54, 0x9d, 0xc4, 0x22, 0x77, 0x61, 0xbd, 0x13, 0xfb, 0x54, 0x74, 0xc3,
+	0xc0, 0xbb, 0x88, 0x39, 0x0d, 0x03, 0x6e, 0x55, 0xb6, 0x8d, 0x76, 0xc3, 0xb9, 0x82, 0x13, 0x02,
+	0x95, 0x43, 0x77, 0x8c, 0x56, 0x55, 0x8d, 0xab, 0x6f, 0xb2, 0x0b, 0x37, 0xfb, 0x3e, 0x06, 0xd3,
+	0xbc, 0x1c, 0xc6, 0xe3, 0x53, 0x64, 0xd6, 0xb2, 0xf2, 0x79, 0xee, 0x18, 0xd9, 0x52, 0xfb, 0x76,
+	0x99, 0x7f, 0x3c, 0x89, 0xd0, 0xaa, 0x29, 0xcf, 0x1c, 0x42, 0xda, 0xb0, 0xa6, 0xad, 0x81, 0x70,
+	0x99, 0xe8, 0xb9, 0x02, 0xad, 0xba, 0x72, 0x9a, 0x85, 0x89, 0x0d, 0x2b, 0x1a, 0xda, 0x7f, 0x1a,
+	0x51, 0x36, 0xb1, 0x1a, 0xca, 0xad, 0x80, 0x11, 0x0b, 0x6a, 0x1d, 0xdf, 0x67, 0xc8, 0xb9, 0x05,
+	0x6a, 0x38, 0x35, 0xc9, 0x3a, 0x98, 0x03, 0x7c, 0x6a, 0x35, 0x15, 0x2a, 0x3f, 0xc9, 0x1d, 0x58,
+	0xd5, 0x73, 0xef, 0xb3, 0x30, 0x10, 0x47, 0xd4, 0xb3, 0x56, 0xd4, 0xe0, 0x0c, 0x4a, 0xde, 0x80,
+	0x96, 0x46, 0xf6, 0x5c, 0xef, 0x5c, 0xba, 0xb5, 0x94, 0x5b, 0x11, 0x94, 0x2b, 0xdf, 0x77, 0x3d,
+	0x94, 0xe3, 0xab, 0x7a, 0xe5, 0xc4, 0x24, 0xdb, 0xd0, 0xdc, 0x17, 0xa3, 0x80, 0x7a, 0x0f, 0x58,
+	0x18, 0x47, 0xd6, 0x9a, 0x1a, 0xcd, 0x43, 0x92, 0xcd, 0x2e, 0x43, 0x57, 0xa0, 0xdf, 0x11, 0xd6,
+	0xba, 0x66, 0x33, 0x03, 0x94, 0x30, 0x22, 0x3f, 0x19, 0xdd, 0xd0, 0xa3, 0x19, 0x60, 0xff, 0xb2,
+	0x04, 0x2b, 0x9f, 0x87, 0xec, 0xfc, 0x25, 0xa5, 0x61, 0x41, 0x4d, 0x46, 0x91, 0xdb, 0xd7, 0x8a,
+	0x48, 0x4d, 0xb2, 0x09, 0xf5, 0x87, 0x62, 0x84, 0x4c, 0x0e, 0x69, 0x31, 0x64, 0xb6, 0x9c, 0xd5,
+	0x0d, 0xc7, 0x91, 0x1b, 0x4c, 0x12, 0x0d, 0xa4, 0xa6, 0xa4, 0xbd, 0x87, 0x91, 0xcb, 0xc4, 0x18,
+	0x03, 0x91, 0xd2, 0x3e, 0x45, 0x64, 0xd4, 0xa3, 0x90, 0x53, 0x29, 0x94, 0x84, 0xef, 0xcc, 0x96,
+	0x27, 0x50, 0x74, 0x22, 0xef, 0x08, 0xc5, 0xb2, 0xe9, 0x4c, 0x01, 0x99, 0x4e, 0x25, 0x56, 0x07,
+	0x79, 0x7c, 0x21, 0x12, 0x9a, 0xf3, 0xd0, 0x4b, 0xa5, 0xf3, 0x8e, 0x12, 0x19, 0x32, 0x91, 0xe4,
+	0x65, 0x9a, 0x2f, 0x23, 0x9f, 0x2f, 0xbb, 0x0d, 0xab, 0x69, 0xd6, 0x17, 0x78, 0xfe, 0x66, 0x40,
+	0x33, 0x75, 0x95, 0x2d, 0x60, 0x3e, 0x3f, 0xff, 0x1a, 0x1e, 0xec, 0x6f, 0x93, 0x66, 0x72, 0xfd,
+	0xb3, 0xad, 0xeb, 0xe6, 0xb7, 0xa4, 0x70, 0xd5, 0xf3, 0x66, 0xb8, 0x34, 0xaf, 0x72, 0x29, 0x0b,
+	0x3a, 0x8a, 0x58, 0xf8, 0x04, 0x55, 0x3e, 0xea, 0x4e, 0x6a, 0xda, 0x3f, 0x19, 0xb0, 0xe1, 0xe0,
+	0xe3, 0x18, 0xb9, 0xd0, 0x8c, 0x39, 0xc8, 0x23, 0xd9, 0xe2, 0xba, 0x17, 0x61, 0xec, 0xbb, 0xb1,
+	0x18, 0x1d, 0xb9, 0x67, 0x78, 0xc2, 0x2e, 0xd4, 0x46, 0x1a, 0xce, 0x15, 0x9c, 0x7c, 0x00, 0xf5,
+	0xc1, 0xf1, 0xe0, 0x38, 0x3c, 0xc7, 0x40, 0x6d, 0xaa, 0xb9, 0x7b, 0x7b, 0xe7, 0xb9, 0xed, 0x7f,
+	0x27, 0x75, 0x73, 0xb2, 0x09, 0xa4, 0x07, 0xcd, 0xcf, 0x90, 0xd1, 0xe1, 0x44, 0xcf, 0x37, 0xd5,
+	0x7c, 0xbb, 0x64, 0x7e, 0xce, 0xd3, 0xc9, 0x4f, 0xb3, 0x0f, 0x0a, 0x51, 0xc8, 0x4d, 0xa8, 0xea,
+	0x70, 0x7a, 0xcb, 0xda, 0x90, 0x2d, 0xb2, 0x17, 0x33, 0x15, 0x69, 0x80, 0x5e, 0x18, 0xf8, 0x69,
+	0xf1, 0xce, 0xc2, 0xf6, 0x33, 0x63, 0x7a, 0x24, 0x95, 0x5c, 0xcf, 0x43, 0xce, 0x3f, 0xc6, 0x49,
+	0xdf, 0x4f, 0x42, 0xe6, 0x21, 0x19, 0x38, 0x33, 0x07, 0xe8, 0x31, 0x14, 0x2a, 0x70, 0xc3, 0x99,
+	0x85, 0xa5, 0x8c, 0x14, 0xf3, 0x6a, 0xb5, 0x84, 0xa7, 0x1c, 0x22, 0x65, 0xb4, 0x1f, 0xf8, 0x47,
+	0x21, 0x0d, 0x44, 0xa2, 0xdb, 0xcc, 0x96, 0x73, 0xf7, 0x62, 0xef, 0x1c, 0x45, 0xee, 0x3e, 0xc9,
+	0x21, 0xf2, 0xa6, 0x39, 0x72, 0xc5, 0x28, 0x51, 0xae, 0xfa, 0x9e, 0x26, 0xa2, 0x96, 0x4b, 0x84,
+	0xfd, 0x0d, 0xac, 0xa7, 0x6a, 0x93, 0x1c, 0xaa, 0x1b, 0xb5, 0xa4, 0xec, 0x64, 0x84, 0x4f, 0xe8,
+	0x98, 0x8a, 0x24, 0x55, 0xda, 0x90, 0xde, 0x0f, 0x87, 0x43, 0x8e, 0x5a, 0x6b, 0x55, 0x27, 0xb1,
+	0x52, 0x69, 0x56, 0x32, 0x69, 0xda, 0xcf, 0xf2, 0x7d, 0x55, 0xe0, 0x98, 0xac, 0xc2, 0x52, 0x26,
+	0xea, 0xa5, 0x7e, 0xaf, 0xa8, 0x75, 0xb3, 0xbc, 0xcf, 0x56, 0xca, 0xfa, 0x6c, 0xb5, 0xbc, 0xbe,
+	0x97, 0xcb, 0xeb, 0xbb, 0x36, 0xaf, 0xbe, 0xeb, 0x73, 0xeb, 0xbb, 0x31, 0xaf, 0xbe, 0x61, 0x41,
+	0x9f, 0x6d, 0x2e, 0xe8, 0xb3, 0x2b, 0x73, 0xfb, 0x6c, 0x6b, 0xb6, 0xcf, 0x7e, 0x6f, 0xc2, 0x8d,
+	0x34, 0xbd, 0x1f, 0x51, 0x2e, 0x42, 0x36, 0xf9, 0x2f, 0xcb, 0x65, 0x59, 0x3e, 0x70, 0x03, 0xf7,
+	0x0c, 0x59, 0xbf, 0x97, 0xe6, 0x31, 0x03, 0x8a, 0x1c, 0xac, 0xce, 0xe5, 0x60, 0x6d, 0x96, 0x83,
+	0x43, 0xd8, 0x98, 0x29, 0x27, 0x1e, 0x91, 0xf7, 0xa1, 0x2a, 0x89, 0x90, 0xe5, 0x64, 0xb6, 0x9b,
+	0xbb, 0xaf, 0x97, 0x74, 0xb4, 0x7c, 0x69, 0x38, 0x7a, 0x86, 0x3d, 0x81, 0x5b, 0x45, 0x4a, 0x29,
+	0xf2, 0xac, 0x4e, 0x5f, 0xac, 0x1e, 0x0b, 0xb4, 0x57, 0x4a, 0x2e, 0x92, 0xea, 0xb4, 0x5a, 0xbf,
+	0x86, 0xcd, 0xb2, 0xa5, 0x79, 0x44, 0x3e, 0x2c, 0x9e, 0xe9, 0xee, 0x82, 0x33, 0xe5, 0xf4, 0x98,
+	0x1c, 0x6d, 0xf7, 0xc7, 0x1a, 0xb4, 0xba, 0x79, 0x67, 0xf2, 0x05, 0xb4, 0x0a, 0xb7, 0x0f, 0x79,
+	0xb5, 0x24, 0xaa, 0x7e, 0xf9, 0x6f, 0xb6, 0x4b, 0x86, 0xaf, 0x5e, 0x61, 0x8f, 0xe0, 0x86, 0x83,
+	0x43, 0x86, 0x7c, 0x54, 0x78, 0x89, 0x2c, 0x88, 0x5f, 0x46, 0x54, 0x21, 0xc6, 0x01, 0x34, 0x1e,
+	0xe0, 0x35, 0x37, 0xfc, 0xda, 0xdc, 0x80, 0xea, 0xa9, 0x79, 0x02, 0x6b, 0x59, 0xb8, 0x7f, 0x70,
+	0x97, 0x8f, 0x60, 0x2d, 0xc9, 0x4a, 0xca, 0x08, 0xb1, 0x17, 0x50, 0x26, 0x63, 0x97, 0xf9, 0xe4,
+	0xfe, 0xc4, 0xc8, 0x57, 0xd0, 0x2a, 0x3c, 0x5a, 0xc8, 0x5b, 0x65, 0xfb, 0x9d, 0x79, 0xda, 0x5c,
+	0x2b, 0xfa, 0xa7, 0xd0, 0x7c, 0x80, 0xd3, 0xd8, 0x7f, 0x33, 0x17, 0x85, 0xd7, 0xfc, 0x10, 0x36,
+	0x72, 0x21, 0xb5, 0xa6, 0x4b, 0x37, 0x3d, 0x7b, 0x39, 0x96, 0x8a, 0xee, 0x6a, 0xd9, 0x7f, 0x67,
+	0xc0, 0xad, 0xdc, 0x42, 0xc5, 0x22, 0x22, 0xef, 0x5c, 0xab, 0x62, 0x72, 0xe5, 0xbe, 0xf9, 0xee,
+	0x0b, 0xce, 0x50, 0xba, 0xcf, 0x1f, 0xf5, 0x7a, 0x7a, 0x7a, 0x73, 0xc1, 0x32, 0x3a, 0xca, 0xde,
+	0xc6, 0xcf, 0x97, 0x5b, 0xc6, 0xaf, 0x97, 0x5b, 0xc6, 0x1f, 0x97, 0x5b, 0xc6, 0x97, 0xa6, 0x1b,
+	0xd1, 0xd3, 0x65, 0xf5, 0xa7, 0xfe, 0xde, 0x5f, 0x01, 0x00, 0x00, 0xff, 0xff, 0xa3, 0x64, 0xfb,
+	0xe9, 0xfc, 0x0f, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -1285,6 +1533,7 @@ type CertificationClient interface {
 	AuditWorkCert(ctx context.Context, in *AuditWorkCertReq, opts ...grpc.CallOption) (*EmptyStruct, error)
 	GetWorkCert(ctx context.Context, in *AidReq, opts ...grpc.CallOption) (*WorkCertInfo, error)
 	GetWorkCertsPaged(ctx context.Context, in *WorkCertPagedReq, opts ...grpc.CallOption) (*WorkCertPagedResp, error)
+	GetWorkCertHistoriesPaged(ctx context.Context, in *WorkCertHistoriesPagedReq, opts ...grpc.CallOption) (*WorkCertHistoriesPagedResp, error)
 	GetWorkCertStatus(ctx context.Context, in *AidReq, opts ...grpc.CallOption) (*WorkCertStatus, error)
 }
 
@@ -1368,6 +1617,15 @@ func (c *certificationClient) GetWorkCertsPaged(ctx context.Context, in *WorkCer
 	return out, nil
 }
 
+func (c *certificationClient) GetWorkCertHistoriesPaged(ctx context.Context, in *WorkCertHistoriesPagedReq, opts ...grpc.CallOption) (*WorkCertHistoriesPagedResp, error) {
+	out := new(WorkCertHistoriesPagedResp)
+	err := c.cc.Invoke(ctx, "/service.certification.Certification/GetWorkCertHistoriesPaged", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *certificationClient) GetWorkCertStatus(ctx context.Context, in *AidReq, opts ...grpc.CallOption) (*WorkCertStatus, error) {
 	out := new(WorkCertStatus)
 	err := c.cc.Invoke(ctx, "/service.certification.Certification/GetWorkCertStatus", in, out, opts...)
@@ -1387,6 +1645,7 @@ type CertificationServer interface {
 	AuditWorkCert(context.Context, *AuditWorkCertReq) (*EmptyStruct, error)
 	GetWorkCert(context.Context, *AidReq) (*WorkCertInfo, error)
 	GetWorkCertsPaged(context.Context, *WorkCertPagedReq) (*WorkCertPagedResp, error)
+	GetWorkCertHistoriesPaged(context.Context, *WorkCertHistoriesPagedReq) (*WorkCertHistoriesPagedResp, error)
 	GetWorkCertStatus(context.Context, *AidReq) (*WorkCertStatus, error)
 }
 
@@ -1417,6 +1676,9 @@ func (*UnimplementedCertificationServer) GetWorkCert(ctx context.Context, req *A
 }
 func (*UnimplementedCertificationServer) GetWorkCertsPaged(ctx context.Context, req *WorkCertPagedReq) (*WorkCertPagedResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetWorkCertsPaged not implemented")
+}
+func (*UnimplementedCertificationServer) GetWorkCertHistoriesPaged(ctx context.Context, req *WorkCertHistoriesPagedReq) (*WorkCertHistoriesPagedResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetWorkCertHistoriesPaged not implemented")
 }
 func (*UnimplementedCertificationServer) GetWorkCertStatus(ctx context.Context, req *AidReq) (*WorkCertStatus, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetWorkCertStatus not implemented")
@@ -1570,6 +1832,24 @@ func _Certification_GetWorkCertsPaged_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Certification_GetWorkCertHistoriesPaged_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WorkCertHistoriesPagedReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CertificationServer).GetWorkCertHistoriesPaged(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/service.certification.Certification/GetWorkCertHistoriesPaged",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CertificationServer).GetWorkCertHistoriesPaged(ctx, req.(*WorkCertHistoriesPagedReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Certification_GetWorkCertStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AidReq)
 	if err := dec(in); err != nil {
@@ -1623,6 +1903,10 @@ var _Certification_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetWorkCertsPaged",
 			Handler:    _Certification_GetWorkCertsPaged_Handler,
+		},
+		{
+			MethodName: "GetWorkCertHistoriesPaged",
+			Handler:    _Certification_GetWorkCertHistoriesPaged_Handler,
 		},
 		{
 			MethodName: "GetWorkCertStatus",
@@ -2112,8 +2396,8 @@ func (m *AuditWorkCertReq) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x1a
 	}
-	if m.ManagerID != 0 {
-		i = encodeVarintApi(dAtA, i, uint64(m.ManagerID))
+	if m.Aid != 0 {
+		i = encodeVarintApi(dAtA, i, uint64(m.Aid))
 		i--
 		dAtA[i] = 0x10
 	}
@@ -2322,6 +2606,11 @@ func (m *WorkCertPagedReq) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
+	if m.Aid != 0 {
+		i = encodeVarintApi(dAtA, i, uint64(m.Aid))
+		i--
+		dAtA[i] = 0x20
+	}
 	if m.Offset != 0 {
 		i = encodeVarintApi(dAtA, i, uint64(m.Offset))
 		i--
@@ -2332,30 +2621,14 @@ func (m *WorkCertPagedReq) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x10
 	}
-	if m.Status != nil {
-		{
-			size := m.Status.Size()
-			i -= size
-			if _, err := m.Status.MarshalTo(dAtA[i:]); err != nil {
-				return 0, err
-			}
-		}
+	if m.Status != 0 {
+		i = encodeVarintApi(dAtA, i, uint64(m.Status))
+		i--
+		dAtA[i] = 0x8
 	}
 	return len(dAtA) - i, nil
 }
 
-func (m *WorkCertPagedReq_StatusValue) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *WorkCertPagedReq_StatusValue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	i = encodeVarintApi(dAtA, i, uint64(m.StatusValue))
-	i--
-	dAtA[i] = 0x8
-	return len(dAtA) - i, nil
-}
 func (m *WorkCertItem) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -2455,6 +2728,110 @@ func (m *WorkCertItem) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *WorkCertHistoryItem) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *WorkCertHistoryItem) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *WorkCertHistoryItem) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.UpdatedAt != 0 {
+		i = encodeVarintApi(dAtA, i, uint64(m.UpdatedAt))
+		i--
+		dAtA[i] = 0x78
+	}
+	if m.CreatedAt != 0 {
+		i = encodeVarintApi(dAtA, i, uint64(m.CreatedAt))
+		i--
+		dAtA[i] = 0x70
+	}
+	if m.ManagerID != 0 {
+		i = encodeVarintApi(dAtA, i, uint64(m.ManagerID))
+		i--
+		dAtA[i] = 0x68
+	}
+	if len(m.AuditResult) > 0 {
+		i -= len(m.AuditResult)
+		copy(dAtA[i:], m.AuditResult)
+		i = encodeVarintApi(dAtA, i, uint64(len(m.AuditResult)))
+		i--
+		dAtA[i] = 0x5a
+	}
+	if m.ExpiresAt != 0 {
+		i = encodeVarintApi(dAtA, i, uint64(m.ExpiresAt))
+		i--
+		dAtA[i] = 0x50
+	}
+	if len(m.Position) > 0 {
+		i -= len(m.Position)
+		copy(dAtA[i:], m.Position)
+		i = encodeVarintApi(dAtA, i, uint64(len(m.Position)))
+		i--
+		dAtA[i] = 0x4a
+	}
+	if len(m.Department) > 0 {
+		i -= len(m.Department)
+		copy(dAtA[i:], m.Department)
+		i = encodeVarintApi(dAtA, i, uint64(len(m.Department)))
+		i--
+		dAtA[i] = 0x42
+	}
+	if len(m.Company) > 0 {
+		i -= len(m.Company)
+		copy(dAtA[i:], m.Company)
+		i = encodeVarintApi(dAtA, i, uint64(len(m.Company)))
+		i--
+		dAtA[i] = 0x3a
+	}
+	if len(m.OtherPic) > 0 {
+		i -= len(m.OtherPic)
+		copy(dAtA[i:], m.OtherPic)
+		i = encodeVarintApi(dAtA, i, uint64(len(m.OtherPic)))
+		i--
+		dAtA[i] = 0x32
+	}
+	if len(m.WorkPic) > 0 {
+		i -= len(m.WorkPic)
+		copy(dAtA[i:], m.WorkPic)
+		i = encodeVarintApi(dAtA, i, uint64(len(m.WorkPic)))
+		i--
+		dAtA[i] = 0x2a
+	}
+	if m.Status != 0 {
+		i = encodeVarintApi(dAtA, i, uint64(m.Status))
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.AccountID != 0 {
+		i = encodeVarintApi(dAtA, i, uint64(m.AccountID))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.ID != 0 {
+		i = encodeVarintApi(dAtA, i, uint64(m.ID))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
 func (m *WorkCertPagedResp) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -2471,6 +2848,94 @@ func (m *WorkCertPagedResp) MarshalTo(dAtA []byte) (int, error) {
 }
 
 func (m *WorkCertPagedResp) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.Items) > 0 {
+		for iNdEx := len(m.Items) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Items[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintApi(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *WorkCertHistoriesPagedReq) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *WorkCertHistoriesPagedReq) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *WorkCertHistoriesPagedReq) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Aid != 0 {
+		i = encodeVarintApi(dAtA, i, uint64(m.Aid))
+		i--
+		dAtA[i] = 0x28
+	}
+	if m.AccountID != 0 {
+		i = encodeVarintApi(dAtA, i, uint64(m.AccountID))
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.Offset != 0 {
+		i = encodeVarintApi(dAtA, i, uint64(m.Offset))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.Limit != 0 {
+		i = encodeVarintApi(dAtA, i, uint64(m.Limit))
+		i--
+		dAtA[i] = 0x10
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *WorkCertHistoriesPagedResp) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *WorkCertHistoriesPagedResp) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *WorkCertHistoriesPagedResp) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -2737,8 +3202,8 @@ func (m *AuditWorkCertReq) Size() (n int) {
 	if m.AccountID != 0 {
 		n += 1 + sovApi(uint64(m.AccountID))
 	}
-	if m.ManagerID != 0 {
-		n += 1 + sovApi(uint64(m.ManagerID))
+	if m.Aid != 0 {
+		n += 1 + sovApi(uint64(m.Aid))
 	}
 	l = len(m.AuditResult)
 	if l > 0 {
@@ -2842,8 +3307,8 @@ func (m *WorkCertPagedReq) Size() (n int) {
 	}
 	var l int
 	_ = l
-	if m.Status != nil {
-		n += m.Status.Size()
+	if m.Status != 0 {
+		n += 1 + sovApi(uint64(m.Status))
 	}
 	if m.Limit != 0 {
 		n += 1 + sovApi(uint64(m.Limit))
@@ -2851,21 +3316,15 @@ func (m *WorkCertPagedReq) Size() (n int) {
 	if m.Offset != 0 {
 		n += 1 + sovApi(uint64(m.Offset))
 	}
+	if m.Aid != 0 {
+		n += 1 + sovApi(uint64(m.Aid))
+	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
 
-func (m *WorkCertPagedReq_StatusValue) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	n += 1 + sovApi(uint64(m.StatusValue))
-	return n
-}
 func (m *WorkCertItem) Size() (n int) {
 	if m == nil {
 		return 0
@@ -2920,7 +3379,106 @@ func (m *WorkCertItem) Size() (n int) {
 	return n
 }
 
+func (m *WorkCertHistoryItem) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.ID != 0 {
+		n += 1 + sovApi(uint64(m.ID))
+	}
+	if m.AccountID != 0 {
+		n += 1 + sovApi(uint64(m.AccountID))
+	}
+	if m.Status != 0 {
+		n += 1 + sovApi(uint64(m.Status))
+	}
+	l = len(m.WorkPic)
+	if l > 0 {
+		n += 1 + l + sovApi(uint64(l))
+	}
+	l = len(m.OtherPic)
+	if l > 0 {
+		n += 1 + l + sovApi(uint64(l))
+	}
+	l = len(m.Company)
+	if l > 0 {
+		n += 1 + l + sovApi(uint64(l))
+	}
+	l = len(m.Department)
+	if l > 0 {
+		n += 1 + l + sovApi(uint64(l))
+	}
+	l = len(m.Position)
+	if l > 0 {
+		n += 1 + l + sovApi(uint64(l))
+	}
+	if m.ExpiresAt != 0 {
+		n += 1 + sovApi(uint64(m.ExpiresAt))
+	}
+	l = len(m.AuditResult)
+	if l > 0 {
+		n += 1 + l + sovApi(uint64(l))
+	}
+	if m.ManagerID != 0 {
+		n += 1 + sovApi(uint64(m.ManagerID))
+	}
+	if m.CreatedAt != 0 {
+		n += 1 + sovApi(uint64(m.CreatedAt))
+	}
+	if m.UpdatedAt != 0 {
+		n += 1 + sovApi(uint64(m.UpdatedAt))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
 func (m *WorkCertPagedResp) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Items) > 0 {
+		for _, e := range m.Items {
+			l = e.Size()
+			n += 1 + l + sovApi(uint64(l))
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *WorkCertHistoriesPagedReq) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Limit != 0 {
+		n += 1 + sovApi(uint64(m.Limit))
+	}
+	if m.Offset != 0 {
+		n += 1 + sovApi(uint64(m.Offset))
+	}
+	if m.AccountID != 0 {
+		n += 1 + sovApi(uint64(m.AccountID))
+	}
+	if m.Aid != 0 {
+		n += 1 + sovApi(uint64(m.Aid))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *WorkCertHistoriesPagedResp) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -4394,9 +4952,9 @@ func (m *AuditWorkCertReq) Unmarshal(dAtA []byte) error {
 			}
 		case 2:
 			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ManagerID", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Aid", wireType)
 			}
-			m.ManagerID = 0
+			m.Aid = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowApi
@@ -4406,7 +4964,7 @@ func (m *AuditWorkCertReq) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.ManagerID |= int64(b&0x7F) << shift
+				m.Aid |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -5060,9 +5618,9 @@ func (m *WorkCertPagedReq) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field StatusValue", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Status", wireType)
 			}
-			var v int32
+			m.Status = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowApi
@@ -5072,12 +5630,11 @@ func (m *WorkCertPagedReq) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= int32(b&0x7F) << shift
+				m.Status |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			m.Status = &WorkCertPagedReq_StatusValue{v}
 		case 2:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Limit", wireType)
@@ -5112,6 +5669,25 @@ func (m *WorkCertPagedReq) Unmarshal(dAtA []byte) error {
 				b := dAtA[iNdEx]
 				iNdEx++
 				m.Offset |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Aid", wireType)
+			}
+			m.Aid = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Aid |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -5501,6 +6077,385 @@ func (m *WorkCertItem) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+func (m *WorkCertHistoryItem) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowApi
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: WorkCertHistoryItem: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: WorkCertHistoryItem: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ID", wireType)
+			}
+			m.ID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ID |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AccountID", wireType)
+			}
+			m.AccountID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.AccountID |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Status", wireType)
+			}
+			m.Status = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Status |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field WorkPic", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthApi
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthApi
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.WorkPic = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field OtherPic", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthApi
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthApi
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.OtherPic = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 7:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Company", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthApi
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthApi
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Company = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 8:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Department", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthApi
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthApi
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Department = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 9:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Position", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthApi
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthApi
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Position = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 10:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ExpiresAt", wireType)
+			}
+			m.ExpiresAt = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ExpiresAt |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 11:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AuditResult", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthApi
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthApi
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.AuditResult = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 13:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ManagerID", wireType)
+			}
+			m.ManagerID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ManagerID |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 14:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CreatedAt", wireType)
+			}
+			m.CreatedAt = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.CreatedAt |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 15:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field UpdatedAt", wireType)
+			}
+			m.UpdatedAt = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.UpdatedAt |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipApi(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthApi
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthApi
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
 func (m *WorkCertPagedResp) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -5560,6 +6515,224 @@ func (m *WorkCertPagedResp) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.Items = append(m.Items, &WorkCertItem{})
+			if err := m.Items[len(m.Items)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipApi(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthApi
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthApi
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *WorkCertHistoriesPagedReq) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowApi
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: WorkCertHistoriesPagedReq: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: WorkCertHistoriesPagedReq: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Limit", wireType)
+			}
+			m.Limit = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Limit |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Offset", wireType)
+			}
+			m.Offset = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Offset |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AccountID", wireType)
+			}
+			m.AccountID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.AccountID |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Aid", wireType)
+			}
+			m.Aid = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Aid |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipApi(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthApi
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthApi
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *WorkCertHistoriesPagedResp) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowApi
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: WorkCertHistoriesPagedResp: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: WorkCertHistoriesPagedResp: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Items", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthApi
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthApi
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Items = append(m.Items, &WorkCertHistoryItem{})
 			if err := m.Items[len(m.Items)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}

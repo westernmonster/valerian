@@ -70,3 +70,17 @@ func (p *Dao) UpdateProfile(c context.Context, arg *account.UpdateProfileReq) (e
 	}
 	return
 }
+
+func (p *Dao) AllAccountIDsPaged(c context.Context, req *account.AccountsPagedReq) (info *account.IDsResp, err error) {
+	if info, err = p.accountRPC.AllAccountsIDsPaged(c, req); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.AllAccountIDsPaged err(%+v) req(%+v) ", err, req))
+	}
+	return
+}
+
+func (p *Dao) AllAccountsPaged(c context.Context, req *account.AccountsPagedReq) (info *account.AdminAccountsResp, err error) {
+	if info, err = p.accountRPC.AllAccountsPaged(c, req); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.AllAccountsPaged err(%+v) req(%+v) ", err, req))
+	}
+	return
+}

@@ -104,7 +104,7 @@ func (p *Dao) GetAccounts(c context.Context, node sqalx.Node) (items []*model.Ac
 
 func (p *Dao) DeactiveAccount(c context.Context, node sqalx.Node, aid int64) (err error) {
 	sqlSelect := "UPDATE accounts SET user_name=?, deactive=?, updated_at=? WHERE id=? AND deleted=0"
-	if _, err = node.ExecContext(c, sqlSelect, "已注销", types.BitBool(true), aid, time.Now().Unix()); err != nil {
+	if _, err = node.ExecContext(c, sqlSelect, "已注销", 1, time.Now().Unix(), aid); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.DeactiveAccount error(%+v), id(%d)", err, aid))
 		return
 	}

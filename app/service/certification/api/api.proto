@@ -68,7 +68,7 @@ message WorkCertReq {
 
 message AuditWorkCertReq {
     int64 AccountID = 1;
-    int64 ManagerID = 2;
+    int64 Aid = 2;
     string AuditResult = 3;
     bool Approve = 4;
 }
@@ -108,11 +108,10 @@ message STSToken {
 }
 
 message WorkCertPagedReq {
-    oneof Status {
-        int32 StatusValue = 1;
-    }
-    int32 Limit = 2 [(gogoproto.jsontag) = "limit"];
-    int32 Offset = 3 [(gogoproto.jsontag) = "offset"];
+    int32 Status = 1;
+    int32 Limit = 2 ;
+    int32 Offset = 3;
+    int64 Aid = 4;
 }
 
 message WorkCertItem {
@@ -130,8 +129,34 @@ message WorkCertItem {
     int64 UpdatedAt   = 13;
 }
 
+message WorkCertHistoryItem {
+    int64 ID  = 1;
+    int64 AccountID   = 3;
+    int32  Status = 4;
+    string WorkPic     = 5;
+    string OtherPic    = 6;
+    string Company     = 7;
+    string Department  = 8;
+    string Position    = 9;
+    int64 ExpiresAt   = 10;
+    string AuditResult = 11;
+    int64 ManagerID   = 13;
+    int64 CreatedAt   = 14;
+    int64 UpdatedAt   = 15;
+}
+
 message WorkCertPagedResp {
     repeated WorkCertItem Items = 1;
+}
+
+message WorkCertHistoriesPagedReq {
+    int32 Limit = 2 ;
+    int32 Offset = 3;
+    int64 AccountID = 4;
+    int64 Aid = 5;
+}
+message WorkCertHistoriesPagedResp {
+    repeated WorkCertHistoryItem Items = 1;
 }
 
 
@@ -146,6 +171,7 @@ service Certification {
     rpc GetWorkCert(AidReq) returns (WorkCertInfo);
 
     rpc GetWorkCertsPaged(WorkCertPagedReq) returns (WorkCertPagedResp);
+    rpc GetWorkCertHistoriesPaged(WorkCertHistoriesPagedReq) returns (WorkCertHistoriesPagedResp);
 
     rpc GetWorkCertStatus(AidReq) returns (WorkCertStatus);
 }

@@ -2,27 +2,27 @@ package http
 
 import (
 	"strconv"
-	"valerian/app/admin/account/model"
+	"valerian/app/interface/certification/model"
 	"valerian/library/ecode"
 	"valerian/library/net/http/mars"
 )
 
-// @Summary 工作认证
-// @Description  工作认证
+// @Summary 审核工作认证
+// @Description  审核工作认证
 // @Tags admin
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body  app.admin.account.model.ArgWorkCert true "请求"
+// @Param req body  app.interface.certification.model.ArgAuditWorkCert true "请求"
 // @Success 200 "成功"
 // @Failure 400 "验证请求失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /admin/account/workcert [post]
-func setWorkCert(c *mars.Context) {
-	arg := new(model.ArgWorkCert)
+// @Router /admin/certification/workcert/audit [post]
+func auditWorkCert(c *mars.Context) {
+	arg := new(model.ArgAuditWorkCert)
 	if e := c.Bind(arg); e != nil {
 		return
 	}
@@ -30,7 +30,7 @@ func setWorkCert(c *mars.Context) {
 		c.JSON(nil, ecode.RequestErr)
 		return
 	}
-	c.JSON(nil, srv.WorkCert(c, arg))
+	c.JSON(nil, srv.AuditWorkCert(c, arg))
 }
 
 // @Summary 工作认证列表
@@ -44,16 +44,17 @@ func setWorkCert(c *mars.Context) {
 // @Param status query string false "状态"
 // @Param limit query integer false "每页大小"
 // @Param offset query integer false "offset"
-// @Success 200 {object}  app.admin.account.model.WorkCertListResp "工作认证列表"
+// @Success 200 {object}  app.interface.certification.model.WorkCertsPagedResp "工作认证列表"
 // @Failure 400 "请求验证失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /admin/account/workcert/list [get]
+// @Router /admin/certification/workcert/list [get]
 func listWorkCert(c *mars.Context) {
 	var (
 		err    error
 		offset int
 		limit  int
+		status int
 	)
 
 	params := c.Request.Form
@@ -70,12 +71,13 @@ func listWorkCert(c *mars.Context) {
 		limit = 10
 	}
 
-	cond := map[string]interface{}{}
-	status := params.Get("status")
-	if len(status) > 0 {
-		cond["status"] = status
+	if status, err = strconv.Atoi(params.Get("status")); err != nil {
+		status = 0
+	} else if limit < 0 {
+		status = 0
 	}
-	c.JSON(srv.GetWorkCertsByCondPaged(c, cond, limit, offset))
+
+	c.JSON(srv.GetWorkCertsPaged(c, status, limit, offset))
 }
 
 // @Summary 工作认证审核列表
@@ -89,16 +91,17 @@ func listWorkCert(c *mars.Context) {
 // @Param account_id query string true "用户 id"
 // @Param limit query integer false "每页大小"
 // @Param offset query integer false "offset"
-// @Success 200 {object}  app.admin.account.model.WorkCertHistoryResp "工作认证审核列表"
+// @Success 200 {object}  app.interface.certification.model.WorkCertHistoriesResp "工作认证审核列表"
 // @Failure 400 "请求验证失败"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
-// @Router /admin/account/workcert/history/list [get]
+// @Router /admin/certification/workcert/history/list [get]
 func workCertHistory(c *mars.Context) {
 	var (
 		err    error
 		offset int
 		limit  int
+		id     int64
 	)
 
 	params := c.Request.Form
@@ -115,11 +118,10 @@ func workCertHistory(c *mars.Context) {
 		limit = 10
 	}
 
-	cond := map[string]interface{}{}
-	account_id := params.Get("account_id")
-	if len(account_id) > 0 {
-		cond["account_id"] = account_id
+	if id, err = strconv.ParseInt(params.Get("id"), 10, 64); err != nil {
+		c.JSON(nil, ecode.RequestErr)
+		return
 	}
 
-	c.JSON(srv.GetWorkCertHistorysByAccount(c, cond, limit, offset))
+	c.JSON(srv.GetWorkCertHistoriesPaged(c, id, limit, offset))
 }

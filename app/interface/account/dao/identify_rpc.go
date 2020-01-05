@@ -30,3 +30,31 @@ func (p *Dao) Deactive(c context.Context, arg *identify.DeactiveReq) (err error)
 	}
 	return
 }
+
+func (p *Dao) AdminCreateAccount(c context.Context, arg *identify.AdminCreateAccountReq) (err error) {
+	if _, err = p.identifyRPC.AdminCreateAccount(c, arg); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.AdminCreateAccount err(%+v) req(%s)", err, arg))
+	}
+	return
+}
+
+func (p *Dao) AccountLock(c context.Context, arg *identify.LockReq) (err error) {
+	if _, err = p.identifyRPC.AccountLock(c, arg); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.AccountLock err(%+v) req(%s)", err, arg))
+	}
+	return
+}
+
+func (p *Dao) AccountUnlock(c context.Context, arg *identify.LockReq) (err error) {
+	if _, err = p.identifyRPC.AccountUnlock(c, arg); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.AccountUnlock err(%+v) req(%s)", err, arg))
+	}
+	return
+}
+
+func (p *Dao) AdminDeactive(c context.Context, arg *identify.AdminDeactiveReq) (err error) {
+	if _, err = p.identifyRPC.AdminDeactive(c, arg); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.AdminDeactive err(%+v) req(%s)", err, arg))
+	}
+	return
+}

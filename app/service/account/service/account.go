@@ -7,6 +7,7 @@ import (
 
 	"valerian/app/service/account/api"
 	"valerian/app/service/account/model"
+	certification "valerian/app/service/certification/api"
 	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
 	"valerian/library/log"
@@ -51,6 +52,7 @@ func baseInfoFromAccount(acc *model.Account, stat *model.AccountStat) (info *api
 		IsOrg:        bool(acc.IsOrg),
 		IsVIP:        bool(acc.IsVip),
 		Role:         acc.Role,
+		IsLock:       bool(acc.IsLock),
 		Stat: &api.AccountStatInfo{
 			FollowingCount: stat.Following,
 			FansCount:      stat.Fans,
@@ -58,6 +60,88 @@ func baseInfoFromAccount(acc *model.Account, stat *model.AccountStat) (info *api
 			TopicCount:     stat.TopicCount,
 			ArticleCount:   stat.ArticleCount,
 		},
+	}
+	return
+}
+
+// GetAllAccountIDs 获取所有用户ID，排除已经注销的
+func (p *Service) GetAllAccountIDs(c context.Context, req *api.AidReq) (ids []int64, err error) {
+	if err = p.checkSystemAdmin(c, p.d.DB(), req.Aid); err != nil {
+		return
+	}
+
+	if ids, err = p.d.GetAllAccountIDs(c, p.d.DB()); err != nil {
+		return
+	}
+	return
+}
+
+// GetAllAccountIDsPaged 分页获取所有用户ID，排除已经注销的
+func (p *Service) GetAllAccountIDsPaged(c context.Context, req *api.AccountsPagedReq) (ids []int64, err error) {
+	if err = p.checkSystemAdmin(c, p.d.DB(), req.Aid); err != nil {
+		return
+	}
+
+	if ids, err = p.d.GetAllAccountIDsPaged(c, p.d.DB(), req.Limit, req.Offset); err != nil {
+		return
+	}
+	return
+}
+
+func (p *Service) GetAllAccountsPaged(c context.Context, req *api.AccountsPagedReq) (resp *api.AdminAccountsResp, err error) {
+	if err = p.checkSystemAdmin(c, p.d.DB(), req.Aid); err != nil {
+		return
+	}
+
+	var data []*model.Account
+	if data, err = p.d.GetAllAccountsPaged(c, p.d.DB(), req.Limit, req.Offset); err != nil {
+		return
+	}
+
+	resp = &api.AdminAccountsResp{Items: make([]*api.AdminAccountItem, len(data))}
+
+	for i, v := range data {
+		item := &api.AdminAccountItem{
+			ID:           v.ID,
+			UserName:     v.UserName,
+			Avatar:       v.Avatar,
+			Email:        v.Email,
+			Prefix:       v.Prefix,
+			Mobile:       v.Mobile,
+			IDCert:       bool(v.IDCert),
+			WorkCert:     bool(v.WorkCert),
+			IsOrg:        bool(v.IsOrg),
+			IsVIP:        bool(v.IsVip),
+			CreatedAt:    v.CreatedAt,
+			Gender:       int32(v.Gender),
+			Introduction: v.Introduction,
+			Location:     v.Location,
+			IsLock:       bool(v.IsLock),
+		}
+
+		var workCertStatus int32
+		if workCertStatus, err = p.d.GetWorkCertStatus(c, v.ID); err != nil {
+			return
+		}
+
+		if workCertStatus == int32(1) {
+			var workCert *certification.WorkCertInfo
+			if workCert, err = p.d.GetWorkCert(c, v.ID); err != nil {
+				return
+			}
+
+			item.Company = workCert.Company
+			item.Position = workCert.Position
+		}
+
+		if item.Location != 0 {
+			if v, e := p.getLocationString(c, item.Location); e != nil {
+				return nil, e
+			} else {
+				item.LocationString = v
+			}
+		}
+		resp.Items[i] = item
 	}
 	return
 }
@@ -186,8 +270,16 @@ func (p *Service) BatchBaseInfo(c context.Context, aids []int64) (data map[int64
 
 // UpdateAccount 更新用户资料
 func (p *Service) UpdateAccount(c context.Context, arg *api.UpdateProfileReq) (err error) {
+	// 如果操作人ID和操作的账户ID不等
+	// 则需要验证是否是管理员进行操作
+	if arg.Aid != arg.AccountID {
+		if err = p.checkSystemAdmin(c, p.d.DB(), arg.Aid); err != nil {
+			return
+		}
+	}
+
 	var account *model.Account
-	if account, err = p.getAccountByID(c, p.d.DB(), arg.Aid); err != nil {
+	if account, err = p.getAccountByID(c, p.d.DB(), arg.AccountID); err != nil {
 		return
 	}
 

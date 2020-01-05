@@ -38,6 +38,12 @@ func route(e *mars.Engine) {
 		g.GET("/articles", authSvc.User, searchArticles)
 		g.GET("/accounts", authSvc.User, searchAccounts)
 		g.GET("/discussions", authSvc.User, searchDiscusstions)
+
+		g.GET("/suggest/all", authSvc.User, suggestAll)
+		g.GET("/suggest/topics", authSvc.User, suggestTopics)
+		g.GET("/suggest/articles", authSvc.User, suggestArticles)
+		g.GET("/suggest/accounts", authSvc.User, suggestAccounts)
+		g.GET("/suggest/discussions", authSvc.User, suggestDiscusstions)
 	}
 
 }

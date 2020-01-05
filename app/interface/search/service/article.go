@@ -12,6 +12,18 @@ import (
 	"valerian/library/xstr"
 )
 
+func (p *Service) ArticleSuggest(c context.Context, kw string) (resp []string, err error) {
+	resp = make([]string, 0)
+
+	var articleSuggestions []string
+	if articleSuggestions, err = p.d.ArticleSuggest(c, kw, 10); err != nil {
+		return
+	}
+	resp = append(resp, articleSuggestions...)
+
+	return
+}
+
 func (p *Service) addContextTextSource(arg *model.BasicSearchParams) (resp *model.BasicSearchParams) {
 	if arg.Source == nil {
 		return arg

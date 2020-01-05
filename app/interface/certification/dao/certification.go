@@ -70,3 +70,10 @@ func (p *Dao) GetWorkCertsPaged(c context.Context, req *certification.WorkCertPa
 	}
 	return
 }
+
+func (p *Dao) GetWorkCertHistoriesPaged(c context.Context, req *certification.WorkCertHistoriesPagedReq) (info *certification.WorkCertHistoriesPagedResp, err error) {
+	if info, err = p.certificationRPC.GetWorkCertHistoriesPaged(c, req); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetWorkCertHistoriesPaged err(%+v) req(%+v)", err, req))
+	}
+	return
+}

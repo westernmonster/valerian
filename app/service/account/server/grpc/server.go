@@ -294,3 +294,26 @@ func (s *server) EmailExist(ctx context.Context, req *api.EmailReq) (*api.ExistR
 
 	return &api.ExistResp{Exist: exist}, nil
 }
+
+func (s *server) AllAccountsIDs(ctx context.Context, req *api.AidReq) (*api.IDsResp, error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+	}
+	data, err := s.svr.GetAllAccountIDs(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return &api.IDsResp{IDs: data}, nil
+}
+
+func (s *server) AllAccountsIDsPaged(ctx context.Context, req *api.AccountsPagedReq) (*api.IDsResp, error) {
+	data, err := s.svr.GetAllAccountIDsPaged(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return &api.IDsResp{IDs: data}, nil
+}
+
+func (s *server) AllAccountsPaged(ctx context.Context, req *api.AccountsPagedReq) (*api.AdminAccountsResp, error) {
+	return s.svr.GetAllAccountsPaged(ctx, req)
+}

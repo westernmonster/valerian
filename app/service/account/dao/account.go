@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"time"
-	"valerian/library/database/sqlx/types"
+	"valerian/library/database/sqlx"
 
 	"valerian/app/service/account/model"
 	"valerian/library/database/sqalx"
@@ -104,8 +104,75 @@ func (p *Dao) GetAccounts(c context.Context, node sqalx.Node) (items []*model.Ac
 
 func (p *Dao) DeactiveAccount(c context.Context, node sqalx.Node, aid int64) (err error) {
 	sqlSelect := "UPDATE accounts SET user_name=?, deactive=?, updated_at=? WHERE id=? AND deleted=0"
-	if _, err = node.ExecContext(c, sqlSelect, "已注销", types.BitBool(true), aid, time.Now().Unix()); err != nil {
+	if _, err = node.ExecContext(c, sqlSelect, "已注销", 1, aid, time.Now().Unix()); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.DeactiveAccount error(%+v), id(%d)", err, aid))
+		return
+	}
+	return
+}
+
+func (p *Dao) GetAllAccountIDs(c context.Context, node sqalx.Node) (items []int64, err error) {
+	items = make([]int64, 0)
+	sqlSelect := "SELECT a.id FROM accounts a WHERE a.deleted=0 AND a.deactive=0 ORDER BY a.id DESC"
+
+	var rows *sqlx.Rows
+	if rows, err = node.QueryxContext(c, sqlSelect); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetAllAccountIDs err(%+v)", err))
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var (
+			targetID int64
+		)
+		if err = rows.Scan(&targetID); err != nil {
+			log.For(c).Error(fmt.Sprintf("dao.GetAllAccountIDs err(%+v)", err))
+			return
+		}
+		items = append(items, targetID)
+	}
+
+	err = rows.Err()
+	return
+}
+
+func (p *Dao) GetAllAccountIDsPaged(c context.Context, node sqalx.Node, limit, offset int32) (items []int64, err error) {
+	items = make([]int64, 0)
+	sqlSelect := "SELECT a.id FROM accounts a WHERE a.deleted=0 AND a.deactive=0 ORDER BY a.id DESC LIMIT ?,?"
+
+	var rows *sqlx.Rows
+	if rows, err = node.QueryxContext(c, sqlSelect, offset, limit); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetAllAccountIDsPaged err(%+v), limit(%d), offset(%d)", err, limit, offset))
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var (
+			targetID int64
+		)
+		if err = rows.Scan(&targetID); err != nil {
+			log.For(c).Error(fmt.Sprintf("dao.GetAllAccountIDsPaged err(%+v), limit(%d), offset(%d)", err, limit, offset))
+			return
+		}
+		items = append(items, targetID)
+	}
+
+	err = rows.Err()
+	return
+}
+
+func (p *Dao) GetAllAccountsPaged(c context.Context, node sqalx.Node, limit, offset int32) (items []*model.Account, err error) {
+	items = make([]*model.Account, 0)
+	sqlSelect := `SELECT a.id,a.mobile,a.user_name,a.email,a.password,a.role,a.salt,a.gender,a.birth_year,a.birth_month,a.birth_day,a.location,a.introduction,a.avatar,a.source,a.ip,a.id_cert,a.work_cert,a.is_org,a.is_vip,a.deleted,a.created_at,a.updated_at,a.prefix,a.is_lock,a.deactive
+	FROM accounts a
+	WHERE a.deleted=0 AND a.deactive=0
+	ORDER BY a.id DESC
+	LIMIT ?,?`
+
+	if err = node.SelectContext(c, &items, sqlSelect, offset, limit); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetAllAccountsPaged err(%+v), limit(%d), offset(%d)", err, limit, offset))
 		return
 	}
 	return

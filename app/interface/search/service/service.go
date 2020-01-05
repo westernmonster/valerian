@@ -14,10 +14,10 @@ import (
 
 type Service struct {
 	c      *conf.Config
-	d      IDao
+	d      *dao.Dao
 	missch chan func()
 
-	mq     *mq.MessageQueue
+	mq *mq.MessageQueue
 }
 
 // New create new service

@@ -45,7 +45,7 @@ interface-location: build-interface-location docker-interface-location push-inte
 
 build-interface-location:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/interface/location/cmd/cmd"   app/interface/location/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/interface/location/cmd/cmd"   app/interface/location/cmd/main.go
 docker-interface-location:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/interface-location:${DOCKER_TAG} ./app/interface/location/cmd/
 push-interface-location:
@@ -58,7 +58,7 @@ interface-locale: build-interface-locale docker-interface-locale push-interface-
 
 build-interface-locale:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/interface/locale/cmd/cmd"   app/interface/locale/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/interface/locale/cmd/cmd"   app/interface/locale/cmd/main.go
 docker-interface-locale:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/interface-locale:${DOCKER_TAG} ./app/interface/locale/cmd/
 push-interface-locale:
@@ -70,7 +70,7 @@ interface-valcode: build-interface-valcode docker-interface-valcode push-interfa
 
 build-interface-valcode:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/interface/valcode/cmd/cmd"   app/interface/valcode/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/interface/valcode/cmd/cmd"   app/interface/valcode/cmd/main.go
 docker-interface-valcode:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/interface-valcode:${DOCKER_TAG} ./app/interface/valcode/cmd/
 push-interface-valcode:
@@ -82,7 +82,7 @@ interface-passport-register: build-interface-passport-register docker-interface-
 
 build-interface-passport-register:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/interface/passport-register/cmd/cmd"   app/interface/passport-register/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/interface/passport-register/cmd/cmd"   app/interface/passport-register/cmd/main.go
 docker-interface-passport-register:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/interface-passport-register:${DOCKER_TAG} ./app/interface/passport-register/cmd/
 push-interface-passport-register:
@@ -94,7 +94,7 @@ interface-passport-login: build-interface-passport-login docker-interface-passpo
 
 build-interface-passport-login:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/interface/passport-login/cmd/cmd"   app/interface/passport-login/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/interface/passport-login/cmd/cmd"   app/interface/passport-login/cmd/main.go
 docker-interface-passport-login:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/interface-passport-login:${DOCKER_TAG} ./app/interface/passport-login/cmd/
 push-interface-passport-login:
@@ -106,7 +106,7 @@ interface-passport-auth: build-interface-passport-auth docker-interface-passport
 
 build-interface-passport-auth:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/interface/passport-auth/cmd/cmd"   app/interface/passport-auth/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/interface/passport-auth/cmd/cmd"   app/interface/passport-auth/cmd/main.go
 docker-interface-passport-auth:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/interface-passport-auth:${DOCKER_TAG} ./app/interface/passport-auth/cmd/
 push-interface-passport-auth:
@@ -118,7 +118,7 @@ interface-file: build-interface-file docker-interface-file push-interface-file d
 
 build-interface-file:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/interface/file/cmd/cmd"   app/interface/file/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/interface/file/cmd/cmd"   app/interface/file/cmd/main.go
 docker-interface-file:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/interface-file:${DOCKER_TAG} ./app/interface/file/cmd/
 push-interface-file:
@@ -130,7 +130,7 @@ interface-feedback: build-interface-feedback docker-interface-feedback push-inte
 
 build-interface-feedback:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/interface/feedback/cmd/cmd"   app/interface/feedback/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/interface/feedback/cmd/cmd"   app/interface/feedback/cmd/main.go
 docker-interface-feedback:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/interface-feedback:${DOCKER_TAG} ./app/interface/feedback/cmd/
 push-interface-feedback:
@@ -142,7 +142,7 @@ interface-editor: build-interface-editor docker-interface-editor push-interface-
 
 build-interface-editor:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/interface/editor/cmd/cmd"   app/interface/editor/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/interface/editor/cmd/cmd"   app/interface/editor/cmd/main.go
 docker-interface-editor:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/interface-editor:${DOCKER_TAG} ./app/interface/editor/cmd/
 push-interface-editor:
@@ -154,7 +154,7 @@ interface-certification: build-interface-certification docker-interface-certific
 
 build-interface-certification:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/interface/certification/cmd/cmd"   app/interface/certification/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/interface/certification/cmd/cmd"   app/interface/certification/cmd/main.go
 docker-interface-certification:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/interface-certification:${DOCKER_TAG} ./app/interface/certification/cmd/
 push-interface-certification:
@@ -166,7 +166,7 @@ interface-account: build-interface-account docker-interface-account push-interfa
 
 build-interface-account:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/interface/account/cmd/cmd"   app/interface/account/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/interface/account/cmd/cmd"   app/interface/account/cmd/main.go
 docker-interface-account:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/interface-account:${DOCKER_TAG} ./app/interface/account/cmd/
 push-interface-account:
@@ -179,7 +179,7 @@ interface-topic: build-interface-topic docker-interface-topic push-interface-top
 
 build-interface-topic:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/interface/topic/cmd/cmd"   app/interface/topic/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/interface/topic/cmd/cmd"   app/interface/topic/cmd/main.go
 docker-interface-topic:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/interface-topic:${DOCKER_TAG} ./app/interface/topic/cmd/
 push-interface-topic:
@@ -191,7 +191,7 @@ interface-discuss: build-interface-discuss docker-interface-discuss push-interfa
 
 build-interface-discuss:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/interface/discuss/cmd/cmd"   app/interface/discuss/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/interface/discuss/cmd/cmd"   app/interface/discuss/cmd/main.go
 docker-interface-discuss:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/interface-discuss:${DOCKER_TAG} ./app/interface/discuss/cmd/
 push-interface-discuss:
@@ -203,7 +203,7 @@ interface-article: build-interface-article docker-interface-article push-interfa
 
 build-interface-article:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/interface/article/cmd/cmd"   app/interface/article/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/interface/article/cmd/cmd"   app/interface/article/cmd/main.go
 docker-interface-article:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/interface-article:${DOCKER_TAG} ./app/interface/article/cmd/
 push-interface-article:
@@ -215,7 +215,7 @@ interface-like: build-interface-like docker-interface-like push-interface-like d
 
 build-interface-like:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/interface/like/cmd/cmd"   app/interface/like/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/interface/like/cmd/cmd"   app/interface/like/cmd/main.go
 docker-interface-like:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/interface-like:${DOCKER_TAG} ./app/interface/like/cmd/
 push-interface-like:
@@ -227,7 +227,7 @@ interface-fav: build-interface-fav docker-interface-fav push-interface-fav deplo
 
 build-interface-fav:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/interface/fav/cmd/cmd"   app/interface/fav/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/interface/fav/cmd/cmd"   app/interface/fav/cmd/main.go
 docker-interface-fav:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/interface-fav:${DOCKER_TAG} ./app/interface/fav/cmd/
 push-interface-fav:
@@ -239,7 +239,7 @@ interface-feed: build-interface-feed docker-interface-feed push-interface-feed d
 
 build-interface-feed:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/interface/feed/cmd/cmd"   app/interface/feed/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/interface/feed/cmd/cmd"   app/interface/feed/cmd/main.go
 docker-interface-feed:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/interface-feed:${DOCKER_TAG} ./app/interface/feed/cmd/
 push-interface-feed:
@@ -251,7 +251,7 @@ interface-comment: build-interface-comment docker-interface-comment push-interfa
 
 build-interface-comment:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/interface/comment/cmd/cmd"   app/interface/comment/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/interface/comment/cmd/cmd"   app/interface/comment/cmd/main.go
 docker-interface-comment:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/interface-comment:${DOCKER_TAG} ./app/interface/comment/cmd/
 push-interface-comment:
@@ -263,7 +263,7 @@ interface-search: build-interface-search docker-interface-search push-interface-
 
 build-interface-search:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/interface/search/cmd/cmd"   app/interface/search/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/interface/search/cmd/cmd"   app/interface/search/cmd/main.go
 docker-interface-search:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/interface-search:${DOCKER_TAG} ./app/interface/search/cmd/
 push-interface-search:
@@ -275,7 +275,7 @@ interface-recent: build-interface-recent docker-interface-recent push-interface-
 
 build-interface-recent:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/interface/recent/cmd/cmd"   app/interface/recent/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/interface/recent/cmd/cmd"   app/interface/recent/cmd/main.go
 docker-interface-recent:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/interface-recent:${DOCKER_TAG} ./app/interface/recent/cmd/
 push-interface-recent:
@@ -287,7 +287,7 @@ interface-dm: build-interface-dm docker-interface-dm push-interface-dm deploy-in
 
 build-interface-dm:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/interface/dm/cmd/cmd"   app/interface/dm/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/interface/dm/cmd/cmd"   app/interface/dm/cmd/main.go
 docker-interface-dm:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/interface-dm:${DOCKER_TAG} ./app/interface/dm/cmd/
 push-interface-dm:
@@ -299,7 +299,7 @@ interface-init: build-interface-init docker-interface-init push-interface-init d
 
 build-interface-init:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/interface/init/cmd/cmd"   app/interface/init/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/interface/init/cmd/cmd"   app/interface/init/cmd/main.go
 docker-interface-init:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/interface-init:${DOCKER_TAG} ./app/interface/init/cmd/
 push-interface-init:
@@ -312,7 +312,7 @@ admin-config: build-admin-config docker-admin-config push-admin-config deploy-ad
 
 build-admin-config:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/admin/config/cmd/cmd"   app/admin/config/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/admin/config/cmd/cmd"   app/admin/config/cmd/main.go
 docker-admin-config:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/admin-config:${DOCKER_TAG} ./app/admin/config/cmd/
 push-admin-config:
@@ -324,7 +324,7 @@ admin-login: build-admin-login docker-admin-login push-admin-login deploy-admin-
 
 build-admin-login:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/admin/login/cmd/cmd"   app/admin/login/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/admin/login/cmd/cmd"   app/admin/login/cmd/main.go
 docker-admin-login:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/admin-login:${DOCKER_TAG} ./app/admin/login/cmd/
 push-admin-login:
@@ -337,7 +337,7 @@ admin-account: build-admin-account docker-admin-account push-admin-account deplo
 
 build-admin-account:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/admin/account/cmd/cmd"   app/admin/account/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/admin/account/cmd/cmd"   app/admin/account/cmd/main.go
 docker-admin-account:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/admin-account:${DOCKER_TAG} ./app/admin/account/cmd/
 push-admin-account:
@@ -349,7 +349,7 @@ admin-search: build-admin-search docker-admin-search push-admin-search deploy-ad
 
 build-admin-search:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/admin/search/cmd/cmd"   app/admin/search/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/admin/search/cmd/cmd"   app/admin/search/cmd/main.go
 docker-admin-search:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/admin-search:${DOCKER_TAG} ./app/admin/search/cmd/
 push-admin-search:
@@ -361,7 +361,7 @@ admin-topic: build-admin-topic docker-admin-topic push-admin-topic deploy-admin-
 
 build-admin-topic:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/admin/topic/cmd/cmd"   app/admin/topic/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/admin/topic/cmd/cmd"   app/admin/topic/cmd/main.go
 docker-admin-topic:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/admin-topic:${DOCKER_TAG} ./app/admin/topic/cmd/
 push-admin-topic:
@@ -373,7 +373,7 @@ admin-article: build-admin-article docker-admin-article push-admin-article deplo
 
 build-admin-article:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/admin/article/cmd/cmd"   app/admin/article/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/admin/article/cmd/cmd"   app/admin/article/cmd/main.go
 docker-admin-article:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/admin-article:${DOCKER_TAG} ./app/admin/article/cmd/
 push-admin-article:
@@ -385,7 +385,7 @@ admin-discuss: build-admin-discuss docker-admin-discuss push-admin-discuss deplo
 
 build-admin-discuss:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/admin/discuss/cmd/cmd"   app/admin/discuss/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/admin/discuss/cmd/cmd"   app/admin/discuss/cmd/main.go
 docker-admin-discuss:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/admin-discuss:${DOCKER_TAG} ./app/admin/discuss/cmd/
 push-admin-discuss:
@@ -397,7 +397,7 @@ admin-feedback: build-admin-feedback docker-admin-feedback push-admin-feedback d
 
 build-admin-feedback:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/admin/feedback/cmd/cmd"   app/admin/feedback/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/admin/feedback/cmd/cmd"   app/admin/feedback/cmd/main.go
 docker-admin-feedback:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/admin-feedback:${DOCKER_TAG} ./app/admin/feedback/cmd/
 push-admin-feedback:
@@ -410,7 +410,7 @@ service-msm: build-service-msm docker-service-msm push-service-msm deploy-servic
 
 build-service-msm:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/service/msm/cmd/cmd"   app/service/msm/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/service/msm/cmd/cmd"   app/service/msm/cmd/main.go
 docker-service-msm:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/service-msm:${DOCKER_TAG} ./app/service/msm/cmd/
 push-service-msm:
@@ -422,7 +422,7 @@ service-identify: build-service-identify docker-service-identify push-service-id
 
 build-service-identify:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/service/identify/cmd/cmd"   app/service/identify/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/service/identify/cmd/cmd"   app/service/identify/cmd/main.go
 docker-service-identify:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/service-identify:${DOCKER_TAG} ./app/service/identify/cmd/
 push-service-identify:
@@ -436,7 +436,7 @@ service-account: build-service-account docker-service-account push-service-accou
 
 build-service-account:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/service/account/cmd/cmd"   app/service/account/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/service/account/cmd/cmd"   app/service/account/cmd/main.go
 docker-service-account:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/service-account:${DOCKER_TAG} ./app/service/account/cmd/
 push-service-account:
@@ -449,7 +449,7 @@ service-discuss: build-service-discuss docker-service-discuss push-service-discu
 
 build-service-discuss:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/service/discuss/cmd/cmd"   app/service/discuss/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/service/discuss/cmd/cmd"   app/service/discuss/cmd/main.go
 docker-service-discuss:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/service-discuss:${DOCKER_TAG} ./app/service/discuss/cmd/
 push-service-discuss:
@@ -461,7 +461,7 @@ service-topic: build-service-topic docker-service-topic push-service-topic deplo
 
 build-service-topic:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/service/topic/cmd/cmd"   app/service/topic/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/service/topic/cmd/cmd"   app/service/topic/cmd/main.go
 docker-service-topic:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/service-topic:${DOCKER_TAG} ./app/service/topic/cmd/
 push-service-topic:
@@ -473,7 +473,7 @@ service-feed: build-service-feed docker-service-feed push-service-feed deploy-se
 
 build-service-feed:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/service/feed/cmd/cmd"   app/service/feed/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/service/feed/cmd/cmd"   app/service/feed/cmd/main.go
 docker-service-feed:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/service-feed:${DOCKER_TAG} ./app/service/feed/cmd/
 push-service-feed:
@@ -485,7 +485,7 @@ service-fav: build-service-fav docker-service-fav push-service-fav deploy-servic
 
 build-service-fav:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/service/fav/cmd/cmd"   app/service/fav/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/service/fav/cmd/cmd"   app/service/fav/cmd/main.go
 docker-service-fav:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/service-fav:${DOCKER_TAG} ./app/service/fav/cmd/
 push-service-fav:
@@ -498,7 +498,7 @@ service-like: build-service-like docker-service-like push-service-like deploy-se
 
 build-service-like:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/service/like/cmd/cmd"   app/service/like/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/service/like/cmd/cmd"   app/service/like/cmd/main.go
 docker-service-like:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/service-like:${DOCKER_TAG} ./app/service/like/cmd/
 push-service-like:
@@ -510,7 +510,7 @@ service-relation: build-service-relation docker-service-relation push-service-re
 
 build-service-relation:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/service/relation/cmd/cmd"   app/service/relation/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/service/relation/cmd/cmd"   app/service/relation/cmd/main.go
 docker-service-relation:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/service-relation:${DOCKER_TAG} ./app/service/relation/cmd/
 push-service-relation:
@@ -522,7 +522,7 @@ deploy-service-relation:
 service-article: build-service-article docker-service-article push-service-article deploy-service-article
 build-service-article:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/service/article/cmd/cmd"   app/service/article/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/service/article/cmd/cmd"   app/service/article/cmd/main.go
 docker-service-article:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/service-article:${DOCKER_TAG} ./app/service/article/cmd/
 push-service-article:
@@ -533,7 +533,7 @@ deploy-service-article:
 service-recent: build-service-recent docker-service-recent push-service-recent deploy-service-recent
 build-service-recent:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/service/recent/cmd/cmd"   app/service/recent/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/service/recent/cmd/cmd"   app/service/recent/cmd/main.go
 docker-service-recent:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/service-recent:${DOCKER_TAG} ./app/service/recent/cmd/
 push-service-recent:
@@ -545,7 +545,7 @@ deploy-service-recent:
 service-topic-feed: build-service-topic-feed docker-service-topic-feed push-service-topic-feed deploy-service-topic-feed
 build-service-topic-feed:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/service/topic-feed/cmd/cmd"   app/service/topic-feed/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/service/topic-feed/cmd/cmd"   app/service/topic-feed/cmd/main.go
 docker-service-topic-feed:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/service-topic-feed:${DOCKER_TAG} ./app/service/topic-feed/cmd/
 push-service-topic-feed:
@@ -556,7 +556,7 @@ deploy-service-topic-feed:
 service-account-feed: build-service-account-feed docker-service-account-feed push-service-account-feed deploy-service-account-feed
 build-service-account-feed:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/service/account-feed/cmd/cmd"   app/service/account-feed/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/service/account-feed/cmd/cmd"   app/service/account-feed/cmd/main.go
 docker-service-account-feed:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/service-account-feed:${DOCKER_TAG} ./app/service/account-feed/cmd/
 push-service-account-feed:
@@ -567,7 +567,7 @@ deploy-service-account-feed:
 service-message: build-service-message docker-service-message push-service-message deploy-service-message
 build-service-message:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/service/message/cmd/cmd"   app/service/message/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/service/message/cmd/cmd"   app/service/message/cmd/main.go
 docker-service-message:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/service-message:${DOCKER_TAG} ./app/service/message/cmd/
 push-service-message:
@@ -578,7 +578,7 @@ deploy-service-message:
 service-comment: build-service-comment docker-service-comment push-service-comment deploy-service-comment
 build-service-comment:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/service/comment/cmd/cmd"   app/service/comment/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/service/comment/cmd/cmd"   app/service/comment/cmd/main.go
 docker-service-comment:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/service-comment:${DOCKER_TAG} ./app/service/comment/cmd/
 push-service-comment:
@@ -589,7 +589,7 @@ deploy-service-comment:
 service-search: build-service-search docker-service-search push-service-search deploy-service-search
 build-service-search:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/service/search/cmd/cmd"   app/service/search/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/service/search/cmd/cmd"   app/service/search/cmd/main.go
 docker-service-search:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/service-search:${DOCKER_TAG} ./app/service/search/cmd/
 push-service-search:
@@ -600,7 +600,7 @@ deploy-service-search:
 service-certification: build-service-certification docker-service-certification push-service-certification deploy-service-certification
 build-service-certification:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a -installsuffix cgo -o "app/service/certification/cmd/cmd"   app/service/certification/cmd/main.go
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -mod vendor -ldflags="-w -s" -a  -o "app/service/certification/cmd/cmd"   app/service/certification/cmd/main.go
 docker-service-certification:
 	docker build --no-cache --build-arg EXE=./cmd -f build/Dockerfile  -t registry.cn-hangzhou.aliyuncs.com/valerian/service-certification:${DOCKER_TAG} ./app/service/certification/cmd/
 push-service-certification:

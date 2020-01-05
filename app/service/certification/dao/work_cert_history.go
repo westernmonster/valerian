@@ -23,15 +23,12 @@ func (p *Dao) AddWorkCertHistory(c context.Context, node sqalx.Node, item *model
 	return
 }
 
-// GetAll get all records
-func (p *Dao) ListWorkCertHistoryByAccount(c context.Context, node sqalx.Node) (items []*model.WorkCertHistory, err error) {
+func (p *Dao) GetWorkCertHistoriesPaged(c context.Context, node sqalx.Node, aid int64, limit, offset int32) (items []*model.WorkCertHistory, err error) {
 	items = make([]*model.WorkCertHistory, 0)
-	sqlSelect := "SELECT a.id,a.account_id,a.status,a.work_pic,a.other_pic,a.company,a.department,a.position," +
-		"a.expires_at,a.audit_result,a.manager_id,a.deleted,a.created_at,a.updated_at FROM work_cert_history a " +
-		"WHERE a.deleted=0 ORDER BY a.id DESC "
+	sqlSelect := `SELECT a.id,a.account_id,a.status,a.work_pic,a.other_pic,a.company,a.department,a.position,a.expires_at,a.audit_result,a.manager_id,a.deleted,a.created_at,a.updated_at FROM work_cert_history a WHERE a.deleted=0 AND a.account_id=? ORDER BY a.id DESC LIMIT ?,?`
 
-	if err = node.SelectContext(c, &items, sqlSelect); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.GetWorkCertHistory err(%+v)", err))
+	if err = node.SelectContext(c, &items, sqlSelect, aid, offset, limit); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetWorkCertHistoriesPaged err(%+v), aid(%+v) limit(%d) offset(%d)", err, limit, offset))
 		return
 	}
 	return
