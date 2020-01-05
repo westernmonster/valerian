@@ -2,6 +2,7 @@ package http
 
 import (
 	"strconv"
+	"strings"
 	"valerian/app/interface/article/model"
 	"valerian/library/ecode"
 	"valerian/library/net/http/mars"
@@ -104,6 +105,7 @@ func delArticle(c *mars.Context) {
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
 // @Param id query string true "ID"
+// @Param cur_topic_id query string true "当前话题ID，用于决定是否返回上下条连续分页"
 // @Param include query string true  "目前支持：files,relations,histories,meta"
 // @Param updated_at query string false  "app缓存的更新时间戳"
 // @Success 200 {object}  app.interface.article.model.ArticleResp "文章"
@@ -114,24 +116,36 @@ func delArticle(c *mars.Context) {
 func getArticle(c *mars.Context) {
 	include := c.Request.Form.Get("include")
 	idStr := c.Request.Form.Get("id")
+	curTopicStr := c.Request.Form.Get("cur_topic_id")
 	updatedAt := c.Request.Form.Get("updated_at")
 	updatedAtTimeStamp, _ := strconv.ParseInt(updatedAt, 10, 64)
 
-	if id, err := strconv.ParseInt(idStr, 10, 64); err != nil {
+	var err error
+	var id int64
+	var curTopicID int64
+
+	if id, err = strconv.ParseInt(idStr, 10, 64); err != nil {
 		c.JSON(nil, ecode.RequestErr)
 		return
 	} else if id == 0 {
 		c.JSON(nil, ecode.RequestErr)
 		return
-	} else {
-		articleResp, err := srv.GetArticle(c, id, include)
-		// 传入updatedAtTimeStamp 的时候判断是否已经修改过用于更新 app 的缓存
-		if err == nil && updatedAtTimeStamp == articleResp.UpdatedAt {
-			c.JSON(nil, ecode.NotModified )
+	}
+
+	if strings.TrimSpace(curTopicStr) != "" {
+		if curTopicID, err = strconv.ParseInt(curTopicStr, 10, 64); err != nil {
+			c.JSON(nil, ecode.RequestErr)
 			return
 		}
-		c.JSON(articleResp, err)
 	}
+
+	articleResp, err := srv.GetArticle(c, id, curTopicID, include)
+	// 传入updatedAtTimeStamp 的时候判断是否已经修改过用于更新 app 的缓存
+	if err == nil && updatedAtTimeStamp == articleResp.UpdatedAt {
+		c.JSON(nil, ecode.NotModified)
+		return
+	}
+	c.JSON(articleResp, err)
 }
 
 // @Summary 有编辑权限的文章列表
