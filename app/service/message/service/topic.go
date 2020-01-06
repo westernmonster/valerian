@@ -26,10 +26,9 @@ func (p *Service) getTopic(c context.Context, node sqalx.Node, topicID int64) (i
 }
 
 func (p *Service) getTopicFollowRequest(c context.Context, node sqalx.Node, id int64) (item *model.TopicFollowRequest, err error) {
-	var req *model.TopicFollowRequest
-	if req, err = p.d.GetTopicFollowRequestByID(c, node, id); err != nil {
+	if item, err = p.d.GetTopicFollowRequestByID(c, node, id); err != nil {
 		return
-	} else if req == nil {
+	} else if item == nil {
 		err = ecode.TopicFollowRequestNotExist
 		return
 	}
@@ -38,10 +37,9 @@ func (p *Service) getTopicFollowRequest(c context.Context, node sqalx.Node, id i
 }
 
 func (p *Service) getTopicInviteRequest(c context.Context, node sqalx.Node, id int64) (item *model.TopicInviteRequest, err error) {
-	var req *model.TopicInviteRequest
-	if req, err = p.d.GetTopicInviteRequestByID(c, node, id); err != nil {
+	if item, err = p.d.GetTopicInviteRequestByID(c, node, id); err != nil {
 		return
-	} else if req == nil {
+	} else if item == nil {
 		err = ecode.TopicInviteRequestNotExist
 		return
 	}
