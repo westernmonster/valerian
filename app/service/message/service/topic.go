@@ -12,6 +12,7 @@ import (
 	"valerian/library/ecode"
 	"valerian/library/gid"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/nats-io/stan.go"
 )
 
@@ -170,6 +171,8 @@ func (p *Service) onTopicFollowRequested(m *stan.Msg) {
 		PromError("message: GetTopicFollowRequest", "GetTopicFollowRequest(), id(%d),error(%+v)", info.RequestID, err)
 		return
 	}
+
+	spew.Dump(req)
 
 	pushMsgs := make([]*model.PushMessage, 0)
 
