@@ -162,6 +162,7 @@ func (p *Service) onTopicFollowRequested(m *stan.Msg) {
 
 	var req *model.TopicFollowRequest
 	if req, err = p.getTopicFollowRequest(c, tx, info.RequestID); err != nil {
+		fmt.Println(err)
 		if ecode.IsNotExistEcode(err) {
 			m.Ack()
 			return
