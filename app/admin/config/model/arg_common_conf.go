@@ -29,7 +29,6 @@ func (p *ArgCreateCommonConfig) Validate() error {
 type ArgUpdateCommonConfig struct {
 	ID        int64  `json:"id,string"`
 	State     int32  `json:"state"`
-	ConfigID  int64  `json:"config_id,string"`
 	Name      string `json:"name"`
 	Comment   string `json:"comment"`
 	Mark      string `json:"mark"`
@@ -42,7 +41,6 @@ func (p *ArgUpdateCommonConfig) Validate() error {
 		p,
 		validation.Field(&p.ID, validation.Required),
 		validation.Field(&p.State, validation.Required, validation.In(ConfigStateInProgress, ConfigStateEnd)),
-		validation.Field(&p.ConfigID, validation.Required),
 		validation.Field(&p.Name, validation.Required),
 		validation.Field(&p.Comment, validation.Required),
 		validation.Field(&p.Mark, validation.Required),

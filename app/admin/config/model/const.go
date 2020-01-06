@@ -12,7 +12,7 @@ const (
 	DefaultZone = "hz001"
 
 	//StatusShow status show
-	AppStatusShow = 1
+	AppStatusShow = int32(1)
 	//StatusHidden status hidden
-	AppStatusHidden = 2
+	AppStatusHidden = int32(2)
 )

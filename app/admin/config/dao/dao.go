@@ -7,6 +7,7 @@ import (
 	"valerian/app/admin/config/conf"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
+	"valerian/library/net/http/mars"
 )
 
 // Dao dao struct
@@ -14,6 +15,7 @@ type Dao struct {
 	apmDB    sqalx.Node
 	configDB sqalx.Node
 	c        *conf.Config
+	client   *mars.Client
 }
 
 func New(c *conf.Config) (dao *Dao) {
@@ -21,6 +23,7 @@ func New(c *conf.Config) (dao *Dao) {
 		c:        c,
 		apmDB:    sqalx.NewMySQL(c.DB.Apm),
 		configDB: sqalx.NewMySQL(c.DB.Config),
+		client:   mars.NewClient(c.HTTPClient),
 	}
 	return
 }

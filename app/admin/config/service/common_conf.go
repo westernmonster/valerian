@@ -125,22 +125,35 @@ func (p *Service) UpdatCommonConf(c context.Context, arg *model.ArgUpdateCommonC
 		}
 
 		confDB.UpdatedAt = 0
+		confDB.Comment = arg.Comment
+		confDB.State = arg.State
+		confDB.Mark = arg.Mark
+		confDB.Name = arg.Name
 
 		if err = p.d.UpdateCommonConfig(c, p.d.ConfigDB(), confDB); err != nil {
 			return
 		}
 		return
 	}
-	// if _, err = s.comConfigIng(confDB.Name, confDB.TeamID); err == nil { //judge have configing.
-	// 	err = ecode.TargetBlocked
-	// 	return
-	// }
-	// if err == sql.ErrNoRows || err == ecode.NothingFound {
-	// 	conf.ID = 0
-	// 	conf.TeamID = confDB.TeamID
-	// 	conf.Name = confDB.Name
-	// 	conf.Mtime = 0
-	// 	return s.dao.DB.Create(conf).Error
-	// }
+	if _, err = p.getConfiguringCommonConf(c, p.d.ConfigDB(), confDB.Name, confDB.TeamID); err == nil { //judge have configing.
+		err = ecode.TargetBlocked
+		return
+	}
+
+	return
+}
+
+func (p *Service) getConfiguringCommonConf(c context.Context, node sqalx.Node, name string, teamID int64) (conf *model.CommonConfig, err error) {
+	if conf, err = p.d.GetCommonConfigByCond(c, p.d.ConfigDB(), map[string]interface{}{
+		"name":    name,
+		"team_id": teamID,
+		"state":   model.ConfigStateInProgress,
+	}); err != nil {
+		return
+	} else if conf == nil {
+		err = ecode.CommonConfNotExist
+		return
+	}
+
 	return
 }
