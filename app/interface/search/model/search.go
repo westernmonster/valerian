@@ -166,3 +166,9 @@ func (p *DiscussionSearchParams) Validate() error {
 		validation.Field(&p.Ps, validation.Required),
 	)
 }
+
+type SuggestResult struct {
+	// 类型 article,discussion, account, topic
+	Type string `json:"type"`
+	Text string `json:"text"`
+}
