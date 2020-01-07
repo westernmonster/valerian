@@ -28,7 +28,6 @@ func (d *Dao) ArticleSuggest(c context.Context, text string, size int) (res []st
 	titleResult := searchResult.Suggest["suggester"]
 	for _, options := range titleResult {
 		for _, option := range options.Options {
-			fmt.Printf("%v ", option.Text)
 			res = append(res, option.Text)
 		}
 	}
@@ -56,7 +55,6 @@ func (d *Dao) TopicSuggest(c context.Context, text string, size int) (res []stri
 	nameResult := searchResult.Suggest["suggester"]
 	for _, options := range nameResult {
 		for _, option := range options.Options {
-			fmt.Printf("%v ", option.Text)
 			res = append(res, option.Text)
 		}
 	}
@@ -84,7 +82,6 @@ func (d *Dao) AccountSuggest(c context.Context, text string, size int) (res []st
 	nameResult := searchResult.Suggest["suggester"]
 	for _, options := range nameResult {
 		for _, option := range options.Options {
-			fmt.Printf("%v ", option.Text)
 			res = append(res, option.Text)
 		}
 	}
@@ -112,7 +109,6 @@ func (d *Dao) DiscussionSuggest(c context.Context, text string, size int) (res [
 	nameResult := searchResult.Suggest["suggester"]
 	for _, options := range nameResult {
 		for _, option := range options.Options {
-			fmt.Printf("%v ", option.Text)
 			res = append(res, option.Text)
 		}
 	}
