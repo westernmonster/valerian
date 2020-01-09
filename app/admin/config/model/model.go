@@ -66,24 +66,24 @@ type Tag struct {
 }
 
 type CommonConfig struct {
-	ID        int64         `db:"id" json:"id,string"`           // ID ID
-	TeamID    int64         `db:"team_id" json:"team_id,string"` // TeamID Team ID
-	Name      string        `db:"name" json:"name"`              // Name 名称
-	Comment   string        `db:"comment" json:"comment"`        // Comment Comment
-	State     int32         `db:"state" json:"state"`            // State State
-	Mark      string        `db:"mark" json:"mark"`              // Mark Mark
-	Operator  string        `db:"operator" json:"operator"`      // Operator Operator
-	Deleted   types.BitBool `db:"deleted" json:"deleted"`        // Deleted 是否删除
-	CreatedAt int64         `db:"created_at" json:"created_at"`  // CreatedAt 创建时间
-	UpdatedAt int64         `db:"updated_at" json:"updated_at"`  // UpdatedAt 更新时间
-}
-
-type Team struct {
 	ID        int64         `db:"id" json:"id,string"`          // ID ID
 	Name      string        `db:"name" json:"name"`             // Name 名称
-	Env       string        `db:"env" json:"env"`               // Env Env
-	Zone      string        `db:"zone" json:"zone"`             // Zone Zone
+	Comment   string        `db:"comment" json:"comment"`       // Comment Comment
+	State     int32         `db:"state" json:"state"`           // State State
+	Mark      string        `db:"mark" json:"mark"`             // Mark Mark
+	Operator  string        `db:"operator" json:"operator"`     // Operator Operator
 	Deleted   types.BitBool `db:"deleted" json:"deleted"`       // Deleted 是否删除
 	CreatedAt int64         `db:"created_at" json:"created_at"` // CreatedAt 创建时间
 	UpdatedAt int64         `db:"updated_at" json:"updated_at"` // UpdatedAt 更新时间
+}
+
+type Tree struct {
+	ID         int64         `db:"id" json:"id,string"`            // ID ID
+	Name       string        `db:"name" json:"name"`               // Name 名称
+	TreeID     int32         `db:"tree_id" json:"tree_id"`         // TreeID Tree ID
+	PlatformID int32         `db:"platform_id" json:"platform_id"` // PlatformID Platform ID
+	Mark       string        `db:"mark" json:"mark"`               // Mark Mark
+	Deleted    types.BitBool `db:"deleted" json:"deleted"`         // Deleted 是否删除
+	CreatedAt  int64         `db:"created_at" json:"created_at"`   // CreatedAt 创建时间
+	UpdatedAt  int64         `db:"updated_at" json:"updated_at"`   // UpdatedAt 更新时间
 }

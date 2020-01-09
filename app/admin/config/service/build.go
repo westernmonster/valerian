@@ -6,8 +6,20 @@ import (
 	"time"
 	"valerian/app/admin/config/model"
 	"valerian/library/database/sqalx"
+	"valerian/library/ecode"
 	"valerian/library/gid"
 )
+
+func (p *Service) getBuild(c context.Context, node sqalx.Node, id int64) (item *model.Build, err error) {
+	if item, err = p.d.GetBuildByID(c, node, id); err != nil {
+		return
+	} else if item == nil {
+		err = ecode.BuildNotExist
+		return
+	}
+
+	return
+}
 
 func (p *Service) CreateBuild(c context.Context, arg *model.ArgCreateBuild) (buildID string, err error) {
 	return p.createBuild(c, p.d.ConfigDB(), arg)

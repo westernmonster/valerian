@@ -80,3 +80,28 @@ func (p *Service) isConfiguring(c context.Context, node sqalx.Node, name string,
 
 	return
 }
+
+func (p *Service) CommonPush(c context.Context, tagID, commonConfID int64) (err error) {
+	// var tag *model.Tag
+	// if tag, err = p.getTag(c, p.d.ConfigDB(), tagID); err != nil {
+	// 	return
+	// }
+
+	// configIds := strings.Split(tag.ConfigIds, ",")
+
+	// var app *model.App
+	// if app, err = p.getApp(c, p.d.ConfigDB(), tag.AppID); err != nil {
+	// 	return
+	// }
+
+	// var build *model.Build
+	// if build, err = p.getBuild(c, p.d.ConfigDB(), tag.BuildID); err != nil {
+	// 	return
+	// }
+	// var commonConf *model.CommonConfig
+	// if commonConf, err = p.getCommonConf(c, p.d.ConfigDB(), commonConfID); err != nil {
+	// 	return
+	// }
+
+	return
+}

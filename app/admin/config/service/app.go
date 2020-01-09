@@ -15,6 +15,50 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
+func (p *Service) getApp(c context.Context, node sqalx.Node, id int64) (item *model.App, err error) {
+	if item, err = p.d.GetAppByID(c, node, id); err != nil {
+		return
+	} else if item == nil {
+		err = ecode.AppNotExist
+		return
+	}
+
+	return
+}
+
+func (p *Service) GetAppsPaged(c context.Context, cond map[string]interface{}, page, pageSize int32) (resp *model.AppListResp, err error) {
+	var count int32
+	var data []*model.App
+	if count, data, err = p.d.GetAppsByCondPaged(c, p.d.ConfigDB(), cond, page, pageSize); err != nil {
+		return
+	}
+
+	resp = &model.AppListResp{
+		Total:    count,
+		Page:     page,
+		PageSize: pageSize,
+		Items:    make([]*model.AppItem, len(data)),
+	}
+
+	for i, v := range data {
+		item := &model.AppItem{
+			ID:        v.ID,
+			Name:      v.Name,
+			Token:     v.Token,
+			Env:       v.Env,
+			Zone:      v.Zone,
+			Platform:  "",
+			TreeID:    v.TreeID,
+			CreatedAt: v.CreatedAt,
+			UpdatedAt: v.UpdatedAt,
+		}
+
+		resp.Items[i] = item
+	}
+
+	return
+}
+
 // AppByTree 获取App信息
 func (p *Service) AppByTree(c context.Context, treeID int, env, zone string) (app *model.App, err error) {
 	return p.appByTree(c, p.d.ConfigDB(), treeID, env, zone)

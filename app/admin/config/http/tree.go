@@ -3,26 +3,11 @@ package http
 import (
 	"strconv"
 	"strings"
-	"valerian/app/admin/config/model"
 	"valerian/library/ecode"
 	"valerian/library/net/http/mars"
 )
 
-func createApp(c *mars.Context) {
-	arg := new(model.ArgCreateApp)
-	if e := c.Bind(arg); e != nil {
-		return
-	}
-
-	if e := arg.Validate(); e != nil {
-		c.JSON(nil, ecode.RequestErr)
-		return
-	}
-
-	c.JSON(nil, svr.CreateApp(c, arg))
-}
-
-func appList(c *mars.Context) {
+func treeList(c *mars.Context) {
 	var (
 		err      error
 		page     int
@@ -47,24 +32,19 @@ func appList(c *mars.Context) {
 
 	cond := make(map[string]interface{})
 
-	env := strings.TrimSpace(params.Get("env"))
-	if env != "" {
-		cond["env"] = env
-	}
-
-	zone := strings.TrimSpace(params.Get("zone"))
-	if zone != "" {
-		cond["zone"] = zone
-	}
-
 	name := strings.TrimSpace(params.Get("name"))
 	if name != "" {
 		cond["name"] = name
 	}
 
-	token := strings.TrimSpace(params.Get("token"))
-	if token != "" {
-		cond["token"] = token
+	platformID := strings.TrimSpace(params.Get("platform_id"))
+	if platformID != "" {
+		if val, err := strconv.Atoi(platformID); err != nil {
+			c.JSON(nil, ecode.RequestErr)
+			return
+		} else {
+			cond["platform_id"] = val
+		}
 	}
 
 	treeId := strings.TrimSpace(params.Get("tree_id"))
@@ -77,5 +57,5 @@ func appList(c *mars.Context) {
 		}
 	}
 
-	c.JSON(svr.GetAppsPaged(c, cond, int32(page), int32(pageSize)))
+	c.JSON(svr.GetTreesPaged(c, cond, int32(page), int32(pageSize)))
 }

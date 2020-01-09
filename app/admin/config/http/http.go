@@ -33,11 +33,15 @@ func innerRouter(e *mars.Engine) {
 	e.Register(register)
 	b := e.Group("/x/admin/config")
 	{
+		tree := b.Group("/tree")
+		{
+			tree.GET("/list", treeList)
+		}
 
-		b.GET("/init", initProd)
 		app := b.Group("/app")
 		{
 			app.POST("/add", createApp)
+			app.GET("/list", appList)
 		}
 
 		config := b.Group("/config")
@@ -45,9 +49,11 @@ func innerRouter(e *mars.Engine) {
 			config.POST("/add", createConfig)
 		}
 
-		commonConfig := b.Group("/common_config")
+		commonConfig := b.Group("/common")
 		{
 			commonConfig.POST("/add", createCommonConfig)
+			commonConfig.POST("/edit", updateCommonConfig)
+			commonConfig.GET("/list", commonConfigList)
 		}
 
 		build := b.Group("/build")

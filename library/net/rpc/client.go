@@ -490,7 +490,7 @@ func (c *Client) ping() {
 		cancel()
 		if err != nil {
 			if err == ErrShutdown || err == io.ErrUnexpectedEOF || ecode.Deadline.Equal(err) {
-				xlog.Errorf("rpc ping error beiTle addr(%s)", c.addr)
+				xlog.Errorf("rpc ping error bad addr(%s)", c.addr)
 				c.client.Store(errClient)
 				client.Close()
 			} else {

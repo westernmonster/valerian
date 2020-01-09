@@ -12,6 +12,7 @@ var (
 		".flywk.com",
 		"stonote.cn",
 		"flywk.com",
+		"localhost:8001",
 	}
 	_allowPatterns = []string{
 		// match by wechat appid

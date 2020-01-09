@@ -7,8 +7,20 @@ import (
 
 	"valerian/app/admin/config/model"
 	"valerian/library/database/sqalx"
+	"valerian/library/ecode"
 	"valerian/library/gid"
 )
+
+func (p *Service) getTag(c context.Context, node sqalx.Node, id int64) (item *model.Tag, err error) {
+	if item, err = p.d.GetTagByID(c, node, id); err != nil {
+		return
+	} else if item == nil {
+		err = ecode.TagNotExist
+		return
+	}
+
+	return
+}
 
 func (p *Service) CreateTag(c context.Context, arg *model.ArgCreateTag) (tagID string, err error) {
 	return p.createTag(c, p.d.ConfigDB(), arg)

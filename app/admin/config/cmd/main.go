@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -23,8 +22,6 @@ func main() {
 		log.Errorf("conf.Init() error(%v)", err)
 		panic(err)
 	}
-
-	fmt.Println("load config success")
 
 	// init log
 	log.Init(conf.Conf.Log)
