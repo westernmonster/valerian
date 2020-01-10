@@ -4,8 +4,8 @@ global:
   name: app
 
 server:
-  replicas: 2
-  bootstrapExpect: 2
+  replicas: 1
+  bootstrapExpect: 1
   exEnv:
     CI: 1
 
