@@ -12,10 +12,6 @@ import (
 
 // SaveAuthTopics  保存授权话题
 func (p *Service) SaveAuthTopics(c context.Context, arg *api.ArgSaveAuthTopics) (err error) {
-	// 检测是否系统管理员或者话题管理员
-	if err = p.checkTopicManagePermission(c, arg.Aid, arg.TopicID); err != nil {
-		return
-	}
 
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
@@ -31,6 +27,11 @@ func (p *Service) SaveAuthTopics(c context.Context, arg *api.ArgSaveAuthTopics) 
 			return
 		}
 	}()
+
+	// 检测是否系统管理员或者话题管理员
+	if err = p.checkTopicManagePermission(c, tx, arg.Aid, arg.TopicID); err != nil {
+		return
+	}
 	if err = p.bulkSaveAuthTopics(c, tx, arg.TopicID, arg.AuthTopics); err != nil {
 		return
 	}

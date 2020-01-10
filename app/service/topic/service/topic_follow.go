@@ -171,7 +171,7 @@ func (p *Service) AuditFollow(c context.Context, arg *api.ArgAuditFollow) (err e
 	}
 
 	// 检测是否系统管理员或者话题管理员
-	if err = p.checkTopicManagePermission(c, arg.Aid, req.TopicID); err != nil {
+	if err = p.checkTopicManagePermission(c, tx, arg.Aid, req.TopicID); err != nil {
 		return
 	}
 

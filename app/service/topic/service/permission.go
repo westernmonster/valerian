@@ -128,9 +128,9 @@ func (p *Service) IsTopicOwner(c context.Context, aid int64, topicID int64) (ret
 }
 
 // checkTopicManagePermission 检测话题管理权限
-func (p *Service) checkTopicManagePermission(c context.Context, aid, topicID int64) (err error) {
+func (p *Service) checkTopicManagePermission(c context.Context, node sqalx.Node, aid, topicID int64) (err error) {
 	var hasManagePermission bool
-	if hasManagePermission, err = p.hasTopicManagePermission(c, p.d.DB(), aid, topicID); err != nil {
+	if hasManagePermission, err = p.hasTopicManagePermission(c, node, aid, topicID); err != nil {
 		return
 	} else if !hasManagePermission {
 		err = ecode.NoTopicManagePermission

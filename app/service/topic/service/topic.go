@@ -310,7 +310,57 @@ func (p *Service) GetTopicResp(c context.Context, aid int64, topicID int64, incl
 }
 
 // DelTopic 删除话题
-func (p *Service) DelTopic(c context.Context, topicID int64) (err error) {
-	//TODO: 实现话题删除逻辑
+func (p *Service) DelTopic(c context.Context, aid, topicID int64) (err error) {
+	var tx sqalx.Node
+	if tx, err = p.d.DB().Beginx(c); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
+		return
+	}
+
+	defer func() {
+		if err != nil {
+			if err1 := tx.Rollback(); err1 != nil {
+				log.For(c).Error(fmt.Sprintf("tx.Rollback() error(%+v)", err1))
+			}
+			return
+		}
+	}()
+
+	var isSystemAdmin bool
+	if isSystemAdmin, err = p.isSystemAdmin(c, tx, aid); err != nil {
+		return
+	}
+
+	if !isSystemAdmin {
+		// 检查是否管理员
+		if err = p.checkTopicManagePermission(c, tx, aid, topicID); err != nil {
+			return
+		}
+	}
+
+	var t *model.Topic
+	if t, err = p.getTopic(c, tx, topicID); err != nil {
+		return
+	}
+
+	// 减少账户话题计数
+	if err = p.d.IncrAccountStat(c, tx, &model.AccountStat{AccountID: t.CreatedBy, TopicCount: -1}); err != nil {
+		return
+	}
+
+	// 删除话题
+	if err = p.d.DelTopic(c, tx, topicID); err != nil {
+		return
+	}
+
+	if err = tx.Commit(); err != nil {
+		log.For(c).Error(fmt.Sprintf("tx.Commit() error(%+v)", err))
+		return
+	}
+
+	p.addCache(func() {
+		p.d.DelTopicCache(context.Background(), topicID)
+		p.onTopicDeleted(context.Background(), topicID, aid, time.Now().Unix())
+	})
 	return
 }
