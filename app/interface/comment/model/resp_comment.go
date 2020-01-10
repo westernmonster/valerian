@@ -9,6 +9,9 @@ type CommentResp struct {
 	Featured bool `json:"featured"`
 	// 是否删除
 	IsDelete bool `json:"is_delete"`
+
+	// 是否删除
+	CanDelete bool `json:"can_delete"`
 	// 发布日期
 	CreatedAt int64 `json:"created_at"`
 	// 发布人
@@ -42,6 +45,9 @@ type CommentItem struct {
 	// 发布人
 	Creator *CommentCreator `json:"creator"`
 
+	// 是否删除
+	CanDelete bool `json:"can_delete"`
+
 	// 是否点赞
 	Like bool `json:"like"`
 	// 是否反对
@@ -69,6 +75,9 @@ type ChildCommentItem struct {
 	CreatedAt int64 `json:"created_at"`
 	// 发布人
 	Creator *CommentCreator `json:"creator"`
+
+	// 是否删除
+	CanDelete bool `json:"can_delete"`
 
 	// 是否点赞
 	Like bool `json:"like"`
