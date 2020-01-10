@@ -95,7 +95,7 @@ func (p *Service) AdminCreateAccount(c context.Context, arg *api.AdminCreateAcco
 	}
 
 	p.addCache(func() {
-		p.onAccountAdded(context.TODO(), item.ID, time.Now().Unix())
+		p.onAccountAdded(context.Background(), item.ID, time.Now().Unix())
 	})
 
 	return
@@ -179,8 +179,8 @@ func (p *Service) MobileRegister(c context.Context, arg *api.MobileRegisterReq) 
 	}
 
 	p.addCache(func() {
-		p.d.DelMobileValcodeCache(context.TODO(), model.ValcodeRegister, mobile)
-		p.onAccountAdded(context.TODO(), item.ID, time.Now().Unix())
+		p.d.DelMobileValcodeCache(context.Background(), model.ValcodeRegister, mobile)
+		p.onAccountAdded(context.Background(), item.ID, time.Now().Unix())
 	})
 
 	// 登录
@@ -264,8 +264,8 @@ func (p *Service) EmailRegister(c context.Context, arg *api.EmailRegisterReq) (r
 	}
 
 	p.addCache(func() {
-		p.d.DelEmailValcodeCache(context.TODO(), model.ValcodeRegister, arg.Email)
-		p.onAccountAdded(context.TODO(), item.ID, time.Now().Unix())
+		p.d.DelEmailValcodeCache(context.Background(), model.ValcodeRegister, arg.Email)
+		p.onAccountAdded(context.Background(), item.ID, time.Now().Unix())
 	})
 
 	return p.loginAccount(c, item, arg.ClientID)

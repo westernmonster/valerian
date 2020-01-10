@@ -30,7 +30,7 @@ func (p *Service) getDiscussion(c context.Context, node sqalx.Node, articleID in
 
 	if addCache {
 		p.addCache(func() {
-			p.d.SetDiscussionCache(context.TODO(), item)
+			p.d.SetDiscussionCache(context.Background(), item)
 		})
 	}
 	return

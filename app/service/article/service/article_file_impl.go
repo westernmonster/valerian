@@ -41,7 +41,7 @@ func (p *Service) getArticleFiles(c context.Context, node sqalx.Node, articleID 
 
 	if addCache {
 		p.addCache(func() {
-			p.d.SetArticleFileCache(context.TODO(), articleID, items)
+			p.d.SetArticleFileCache(context.Background(), articleID, items)
 		})
 	}
 
@@ -88,8 +88,8 @@ func (p *Service) bulkCreateFiles(c context.Context, node sqalx.Node, articleID 
 	}
 
 	p.addCache(func() {
-		p.convertOfficeFiles(context.TODO(), articleID)
-		p.d.DelArticleFileCache(context.TODO(), articleID)
+		p.convertOfficeFiles(context.Background(), articleID)
+		p.d.DelArticleFileCache(context.Background(), articleID)
 	})
 
 	return

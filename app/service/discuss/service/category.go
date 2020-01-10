@@ -109,7 +109,7 @@ func (p *Service) SaveDiscussCategories(c context.Context, arg *api.ArgSaveDiscu
 	}
 
 	p.addCache(func() {
-		p.d.DelDiscussionCategoriesCache(context.TODO(), arg.TopicID)
+		p.d.DelDiscussionCategoriesCache(context.Background(), arg.TopicID)
 	})
 
 	return

@@ -108,7 +108,7 @@ func (p *Service) DigitLogin(ctx context.Context, req *api.DigitLoginReq) (resp 
 	}
 
 	p.addCache(func() {
-		p.d.DelMobileValcodeCache(context.TODO(), model.ValcodeLogin, mobile)
+		p.d.DelMobileValcodeCache(context.Background(), model.ValcodeLogin, mobile)
 	})
 
 	return p.loginAccount(ctx, acc, req.ClientID)

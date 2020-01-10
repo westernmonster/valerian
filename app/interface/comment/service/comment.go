@@ -497,7 +497,7 @@ func (p *Service) getComment(c context.Context, node sqalx.Node, commentID int64
 
 	// if addCache {
 	// 	p.addCache(func() {
-	// 		p.d.SetCommentCache(context.TODO(), item)
+	// 		p.d.SetCommentCache(context.Background(), item)
 	// 	})
 	// }
 	return

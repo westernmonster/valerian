@@ -21,7 +21,7 @@ func (p *Service) GetAllLocales(ctx context.Context) (items []*model.Locale, err
 
 	if addCache {
 		p.addCache(func() {
-			p.d.SetLocalesCache(context.TODO(), items)
+			p.d.SetLocalesCache(context.Background(), items)
 		})
 	}
 	return

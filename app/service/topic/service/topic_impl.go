@@ -210,7 +210,7 @@ func (p *Service) getAccountTopicSetting(c context.Context, node sqalx.Node, aid
 
 	if addCache {
 		p.addCache(func() {
-			p.d.SetAccountTopicSettingCache(context.TODO(), item)
+			p.d.SetAccountTopicSettingCache(context.Background(), item)
 		})
 	}
 
@@ -234,7 +234,7 @@ func (p *Service) getTopic(c context.Context, node sqalx.Node, topicID int64) (i
 
 	if addCache {
 		p.addCache(func() {
-			p.d.SetTopicCache(context.TODO(), item)
+			p.d.SetTopicCache(context.Background(), item)
 		})
 	}
 

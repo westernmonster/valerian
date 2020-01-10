@@ -136,7 +136,7 @@ func (p *Service) SaveDiscussionFiles(c context.Context, arg *api.ArgSaveDiscuss
 	}
 
 	p.addCache(func() {
-		p.d.DelDiscussionFilesCache(context.TODO(), arg.DiscussionID)
+		p.d.DelDiscussionFilesCache(context.Background(), arg.DiscussionID)
 	})
 	return
 }

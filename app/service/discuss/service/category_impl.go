@@ -38,7 +38,7 @@ func (p *Service) getDiscussCategories(c context.Context, node sqalx.Node, topic
 
 	if addCache {
 		p.addCache(func() {
-			p.d.SetDiscussionCategoriesCache(context.TODO(), topicID, items)
+			p.d.SetDiscussionCategoriesCache(context.Background(), topicID, items)
 		})
 	}
 

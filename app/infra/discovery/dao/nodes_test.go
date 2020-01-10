@@ -27,7 +27,7 @@ func TestReplicate(t *testing.T) {
 		nodes.nodes[1].client.SetTransport(gock.DefaultTransport)
 		httpMock("POST", "http://api.stonote.loc/discovery/register").Reply(200).JSON(`{"code":0}`)
 		httpMock("POST", "http://uat-stonote.loc/discovery/register").Reply(200).JSON(`{"code":0}`)
-		err := nodes.Replicate(context.TODO(), model.Register, i, false)
+		err := nodes.Replicate(context.Background(), model.Register, i, false)
 		So(err, ShouldBeNil)
 	})
 }
@@ -48,7 +48,7 @@ func TestReplicateSet(t *testing.T) {
 			Hostname: []string{"test1"},
 			Status:   []int64{1},
 		}
-		err := nodes.ReplicateSet(context.TODO(), set, false)
+		err := nodes.ReplicateSet(context.Background(), set, false)
 		So(err, ShouldBeNil)
 	})
 }

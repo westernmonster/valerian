@@ -330,7 +330,7 @@ func TestRegistrySet(t *testing.T) {
 			Hostname: []string{"reg"},
 			Metadata: []string{`{"weight":"1"}`},
 		}
-		ok := r.Set(context.TODO(), set)
+		ok := r.Set(context.Background(), set)
 		So(ok, ShouldBeTrue)
 		fetchArg := &model.ArgFetch{Region: "shsb", Zone: "sh0001", Env: "pre", Appid: "main.arch.test", Status: 3}
 		c, err := r.Fetch(fetchArg.Zone, fetchArg.Env, fetchArg.Appid, 0, fetchArg.Status)
@@ -356,7 +356,7 @@ func BenchmarkSet(b *testing.B) {
 				Status:   []int64{1},
 				Metadata: []string{`{"weight":"1"}`},
 			}
-			if ok = r.Set(context.TODO(), set); !ok {
+			if ok = r.Set(context.Background(), set); !ok {
 				b.Errorf("SetWeight(%v) error", arg.Appid)
 			}
 			fetchArg := &model.ArgFetch{Region: "shsb", Zone: "sh0001", Env: "pre", Appid: "main.arch.test", Status: 3}

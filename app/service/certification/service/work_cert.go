@@ -87,7 +87,7 @@ func (p *Service) RequestWorkCert(c context.Context, arg *model.ArgAddWorkCert) 
 	}
 
 	p.addCache(func() {
-		p.d.DelAccountCache(context.TODO(), item.AccountID)
+		p.d.DelAccountCache(context.Background(), item.AccountID)
 	})
 
 	return
@@ -172,7 +172,7 @@ func (p *Service) AuditWorkCert(c context.Context, arg *api.AuditWorkCertReq) (e
 	}
 
 	p.addCache(func() {
-		p.d.DelAccountCache(context.TODO(), item.AccountID)
+		p.d.DelAccountCache(context.Background(), item.AccountID)
 	})
 
 	return
@@ -221,7 +221,7 @@ func (p *Service) getWorkCertByID(c context.Context, node sqalx.Node, aid int64)
 
 	if needCache {
 		p.addCache(func() {
-			p.d.SetWorkCertCache(context.TODO(), item)
+			p.d.SetWorkCertCache(context.Background(), item)
 		})
 	}
 	return

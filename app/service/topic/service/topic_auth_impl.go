@@ -169,7 +169,7 @@ func (p *Service) getAuthTopics(c context.Context, node sqalx.Node, topicID int6
 
 	if addCache {
 		p.addCache(func() {
-			p.d.SetAuthTopicsCache(context.TODO(), topicID, data)
+			p.d.SetAuthTopicsCache(context.Background(), topicID, data)
 		})
 	}
 	return

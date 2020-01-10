@@ -83,7 +83,7 @@ func (p *Service) grantToken(ctx context.Context, clientID string, accountID int
 
 	p.addCache(func() {
 		for _, v := range accessTokens {
-			p.d.DelAccessTokenCache(context.TODO(), v)
+			p.d.DelAccessTokenCache(context.Background(), v)
 		}
 	})
 
@@ -135,7 +135,7 @@ func (p *Service) deleteToken(ctx context.Context, clientID string, accountID in
 
 	p.addCache(func() {
 		for _, v := range accessTokens {
-			p.d.DelAccessTokenCache(context.TODO(), v)
+			p.d.DelAccessTokenCache(context.Background(), v)
 		}
 	})
 
@@ -181,11 +181,11 @@ func (p *Service) deleteAllToken(ctx context.Context, accountID int64) (err erro
 
 	p.addCache(func() {
 		for _, v := range accTokens {
-			p.d.DelAccessTokenCache(context.TODO(), v.Token)
+			p.d.DelAccessTokenCache(context.Background(), v.Token)
 		}
 
 		for _, v := range refTokens {
-			p.d.DelRefreshTokenCache(context.TODO(), v.Token)
+			p.d.DelRefreshTokenCache(context.Background(), v.Token)
 		}
 	})
 

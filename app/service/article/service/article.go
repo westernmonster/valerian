@@ -204,7 +204,7 @@ func (p *Service) getArticle(c context.Context, node sqalx.Node, articleID int64
 
 	if addCache {
 		p.addCache(func() {
-			p.d.SetArticleCache(context.TODO(), item)
+			p.d.SetArticleCache(context.Background(), item)
 		})
 	}
 	return
@@ -488,10 +488,10 @@ func (p *Service) DelArticle(c context.Context, arg *api.IDReq) (err error) {
 	}
 
 	p.addCache(func() {
-		p.d.DelArticleCache(context.TODO(), arg.ID)
+		p.d.DelArticleCache(context.Background(), arg.ID)
 
 		for _, v := range catalogs {
-			p.d.DelTopicCatalogCache(context.TODO(), v.TopicID)
+			p.d.DelTopicCatalogCache(context.Background(), v.TopicID)
 		}
 
 		p.onArticleDeleted(context.Background(), arg.ID, arg.Aid, time.Now().Unix())
@@ -608,7 +608,7 @@ func (p *Service) UpdateArticle(c context.Context, arg *api.ArgUpdateArticle) (e
 	}
 
 	p.addCache(func() {
-		p.d.DelArticleCache(context.TODO(), arg.ID)
+		p.d.DelArticleCache(context.Background(), arg.ID)
 		p.onArticleUpdated(context.Background(), arg.ID, h.ID, arg.Aid, time.Now().Unix())
 	})
 

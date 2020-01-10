@@ -21,7 +21,7 @@ func (p *Service) GetAllCountryCodes(ctx context.Context) (items []*model.Countr
 
 	if addCache {
 		p.addCache(func() {
-			p.d.SetCountryCodesCache(context.TODO(), items)
+			p.d.SetCountryCodesCache(context.Background(), items)
 		})
 	}
 	return

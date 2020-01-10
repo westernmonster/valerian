@@ -17,7 +17,7 @@ import (
 )
 
 var (
-	ctx     = context.TODO()
+	ctx     = context.Background()
 	reg     = defRegisArg()
 	rew     = &model.ArgRenew{Appid: "main.arch.test", Hostname: "test1", Region: "shsb", Zone: "sh001", Env: "pre"}
 	cancel  = &model.ArgCancel{Appid: "main.arch.test", Hostname: "test1", Region: "shsb", Zone: "sh001", Env: "pre"}
@@ -65,8 +65,8 @@ func TestRegister(t *testing.T) {
 	Convey("test Register", t, func() {
 		svr, _ := New(config)
 		i := model.NewInstance(reg)
-		svr.Register(context.TODO(), i, reg.LatestTimestamp, false)
-		ins, err := svr.Fetch(context.TODO(), fet)
+		svr.Register(context.Background(), i, reg.LatestTimestamp, false)
+		ins, err := svr.Fetch(context.Background(), fet)
 		for _, i := range ins.Instances {
 			fmt.Println("ins", i)
 		}
@@ -88,18 +88,18 @@ func TestDiscovery(t *testing.T) {
 		reg2.Hostname = "test2"
 		i1 := model.NewInstance(reg)
 		i2 := model.NewInstance(reg2)
-		svr.Register(context.TODO(), i1, reg.LatestTimestamp, reg.Replication)
-		svr.Register(context.TODO(), i2, reg2.LatestTimestamp, reg.Replication)
-		ch, new, err := svr.Polls(context.TODO(), pollArg)
+		svr.Register(context.Background(), i1, reg.LatestTimestamp, reg.Replication)
+		svr.Register(context.Background(), i2, reg2.LatestTimestamp, reg.Replication)
+		ch, new, err := svr.Polls(context.Background(), pollArg)
 		So(err, ShouldBeNil)
 		So(new, ShouldBeTrue)
 		ins := <-ch
 		So(len(ins["main.arch.test"].Instances), ShouldEqual, 2)
 		pollArg.LatestTimestamp[0] = ins["main.arch.test"].LatestTimestamp
 		time.Sleep(time.Second)
-		err = svr.Cancel(context.TODO(), cancel)
+		err = svr.Cancel(context.Background(), cancel)
 		So(err, ShouldBeNil)
-		ch, new, err = svr.Polls(context.TODO(), pollArg)
+		ch, new, err = svr.Polls(context.Background(), pollArg)
 		So(err, ShouldBeNil)
 		So(new, ShouldBeTrue)
 		ins = <-ch
@@ -111,14 +111,14 @@ func TestDiscovery(t *testing.T) {
 		reg2.Treeid = 1
 		i1 := model.NewInstance(reg2)
 		svr.Register(ctx, i1, reg2.LatestTimestamp, reg2.Replication)
-		ch, new, err := svr.Polls(context.TODO(), pollArg)
+		ch, new, err := svr.Polls(context.Background(), pollArg)
 		So(err, ShouldBeNil)
 		So(new, ShouldBeTrue)
 		ins := <-ch
 		So(len(ins["main.arch.test"].Instances), ShouldEqual, 1)
 		treepoll := newPoll()
 		treepoll.Treeid = []int64{1}
-		ch, new, err = svr.Polls(context.TODO(), treepoll)
+		ch, new, err = svr.Polls(context.Background(), treepoll)
 		So(err, ShouldBeNil)
 		So(new, ShouldBeTrue)
 		ins = <-ch
@@ -132,8 +132,8 @@ func TestFetchs(t *testing.T) {
 		reg2.Appid = "appid2"
 		i1 := model.NewInstance(reg)
 		i2 := model.NewInstance(reg2)
-		svr.Register(context.TODO(), i1, reg.LatestTimestamp, reg.Replication)
-		svr.Register(context.TODO(), i2, reg2.LatestTimestamp, reg.Replication)
+		svr.Register(context.Background(), i1, reg.LatestTimestamp, reg.Replication)
+		svr.Register(context.Background(), i2, reg2.LatestTimestamp, reg.Replication)
 		fetchs := newFetchArg()
 		fetchs.Appid = append(fetchs.Appid, "appid2")
 		is, err := svr.Fetchs(ctx, fetchs)
@@ -148,15 +148,15 @@ func TestZones(t *testing.T) {
 		reg2.Zone = "sh002"
 		i1 := model.NewInstance(reg)
 		i2 := model.NewInstance(reg2)
-		svr.Register(context.TODO(), i1, reg.LatestTimestamp, reg.Replication)
-		svr.Register(context.TODO(), i2, reg2.LatestTimestamp, reg.Replication)
-		ch, new, err := svr.Polls(context.TODO(), pollArg)
+		svr.Register(context.Background(), i1, reg.LatestTimestamp, reg.Replication)
+		svr.Register(context.Background(), i2, reg2.LatestTimestamp, reg.Replication)
+		ch, new, err := svr.Polls(context.Background(), pollArg)
 		So(err, ShouldBeNil)
 		So(new, ShouldBeTrue)
 		ins := <-ch
 		So(len(ins["main.arch.test"].ZoneInstances), ShouldEqual, 2)
 		pollArg.Zone = "sh002"
-		ch, new, err = svr.Polls(context.TODO(), pollArg)
+		ch, new, err = svr.Polls(context.Background(), pollArg)
 		So(err, ShouldBeNil)
 		So(new, ShouldBeTrue)
 		ins = <-ch
@@ -168,15 +168,15 @@ func TestZones(t *testing.T) {
 			reg3.Zone = "sh002"
 			reg3.Hostname = "test03"
 			i3 := model.NewInstance(reg3)
-			svr.Register(context.TODO(), i3, reg3.LatestTimestamp, reg3.Replication)
-			ch, new, err = svr.Polls(context.TODO(), pollArg)
+			svr.Register(context.Background(), i3, reg3.LatestTimestamp, reg3.Replication)
+			ch, new, err = svr.Polls(context.Background(), pollArg)
 			So(err, ShouldBeNil)
 			ins = <-ch
 			So(len(ins["main.arch.test"].ZoneInstances), ShouldResemble, 2)
 			So(len(ins["main.arch.test"].ZoneInstances["sh002"]), ShouldResemble, 2)
 			So(len(ins["main.arch.test"].ZoneInstances["sh001"]), ShouldResemble, 1)
 			pollArg.LatestTimestamp = []int64{ins["main.arch.test"].LatestTimestamp}
-			_, _, err = svr.Polls(context.TODO(), pollArg)
+			_, _, err = svr.Polls(context.Background(), pollArg)
 			So(err, ShouldResemble, ecode.NotModified)
 		})
 	})
@@ -185,8 +185,8 @@ func TestRenew(t *testing.T) {
 	Convey("test Renew", t, func() {
 		svr, _ := New(config)
 		i := model.NewInstance(reg)
-		svr.Register(context.TODO(), i, reg.LatestTimestamp, reg.Replication)
-		_, err := svr.Renew(context.TODO(), rew)
+		svr.Register(context.Background(), i, reg.LatestTimestamp, reg.Replication)
+		_, err := svr.Renew(context.Background(), rew)
 		So(err, ShouldBeNil)
 	})
 }
@@ -195,10 +195,10 @@ func TestCancel(t *testing.T) {
 	Convey("test cancel", t, func() {
 		svr, _ := New(config)
 		i := model.NewInstance(reg)
-		svr.Register(context.TODO(), i, reg.LatestTimestamp, reg.Replication)
-		err := svr.Cancel(context.TODO(), cancel)
+		svr.Register(context.Background(), i, reg.LatestTimestamp, reg.Replication)
+		err := svr.Cancel(context.Background(), cancel)
 		So(err, ShouldBeNil)
-		_, err = svr.Fetch(context.TODO(), fet)
+		_, err = svr.Fetch(context.Background(), fet)
 		So(err, ShouldResemble, ecode.NothingFound)
 	})
 }
@@ -207,8 +207,8 @@ func TestFetchAll(t *testing.T) {
 	Convey("test fetch all", t, func() {
 		svr, _ := New(config)
 		i := model.NewInstance(reg)
-		svr.Register(context.TODO(), i, reg.LatestTimestamp, reg.Replication)
-		fs := svr.FetchAll(context.TODO())
+		svr.Register(context.Background(), i, reg.LatestTimestamp, reg.Replication)
+		fs := svr.FetchAll(context.Background())
 		_, ok := fs[reg.Appid]
 		So(ok, ShouldBeTrue)
 	})
@@ -218,11 +218,11 @@ func TestSet(t *testing.T) {
 	Convey("test set", t, func() {
 		svr, _ := New(config)
 		i := model.NewInstance(reg)
-		svr.Register(context.TODO(), i, reg.LatestTimestamp, reg.Replication)
+		svr.Register(context.Background(), i, reg.LatestTimestamp, reg.Replication)
 		set.Metadata = []string{`{"weight":"1"}`}
-		err := svr.Set(context.TODO(), set)
+		err := svr.Set(context.Background(), set)
 		So(err, ShouldBeNil)
-		cm, err := svr.Fetch(context.TODO(), fet)
+		cm, err := svr.Fetch(context.Background(), fet)
 		So(err, ShouldBeNil)
 		So(cm.Instances[0].Metadata["weight"], ShouldResemble, "1")
 	})

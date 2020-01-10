@@ -44,7 +44,7 @@ func (p *Service) getReviseFiles(c context.Context, node sqalx.Node, reviseID in
 
 	if addCache {
 		p.addCache(func() {
-			p.d.SetReviseFileCache(context.TODO(), reviseID, items)
+			p.d.SetReviseFileCache(context.Background(), reviseID, items)
 		})
 	}
 
@@ -90,7 +90,7 @@ func (p *Service) bulkCreateReviseFiles(c context.Context, node sqalx.Node, revi
 	}
 
 	p.addCache(func() {
-		p.d.DelReviseFileCache(context.TODO(), reviseID)
+		p.d.DelReviseFileCache(context.Background(), reviseID)
 	})
 
 	return
@@ -184,7 +184,7 @@ func (p *Service) SaveReviseFiles(c context.Context, arg *api.ArgSaveReviseFiles
 	}
 
 	p.addCache(func() {
-		p.d.DelReviseFileCache(context.TODO(), arg.ReviseID)
+		p.d.DelReviseFileCache(context.Background(), arg.ReviseID)
 	})
 	return
 }

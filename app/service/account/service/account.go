@@ -262,7 +262,7 @@ func (p *Service) BatchBaseInfo(c context.Context, aids []int64) (data map[int64
 	}
 
 	p.addCache(func() {
-		p.d.SetBatchAccountCache(context.TODO(), missA)
+		p.d.SetBatchAccountCache(context.Background(), missA)
 	})
 
 	return
@@ -338,8 +338,8 @@ func (p *Service) UpdateAccount(c context.Context, arg *api.UpdateProfileReq) (e
 	}
 
 	p.addCache(func() {
-		p.d.DelAccountCache(context.TODO(), arg.Aid)
-		p.onAccountUpdated(context.TODO(), arg.Aid, time.Now().Unix())
+		p.d.DelAccountCache(context.Background(), arg.Aid)
+		p.onAccountUpdated(context.Background(), arg.Aid, time.Now().Unix())
 	})
 
 	return
@@ -368,7 +368,7 @@ func (p *Service) getAccountByID(c context.Context, node sqalx.Node, aid int64) 
 
 	if needCache {
 		p.addCache(func() {
-			p.d.SetAccountCache(context.TODO(), account)
+			p.d.SetAccountCache(context.Background(), account)
 		})
 	}
 	return

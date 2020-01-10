@@ -126,10 +126,10 @@ func (p *Service) Follow(c context.Context, arg *api.ArgTopicFollow) (status int
 		}
 
 		if addedMember {
-			p.onTopicFollowed(context.TODO(), arg.TopicID, arg.Aid, time.Now().Unix())
+			p.onTopicFollowed(context.Background(), arg.TopicID, arg.Aid, time.Now().Unix())
 		}
-		p.d.DelTopicMembersCache(context.TODO(), req.TopicID)
-		p.d.DelTopicCache(context.TODO(), req.TopicID)
+		p.d.DelTopicMembersCache(context.Background(), req.TopicID)
+		p.d.DelTopicCache(context.Background(), req.TopicID)
 	})
 
 	return
@@ -217,16 +217,16 @@ func (p *Service) AuditFollow(c context.Context, arg *api.ArgAuditFollow) (err e
 	p.addCache(func() {
 		switch req.Status {
 		case model.FollowRequestStatusApproved:
-			p.onTopicFollowed(context.TODO(), req.TopicID, req.AccountID, time.Now().Unix())
-			p.onTopicFollowApproved(context.TODO(), req.ID, req.TopicID, arg.Aid, time.Now().Unix())
+			p.onTopicFollowed(context.Background(), req.TopicID, req.AccountID, time.Now().Unix())
+			p.onTopicFollowApproved(context.Background(), req.ID, req.TopicID, arg.Aid, time.Now().Unix())
 			break
 		case model.FollowRequestStatusRejected:
-			p.onTopicFollowRejected(context.TODO(), req.ID, req.TopicID, arg.Aid, time.Now().Unix())
+			p.onTopicFollowRejected(context.Background(), req.ID, req.TopicID, arg.Aid, time.Now().Unix())
 			break
 		}
 
-		p.d.DelTopicCache(context.TODO(), req.TopicID)
-		p.d.DelTopicMembersCache(context.TODO(), req.TopicID)
+		p.d.DelTopicCache(context.Background(), req.TopicID)
+		p.d.DelTopicMembersCache(context.Background(), req.TopicID)
 	})
 
 	return

@@ -33,7 +33,7 @@ func (p *Service) getAccountByID(c context.Context, node sqalx.Node, aid int64) 
 
 	if needCache {
 		p.addCache(func() {
-			p.d.SetAccountCache(context.TODO(), account)
+			p.d.SetAccountCache(context.Background(), account)
 		})
 	}
 	return
@@ -175,9 +175,9 @@ func (p *Service) ResetPassword(c context.Context, arg *api.ResetPasswordReq) (e
 	}
 
 	p.addCache(func() {
-		p.d.DelAccountCache(context.TODO(), aid)
-		p.d.DelResetPasswordCache(context.TODO(), arg.SessionID)
-		p.deleteAllToken(context.TODO(), aid)
+		p.d.DelAccountCache(context.Background(), aid)
+		p.d.DelResetPasswordCache(context.Background(), arg.SessionID)
+		p.deleteAllToken(context.Background(), aid)
 	})
 
 	return
@@ -200,8 +200,8 @@ func (p *Service) SetPassword(c context.Context, arg *api.SetPasswordReq) (err e
 	}
 
 	p.addCache(func() {
-		p.d.DelAccountCache(context.TODO(), arg.Aid)
-		p.deleteAllToken(context.TODO(), arg.Aid)
+		p.d.DelAccountCache(context.Background(), arg.Aid)
+		p.deleteAllToken(context.Background(), arg.Aid)
 	})
 
 	return
@@ -238,7 +238,7 @@ func (p *Service) AccountLock(c context.Context, req *api.LockReq) (err error) {
 	}
 
 	p.addCache(func() {
-		p.onAccountUpdated(context.TODO(), req.TargetAccountID, time.Now().Unix())
+		p.onAccountUpdated(context.Background(), req.TargetAccountID, time.Now().Unix())
 	})
 	return
 }
@@ -274,7 +274,7 @@ func (p *Service) AccountUnlock(c context.Context, req *api.LockReq) (err error)
 	}
 
 	p.addCache(func() {
-		p.onAccountUpdated(context.TODO(), req.TargetAccountID, time.Now().Unix())
+		p.onAccountUpdated(context.Background(), req.TargetAccountID, time.Now().Unix())
 	})
 	return
 }
@@ -338,9 +338,9 @@ func (p *Service) Deactive(c context.Context, arg *api.DeactiveReq) (err error) 
 	}
 
 	p.addCache(func() {
-		p.d.DelAccountCache(context.TODO(), arg.Aid)
-		p.deleteAllToken(context.TODO(), arg.Aid)
-		p.onAccountDeleted(context.TODO(), arg.Aid, time.Now().Unix())
+		p.d.DelAccountCache(context.Background(), arg.Aid)
+		p.deleteAllToken(context.Background(), arg.Aid)
+		p.onAccountDeleted(context.Background(), arg.Aid, time.Now().Unix())
 	})
 
 	return
@@ -377,9 +377,9 @@ func (p *Service) AdminDeactive(c context.Context, arg *api.AdminDeactiveReq) (e
 	}
 
 	p.addCache(func() {
-		p.d.DelAccountCache(context.TODO(), arg.AccountID)
-		p.deleteAllToken(context.TODO(), arg.AccountID)
-		p.onAccountDeleted(context.TODO(), arg.AccountID, time.Now().Unix())
+		p.d.DelAccountCache(context.Background(), arg.AccountID)
+		p.deleteAllToken(context.Background(), arg.AccountID)
+		p.onAccountDeleted(context.Background(), arg.AccountID, time.Now().Unix())
 	})
 
 	return

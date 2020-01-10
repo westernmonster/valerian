@@ -62,7 +62,7 @@ func (p *Service) getTopicMembers(c context.Context, node sqalx.Node, topicID in
 
 	if items != nil && addCache {
 		p.addCache(func() {
-			p.d.SetTopicMembersCache(context.TODO(), topicID, total, int32(1), int32(10), items)
+			p.d.SetTopicMembersCache(context.Background(), topicID, total, int32(1), int32(10), items)
 		})
 	}
 

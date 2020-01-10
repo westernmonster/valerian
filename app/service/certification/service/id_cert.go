@@ -156,8 +156,8 @@ func (p *Service) RefreshIDCertStatus(c context.Context, aid int64) (status int3
 	status = item.Status
 
 	p.addCache(func() {
-		p.d.DelAccountCache(context.TODO(), item.AccountID)
-		p.d.DelIDCertCache(context.TODO(), item.AccountID)
+		p.d.DelAccountCache(context.Background(), item.AccountID)
+		p.d.DelIDCertCache(context.Background(), item.AccountID)
 	})
 	return
 }
@@ -192,7 +192,7 @@ func (p *Service) getIDCertByID(c context.Context, node sqalx.Node, aid int64) (
 
 	if needCache {
 		p.addCache(func() {
-			p.d.SetIDCertCache(context.TODO(), item)
+			p.d.SetIDCertCache(context.Background(), item)
 		})
 	}
 	return
