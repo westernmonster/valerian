@@ -22,10 +22,14 @@ func (p *Dao) GetCommentInfo(c context.Context, req *comment.IDReq) (info *comme
 	return
 }
 
-func (p *Dao) AddComment(c context.Context, req *comment.AddCommentReq) (err error) {
-	if _, err = p.commentRPC.AddComment(c, req); err != nil {
+func (p *Dao) AddComment(c context.Context, req *comment.AddCommentReq) (id int64, err error) {
+	var resp *comment.IDResp
+	if resp, err = p.commentRPC.AddComment(c, req); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.AddComment, error(%+v) req(%+v)", err, req))
+		return
 	}
+
+	id = resp.ID
 	return
 }
 

@@ -127,7 +127,7 @@ func (p *Service) AddComment(c context.Context, arg *model.ArgAddComment) (id in
 		return
 	}
 
-	if err = p.d.AddComment(c, &comment.AddCommentReq{
+	if id, err = p.d.AddComment(c, &comment.AddCommentReq{
 		TargetType: arg.TargetType,
 		TargetID:   arg.TargetID,
 		Content:    arg.Content,
