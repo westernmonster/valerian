@@ -8,6 +8,7 @@ import (
 	"valerian/library/cache/memcache"
 	"valerian/library/conf"
 	"valerian/library/database/sqalx"
+	ecode "valerian/library/ecode/tip"
 	"valerian/library/log"
 	"valerian/library/mq"
 	"valerian/library/naming/discovery"
@@ -31,18 +32,40 @@ type Config struct {
 	Mars   *mars.ServerConfig
 	Tracer *tracing.Config
 	DB     *DB
+	Ecode  *ecode.Config
 	// Auth
 	Auth      *auth.Config
 	Memcache  *Memcache
 	Discovery *discovery.Config
 	Nats      *mq.Config
 
-	LikeRPC    *warden.ClientConfig
-	AccountRPC *warden.ClientConfig
-	DiscussRPC *warden.ClientConfig
-	TopicRPC   *warden.ClientConfig
-	ArticleRPC *warden.ClientConfig
-	CommentRPC *warden.ClientConfig
+	Aliyun *Aliyun
+	OSS    *OSS
+
+	LikeRPC     *warden.ClientConfig
+	AccountRPC  *warden.ClientConfig
+	DiscussRPC  *warden.ClientConfig
+	TopicRPC    *warden.ClientConfig
+	ArticleRPC  *warden.ClientConfig
+	CommentRPC  *warden.ClientConfig
+	RelationRPC *warden.ClientConfig
+}
+
+type Aliyun struct {
+	AccessKeyID     string
+	AccessKeySecret string
+	RegionID        string
+	RoleArn         string
+	RoleSessionName string
+}
+
+type OSS struct {
+	Host             string
+	CallbackURL      string
+	ImageDir         string
+	FileDir          string
+	CertificationDir string
+	OtherDir         string
 }
 
 // DB db config.

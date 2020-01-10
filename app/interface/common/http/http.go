@@ -45,6 +45,37 @@ func route(e *mars.Engine) {
 		editor.POST("/link_info", linkInfo)
 	}
 
+	init := e.Group("/api/v1/init")
+	{
+		init.GET("/list/major", getMajorData)
+		init.GET("/list/related", getRelatedData)
+		init.GET("/list/members", getMembersData)
+	}
+
+	static := e.Group("/static")
+	{
+		static.GET("/user-agreement", agreement)
+		static.GET("/privacy", privacy)
+	}
+
+	e.GET("/api/v1/list/country_codes", countryCodes)
+	e.GET("/api/v1/list/locales", locales)
+
+	file := e.Group("/api/v1/file")
+	{
+		file.POST("/oss_token", authSvc.User, ossToken)
+		file.POST("/office_convert", authSvc.User, officeConvert)
+		file.POST("/url_upload", authSvc.User, urlUpload)
+		file.GET("/sts_cred", authSvc.User, stsCred)
+	}
+
+	fav := e.Group("/api/v1/fav")
+	{
+		fav.GET("/list/all", authSvc.User, favList)
+		fav.POST("/fav", authSvc.User, tofav)
+		fav.POST("/unfav", authSvc.User, unfav)
+	}
+
 }
 
 // ping check server ok.

@@ -14,9 +14,16 @@ func (p *Dao) GetAccountBaseInfo(c context.Context, aid int64) (info *account.Ba
 	return
 }
 
+func (p *Dao) GetAccountStat(c context.Context, aid int64) (info *account.AccountStatInfo, err error) {
+	if info, err = p.accountRPC.AccountStat(c, &account.AidReq{Aid: aid}); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetAccountStat err(%+v)", err))
+	}
+	return
+}
+
 func (p *Dao) GetMemberInfo(c context.Context, aid int64) (info *account.MemberInfoReply, err error) {
 	if info, err = p.accountRPC.MemberInfo(c, &account.AidReq{Aid: aid}); err != nil {
-		log.For(c).Error(fmt.Sprintf("dao.GetMemberInfo err(%+v)", err))
+		log.For(c).Error(fmt.Sprintf("dao.MemberInfo err(%+v) aid(%d)", err, aid))
 	}
 	return
 }

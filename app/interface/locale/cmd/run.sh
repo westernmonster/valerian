@@ -1,1 +1,0 @@
-REGION=hz ZONE=hz001 DEPLOY_ENV=dev APP_ID=locale CONF_APPID=locale CONF_PATH=/data/conf/locale-interface CONF_ENV=dev CONF_TOKEN=token CONF_HOST=config.flywk.com CONF_VERSION=v0.1 CONF_APPOINT=0 TREE_ID=11 ./cmd
