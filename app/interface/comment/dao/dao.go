@@ -8,6 +8,7 @@ import (
 	"valerian/app/interface/comment/conf"
 	account "valerian/app/service/account/api"
 	article "valerian/app/service/article/api"
+	comment "valerian/app/service/comment/api"
 	discuss "valerian/app/service/discuss/api"
 	like "valerian/app/service/like/api"
 	"valerian/library/cache/memcache"
@@ -26,6 +27,7 @@ type Dao struct {
 	c          *conf.Config
 	accountRPC account.AccountClient
 	discussRPC discuss.DiscussionClient
+	commentRPC comment.CommentClient
 	articleRPC article.ArticleClient
 	likeRPC    like.LikeClient
 }
@@ -54,6 +56,12 @@ func New(c *conf.Config) (dao *Dao) {
 		panic(errors.WithMessage(err, "Failed to dial article service"))
 	} else {
 		dao.articleRPC = articleRPC
+	}
+
+	if commentRPC, err := comment.NewClient(c.TopicRPC); err != nil {
+		panic(errors.WithMessage(err, "Failed to dial comment service"))
+	} else {
+		dao.commentRPC = commentRPC
 	}
 
 	if likeRPC, err := like.NewClient(c.TopicRPC); err != nil {

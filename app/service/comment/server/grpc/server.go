@@ -51,13 +51,25 @@ func (s *server) GetCommentInfo(ctx context.Context, req *api.IDReq) (*api.Comme
 }
 
 func (s *server) GetCommentsPaged(ctx context.Context, req *api.CommentListReq) (*api.CommentListResp, error) {
-	return nil, nil
+	return s.svr.GetCommentsPaged(ctx, req)
 }
 
-func (s *server) AddComment(ctx context.Context, req *api.AddCommentReq) (*api.EmptyStruct, error) {
-	return nil, nil
+func (s *server) AddComment(ctx context.Context, req *api.AddCommentReq) (*api.IDResp, error) {
+	if id, err := s.svr.AddComment(ctx, req); err != nil {
+		return nil, err
+	} else {
+		return &api.IDResp{ID: id}, nil
+	}
 }
 
 func (s *server) DeleteComment(ctx context.Context, req *api.DeleteReq) (*api.EmptyStruct, error) {
-	return nil, nil
+	if err := s.svr.DelComment(ctx, req.Aid, req.ID); err != nil {
+		return nil, err
+	}
+
+	return &api.EmptyStruct{}, nil
+}
+
+func (s *server) GetAllChildrenComment(ctx context.Context, req *api.IDReq) (*api.ChildrenCommentListResp, error) {
+	return s.svr.GetAllChildrenComments(ctx, req)
 }
