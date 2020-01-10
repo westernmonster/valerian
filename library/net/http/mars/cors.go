@@ -15,6 +15,7 @@ var (
 		".stonote.cn",
 		"flywk.com",
 		"stonote.cn",
+		"localhost:8001",
 	}
 )
 

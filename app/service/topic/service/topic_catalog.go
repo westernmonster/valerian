@@ -27,10 +27,6 @@ func (p *Service) GetCatalogTaxonomiesHierarchy(c context.Context, topicID int64
 
 // SaveCatalogs 批量保存目录信息
 func (p *Service) SaveCatalogs(c context.Context, req *api.ArgSaveCatalogs) (err error) {
-	// 检测是否系统管理员或者话题管理员
-	if err = p.checkTopicManagePermission(c, req.Aid, req.TopicID); err != nil {
-		return
-	}
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
 		log.For(c).Error(fmt.Sprintf("tx.BeginTran() error(%+v)", err))
@@ -45,6 +41,11 @@ func (p *Service) SaveCatalogs(c context.Context, req *api.ArgSaveCatalogs) (err
 			return
 		}
 	}()
+
+	// 检测是否系统管理员或者话题管理员
+	if err = p.checkTopicManagePermission(c, tx, req.Aid, req.TopicID); err != nil {
+		return
+	}
 
 	var change *model.CatalogChange
 	if change, err = p.saveCatalogs(c, tx, req.Aid, req); err != nil {

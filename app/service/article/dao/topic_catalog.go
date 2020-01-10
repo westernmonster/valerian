@@ -53,7 +53,11 @@ func (p *Dao) GetTopicCatalogsByCond(c context.Context, node sqalx.Node, cond ma
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.id,a.name,a.seq,a.type,a.parent_id,a.ref_id,a.topic_id,a.is_primary,a.permission,a.deleted,a.created_at,a.updated_at FROM topic_catalogs a WHERE a.deleted=0 %s ORDER BY a.id DESC", clause)
+	sqlSelect := fmt.Sprintf(`
+    SELECT a.id,a.name,a.seq,a.type,a.parent_id,a.ref_id,a.topic_id,a.is_primary,a.permission,a.deleted,a.created_at,a.updated_at
+	FROM topic_catalogs a
+	LEFT JOIN topics b ON a.topic_id = b.id
+	WHERE b.deleted=0 AND a.deleted=0 %s ORDER BY a.id DESC`, clause)
 
 	if err = node.SelectContext(c, &items, sqlSelect, condition...); err != nil {
 		log.For(c).Error(fmt.Sprintf("dao.GetTopicCatalogsByCond err(%+v), condition(%+v)", err, cond))
@@ -65,7 +69,11 @@ func (p *Dao) GetTopicCatalogsByCond(c context.Context, node sqalx.Node, cond ma
 
 func (p *Dao) GetTopicCatalogByID(c context.Context, node sqalx.Node, id int64) (item *model.TopicCatalog, err error) {
 	item = new(model.TopicCatalog)
-	sqlSelect := "SELECT a.id,a.name,a.seq,a.type,a.parent_id,a.ref_id,a.topic_id,a.is_primary,a.permission,a.deleted,a.created_at,a.updated_at FROM topic_catalogs a WHERE a.id=? AND a.deleted=0"
+	sqlSelect := `
+	SELECT a.id,a.name,a.seq,a.type,a.parent_id,a.ref_id,a.topic_id,a.is_primary,a.permission,a.deleted,a.created_at,a.updated_at
+	FROM topic_catalogs a
+	LEFT JOIN topics b ON a.topic_id = b.id
+	WHERE b.deleted=0 AND a.id=? AND a.deleted=0`
 
 	if err = node.GetContext(c, item, sqlSelect, id); err != nil {
 		if err == sql.ErrNoRows {
@@ -121,7 +129,11 @@ func (p *Dao) GetTopicCatalogByCond(c context.Context, node sqalx.Node, cond map
 		condition = append(condition, val)
 	}
 
-	sqlSelect := fmt.Sprintf("SELECT a.id,a.name,a.seq,a.type,a.parent_id,a.ref_id,a.topic_id,a.is_primary,a.permission,a.deleted,a.created_at,a.updated_at FROM topic_catalogs a WHERE a.deleted=0 %s", clause)
+	sqlSelect := fmt.Sprintf(`
+	SELECT a.id,a.name,a.seq,a.type,a.parent_id,a.ref_id,a.topic_id,a.is_primary,a.permission,a.deleted,a.created_at,a.updated_at
+	FROM topic_catalogs a
+	LEFT JOIN topics b ON a.topic_id=b.id
+	WHERE b.deleted=0 AND a.deleted=0 %s`, clause)
 
 	if err = node.GetContext(c, item, sqlSelect, condition...); err != nil {
 		if err == sql.ErrNoRows {
@@ -137,7 +149,8 @@ func (p *Dao) GetTopicCatalogByCond(c context.Context, node sqalx.Node, cond map
 }
 
 func (p *Dao) GetTopicCatalogMaxChildrenSeq(c context.Context, node sqalx.Node, topicID, parentID int64) (seq int, err error) {
-	sqlSelect := "SELECT a.seq FROM topic_catalogs a WHERE a.deleted=0 AND a.topic_id=? AND a.parent_id=? ORDER BY a.seq DESC LIMIT 1"
+	sqlSelect := `SELECT a.seq FROM topic_catalogs a LEFT JOIN topics b ON a.topic_id=b.id
+	WHERE b.deleted=0 AND a.deleted=0 AND a.topic_id=? AND a.parent_id=? ORDER BY a.seq DESC LIMIT 1`
 	if err = node.GetContext(c, &seq, sqlSelect, topicID, parentID); err != nil {
 		if err == sql.ErrNoRows {
 			seq = 0

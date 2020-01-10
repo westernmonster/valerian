@@ -9,32 +9,53 @@ import (
 	"valerian/library/xstr"
 )
 
-func (p *Service) AllSuggest(c context.Context, kw string) (resp []string, err error) {
-	resp = make([]string, 0)
+func (p *Service) AllSuggest(c context.Context, kw string) (resp []*model.SuggestResult, err error) {
+	resp = make([]*model.SuggestResult, 0)
 
 	var articleSuggestions []string
 	if articleSuggestions, err = p.d.ArticleSuggest(c, kw, 5); err != nil {
 		return
 	}
-	resp = append(resp, articleSuggestions...)
+
+	for _, v := range articleSuggestions {
+		resp = append(resp, &model.SuggestResult{
+			Type: "article",
+			Text: v,
+		})
+	}
 
 	var topicSuggestions []string
 	if topicSuggestions, err = p.d.TopicSuggest(c, kw, 5); err != nil {
 		return
 	}
-	resp = append(resp, topicSuggestions...)
+	for _, v := range topicSuggestions {
+		resp = append(resp, &model.SuggestResult{
+			Type: "topic",
+			Text: v,
+		})
+	}
 
 	var discussionSuggestions []string
 	if discussionSuggestions, err = p.d.DiscussionSuggest(c, kw, 5); err != nil {
 		return
 	}
-	resp = append(resp, discussionSuggestions...)
+	for _, v := range discussionSuggestions {
+		resp = append(resp, &model.SuggestResult{
+			Type: "discussion",
+			Text: v,
+		})
+	}
 
 	var accountSuggestions []string
 	if accountSuggestions, err = p.d.AccountSuggest(c, kw, 5); err != nil {
 		return
 	}
-	resp = append(resp, accountSuggestions...)
+	for _, v := range accountSuggestions {
+		resp = append(resp, &model.SuggestResult{
+			Type: "account",
+			Text: v,
+		})
+	}
 
 	return
 }

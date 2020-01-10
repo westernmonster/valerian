@@ -108,10 +108,6 @@ func (p *Service) GetTopicMembersPaged(c context.Context, arg *api.ArgTopicMembe
 
 // BulkSaveMembers 批量保存话题成员
 func (p *Service) BulkSaveMembers(c context.Context, req *api.ArgBatchSavedTopicMember) (err error) {
-	// 检测是否系统管理员或者话题管理员
-	if err = p.checkTopicManagePermission(c, req.Aid, req.TopicID); err != nil {
-		return
-	}
 
 	var tx sqalx.Node
 	if tx, err = p.d.DB().Beginx(c); err != nil {
@@ -127,6 +123,11 @@ func (p *Service) BulkSaveMembers(c context.Context, req *api.ArgBatchSavedTopic
 			return
 		}
 	}()
+
+	// 检测是否系统管理员或者话题管理员
+	if err = p.checkTopicManagePermission(c, tx, req.Aid, req.TopicID); err != nil {
+		return
+	}
 
 	var change *model.MemberChange
 	if change, err = p.bulkSaveMembers(c, tx, req); err != nil {

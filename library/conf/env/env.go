@@ -4,6 +4,7 @@ package env
 
 import (
 	"os"
+	"strings"
 
 	flag "github.com/spf13/pflag"
 )
@@ -69,6 +70,8 @@ func init() {
 	if Hostname, err = os.Hostname(); err != nil || Hostname == "" {
 		Hostname = os.Getenv("HOSTNAME")
 	}
+
+	Hostname = strings.ReplaceAll(Hostname, ".", "-")
 
 	addFlag(flag.CommandLine)
 }

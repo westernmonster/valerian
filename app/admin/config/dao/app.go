@@ -9,6 +9,54 @@ import (
 	"valerian/library/log"
 )
 
+func (p *Dao) GetAppsByCondPaged(c context.Context, node sqalx.Node, cond map[string]interface{}, page, pageSize int32) (count int32, items []*model.App, err error) {
+	items = make([]*model.App, 0)
+	condition := make([]interface{}, 0)
+	clause := ""
+
+	if val, ok := cond["id"]; ok {
+		clause += " AND a.id =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["name"]; ok {
+		clause += " AND a.name =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["token"]; ok {
+		clause += " AND a.token =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["env"]; ok {
+		clause += " AND a.env =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["zone"]; ok {
+		clause += " AND a.zone =?"
+		condition = append(condition, val)
+	}
+	if val, ok := cond["tree_id"]; ok {
+		clause += " AND a.tree_id =?"
+		condition = append(condition, val)
+	}
+
+	sqlCount := fmt.Sprintf("SELECT COUNT(1) AS count FROM apps a WHERE a.deleted=0 %s", clause)
+	sqlSelect := fmt.Sprintf("SELECT a.* FROM apps a WHERE a.deleted=0 %s ORDER BY a.id DESC LIMIT ?,?", clause)
+
+	if err = node.GetContext(c, &count, sqlCount, condition...); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetAppsByCondPaged error(%+v), condition(%+v)", err, condition))
+	}
+
+	offset := (page - 1) * pageSize
+	condition = append(condition, offset)
+	condition = append(condition, pageSize)
+
+	if err = node.SelectContext(c, &items, sqlSelect, condition...); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetAppsByCondPaged err(%+v), condition(%+v)", err, condition))
+		return
+	}
+	return
+}
+
 // GetAll get all records
 func (p *Dao) GetApps(c context.Context, node sqalx.Node) (items []*model.App, err error) {
 	items = make([]*model.App, 0)

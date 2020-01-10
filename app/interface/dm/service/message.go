@@ -545,11 +545,13 @@ func (p *Service) GetCommentTarget(c context.Context, v *comment.CommentInfo) (r
 			TargetType: replyComment.TargetType,
 		}
 
-		resp.ReplyTo = &model.Creator{
-			ID:           v.ReplyTo.ID,
-			Avatar:       v.ReplyTo.Avatar,
-			UserName:     v.ReplyTo.UserName,
-			Introduction: v.ReplyTo.Introduction,
+		if resp.ReplyTo != nil {
+			resp.ReplyTo = &model.Creator{
+				ID:           v.ReplyTo.ID,
+				Avatar:       v.ReplyTo.Avatar,
+				UserName:     v.ReplyTo.UserName,
+				Introduction: v.ReplyTo.Introduction,
+			}
 		}
 
 		switch replyComment.TargetType {

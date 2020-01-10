@@ -52,7 +52,7 @@ func (p *Dao) IsAllowedViewMember(c context.Context, node sqalx.Node, aid, discu
 
 // GetTopicViewPermissionByID 获取话题的查看权限
 func (p *Dao) GetTopicViewPermissionByID(c context.Context, node sqalx.Node, id int64) (viewPermission string, err error) {
-	sqlSelect := "SELECT a.a.view_permission FROM topics a WHERE a.id=? AND a.deleted=0"
+	sqlSelect := "SELECT a.view_permission FROM topics a WHERE a.id=? AND a.deleted=0"
 
 	if err = node.GetContext(c, &viewPermission, sqlSelect, id); err != nil {
 		if err == sql.ErrNoRows {

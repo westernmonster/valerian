@@ -11,13 +11,6 @@
 * valerian 1
   * admin 1
     - config 1101
-    - login 1102
-    - search 1103
-    - topic 1104
-    - article 1105
-    - account 1106
-    - discuss 1107
-    - feedback 1108
   * infra 2
     - discovery 1201
     - config 2 1202

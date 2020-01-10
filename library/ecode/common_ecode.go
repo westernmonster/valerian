@@ -115,6 +115,7 @@ var (
 	InvalidImage                   = add(10064) // 图片格式不正确
 	TeamExist                      = add(10065) // Team已经存在
 	EmailOrMobileRequired          = add(10066) // 请输入邮件地址或者手机
+	CommonConfExist                = add(10067) // CommonConf 已经存在
 
 	// 89000 - 89999 属于 Permission 类错误
 	NoTopicViewPermission      = add(89001) // 没有话题查看权限
