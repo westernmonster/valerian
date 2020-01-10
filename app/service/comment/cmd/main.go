@@ -85,7 +85,6 @@ func main() {
 			log.Info("comment-service exit")
 			return
 		case syscall.SIGHUP:
-		// TODO reload
 		default:
 			return
 		}

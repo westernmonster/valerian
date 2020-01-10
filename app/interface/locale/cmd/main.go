@@ -48,7 +48,6 @@ func main() {
 			log.Info("app-locale exit")
 			return
 		case syscall.SIGHUP:
-		// TODO reload
 		default:
 			return
 		}

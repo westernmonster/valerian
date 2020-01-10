@@ -48,7 +48,6 @@ func main() {
 			log.Info("fav-service exit")
 			return
 		case syscall.SIGHUP:
-		// TODO reload
 		default:
 			return
 		}
