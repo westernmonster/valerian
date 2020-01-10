@@ -57,7 +57,7 @@ func (s *server) UpdateTopic(ctx context.Context, arg *api.ArgUpdateTopic) (*api
 }
 
 func (s *server) DelTopic(ctx context.Context, arg *api.IDReq) (*api.EmptyStruct, error) {
-	err := s.svr.DelTopic(ctx, arg.ID)
+	err := s.svr.DelTopic(ctx, arg.Aid, arg.ID)
 	if err != nil {
 		return nil, err
 	}
