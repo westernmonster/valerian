@@ -109,7 +109,6 @@ func (p *Service) RefreshIDCertStatus(c context.Context, aid int64) (status int3
 		item.IDCardExpiry = material.Data.IdCardExpiry
 		item.Address = material.Data.Address
 		item.Sex = material.Data.Sex
-		// TODO: 图片下载
 		item.IDCardFrontPic = material.Data.IdCardFrontPic
 		item.IDCardBackPic = material.Data.IdCardBackPic
 		item.FacePic = material.Data.FacePic

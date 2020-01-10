@@ -134,7 +134,6 @@ func (p *Service) getAuthTopicsResp(c context.Context, node sqalx.Node, topicID 
 			return
 		}
 
-		// TODO: need cache ?
 		var stat *model.TopicStat
 		if stat, err = p.d.GetTopicStatByID(c, node, topicID); err != nil {
 			return
