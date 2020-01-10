@@ -191,7 +191,7 @@ func (p *Apps) InstanceInfo(zone string, latestTime int64, status uint32) (ci *I
 			for _, i := range as {
 				// if up is false return all status instance
 				if i.filter(status) {
-					// if i.Status == InstanceStatusUP && i.LatestTimestamp > latestTime { // TODO(felix): increase
+					// if i.Status == InstanceStatusUP && i.LatestTimestamp > latestTime {
 					ni := new(Instance)
 					*ni = *i
 					instance = append(instance, ni)
