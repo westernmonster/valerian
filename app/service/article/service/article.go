@@ -19,30 +19,6 @@ import (
 	"github.com/sergi/go-diff/diffmatchpatch"
 )
 
-// getAccount 获取用户信息
-func (p *Service) getAccount(c context.Context, node sqalx.Node, aid int64) (info *model.Account, err error) {
-	if info, err = p.d.GetAccountByID(c, node, aid); err != nil {
-		return
-	} else if info == nil {
-		err = ecode.UserNotExist
-		return
-	}
-
-	return
-}
-
-// getTopic 获取话题信息
-func (p *Service) getTopic(c context.Context, node sqalx.Node, tid int64) (info *model.Topic, err error) {
-	if info, err = p.d.GetTopicByID(c, node, tid); err != nil {
-		return
-	} else if info == nil {
-		err = ecode.TopicNotExist
-		return
-	}
-
-	return
-}
-
 // GetArticle 获取文章信息
 func (p *Service) GetArticle(c context.Context, articleID int64) (item *model.Article, err error) {
 	return p.getArticle(c, p.d.DB(), articleID)
@@ -476,45 +452,8 @@ func (p *Service) DelArticle(c context.Context, arg *api.IDReq) (err error) {
 		return
 	}
 
+	// 检查编辑权限
 	if err = p.checkEditPermission(c, tx, arg.Aid, arg.ID); err != nil {
-		return
-	}
-
-	if err = p.d.DelAccountFeedByCond(c, tx, arg.ID, model.TargetTypeArticle); err != nil {
-		return
-	}
-
-	if err = p.d.DelFeedByCond(c, tx, arg.ID, model.TargetTypeArticle); err != nil {
-		return
-	}
-
-	if err = p.d.DelTopicFeedByCond(c, tx, arg.ID, model.TargetTypeArticle); err != nil {
-		return
-	}
-
-	if err = p.d.DelRecentPubByCond(c, tx, arg.ID, model.TargetTypeArticle); err != nil {
-		return
-	}
-
-	var histories []*model.ArticleHistory
-	if histories, err = p.d.GetArticleHistoriesByCond(c, tx, map[string]interface{}{}); err != nil {
-		return
-	}
-	for _, v := range histories {
-		if err = p.d.DelTopicFeedByCond(c, tx, v.ID, model.TargetTypeArticleHistory); err != nil {
-			return
-		}
-	}
-
-	if err = p.d.DelArticleHistories(c, tx, arg.ID); err != nil {
-		return
-	}
-
-	if err = p.d.DelArticleFiles(c, tx, arg.ID); err != nil {
-		return
-	}
-
-	if err = p.d.DelImageURLByCond(c, tx, model.TargetTypeArticle, arg.ID); err != nil {
 		return
 	}
 
@@ -550,8 +489,6 @@ func (p *Service) DelArticle(c context.Context, arg *api.IDReq) (err error) {
 
 	p.addCache(func() {
 		p.d.DelArticleCache(context.TODO(), arg.ID)
-		p.d.DelArticleHistoryCache(context.TODO(), arg.ID)
-		p.d.DelArticleFileCache(context.TODO(), arg.ID)
 
 		for _, v := range catalogs {
 			p.d.DelTopicCatalogCache(context.TODO(), v.TopicID)
