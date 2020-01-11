@@ -3,6 +3,8 @@ global:
   pullPolicy: IfNotPresent
   name: app
 
+nameOverride: true
+
 ingress:
   enabled: true
   annotations:
