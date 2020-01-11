@@ -9,7 +9,7 @@ ingress:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
   paths:
     - /
-  host:
+  hosts:
     - uat.flywk.com
     - web.flywk.com
     - admin.flywk.com
