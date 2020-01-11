@@ -7,6 +7,10 @@ metadata:
     app: {{ .Values.global.name }}
     heritage: {{ .Release.Service }}
     release: {{ .Release.Name }}
+    platform: {{ .Values.global.platform }}
+    type: {{ .Values.global.type }}
+    version: {{ .Values.global.version }}
+    gitVersion: {{ .Values.global.gitVersion }}
 spec:
   type: ClusterIP
   # We want the servers to become available even if they're not ready
