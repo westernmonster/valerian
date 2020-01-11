@@ -5,7 +5,7 @@ global:
   type: interface
   name: app
   version: 0.1
-  gitVersion:
+  gitVersion: c91b2e62e7957cc8b8dcc5b78c2b0f7fc544c663
 
 ingress:
   enabled: true
