@@ -14,11 +14,11 @@ ingress:
     - web.flywk.com
     - admin.flywk.com
   tls:
-    secretName: locale-secret0
-    host:
-      - uat.flywk.com
-      - web.flywk.com
-      - admin.flywk.com
+    - secretName: locale-secret0
+      host:
+        - uat.flywk.com
+        - web.flywk.com
+        - admin.flywk.com
 
 server:
   replicas: 1
