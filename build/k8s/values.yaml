@@ -3,7 +3,7 @@ global:
   pullPolicy: IfNotPresent
   name: app
 
-nameOverride: true
+nameOverride: "micro"
 
 ingress:
   enabled: true
