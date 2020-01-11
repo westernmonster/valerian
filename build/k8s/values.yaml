@@ -1,6 +1,7 @@
 global:
   image: registry.cn-hangzhou.aliyuncs.com/valerian/web:0.1
   pullPolicy: IfNotPresent
+  type: valerian
   name: app
 
 ingress:

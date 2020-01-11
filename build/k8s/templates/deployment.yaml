@@ -12,6 +12,7 @@ spec:
   selector:
     matchLabels:
       app: {{ .Values.global.name }}
+      type: {{ .Values.global.type }}
       release: {{ .Release.Name }}
       component: server
   template:
