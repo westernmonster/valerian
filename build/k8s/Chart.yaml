@@ -1,5 +1,6 @@
-appVersion: 1.0.3
-description: Valerian microservices
+apiVersion: v1
+appVersion: 1.0.0
+description: Valerian Microservices
 name: micro
 version: 1.0.0
 maintainers:
