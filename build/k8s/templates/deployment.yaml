@@ -7,12 +7,12 @@ metadata:
     app: {{ .Values.global.name }}
     heritage: {{ .Release.Service }}
     release: {{ .Values.global.name }}
+    platform: {{ .Values.global.platform }}
+    type: {{ .Values.global.type }}
 spec:
   replicas: {{ .Values.server.replicas }}
   selector:
     matchLabels:
-      platform: {{ .Values.global.platform }}
-      type: {{ .Values.global.type }}
       app: {{ .Values.global.name }}
       release: {{ .Release.Name }}
       component: server
