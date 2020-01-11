@@ -11,8 +11,9 @@ spec:
   replicas: {{ .Values.server.replicas }}
   selector:
     matchLabels:
-      app: {{ .Values.global.name }}
+      platform: {{ .Values.global.platform }}
       type: {{ .Values.global.type }}
+      app: {{ .Values.global.name }}
       release: {{ .Release.Name }}
       component: server
   template:
