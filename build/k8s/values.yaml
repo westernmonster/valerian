@@ -15,7 +15,7 @@ ingress:
     - admin.flywk.com
   tls:
     - secretName: locale-secret0
-      host:
+      hosts:
         - uat.flywk.com
         - web.flywk.com
         - admin.flywk.com
