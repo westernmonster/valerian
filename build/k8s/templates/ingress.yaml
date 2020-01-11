@@ -7,7 +7,6 @@ metadata:
   name: {{ template "app.fullname" . }}
   labels:
     app: {{ template "app.name" . }}
-    chart: {{ template "name.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
   {{- range $key, $value := .Values.ingress.labels }}
