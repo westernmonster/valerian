@@ -4,9 +4,9 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: {{ template "app.fullname" . }}
+  name: {{ .Values.global.name }}
   labels:
-    app: {{ template "app.name" . }}
+    app: {{  .Values.global.name }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
   {{- range $key, $value := .Values.ingress.labels }}
