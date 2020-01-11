@@ -4,6 +4,8 @@ global:
   platform: valerian
   type: interface
   name: app
+  version: 0.1
+  gitVersion:
 
 ingress:
   enabled: true
