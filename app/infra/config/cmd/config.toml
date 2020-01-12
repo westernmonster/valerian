@@ -15,7 +15,7 @@ stdout = true
     [antispam.redis]
         name = "config-service/hosts"
         proto = "tcp"
-        addr = "redis:6379"
+        addr = "redis-prod-master:6379"
         maxIdle = 100
         maxActive = 100
         dialTimeout = "1s"
@@ -28,8 +28,8 @@ stdout = true
     domain = "ecode:6401"
 
 [db]
-    addr = "mysql:3306"
-    dsn = "flywk:flywk@tcp(121.199.254.133:3306)/config_uat?parseTime=true&charset=utf8mb4 "
+    addr = "pc-bp15bm1vm861vj9xm.mysql.polardb.rds.aliyuncs.com:3306"
+    dsn = "flywkacc:^EIj7UIjd@tcp(pc-bp15bm1vm861vj9xm.mysql.polardb.rds.aliyuncs.com:3306)/config_prod?parseTime=true&charset=utf8mb4"
     active = 5
     idle = 2
     queryTimeout = "1s"
@@ -44,7 +44,7 @@ stdout = true
 [redis]
     name = "config-service/hosts"
     proto = "tcp"
-    addr = "redis:6379"
+    addr = "redis-prod-master:6379"
     maxIdle = 100
     maxActive = 100
     dialTimeout = "1s"
@@ -54,13 +54,8 @@ stdout = true
 
 
 [mars]
-    address = "0.0.0.0:8001"
+    address = "0.0.0.0:8000"
 	maxListen = 10
     timeout="2s"
 
-[discovery]
-   nodes = ["192.168.0.136:7171"]
-   key = "6a29f8ed87407c11"
-   secret = "d3c5a85f5b895a03735b5d20a273bc57"
-   env = "dev"
-   zone = "hz001"
+
