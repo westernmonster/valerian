@@ -1,5 +1,8 @@
 # interface-passport-register
 
+## 1.0.3
+- 新环境部署
+
 ## 1.0.2
 - 增加代码注释
 - 移动逻辑到 service-identify
