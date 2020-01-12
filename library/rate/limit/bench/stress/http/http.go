@@ -112,7 +112,7 @@ func aqmTest(c *mars.Context) {
 	atomic.AddInt64(&req, 1)
 	for i := 0; i < 3000+rand.Intn(3000); i++ {
 		crc32.Checksum([]byte(`testasdwfwfsddsfgwddcscsc
-			http://git.stonote.loc/platform/valerian/merge_requests/new?merge_request%5Bsource_branch%5D=stress%2Fcodel`), crc32.IEEETable)
+			http://git.flywk.com/platform/valerian/merge_requests/new?merge_request%5Bsource_branch%5D=stress%2Fcodel`), crc32.IEEETable)
 	}
 }
 
