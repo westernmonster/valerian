@@ -52,10 +52,17 @@ stdout = true
     writeTimeout = "1s"
     idleTimeout = "10s"
 
-
 [mars]
     address = "0.0.0.0:8000"
 	maxListen = 10
     timeout="2s"
+
+[discovery]
+    nodes = ["192.168.10.214:7000", "192.168.10.215:7000", "192.168.10.216:7000"]
+    key = "6a29f8ed87407c11"
+    secret = "d3c5a85f5b895a03735b5d20a273bc57"
+    env = "prod"
+    zone = "hz001"
+
 
 
