@@ -1,7 +1,7 @@
 FROM registry.cn-hangzhou.aliyuncs.com/valerian/base:latest
 ARG EXE
 COPY ${EXE} /go/bin/cmd
-RUN touch /go/bin/config.toml
+RUN chmod a+x /go/bin/cmd && touch /go/bin/config.toml
 
 
 # Run the hello binary.
