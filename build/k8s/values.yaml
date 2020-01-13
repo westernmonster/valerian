@@ -11,7 +11,6 @@ ingress:
   enabled: true
   annotations:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/app-root: /api/v1
   paths:
     - /
   hosts:
