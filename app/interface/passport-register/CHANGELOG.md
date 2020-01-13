@@ -1,6 +1,6 @@
 # interface-passport-register
 
-## 1.0.5
+## 1.0.6
 - 新环境部署
 
 ## 1.0.2

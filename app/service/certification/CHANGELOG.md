@@ -1,6 +1,6 @@
 # service-certification
 
-## 1.0.3
+## 1.0.4
 - 新环境部署
 
 ## 1.0.2
