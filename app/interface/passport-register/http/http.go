@@ -28,10 +28,10 @@ func Init(c *conf.Config, s *service.Service) {
 func route(e *mars.Engine) {
 	e.Ping(ping)
 	e.Register(register)
-	g := e.Group("/api/v1")
+	g := e.Group("/oauth")
 	{
-		g.POST("/oauth/registration/email", emailRegister)
-		g.POST("/oauth/registration/mobile", mobileRegister)
+		g.POST("/registration/email", emailRegister)
+		g.POST("/registration/mobile", mobileRegister)
 	}
 }
 

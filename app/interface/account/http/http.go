@@ -32,7 +32,7 @@ func route(e *mars.Engine) {
 	e.Ping(ping)
 	e.Register(register)
 
-	a := e.Group("/api/v1/admin/account")
+	a := e.Group("/admin/account")
 	{
 		a.POST("/profile", authSvc.User, adminUpdateProfile)
 		a.POST("/lock", authSvc.User, adminLockAccount)
@@ -42,7 +42,7 @@ func route(e *mars.Engine) {
 		a.GET("/list", authSvc.User, adminAllAccounts)
 	}
 
-	g := e.Group("/api/v1/me")
+	g := e.Group("/me")
 	{
 		g.PUT("/password", authSvc.User, changePassword)
 		g.GET("/profile", authSvc.User, getProfile)
@@ -54,7 +54,7 @@ func route(e *mars.Engine) {
 		g.POST("/deactive", authSvc.User, deactiveAccount)
 	}
 
-	x := e.Group("/api/v1/account")
+	x := e.Group("/account")
 	{
 		x.POST("/follow", authSvc.User, follow)
 		x.POST("/unfollow", authSvc.User, unfollow)
@@ -78,7 +78,7 @@ func route(e *mars.Engine) {
 		x.GET("/list/followings", authSvc.User, followed)
 	}
 
-	y := e.Group("/api/v1/oauth")
+	y := e.Group("/oauth")
 	{
 		y.PUT("/password/reset", forgetPassword)
 		y.PUT("/password/reset/confirm", resetPassword)

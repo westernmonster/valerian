@@ -31,7 +31,7 @@ func Init(c *conf.Config, s *service.Service) {
 func route(e *mars.Engine) {
 	e.Ping(ping)
 	e.Register(register)
-	g := e.Group("/api/v1/discussion")
+	g := e.Group("/discussion")
 	{
 		g.GET("/list/by_topic", authSvc.User, getDiscusstionsByTopic)
 		g.GET("/list/by_account", authSvc.User, getDiscusstionsByAccount)

@@ -31,7 +31,7 @@ func Init(c *conf.Config, s *service.Service) {
 func route(e *mars.Engine) {
 	e.Ping(ping)
 	e.Register(register)
-	g := e.Group("/api/v1/comment")
+	g := e.Group("/comment")
 	{
 		g.POST("/add", authSvc.User, addComment)
 		g.GET("/get", authSvc.User, getComment)

@@ -31,11 +31,8 @@ func Init(c *conf.Config, s *service.Service) {
 func route(e *mars.Engine) {
 	e.Ping(ping)
 	e.Register(register)
-	g := e.Group("/api/v1")
-	{
-		g.GET("/list/feedback_types", feedbackTypes)
-		g.POST("/feedback", authSvc.User, addFeedback)
-	}
+	e.GET("/list/feedback_types", feedbackTypes)
+	e.POST("/feedback", authSvc.User, addFeedback)
 }
 
 // ping check server ok.

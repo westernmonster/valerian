@@ -31,7 +31,7 @@ func Init(c *conf.Config, s *service.Service) {
 func route(e *mars.Engine) {
 	e.Ping(ping)
 	e.Register(register)
-	g := e.Group("/api/v1/like")
+	g := e.Group("/like")
 	{
 		g.POST("/like", authSvc.User, like)
 		g.POST("/cancel_like", authSvc.User, cancelLike)
@@ -40,12 +40,12 @@ func route(e *mars.Engine) {
 		g.POST("/cancel_dislike", authSvc.User, cancelDislike)
 	}
 
-	editor := e.Group("/api/v1/editor")
+	editor := e.Group("/editor")
 	{
 		editor.POST("/link_info", linkInfo)
 	}
 
-	init := e.Group("/api/v1/init")
+	init := e.Group("/init")
 	{
 		init.GET("/list/major", getMajorData)
 		init.GET("/list/related", getRelatedData)
@@ -58,10 +58,10 @@ func route(e *mars.Engine) {
 		static.GET("/privacy", privacy)
 	}
 
-	e.GET("/api/v1/list/country_codes", countryCodes)
-	e.GET("/api/v1/list/locales", locales)
+	e.GET("/list/country_codes", countryCodes)
+	e.GET("/list/locales", locales)
 
-	file := e.Group("/api/v1/file")
+	file := e.Group("/file")
 	{
 		file.POST("/oss_token", authSvc.User, ossToken)
 		file.POST("/office_convert", authSvc.User, officeConvert)
@@ -69,7 +69,7 @@ func route(e *mars.Engine) {
 		file.GET("/sts_cred", authSvc.User, stsCred)
 	}
 
-	fav := e.Group("/api/v1/fav")
+	fav := e.Group("/fav")
 	{
 		fav.GET("/list/all", authSvc.User, favList)
 		fav.POST("/fav", authSvc.User, tofav)
