@@ -40,9 +40,11 @@ type server struct {
 }
 
 func (s *server) GetCommentInfo(ctx context.Context, req *api.IDReq) (*api.CommentInfo, error) {
-	ctx = sqalx.NewContext(ctx, true)
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+	}
 
-	return s.GetCommentInfo(ctx, req)
+	return s.svr.GetCommentInfo(ctx, req.Aid, req.ID)
 }
 
 func (s *server) GetCommentsPaged(ctx context.Context, req *api.CommentListReq) (*api.CommentListResp, error) {
