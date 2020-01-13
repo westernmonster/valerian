@@ -33,7 +33,7 @@ require (
 	github.com/h2non/filetype v1.0.10
 	github.com/jinzhu/copier v0.0.0-20190625015134-976e0346caa8
 	github.com/jmoiron/sqlx v1.2.0
-	github.com/kamilsk/retry/v4 v4.3.1
+	github.com/kamilsk/retry/v4 v4.3.1 // indirect
 	github.com/kylelemons/godebug v1.1.0 // indirect
 	github.com/leodido/go-urn v1.1.0 // indirect
 	github.com/levigross/grequests v0.0.0-20190908174114-253788527a1a
@@ -47,7 +47,7 @@ require (
 	github.com/nats-io/nats-streaming-server v0.16.2 // indirect
 	github.com/nats-io/stan.go v0.5.0
 	github.com/nicksnyder/go-i18n/v2 v2.0.2
-	github.com/olivere/elastic v6.2.23+incompatible
+	github.com/olivere/elastic v6.2.23+incompatible // indirect
 	github.com/opentracing-contrib/go-stdlib v0.0.0-20190519235532-cf7a6c988dc9
 	github.com/opentracing/opentracing-go v1.1.0
 	github.com/pkg/errors v0.8.1
