@@ -12,8 +12,6 @@ import (
 	"valerian/library/log"
 )
 
-// func (p *Service) getWorkCert(c context.Context, aid k)
-
 // RequestWorkCert 申请工作认证
 func (p *Service) RequestWorkCert(c context.Context, arg *model.ArgAddWorkCert) (err error) {
 	var tx sqalx.Node

@@ -118,20 +118,15 @@ func (p *Service) GetAllAccountsPaged(c context.Context, req *api.AccountsPagedR
 			IsLock:       bool(v.IsLock),
 		}
 
-		// var workCertStatus int32
-		// if workCertStatus, err = p.d.GetWorkCertStatus(c, v.ID); err != nil {
-		// 	return
-		// }
+		if item.WorkCert {
+			var workCert *model.WorkCertification
+			if workCert, err = p.getWorkCertByID(c, p.d.DB(), v.ID); err != nil {
+				return
+			}
 
-		// if workCertStatus == int32(1) {
-		// 	var workCert *certification.WorkCertInfo
-		// 	if workCert, err = p.d.GetWorkCert(c, v.ID); err != nil {
-		// 		return
-		// 	}
-
-		// 	item.Company = workCert.Company
-		// 	item.Position = workCert.Position
-		// }
+			item.Company = workCert.Company
+			item.Position = workCert.Position
+		}
 
 		if item.Location != 0 {
 			if v, e := p.getLocationString(c, item.Location); e != nil {

@@ -10,7 +10,7 @@ import "valerian/library/net/http/mars"
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Success 200 {object} app.interface.certification.model.VerifyTokenData "Token"
+// @Success 200 {object} app.interface.account.model.VerifyTokenData "Token"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
 // @Router /certification/id [post]
@@ -43,7 +43,7 @@ func idCertificationStatus(c *mars.Context) {
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Success 200 {object}  app.interface.certification.model.IDCertResp "认证信息"
+// @Success 200 {object}  app.interface.account.model.IDCertResp "认证信息"
 // @Failure 42 "尚未发起身份认证"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"

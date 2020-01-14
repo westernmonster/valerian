@@ -14,7 +14,7 @@ import (
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Param req body  app.interface.certification.model.ArgWorkCert true "请求"
+// @Param req body  app.interface.account.model.ArgWorkCert true "请求"
 // @Success 200 "提交成功"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
@@ -41,7 +41,7 @@ func reqWorkCert(c *mars.Context) {
 // @Param Authorization header string true "Bearer"
 // @Param Source header int true "Source 来源，1:Web, 2:iOS; 3:Android" Enums(1, 2, 3)
 // @Param Locale header string true "语言" Enums(zh-CN, en-US)
-// @Success 200 {object}  app.interface.certification.model.WorkCertResp "认证信息"
+// @Success 200 {object}  app.interface.account.model.WorkCertResp "认证信息"
 // @Failure 42 "尚未发起身份认证"
 // @Failure 401 "登录验证失败"
 // @Failure 500 "服务器端错误"
