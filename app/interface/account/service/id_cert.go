@@ -2,9 +2,8 @@ package service
 
 import (
 	"context"
-
-	"valerian/app/interface/certification/model"
-	certification "valerian/app/service/certification/api"
+	"valerian/app/interface/account/model"
+	account "valerian/app/service/account/api"
 	"valerian/library/cloudauth"
 	"valerian/library/ecode"
 	"valerian/library/net/metadata"
@@ -18,7 +17,7 @@ func (p *Service) RequestIDCertification(c context.Context) (token cloudauth.Ver
 		return
 	}
 
-	var t *certification.RequestIDCertResp
+	var t *account.RequestIDCertResp
 	if t, err = p.d.RequestIDCert(c, aid); err != nil {
 		return
 	}
@@ -52,7 +51,7 @@ func (p *Service) GetIDCertificationStatus(c context.Context) (status int, err e
 		return
 	}
 
-	var resp *certification.IDCertStatus
+	var resp *account.IDCertStatus
 	if resp, err = p.d.RefreshIDCertStatus(c, aid); err != nil {
 		return
 	}
@@ -69,13 +68,13 @@ func (p *Service) GetIDCert(c context.Context) (resp *model.IDCertResp, err erro
 		return
 	}
 
-	var v *certification.IDCertInfo
+	var v *account.IDCertInfo
 	if v, err = p.d.GetIDCert(c, aid); err != nil {
 		return
 	}
 
 	resp = &model.IDCertResp{
-		Status:               int(v.Status),
+		Status:               (v.Status),
 		AuditConclusions:     v.AuditConclusions,
 		Name:                 v.Name,
 		IdentificationNumber: v.IdentificationNumber,

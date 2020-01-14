@@ -22,7 +22,7 @@ type WorkCertResp struct {
 	ExpiresAt int64 `json:"expires_at"`
 
 	//  状态：-1 未认证, 0 认证中,  1 认证成功, 2 认证失败
-	Status int `json:"status"`
+	Status int32 `json:"status"`
 
 	// 提交时间
 	CreatedAt int64 `json:"created_at"`
@@ -37,15 +37,6 @@ type WorkCertResp struct {
 type WorkCertsPagedResp struct {
 	Items  []*WorkCertItem `json:"items"`
 	Paging *Paging         `json:"paging"`
-}
-
-type Paging struct {
-	// 是否结束
-	IsEnd bool `json:"is_end"`
-	// 下一页
-	Next string `json:"next"`
-	// 上一页
-	Prev string `json:"prev"`
 }
 
 type Member struct {

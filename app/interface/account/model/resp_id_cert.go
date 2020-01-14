@@ -2,7 +2,7 @@ package model
 
 type IDCertResp struct {
 	//  状态：-1 未认证, 0 认证中,  1 认证成功, 2 认证失败
-	Status int `json:"status"`
+	Status int32 `json:"status"`
 	// 失败原因
 	AuditConclusions string `json:"audit_conclusions,omitempty"`
 	// 姓名

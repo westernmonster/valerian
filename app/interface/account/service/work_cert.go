@@ -2,9 +2,8 @@ package service
 
 import (
 	"context"
-
-	"valerian/app/interface/certification/model"
-	certification "valerian/app/service/certification/api"
+	"valerian/app/interface/account/model"
+	account "valerian/app/service/account/api"
 	"valerian/library/ecode"
 	"valerian/library/net/metadata"
 )
@@ -17,7 +16,7 @@ func (p *Service) RequestWorkCert(c context.Context, arg *model.ArgWorkCert) (er
 		return
 	}
 
-	item := &certification.WorkCertReq{
+	item := &account.WorkCertReq{
 		AccountID:  aid,
 		WorkPic:    arg.WorkPic,
 		OtherPic:   arg.OtherPic,
@@ -42,12 +41,12 @@ func (p *Service) GetWorkCert(c context.Context) (resp *model.WorkCertResp, err 
 		return
 	}
 
-	var v *certification.WorkCertInfo
+	var v *account.WorkCertInfo
 	if v, err = p.d.GetWorkCert(c, aid); err != nil {
 		return
 	}
 
-	var i *certification.IDCertInfo
+	var i *account.IDCertInfo
 	if i, err = p.d.GetIDCert(c, aid); err != nil {
 		return
 	}
@@ -55,7 +54,7 @@ func (p *Service) GetWorkCert(c context.Context) (resp *model.WorkCertResp, err 
 	resp = &model.WorkCertResp{
 		AccountID:  v.AccountID,
 		IDName:     i.Name,
-		Status:     int(v.Status),
+		Status:     (v.Status),
 		WorkPic:    v.WorkPic,
 		OtherPic:   v.OtherPic,
 		Company:    v.Company,

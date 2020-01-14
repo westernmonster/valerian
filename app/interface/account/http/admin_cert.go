@@ -2,7 +2,7 @@ package http
 
 import (
 	"strconv"
-	"valerian/app/interface/certification/model"
+	"valerian/app/interface/account/model"
 	"valerian/library/ecode"
 	"valerian/library/net/http/mars"
 )

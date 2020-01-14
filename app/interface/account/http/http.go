@@ -83,6 +83,22 @@ func route(e *mars.Engine) {
 		y.PUT("/password/reset", forgetPassword)
 		y.PUT("/password/reset/confirm", resetPassword)
 	}
+
+	i := e.Group("/admin/certification")
+	{
+		i.POST("/workcert/audit", authSvc.User, auditWorkCert)
+		i.GET("/workcert/list", authSvc.User, listWorkCert)
+		i.GET("/workcert/history/list", authSvc.User, workCertHistory)
+	}
+
+	m := e.Group("/certification")
+	{
+		m.POST("/id", authSvc.User, idCertificationRequest)
+		m.GET("/idcert", authSvc.User, idCert)
+		m.GET("/id/status", authSvc.User, idCertificationStatus)
+		m.POST("/work", authSvc.User, reqWorkCert)
+		m.GET("/workcert", authSvc.User, workCert)
+	}
 }
 
 // ping check server ok.

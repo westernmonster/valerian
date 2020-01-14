@@ -4,10 +4,8 @@ import (
 	"context"
 	"net/url"
 	"strconv"
-
-	"valerian/app/interface/certification/model"
+	"valerian/app/interface/account/model"
 	account "valerian/app/service/account/api"
-	certification "valerian/app/service/certification/api"
 	"valerian/library/ecode"
 	"valerian/library/net/http/mars"
 	"valerian/library/net/metadata"
@@ -20,9 +18,9 @@ func (p *Service) GetWorkCertsPaged(c context.Context, status int, limit, offset
 		err = ecode.AcquireAccountIDFailed
 		return
 	}
-	arg := &certification.WorkCertPagedReq{Aid: aid, Status: int32(status), Limit: int32(limit), Offset: int32(offset)}
+	arg := &account.WorkCertPagedReq{Aid: aid, Status: int32(status), Limit: int32(limit), Offset: int32(offset)}
 
-	var ret *certification.WorkCertPagedResp
+	var ret *account.WorkCertPagedResp
 	if ret, err = p.d.GetWorkCertsPaged(c, arg); err != nil {
 		return
 	}
@@ -58,7 +56,7 @@ func (p *Service) GetWorkCertsPaged(c context.Context, status int, limit, offset
 			Introduction: acc.Introduction,
 		}
 
-		var id *certification.IDCertInfo
+		var id *account.IDCertInfo
 		if id, err = p.d.GetIDCert(c, v.AccountID); err != nil {
 			return
 		}
@@ -103,7 +101,7 @@ func (s *Service) AuditWorkCert(c *mars.Context, arg *model.ArgAuditWorkCert) (e
 		err = ecode.AcquireAccountIDFailed
 		return
 	}
-	req := &certification.AuditWorkCertReq{
+	req := &account.AuditWorkCertReq{
 		AccountID:   arg.AccountID,
 		Approve:     arg.Approve,
 		AuditResult: arg.AuditResult,
@@ -122,9 +120,9 @@ func (p *Service) GetWorkCertHistoriesPaged(c context.Context, accountID int64, 
 		err = ecode.AcquireAccountIDFailed
 		return
 	}
-	arg := &certification.WorkCertHistoriesPagedReq{Aid: aid, AccountID: accountID, Limit: int32(limit), Offset: int32(offset)}
+	arg := &account.WorkCertHistoriesPagedReq{Aid: aid, AccountID: accountID, Limit: int32(limit), Offset: int32(offset)}
 
-	var ret *certification.WorkCertHistoriesPagedResp
+	var ret *account.WorkCertHistoriesPagedResp
 	if ret, err = p.d.GetWorkCertHistoriesPaged(c, arg); err != nil {
 		return
 	}
@@ -172,7 +170,7 @@ func (p *Service) GetWorkCertHistoriesPaged(c context.Context, accountID int64, 
 			Introduction: m.Introduction,
 		}
 
-		var id *certification.IDCertInfo
+		var id *account.IDCertInfo
 		if id, err = p.d.GetIDCert(c, v.AccountID); err != nil {
 			return
 		}
