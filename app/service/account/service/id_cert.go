@@ -5,8 +5,7 @@ import (
 	"fmt"
 	"strconv"
 	"time"
-
-	"valerian/app/service/certification/model"
+	"valerian/app/service/account/model"
 	"valerian/library/cloudauth"
 	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
@@ -68,8 +67,12 @@ func (p *Service) RequestIDCert(c context.Context, aid int64) (token cloudauth.V
 
 // GetIDCertStatus 获取身份认证状态
 func (p *Service) GetIDCertStatus(c context.Context, aid int64) (status int32, err error) {
+	return p.getIDCertStatus(c, p.d.DB(), aid)
+}
+
+func (p *Service) getIDCertStatus(c context.Context, node sqalx.Node, aid int64) (status int32, err error) {
 	var item *model.IDCertification
-	if item, err = p.getIDCertByID(c, p.d.DB(), aid); err != nil {
+	if item, err = p.getIDCertByID(c, node, aid); err != nil {
 		if ecode.Cause(err) == ecode.IDCertificationNotExist {
 			return model.IDCertificationUncommitted, nil
 		}

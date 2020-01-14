@@ -3,7 +3,7 @@ package dao
 import (
 	"context"
 	"fmt"
-	"valerian/app/service/certification/model"
+	"valerian/app/service/account/model"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
 )

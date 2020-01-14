@@ -6,7 +6,6 @@ import (
 
 	"valerian/app/service/account/api"
 	"valerian/app/service/account/model"
-	certification "valerian/app/service/certification/api"
 	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
 )
@@ -58,13 +57,13 @@ func (p *Service) getSelfProfile(c context.Context, node sqalx.Node, accountID i
 		}
 	}
 
-	if profile.WorkCertStatus, err = p.d.GetWorkCertStatus(c, accountID); err != nil {
+	if profile.WorkCertStatus, err = p.getWorkCertStatus(c, node, accountID); err != nil {
 		return
 	}
 
 	if profile.WorkCertStatus == 1 {
-		var workCert *certification.WorkCertInfo
-		if workCert, err = p.d.GetWorkCert(c, accountID); err != nil {
+		var workCert *model.WorkCertification
+		if workCert, err = p.getWorkCertByID(c, node, accountID); err != nil {
 			return
 		}
 
@@ -72,7 +71,7 @@ func (p *Service) getSelfProfile(c context.Context, node sqalx.Node, accountID i
 		profile.Position = workCert.Position
 	}
 
-	if profile.IDCertStatus, err = p.d.GetIDCertStatus(c, accountID); err != nil {
+	if profile.IDCertStatus, err = p.getIDCertStatus(c, node, accountID); err != nil {
 		return
 	}
 
@@ -135,13 +134,13 @@ func (p *Service) GetMemberProfile(c context.Context, accountID int64) (profile 
 	}
 
 	var workCertStatus int32
-	if workCertStatus, err = p.d.GetWorkCertStatus(c, accountID); err != nil {
+	if workCertStatus, err = p.getWorkCertStatus(c, p.d.DB(), accountID); err != nil {
 		return
 	}
 
 	if workCertStatus == int32(1) {
-		var workCert *certification.WorkCertInfo
-		if workCert, err = p.d.GetWorkCert(c, accountID); err != nil {
+		var workCert *model.WorkCertification
+		if workCert, err = p.getWorkCertByID(c, p.d.DB(), accountID); err != nil {
 			return
 		}
 

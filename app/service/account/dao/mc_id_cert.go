@@ -3,15 +3,14 @@ package dao
 import (
 	"context"
 	"fmt"
-
-	"valerian/app/service/certification/model"
+	"valerian/app/service/account/model"
 	"valerian/app/service/feed/def"
 	"valerian/library/cache/memcache"
 	"valerian/library/log"
 )
 
-func (p *Dao) SetWorkCertCache(c context.Context, m *model.WorkCertification) (err error) {
-	key := def.WorkcertKey(m.AccountID)
+func (p *Dao) SetIDCertCache(c context.Context, m *model.IDCertification) (err error) {
+	key := def.IdcertKey(m.AccountID)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 
@@ -22,8 +21,8 @@ func (p *Dao) SetWorkCertCache(c context.Context, m *model.WorkCertification) (e
 	return
 }
 
-func (p *Dao) WorkCertCache(c context.Context, aid int64) (m *model.WorkCertification, err error) {
-	key := def.WorkcertKey(aid)
+func (p *Dao) IDCertCache(c context.Context, aid int64) (m *model.IDCertification, err error) {
+	key := def.IdcertKey(aid)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	var item *memcache.Item
@@ -36,15 +35,15 @@ func (p *Dao) WorkCertCache(c context.Context, aid int64) (m *model.WorkCertific
 		return
 	}
 
-	m = new(model.WorkCertification)
+	m = new(model.IDCertification)
 	if err = conn.Scan(item, m); err != nil {
 		log.For(c).Error(fmt.Sprintf("conn.Scan(%v) error(%v)", string(item.Value), err))
 	}
 	return
 }
 
-func (p *Dao) DelWorkCertCache(c context.Context, aid int64) (err error) {
-	key := def.WorkcertKey(aid)
+func (p *Dao) DelIDCertCache(c context.Context, aid int64) (err error) {
+	key := def.IdcertKey(aid)
 	conn := p.mc.Get(c)
 	defer conn.Close()
 	if err = conn.Delete(key); err != nil {

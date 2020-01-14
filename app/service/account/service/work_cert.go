@@ -4,13 +4,15 @@ import (
 	"context"
 	"fmt"
 	"time"
-	"valerian/app/service/certification/api"
-	"valerian/app/service/certification/model"
+	"valerian/app/service/account/api"
+	"valerian/app/service/account/model"
 	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
 	"valerian/library/gid"
 	"valerian/library/log"
 )
+
+// func (p *Service) getWorkCert(c context.Context, aid k)
 
 // RequestWorkCert 申请工作认证
 func (p *Service) RequestWorkCert(c context.Context, arg *model.ArgAddWorkCert) (err error) {
@@ -180,8 +182,12 @@ func (p *Service) AuditWorkCert(c context.Context, arg *api.AuditWorkCertReq) (e
 
 // GetWorkCertStatus 获取工作认证状态
 func (p *Service) GetWorkCertStatus(c context.Context, aid int64) (status int32, err error) {
+	return p.getWorkCertStatus(c, p.d.DB(), aid)
+}
+
+func (p *Service) getWorkCertStatus(c context.Context, node sqalx.Node, aid int64) (status int32, err error) {
 	var item *model.WorkCertification
-	if item, err = p.getWorkCertByID(c, p.d.DB(), aid); err != nil {
+	if item, err = p.getWorkCertByID(c, node, aid); err != nil {
 		if ecode.Cause(err) == ecode.WorkCertificationNotExist {
 			return model.WorkCertificationUncommitted, nil
 		}

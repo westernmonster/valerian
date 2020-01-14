@@ -2,18 +2,28 @@ package service
 
 import (
 	"context"
+	"fmt"
 
 	"valerian/app/service/account/conf"
 	"valerian/app/service/account/dao"
+	"valerian/library/cloudauth"
 	"valerian/library/conf/env"
 	"valerian/library/log"
 	"valerian/library/mq"
+
+	"github.com/aliyun/alibaba-cloud-sdk-go/sdk"
 )
 
 type Service struct {
-	c      *conf.Config
-	d      *dao.Dao
-	mq     *mq.MessageQueue
+	c         *conf.Config
+	d         *dao.Dao
+	mq        *mq.MessageQueue
+	cloudauth interface {
+		GetVerifyToken(c context.Context, ticketID string) (resp *cloudauth.GetVerifyTokenResponse, err error)
+		GetStatus(c context.Context, ticketID string) (resp *cloudauth.GetStatusResponse, err error)
+		SubmitVerification(c context.Context, ticketID string, realName, idcardNumber, idcardFrontImage, idcardBackImage string) (resp *cloudauth.SubmitVerificationResponse, err error)
+		GetMaterials(c context.Context, ticketID string) (resp *cloudauth.GetMaterialsResponse, err error)
+	}
 	missch chan func()
 }
 
@@ -24,6 +34,13 @@ func New(c *conf.Config) (s *Service) {
 		d:      dao.New(c),
 		mq:     mq.New(env.Hostname, c.Nats),
 		missch: make(chan func(), 1024),
+	}
+
+	if aliClient, err := sdk.NewClientWithAccessKey("cn-hangzhou", c.Aliyun.AccessKeyID, c.Aliyun.AccessKeySecret); err != nil {
+		log.Error(fmt.Sprintf("init aliyun client failed(%+v)", err))
+		panic(err)
+	} else {
+		s.cloudauth = &cloudauth.CloudAuthClient{Client: aliClient}
 	}
 	go s.cacheproc()
 	return
