@@ -48,7 +48,6 @@ func main() {
 			log.Info("interface-search exit")
 			return
 		case syscall.SIGHUP:
-		// TODO reload
 		default:
 			return
 		}

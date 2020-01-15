@@ -53,7 +53,7 @@ func (p *Service) delRevise(c context.Context, aid, id int64) (err error) {
 	}
 
 	p.addCache(func() {
-		p.d.DelReviseCache(context.TODO(), id)
+		p.d.DelReviseCache(context.Background(), id)
 		p.onReviseDeleted(context.Background(), id, aid, time.Now().Unix())
 	})
 	return

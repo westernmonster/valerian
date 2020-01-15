@@ -26,7 +26,7 @@ func (p *Service) getAccount(c context.Context, node sqalx.Node, aid int64) (acc
 
 	if needCache {
 		p.addCache(func() {
-			p.d.SetAccountCache(context.TODO(), account)
+			p.d.SetAccountCache(context.Background(), account)
 		})
 	}
 	return

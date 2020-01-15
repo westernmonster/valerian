@@ -73,7 +73,6 @@ func main() {
 			log.Info("msm-service exit")
 			return
 		case syscall.SIGHUP:
-		// TODO reload
 		default:
 			return
 		}

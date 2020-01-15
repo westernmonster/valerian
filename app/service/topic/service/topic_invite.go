@@ -124,11 +124,11 @@ func (p *Service) ProcessInvite(c context.Context, arg *api.ArgProcessInvite) (e
 	}
 
 	p.addCache(func() {
-		p.d.DelTopicMembersCache(context.TODO(), req.TopicID)
+		p.d.DelTopicMembersCache(context.Background(), req.TopicID)
 		if req.Status == model.InviteStatusJoined {
-			p.onTopicFollowed(context.TODO(), req.TopicID, req.AccountID, time.Now().Unix())
+			p.onTopicFollowed(context.Background(), req.TopicID, req.AccountID, time.Now().Unix())
 		}
-		p.d.DelTopicCache(context.TODO(), req.TopicID)
+		p.d.DelTopicCache(context.Background(), req.TopicID)
 	})
 
 	return

@@ -41,7 +41,14 @@ type Config struct {
 	Memcache         *Memcache
 	Discovery        *discovery.Config
 
+	Aliyun *Aliyun
+
 	Nats *mq.Config
+}
+
+type Aliyun struct {
+	AccessKeyID     string
+	AccessKeySecret string
 }
 
 // DB db config.

@@ -1,5 +1,8 @@
 # service-article
 
+## 1.0.4
+- 新环境部署
+
 ## 1.0.2
 - Revise 更新时候未更新updated_at
 

@@ -9,6 +9,9 @@ type CommentResp struct {
 	Featured bool `json:"featured"`
 	// 是否删除
 	IsDelete bool `json:"is_delete"`
+
+	// 是否删除
+	CanDelete bool `json:"can_delete"`
 	// 发布日期
 	CreatedAt int64 `json:"created_at"`
 	// 发布人
@@ -19,11 +22,11 @@ type CommentResp struct {
 	// 是否反对
 	Dislike bool `json:"dislike"`
 	// 喜欢数
-	LikeCount int `json:"like_count"`
+	LikeCount int32 `json:"like_count"`
 	// 喜欢数
-	DislikeCount int `json:"dislike_count"`
+	DislikeCount int32 `json:"dislike_count"`
 	// 子评论数
-	ChildCommentsCount int `json:"child_comments_count"`
+	ChildCommentsCount int32 `json:"child_comments_count"`
 	// 子评论
 	ChildComments []*ChildCommentItem `json:"child_comments,omitempty"`
 }
@@ -42,16 +45,19 @@ type CommentItem struct {
 	// 发布人
 	Creator *CommentCreator `json:"creator"`
 
+	// 是否删除
+	CanDelete bool `json:"can_delete"`
+
 	// 是否点赞
 	Like bool `json:"like"`
 	// 是否反对
 	Dislike bool `json:"dislike"`
 	// 喜欢数
-	LikeCount int `json:"like_count"`
+	LikeCount int32 `json:"like_count"`
 	// 喜欢数
-	DislikeCount int `json:"dislike_count"`
+	DislikeCount int32 `json:"dislike_count"`
 	// 子评论数
-	ChildCommentsCount int `json:"child_comments_count"`
+	ChildCommentsCount int32 `json:"child_comments_count"`
 	// 子评论
 	ChildComments []*ChildCommentItem `json:"child_comments,omitempty"`
 }
@@ -70,15 +76,18 @@ type ChildCommentItem struct {
 	// 发布人
 	Creator *CommentCreator `json:"creator"`
 
+	// 是否删除
+	CanDelete bool `json:"can_delete"`
+
 	// 是否点赞
 	Like bool `json:"like"`
 	// 是否反对
 	Dislike bool `json:"dislike"`
 
 	// 喜欢数
-	LikeCount int `json:"like_count"`
+	LikeCount int32 `json:"like_count"`
 	// 喜欢数
-	DislikeCount int `json:"dislike_count"`
+	DislikeCount int32 `json:"dislike_count"`
 
 	// 被回复人
 	ReplyTo *CommentCreator `json:"reply_to"`
@@ -89,9 +98,9 @@ type CommentListResp struct {
 	Paging *Paging        `json:"paging"`
 	Total  int            `json:"total"`
 	// 精选数
-	FeaturedCount int `json:"featured_count"`
+	FeaturedCount int32 `json:"featured_count"`
 	// 评论数
-	CommentsCount int `json:"comments_count"`
+	CommentsCount int32 `json:"comments_count"`
 }
 
 type CommentCreator struct {

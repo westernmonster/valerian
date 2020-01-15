@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"valerian/app/service/account/api"
+	"valerian/app/service/account/model"
 	"valerian/app/service/account/service"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
@@ -316,4 +317,174 @@ func (s *server) AllAccountsIDsPaged(ctx context.Context, req *api.AccountsPaged
 
 func (s *server) AllAccountsPaged(ctx context.Context, req *api.AccountsPagedReq) (*api.AdminAccountsResp, error) {
 	return s.svr.GetAllAccountsPaged(ctx, req)
+}
+
+func (p *server) RequestIDCert(c context.Context, req *api.AidReq) (*api.RequestIDCertResp, error) {
+	if req.UseMaster {
+		c = sqalx.NewContext(c, true)
+		defer func() {
+			c = sqalx.NewContext(c, false)
+		}()
+	}
+	data, err := p.svr.RequestIDCert(c, req.Aid)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &api.RequestIDCertResp{
+		CloudauthPageUrl: data.CloudauthPageUrl,
+		STSToken: &api.STSToken{
+			AccessKeyId:     data.STSToken.AccessKeyId,
+			AccessKeySecret: data.STSToken.AccessKeySecret,
+			Expiration:      data.STSToken.Expiration,
+			EndPoint:        data.STSToken.EndPoint,
+			BucketName:      data.STSToken.BucketName,
+			Path:            data.STSToken.Path,
+			Token:           data.STSToken.Token,
+		},
+		VerifyToken: &api.VerifyToken{
+			Token:           data.VerifyToken.Token,
+			DurationSeconds: int32(data.VerifyToken.DurationSeconds),
+		},
+	}
+
+	return resp, nil
+}
+
+func (p *server) RefreshIDCertStatus(c context.Context, req *api.AidReq) (*api.IDCertStatus, error) {
+	if req.UseMaster {
+		c = sqalx.NewContext(c, true)
+		defer func() {
+			c = sqalx.NewContext(c, false)
+		}()
+	}
+	status, err := p.svr.RefreshIDCertStatus(c, req.Aid)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.IDCertStatus{Status: int32(status)}, nil
+}
+
+func (p *server) GetIDCert(c context.Context, req *api.AidReq) (*api.IDCertInfo, error) {
+	if req.UseMaster {
+		c = sqalx.NewContext(c, true)
+		defer func() {
+			c = sqalx.NewContext(c, false)
+		}()
+	}
+	data, err := p.svr.GetIDCert(c, req.Aid)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.IDCertInfo{
+		AccountID:            data.AccountID,
+		Status:               int32(data.Status),
+		AuditConclusions:     data.AuditConclusions,
+		Name:                 data.Name,
+		IdentificationNumber: data.IdentificationNumber,
+		IDCardType:           data.IDCardType,
+		IDCardStartDate:      data.IDCardStartDate,
+		IDCardExpiry:         data.IDCardExpiry,
+		Address:              data.Address,
+		Sex:                  data.Sex,
+		IDCardFrontPic:       data.IDCardFrontPic,
+		IDCardBackPic:        data.IDCardBackPic,
+		FacePic:              data.FacePic,
+		EthnicGroup:          data.EthnicGroup,
+		CreatedAt:            data.CreatedAt,
+		UpdatedAt:            data.UpdatedAt,
+	}, nil
+}
+
+func (p *server) GetIDCertStatus(c context.Context, req *api.AidReq) (*api.IDCertStatus, error) {
+	if req.UseMaster {
+		c = sqalx.NewContext(c, true)
+		defer func() {
+			c = sqalx.NewContext(c, false)
+		}()
+	}
+	status, err := p.svr.GetIDCertStatus(c, req.Aid)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.IDCertStatus{Status: int32(status)}, nil
+}
+
+func (p *server) RequestWorkCert(c context.Context, req *api.WorkCertReq) (*api.EmptyStruct, error) {
+	err := p.svr.RequestWorkCert(c, &model.ArgAddWorkCert{
+		AccountID:  req.AccountID,
+		WorkPic:    req.WorkPic,
+		OtherPic:   req.OtherPic,
+		Company:    req.Company,
+		Department: req.Department,
+		Position:   req.Position,
+		ExpiresAt:  req.ExpiresAt,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.EmptyStruct{}, nil
+}
+
+func (p *server) AuditWorkCert(c context.Context, req *api.AuditWorkCertReq) (*api.EmptyStruct, error) {
+	err := p.svr.AuditWorkCert(c, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.EmptyStruct{}, nil
+}
+
+func (p *server) GetWorkCert(c context.Context, req *api.AidReq) (*api.WorkCertInfo, error) {
+	if req.UseMaster {
+		c = sqalx.NewContext(c, true)
+		defer func() {
+			c = sqalx.NewContext(c, false)
+		}()
+	}
+	data, err := p.svr.GetWorkCert(c, req.Aid)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.WorkCertInfo{
+		AccountID:   data.AccountID,
+		Status:      int32(data.Status),
+		WorkPic:     data.WorkPic,
+		OtherPic:    data.OtherPic,
+		Company:     data.Company,
+		Department:  data.Department,
+		Position:    data.Position,
+		ExpiresAt:   data.ExpiresAt,
+		AuditResult: data.AuditResult,
+		CreatedAt:   data.CreatedAt,
+		UpdatedAt:   data.UpdatedAt,
+	}, nil
+}
+
+func (p *server) GetWorkCertStatus(c context.Context, req *api.AidReq) (*api.WorkCertStatus, error) {
+	if req.UseMaster {
+		c = sqalx.NewContext(c, true)
+		defer func() {
+			c = sqalx.NewContext(c, false)
+		}()
+	}
+	status, err := p.svr.GetWorkCertStatus(c, req.Aid)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.WorkCertStatus{Status: int32(status)}, nil
+}
+
+func (p *server) GetWorkCertsPaged(c context.Context, req *api.WorkCertPagedReq) (*api.WorkCertPagedResp, error) {
+	return p.svr.GetWorkCertificationsPaged(c, req)
+}
+
+func (p *server) GetWorkCertHistoriesPaged(c context.Context, req *api.WorkCertHistoriesPagedReq) (*api.WorkCertHistoriesPagedResp, error) {
+	return p.svr.GetWorkCertHistoriesPaged(c, req)
 }

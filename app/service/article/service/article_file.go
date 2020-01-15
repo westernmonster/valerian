@@ -134,8 +134,8 @@ func (p *Service) SaveArticleFiles(c context.Context, arg *api.ArgSaveArticleFil
 	}
 
 	p.addCache(func() {
-		p.convertOfficeFiles(context.TODO(), arg.ArticleID)
-		p.d.DelArticleFileCache(context.TODO(), arg.ArticleID)
+		p.convertOfficeFiles(context.Background(), arg.ArticleID)
+		p.d.DelArticleFileCache(context.Background(), arg.ArticleID)
 	})
 	return
 }

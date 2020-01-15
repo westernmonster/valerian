@@ -7,7 +7,6 @@ import (
 
 	"valerian/app/service/account/api"
 	"valerian/app/service/account/model"
-	certification "valerian/app/service/certification/api"
 	"valerian/library/database/sqalx"
 	"valerian/library/ecode"
 	"valerian/library/log"
@@ -119,14 +118,9 @@ func (p *Service) GetAllAccountsPaged(c context.Context, req *api.AccountsPagedR
 			IsLock:       bool(v.IsLock),
 		}
 
-		var workCertStatus int32
-		if workCertStatus, err = p.d.GetWorkCertStatus(c, v.ID); err != nil {
-			return
-		}
-
-		if workCertStatus == int32(1) {
-			var workCert *certification.WorkCertInfo
-			if workCert, err = p.d.GetWorkCert(c, v.ID); err != nil {
+		if item.WorkCert {
+			var workCert *model.WorkCertification
+			if workCert, err = p.getWorkCertByID(c, p.d.DB(), v.ID); err != nil {
 				return
 			}
 
@@ -262,7 +256,7 @@ func (p *Service) BatchBaseInfo(c context.Context, aids []int64) (data map[int64
 	}
 
 	p.addCache(func() {
-		p.d.SetBatchAccountCache(context.TODO(), missA)
+		p.d.SetBatchAccountCache(context.Background(), missA)
 	})
 
 	return
@@ -338,8 +332,8 @@ func (p *Service) UpdateAccount(c context.Context, arg *api.UpdateProfileReq) (e
 	}
 
 	p.addCache(func() {
-		p.d.DelAccountCache(context.TODO(), arg.Aid)
-		p.onAccountUpdated(context.TODO(), arg.Aid, time.Now().Unix())
+		p.d.DelAccountCache(context.Background(), arg.Aid)
+		p.onAccountUpdated(context.Background(), arg.Aid, time.Now().Unix())
 	})
 
 	return
@@ -368,7 +362,7 @@ func (p *Service) getAccountByID(c context.Context, node sqalx.Node, aid int64) 
 
 	if needCache {
 		p.addCache(func() {
-			p.d.SetAccountCache(context.TODO(), account)
+			p.d.SetAccountCache(context.Background(), account)
 		})
 	}
 	return

@@ -84,7 +84,6 @@ func main() {
 			log.Info("identify-service exit")
 			return
 		case syscall.SIGHUP:
-		// TODO reload
 		default:
 			return
 		}

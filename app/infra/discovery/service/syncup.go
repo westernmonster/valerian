@@ -29,7 +29,7 @@ func (s *Service) syncUp() (err error) {
 			Code int                          `json:"code"`
 			Data map[string][]*model.Instance `json:"data"`
 		}
-		if err = s.client.Get(context.TODO(), uri, "", nil, &res); err != nil {
+		if err = s.client.Get(context.Background(), uri, "", nil, &res); err != nil {
 			log.Errorf("e.client.Get(%v) error(%v)", uri, err)
 			continue
 		}

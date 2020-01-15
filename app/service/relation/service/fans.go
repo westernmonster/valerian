@@ -26,7 +26,7 @@ func (p *Service) FansPaged(c context.Context, aid int64, limit, offset int) (re
 
 	if items != nil && addCache {
 		p.addCache(func() {
-			p.d.SetFansCache(context.TODO(), aid, limit, offset, items)
+			p.d.SetFansCache(context.Background(), aid, limit, offset, items)
 		})
 	}
 

@@ -7,6 +7,10 @@ metadata:
     app: {{ .Values.global.name }}
     heritage: {{ .Release.Service }}
     release: {{ .Values.global.name }}
+    platform: {{ .Values.global.platform }}
+    type: {{ .Values.global.type }}
+    version: {{ .Values.global.version }}
+    gitVersion: {{ .Values.global.gitVersion }}
 spec:
   replicas: {{ .Values.server.replicas }}
   selector:

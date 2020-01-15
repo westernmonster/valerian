@@ -27,7 +27,7 @@ func (p *Service) getDiscussionFiles(c context.Context, node sqalx.Node, aid, di
 
 	if addCache {
 		p.addCache(func() {
-			p.d.SetDiscussionFilesCache(context.TODO(), discussionID, items)
+			p.d.SetDiscussionFilesCache(context.Background(), discussionID, items)
 		})
 	}
 
@@ -73,7 +73,7 @@ func (p *Service) bulkCreateFiles(c context.Context, node sqalx.Node, discussion
 	}
 
 	p.addCache(func() {
-		p.d.DelDiscussionFilesCache(context.TODO(), discussionID)
+		p.d.DelDiscussionFilesCache(context.Background(), discussionID)
 	})
 
 	return

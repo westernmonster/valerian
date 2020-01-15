@@ -5,23 +5,19 @@ import (
 	"fmt"
 	"time"
 
-	account "valerian/app/service/account/api"
 	"valerian/app/service/comment/conf"
 	"valerian/library/cache/memcache"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
 	"valerian/library/stat/prom"
-
-	"github.com/pkg/errors"
 )
 
 // Dao dao struct
 type Dao struct {
-	db         sqalx.Node
-	mc         *memcache.Pool
-	mcExpire   int32
-	c          *conf.Config
-	accountRPC account.AccountClient
+	db       sqalx.Node
+	mc       *memcache.Pool
+	mcExpire int32
+	c        *conf.Config
 }
 
 func New(c *conf.Config) (dao *Dao) {
@@ -30,12 +26,6 @@ func New(c *conf.Config) (dao *Dao) {
 		db:       sqalx.NewMySQL(c.DB.Main),
 		mc:       memcache.NewPool(c.Memcache.Main.Config),
 		mcExpire: int32(time.Duration(c.Memcache.Main.Expire) / time.Second),
-	}
-
-	if accountRPC, err := account.NewClient(c.AccountRPC); err != nil {
-		panic(errors.WithMessage(err, "Failed to dial account service"))
-	} else {
-		dao.accountRPC = accountRPC
 	}
 
 	return

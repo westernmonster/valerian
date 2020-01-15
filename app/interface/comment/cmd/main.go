@@ -48,7 +48,6 @@ func main() {
 			log.Info("interface-comment exit")
 			return
 		case syscall.SIGHUP:
-		// TODO reload
 		default:
 			return
 		}

@@ -43,7 +43,7 @@ func (p *Service) getArticle(c context.Context, node sqalx.Node, articleID int64
 
 	if addCache {
 		p.addCache(func() {
-			p.d.SetArticleCache(context.TODO(), item)
+			p.d.SetArticleCache(context.Background(), item)
 		})
 	}
 	return

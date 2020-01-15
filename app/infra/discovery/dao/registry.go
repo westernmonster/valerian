@@ -31,7 +31,7 @@ type Registry struct {
 
 // conn the poll chan contains consumer.
 type conn struct {
-	ch         chan map[string]*model.InstanceInfo // TODO(felix): increase
+	ch         chan map[string]*model.InstanceInfo
 	arg        *model.ArgPolls
 	latestTime int64
 	count      int
@@ -256,7 +256,7 @@ func (r *Registry) broadcast(env, appid string, a *model.App) {
 	}
 	delete(r.conns, key)
 	for _, conn := range conns {
-		ii, _ := r.Fetch(conn.arg.Zone, env, appid, 0, model.InstanceStatusUP) // TODO(felix): latesttime!=0 increase
+		ii, _ := r.Fetch(conn.arg.Zone, env, appid, 0, model.InstanceStatusUP)
 		var key string
 		if len(conn.arg.Treeid) != 0 {
 			key = strconv.FormatInt(a.Treeid, 10)

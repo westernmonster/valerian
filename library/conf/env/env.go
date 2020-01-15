@@ -31,6 +31,8 @@ var (
 	// Site
 	SiteURL string
 
+	Version string
+
 	// Region avaliable region where app at.
 	Region string
 	// Zone avaliable zone where app at.
@@ -78,6 +80,7 @@ func init() {
 
 func addFlag(fs *flag.FlagSet) {
 	// env
+	fs.StringVar(&Version, "app.version", os.Getenv("APP_VERSION"), "app semantic version")
 	fs.StringVar(&SiteURL, "siteurl", os.Getenv("SITE_URL"), "site url, example: http://dev.stonote.cn")
 	fs.StringVar(&Region, "region", defaultString("REGION", _region), "avaliable region. or use REGION env variable, value: sh etc.")
 	fs.StringVar(&Zone, "zone", defaultString("ZONE", _zone), "avaliable zone. or use ZONE env variable, value: sh001/sh002 etc.")

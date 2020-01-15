@@ -31,27 +31,19 @@
     - message 1314
     - comment 1315
     - search 1316
-    - certification 1317
   * interface 4
     - account  1401
     - article 1402
-    - certification 1403
     - discuss 1404
     - dm 1405
-    - editor 1406
-    - fav 1407
     - feed 1408
     - feedback 1409
-    - file 1410
-    - locale 1411
-    - location 1412
     - passport-auth 1413
     - passport-login 1414
     - passport-register 1415
     - recent 1416
     - topic 1417
     - valcode 1418
-    - like 1419
     - search 1420
     - comment 1421
-    - init 1422
+    - common 1423

@@ -9,7 +9,6 @@ import (
 	feed "valerian/app/service/account-feed/api"
 	account "valerian/app/service/account/api"
 	article "valerian/app/service/article/api"
-	certification "valerian/app/service/certification/api"
 	comment "valerian/app/service/comment/api"
 	discuss "valerian/app/service/discuss/api"
 	recent "valerian/app/service/recent/api"
@@ -635,12 +634,12 @@ func (p *Service) GetMemberCert(c context.Context, targetID int64) (resp *model.
 		IsFollow:        isFollowing,
 	}
 
-	var v *certification.IDCertInfo
+	var v *account.IDCertInfo
 	if v, err = p.d.GetIDCert(c, targetID); err != nil {
 		return
 	}
 
-	var w *certification.WorkCertInfo
+	var w *account.WorkCertInfo
 	if w, err = p.d.GetWorkCert(c, targetID); err != nil {
 		return
 	}

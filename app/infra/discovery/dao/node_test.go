@@ -28,7 +28,7 @@ func TestCall(t *testing.T) {
 		node.client.SetTransport(gock.DefaultTransport)
 		httpMock("POST", "http://api.stonote.loc/discovery/register").Reply(200).JSON(`{"ts":1514341945,"code":409,"data":{"region":"shsb","zone":"fuck","appid":"main.arch.account-service","env":"pre","hostname":"cs4sq","http":"","rpc":"0.0.0.0:18888","weight":2}}`)
 		i := model.NewInstance(reg)
-		err := node.call(context.TODO(), model.Register, i, "http://api.stonote.loc/discovery/register", &res)
+		err := node.call(context.Background(), model.Register, i, "http://api.stonote.loc/discovery/register", &res)
 		So(err, ShouldResemble, ecode.Conflict)
 		So(res.Appid, ShouldResemble, "main.arch.account-service")
 	})
@@ -45,7 +45,7 @@ func TestNodeCancel(t *testing.T) {
 		node.pRegisterURL = "http://127.0.0.1:7171/discovery/register"
 		node.client.SetTransport(gock.DefaultTransport)
 		httpMock("POST", "http://api.stonote.loc/discovery/cancel").Reply(200).JSON(`{"code":0}`)
-		err := node.Cancel(context.TODO(), i)
+		err := node.Cancel(context.Background(), i)
 		So(err, ShouldBeNil)
 	})
 }
@@ -62,7 +62,7 @@ func TestNodeRenew(t *testing.T) {
 		node.client.SetTransport(gock.DefaultTransport)
 		httpMock("POST", "http://api.stonote.loc/discovery/renew").Reply(200).JSON(`{"code":409,"data":{"region":"shsb","zone":"fuck","appid":"main.arch.account-service","env":"pre","hostname":"cs4sq","http":"","rpc":"0.0.0.0:18888","weight":2}}`)
 		httpMock("POST", "http://127.0.0.1:7171/discovery/register").Reply(200).JSON(`{"code":0}`)
-		err := node.Renew(context.TODO(), i)
+		err := node.Renew(context.Background(), i)
 		So(err, ShouldBeNil)
 	})
 }
@@ -78,7 +78,7 @@ func TestNodeRenew2(t *testing.T) {
 		node.client.SetTransport(gock.DefaultTransport)
 		httpMock("POST", "http://api.stonote.loc/discovery/renew").Reply(200).JSON(`{"code":404}`)
 		httpMock("POST", "http://api.stonote.loc/discovery/register").Reply(200).JSON(`{"code":0}`)
-		err := node.Renew(context.TODO(), i)
+		err := node.Renew(context.Background(), i)
 		So(err, ShouldBeNil)
 	})
 }
@@ -99,7 +99,7 @@ func TestSet(t *testing.T) {
 			Hostname: []string{"test1"},
 			Status:   []int64{1},
 		}
-		err := node.Set(context.TODO(), set)
+		err := node.Set(context.Background(), set)
 		So(err, ShouldBeNil)
 	})
 }

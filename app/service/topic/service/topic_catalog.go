@@ -86,7 +86,7 @@ func (p *Service) SaveCatalogs(c context.Context, req *api.ArgSaveCatalogs) (err
 			p.onTopicTaxonomyCatalogDeleted(c, v, req.Aid, time.Now().Unix())
 		}
 
-		p.d.DelTopicCache(context.TODO(), req.TopicID)
+		p.d.DelTopicCache(context.Background(), req.TopicID)
 	})
 	return
 }

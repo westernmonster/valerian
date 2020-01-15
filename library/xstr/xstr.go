@@ -2,9 +2,13 @@ package xstr
 
 import (
 	"bytes"
+	"fmt"
 	"strconv"
 	"strings"
 	"sync"
+
+	"github.com/blang/semver"
+	"github.com/pkg/errors"
 )
 
 var (
@@ -14,6 +18,15 @@ var (
 		},
 	}
 )
+
+func UrlVerPrefix(appVersion string) (urlPrefix string) {
+	ver, err := semver.Make(appVersion)
+	if err != nil {
+		panic(errors.WithMessage(err, "wrong app version"))
+	}
+
+	return fmt.Sprintf("/api/v%d", ver.Major)
+}
 
 // JoinInts format int64 slice like:n1,n2,n3.
 func JoinInts(is []int64) string {

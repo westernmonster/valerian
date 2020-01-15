@@ -237,8 +237,8 @@ func (p *Service) UpdateTopic(c context.Context, arg *api.ArgUpdateTopic) (err e
 	}
 
 	p.addCache(func() {
-		p.d.DelAccountTopicSettingCache(context.TODO(), arg.Aid, arg.ID)
-		p.d.DelTopicCache(context.TODO(), arg.ID)
+		p.d.DelAccountTopicSettingCache(context.Background(), arg.Aid, arg.ID)
+		p.d.DelTopicCache(context.Background(), arg.ID)
 		p.onTopicUpdated(context.Background(), arg.ID, arg.Aid, time.Now().Unix())
 	})
 	return

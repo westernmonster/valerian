@@ -86,7 +86,6 @@ func main() {
 			log.Info("search-service exit")
 			return
 		case syscall.SIGHUP:
-		// TODO reload
 		default:
 			return
 		}

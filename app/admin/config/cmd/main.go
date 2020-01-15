@@ -43,7 +43,6 @@ func main() {
 			log.Info("config-admin exit")
 			return
 		case syscall.SIGHUP:
-		// TODO reload
 		default:
 			return
 		}

@@ -60,7 +60,7 @@ func (p *Service) UpdateArticleRelation(c context.Context, arg *api.ArgUpdateArt
 	}
 
 	p.addCache(func() {
-		p.d.DelTopicCatalogCache(context.TODO(), catalog.TopicID)
+		p.d.DelTopicCatalogCache(context.Background(), catalog.TopicID)
 	})
 
 	return
@@ -109,7 +109,7 @@ func (p *Service) AddArticleRelation(c context.Context, arg *api.ArgAddArticleRe
 	}
 
 	p.addCache(func() {
-		p.d.DelTopicCatalogCache(context.TODO(), arg.TopicID)
+		p.d.DelTopicCatalogCache(context.Background(), arg.TopicID)
 	})
 
 	return
@@ -177,7 +177,7 @@ func (p *Service) DelArticleRelation(c context.Context, arg *api.ArgDelArticleRe
 	}
 
 	p.addCache(func() {
-		p.d.DelTopicCatalogCache(context.TODO(), catalog.TopicID)
+		p.d.DelTopicCatalogCache(context.Background(), catalog.TopicID)
 		p.onCatalogArticleDeleted(context.Background(), arg.ArticleID, catalog.TopicID, arg.Aid, time.Now().Unix())
 	})
 

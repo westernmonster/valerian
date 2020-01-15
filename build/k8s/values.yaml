@@ -1,11 +1,33 @@
 global:
   image: registry.cn-hangzhou.aliyuncs.com/valerian/web:0.1
   pullPolicy: IfNotPresent
+  platform: valerian
+  type: interface
   name: app
+  version: 1.0.3
+  gitVersion: c91b2e62e7957cc8b8dcc5b78c2b0f7fc544c663
+
+ingress:
+  enabled: true
+  annotations:
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: $1
+  paths:
+    - /
+  hosts:
+    - uat.flywk.com
+    - web.flywk.com
+    - admin.flywk.com
+  tls:
+    - secretName: locale-secret0
+      hosts:
+        - uat.flywk.com
+        - web.flywk.com
+        - admin.flywk.com
 
 server:
-  replicas: 2
-  bootstrapExpect: 2
+  replicas: 1
+  bootstrapExpect: 1
   exEnv:
     CI: 1
 

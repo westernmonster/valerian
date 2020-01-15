@@ -55,7 +55,7 @@ func (p *Service) getRevise(c context.Context, node sqalx.Node, reviseID int64) 
 
 	if addCache {
 		p.addCache(func() {
-			p.d.SetReviseCache(context.TODO(), item)
+			p.d.SetReviseCache(context.Background(), item)
 		})
 	}
 	return
@@ -368,7 +368,7 @@ func (p *Service) UpdateRevise(c context.Context, arg *api.ArgUpdateRevise) (err
 	}
 
 	p.addCache(func() {
-		p.d.DelReviseCache(context.TODO(), arg.ID)
+		p.d.DelReviseCache(context.Background(), arg.ID)
 		p.onReviseUpdated(context.Background(), arg.ID, arg.Aid, time.Now().Unix())
 	})
 

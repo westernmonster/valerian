@@ -42,9 +42,9 @@ func (p *Service) Leave(c context.Context, aid, topicID int64) (err error) {
 	}
 
 	p.addCache(func() {
-		p.d.DelTopicMembersCache(context.TODO(), topicID)
+		p.d.DelTopicMembersCache(context.Background(), topicID)
 		p.onTopicLeaved(c, aid, topicID, time.Now().Unix())
-		p.d.DelTopicCache(context.TODO(), topicID)
+		p.d.DelTopicCache(context.Background(), topicID)
 	})
 
 	return
@@ -84,7 +84,7 @@ func (p *Service) GetTopicMembersPaged(c context.Context, arg *api.ArgTopicMembe
 
 	if items != nil && addCache {
 		p.addCache(func() {
-			p.d.SetTopicMembersCache(context.TODO(), arg.TopicID, count, arg.Page, arg.PageSize, items)
+			p.d.SetTopicMembersCache(context.Background(), arg.TopicID, count, arg.Page, arg.PageSize, items)
 		})
 	}
 
@@ -145,13 +145,13 @@ func (p *Service) BulkSaveMembers(c context.Context, req *api.ArgBatchSavedTopic
 
 	p.addCache(func() {
 		for _, v := range change.NewMembers {
-			p.onTopicFollowed(context.TODO(), req.TopicID, v, time.Now().Unix())
+			p.onTopicFollowed(context.Background(), req.TopicID, v, time.Now().Unix())
 		}
 		for _, v := range change.DelMembers {
-			p.onTopicLeaved(context.TODO(), req.TopicID, v, time.Now().Unix())
+			p.onTopicLeaved(context.Background(), req.TopicID, v, time.Now().Unix())
 		}
-		p.d.DelTopicCache(context.TODO(), req.TopicID)
-		p.d.DelTopicMembersCache(context.TODO(), req.TopicID)
+		p.d.DelTopicCache(context.Background(), req.TopicID)
+		p.d.DelTopicMembersCache(context.Background(), req.TopicID)
 	})
 
 	return
@@ -188,8 +188,8 @@ func (p *Service) ChangeOwner(c context.Context, arg *api.ArgChangeOwner) (err e
 	}
 
 	p.addCache(func() {
-		p.d.DelTopicMembersCache(context.TODO(), arg.TopicID)
-		p.d.DelTopicCache(context.TODO(), arg.TopicID)
+		p.d.DelTopicMembersCache(context.Background(), arg.TopicID)
+		p.d.DelTopicCache(context.Background(), arg.TopicID)
 	})
 
 	return

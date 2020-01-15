@@ -26,7 +26,7 @@ const (
 var (
 	defualtEcodes = &ecodes{}
 	defaultConfig = &Config{
-		Domain: "internal.stonote.loc",
+		Domain: "internal.stonote.lan",
 		All:    xtime.Duration(time.Hour),
 		Diff:   xtime.Duration(time.Minute * 5),
 		ClientConfig: &xhttp.ClientConfig{

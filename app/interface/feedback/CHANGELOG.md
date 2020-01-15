@@ -1,5 +1,8 @@
 # interface-feedback
 
+## 1.0.5
+- 新环境部署
+
 ## 1.0.2
 1. feature:举报处理结果通知
 

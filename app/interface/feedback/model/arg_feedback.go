@@ -33,3 +33,18 @@ func (p *ArgAddFeedback) Validate() (err error) {
 		validation.Field(&p.TargetType, validation.In(TargetTypeFeedback, TargetTypeMember, TargetTypeTopic, TargetTypeArticle, TargetTypeDiscuss, TargetTypeRevise, TargetTypeComment)),
 	)
 }
+
+type ArgVerifyFeedback struct {
+	FeedbackID int64 `json:"feedback_id,string" swaggertype:"string"`
+	//审核状态 0-未审核，1-审核通过，2 审核不通过
+	VerifyStatus int32  `json:"verify_status"`
+	VerifyDesc   string `json:"verify_desc"`
+}
+
+func (p *ArgVerifyFeedback) Validate() error {
+	return validation.ValidateStruct(
+		p,
+		validation.Field(&p.FeedbackID, validation.Required),
+		validation.Field(&p.VerifyStatus, validation.Required, validation.In(FeedbackStatusCommited, FeedbackStatusApproved, FeedbackStatusRejected)),
+	)
+}

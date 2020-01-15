@@ -30,7 +30,7 @@ func (p *Service) FollowingPaged(c context.Context, aid int64, limit, offset int
 
 	if items != nil && addCache {
 		p.addCache(func() {
-			p.d.SetFollowingsCache(context.TODO(), aid, limit, offset, items)
+			p.d.SetFollowingsCache(context.Background(), aid, limit, offset, items)
 		})
 	}
 

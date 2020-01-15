@@ -45,8 +45,8 @@ func (p *Service) SaveAuthTopics(c context.Context, arg *api.ArgSaveAuthTopics) 
 	}
 
 	p.addCache(func() {
-		p.d.DelTopicCache(context.TODO(), arg.TopicID)
-		p.d.DelAuthTopicsCache(context.TODO(), arg.TopicID)
+		p.d.DelTopicCache(context.Background(), arg.TopicID)
+		p.d.DelAuthTopicsCache(context.Background(), arg.TopicID)
 	})
 
 	return

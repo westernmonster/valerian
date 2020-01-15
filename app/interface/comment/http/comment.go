@@ -77,6 +77,7 @@ func commentList(c *mars.Context) {
 func addComment(c *mars.Context) {
 	arg := new(model.ArgAddComment)
 	if e := c.Bind(arg); e != nil {
+		c.JSON(nil, ecode.RequestErr)
 		return
 	}
 
@@ -109,6 +110,7 @@ func addComment(c *mars.Context) {
 func delComment(c *mars.Context) {
 	arg := new(model.ArgDelete)
 	if e := c.Bind(arg); e != nil {
+		c.JSON(nil, ecode.RequestErr)
 		return
 	}
 

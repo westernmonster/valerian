@@ -9,7 +9,6 @@ import (
 	accountFeed "valerian/app/service/account-feed/api"
 	account "valerian/app/service/account/api"
 	article "valerian/app/service/article/api"
-	certification "valerian/app/service/certification/api"
 	comment "valerian/app/service/comment/api"
 	discuss "valerian/app/service/discuss/api"
 	fav "valerian/app/service/fav/api"
@@ -27,24 +26,23 @@ import (
 
 // Dao dao struct
 type Dao struct {
-	mc               *memcache.Pool
-	mcExpire         int32
-	authMC           *memcache.Pool
-	authMCExpire     int32
-	db               sqalx.Node
-	c                *conf.Config
-	accountRPC       account.AccountClient
-	relationRPC      relation.RelationClient
-	articleRPC       article.ArticleClient
-	topicRPC         topic.TopicClient
-	messageRPC       message.MessageClient
-	discussRPC       discuss.DiscussionClient
-	commentRPC       comment.CommentClient
-	accountFeedRPC   accountFeed.AccountFeedClient
-	recentRPC        recent.RecentClient
-	certificationRPC certification.CertificationClient
-	favRPC           fav.FavClient
-	identifyRPC      identify.IdentifyClient
+	mc             *memcache.Pool
+	mcExpire       int32
+	authMC         *memcache.Pool
+	authMCExpire   int32
+	db             sqalx.Node
+	c              *conf.Config
+	accountRPC     account.AccountClient
+	relationRPC    relation.RelationClient
+	articleRPC     article.ArticleClient
+	topicRPC       topic.TopicClient
+	messageRPC     message.MessageClient
+	discussRPC     discuss.DiscussionClient
+	commentRPC     comment.CommentClient
+	accountFeedRPC accountFeed.AccountFeedClient
+	recentRPC      recent.RecentClient
+	favRPC         fav.FavClient
+	identifyRPC    identify.IdentifyClient
 }
 
 func New(c *conf.Config) (dao *Dao) {
@@ -55,12 +53,6 @@ func New(c *conf.Config) (dao *Dao) {
 		authMCExpire: int32(time.Duration(c.Memcache.Auth.Expire) / time.Second),
 		mc:           memcache.NewPool(c.Memcache.Main.Config),
 		mcExpire:     int32(time.Duration(c.Memcache.Main.Expire) / time.Second),
-	}
-
-	if certificationRPC, err := certification.NewClient(c.CertificationRPC); err != nil {
-		panic(errors.WithMessage(err, "Failed to dial certification service"))
-	} else {
-		dao.certificationRPC = certificationRPC
 	}
 
 	if accountRPC, err := account.NewClient(c.AccountRPC); err != nil {

@@ -48,7 +48,6 @@ func main() {
 			log.Info("admin-topic exit")
 			return
 		case syscall.SIGHUP:
-		// TODO reload
 		default:
 			return
 		}

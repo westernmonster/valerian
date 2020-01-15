@@ -113,7 +113,6 @@ func (p *ArgUpdateTopic) Validate() error {
 		p,
 		validation.Field(&p.Avatar, is.URL), validation.Field(&p.Bg, is.URL),
 		validation.Field(&p.Name, validation.RuneLength(0, 250)),
-		// TODO: Web安全性
 		validation.Field(&p.Introduction, validation.RuneLength(0, 1000)),
 		validation.Field(&p.CatalogViewType, validation.In(CatalogViewTypeColumn, CatalogViewTypeSection)),
 		validation.Field(&p.ViewPermission, validation.In(ViewPermissionJoin, ViewPermissionPublic)),

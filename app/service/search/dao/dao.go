@@ -40,7 +40,7 @@ func New(c *conf.Config) (dao *Dao) {
 	); err == nil {
 		dao.esClient = client
 	} else {
-		PromError(context.TODO(), "es:集群连接失败", "cluster:  %v", err)
+		PromError(context.Background(), "es:集群连接失败", "cluster:  %v", err)
 	}
 
 	return

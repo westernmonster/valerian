@@ -78,7 +78,7 @@ func (p *Service) getAccessToken(c context.Context, token string) (t *model.Acce
 
 	if addCache {
 		p.addCache(func() {
-			p.d.SetAccessTokenCache(context.TODO(), t)
+			p.d.SetAccessTokenCache(context.Background(), t)
 		})
 	}
 	return

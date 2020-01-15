@@ -48,7 +48,6 @@ func main() {
 			log.Info("interface-topic exit")
 			return
 		case syscall.SIGHUP:
-		// TODO reload
 		default:
 			return
 		}
