@@ -15,3 +15,9 @@ const (
 	FeedbackTypeAccuseContent = "accuse_content"
 	FeedbackTypeFeedback      = "feedback"
 )
+
+const (
+	FeedbackStatusCommited = int32(0)
+	FeedbackStatusApproved = int32(1)
+	FeedbackStatusRejected = int32(2)
+)

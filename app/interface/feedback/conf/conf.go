@@ -9,6 +9,7 @@ import (
 	"valerian/library/conf"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
+	"valerian/library/mq"
 	"valerian/library/naming/discovery"
 	"valerian/library/net/http/mars"
 	"valerian/library/net/http/mars/middleware/auth"
@@ -32,6 +33,7 @@ type Config struct {
 	DB     *DB
 	// Auth
 	Auth      *auth.Config
+	Nats      *mq.Config
 	Memcache  *Memcache
 	Discovery *discovery.Config
 }
