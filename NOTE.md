@@ -31,11 +31,9 @@
     - message 1314
     - comment 1315
     - search 1316
-    - certification 1317
   * interface 4
     - account  1401
     - article 1402
-    - certification 1403
     - discuss 1404
     - dm 1405
     - feed 1408
@@ -48,5 +46,4 @@
     - valcode 1418
     - search 1420
     - comment 1421
-    - init **1422**
     - common 1423
