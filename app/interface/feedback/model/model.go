@@ -16,6 +16,7 @@ type Feedback struct {
 	VerifyStatus int32         `db:"verify_status" json:"verify_status"`  // CheckStatus 审核状态
 	VerifyDesc   string        `db:"verify_desc" json:"verify_desc"`      // CheckDesc 审核结果/原因
 }
+
 type FeedbackType struct {
 	ID        int32         `db:"id" json:"id"`                 // ID ID
 	Type      string        `db:"type" json:"type"`             // Type 目标类型

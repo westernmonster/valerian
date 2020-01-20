@@ -36,12 +36,12 @@ func (p *Service) GetArticleDetail(c context.Context, req *api.IDReq) (resp *api
 		return nil, err
 	}
 
-	stat, err := p.GetArticleStat(c, req.ID)
+	stat, err := p.d.GetArticleStatByID(c, p.d.DB(), req.ID)
 	if err != nil {
 		return nil, err
 	}
 
-	urls, err := p.GetArticleImageUrls(c, req.ID)
+	urls, err := p.getArticleImageUrls(c, p.d.DB(), req.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -102,29 +102,58 @@ func (p *Service) GetArticleDetail(c context.Context, req *api.IDReq) (resp *api
 
 }
 
+// GetArticleInfos 批量获取文章信息
+func (p *Service) GetArticleInfos(c context.Context, req *api.IDsReq) (resp *api.ArticleInfosResp, err error) {
+	resp = &api.ArticleInfosResp{
+		Items: make(map[int64]*api.ArticleInfo),
+	}
+
+	for _, v := range req.IDs {
+		var item *api.ArticleInfo
+		if item, err = p.getArticleInfo(c, p.d.DB(), v, ""); err != nil {
+			if ecode.IsNotExistEcode(err) {
+				resp.Items[v] = nil
+				continue
+			}
+			return
+		}
+
+		resp.Items[v] = item
+	}
+	return
+}
+
 // GetArticleInfo 获取文章基本信息
 func (p *Service) GetArticleInfo(c context.Context, req *api.IDReq) (resp *api.ArticleInfo, err error) {
-	article, err := p.GetArticle(c, req.ID)
+	if req.UseMaster {
+		c = sqalx.NewContext(c, true)
+	}
+	return p.getArticleInfo(c, p.d.DB(), req.ID, req.Include)
+}
+
+// getArticleInfo 获取文章基本信息
+func (p *Service) getArticleInfo(c context.Context, node sqalx.Node, id int64, include string) (resp *api.ArticleInfo, err error) {
+	article, err := p.getArticle(c, node, id)
 	if err != nil {
 		return nil, err
 	}
 
-	changeDesc, err := p.GetArticleLastChangeDesc(c, req.ID)
+	changeDesc, err := p.getArticleLastChangeDesc(c, node, id)
 	if err != nil {
 		return nil, err
 	}
 
-	stat, err := p.GetArticleStat(c, req.ID)
+	stat, err := p.d.GetArticleStatByID(c, node, id)
 	if err != nil {
 		return nil, err
 	}
 
-	urls, err := p.GetArticleImageUrls(c, req.ID)
+	urls, err := p.getArticleImageUrls(c, node, id)
 	if err != nil {
 		return nil, err
 	}
 
-	m, err := p.getAccount(c, p.d.DB(), article.CreatedBy)
+	m, err := p.getAccount(c, node, article.CreatedBy)
 	if err != nil {
 		return nil, err
 	}
@@ -153,7 +182,7 @@ func (p *Service) GetArticleInfo(c context.Context, req *api.IDReq) (resp *api.A
 		ChangeDesc: changeDesc,
 	}
 
-	inc := includeParam(req.Include)
+	inc := includeParam(include)
 
 	if inc["content"] {
 		resp.Content = article.Content
@@ -167,10 +196,10 @@ func (p *Service) GetArticleInfo(c context.Context, req *api.IDReq) (resp *api.A
 
 }
 
-// GetArticleLastChangeDesc 获取文章最后一次改动备注
-func (p *Service) GetArticleLastChangeDesc(c context.Context, articleID int64) (changeDesc string, err error) {
+// getArticleLastChangeDesc 获取文章最后一次改动备注
+func (p *Service) getArticleLastChangeDesc(c context.Context, node sqalx.Node, articleID int64) (changeDesc string, err error) {
 	var history *model.ArticleHistory
-	if history, err = p.d.GetLastArticleHistory(c, p.d.DB(), articleID); err != nil {
+	if history, err = p.d.GetLastArticleHistory(c, node, articleID); err != nil {
 		return
 	} else if history != nil {
 		changeDesc = history.ChangeDesc
@@ -195,7 +224,7 @@ func (p *Service) getArticle(c context.Context, node sqalx.Node, articleID int64
 		return
 	}
 
-	if item, err = p.d.GetArticleByID(c, p.d.DB(), articleID); err != nil {
+	if item, err = p.d.GetArticleByID(c, node, articleID); err != nil {
 		return
 	} else if item == nil {
 		err = ecode.ArticleNotExist
@@ -210,11 +239,11 @@ func (p *Service) getArticle(c context.Context, node sqalx.Node, articleID int64
 	return
 }
 
-// GetArticleImageUrls 获取文章图片
-func (p *Service) GetArticleImageUrls(c context.Context, articleID int64) (urls []string, err error) {
+// getArticleImageUrls 获取文章图片
+func (p *Service) getArticleImageUrls(c context.Context, node sqalx.Node, articleID int64) (urls []string, err error) {
 	urls = make([]string, 0)
 	var imgs []*model.ImageURL
-	if imgs, err = p.d.GetImageUrlsByCond(c, p.d.DB(), map[string]interface{}{
+	if imgs, err = p.d.GetImageUrlsByCond(c, node, map[string]interface{}{
 		"target_type": model.TargetTypeArticle,
 		"target_id":   articleID,
 	}); err != nil {
@@ -250,12 +279,12 @@ func (p *Service) GetUserArticlesPaged(c context.Context, req *api.UserArticlesR
 	}
 
 	for i, v := range data {
-		stat, err := p.GetArticleStat(c, v.ID)
+		stat, err := p.d.GetArticleStatByID(c, p.d.DB(), v.ID)
 		if err != nil {
 			return nil, err
 		}
 
-		urls, err := p.GetArticleImageUrls(c, v.ID)
+		urls, err := p.getArticleImageUrls(c, p.d.DB(), v.ID)
 		if err != nil {
 			return nil, err
 		}
@@ -265,7 +294,7 @@ func (p *Service) GetUserArticlesPaged(c context.Context, req *api.UserArticlesR
 			return nil, err
 		}
 
-		changeDesc, err := p.GetArticleLastChangeDesc(c, v.ID)
+		changeDesc, err := p.getArticleLastChangeDesc(c, p.d.DB(), v.ID)
 		if err != nil {
 			return nil, err
 		}
