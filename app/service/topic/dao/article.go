@@ -20,3 +20,10 @@ func (p *Dao) GetRevise(c context.Context, id int64) (info *article.ReviseInfo, 
 	}
 	return
 }
+
+func (p *Dao) GetArticleInfos(c context.Context, ids []int64) (info *article.ArticleInfosResp, err error) {
+	if info, err = p.articleRPC.GetArticleInfos(c, &article.IDsReq{IDs: ids}); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetArticleInfos, error(%+v) ids(%+v)", err, ids))
+	}
+	return
+}

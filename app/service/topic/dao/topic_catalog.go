@@ -24,6 +24,32 @@ func (p *Dao) HasTaxonomy(c context.Context, node sqalx.Node, topicID int64) (ha
 	return
 }
 
+func (p *Dao) GetTopicArticleIDs(c context.Context, node sqalx.Node, articleID int64) (items []int64, err error) {
+	items = make([]int64, 0)
+	sqlSelect := "SELECT a.ref_id FROM topic_catalogs a WHERE a.topic_id=? AND a.`type` = ? AND a.deleted=0"
+
+	var rows *sqlx.Rows
+	if rows, err = node.QueryxContext(c, sqlSelect, articleID, model.TopicCatalogArticle); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetTopicArticleIDs err(%+v)", err))
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var (
+			targetID int64
+		)
+		if err = rows.Scan(&targetID); err != nil {
+			log.For(c).Error(fmt.Sprintf("dao.GetTopicArticleIDs err(%+v)", err))
+			return
+		}
+		items = append(items, targetID)
+	}
+
+	err = rows.Err()
+	return
+}
+
 func (p *Dao) GetArticleRelationIDs(c context.Context, node sqalx.Node, articleID int64) (items []int64, err error) {
 	items = make([]int64, 0)
 	sqlSelect := "SELECT a.topic_id FROM topic_catalogs a WHERE a.ref_id=? AND a.`type` = ? AND a.deleted=0"

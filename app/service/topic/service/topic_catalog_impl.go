@@ -17,15 +17,35 @@ type dicItem struct {
 	Item *model.TopicCatalog
 }
 
+func (p *Service) getTopicArticleInfos(c context.Context, node sqalx.Node, topicID int64) (items map[int64]*article.ArticleInfo, err error) {
+	var articleIDs []int64
+	if articleIDs, err = p.d.GetTopicArticleIDs(c, node, topicID); err != nil {
+		return
+	}
+
+	var resp *article.ArticleInfosResp
+	if resp, err = p.d.GetArticleInfos(c, articleIDs); err != nil {
+		return
+	}
+
+	items = resp.Items
+	return
+}
+
 // getCatalogHierarchyOfAll 按树形层级获取话题目录信息
 func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, topicID int64) (items []*api.TopicRootCatalogInfo, err error) {
 	items = make([]*api.TopicRootCatalogInfo, 0)
 
-	parents, err := p.d.GetTopicCatalogsByCond(c, node, map[string]interface{}{
+	var articleInfos map[int64]*article.ArticleInfo
+	if articleInfos, err = p.getTopicArticleInfos(c, node, topicID); err != nil {
+		return
+	}
+
+	var parents []*model.TopicCatalog
+	if parents, err = p.d.GetTopicCatalogsByCond(c, node, map[string]interface{}{
 		"topic_id":  topicID,
 		"parent_id": 0,
-	})
-	if err != nil {
+	}); err != nil {
 		return
 	}
 
@@ -42,18 +62,24 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 
 		switch lvl1.Type {
 		case model.TopicCatalogArticle:
-			var article *article.ArticleInfo
-			if article, err = p.d.GetArticle(c, lvl1.RefID); err != nil {
-				return
+			if val, ok := articleInfos[parent.RefID]; ok {
+				parent.Name = val.Title
+				parent.Article = p.fromArticle(val)
+				if parent.Article.RelationIDs, err = p.d.GetArticleRelationIDs(c, node, val.ID); err != nil {
+					return
+				}
+			} else {
+				// 如果未获取到文章信息，则跳过
+				continue
 			}
-			parent.Name = article.Title
-			parent.Article = p.fromArticle(article)
-			if parent.Article.RelationIDs, err = p.d.GetArticleRelationIDs(c, node, article.ID); err != nil {
-				return
-			}
+			break
 		case model.TopicCatalogTopic:
 			var t *model.Topic
 			if t, err = p.getTopic(c, p.d.DB(), lvl1.RefID); err != nil {
+				if ecode.IsNotExistEcode(err) {
+					// 如果未获取到话题信息，则跳过
+					continue
+				}
 				return
 			}
 			var topicStat *model.TopicStat
@@ -62,15 +88,15 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 			}
 			parent.Name = t.Name
 			parent.Topic = modelCopyToPbTopic(t, topicStat)
+			break
 		case model.TopicCatalogTestSet:
 		}
 
-		children, eInner := p.d.GetTopicCatalogsByCond(c, node, map[string]interface{}{
+		var children []*model.TopicCatalog
+		if children, err = p.d.GetTopicCatalogsByCond(c, node, map[string]interface{}{
 			"topic_id":  topicID,
 			"parent_id": lvl1.ID,
-		})
-		if eInner != nil {
-			err = eInner
+		}); err != nil {
 			return
 		}
 
@@ -87,18 +113,23 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 
 			switch lvl2.Type {
 			case model.TopicCatalogArticle:
-				var article *article.ArticleInfo
-				if article, err = p.d.GetArticle(c, lvl2.RefID); err != nil {
-					return
-				}
-				child.Name = article.Title
-				child.Article = p.fromArticle(article)
-				if child.Article.RelationIDs, err = p.d.GetArticleRelationIDs(c, node, article.ID); err != nil {
-					return
+				if val, ok := articleInfos[lvl2.ID]; ok {
+					child.Name = val.Title
+					child.Article = p.fromArticle(val)
+					if child.Article.RelationIDs, err = p.d.GetArticleRelationIDs(c, node, val.ID); err != nil {
+						return
+					}
+				} else {
+					// 如果未获取到文章信息，则跳过
+					continue
 				}
 			case model.TopicCatalogTopic:
 				var t *model.Topic
 				if t, err = p.getTopic(c, p.d.DB(), lvl2.RefID); err != nil {
+					if ecode.IsNotExistEcode(err) {
+						// 如果未获取到话题信息，则跳过
+						continue
+					}
 					return
 				}
 				var topicStat *model.TopicStat
@@ -110,12 +141,11 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 			case model.TopicCatalogTestSet:
 			}
 
-			sub, eInner := p.d.GetTopicCatalogsByCond(c, node, map[string]interface{}{
+			var sub []*model.TopicCatalog
+			if sub, err = p.d.GetTopicCatalogsByCond(c, node, map[string]interface{}{
 				"topic_id":  topicID,
 				"parent_id": lvl2.ID,
-			})
-			if eInner != nil {
-				err = eInner
+			}); err != nil {
 				return
 			}
 
@@ -131,18 +161,23 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 
 				switch lvl3.Type {
 				case model.TopicCatalogArticle:
-					var article *article.ArticleInfo
-					if article, err = p.d.GetArticle(c, lvl3.RefID); err != nil {
-						return
-					}
-					subItem.Name = article.Title
-					subItem.Article = p.fromArticle(article)
-					if subItem.Article.RelationIDs, err = p.d.GetArticleRelationIDs(c, node, article.ID); err != nil {
-						return
+					if val, ok := articleInfos[lvl3.ID]; ok {
+						subItem.Name = val.Title
+						subItem.Article = p.fromArticle(val)
+						if subItem.Article.RelationIDs, err = p.d.GetArticleRelationIDs(c, node, val.ID); err != nil {
+							return
+						}
+					} else {
+						// 如果未获取到文章信息，则跳过
+						continue
 					}
 				case model.TopicCatalogTopic:
 					var t *model.Topic
 					if t, err = p.getTopic(c, p.d.DB(), lvl3.RefID); err != nil {
+						if ecode.IsNotExistEcode(err) {
+							// 如果未获取到话题信息，则跳过
+							continue
+						}
 						return
 					}
 					var topicStat *model.TopicStat
