@@ -37,8 +37,10 @@ func (p *Service) getTopicArticleInfos(c context.Context, node sqalx.Node, topic
 func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, topicID int64) (items []*api.TopicRootCatalogInfo, err error) {
 	items = make([]*api.TopicRootCatalogInfo, 0)
 
-	deadline, _ := c.Deadline()
-	fmt.Println(deadline)
+	if dl, ok := c.Deadline(); ok {
+		ctimeout := time.Until(dl)
+		fmt.Println(ctimeout)
+	}
 
 	var articleInfos map[int64]*article.ArticleInfo
 	if articleInfos, err = p.getTopicArticleInfos(c, node, topicID); err != nil {

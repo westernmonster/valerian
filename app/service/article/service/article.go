@@ -104,6 +104,11 @@ func (p *Service) GetArticleDetail(c context.Context, req *api.IDReq) (resp *api
 
 // GetArticleInfos 批量获取文章信息
 func (p *Service) GetArticleInfos(c context.Context, req *api.IDsReq) (resp *api.ArticleInfosResp, err error) {
+	if dl, ok := c.Deadline(); ok {
+		ctimeout := time.Until(dl)
+		fmt.Println(ctimeout)
+	}
+
 	resp = &api.ArticleInfosResp{
 		Items: make(map[int64]*api.ArticleInfo),
 	}

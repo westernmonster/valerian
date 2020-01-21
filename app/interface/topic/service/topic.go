@@ -106,11 +106,6 @@ func (p *Service) UpdateTopic(c context.Context, arg *model.ArgUpdateTopic) (err
 }
 
 func (p *Service) GetTopic(c context.Context, topicID int64, include string) (item *model.TopicResp, err error) {
-	if dl, ok := c.Deadline(); ok {
-		ctimeout := time.Until(dl)
-		fmt.Println(ctimeout)
-	}
-
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed
@@ -197,11 +192,6 @@ func (p *Service) GetTopic(c context.Context, topicID int64, include string) (it
 		}
 	}
 
-	if dl, ok := c.Deadline(); ok {
-		ctimeout := time.Until(dl)
-		fmt.Println(ctimeout)
-	}
-
 	if inc["catalogs"] {
 		var resp *topic.CatalogsResp
 		if resp, err = p.d.GetCatalogsHierarchy(c, &topic.IDReq{ID: topicID, Aid: aid}); err != nil {
@@ -209,11 +199,6 @@ func (p *Service) GetTopic(c context.Context, topicID int64, include string) (it
 		}
 
 		item.Catalogs = p.FromCatalogs(resp.Items)
-	}
-
-	if dl, ok := c.Deadline(); ok {
-		ctimeout := time.Until(dl)
-		fmt.Println(ctimeout)
 	}
 
 	if inc["auth_topics"] {
