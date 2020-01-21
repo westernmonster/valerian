@@ -113,7 +113,7 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 
 			switch lvl2.Type {
 			case model.TopicCatalogArticle:
-				if val, ok := articleInfos[lvl2.ID]; ok {
+				if val, ok := articleInfos[lvl2.RefID]; ok {
 					child.Name = val.Title
 					child.Article = p.fromArticle(val)
 					if child.Article.RelationIDs, err = p.d.GetArticleRelationIDs(c, node, val.ID); err != nil {
@@ -161,7 +161,7 @@ func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, t
 
 				switch lvl3.Type {
 				case model.TopicCatalogArticle:
-					if val, ok := articleInfos[lvl3.ID]; ok {
+					if val, ok := articleInfos[lvl3.RefID]; ok {
 						subItem.Name = val.Title
 						subItem.Article = p.fromArticle(val)
 						if subItem.Article.RelationIDs, err = p.d.GetArticleRelationIDs(c, node, val.ID); err != nil {
