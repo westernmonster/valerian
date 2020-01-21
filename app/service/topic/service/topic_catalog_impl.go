@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	article "valerian/app/service/article/api"
@@ -36,10 +37,15 @@ func (p *Service) getTopicArticleInfos(c context.Context, node sqalx.Node, topic
 func (p *Service) getCatalogHierarchyOfAll(c context.Context, node sqalx.Node, topicID int64) (items []*api.TopicRootCatalogInfo, err error) {
 	items = make([]*api.TopicRootCatalogInfo, 0)
 
+	deadline, _ := c.Deadline()
+	fmt.Println(deadline)
+
 	var articleInfos map[int64]*article.ArticleInfo
 	if articleInfos, err = p.getTopicArticleInfos(c, node, topicID); err != nil {
 		return
 	}
+
+	fmt.Println("获取文章信息成功")
 
 	var parents []*model.TopicCatalog
 	if parents, err = p.d.GetTopicCatalogsByCond(c, node, map[string]interface{}{
