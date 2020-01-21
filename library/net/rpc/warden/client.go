@@ -39,7 +39,7 @@ var (
 	_once           sync.Once
 	_defaultCliConf = &ClientConfig{
 		Dial:    xtime.Duration(time.Second * 10),
-		Timeout: xtime.Duration(time.Second * 1),
+		Timeout: xtime.Duration(time.Second * 5),
 		Subset:  50,
 	}
 	_defaultClient *Client
