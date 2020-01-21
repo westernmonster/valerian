@@ -109,8 +109,22 @@ func (c *Client) handle() grpc.UnaryClientInterceptor {
 			return
 		}
 		defer onBreaker(brk, &err)
+
+		if dl, ok := ctx.Deadline(); ok {
+			ctimeout := time.Until(dl)
+			fmt.Println("GRPC deadline")
+			fmt.Println(ctimeout)
+		}
+
 		_, ctx, cancel = conf.Timeout.Shrink(ctx)
 		defer cancel()
+
+		if dl, ok := ctx.Deadline(); ok {
+			ctimeout := time.Until(dl)
+			fmt.Println("GRPC Shrink deadline")
+			fmt.Println(ctimeout)
+		}
+
 		// meta color
 		if cmd, ok = nmd.FromContext(ctx); ok {
 			var color, ip, port string
@@ -205,7 +219,7 @@ func (c *Client) SetConfig(conf *ClientConfig) (err error) {
 		conf.Dial = xtime.Duration(time.Second * 10)
 	}
 	if conf.Timeout <= 0 {
-		conf.Timeout = xtime.Duration(time.Second * 1)
+		conf.Timeout = xtime.Duration(time.Second * 5)
 	}
 	if conf.Subset <= 0 {
 		conf.Subset = 50
