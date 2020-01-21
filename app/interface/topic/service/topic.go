@@ -106,6 +106,7 @@ func (p *Service) UpdateTopic(c context.Context, arg *model.ArgUpdateTopic) (err
 }
 
 func (p *Service) GetTopic(c context.Context, topicID int64, include string) (item *model.TopicResp, err error) {
+
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed
@@ -120,11 +121,6 @@ func (p *Service) GetTopic(c context.Context, topicID int64, include string) (it
 	var t *topic.TopicResp
 	if t, err = p.d.GetTopicResp(c, &topic.IDReq{ID: topicID, Aid: aid, Include: include}); err != nil {
 		return
-	}
-
-	if dl, ok := c.Deadline(); ok {
-		ctimeout := time.Until(dl)
-		fmt.Println(ctimeout)
 	}
 
 	item = &model.TopicResp{
@@ -174,6 +170,10 @@ func (p *Service) GetTopic(c context.Context, topicID int64, include string) (it
 		}
 	}
 
+	if dl, ok := c.Deadline(); ok {
+		ctimeout := time.Until(dl)
+		fmt.Println(ctimeout)
+	}
 	if inc["members"] {
 		var data *topic.TopicMembersPagedResp
 		if data, err = p.d.GetTopicMembersPaged(c, &topic.ArgTopicMembers{TopicID: topicID, Page: 1, PageSize: 9}); err != nil {
@@ -192,16 +192,32 @@ func (p *Service) GetTopic(c context.Context, topicID int64, include string) (it
 		}
 	}
 
+	if dl, ok := c.Deadline(); ok {
+		ctimeout := time.Until(dl)
+		fmt.Println(ctimeout)
+	}
 	if inc["catalogs"] {
+		fmt.Println(11111111)
+		if dl, ok := c.Deadline(); ok {
+			ctimeout := time.Until(dl)
+			fmt.Println(ctimeout)
+		}
 		var resp *topic.CatalogsResp
 		if resp, err = p.d.GetCatalogsHierarchy(c, &topic.IDReq{ID: topicID, Aid: aid}); err != nil {
 			return
 		}
 
 		item.Catalogs = p.FromCatalogs(resp.Items)
+
 	}
 
 	if inc["auth_topics"] {
+		fmt.Println(22222222)
+		if dl, ok := c.Deadline(); ok {
+			ctimeout := time.Until(dl)
+			fmt.Println(ctimeout)
+		}
+
 		var resp *topic.AuthTopicsResp
 		if resp, err = p.d.GetAuthTopics(c, &topic.IDReq{ID: topicID, Aid: aid}); err != nil {
 			return
@@ -223,6 +239,11 @@ func (p *Service) GetTopic(c context.Context, topicID int64, include string) (it
 	}
 
 	if inc["discuss_categories"] {
+		fmt.Println(33333333)
+		if dl, ok := c.Deadline(); ok {
+			ctimeout := time.Until(dl)
+			fmt.Println(ctimeout)
+		}
 		var resp *discuss.CategoriesResp
 		if resp, err = p.d.GetDiscussionCategories(c, topicID); err != nil {
 			return
@@ -242,6 +263,7 @@ func (p *Service) GetTopic(c context.Context, topicID int64, include string) (it
 	}
 
 	if inc["meta"] {
+		fmt.Println(44444444)
 		var m *topic.TopicMetaInfo
 		if m, err = p.d.GetTopicMeta(c, aid, topicID); err != nil {
 			return
