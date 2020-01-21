@@ -110,6 +110,7 @@ func (p *Service) GetTopic(c context.Context, topicID int64, include string) (it
 		ctimeout := time.Until(dl)
 		fmt.Println(ctimeout)
 	}
+
 	aid, ok := metadata.Value(c, metadata.Aid).(int64)
 	if !ok {
 		err = ecode.AcquireAccountIDFailed
@@ -124,6 +125,11 @@ func (p *Service) GetTopic(c context.Context, topicID int64, include string) (it
 	var t *topic.TopicResp
 	if t, err = p.d.GetTopicResp(c, &topic.IDReq{ID: topicID, Aid: aid, Include: include}); err != nil {
 		return
+	}
+
+	if dl, ok := c.Deadline(); ok {
+		ctimeout := time.Until(dl)
+		fmt.Println(ctimeout)
 	}
 
 	item = &model.TopicResp{
@@ -191,6 +197,11 @@ func (p *Service) GetTopic(c context.Context, topicID int64, include string) (it
 		}
 	}
 
+	if dl, ok := c.Deadline(); ok {
+		ctimeout := time.Until(dl)
+		fmt.Println(ctimeout)
+	}
+
 	if inc["catalogs"] {
 		var resp *topic.CatalogsResp
 		if resp, err = p.d.GetCatalogsHierarchy(c, &topic.IDReq{ID: topicID, Aid: aid}); err != nil {
@@ -198,6 +209,11 @@ func (p *Service) GetTopic(c context.Context, topicID int64, include string) (it
 		}
 
 		item.Catalogs = p.FromCatalogs(resp.Items)
+	}
+
+	if dl, ok := c.Deadline(); ok {
+		ctimeout := time.Until(dl)
+		fmt.Println(ctimeout)
 	}
 
 	if inc["auth_topics"] {
@@ -263,11 +279,11 @@ func (p *Service) GetTopic(c context.Context, topicID int64, include string) (it
 
 func (p *Service) FormCatelogTopic(v *topic.TopicInfo) (resp *model.TargetTopic) {
 	resp = &model.TargetTopic{
-		ID:              v.ID,
-		Name:            v.Name,
-		Introduction:    v.Introduction,
-		Avatar:          v.Avatar,
-		Creator:         nil,
+		ID:           v.ID,
+		Name:         v.Name,
+		Introduction: v.Introduction,
+		Avatar:       v.Avatar,
+		Creator:      nil,
 	}
 	if v.Stat != nil {
 		resp.MemberCount = v.Stat.MemberCount
