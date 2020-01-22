@@ -42,6 +42,7 @@ func innerRouter(e *mars.Engine) {
 		{
 			app.POST("/add", createApp)
 			app.GET("/list", appList)
+			app.GET("/getByName", getAppByName)
 		}
 
 		config := b.Group("/config")

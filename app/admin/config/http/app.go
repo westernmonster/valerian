@@ -8,6 +8,15 @@ import (
 	"valerian/library/net/http/mars"
 )
 
+func getAppByName(c *mars.Context) {
+	params := c.Request.Form
+
+	env := strings.TrimSpace(params.Get("env"))
+	name := strings.TrimSpace(params.Get("name"))
+
+	c.JSON(svr.GetAppByName(c, env, name))
+}
+
 func createApp(c *mars.Context) {
 	arg := new(model.ArgCreateApp)
 	if e := c.Bind(arg); e != nil {

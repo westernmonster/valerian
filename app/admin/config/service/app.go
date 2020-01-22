@@ -15,6 +15,20 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
+func (p *Service) GetAppByName(c context.Context, env string, name string) (item *model.App, err error) {
+	if item, err = p.d.GetAppByCond(c, p.d.ConfigDB(), map[string]interface{}{
+		"env":  env,
+		"name": name,
+	}); err != nil {
+		return
+	} else if item == nil {
+		err = ecode.NothingFound
+		return
+	}
+
+	return
+}
+
 func (p *Service) getApp(c context.Context, node sqalx.Node, id int64) (item *model.App, err error) {
 	if item, err = p.d.GetAppByID(c, node, id); err != nil {
 		return
