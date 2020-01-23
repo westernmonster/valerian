@@ -40,3 +40,9 @@ type CodeLang struct {
 	CreatedAt int64         `db:"created_at" json:"created_at"` // CreatedAt 创建时间
 	UpdatedAt int64         `db:"updated_at" json:"updated_at"` // UpdatedAt 更新时间
 }
+
+type CodeLangs struct {
+	Ver  int64
+	Code int
+	Msg  map[string]string
+}

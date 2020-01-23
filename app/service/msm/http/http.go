@@ -31,6 +31,7 @@ func innerRouter(e *mars.Engine) {
 	group := e.Group("/x/internal/msm")
 	{
 		group.GET("/codes", codes)
+		group.GET("/codes/langs", codesLangs)
 	}
 }
 
