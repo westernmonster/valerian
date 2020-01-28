@@ -15,6 +15,8 @@ import (
 	"valerian/library/log"
 	xhttp "valerian/library/net/http/mars"
 	xtime "valerian/library/time"
+
+	"github.com/davecgh/go-spew/spew"
 )
 
 const (
@@ -133,6 +135,8 @@ func (e *ecodes) update(ver int64) (lver int64, err error) {
 		err = fmt.Errorf("e.client.Get(%v) error(%v)", fmt.Sprintf(_checkURL, e.conf.Domain), err)
 		return
 	}
+
+	spew.Dump(res)
 	switch res.Code {
 	case _codeOk:
 		if res.Result == nil {
