@@ -6,7 +6,6 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"encoding/json"
-	"fmt"
 	"time"
 
 	"valerian/app/service/msm/model"
@@ -73,7 +72,6 @@ func (s *Service) allLang() (err error) {
 }
 
 func (s *Service) newCodesLang(code map[int]map[string]string, ver int64) (*model.CodesLangs, error) {
-	fmt.Println(code)
 	bytes, err := json.Marshal(code)
 	if err != nil {
 		log.Errorf("json.Marshal(%v) error(%v)", code, err)
