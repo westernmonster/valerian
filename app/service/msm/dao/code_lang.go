@@ -27,7 +27,11 @@ func (p *Dao) CodesLang(c context.Context, node sqalx.Node) (codes map[int]map[s
 	codes = make(map[int]map[string]string)
 
 	for _, v := range items {
-		codes[int(v.Code)][v.Locale] = v.Message
+		if _, ok := codes[int(v.Code)]; ok {
+			codes[int(v.Code)][v.Locale] = v.Message
+		} else {
+			codes[int(v.Code)] = make(map[string]string)
+		}
 		if v.UpdatedAt > tmp {
 			lcode.Code = int(v.Code)
 			lcode.Ver = v.UpdatedAt
