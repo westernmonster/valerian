@@ -81,7 +81,7 @@ func Init(conf *Config) {
 	}
 	defualtEcodes.conf = conf
 	defualtEcodes.client = xhttp.NewClient(conf.ClientConfig)
-	defualtEcodes.codes.Store(make(map[int]string))
+	defualtEcodes.codes.Store(make(map[int]map[string]string))
 	ver, _ := defualtEcodes.update(0)
 	go defualtEcodes.updateproc(ver)
 }
@@ -134,6 +134,7 @@ func (e *ecodes) update(ver int64) (lver int64, err error) {
 		return
 	}
 
+	fmt.Println("update()")
 	fmt.Println(res.Code)
 	switch res.Code {
 	case _codeOk:
@@ -159,7 +160,6 @@ func (e *ecodes) update(ver int64) (lver int64, err error) {
 	if !ok {
 		return
 	}
-	fmt.Println(oCodes)
 	nCodes := copy(oCodes)
 	for k, v := range res.Result.Code {
 		nCodes[k] = v
