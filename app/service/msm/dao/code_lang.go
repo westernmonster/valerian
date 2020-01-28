@@ -7,8 +7,55 @@ import (
 
 	"valerian/app/service/msm/model"
 	"valerian/library/database/sqalx"
+	"valerian/library/database/sqlx"
 	"valerian/library/log"
 )
+
+func (p *Dao) CodesLang(c context.Context, node sqalx.Node) (codes map[int]map[string]string, lcode *model.CodeLangs, err error) {
+	sqlSelect := "SELECT a.locale,a.code,a.message,a.updated_at FROM code_langs a WHERE a.deleted=0 ORDER BY a.id "
+
+	var (
+		tmp int64
+	)
+
+	var rows *sqlx.Rows
+	if rows, err = node.QueryxContext(c, sqlSelect); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.CodesLang err(%+v)", err))
+		return
+	}
+	defer rows.Close()
+	lcode = &model.CodeLangs{}
+	codes = make(map[int]map[string]string)
+
+	for rows.Next() {
+		var (
+			code      int
+			message   string
+			locale    string
+			updatedAt int64
+		)
+		t := make(map[string]string)
+		if err = rows.Scan(&locale, &code, &message, &updatedAt); err != nil {
+			log.For(c).Error(fmt.Sprintf("dao.CodesLang err(%+v)", err))
+			return
+		}
+
+		if len(locale) > 0 {
+			t[locale] = message
+		}
+
+		codes[code] = t
+		if updatedAt > tmp {
+			lcode.Code = code
+			lcode.Ver = updatedAt
+			lcode.Msg = t
+			tmp = updatedAt
+		}
+	}
+
+	err = rows.Err()
+	return
+}
 
 // GetAll get all records
 func (p *Dao) GetCodeLangs(c context.Context, node sqalx.Node) (items []*model.CodeLang, err error) {

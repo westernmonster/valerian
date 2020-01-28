@@ -50,15 +50,9 @@ func (s *Service) allLang() (err error) {
 	)
 
 	code := make(map[int]map[string]string)
-	var codes []*model.CodeLang
-	if codes, err = s.d.GetCodeLangs(context.Background(), s.d.ApmDB()); err != nil {
+	if code, lcode, err = s.d.CodesLang(context.Background(), s.d.ApmDB()); err != nil {
 		return
 	}
-
-	for _, v := range codes {
-		code[int(v.Code)][v.Locale] = v.Message
-	}
-
 	if ncodes, err = s.newCodesLang(code, lcode.Ver); err != nil {
 		return
 	}
