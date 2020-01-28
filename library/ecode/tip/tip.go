@@ -157,6 +157,7 @@ func (e *ecodes) update(ver int64) (lver int64, err error) {
 	if !ok {
 		return
 	}
+	fmt.Println(oCodes)
 	nCodes := copy(oCodes)
 	for k, v := range res.Result.Code {
 		nCodes[k] = v
