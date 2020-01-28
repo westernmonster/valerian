@@ -45,6 +45,13 @@ func (s *Status) Message() string {
 	return s.s.Message
 }
 
+func (s *Status) LocaleMessage(locale string) string {
+	if s.s.Message == "" {
+		return strconv.Itoa(int(s.s.Code))
+	}
+	return s.s.Message
+}
+
 // Details return error details
 func (s *Status) Details() []interface{} {
 	if s == nil || s.s == nil {

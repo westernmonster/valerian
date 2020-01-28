@@ -22,6 +22,10 @@ func (e *Error) Message() string {
 	return e.GetErrMessage()
 }
 
+func (e *Error) LocaleMessage(locale string) string {
+	return e.GetErrMessage()
+}
+
 // Equal compare whether two errors are equal.
 func (e *Error) Equal(ec error) bool {
 	return ecode.Cause(ec).Code() == e.Code()

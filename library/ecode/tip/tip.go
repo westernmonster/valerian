@@ -20,7 +20,7 @@ import (
 const (
 	_codeOk          = 200
 	_codeNotModified = 304
-	_checkURL        = "http://%s/x/internal/msm/codes"
+	_checkURL        = "http://%s/x/internal/msm/codes/langs"
 )
 
 var (
@@ -67,7 +67,7 @@ type res struct {
 type data struct {
 	Ver  int64
 	MD5  string
-	Code map[int]string
+	Code map[int]map[string]string
 }
 
 // Init init ecode.
@@ -153,7 +153,7 @@ func (e *ecodes) update(ver int64) (lver int64, err error) {
 		err = fmt.Errorf("get codes fail,error md5")
 		return
 	}
-	oCodes, ok := e.codes.Load().(map[int]string)
+	oCodes, ok := e.codes.Load().(map[int]map[string]string)
 	if !ok {
 		return
 	}
@@ -166,10 +166,13 @@ func (e *ecodes) update(ver int64) (lver int64, err error) {
 	return res.Result.Ver, nil
 }
 
-func copy(src map[int]string) (dst map[int]string) {
-	dst = make(map[int]string)
-	for k1, v1 := range src {
-		dst[k1] = v1
+func copy(src map[int]map[string]string) (dst map[int]map[string]string) {
+	dst = make(map[int]map[string]string)
+	for k, v := range src {
+		dst[k] = make(map[string]string)
+		for k1, v1 := range v {
+			dst[k][k1] = v1
+		}
 	}
 	return
 }
