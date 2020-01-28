@@ -1,6 +1,6 @@
 # interface-passport-auth
 
-## 1.0.4
+## 1.0.5
 - 新环境部署
 
 ## 1.0.1
