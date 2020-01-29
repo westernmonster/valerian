@@ -77,7 +77,10 @@ func (e Code) Message() string {
 func (e Code) LocaleMessage(locale string) string {
 	if cm, ok := _messages.Load().(map[int]map[string]string); ok {
 		if msg, ok := cm[e.Code()]; ok {
-			return msg[locale]
+			d := msg[locale]
+			if d != "" {
+				return d
+			}
 		}
 	}
 	return e.Error()
