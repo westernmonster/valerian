@@ -134,8 +134,6 @@ func (e *ecodes) update(ver int64) (lver int64, err error) {
 		return
 	}
 
-	fmt.Println("update()")
-	fmt.Println(res.Code)
 	switch res.Code {
 	case _codeOk:
 		if res.Result == nil {
