@@ -7,6 +7,7 @@ import (
 
 	"valerian/app/service/feed/conf"
 	"valerian/library/cache/memcache"
+	"valerian/library/cache/redis"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
 	"valerian/library/stat/prom"
@@ -18,6 +19,7 @@ type Dao struct {
 	mc       *memcache.Pool
 	mcExpire int32
 	c        *conf.Config
+	redis    *redis.Pool
 }
 
 func New(c *conf.Config) (dao *Dao) {
@@ -26,6 +28,7 @@ func New(c *conf.Config) (dao *Dao) {
 		db:       sqalx.NewMySQL(c.DB.Main),
 		mc:       memcache.NewPool(c.Memcache.Main.Config),
 		mcExpire: int32(time.Duration(c.Memcache.Main.Expire) / time.Second),
+		redis:    redis.NewPool(c.Redis),
 	}
 
 	return
