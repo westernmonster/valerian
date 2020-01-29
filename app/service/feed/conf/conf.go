@@ -6,6 +6,7 @@ import (
 	flag "github.com/spf13/pflag"
 
 	"valerian/library/cache/memcache"
+	"valerian/library/cache/redis"
 	"valerian/library/conf"
 	"valerian/library/database/sqalx"
 	"valerian/library/log"
@@ -36,6 +37,7 @@ type Config struct {
 	Memcache  *Memcache
 	Discovery *discovery.Config
 	Nats      *mq.Config
+	Redis     *redis.Config
 
 	WardenServer *warden.ServerConfig
 }

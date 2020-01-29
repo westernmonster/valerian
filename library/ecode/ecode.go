@@ -14,7 +14,7 @@ var (
 )
 
 // Register register ecode message map.
-func Register(cm map[int]string) {
+func Register(cm map[int]map[string]string) {
 	_messages.Store(cm)
 }
 
@@ -44,6 +44,8 @@ type Codes interface {
 	Code() int
 	// Message get code message.
 	Message() string
+
+	LocaleMessage(locale string) string
 	//Detail get error detail,it may be nil.
 	Details() []interface{}
 	// Equal for compatible.
@@ -63,9 +65,22 @@ func (e Code) Code() int { return int(e) }
 
 // Message return error message
 func (e Code) Message() string {
-	if cm, ok := _messages.Load().(map[int]string); ok {
+	if cm, ok := _messages.Load().(map[int]map[string]string); ok {
 		if msg, ok := cm[e.Code()]; ok {
-			return msg
+			return msg["en-US"]
+		}
+	}
+	return e.Error()
+}
+
+// Message return error message
+func (e Code) LocaleMessage(locale string) string {
+	if cm, ok := _messages.Load().(map[int]map[string]string); ok {
+		if msg, ok := cm[e.Code()]; ok {
+			d := msg[locale]
+			if d != "" {
+				return d
+			}
 		}
 	}
 	return e.Error()

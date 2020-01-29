@@ -25,3 +25,14 @@ func (p *Dao) GetArticleByID(c context.Context, node sqalx.Node, id int64) (item
 
 	return
 }
+
+func (p *Dao) GetArticles(c context.Context, node sqalx.Node) (items []*model.Article, err error) {
+	items = make([]*model.Article, 0)
+	sqlSelect := "SELECT  a.id,a.title,a.content,a.content_text,a.disable_revise,a.disable_comment,a.created_by,a.deleted,a.created_at,a.updated_at  FROM articles a WHERE a.deleted=0 ORDER BY a.id DESC "
+
+	if err = node.SelectContext(c, &items, sqlSelect); err != nil {
+		log.For(c).Error(fmt.Sprintf("dao.GetArticles err(%+v)", err))
+		return
+	}
+	return
+}

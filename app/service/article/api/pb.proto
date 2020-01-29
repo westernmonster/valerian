@@ -403,6 +403,16 @@ message BoolResp {
     bool Result = 1;
 }
 
+message IDsReq {
+    repeated int64 IDs = 1;
+    bool UseMaster = 2;
+}
+
+message ArticleInfosResp {
+    map<int64, ArticleInfo> Items = 1;
+}
+
+
 message IDsResp {
     repeated int64 IDs = 1 [(gogoproto.jsontag) = 'ids'];
 }
@@ -462,6 +472,7 @@ service Article {
 
     rpc GetAllArticles (EmptyStruct) returns (ArticlesResp);
     rpc GetArticleInfo (IDReq) returns (ArticleInfo);
+    rpc GetArticleInfos (IDsReq) returns (ArticleInfosResp);
     rpc GetArticleDetail (IDReq) returns (ArticleDetail);
     rpc GetReviseInfo (IDReq) returns (ReviseInfo);
     rpc GetReviseDetail (IDReq) returns (ReviseDetail);

@@ -40,7 +40,7 @@ var (
 	_defaultSerConf = &ServerConfig{
 		Network:           "tcp",
 		Addr:              "0.0.0.0:9000",
-		Timeout:           xtime.Duration(time.Second),
+		Timeout:           xtime.Duration(5 * time.Second),
 		IdleTimeout:       xtime.Duration(time.Second * 60),
 		MaxLifeTime:       xtime.Duration(time.Hour * 2),
 		ForceCloseWait:    xtime.Duration(time.Second * 20),
@@ -103,6 +103,7 @@ func (s *Server) handle() grpc.UnaryServerInterceptor {
 		timeout := time.Duration(conf.Timeout)
 		if dl, ok := ctx.Deadline(); ok {
 			ctimeout := time.Until(dl)
+			fmt.Printf("GRPC Server deadline: %+v\n", ctimeout)
 			if ctimeout-time.Millisecond*20 > 0 {
 				ctimeout = ctimeout - time.Millisecond*20
 			}
@@ -110,6 +111,8 @@ func (s *Server) handle() grpc.UnaryServerInterceptor {
 				timeout = ctimeout
 			}
 		}
+
+		fmt.Printf("GRPC Server timeout: %+v\n", timeout)
 		ctx, cancel = context.WithTimeout(ctx, timeout)
 		defer cancel()
 
@@ -221,7 +224,7 @@ func (s *Server) SetConfig(conf *ServerConfig) (err error) {
 		conf = _defaultSerConf
 	}
 	if conf.Timeout <= 0 {
-		conf.Timeout = xtime.Duration(time.Second)
+		conf.Timeout = xtime.Duration(5 * time.Second)
 	}
 	if conf.IdleTimeout <= 0 {
 		conf.IdleTimeout = xtime.Duration(time.Second * 60)

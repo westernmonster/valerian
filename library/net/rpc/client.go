@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/gob"
 	"errors"
+	"fmt"
 	"io"
 	"log"
 	"net"
@@ -410,6 +411,7 @@ func (c *Client) Call(ctx context.Context, serviceMethod string, args interface{
 	}()
 	// timeout: get from conf
 	// if context > conf use conf else context
+	fmt.Println(serviceMethod)
 	deliver := true
 	if deadline, ok := ctx.Deadline(); ok {
 		if ctimeout := time.Until(deadline); ctimeout < timeout {

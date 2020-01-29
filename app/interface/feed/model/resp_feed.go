@@ -283,7 +283,7 @@ type Paging struct {
 
 type HotFeedItem struct {
 	// 目标类型
-	// article, topic, member, comment
+	// article, topic, discuss, comment
 	TargetType string `json:"target_type"`
 	// 目标
 	Target *FeedTarget `json:"target"`

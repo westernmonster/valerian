@@ -1,6 +1,6 @@
 # interface-passport-login
 
-## 1.0.4
+## 1.0.6
 - 新环境部署
 
 

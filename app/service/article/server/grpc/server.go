@@ -91,6 +91,17 @@ func (s *server) GetArticleInfo(ctx context.Context, req *api.IDReq) (*api.Artic
 	return s.svr.GetArticleInfo(ctx, req)
 }
 
+func (s *server) GetArticleInfos(ctx context.Context, req *api.IDsReq) (*api.ArticleInfosResp, error) {
+	if req.UseMaster {
+		ctx = sqalx.NewContext(ctx, true)
+		defer func() {
+			ctx = sqalx.NewContext(ctx, false)
+		}()
+	}
+
+	return s.svr.GetArticleInfos(ctx, req)
+}
+
 func (s *server) GetArticleDetail(ctx context.Context, req *api.IDReq) (*api.ArticleDetail, error) {
 	if req.UseMaster {
 		ctx = sqalx.NewContext(ctx, true)

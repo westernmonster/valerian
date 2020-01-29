@@ -196,6 +196,10 @@ func (c *Context) JSON(data interface{}, err error) {
 	if bcode.Code() == 401 {
 		code = http.StatusUnauthorized
 	}
+	locale := c.Request.Header.Get("Locale")
+	if locale == "" {
+		locale = "en-US"
+	}
 
 	writeStatusCode(c.Writer, bcode.Code())
 	success := false
@@ -205,7 +209,7 @@ func (c *Context) JSON(data interface{}, err error) {
 	c.Render(code, render.JSON{
 		Code:    bcode.Code(),
 		Success: success,
-		Message: bcode.Message(),
+		Message: bcode.LocaleMessage(locale),
 		Result:  nil,
 	})
 }
@@ -227,10 +231,14 @@ func (c *Context) JSONMap(data map[string]interface{}, err error) {
 	if bcode.Code() == -401 {
 		code = http.StatusUnauthorized
 	}
+	locale := c.Request.Header.Get("Locale")
+	if locale == "" {
+		locale = "en-US"
+	}
 	writeStatusCode(c.Writer, bcode.Code())
 	data["code"] = bcode.Code()
 	if _, ok := data["message"]; !ok {
-		data["message"] = bcode.Message()
+		data["message"] = bcode.LocaleMessage(locale)
 	}
 	c.Render(code, render.MapJSON(data))
 }
@@ -240,11 +248,16 @@ func (c *Context) JSONMap(data map[string]interface{}, err error) {
 func (c *Context) XML(data interface{}, err error) {
 	code := http.StatusOK
 	c.Error = err
+
+	locale := c.Request.Header.Get("Locale")
+	if locale == "" {
+		locale = "en-US"
+	}
 	bcode := ecode.Cause(err)
 	writeStatusCode(c.Writer, bcode.Code())
 	c.Render(code, render.XML{
 		Code:    bcode.Code(),
-		Message: bcode.Message(),
+		Message: bcode.LocaleMessage(locale),
 		Data:    data,
 	})
 }
@@ -269,10 +282,16 @@ func (c *Context) Protobuf(data proto.Message, err error) {
 		any.TypeUrl = "type.googleapis.com/" + proto.MessageName(data)
 		any.Value = bytes
 	}
+
+	locale := c.Request.Header.Get("Locale")
+	if locale == "" {
+		locale = "en-US"
+	}
+
 	writeStatusCode(c.Writer, bcode.Code())
 	c.Render(code, render.PB{
 		Code:    int64(bcode.Code()),
-		Message: bcode.Message(),
+		Message: bcode.LocaleMessage(locale),
 		Data:    any,
 	})
 }
