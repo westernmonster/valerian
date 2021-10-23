@@ -429,7 +429,7 @@ func (tx *Tx) Commit() (err error) {
 }
 
 func (tx *Tx) Rollback() (err error) {
-	err = tx.Tx.Commit()
+	err = tx.Tx.Rollback()
 	tx.cancel()
 	tx.db.onBreaker(&err)
 	if tx.span != nil {
